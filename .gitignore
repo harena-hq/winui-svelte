@@ -1,0 +1,9 @@
+# Private context (see AGENTS.md)
+.private/
+
+# Agent-runtime state. Regenerated per session, hand-edited by nobody, and
+# never part of any history.
+# Claude Code / oh-my-claudecode:
+.omc/
+# Codex / oh-my-codex:
+.omx/
