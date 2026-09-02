@@ -20,10 +20,10 @@ test-results/
 playwright-report/
 blob-report/
 
-# Visual baselines. Only the Windows runner's set is tracked: it is the one where
-# Segoe UI Variable resolves, so it is the only one whose pixels mean anything.
-tests/visual/__screenshots__/linux/
-tests/visual/__screenshots__/darwin/
+# Visual baselines. Only the Windows set is tracked: it is the one where Segoe UI
+# Variable resolves, so it is the only one whose pixels mean anything. Directories are
+# named for where the browser ran, not for where the test runner ran.
+tests/visual/__screenshots__/chromium-linux/
 
 # Secrets. `.gitignore` is the first layer only — the pre-commit hook refuses these
 # too, because this is the class where `git add -f` is exactly what someone does.
