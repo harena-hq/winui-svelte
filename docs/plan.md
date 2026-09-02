@@ -52,10 +52,16 @@ project ends up with a green suite and a wrong-looking app.
   in `.private/`, never tracked.
 
 The development machine is Linux and does not have Segoe UI Variable, so a screenshot taken
-here does not show what a Windows user sees. **Snapshots therefore run on a local Windows VM
-runner**, where the fonts resolve exactly as they do for a real user. This is the one
-arrangement that lets the automated suite and the human comparison look at the same pixels,
-and it is what makes the accent derivation below testable at all.
+here does not show what a Windows user sees. **The browser therefore runs on a local Windows
+VM**, driven from here over the Chrome DevTools Protocol: Playwright stays on this host and
+the guest gets nothing installed, which keeps it the stock machine that makes it worth
+measuring on. `WINUI_CDP_ENDPOINT` selects that arrangement.
+
+Baseline directories are named for the browser's environment, not the runner's — with the
+browser on Windows and the runner here, a platform-keyed path would file Windows pixels
+under `linux/`. Only the Windows set is tracked.
+
+That is also what makes the accent derivation below testable at all.
 
 Installing the fonts on a Linux runner is not an alternative: that is the redistribution
 ADR 0003 exists to avoid.

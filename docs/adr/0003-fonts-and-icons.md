@@ -26,9 +26,18 @@ Icons. It is a fallback, not a replacement.
 
 Reference by name; embed nothing.
 
-- Text: `"Segoe UI Variable Text"`, `"Segoe UI Variable"`, `"Segoe UI"`, then a neutral
+- Text: `"Segoe UI Variable Small"` / `"Segoe UI Variable Text"` /
+  `"Segoe UI Variable Display"` per ramp step, then `"Segoe UI"`, then a neutral
   sans-serif fallback. Optical size follows WinUI's mapping — Small for Caption, Text for
   Body through Body Large, Display for Subtitle and above.
+
+  **`"Segoe UI Variable"` without an optical-size suffix is not a family name.** Measured
+  on the reference guest: it renders at exactly the fallback width, identical to a name
+  invented to be absent. Only the three suffixed families are registered, so an
+  unsuffixed entry in a stack is inert — and worse than inert, because it reads as a
+  working fallback step. `tests/visual/fonts.spec.ts` fails if any of the families the
+  token layer names stops resolving.
+
 - Icons: `"Segoe Fluent Icons"` first, with a redistributable set behind it for non-Windows
   viewers. Glyphs are addressed by their WinUI codepoint.
 
@@ -50,6 +59,13 @@ that is a new decision and belongs in its own ADR.
 - **Redrawing the WinUI glyphs as SVG** — fully ours to redistribute and a real option later
   if off-Windows fidelity matters, but it is weeks of drawing to solve a problem the target
   environment does not have.
+
+## How the claim is checked
+
+`document.fonts.check()` cannot answer this. It reports whether text _could be rendered_,
+not whether a family exists, and returns `true` for a name invented on the spot. The test
+measures a glyph run's advance width against such a name instead: a family that resolves
+renders at a different width than the fallback does.
 
 ## Downstream impact
 

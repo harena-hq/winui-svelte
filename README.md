@@ -16,9 +16,22 @@ docs/plan.md             roadmap, locked decisions, conformance gates
 
 ```sh
 pnpm install
-pnpm verify          # build + typecheck, the gate
+pnpm verify          # build, typecheck, lint, the conformance gates, the harness
 pnpm --filter gallery dev
 ```
+
+Visual baselines are taken with the browser on a Windows machine, because that is where
+Segoe UI Variable resolves. Point the suite at a Chrome DevTools endpoint there and tell it
+what address that browser reaches this host on:
+
+```sh
+WINUI_CDP_ENDPOINT=http://127.0.0.1:<tunnelled port> \
+WINUI_BASE_URL=http://<host as the browser sees it>:4173 \
+pnpm test --update-snapshots
+```
+
+Without those, screenshot comparisons skip: a Linux run has no tracked baseline to compare
+against, and writing one would pin a substitute typeface.
 
 Read `AGENTS.md` before your first commit from a fresh clone — one line of git config has to
 be re-run there, and nothing else will tell you.
