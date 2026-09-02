@@ -1,0 +1,41 @@
+# Notices
+
+## Not affiliated with Microsoft
+
+This is an independent reimplementation. "WinUI", "Fluent", "Segoe" and "Windows"
+are trademarks of Microsoft Corporation. This project is not affiliated with,
+endorsed by, or sponsored by Microsoft.
+
+## Design values derived from microsoft-ui-xaml
+
+Theme-resource values — colors, corner radii, the type ramp, motion durations and
+easings — are derived from [microsoft-ui-xaml](https://github.com/microsoft/microsoft-ui-xaml),
+which is MIT licensed. The Gallery's structure and control catalogue follow
+[WinUI-Gallery](https://github.com/microsoft/WinUI-Gallery), also MIT.
+
+```
+Copyright (c) Microsoft Corporation.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
+
+## Fonts and icons are not redistributed
+
+Segoe UI Variable and Segoe Fluent Icons ship with Windows and are referenced by
+name from the local system, never embedded. See `docs/adr/0003-fonts-and-icons.md`.

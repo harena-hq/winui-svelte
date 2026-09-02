@@ -28,17 +28,17 @@ pnpm workspace. The library is publishable and imposes no build tooling on its c
 
 ## Locked decisions
 
-| # | Decision | Where |
-|---|---|---|
-| D1 | Library + Gallery showcase, split as above | this file |
-| D2 | Token values are extracted from `microsoft-ui-xaml` (MIT), not from Fluent 2 web packages | ADR 0001 |
-| D3 | Styling is Svelte scoped CSS over a CSS custom-property token cascade. No Tailwind, no CSS-in-JS | ADR 0002 |
-| D4 | Fonts and icons are referenced by name from the local system, never embedded | ADR 0003 |
-| D5 | Visual truth is a human side-by-side against Windows 11; automation gates regression only | this file, "Verification" |
-| D6 | Snapshots run on a local Windows VM runner, not on the Linux host | this file, "Verification" |
-| D7 | Out-of-scope Gallery groups keep their pages, implemented where the web allows | this file, "Roadmap → v4" |
-| D8 | Accent is six tokens with a baked default, plus an optional derivation from one base | this file, "Accent" |
-| D9 | bits-ui as the primitive base; individual Zag machines for TreeView, ColorPicker, NumberBox | ADR 0004 |
+| #   | Decision                                                                                         | Where                     |
+| --- | ------------------------------------------------------------------------------------------------ | ------------------------- |
+| D1  | Library + Gallery showcase, split as above                                                       | this file                 |
+| D2  | Token values are extracted from `microsoft-ui-xaml` (MIT), not from Fluent 2 web packages        | ADR 0001                  |
+| D3  | Styling is Svelte scoped CSS over a CSS custom-property token cascade. No Tailwind, no CSS-in-JS | ADR 0002                  |
+| D4  | Fonts and icons are referenced by name from the local system, never embedded                     | ADR 0003                  |
+| D5  | Visual truth is a human side-by-side against Windows 11; automation gates regression only        | this file, "Verification" |
+| D6  | Snapshots run on a local Windows VM runner, not on the Linux host                                | this file, "Verification" |
+| D7  | Out-of-scope Gallery groups keep their pages, implemented where the web allows                   | this file, "Roadmap → v4" |
+| D8  | Accent is six tokens with a baked default, plus an optional derivation from one base             | this file, "Accent"       |
+| D9  | bits-ui as the primitive base; individual Zag machines for TreeView, ColorPicker, NumberBox      | ADR 0004                  |
 
 ## Verification
 
@@ -89,17 +89,23 @@ Each version has one goal. The next does not start until the current one is met.
 
 Goal: **a green pipeline with nothing in it.**
 
-Workspace, both packages, TypeScript strict, lint, format, Playwright harness, CI. The
-Gallery renders an empty page. Conformance gates C1–C6 exist and pass vacuously.
+Workspace, both packages, TypeScript strict, lint, format, and the Playwright harness. The
+Gallery renders an empty page. Conformance gates C1–C6 exist, and each either passes or
+reports itself pending, naming the version that makes it live.
 
-Done-when: `pnpm build && pnpm check && pnpm lint && pnpm test` is green from a clean clone.
+Done-when: `pnpm verify` — build, typecheck, lint, the six gates, the harness — is green from
+a clean clone.
 
 The gates come first because a gate added after feature work has to be retrofitted against
 code that already violates it.
 
-**Sequencing note.** Everything above runs on the Linux host. The snapshot job depends on the
-Windows VM runner and is the last piece of v0, wired once the VM's access and start procedure
-are known. The rest of v0 does not wait on it.
+**No hosted CI.** D6 puts the snapshot runner on a local Windows VM, and there is no remote to
+run a workflow against. `pnpm verify` is the gate and it runs wherever the work happens.
+
+**Sequencing note.** The harness runs on the Linux host, but its baselines are untracked there
+— only the Windows set is committed, because only there does Segoe UI Variable resolve. Taking
+the tracked baselines is the last piece of v0, once the VM's access and start procedure are
+known. The rest of v0 does not wait on it.
 
 ### v1 — the token layer
 
@@ -174,7 +180,7 @@ An observed, time-boxed side-by-side of the full Gallery against Windows 11, pag
 Automated, and a unit that fails one cannot be sealed.
 
 - **C1 — no raw visual literals.** No hex color, no px size in a component's CSS except
-  through `var(--winui-*)`. The token cascade *is* the design system; a literal is a value
+  through `var(--winui-*)`. The token cascade _is_ the design system; a literal is a value
   that will not follow a theme switch.
 - **C2 — tokens are generated.** The committed token CSS must equal the generator's output.
 - **C3 — layer separation.** `packages/winui-svelte` must not import from `apps/gallery`.
@@ -189,16 +195,24 @@ Automated, and a unit that fails one cannot be sealed.
 C5 is the mechanism for the project's central constraint: WinUI behaviour we choose not to
 reproduce is a recorded decision, never a silent one.
 
+**A gate is not trusted until it has been seen to fail.** Each is probed against a planted
+violation — and against the evasions that occurred to a reviewer, not only the obvious form —
+before it is relied on. A gate that has only ever passed is indistinguishable from one that
+cannot fail.
+
+Probe with an empty index. A guard probe commits and resets to prove the guard fired; run with
+work staged, that reset discards the work.
+
 ## Resolved questions
 
-- **O1 — snapshot fonts.** *Resolved:* run the snapshot suite on a local Windows VM runner.
+- **O1 — snapshot fonts.** _Resolved:_ run the snapshot suite on a local Windows VM runner.
   See "Verification".
-- **O2 — out-of-scope Gallery groups.** *Resolved:* keep every page in the navigation tree.
+- **O2 — out-of-scope Gallery groups.** _Resolved:_ keep every page in the navigation tree.
   Implement the ones the web can actually do (Clipboard, notifications in part); render the
   rest as an honest "not applicable on the web" panel in the original's page slot. Dropping
   the pages would change the left navigation, which is exactly what v2 is judged on.
-- **O3 — accent color.** *Resolved:* both layers. See "Accent".
-- **O4 — primitive library.** *Resolved:* bits-ui, with individual Zag machines for the three
+- **O3 — accent color.** _Resolved:_ both layers. See "Accent".
+- **O4 — primitive library.** _Resolved:_ bits-ui, with individual Zag machines for the three
   primitives it lacks. See ADR 0004. The survey's headline was that the keyboard limitation
   which prompted it is universal across every candidate, so it never was a selection
   criterion.
