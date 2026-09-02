@@ -9,7 +9,7 @@ resource, and every control referencing that name follows.
 
 CSS custom properties are the same mechanism. Re-encoding a token cascade as utility classes
 loses the indirection that makes the switch work — the utility names the value, where the
-token names the *role*, and only the role survives a theme change.
+token names the _role_, and only the role survives a theme change.
 
 The other constraint is the consumer. `packages/winui-svelte` is publishable, and a library
 that requires the consumer to run Tailwind, configure a content glob, and import a preset has

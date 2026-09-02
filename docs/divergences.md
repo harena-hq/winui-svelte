@@ -29,9 +29,9 @@ worth closing. "Would be hard" is not a reason — the reason is always a specif
 
 ---
 
-*No entries yet. The first is expected to be TabView's arrow-key traversal. Every surveyed
+_No entries yet. The first is expected to be TabView's arrow-key traversal. Every surveyed
 primitive library — bits-ui, Zag and therefore Ark, and Melt — builds its roving-focus
 candidate set by querying for a role or data attribute, which cannot match a close button
 nested inside a tab trigger. So the button is reachable by Tab and not by arrow keys, and that
 is a property of the standard roving-tabindex pattern rather than of any one library.
-Recorded here once the control is built and the behaviour is observed rather than predicted.*
+Recorded here once the control is built and the behaviour is observed rather than predicted._

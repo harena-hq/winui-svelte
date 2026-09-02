@@ -1,9 +1,27 @@
 #!/usr/bin/env bash
-if git diff --cached --name-only -z | grep -qzE '(^|/)\.private/'; then
-  echo "refusing: staged path under .private/ (private context)" >&2
+# Runs only when `core.hooksPath` points here — see AGENTS.md. A fresh clone starts
+# with this guard off until that one line is re-run there.
+
+staged() { git diff --cached --name-only -z | tr '\0' '\n'; }
+refuse() {
+  echo "refusing: $1" >&2
   exit 1
+}
+
+if staged | grep -qE '(^|/)\.private(/|$)'; then
+  refuse "staged path under .private/ (private context)"
 fi
-if git diff --cached --name-only -z | grep -qzE '(^|/)\.(omc|omx)/'; then
-  echo "refusing: staged path under agent-runtime state" >&2
-  exit 1
+
+if staged | grep -qE '(^|/)\.(omc|omx)(/|$)'; then
+  refuse "staged path under agent-runtime state"
 fi
+
+# A secret in a commit is published even if a later commit deletes it, so this is the
+# layer that has to hold when someone reaches for `git add -f`. ERE has no lookahead,
+# so `.env.example` is excluded by a second pass rather than inside the pattern.
+secrets=$(staged | grep -E '(^|/)\.env(\.[^/]*)?$|\.(pem|key|p12|pfx)$' | grep -vE '(^|/)\.env\.example$' || true)
+if [ -n "$secrets" ]; then
+  refuse "staged secret-shaped path(s): $(echo "$secrets" | tr '\n' ' ')"
+fi
+
+exit 0

@@ -7,3 +7,34 @@
 .omc/
 # Codex / oh-my-codex:
 .omx/
+
+# Dependencies and generated framework state. Written without a leading slash so
+# they match at any depth, the same reason the runtime-state patterns above are.
+# Build output is NOT listed here: each package anchors its own `/dist` and `/build`,
+# and an unanchored pattern would silently untrack a future `scripts/build/`.
+node_modules/
+.svelte-kit/
+
+# Playwright
+test-results/
+playwright-report/
+blob-report/
+
+# Visual baselines. Only the Windows runner's set is tracked: it is the one where
+# Segoe UI Variable resolves, so it is the only one whose pixels mean anything.
+tests/visual/__screenshots__/linux/
+tests/visual/__screenshots__/darwin/
+
+# Secrets. `.gitignore` is the first layer only — the pre-commit hook refuses these
+# too, because this is the class where `git add -f` is exactly what someone does.
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+
+# OS cruft
+.DS_Store
+Thumbs.db

@@ -16,7 +16,7 @@ deleting a file in a later commit publishes it just as surely as leaving it.
 Private context lives in `.private/`, untracked. Read it like any other
 context, and treat it as **input only** — nothing from `.private/` reaches a
 tracked file, commit message, PR, or issue unless it is first restated in a
-form that would be fine published. A rationale worth keeping is *promoted* to a
+form that would be fine published. A rationale worth keeping is _promoted_ to a
 commit trailer or an ADR in publishable form, never copied across.
 
 `.private/README.md` states what belongs there for this project.
