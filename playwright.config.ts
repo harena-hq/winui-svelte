@@ -1,38 +1,50 @@
 import { defineConfig, devices } from '@playwright/test';
 
 // Snapshots answer "did this change since yesterday", never "does this match WinUI" —
-// see docs/plan.md, Verification. Fidelity is judged by a human on Windows 11.
+// see docs/plan.md, Verification. Fidelity is judged by a human against Windows 11.
+
+const CDP = process.env.WINUI_CDP_ENDPOINT;
+
+// The address the *browser* fetches from. When the browser is on a guest VM, the host is
+// not localhost to it, so the base URL is supplied rather than assumed.
+const BASE_URL = process.env.WINUI_BASE_URL ?? 'http://localhost:4173';
+
 export default defineConfig({
 	testDir: 'tests/visual',
 
-	// Keyed by platform because the fonts differ: Segoe UI Variable resolves on the
-	// Windows runner and is absent here, so a Linux baseline records a substitute face.
-	// Only the Windows set is tracked; see .gitignore.
+	// Keyed by project, not by `{platform}`. With the browser on a Windows guest the
+	// runner's platform is still linux, so `{platform}` would file Windows-rendered
+	// pixels under `linux/` — the one confusion these baselines exist to prevent.
 	//
-	// {testFileName} and {projectName} are load-bearing, not decoration: without them
-	// two spec files taking a snapshot of the same component name, or the same spec run
-	// under a second browser project, silently overwrite each other's baseline.
-	snapshotPathTemplate:
-		'{testDir}/__screenshots__/{platform}/{projectName}/{testFileName}/{arg}{ext}',
+	// {testFileName} and {projectName} are both load-bearing: without them two specs
+	// snapshotting the same component name overwrite each other's baseline.
+	snapshotPathTemplate: '{testDir}/__screenshots__/{projectName}/{testFileName}/{arg}{ext}',
 
 	fullyParallel: true,
 	forbidOnly: !!process.env.CI,
 	reporter: process.env.CI ? 'list' : 'html',
 	use: {
-		baseURL: 'http://localhost:4173',
+		baseURL: BASE_URL,
 		trace: 'on-first-retry'
 	},
-	projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
+
+	// One project at a time, named for where the pixels are produced. Only `edge-win32`
+	// is tracked; see .gitignore.
+	projects: CDP
+		? [{ name: 'edge-win32', use: { ...devices['Desktop Chrome'] } }]
+		: [{ name: 'chromium-linux', use: { ...devices['Desktop Chrome'] } }],
+
 	webServer: {
 		// Build, then serve adapter-static's own output. `vite preview` serves
 		// `.svelte-kit/output`, which is not the artifact that ships; and serving without
 		// building compares new code against old pixels and passes.
 		command:
-			'pnpm --filter gallery build && pnpm exec sirv apps/gallery/build --port 4173 --single --quiet',
+			'pnpm --filter gallery build && pnpm exec sirv apps/gallery/build --port 4173 --host 0.0.0.0 --single --quiet',
+		// Checked from here, whatever the browser reaches it as.
 		url: 'http://localhost:4173',
-		// Never adopt a running server: it was started from an earlier build, which is
-		// the staleness this command exists to remove.
+		// Never adopt a running server: it was started from an earlier build, which is the
+		// staleness this command exists to remove.
 		reuseExistingServer: false,
-		timeout: 120_000
+		timeout: 180_000
 	}
 });
