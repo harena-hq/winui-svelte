@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+if git diff --cached --name-only -z | grep -qzE '(^|/)\.private/'; then
+  echo "refusing: staged path under .private/ (private context)" >&2
+  exit 1
+fi
+if git diff --cached --name-only -z | grep -qzE '(^|/)\.(omc|omx)/'; then
+  echo "refusing: staged path under agent-runtime state" >&2
+  exit 1
+fi
