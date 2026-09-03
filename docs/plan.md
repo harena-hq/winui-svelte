@@ -42,6 +42,7 @@ pnpm workspace. The library is publishable and imposes no build tooling on its c
 | D10 | High contrast is generated as aliases onto eight system colors, not as a third palette           | ADR 0005                  |
 | D11 | A token is named `--winui-` plus the WinUI resource key, unchanged                               | ADR 0006                  |
 | D12 | The token layer is a curated closure of four base files plus what the Design pages name          | this file, "Roadmap → v1" |
+| D13 | Gallery page structure and page data are read from the pinned `WinUI-Gallery` source             | ADR 0007                  |
 
 ## Verification
 

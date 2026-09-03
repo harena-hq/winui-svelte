@@ -16,6 +16,7 @@
 		"tokens:fetch": "node scripts/tokens/fetch.mjs",
 		"tokens:extract": "node scripts/tokens/extract.mjs",
 		"tokens:build": "node scripts/tokens/generate.mjs",
+		"gallery:fetch": "node scripts/gallery/fetch.mjs",
 		"test": "playwright test",
 		"verify": "pnpm build && pnpm check && pnpm lint && pnpm conform && pnpm test"
 	},
