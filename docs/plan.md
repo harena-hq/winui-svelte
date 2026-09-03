@@ -323,6 +323,12 @@ Automated, and a unit that fails one cannot be sealed.
   existed as data to check against.
 - **C6 — no consumer build tooling.** A smoke app consuming the built package with bare Vite +
   Svelte and nothing else must render correctly.
+- **C8 — the Gallery records are current.** C2's sibling for the other generated pair. The
+  records are derived from a checkout that is deliberately not committed, so the gate always
+  checks what a fresh clone can — the commit each record names against the pin, and each
+  record's census against its own contents — and re-derives both when the checkout is present
+  at that pin. The weaker half is the one that catches the failure that actually happens: a
+  record edited by hand rather than through the extractor.
 
 C5 is the mechanism for the project's central constraint: WinUI behaviour we choose not to
 reproduce is a recorded decision, never a silent one.
