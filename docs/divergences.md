@@ -101,7 +101,37 @@ worth closing. "Would be hard" is not a reason — the reason is always a specif
 
 ---
 
-_Three entries. The next is expected to be TabView's arrow-key traversal. Every surveyed
+### WD-004 — NavigationView items are each a tab stop; arrow keys do not move focus
+
+- **Control**: `NavigationView`'s menu tree.
+- **WinUI does**: the pane is a single tab stop. Tab enters it; arrow keys (Up/Down,
+  Left/Right — Left/Right also drive expand and collapse) move focus among items,
+  Home/End jump to the ends, typing jumps to the next item whose label starts with the
+  pressed character; Tab leaves the pane and walks into the next focusable element in
+  tab order. The chevron is reached by the same arrow keys, not by Tab.
+- **We do**: every item is `tabindex="0"` and is reached by Tab. There is no arrow-key
+  navigation among items, no typeahead, no Home/End. Tab walks through them in document
+  order, which is also the visual order.
+- **Why accepted**: the tree is built from scratch, not on top of a primitive. ADR 0004
+  notes that no surveyed primitive library ships a tree, and the one this project would
+  adopt for it — `@zag-js/tree-view` — arrives with the Collections tranche. A
+  hand-rolled roving-tabindex loop is not hard; what is hard is the keyboard contract
+  being right without it being tested: each tree interaction is a state machine with
+  collapsed children, headers, an expand chevron that is focusable in WinUI but lives
+  inside an item that is, and three display modes that each close the pane and change
+  the candidate set. The web's own keyboard contract for a `role="tree"` is the WAI-ARIA
+  Authoring Practices guide, which is what WinUI follows, and reproducing it requires
+  the same test rig the Collections tranche will build for TreeView. Until then, every
+  item being a tab stop is the behaviour the keyboard already reaches, and the cost of
+  the gap is a Tab key rather than an arrow key — a real loss, and a recorded one.
+- **Would reconsider if**: the Collections tranche lands with a tree that the navigation
+  pane can adopt, or the Gallery's own page structure makes hand-rolling the contract
+  cheap enough to do without that. Either way the entry is deleted, because the
+  behaviour it names is the one WinUI ships.
+
+---
+
+_Four entries. The next is expected to be TabView's arrow-key traversal. Every surveyed
 primitive library — bits-ui, Zag and therefore Ark, and Melt — builds its roving-focus
 candidate set by querying for a role or data attribute, which cannot match a close button
 nested inside a tab trigger. So the button is reachable by Tab and not by arrow keys, and that

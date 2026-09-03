@@ -5,7 +5,7 @@
 	"license": "MIT",
 	"type": "module",
 	"scripts": {
-		"build": "svelte-kit sync && svelte-package && publint",
+		"build": "svelte-kit sync && svelte-package && node ../../scripts/package/strip-script-lang.mjs && publint",
 		"prepare": "svelte-kit sync || echo ''",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json"
 	},
