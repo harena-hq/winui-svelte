@@ -15,6 +15,11 @@
 node_modules/
 .svelte-kit/
 
+# Pinned upstream checkout for token extraction (see scripts/tokens/fetch.mjs).
+# Materialised on demand, never tracked: it is a sparse clone of someone else's
+# repository, and `data/winui-tokens.json` already carries the commit it was read at.
+.upstream/
+
 # Playwright
 test-results/
 playwright-report/
