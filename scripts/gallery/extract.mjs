@@ -5,6 +5,7 @@ import { CHECKOUT, head, ROOT, UPSTREAM } from './fetch.mjs';
 import { parse } from '../tokens/xaml.mjs';
 
 const OUTPUT = join(ROOT, 'data', 'winui-gallery-design.json');
+const OUTPUT_SHELL = join(ROOT, 'data', 'winui-gallery-shell.json');
 
 // The five Design pages — Color, Typography, Iconography, Geometry, Spacing —
 // are written against two upstream shapes that this script treats differently:
@@ -16,7 +17,7 @@ const OUTPUT = join(ROOT, 'data', 'winui-gallery-design.json');
 // reader, and this list is the line the unit draws.
 const COLOR_SECTIONS_DIR = 'WinUIGallery/Controls/DesignGuidance/ColorSections';
 
-// The four non-section sources are named, not indexed out of the list below. Each read
+// The non-section sources are named, not indexed out of the list below. Each read
 // wants one specific file, and a positional index into a list is only ever the right
 // file by an accident of ordering — inserting a section above would silently hand every
 // reader the file next door.
@@ -24,12 +25,21 @@ const COLOR_PAGE = 'WinUIGallery/Samples/Color/ColorPage.xaml';
 const TYPOGRAPHY_PAGE = 'WinUIGallery/Samples/Typography/TypographyPage.xaml';
 const ICONS_DATA = 'WinUIGallery/Samples/Iconography/IconsData.json';
 const CONTROL_INFO = 'WinUIGallery/SampleSupport/Data/ControlInfoData.json';
+const MAIN_WINDOW = 'WinUIGallery/MainWindow.xaml';
 
+// One list per record, holding the files that record is derived from — not one shared
+// list both draw on. A provenance block answers "what was read to produce this file",
+// and a shared list answers it wrongly for both: it would have the Design record
+// vouching for the shell's markup and the shell record vouching for 1533 icons.
+//
 // Read order rather than sorted, unlike the token census: that one enumerates a
-// directory and sorts so the filesystem does not decide the order, while this list is
-// written here and leads with the six sections in the order the Color page's tab bar
-// shows them — the same order the census reports tiles in.
-const FILES = [
+// directory and sorts so the filesystem does not decide the order, while these are
+// written here, and the Design list leads with the six sections in the order the Color
+// page's tab bar shows them — the same order the census reports tiles in.
+//
+// `CONTROL_INFO` is in both because both read it, for different things: the Design
+// record takes the five `DesignItem` entries, the shell record takes all nineteen groups.
+const DESIGN_SOURCES = [
 	`${COLOR_SECTIONS_DIR}/TextSection.xaml`,
 	`${COLOR_SECTIONS_DIR}/FillSection.xaml`,
 	`${COLOR_SECTIONS_DIR}/StrokeSection.xaml`,
@@ -41,6 +51,8 @@ const FILES = [
 	ICONS_DATA,
 	CONTROL_INFO
 ];
+
+const SHELL_SOURCES = [MAIN_WINDOW, CONTROL_INFO];
 
 /** Depth-first walk that yields a node, then its children in order. */
 function* descendants(node) {
@@ -220,6 +232,290 @@ function typographyRows(root) {
 	return rows;
 }
 
+// --- shell extraction -----------------------------------------------------
+
+/**
+ * A one-character glyph as its uppercase hexadecimal code point.
+ *
+ * The two sources spell the same value differently — `xaml.mjs` resolves
+ * `&#xE790;` to the literal private-use character while `ControlInfoData.json`
+ * stores that character directly — and hex is what keeps one value from having
+ * two spellings in one record. It is also what the icon catalogue in
+ * `winui-gallery-design.json` already uses for its 1533 `Code` fields.
+ *
+ * Throwing on anything but exactly one code point is the half that makes the
+ * conversion safe: a combining sequence would produce the same first
+ * `toString(16)` and be silently wrong.
+ */
+function codePointHex(raw, what) {
+	if (typeof raw !== 'string' || [...raw].length !== 1) {
+		throw new Error(`${what} is ${JSON.stringify(raw)}; expected exactly one code point`);
+	}
+	return raw.codePointAt(0).toString(16).toUpperCase();
+}
+
+/** The single icon one `<NavigationViewItem>` declares, in two shapes, or `null`. */
+function menuIcon(node) {
+	const attr = pick(node, 'Icon');
+	const propEls = node.children.filter((c) => c.tag === 'NavigationViewItem.Icon');
+	if (attr !== null && propEls.length > 0) {
+		throw new Error(
+			`<${node.tag}> at line ${node.line} has both Icon="${attr}" and a NavigationViewItem.Icon child`
+		);
+	}
+	if (attr !== null) return { kind: 'symbol', value: attr };
+	if (propEls.length === 0) return null;
+	if (propEls.length !== 1) {
+		throw new Error(
+			`<${node.tag}> at line ${node.line} has ${propEls.length} NavigationViewItem.Icon children; expected 1`
+		);
+	}
+	const fonts = propEls[0].children.filter((c) => c.tag === 'FontIcon');
+	const others = propEls[0].children.filter((c) => c.tag !== 'FontIcon');
+	if (others.length > 0) {
+		throw new Error(
+			`<${node.tag}> at line ${node.line} NavigationViewItem.Icon has non-FontIcon child <${others[0].tag}>`
+		);
+	}
+	if (fonts.length !== 1) {
+		throw new Error(
+			`<${node.tag}> at line ${node.line} NavigationViewItem.Icon has ${fonts.length} FontIcon children; expected 1`
+		);
+	}
+	return {
+		kind: 'font',
+		glyph: codePointHex(pick(fonts[0], 'Glyph'), `<FontIcon> at line ${fonts[0].line} Glyph`)
+	};
+}
+
+/** One entry of the static navigation tree, in document order. */
+function menuEntry(node) {
+	if (node.tag === 'NavigationViewItemHeader') {
+		const kids = node.children.filter((c) => c.tag === 'NavigationViewItem.MenuItems');
+		if (kids.length > 0) {
+			throw new Error(
+				`<NavigationViewItemHeader> at line ${node.line} has NavigationViewItem.MenuItems; headers are flat`
+			);
+		}
+		return { kind: 'header', content: pick(node, 'Content') };
+	}
+	if (node.tag === 'NavigationViewItem') {
+		const sub = node.children.filter((c) => c.tag === 'NavigationViewItem.MenuItems');
+		if (sub.length > 1) {
+			throw new Error(
+				`<NavigationViewItem> at line ${node.line} has ${sub.length} NavigationViewItem.MenuItems; expected 0 or 1`
+			);
+		}
+		const children = sub.length === 1 ? sub[0].children.map(menuEntry) : [];
+		return {
+			kind: 'item',
+			name: pick(node, 'x:Name'),
+			content: pick(node, 'Content'),
+			tag: pick(node, 'Tag'),
+			automationId: pick(node, 'AutomationProperties.AutomationId'),
+			icon: menuIcon(node),
+			children
+		};
+	}
+	throw new Error(
+		`unexpected <${node.tag}> at line ${node.line} under NavigationView.MenuItems; expected NavigationViewItem or NavigationViewItemHeader`
+	);
+}
+
+/** Walk every entry in the tree, headers included, so the census can count it. */
+function* menuEntries(nodes) {
+	for (const node of nodes) {
+		yield node;
+		if (node.kind === 'item') yield* menuEntries(node.children);
+	}
+}
+
+/**
+ * The one element with this tag anywhere under `root`.
+ *
+ * Zero and two are both errors, and they are the same error: the shell is a single
+ * title bar around a single navigation view, and a second of either means the window
+ * has been restructured upstream in a way this extractor's assumptions no longer fit.
+ */
+function only(root, tag) {
+	const found = [...descendants(root)].filter((node) => node.tag === tag);
+	if (found.length !== 1) {
+		throw new Error(`${MAIN_WINDOW} has ${found.length} <${tag}> elements; expected 1`);
+	}
+	return found[0];
+}
+
+/**
+ * The shell's `<TitleBar>` configuration.
+ *
+ * The icon source is the `ImageSource` on the lone `<ImageIconSource>` inside
+ * `<TitleBar.IconSource>`. The content is the lone element inside
+ * `<TitleBar.Content>`. Both `pick()`-shaped: a missing attribute is `null`.
+ */
+function titleBar(node) {
+	const iconSourceProps = node.children.filter((c) => c.tag === 'TitleBar.IconSource');
+	if (iconSourceProps.length !== 1) {
+		throw new Error(
+			`<TitleBar> at line ${node.line} has ${iconSourceProps.length} TitleBar.IconSource children; expected 1`
+		);
+	}
+	const images = iconSourceProps[0].children.filter((c) => c.tag === 'ImageIconSource');
+	if (images.length !== 1) {
+		throw new Error(
+			`<TitleBar.IconSource> at line ${iconSourceProps[0].line} has ${images.length} ImageIconSource children; expected 1`
+		);
+	}
+
+	const contentProps = node.children.filter((c) => c.tag === 'TitleBar.Content');
+	if (contentProps.length !== 1) {
+		throw new Error(
+			`<TitleBar> at line ${node.line} has ${contentProps.length} TitleBar.Content children; expected 1`
+		);
+	}
+	const elements = contentProps[0].children;
+	if (elements.length !== 1) {
+		throw new Error(
+			`<TitleBar.Content> at line ${contentProps[0].line} has ${elements.length} element children; expected 1`
+		);
+	}
+	const content = elements[0];
+
+	return {
+		title: pick(node, 'Title'),
+		isBackButtonVisible: pick(node, 'IsBackButtonVisible'),
+		isPaneToggleButtonVisible: pick(node, 'IsPaneToggleButtonVisible'),
+		iconSource: pick(images[0], 'ImageSource'),
+		content: {
+			tag: content.tag,
+			maxWidth: pick(content, 'MaxWidth'),
+			placeholderText: pick(content, 'PlaceholderText'),
+			queryIcon: pick(content, 'QueryIcon')
+		}
+	};
+}
+
+/** The shell's `<NavigationView>` configuration — the three attributes the source pins. */
+function navigationView(node) {
+	return {
+		isBackButtonVisible: pick(node, 'IsBackButtonVisible'),
+		isPaneToggleButtonVisible: pick(node, 'IsPaneToggleButtonVisible'),
+		isTabStop: pick(node, 'IsTabStop')
+	};
+}
+
+/**
+ * The static menu tree from `<NavigationView.MenuItems>`.
+ *
+ * The "six top-level nodes in this order — Home, Fundamentals (7 children),
+ * Design (5 children), Accessibility (3 children), one header whose content is
+ * `Controls`, and All" enumeration is the line that makes this unit exhaustive:
+ * a seventh top-level item is a re-pin that must be looked at, not absorbed.
+ */
+function menu(root) {
+	const hosts = only(root, 'NavigationView').children.filter(
+		(c) => c.tag === 'NavigationView.MenuItems'
+	);
+	// Concatenating two would read as one menu and hide that the source now declares the
+	// items in two places, which is a precedence question rather than a longer list.
+	if (hosts.length !== 1) {
+		throw new Error(
+			`<NavigationView> has ${hosts.length} NavigationView.MenuItems children; expected 1`
+		);
+	}
+	const items = hosts[0].children.map(menuEntry);
+	if (items.length !== 6) {
+		throw new Error(`NavigationView.MenuItems holds ${items.length} top-level entries; expected 6`);
+	}
+	const expectedNames = ['Home', 'FundamentalsItem', 'DesignItem', 'AccessibilityItem'];
+	for (let i = 0; i < expectedNames.length; i++) {
+		if (items[i].kind !== 'item' || items[i].name !== expectedNames[i]) {
+			throw new Error(`menu[${i}] is ${JSON.stringify(items[i])}; expected ${expectedNames[i]}`);
+		}
+	}
+	if (items[4].kind !== 'header' || items[4].content !== 'Controls') {
+		throw new Error(
+			`menu[4] is ${JSON.stringify(items[4])}; expected a header with Content="Controls"`
+		);
+	}
+	if (items[5].kind !== 'item' || items[5].name !== 'AllControlsItem') {
+		throw new Error(`menu[5] is ${JSON.stringify(items[5])}; expected AllControlsItem`);
+	}
+	const expectedChildren = [null, 7, 5, 3, null, null];
+	for (let i = 0; i < expectedChildren.length; i++) {
+		const n = expectedChildren[i];
+		if (n === null) continue;
+		if (items[i].kind !== 'item' || items[i].children.length !== n) {
+			throw new Error(`menu[${i}] has ${items[i].children?.length ?? 0} children; expected ${n}`);
+		}
+	}
+	return items;
+}
+
+/**
+ * The nineteen `Groups` from `ControlInfoData.json`, in the file's order, unsorted.
+ *
+ * The runtime ordering by title for the non-special groups happens in
+ * `MainWindow.xaml.cs:222`, and is the shell unit's concern when it renders.
+ * A census that pre-applied it would be recording a decision, and the three
+ * special sections — whose items the static menu tree above already spells out —
+ * would vanish from the record with no trace that they were ever read.
+ */
+function groups(json) {
+	if (!Array.isArray(json.Groups) || json.Groups.length !== 19) {
+		throw new Error(`ControlInfoData.json holds ${json.Groups?.length ?? 0} groups; expected 19`);
+	}
+	let totalItems = 0;
+	let specials = 0;
+	const out = [];
+	for (const g of json.Groups) {
+		const iconGlyph =
+			g.IconGlyph === undefined
+				? null
+				: codePointHex(g.IconGlyph, `group "${g.UniqueId}" IconGlyph`);
+		const isSpecialSection = g.IsSpecialSection === true;
+		if (isSpecialSection) specials++;
+		if (!Array.isArray(g.Items)) {
+			throw new Error(`Group "${g.UniqueId}" has no Items array`);
+		}
+		totalItems += g.Items.length;
+		out.push({
+			uniqueId: g.UniqueId,
+			title: g.Title,
+			iconGlyph,
+			isSpecialSection,
+			items: g.Items.map((it) => ({ uniqueId: it.UniqueId, title: it.Title }))
+		});
+	}
+	if (totalItems !== 120) {
+		throw new Error(`ControlInfoData.json groups hold ${totalItems} items total; expected 120`);
+	}
+	if (specials !== 3) {
+		throw new Error(`ControlInfoData.json has ${specials} IsSpecialSection groups; expected 3`);
+	}
+	return { groups: out, specials };
+}
+
+/** Build the shell record from the parsed source. */
+function buildShell(mainWindowRoot, controlInfo) {
+	const items = menu(mainWindowRoot);
+	const groupData = groups(controlInfo);
+	const all = [...menuEntries(items)];
+	return {
+		titleBar: titleBar(only(mainWindowRoot, 'TitleBar')),
+		navigationView: navigationView(only(mainWindowRoot, 'NavigationView')),
+		menu: items,
+		groups: groupData.groups,
+		census: {
+			files: SHELL_SOURCES.length,
+			menuItems: items.length,
+			menuItemsTotal: all.length,
+			groups: groupData.groups.length,
+			specialSections: groupData.specials,
+			groupItems: groupData.groups.reduce((n, g) => n + g.items.length, 0)
+		}
+	};
+}
+
 function build() {
 	const sections = sectionOrder(parse(readFileSync(join(CHECKOUT, COLOR_PAGE), 'utf8')));
 
@@ -249,7 +545,7 @@ function build() {
 	const iconsData = icons(JSON.parse(readFileSync(join(CHECKOUT, ICONS_DATA), 'utf8')));
 
 	return {
-		files: FILES,
+		files: DESIGN_SOURCES,
 		colorSections: sections,
 		navItems: nav.length,
 		colorExamples: examples,
@@ -262,7 +558,7 @@ function build() {
 	};
 }
 
-function extract() {
+function extractDesign() {
 	const built = build();
 
 	return {
@@ -271,8 +567,8 @@ function extract() {
 			ref: UPSTREAM.ref,
 			commit: UPSTREAM.commit,
 			extractedAt: new Date().toISOString().slice(0, 10),
-			fileCount: FILES.length,
-			files: FILES.map((path) => ({
+			fileCount: DESIGN_SOURCES.length,
+			files: DESIGN_SOURCES.map((path) => ({
 				path,
 				sha256: createHash('sha256')
 					.update(readFileSync(join(CHECKOUT, path)))
@@ -297,7 +593,35 @@ function extract() {
 	};
 }
 
-const census = (doc) => {
+function extractShell() {
+	const built = buildShell(
+		parse(readFileSync(join(CHECKOUT, MAIN_WINDOW), 'utf8')),
+		JSON.parse(readFileSync(join(CHECKOUT, CONTROL_INFO), 'utf8'))
+	);
+
+	return {
+		source: {
+			url: UPSTREAM.url,
+			ref: UPSTREAM.ref,
+			commit: UPSTREAM.commit,
+			extractedAt: new Date().toISOString().slice(0, 10),
+			fileCount: SHELL_SOURCES.length,
+			files: SHELL_SOURCES.map((path) => ({
+				path,
+				sha256: createHash('sha256')
+					.update(readFileSync(join(CHECKOUT, path)))
+					.digest('hex')
+			}))
+		},
+		census: built.census,
+		titleBar: built.titleBar,
+		navigationView: built.navigationView,
+		menu: built.menu,
+		groups: built.groups
+	};
+}
+
+const censusDesign = (doc) => {
 	const c = doc.census;
 	const tileLine = (obj) =>
 		Object.entries(obj)
@@ -310,6 +634,15 @@ const census = (doc) => {
 		`tiles by section  ${tileLine(c.tilesBySection)}`,
 		`typography        ${c.typographyRows} rows`,
 		`icons             ${c.icons}`
+	].join('\n');
+};
+
+const censusShell = (doc) => {
+	const c = doc.census;
+	return [
+		`files             ${c.files} read`,
+		`menu              ${c.menuItems} top-level, ${c.menuItemsTotal} total`,
+		`groups            ${c.groups} (${c.specialSections} special), ${c.groupItems} items`
 	].join('\n');
 };
 
@@ -348,6 +681,18 @@ function difference(a, b, path = '') {
 	return `${at}: ${JSON.stringify(a)} vs ${JSON.stringify(b)}`;
 }
 
+function checkOne(path, fresh) {
+	if (!existsSync(path)) throw new Error(`${relative(ROOT, path)} does not exist.`);
+	const committed = JSON.parse(readFileSync(path, 'utf8'));
+	const strip = (record) => {
+		const source = { ...record.source };
+		delete source.extractedAt;
+		return { ...record, source };
+	};
+	const found = difference(strip(committed), strip(fresh));
+	if (found) throw new Error(`${relative(ROOT, path)} differs from the extractor: ${found}`);
+}
+
 function main(argv) {
 	const at = head();
 	if (at !== UPSTREAM.commit) {
@@ -357,30 +702,29 @@ function main(argv) {
 		);
 	}
 
-	const doc = extract();
+	const design = extractDesign();
+	const shell = extractShell();
 
 	if (argv.includes('--check')) {
-		if (!existsSync(OUTPUT)) throw new Error(`${relative(ROOT, OUTPUT)} does not exist.`);
-		const committed = JSON.parse(readFileSync(OUTPUT, 'utf8'));
-
-		const strip = (record) => {
-			const source = { ...record.source };
-			delete source.extractedAt;
-			return { ...record, source };
-		};
-		const found = difference(strip(committed), strip(doc));
-		if (found) throw new Error(`${relative(ROOT, OUTPUT)} differs from the extractor: ${found}`);
+		checkOne(OUTPUT, design);
+		checkOne(OUTPUT_SHELL, shell);
 
 		console.log(
-			`${relative(ROOT, OUTPUT)} matches the extractor (${doc.census.colorTiles} tiles, ${doc.census.icons} icons).`
+			`${relative(ROOT, OUTPUT)} matches the extractor (${design.census.colorTiles} tiles, ${design.census.icons} icons).`
+		);
+		console.log(
+			`${relative(ROOT, OUTPUT_SHELL)} matches the extractor (${shell.census.menuItems} menu entries, ${shell.census.groups} groups).`
 		);
 		return;
 	}
 
 	mkdirSync(dirname(OUTPUT), { recursive: true });
-	writeFileSync(OUTPUT, `${JSON.stringify(doc, null, '\t')}\n`);
-	console.log(census(doc));
+	writeFileSync(OUTPUT, `${JSON.stringify(design, null, '\t')}\n`);
+	writeFileSync(OUTPUT_SHELL, `${JSON.stringify(shell, null, '\t')}\n`);
+	console.log(censusDesign(design));
 	console.log(`written           ${relative(ROOT, OUTPUT)}`);
+	console.log(censusShell(shell));
+	console.log(`written           ${relative(ROOT, OUTPUT_SHELL)}`);
 }
 
 try {

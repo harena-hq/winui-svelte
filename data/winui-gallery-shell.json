@@ -1,0 +1,897 @@
+{
+	"source": {
+		"url": "https://github.com/microsoft/WinUI-Gallery",
+		"ref": "main",
+		"commit": "7a8a6aa6f432bee71b89aeb24c3e69a5b854dc4f",
+		"extractedAt": "2026-09-03",
+		"fileCount": 2,
+		"files": [
+			{
+				"path": "WinUIGallery/MainWindow.xaml",
+				"sha256": "3b8f2a4b8e9c3c884013d3c0096202a1040372defc49217d57450a9bae92d0af"
+			},
+			{
+				"path": "WinUIGallery/SampleSupport/Data/ControlInfoData.json",
+				"sha256": "4dedbac6bcf0088731cb52b5c5149bea7b9320351427b7ae790bb12f15e3190f"
+			}
+		]
+	},
+	"census": {
+		"files": 2,
+		"menuItems": 6,
+		"menuItemsTotal": 21,
+		"groups": 19,
+		"specialSections": 3,
+		"groupItems": 120
+	},
+	"titleBar": {
+		"title": "WinUI 3 Gallery",
+		"isBackButtonVisible": "{x:Bind rootFrame.CanGoBack, Mode=OneWay}",
+		"isPaneToggleButtonVisible": "True",
+		"iconSource": "/Assets/Tiles/GalleryIcon.ico",
+		"content": {
+			"tag": "AutoSuggestBox",
+			"maxWidth": "580",
+			"placeholderText": "Search controls and samples...",
+			"queryIcon": "Find"
+		}
+	},
+	"navigationView": {
+		"isBackButtonVisible": "Collapsed",
+		"isPaneToggleButtonVisible": "False",
+		"isTabStop": "False"
+	},
+	"menu": [
+		{
+			"kind": "item",
+			"name": "Home",
+			"content": "Home",
+			"tag": null,
+			"automationId": "Home",
+			"icon": {
+				"kind": "symbol",
+				"value": "Home"
+			},
+			"children": []
+		},
+		{
+			"kind": "item",
+			"name": "FundamentalsItem",
+			"content": "Fundamentals",
+			"tag": "Fundamentals",
+			"automationId": "FundamentalsItem",
+			"icon": {
+				"kind": "font",
+				"glyph": "E8F1"
+			},
+			"children": [
+				{
+					"kind": "item",
+					"name": "XamlResourcesPage",
+					"content": "Resources",
+					"tag": "XamlResources",
+					"automationId": "XamlResources",
+					"icon": null,
+					"children": []
+				},
+				{
+					"kind": "item",
+					"name": "XamlStylesPage",
+					"content": "Styles",
+					"tag": "XamlStyles",
+					"automationId": "XamlStyles",
+					"icon": null,
+					"children": []
+				},
+				{
+					"kind": "item",
+					"name": "BindingPage",
+					"content": "Binding",
+					"tag": "Binding",
+					"automationId": "Binding",
+					"icon": null,
+					"children": []
+				},
+				{
+					"kind": "item",
+					"name": "TemplatesPage",
+					"content": "Templates",
+					"tag": "Templates",
+					"automationId": "Templates",
+					"icon": null,
+					"children": []
+				},
+				{
+					"kind": "item",
+					"name": "CustomUserControlsPage",
+					"content": "Custom & User Controls",
+					"tag": "CustomUserControls",
+					"automationId": "CustomUserControls",
+					"icon": null,
+					"children": []
+				},
+				{
+					"kind": "item",
+					"name": "CustomXamlConditionalsPage",
+					"content": "XAML Conditions",
+					"tag": "CustomXamlConditionals",
+					"automationId": "CustomXamlConditionals",
+					"icon": null,
+					"children": []
+				},
+				{
+					"kind": "item",
+					"name": "ScratchPadPage",
+					"content": "Scratch Pad",
+					"tag": "ScratchPad",
+					"automationId": "ScratchPad",
+					"icon": null,
+					"children": []
+				}
+			]
+		},
+		{
+			"kind": "item",
+			"name": "DesignItem",
+			"content": "Design",
+			"tag": "Design",
+			"automationId": "DesignItem",
+			"icon": {
+				"kind": "font",
+				"glyph": "EB3C"
+			},
+			"children": [
+				{
+					"kind": "item",
+					"name": "ColorItem",
+					"content": "Color",
+					"tag": "Color",
+					"automationId": "Color",
+					"icon": {
+						"kind": "font",
+						"glyph": "E790"
+					},
+					"children": []
+				},
+				{
+					"kind": "item",
+					"name": "GeometryItem",
+					"content": "Geometry",
+					"tag": "Geometry",
+					"automationId": "Geometry",
+					"icon": {
+						"kind": "font",
+						"glyph": "E743"
+					},
+					"children": []
+				},
+				{
+					"kind": "item",
+					"name": "IconographyItem",
+					"content": "Iconography",
+					"tag": "Iconography",
+					"automationId": "Iconography",
+					"icon": {
+						"kind": "font",
+						"glyph": "ED58"
+					},
+					"children": []
+				},
+				{
+					"kind": "item",
+					"name": "SpacingItem",
+					"content": "Spacing",
+					"tag": "Spacing",
+					"automationId": "Spacing",
+					"icon": {
+						"kind": "font",
+						"glyph": "E8B3"
+					},
+					"children": []
+				},
+				{
+					"kind": "item",
+					"name": "TypographyItem",
+					"content": "Typography",
+					"tag": "Typography",
+					"automationId": "Typography",
+					"icon": {
+						"kind": "font",
+						"glyph": "E8D2"
+					},
+					"children": []
+				}
+			]
+		},
+		{
+			"kind": "item",
+			"name": "AccessibilityItem",
+			"content": "Accessibility",
+			"tag": "Accessibility",
+			"automationId": "AccessibilityItem",
+			"icon": {
+				"kind": "font",
+				"glyph": "E776"
+			},
+			"children": [
+				{
+					"kind": "item",
+					"name": "AccessibilityScreenReaderPage",
+					"content": "Screen reader support",
+					"tag": "AccessibilityScreenReader",
+					"automationId": "AccessibilityScreenReader",
+					"icon": null,
+					"children": []
+				},
+				{
+					"kind": "item",
+					"name": "AccessibilityKeyboardPage",
+					"content": "Keyboard support",
+					"tag": "AccessibilityKeyboard",
+					"automationId": "AccessibilityKeyboard",
+					"icon": null,
+					"children": []
+				},
+				{
+					"kind": "item",
+					"name": "AccessibilityContrastPage",
+					"content": "Color contrast",
+					"tag": "AccessibilityColorContrast",
+					"automationId": "AccessibilityColorContrast",
+					"icon": null,
+					"children": []
+				}
+			]
+		},
+		{
+			"kind": "header",
+			"content": "Controls"
+		},
+		{
+			"kind": "item",
+			"name": "AllControlsItem",
+			"content": "All",
+			"tag": null,
+			"automationId": null,
+			"icon": {
+				"kind": "font",
+				"glyph": "E8A9"
+			},
+			"children": []
+		}
+	],
+	"groups": [
+		{
+			"uniqueId": "FundamentalsItem",
+			"title": "Fundamentals",
+			"iconGlyph": null,
+			"isSpecialSection": true,
+			"items": [
+				{
+					"uniqueId": "XamlResources",
+					"title": "Resources"
+				},
+				{
+					"uniqueId": "XamlStyles",
+					"title": "Style"
+				},
+				{
+					"uniqueId": "Binding",
+					"title": "Binding"
+				},
+				{
+					"uniqueId": "Templates",
+					"title": "Templates"
+				},
+				{
+					"uniqueId": "CustomUserControls",
+					"title": "Custom & User Controls"
+				},
+				{
+					"uniqueId": "CustomXamlConditionals",
+					"title": "XAML Conditions"
+				},
+				{
+					"uniqueId": "ScratchPad",
+					"title": "Scratch Pad"
+				}
+			]
+		},
+		{
+			"uniqueId": "DesignItem",
+			"title": "Design",
+			"iconGlyph": "E74E",
+			"isSpecialSection": true,
+			"items": [
+				{
+					"uniqueId": "Color",
+					"title": "Color"
+				},
+				{
+					"uniqueId": "Geometry",
+					"title": "Geometry"
+				},
+				{
+					"uniqueId": "Iconography",
+					"title": "Iconography"
+				},
+				{
+					"uniqueId": "Spacing",
+					"title": "Spacing"
+				},
+				{
+					"uniqueId": "Typography",
+					"title": "Typography"
+				}
+			]
+		},
+		{
+			"uniqueId": "AccessibilityItem",
+			"title": "Accessibility",
+			"iconGlyph": null,
+			"isSpecialSection": true,
+			"items": [
+				{
+					"uniqueId": "AccessibilityColorContrast",
+					"title": "Color Contrast"
+				},
+				{
+					"uniqueId": "AccessibilityKeyboard",
+					"title": "Keyboard Navigation"
+				},
+				{
+					"uniqueId": "AccessibilityScreenReader",
+					"title": "Screen Reader"
+				}
+			]
+		},
+		{
+			"uniqueId": "MenusAndToolbars",
+			"title": "Menus & toolbars",
+			"iconGlyph": "E74E",
+			"isSpecialSection": false,
+			"items": [
+				{
+					"uniqueId": "AppBarButton",
+					"title": "AppBarButton"
+				},
+				{
+					"uniqueId": "AppBarSeparator",
+					"title": "AppBarSeparator"
+				},
+				{
+					"uniqueId": "AppBarToggleButton",
+					"title": "AppBarToggleButton"
+				},
+				{
+					"uniqueId": "CommandBar",
+					"title": "CommandBar"
+				},
+				{
+					"uniqueId": "CommandBarFlyout",
+					"title": "CommandBarFlyout"
+				},
+				{
+					"uniqueId": "MenuBar",
+					"title": "MenuBar"
+				},
+				{
+					"uniqueId": "MenuFlyout",
+					"title": "MenuFlyout"
+				},
+				{
+					"uniqueId": "SwipeControl",
+					"title": "SwipeControl"
+				},
+				{
+					"uniqueId": "StandardUICommand",
+					"title": "StandardUICommand"
+				},
+				{
+					"uniqueId": "XamlUICommand",
+					"title": "XamlUICommand"
+				}
+			]
+		},
+		{
+			"uniqueId": "Collections",
+			"title": "Collections",
+			"iconGlyph": "E80A",
+			"isSpecialSection": false,
+			"items": [
+				{
+					"uniqueId": "FlipView",
+					"title": "FlipView"
+				},
+				{
+					"uniqueId": "GridView",
+					"title": "GridView"
+				},
+				{
+					"uniqueId": "ItemsRepeater",
+					"title": "ItemsRepeater"
+				},
+				{
+					"uniqueId": "ItemsView",
+					"title": "ItemsView"
+				},
+				{
+					"uniqueId": "ListView",
+					"title": "ListView"
+				},
+				{
+					"uniqueId": "PullToRefresh",
+					"title": "PullToRefresh"
+				},
+				{
+					"uniqueId": "TreeView",
+					"title": "TreeView"
+				}
+			]
+		},
+		{
+			"uniqueId": "DateAndTime",
+			"title": "Date & time",
+			"iconGlyph": "EC92",
+			"isSpecialSection": false,
+			"items": [
+				{
+					"uniqueId": "CalendarDatePicker",
+					"title": "CalendarDatePicker"
+				},
+				{
+					"uniqueId": "CalendarView",
+					"title": "CalendarView"
+				},
+				{
+					"uniqueId": "DatePicker",
+					"title": "DatePicker"
+				},
+				{
+					"uniqueId": "TimePicker",
+					"title": "TimePicker"
+				}
+			]
+		},
+		{
+			"uniqueId": "BasicInput",
+			"title": "Basic input",
+			"iconGlyph": "E73A",
+			"isSpecialSection": false,
+			"items": [
+				{
+					"uniqueId": "Button",
+					"title": "Button"
+				},
+				{
+					"uniqueId": "DropDownButton",
+					"title": "DropDownButton"
+				},
+				{
+					"uniqueId": "HyperlinkButton",
+					"title": "HyperlinkButton"
+				},
+				{
+					"uniqueId": "RepeatButton",
+					"title": "RepeatButton"
+				},
+				{
+					"uniqueId": "ToggleButton",
+					"title": "ToggleButton"
+				},
+				{
+					"uniqueId": "SplitButton",
+					"title": "SplitButton"
+				},
+				{
+					"uniqueId": "ToggleSplitButton",
+					"title": "ToggleSplitButton"
+				},
+				{
+					"uniqueId": "CheckBox",
+					"title": "CheckBox"
+				},
+				{
+					"uniqueId": "ColorPicker",
+					"title": "ColorPicker"
+				},
+				{
+					"uniqueId": "ComboBox",
+					"title": "ComboBox"
+				},
+				{
+					"uniqueId": "RadioButton",
+					"title": "RadioButton"
+				},
+				{
+					"uniqueId": "RatingControl",
+					"title": "RatingControl"
+				},
+				{
+					"uniqueId": "Slider",
+					"title": "Slider"
+				},
+				{
+					"uniqueId": "ToggleSwitch",
+					"title": "ToggleSwitch"
+				}
+			]
+		},
+		{
+			"uniqueId": "StatusAndInfo",
+			"title": "Status & info",
+			"iconGlyph": "E8F2",
+			"isSpecialSection": false,
+			"items": [
+				{
+					"uniqueId": "InfoBadge",
+					"title": "InfoBadge"
+				},
+				{
+					"uniqueId": "InfoBar",
+					"title": "InfoBar"
+				},
+				{
+					"uniqueId": "ProgressBar",
+					"title": "ProgressBar"
+				},
+				{
+					"uniqueId": "ProgressRing",
+					"title": "ProgressRing"
+				},
+				{
+					"uniqueId": "ToolTip",
+					"title": "ToolTip"
+				}
+			]
+		},
+		{
+			"uniqueId": "DialogsAndFlyouts",
+			"title": "Dialogs & flyouts",
+			"iconGlyph": "E15F",
+			"isSpecialSection": false,
+			"items": [
+				{
+					"uniqueId": "ContentDialog",
+					"title": "ContentDialog"
+				},
+				{
+					"uniqueId": "Flyout",
+					"title": "Flyout"
+				},
+				{
+					"uniqueId": "Popup",
+					"title": "Popup"
+				},
+				{
+					"uniqueId": "TeachingTip",
+					"title": "TeachingTip"
+				}
+			]
+		},
+		{
+			"uniqueId": "Scrolling",
+			"title": "Scrolling",
+			"iconGlyph": "E174",
+			"isSpecialSection": false,
+			"items": [
+				{
+					"uniqueId": "AnnotatedScrollBar",
+					"title": "AnnotatedScrollBar"
+				},
+				{
+					"uniqueId": "PipsPager",
+					"title": "PipsPager"
+				},
+				{
+					"uniqueId": "ScrollView",
+					"title": "ScrollView"
+				},
+				{
+					"uniqueId": "ScrollViewer",
+					"title": "ScrollViewer"
+				},
+				{
+					"uniqueId": "SemanticZoom",
+					"title": "SemanticZoom"
+				}
+			]
+		},
+		{
+			"uniqueId": "Layout",
+			"title": "Layout",
+			"iconGlyph": "E8A1",
+			"isSpecialSection": false,
+			"items": [
+				{
+					"uniqueId": "Border",
+					"title": "Border"
+				},
+				{
+					"uniqueId": "Canvas",
+					"title": "Canvas"
+				},
+				{
+					"uniqueId": "Expander",
+					"title": "Expander"
+				},
+				{
+					"uniqueId": "Grid",
+					"title": "Grid"
+				},
+				{
+					"uniqueId": "RelativePanel",
+					"title": "RelativePanel"
+				},
+				{
+					"uniqueId": "SplitView",
+					"title": "SplitView"
+				},
+				{
+					"uniqueId": "StackPanel",
+					"title": "StackPanel"
+				},
+				{
+					"uniqueId": "VariableSizedWrapGrid",
+					"title": "VariableSizedWrapGrid"
+				},
+				{
+					"uniqueId": "Viewbox",
+					"title": "Viewbox"
+				}
+			]
+		},
+		{
+			"uniqueId": "Navigation",
+			"title": "Navigation",
+			"iconGlyph": "E700",
+			"isSpecialSection": false,
+			"items": [
+				{
+					"uniqueId": "BreadcrumbBar",
+					"title": "BreadcrumbBar"
+				},
+				{
+					"uniqueId": "NavigationView",
+					"title": "NavigationView"
+				},
+				{
+					"uniqueId": "Pivot",
+					"title": "Pivot"
+				},
+				{
+					"uniqueId": "SelectorBar",
+					"title": "SelectorBar"
+				},
+				{
+					"uniqueId": "TabView",
+					"title": "TabView"
+				}
+			]
+		},
+		{
+			"uniqueId": "Media",
+			"title": "Media",
+			"iconGlyph": "E173",
+			"isSpecialSection": false,
+			"items": [
+				{
+					"uniqueId": "AnimatedVisualPlayer",
+					"title": "AnimatedVisualPlayer"
+				},
+				{
+					"uniqueId": "CaptureElementPreview",
+					"title": "Capture Element / Camera Preview"
+				},
+				{
+					"uniqueId": "Image",
+					"title": "Image"
+				},
+				{
+					"uniqueId": "MapControl",
+					"title": "MapControl"
+				},
+				{
+					"uniqueId": "MediaPlayerElement",
+					"title": "MediaPlayerElement"
+				},
+				{
+					"uniqueId": "PersonPicture",
+					"title": "PersonPicture"
+				},
+				{
+					"uniqueId": "Sound",
+					"title": "Sound"
+				},
+				{
+					"uniqueId": "WebView2",
+					"title": "WebView2"
+				}
+			]
+		},
+		{
+			"uniqueId": "Styles",
+			"title": "Styles",
+			"iconGlyph": "E2B1",
+			"isSpecialSection": false,
+			"items": [
+				{
+					"uniqueId": "Acrylic",
+					"title": "AcrylicBrush"
+				},
+				{
+					"uniqueId": "AnimatedIcon",
+					"title": "AnimatedIcon"
+				},
+				{
+					"uniqueId": "CompactSizing",
+					"title": "Compact Sizing"
+				},
+				{
+					"uniqueId": "IconElement",
+					"title": "IconElement"
+				},
+				{
+					"uniqueId": "Line",
+					"title": "Line"
+				},
+				{
+					"uniqueId": "Shape",
+					"title": "Shape"
+				},
+				{
+					"uniqueId": "RadialGradientBrush",
+					"title": "RadialGradientBrush"
+				},
+				{
+					"uniqueId": "SystemBackdrops",
+					"title": "System Backdrops (Mica/Acrylic)"
+				},
+				{
+					"uniqueId": "SystemBackdropElement",
+					"title": "SystemBackdropElement"
+				},
+				{
+					"uniqueId": "ThemeShadow",
+					"title": "ThemeShadow"
+				}
+			]
+		},
+		{
+			"uniqueId": "Text",
+			"title": "Text",
+			"iconGlyph": "E8D2",
+			"isSpecialSection": false,
+			"items": [
+				{
+					"uniqueId": "AutoSuggestBox",
+					"title": "AutoSuggestBox"
+				},
+				{
+					"uniqueId": "NumberBox",
+					"title": "NumberBox"
+				},
+				{
+					"uniqueId": "PasswordBox",
+					"title": "PasswordBox"
+				},
+				{
+					"uniqueId": "RichEditBox",
+					"title": "RichEditBox"
+				},
+				{
+					"uniqueId": "RichTextBlock",
+					"title": "RichTextBlock"
+				},
+				{
+					"uniqueId": "TextBlock",
+					"title": "TextBlock"
+				},
+				{
+					"uniqueId": "TextBox",
+					"title": "TextBox"
+				}
+			]
+		},
+		{
+			"uniqueId": "Motion",
+			"title": "Motion",
+			"iconGlyph": "E945",
+			"isSpecialSection": false,
+			"items": [
+				{
+					"uniqueId": "XamlCompInterop",
+					"title": "Animation interop"
+				},
+				{
+					"uniqueId": "ConnectedAnimation",
+					"title": "Connected Animation"
+				},
+				{
+					"uniqueId": "EasingFunction",
+					"title": "Easing Functions"
+				},
+				{
+					"uniqueId": "ImplicitTransition",
+					"title": "Implicit Transitions"
+				},
+				{
+					"uniqueId": "PageTransition",
+					"title": "Page Transitions"
+				},
+				{
+					"uniqueId": "ThemeTransition",
+					"title": "Theme Transitions"
+				},
+				{
+					"uniqueId": "ParallaxView",
+					"title": "ParallaxView"
+				}
+			]
+		},
+		{
+			"uniqueId": "MultipleWindows",
+			"title": "Windowing",
+			"iconGlyph": "E7C4",
+			"isSpecialSection": false,
+			"items": [
+				{
+					"uniqueId": "AppWindow",
+					"title": "AppWindow"
+				},
+				{
+					"uniqueId": "AppWindowTitleBar",
+					"title": "AppWindowTitleBar"
+				},
+				{
+					"uniqueId": "CreateMultipleWindows",
+					"title": "Multiple windows"
+				},
+				{
+					"uniqueId": "TitleBar",
+					"title": "TitleBar"
+				}
+			]
+		},
+		{
+			"uniqueId": "System",
+			"title": "System",
+			"iconGlyph": "E770",
+			"isSpecialSection": false,
+			"items": [
+				{
+					"uniqueId": "Clipboard",
+					"title": "Clipboard"
+				},
+				{
+					"uniqueId": "ContentIsland",
+					"title": "ContentIsland"
+				},
+				{
+					"uniqueId": "StoragePickers",
+					"title": "Storage pickers"
+				}
+			]
+		},
+		{
+			"uniqueId": "Shell",
+			"title": "Shell",
+			"iconGlyph": "E1E4",
+			"isSpecialSection": false,
+			"items": [
+				{
+					"uniqueId": "AppNotification",
+					"title": "App notifications"
+				},
+				{
+					"uniqueId": "BadgeNotificationManager",
+					"title": "Badge notifications"
+				},
+				{
+					"uniqueId": "JumpList",
+					"title": "JumpList"
+				}
+			]
+		}
+	]
+}
