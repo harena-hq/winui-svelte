@@ -28,6 +28,7 @@
 	--winui-SystemAccentColorLight3: #99ebff;
 	--winui-SymbolThemeFontFamily: 'Segoe Fluent Icons';
 
+	--winui-AutoSuggestBoxIconFontSize: 12px;
 	--winui-SystemControlTransparentColor: #00000000;
 	--winui-SystemControlTransparentBrush: transparent;
 	--winui-SystemControlHighlightListAccentVeryHighBrush: color-mix(
@@ -298,9 +299,124 @@
 		var(--winui-ControlStrokeColorDefault) 2px
 	);
 	--winui-AcrylicBackgroundFillColorDefaultBrush: #f9f9f9;
+	--winui-AcrylicInAppFillColorDefaultBrush: #f9f9f9;
 	--winui-AcrylicBackgroundFillColorBaseBrush: #eeeeee;
 	--winui-AccentAcrylicBackgroundFillColorDefaultBrush: var(--winui-SystemAccentColorLight3);
 	--winui-AccentAcrylicBackgroundFillColorBaseBrush: var(--winui-SystemAccentColorLight3);
+	--winui-SystemControlTransparentRevealBackgroundBrush: transparent;
+	--winui-NavigationViewBackButtonBackground: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-NavigationBackButtonWidth: 40px;
+	--winui-NavigationBackButtonHeight: 36px;
+	--winui-NavigationViewDefaultPaneBackground: var(--winui-AcrylicInAppFillColorDefaultBrush);
+	--winui-NavigationViewExpandedPaneBackground: var(--winui-SolidBackgroundFillColorTransparent);
+	--winui-NavigationViewContentBackground: var(--winui-LayerFillColorDefaultBrush);
+	--winui-NavigationViewItemBackground: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-NavigationViewItemBackgroundPointerOver: var(--winui-SubtleFillColorSecondaryBrush);
+	--winui-NavigationViewItemBackgroundPressed: var(--winui-SubtleFillColorTertiaryBrush);
+	--winui-NavigationViewItemBackgroundDisabled: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-NavigationViewItemBackgroundSelected: var(--winui-SubtleFillColorSecondaryBrush);
+	--winui-NavigationViewItemBackgroundSelectedPointerOver: var(
+		--winui-SubtleFillColorTertiaryBrush
+	);
+	--winui-NavigationViewItemBackgroundSelectedPressed: var(--winui-SubtleFillColorSecondaryBrush);
+	--winui-NavigationViewItemBackgroundSelectedDisabled: var(--winui-SubtleFillColorSecondaryBrush);
+	--winui-NavigationViewItemForeground: var(--winui-TextFillColorPrimaryBrush);
+	--winui-NavigationViewItemForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
+	--winui-NavigationViewItemForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
+	--winui-NavigationViewItemForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+	--winui-NavigationViewItemForegroundSelected: var(--winui-TextFillColorPrimaryBrush);
+	--winui-NavigationViewItemForegroundSelectedPointerOver: var(--winui-TextFillColorPrimaryBrush);
+	--winui-NavigationViewItemForegroundSelectedPressed: var(--winui-TextFillColorSecondaryBrush);
+	--winui-NavigationViewItemForegroundSelectedDisabled: var(--winui-TextFillColorDisabledBrush);
+	--winui-NavigationViewItemBorderBrush: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-NavigationViewItemBorderBrushPointerOver: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-NavigationViewItemBorderBrushPressed: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-NavigationViewItemBorderBrushDisabled: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-NavigationViewItemBorderBrushSelected: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-NavigationViewItemBorderBrushSelectedPointerOver: var(
+		--winui-SubtleFillColorTransparentBrush
+	);
+	--winui-NavigationViewItemBorderBrushSelectedPressed: var(
+		--winui-SubtleFillColorTransparentBrush
+	);
+	--winui-NavigationViewItemBorderBrushSelectedDisabled: var(
+		--winui-SubtleFillColorTransparentBrush
+	);
+	--winui-NavigationViewItemIconBackground: var(--winui-SystemControlTransparentBrush);
+	--winui-NavigationViewItemSeparatorForeground: var(--winui-DividerStrokeColorDefaultBrush);
+	--winui-NavigationViewItemHeaderForeground: var(--winui-TextFillColorSecondaryBrush);
+	--winui-NavigationViewSelectionIndicatorForeground: var(--winui-AccentFillColorDefaultBrush);
+	--winui-NavigationViewContentGridBorderBrush: var(--winui-CardStrokeColorDefaultBrush);
+	--winui-NavigationViewButtonBackgroundPointerOver: var(--winui-SubtleFillColorSecondaryBrush);
+	--winui-NavigationViewButtonBackgroundPressed: var(--winui-SubtleFillColorTertiaryBrush);
+	--winui-NavigationViewButtonBackgroundDisabled: var(--winui-ControlFillColorDisabledBrush);
+	--winui-NavigationViewButtonForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
+	--winui-NavigationViewButtonForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
+	--winui-NavigationViewButtonForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+	--winui-NavigationViewAutoSuggestBoxMargin: 0px 16px;
+	--winui-PaneToggleButtonHeight: 36px;
+	--winui-PaneToggleButtonWidth: 40px;
+	--winui-NavigationViewCompactPaneLength: 48px;
+	--winui-NavigationViewIconBoxWidth: 40px;
+	--winui-NavigationViewAutoSuggestAreaHeight: 40px;
+	--winui-NavigationViewItemOnLeftMinHeight: 36px;
+	--winui-NavigationViewItemOnLeftIconBoxHeight: 16px;
+	--winui-NavigationViewSelectionIndicatorWidth: 3px;
+	--winui-NavigationViewSelectionIndicatorHeight: 16px;
+	--winui-NavigationViewSelectionIndicatorRadius: 2px;
+	--winui-NavigationViewItemSeparatorHeight: 1px;
+	--winui-NavigationViewItemBorderThickness: 1px;
+	--winui-NavigationViewItemOnLeftIconBoxMargin: 0px;
+	--winui-NavigationViewItemButtonMargin: 2px 4px;
+	--winui-NavigationViewMinimalHeaderMargin: 44px 0px 0px -24px;
+	--winui-NavigationViewButtonHolderGridMargin: 4px 0px;
+	--winui-NavigationViewPaneContentGridMargin: 3px -1px;
+	--winui-NavigationViewContentGridBorderThickness: 1px 0px 0px 1px;
+	--winui-NavigationViewMinimalContentGridBorderThickness: 1px 0px 0px 0px;
+	--winui-NavigationViewBorderThickness: 1px;
+	--winui-NavigationViewHeaderMargin: 44px 0px 0px 56px;
+	--winui-NavigationViewContentPresenterMargin: 0px;
+	--winui-NavigationViewContentMargin: 0px;
+	--winui-NavigationViewMinimalContentMargin: 0px;
+	--winui-NavigationViewItemMargin: 0px;
+	--winui-NavigationViewItemSeparatorMargin: 3px 0px 4px 0px;
+	--winui-NavigationViewCompactItemSeparatorMargin: 3px 0px 4px 0px;
+	--winui-NavigationViewItemContentPresenterMargin: -1px 8px -1px 4px;
+	--winui-NavigationViewItemExpandChevronMargin: 0px -14px 0px 0px;
+	--winui-NavigationViewContentGridCornerRadius: 8px 0px 0px 0px;
+	--winui-NavigationViewMinimalContentGridCornerRadius: 0px;
+	--winui-NavigationViewItemExpandedGlyphFontSize: 8px;
+	--winui-NavigationViewItemExpandedGlyph: '\00e70d';
+	--winui-TitleBarForegroundBrush: var(--winui-TextFillColorPrimaryBrush);
+	--winui-TitleBarBackButtonBackground: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-TitleBarBackButtonBackgroundPointerOver: var(--winui-SubtleFillColorSecondaryBrush);
+	--winui-TitleBarBackButtonBackgroundPressed: var(--winui-SubtleFillColorTertiaryBrush);
+	--winui-TitleBarBackButtonBackgroundDisabled: var(--winui-ControlFillColorDisabledBrush);
+	--winui-TitleBarBackButtonForeground: var(--winui-TextFillColorPrimaryBrush);
+	--winui-TitleBarBackButtonForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
+	--winui-TitleBarBackButtonForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
+	--winui-TitleBarBackButtonForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+	--winui-TitleBarPaneToggleButtonBackground: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-TitleBarPaneToggleButtonBackgroundPointerOver: var(--winui-SubtleFillColorSecondaryBrush);
+	--winui-TitleBarPaneToggleButtonBackgroundPressed: var(--winui-SubtleFillColorTertiaryBrush);
+	--winui-TitleBarPaneToggleButtonBackgroundDisabled: var(--winui-ControlFillColorDisabledBrush);
+	--winui-TitleBarPaneToggleButtonForeground: var(--winui-TextFillColorPrimaryBrush);
+	--winui-TitleBarPaneToggleButtonForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
+	--winui-TitleBarPaneToggleButtonForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
+	--winui-TitleBarPaneToggleButtonForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+	--winui-TitleBarCompactHeight: 32px;
+	--winui-TitleBarExpandedHeight: 48px;
+	--winui-TitleBarBackButtonWidth: 40px;
+	--winui-TitleBarPaneToggleButtonWidth: 40px;
+	--winui-TitleBarLeftPaddingWidth: 2px;
+	--winui-TitleBarRightPaddingWidth: 0px;
+	--winui-TitleBarLeftHeaderPaddingWidth: 14px;
+	--winui-TitleBarCompactContentMargin: 0px 16px 0px 0px;
+	--winui-TitleBarIconMaxWidth: 16px;
+	--winui-TitleBarIconMaxHeight: 16px;
+	--winui-TitleBarTitleMinWidth: 0px;
+	--winui-TitleBarIconMargin: 0px 16px 0px 0px;
+	--winui-TitleBarTitleMargin: 0px 8px 0px 0px;
 }
 
 :root[data-theme='dark'] {
@@ -315,6 +431,7 @@
 	--winui-SystemColorHighlightTextColor: #212d3b;
 	--winui-SystemColorHotlightColor: #70ebde;
 
+	--winui-AutoSuggestBoxIconFontSize: 12px;
 	--winui-SystemControlTransparentColor: #00000000;
 	--winui-SystemControlTransparentBrush: transparent;
 	--winui-SystemControlHighlightListAccentVeryHighBrush: color-mix(
@@ -572,9 +689,75 @@
 		var(--winui-ControlStrokeColorDefault) 2px
 	);
 	--winui-AcrylicBackgroundFillColorDefaultBrush: #2c2c2c;
+	--winui-AcrylicInAppFillColorDefaultBrush: #2c2c2c;
 	--winui-AcrylicBackgroundFillColorBaseBrush: #1c1c1c;
 	--winui-AccentAcrylicBackgroundFillColorDefaultBrush: var(--winui-SystemAccentColorDark1);
 	--winui-AccentAcrylicBackgroundFillColorBaseBrush: var(--winui-SystemAccentColorDark2);
+	--winui-SystemControlTransparentRevealBackgroundBrush: transparent;
+	--winui-NavigationViewBackButtonBackground: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-NavigationViewDefaultPaneBackground: var(--winui-AcrylicInAppFillColorDefaultBrush);
+	--winui-NavigationViewExpandedPaneBackground: var(--winui-SolidBackgroundFillColorTransparent);
+	--winui-NavigationViewContentBackground: var(--winui-LayerFillColorDefaultBrush);
+	--winui-NavigationViewItemBackground: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-NavigationViewItemBackgroundPointerOver: var(--winui-SubtleFillColorSecondaryBrush);
+	--winui-NavigationViewItemBackgroundPressed: var(--winui-SubtleFillColorTertiaryBrush);
+	--winui-NavigationViewItemBackgroundDisabled: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-NavigationViewItemBackgroundSelected: var(--winui-SubtleFillColorSecondaryBrush);
+	--winui-NavigationViewItemBackgroundSelectedPointerOver: var(
+		--winui-SubtleFillColorTertiaryBrush
+	);
+	--winui-NavigationViewItemBackgroundSelectedPressed: var(--winui-SubtleFillColorSecondaryBrush);
+	--winui-NavigationViewItemBackgroundSelectedDisabled: var(--winui-SubtleFillColorSecondaryBrush);
+	--winui-NavigationViewItemForeground: var(--winui-TextFillColorPrimaryBrush);
+	--winui-NavigationViewItemForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
+	--winui-NavigationViewItemForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
+	--winui-NavigationViewItemForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+	--winui-NavigationViewItemForegroundSelected: var(--winui-TextFillColorPrimaryBrush);
+	--winui-NavigationViewItemForegroundSelectedPointerOver: var(--winui-TextFillColorPrimaryBrush);
+	--winui-NavigationViewItemForegroundSelectedPressed: var(--winui-TextFillColorSecondaryBrush);
+	--winui-NavigationViewItemForegroundSelectedDisabled: var(--winui-TextFillColorDisabledBrush);
+	--winui-NavigationViewItemBorderBrush: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-NavigationViewItemBorderBrushPointerOver: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-NavigationViewItemBorderBrushPressed: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-NavigationViewItemBorderBrushDisabled: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-NavigationViewItemBorderBrushSelected: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-NavigationViewItemBorderBrushSelectedPointerOver: var(
+		--winui-SubtleFillColorTransparentBrush
+	);
+	--winui-NavigationViewItemBorderBrushSelectedPressed: var(
+		--winui-SubtleFillColorTransparentBrush
+	);
+	--winui-NavigationViewItemBorderBrushSelectedDisabled: var(
+		--winui-SubtleFillColorTransparentBrush
+	);
+	--winui-NavigationViewItemIconBackground: var(--winui-SystemControlTransparentBrush);
+	--winui-NavigationViewItemSeparatorForeground: var(--winui-DividerStrokeColorDefaultBrush);
+	--winui-NavigationViewItemHeaderForeground: var(--winui-TextFillColorSecondaryBrush);
+	--winui-NavigationViewSelectionIndicatorForeground: var(--winui-AccentFillColorDefaultBrush);
+	--winui-NavigationViewContentGridBorderBrush: var(--winui-CardStrokeColorDefaultBrush);
+	--winui-NavigationViewButtonBackgroundPointerOver: var(--winui-SubtleFillColorSecondaryBrush);
+	--winui-NavigationViewButtonBackgroundPressed: var(--winui-SubtleFillColorTertiaryBrush);
+	--winui-NavigationViewButtonBackgroundDisabled: var(--winui-ControlFillColorDisabledBrush);
+	--winui-NavigationViewButtonForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
+	--winui-NavigationViewButtonForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
+	--winui-NavigationViewButtonForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+	--winui-TitleBarForegroundBrush: var(--winui-TextFillColorPrimaryBrush);
+	--winui-TitleBarBackButtonBackground: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-TitleBarBackButtonBackgroundPointerOver: var(--winui-SubtleFillColorSecondaryBrush);
+	--winui-TitleBarBackButtonBackgroundPressed: var(--winui-SubtleFillColorTertiaryBrush);
+	--winui-TitleBarBackButtonBackgroundDisabled: var(--winui-ControlFillColorDisabledBrush);
+	--winui-TitleBarBackButtonForeground: var(--winui-TextFillColorPrimaryBrush);
+	--winui-TitleBarBackButtonForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
+	--winui-TitleBarBackButtonForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
+	--winui-TitleBarBackButtonForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+	--winui-TitleBarPaneToggleButtonBackground: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-TitleBarPaneToggleButtonBackgroundPointerOver: var(--winui-SubtleFillColorSecondaryBrush);
+	--winui-TitleBarPaneToggleButtonBackgroundPressed: var(--winui-SubtleFillColorTertiaryBrush);
+	--winui-TitleBarPaneToggleButtonBackgroundDisabled: var(--winui-ControlFillColorDisabledBrush);
+	--winui-TitleBarPaneToggleButtonForeground: var(--winui-TextFillColorPrimaryBrush);
+	--winui-TitleBarPaneToggleButtonForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
+	--winui-TitleBarPaneToggleButtonForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
+	--winui-TitleBarPaneToggleButtonForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -590,6 +773,7 @@
 		--winui-SystemColorHighlightTextColor: #212d3b;
 		--winui-SystemColorHotlightColor: #70ebde;
 
+		--winui-AutoSuggestBoxIconFontSize: 12px;
 		--winui-SystemControlTransparentColor: #00000000;
 		--winui-SystemControlTransparentBrush: transparent;
 		--winui-SystemControlHighlightListAccentVeryHighBrush: color-mix(
@@ -855,9 +1039,79 @@
 			var(--winui-ControlStrokeColorDefault) 2px
 		);
 		--winui-AcrylicBackgroundFillColorDefaultBrush: #2c2c2c;
+		--winui-AcrylicInAppFillColorDefaultBrush: #2c2c2c;
 		--winui-AcrylicBackgroundFillColorBaseBrush: #1c1c1c;
 		--winui-AccentAcrylicBackgroundFillColorDefaultBrush: var(--winui-SystemAccentColorDark1);
 		--winui-AccentAcrylicBackgroundFillColorBaseBrush: var(--winui-SystemAccentColorDark2);
+		--winui-SystemControlTransparentRevealBackgroundBrush: transparent;
+		--winui-NavigationViewBackButtonBackground: var(--winui-SubtleFillColorTransparentBrush);
+		--winui-NavigationViewDefaultPaneBackground: var(--winui-AcrylicInAppFillColorDefaultBrush);
+		--winui-NavigationViewExpandedPaneBackground: var(--winui-SolidBackgroundFillColorTransparent);
+		--winui-NavigationViewContentBackground: var(--winui-LayerFillColorDefaultBrush);
+		--winui-NavigationViewItemBackground: var(--winui-SubtleFillColorTransparentBrush);
+		--winui-NavigationViewItemBackgroundPointerOver: var(--winui-SubtleFillColorSecondaryBrush);
+		--winui-NavigationViewItemBackgroundPressed: var(--winui-SubtleFillColorTertiaryBrush);
+		--winui-NavigationViewItemBackgroundDisabled: var(--winui-SubtleFillColorTransparentBrush);
+		--winui-NavigationViewItemBackgroundSelected: var(--winui-SubtleFillColorSecondaryBrush);
+		--winui-NavigationViewItemBackgroundSelectedPointerOver: var(
+			--winui-SubtleFillColorTertiaryBrush
+		);
+		--winui-NavigationViewItemBackgroundSelectedPressed: var(--winui-SubtleFillColorSecondaryBrush);
+		--winui-NavigationViewItemBackgroundSelectedDisabled: var(
+			--winui-SubtleFillColorSecondaryBrush
+		);
+		--winui-NavigationViewItemForeground: var(--winui-TextFillColorPrimaryBrush);
+		--winui-NavigationViewItemForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
+		--winui-NavigationViewItemForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
+		--winui-NavigationViewItemForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+		--winui-NavigationViewItemForegroundSelected: var(--winui-TextFillColorPrimaryBrush);
+		--winui-NavigationViewItemForegroundSelectedPointerOver: var(--winui-TextFillColorPrimaryBrush);
+		--winui-NavigationViewItemForegroundSelectedPressed: var(--winui-TextFillColorSecondaryBrush);
+		--winui-NavigationViewItemForegroundSelectedDisabled: var(--winui-TextFillColorDisabledBrush);
+		--winui-NavigationViewItemBorderBrush: var(--winui-SubtleFillColorTransparentBrush);
+		--winui-NavigationViewItemBorderBrushPointerOver: var(--winui-SubtleFillColorTransparentBrush);
+		--winui-NavigationViewItemBorderBrushPressed: var(--winui-SubtleFillColorTransparentBrush);
+		--winui-NavigationViewItemBorderBrushDisabled: var(--winui-SubtleFillColorTransparentBrush);
+		--winui-NavigationViewItemBorderBrushSelected: var(--winui-SubtleFillColorTransparentBrush);
+		--winui-NavigationViewItemBorderBrushSelectedPointerOver: var(
+			--winui-SubtleFillColorTransparentBrush
+		);
+		--winui-NavigationViewItemBorderBrushSelectedPressed: var(
+			--winui-SubtleFillColorTransparentBrush
+		);
+		--winui-NavigationViewItemBorderBrushSelectedDisabled: var(
+			--winui-SubtleFillColorTransparentBrush
+		);
+		--winui-NavigationViewItemIconBackground: var(--winui-SystemControlTransparentBrush);
+		--winui-NavigationViewItemSeparatorForeground: var(--winui-DividerStrokeColorDefaultBrush);
+		--winui-NavigationViewItemHeaderForeground: var(--winui-TextFillColorSecondaryBrush);
+		--winui-NavigationViewSelectionIndicatorForeground: var(--winui-AccentFillColorDefaultBrush);
+		--winui-NavigationViewContentGridBorderBrush: var(--winui-CardStrokeColorDefaultBrush);
+		--winui-NavigationViewButtonBackgroundPointerOver: var(--winui-SubtleFillColorSecondaryBrush);
+		--winui-NavigationViewButtonBackgroundPressed: var(--winui-SubtleFillColorTertiaryBrush);
+		--winui-NavigationViewButtonBackgroundDisabled: var(--winui-ControlFillColorDisabledBrush);
+		--winui-NavigationViewButtonForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
+		--winui-NavigationViewButtonForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
+		--winui-NavigationViewButtonForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+		--winui-TitleBarForegroundBrush: var(--winui-TextFillColorPrimaryBrush);
+		--winui-TitleBarBackButtonBackground: var(--winui-SubtleFillColorTransparentBrush);
+		--winui-TitleBarBackButtonBackgroundPointerOver: var(--winui-SubtleFillColorSecondaryBrush);
+		--winui-TitleBarBackButtonBackgroundPressed: var(--winui-SubtleFillColorTertiaryBrush);
+		--winui-TitleBarBackButtonBackgroundDisabled: var(--winui-ControlFillColorDisabledBrush);
+		--winui-TitleBarBackButtonForeground: var(--winui-TextFillColorPrimaryBrush);
+		--winui-TitleBarBackButtonForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
+		--winui-TitleBarBackButtonForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
+		--winui-TitleBarBackButtonForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+		--winui-TitleBarPaneToggleButtonBackground: var(--winui-SubtleFillColorTransparentBrush);
+		--winui-TitleBarPaneToggleButtonBackgroundPointerOver: var(
+			--winui-SubtleFillColorSecondaryBrush
+		);
+		--winui-TitleBarPaneToggleButtonBackgroundPressed: var(--winui-SubtleFillColorTertiaryBrush);
+		--winui-TitleBarPaneToggleButtonBackgroundDisabled: var(--winui-ControlFillColorDisabledBrush);
+		--winui-TitleBarPaneToggleButtonForeground: var(--winui-TextFillColorPrimaryBrush);
+		--winui-TitleBarPaneToggleButtonForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
+		--winui-TitleBarPaneToggleButtonForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
+		--winui-TitleBarPaneToggleButtonForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
 	}
 }
 
@@ -873,6 +1127,7 @@
 	--winui-SystemColorHighlightTextColor: #212d3b;
 	--winui-SystemColorHotlightColor: #70ebde;
 
+	--winui-AutoSuggestBoxIconFontSize: 12px;
 	--winui-SystemControlTransparentColor: #00000000;
 	--winui-SystemControlTransparentBrush: transparent;
 	--winui-SystemControlHighlightListAccentVeryHighBrush: var(--winui-SystemColorHighlightColor);
@@ -1084,9 +1339,73 @@
 		var(--winui-ControlStrokeColorDefault) 2px
 	);
 	--winui-AcrylicBackgroundFillColorDefaultBrush: var(--winui-SystemColorWindowColor);
+	--winui-AcrylicInAppFillColorDefaultBrush: var(--winui-SystemColorWindowColor);
 	--winui-AcrylicBackgroundFillColorBaseBrush: var(--winui-SystemColorWindowColor);
 	--winui-AccentAcrylicBackgroundFillColorDefaultBrush: var(--winui-SystemColorWindowColor);
 	--winui-AccentAcrylicBackgroundFillColorBaseBrush: var(--winui-SystemColorWindowColor);
+	--winui-SystemControlTransparentRevealBackgroundBrush: transparent;
+	--winui-NavigationViewBackButtonBackground: var(--winui-SystemColorButtonFaceColor);
+	--winui-NavigationViewDefaultPaneBackground: var(--winui-SystemColorButtonFaceColor);
+	--winui-NavigationViewExpandedPaneBackground: var(--winui-SystemColorWindowColor);
+	--winui-NavigationViewContentBackground: var(--winui-SystemColorWindowColor);
+	--winui-NavigationViewItemBackground: var(--winui-SystemColorButtonFaceColor);
+	--winui-NavigationViewItemBackgroundPointerOver: var(--winui-SystemColorHighlightColor);
+	--winui-NavigationViewItemBackgroundPressed: var(--winui-SystemColorHighlightColor);
+	--winui-NavigationViewItemBackgroundDisabled: var(--winui-SystemColorButtonFaceColor);
+	--winui-NavigationViewItemBackgroundSelected: var(--winui-SystemColorHighlightColor);
+	--winui-NavigationViewItemBackgroundSelectedPointerOver: var(--winui-SystemColorHighlightColor);
+	--winui-NavigationViewItemBackgroundSelectedPressed: var(--winui-SystemColorHighlightColor);
+	--winui-NavigationViewItemBackgroundSelectedDisabled: var(
+		--winui-SystemControlTransparentRevealBackgroundBrush
+	);
+	--winui-NavigationViewItemForeground: var(--winui-SystemColorButtonTextColor);
+	--winui-NavigationViewItemForegroundPointerOver: var(--winui-SystemColorHighlightTextColor);
+	--winui-NavigationViewItemForegroundPressed: var(--winui-SystemColorHighlightTextColor);
+	--winui-NavigationViewItemForegroundDisabled: var(--winui-SystemColorGrayTextColor);
+	--winui-NavigationViewItemForegroundSelected: var(--winui-SystemColorHighlightTextColor);
+	--winui-NavigationViewItemForegroundSelectedPointerOver: var(
+		--winui-SystemColorHighlightTextColor
+	);
+	--winui-NavigationViewItemForegroundSelectedPressed: var(--winui-SystemColorHighlightTextColor);
+	--winui-NavigationViewItemForegroundSelectedDisabled: var(--winui-SystemColorGrayTextColor);
+	--winui-NavigationViewItemBorderBrush: var(--winui-SystemControlTransparentBrush);
+	--winui-NavigationViewItemBorderBrushPointerOver: var(--winui-SystemColorHighlightTextColor);
+	--winui-NavigationViewItemBorderBrushPressed: var(--winui-SystemColorHighlightTextColor);
+	--winui-NavigationViewItemBorderBrushDisabled: var(--winui-SystemControlTransparentBrush);
+	--winui-NavigationViewItemBorderBrushSelected: var(--winui-SystemColorButtonTextColor);
+	--winui-NavigationViewItemBorderBrushSelectedPointerOver: var(
+		--winui-SystemColorHighlightTextColor
+	);
+	--winui-NavigationViewItemBorderBrushSelectedPressed: var(--winui-SystemColorHighlightTextColor);
+	--winui-NavigationViewItemBorderBrushSelectedDisabled: var(--winui-SystemControlTransparentBrush);
+	--winui-NavigationViewItemIconBackground: var(--winui-SystemControlTransparentBrush);
+	--winui-NavigationViewItemSeparatorForeground: var(--winui-SystemColorWindowTextColorBrush);
+	--winui-NavigationViewItemHeaderForeground: var(--winui-SystemColorButtonTextColor);
+	--winui-NavigationViewSelectionIndicatorForeground: var(--winui-SystemColorHighlightTextColor);
+	--winui-NavigationViewContentGridBorderBrush: var(--winui-SystemControlTransparentBrush);
+	--winui-NavigationViewButtonBackgroundPointerOver: var(--winui-SystemColorHighlightColor);
+	--winui-NavigationViewButtonBackgroundPressed: var(--winui-SystemColorHighlightColor);
+	--winui-NavigationViewButtonBackgroundDisabled: var(--winui-SystemColorButtonFaceColor);
+	--winui-NavigationViewButtonForegroundPointerOver: var(--winui-SystemColorHighlightTextColor);
+	--winui-NavigationViewButtonForegroundPressed: var(--winui-SystemColorHighlightTextColor);
+	--winui-NavigationViewButtonForegroundDisabled: var(--winui-SystemColorGrayTextColor);
+	--winui-TitleBarForegroundBrush: var(--winui-SystemColorButtonTextColor);
+	--winui-TitleBarBackButtonBackground: var(--winui-SystemColorButtonFaceColor);
+	--winui-TitleBarBackButtonBackgroundPointerOver: var(--winui-SystemColorHighlightColor);
+	--winui-TitleBarBackButtonBackgroundPressed: var(--winui-SystemColorHighlightColor);
+	--winui-TitleBarBackButtonBackgroundDisabled: var(--winui-SystemColorButtonFaceColor);
+	--winui-TitleBarBackButtonForeground: var(--winui-SystemColorButtonTextColor);
+	--winui-TitleBarBackButtonForegroundPointerOver: var(--winui-SystemColorHighlightTextColor);
+	--winui-TitleBarBackButtonForegroundPressed: var(--winui-SystemColorHighlightTextColor);
+	--winui-TitleBarBackButtonForegroundDisabled: var(--winui-SystemColorGrayTextColor);
+	--winui-TitleBarPaneToggleButtonBackground: var(--winui-SystemColorButtonFaceColor);
+	--winui-TitleBarPaneToggleButtonBackgroundPointerOver: var(--winui-SystemColorHighlightColor);
+	--winui-TitleBarPaneToggleButtonBackgroundPressed: var(--winui-SystemColorHighlightColor);
+	--winui-TitleBarPaneToggleButtonBackgroundDisabled: var(--winui-SystemColorButtonFaceColor);
+	--winui-TitleBarPaneToggleButtonForeground: var(--winui-SystemColorButtonTextColor);
+	--winui-TitleBarPaneToggleButtonForegroundPointerOver: var(--winui-SystemColorHighlightTextColor);
+	--winui-TitleBarPaneToggleButtonForegroundPressed: var(--winui-SystemColorHighlightTextColor);
+	--winui-TitleBarPaneToggleButtonForegroundDisabled: var(--winui-SystemColorGrayTextColor);
 }
 
 /* In forced-colors mode the browser fills the same eight from the actual Windows */
