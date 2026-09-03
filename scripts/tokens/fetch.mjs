@@ -15,10 +15,16 @@ export const UPSTREAM = {
 export const ROOT = fileURLToPath(new URL('../../', import.meta.url)).replace(/[\\/]$/, '');
 export const CHECKOUT = join(ROOT, '.upstream', 'microsoft-ui-xaml');
 
-// The extractor reads theme dictionaries and nothing else, and the upstream repository
-// is large. `blob:none` plus this path keeps the working copy to what is actually read;
-// `--no-cone` because cone mode cannot express a `**`-and-suffix pattern.
-const SPARSE = '/controls/dev/**/*_themeresources*.xaml';
+// The upstream repository is large, so the working copy is narrowed to the XAML under
+// `controls/dev` — theme dictionaries, which the extractor reads, and control templates,
+// which it does not. The templates are here for a reader rather than for a program: a
+// control reproduced from scratch is reproduced from its `ControlTemplate`, and guessing
+// at a structure the source states is the failure this checkout exists to prevent. The
+// per-control test pages are excluded; they are app markup, not the control.
+//
+// `--no-cone` because cone mode can express neither a `**`-and-suffix pattern nor the
+// exclusion.
+const SPARSE = ['/controls/dev/**/*.xaml', '!/controls/dev/**/TestUI/**'];
 
 const git = (args) =>
 	execFileSync('git', args, { cwd: ROOT, encoding: 'utf8', stdio: ['ignore', 'pipe', 'inherit'] });
@@ -40,7 +46,14 @@ function fetchUpstream() {
 	const at = head();
 
 	if (at === UPSTREAM.commit) {
-		console.log(`.upstream/microsoft-ui-xaml is already at ${UPSTREAM.commit}; nothing to do.`);
+		// The commit matching is not the same as the working copy matching. `SPARSE`
+		// widening between runs leaves a checkout at the right commit missing files it
+		// is now supposed to hold, and an early return here would report that as
+		// "nothing to do" — the one message that stops anyone from looking further.
+		console.log(
+			`.upstream/microsoft-ui-xaml is already at ${UPSTREAM.commit}; re-applying paths …`
+		);
+		git(['-C', CHECKOUT, 'sparse-checkout', 'set', '--no-cone', ...SPARSE]);
 		return;
 	}
 
@@ -61,13 +74,13 @@ function fetchUpstream() {
 			UPSTREAM.url,
 			CHECKOUT
 		]);
-		git(['-C', CHECKOUT, 'sparse-checkout', 'set', '--no-cone', SPARSE]);
+		git(['-C', CHECKOUT, 'sparse-checkout', 'set', '--no-cone', ...SPARSE]);
 	} else {
 		// Deleting and re-cloning would discard a perfectly good object store to move a
 		// few commits; fetching keeps a re-pin cheap on a slow connection.
 		console.log(`.upstream/microsoft-ui-xaml is at ${at}; fetching ${UPSTREAM.commit} …`);
 		git(['-C', CHECKOUT, 'fetch', '--filter=blob:none', 'origin', UPSTREAM.ref]);
-		git(['-C', CHECKOUT, 'sparse-checkout', 'set', '--no-cone', SPARSE]);
+		git(['-C', CHECKOUT, 'sparse-checkout', 'set', '--no-cone', ...SPARSE]);
 	}
 
 	git(['-C', CHECKOUT, 'checkout', UPSTREAM.commit]);
