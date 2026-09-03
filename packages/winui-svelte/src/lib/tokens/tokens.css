@@ -368,6 +368,7 @@
 	--winui-NavigationViewItemBorderThickness: 1px;
 	--winui-NavigationViewItemOnLeftIconBoxMargin: 0px;
 	--winui-NavigationViewItemButtonMargin: 2px 4px;
+	--winui-NavigationViewItemInnerHeaderMargin: 0px 16px;
 	--winui-NavigationViewMinimalHeaderMargin: 44px 0px 0px -24px;
 	--winui-NavigationViewButtonHolderGridMargin: 4px 0px;
 	--winui-NavigationViewPaneContentGridMargin: 3px -1px;

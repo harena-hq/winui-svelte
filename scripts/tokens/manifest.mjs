@@ -66,9 +66,11 @@ export const ADDITIONAL_KEYS = {
  * - **The top display mode** — every `Top*` key, `NavigationViewTopPane*`, and the two
  *   overflow-button styles. Not built. It arrives with the Navigation tranche, and its
  *   keys arrive with it.
- * - **The pane header and pane title** — `NavigationViewPaneHeaderRowMinHeight`,
- *   `NavigationViewPaneTitlePresenterMargin`, `NavigationViewItemInnerHeaderMargin`. The
- *   Gallery sets neither property, so nothing renders in either slot.
+ * - **The pane header and pane title** — `NavigationViewPaneHeaderRowMinHeight` and
+ *   `NavigationViewPaneTitlePresenterMargin`. The Gallery sets neither property, so
+ *   nothing renders in either slot. `NavigationViewItemInnerHeaderMargin` was listed here
+ *   too and does not belong: despite the name it is the inset inside a *group header* in
+ *   the item list, which the Gallery does render.
  * - **The compact-mode child flyout** — `NavigationViewItemChildrenMenuFlyoutPadding`.
  *   That flyout is a Flyout, which belongs to the Dialogs and flyouts tranche.
  * - **The title bar's deactivated and subtitle states** —
@@ -164,6 +166,7 @@ export const SHELL_KEYS = {
 	NavigationViewCompactItemSeparatorMargin:
 		'NavigationView, the separator between item groups when the pane is compact',
 	NavigationViewItemHeaderForeground: 'NavigationView, a group header in the pane',
+	NavigationViewItemInnerHeaderMargin: 'NavigationView, the inset inside a group header',
 	NavigationViewItemExpandChevronMargin: 'NavigationView item, the expand chevron',
 	NavigationViewItemExpandedGlyph: 'NavigationView item, the expand chevron',
 	NavigationViewItemExpandedGlyphFontSize: 'NavigationView item, the expand chevron',
