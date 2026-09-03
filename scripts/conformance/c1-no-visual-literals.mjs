@@ -23,7 +23,7 @@ const COLOUR_PROPS =
 	/^(color|background|background-color|background-image|border|border-(top|right|bottom|left|block|inline)(-(start|end))?(-color)?|border-color|outline|outline-color|box-shadow|text-shadow|fill|stroke|stop-color|caret-color|column-rule|column-rule-color|text-decoration|text-decoration-color|accent-color|scrollbar-color)$/;
 
 const SIZED_PROPS =
-	/^(border-radius|border-(top|bottom)-(left|right)-radius|border-(start|end)-(start|end)-radius|border-width|border-(top|right|bottom|left)-width|border|outline|outline-width|outline-offset|font-size|letter-spacing|word-spacing|box-shadow|text-shadow|stroke-width|transition|transition-duration|animation|animation-duration)$/;
+	/^(border-radius|border-(top|bottom)-(left|right)-radius|border-(start|end)-(start|end)-radius|border-width|border-(top|right|bottom|left)(-width)?|border|outline|outline-width|outline-offset|font-size|letter-spacing|word-spacing|box-shadow|text-shadow|stroke-width|transition|transition-duration|animation|animation-duration)$/;
 
 const TOKEN_ONLY_PROPS = /^(font-family|font-weight|line-height|font)$/;
 
@@ -80,8 +80,15 @@ function violation({ prop, value }) {
 		if (size && !ZERO.test(size[0])) return `hard-coded \`${size[0].trim()}\` in \`${prop}\``;
 	}
 
+	// `bare` is the value with every `var()` removed, so an empty one means the value was
+	// nothing but tokens — which is the thing this rule demands. Without that first clause
+	// the check inverts: `font-family: var(--winui-SymbolThemeFontFamily)` was rejected for
+	// not coming from a token, and the only way past a rule asking for a token was to stop
+	// using one. Anything left over is a literal sharing the declaration with a token, and
+	// still fails: a fallback face belongs inside the token, not after it.
 	if (
 		TOKEN_ONLY_PROPS.test(prop) &&
+		bare.trim() &&
 		!/^(inherit|initial|unset|revert|normal)$/i.test(bare.trim())
 	) {
 		return `\`${prop}\` must come from a token`;
