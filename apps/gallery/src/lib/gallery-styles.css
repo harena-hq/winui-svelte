@@ -11,6 +11,7 @@
  */
 
 .gallery-tile-grid {
+	display: grid;
 	background: var(--winui-SolidBackgroundFillColorBaseBrush);
 	/* c1-allow: 1px is the Gallery's card stroke width, not a tokenized theme value */
 	border: 1px solid var(--winui-CardStrokeColorDefaultBrush);
