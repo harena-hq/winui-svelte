@@ -41,7 +41,7 @@ pnpm workspace. The library is publishable and imposes no build tooling on its c
 | D9  | bits-ui as the primitive base; individual Zag machines for TreeView, ColorPicker, NumberBox      | ADR 0004                  |
 | D10 | High contrast is generated as aliases onto eight system colors, not as a third palette           | ADR 0005                  |
 | D11 | A token is named `--winui-` plus the WinUI resource key, unchanged                               | ADR 0006                  |
-| D12 | The token layer is a curated closure of four base files, not every key                           | this file, "Roadmap → v1" |
+| D12 | The token layer is a curated closure of four base files plus what the Design pages name          | this file, "Roadmap → v1" |
 
 ## Verification
 
@@ -135,16 +135,51 @@ themes, generated rather than hand-written.**
   and the generator's output disagree.
 - **Scope is a closure, not the whole extraction.** v1 emits the keys defined in four base
   files — the palette, the small common dictionary, corner radii and the type ramp — plus what
-  they transitively reference. Measured: 236 keys, closing over exactly 14 names the OS
-  supplies. Per-control tokens land with their control tranche, because emitting all 3074 keys
-  would drag in Acrylic and Reveal, which v1 cannot express and must not fake.
+  they transitively reference, **plus every key the acceptance surface names.** Measured: 236
+  keys from the four files, closing over exactly 14 names the OS supplies; the Design pages add
+  three more from outside them. Per-control tokens otherwise land with their control tranche,
+  because emitting all 3074 keys would drag in Acrylic and Reveal, which v1 cannot express and
+  must not fake.
 
-Acceptance surface: the Gallery's **Design** pages — Color, Typography, Geometry, Spacing,
-Iconography. These render tokens with almost no control chrome, which makes them the
-cheapest possible thing to compare against the original.
+  The second clause is the half that keeps the acceptance surface honest. A key the Design
+  pages display is either emitted or listed in the generator's exclusions with a reason, and
+  the generator fails on any third case — so a page cannot come to show a blank swatch because
+  a token silently fell outside a file boundary drawn for an unrelated reason.
 
-Done-when: the five Design pages render; every token has a value in all three themes; the
-parity test passes; the Color page compares clean against Windows 11.
+#### The acceptance surface
+
+The Gallery's **Design** group: Color, Geometry, Iconography, Spacing, Typography — that
+order, which is the order `ControlInfoData.json` lists them in. They render tokens with
+almost no control chrome, which is what makes them the cheapest thing to compare against the
+original.
+
+"Almost no chrome" was an estimate, and measuring it against the Gallery source
+(`microsoft/WinUI-Gallery`) changed the shape of this version's Done-when. Every one of the
+five pages is a table of tokens **wrapped in a control from a later version**:
+
+| page        | the table v1 reproduces                              | the frame around it, and where it lands   |
+| ----------- | ---------------------------------------------------- | ----------------------------------------- |
+| Color       | 132 tiles and 27 captioned examples, in six sections | `SelectorBar` — v4, Navigation            |
+| Typography  | 9 type-ramp rows                                     | `ControlExample` — v3                     |
+| Geometry    | 3 corner-radius rows                                 | `ControlExample` — v3                     |
+| Spacing     | 7 spacing rows                                       | none; two annotated images v1 cannot draw |
+| Iconography | 1533 Segoe Fluent Icons tiles                        | `AutoSuggestBox` + `ItemsView` — v4       |
+
+**v1 builds the tables and a plain frame; it does not build the chrome.** The pages are
+reachable from a list on the Gallery's index and switch theme from a control the shell later
+replaces. Each version that brings a page's real frame moves that page onto it. This is not a
+reduction in scope — the tables are the part that shows the tokens, and the chrome shows
+controls that do not exist yet — but it does mean these five pages are not a side-by-side
+match until v4, and only the tables are compared before then.
+
+Four of the 132 color tiles cannot be reproduced at all in v1: they display the Acrylic
+brushes, which need a backdrop this version has nothing to put behind them. Recorded as a
+divergence rather than dropped, because a missing tile is indistinguishable from a page that
+was never finished.
+
+Done-when: the five Design pages render, each carrying its full table; every token has a value
+in all three themes; the parity test passes; and the Color page's tiles compare clean against
+Windows 11, tile for tile, ignoring the chrome around them.
 
 ### v2 — the app shell
 
