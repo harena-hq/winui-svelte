@@ -47,6 +47,177 @@ export const ADDITIONAL_KEYS = {
 };
 
 /**
+ * Keys the app shell reads — the second seed set, and the first written under D15.
+ *
+ * v1 seeded four whole dictionaries because they are the shared vocabulary. A control's
+ * own dictionary is not seeded that way and this is the measurement that settled it:
+ * taking `NavigationView`, `NavigationBackButton`, `TitleBar` and `AutoSuggestBox` whole
+ * drags in the Reveal material brushes, which nothing here can express, and sixteen names
+ * that neither those four files nor anything the closure reaches from them defines — because those files also carry whole `Style` records for
+ * controls this version does not build. A per-control dictionary is a place to look keys
+ * up, not a set to take wholesale.
+ *
+ * So: one line per key, and the line says what the key paints. A key whose element stops
+ * existing is a line to delete, which is a harder thing to skip than a file to keep.
+ *
+ * What this list leaves out, so that a gap reads as a decision rather than an oversight.
+ * The three templates between them reference 104 resources; these are the ones not here:
+ *
+ * - **The top display mode** — every `Top*` key, `NavigationViewTopPane*`, and the two
+ *   overflow-button styles. Not built. It arrives with the Navigation tranche, and its
+ *   keys arrive with it.
+ * - **The pane header and pane title** — `NavigationViewPaneHeaderRowMinHeight`,
+ *   `NavigationViewPaneTitlePresenterMargin`, `NavigationViewItemInnerHeaderMargin`. The
+ *   Gallery sets neither property, so nothing renders in either slot.
+ * - **The compact-mode child flyout** — `NavigationViewItemChildrenMenuFlyoutPadding`.
+ *   That flyout is a Flyout, which belongs to the Dialogs and flyouts tranche.
+ * - **The title bar's deactivated and subtitle states** —
+ *   `TitleBarDeactivatedForegroundBrush`, `TitleBarDeactivatedOpacity`,
+ *   `TitleBarSubtitle*`. A web page has no deactivated window state, and the Gallery
+ *   sets no subtitle.
+ * - **The drag region** — `TitleBarMinDragRegionWidth`,
+ *   `TitleBarHeaderNegativeInsetPaddingWidth`. Dragging a window is not a page's to do.
+ * - **The four `TitleBar*Alignment` resources.** They hold XAML layout enums, not values
+ *   a custom property can carry; the component writes the equivalent CSS directly.
+ * - **Every `*Style` resource.** A `Style` is a control template, and this project writes
+ *   its own. The two that are text rather than template —
+ *   `NavigationViewItemHeaderTextStyle` and
+ *   `NavigationViewTitleHeaderContentControlTextStyle` — flatten to values the type ramp
+ *   already emits: 14px SemiBold is `.winui-BodyStrongTextBlockStyle` and 28px SemiBold is
+ *   `.winui-TitleTextBlockStyle`, to the pixel and the weight.
+ */
+export const SHELL_KEYS = {
+	// NavigationView — the pane, the content area, and the metrics that size them.
+	NavigationViewDefaultPaneBackground: 'NavigationView pane, the surface behind the items',
+	NavigationViewExpandedPaneBackground:
+		'NavigationView pane, the surface when the pane sits beside the content rather than over it',
+	NavigationViewContentBackground: 'NavigationView content area',
+	NavigationViewContentGridBorderBrush: 'NavigationView content area, its own border',
+	NavigationViewContentGridBorderThickness: 'NavigationView content area, its own border',
+	NavigationViewContentGridCornerRadius: 'NavigationView content area, its own border',
+	NavigationViewBorderThickness: 'NavigationView, the border between pane and content',
+	NavigationViewContentMargin: 'NavigationView content area, its two nested insets',
+	NavigationViewMinimalContentMargin: 'NavigationView content area, minimal display mode',
+	NavigationViewMinimalContentGridBorderThickness:
+		'NavigationView content area, its border in minimal display mode',
+	NavigationViewMinimalContentGridCornerRadius:
+		'NavigationView content area, its corners in minimal display mode',
+	NavigationViewMinimalHeaderMargin: 'NavigationView content area, the page header when minimal',
+	NavigationViewContentPresenterMargin: 'NavigationView content area, its two nested insets',
+	NavigationViewPaneContentGridMargin: 'NavigationView pane, its inset',
+	NavigationViewCompactPaneLength: 'NavigationView pane, its width when collapsed',
+	NavigationViewIconBoxWidth: 'NavigationView item, the icon column',
+	NavigationViewButtonHolderGridMargin: 'NavigationView, the row holding the pane-toggle button',
+	PaneToggleButtonHeight: 'NavigationView pane-toggle button, its box',
+	PaneToggleButtonWidth: 'NavigationView pane-toggle button, its box',
+	NavigationViewAutoSuggestAreaHeight: 'NavigationView pane, the search row',
+	NavigationViewAutoSuggestBoxMargin: 'NavigationView pane, the search row',
+	NavigationViewHeaderMargin: 'NavigationView content area, the page header',
+
+	// A NavigationView item: the three brushes it paints with, in each of the eight
+	// states the left-pane template names.
+	NavigationViewItemBackground: 'NavigationView item background, at rest',
+	NavigationViewItemBackgroundPointerOver: 'NavigationView item background, pointer over',
+	NavigationViewItemBackgroundPressed: 'NavigationView item background, pressed',
+	NavigationViewItemBackgroundDisabled: 'NavigationView item background, disabled',
+	NavigationViewItemBackgroundSelected: 'NavigationView item background, selected',
+	NavigationViewItemBackgroundSelectedPointerOver:
+		'NavigationView item background, selected pointer over',
+	NavigationViewItemBackgroundSelectedPressed: 'NavigationView item background, selected pressed',
+	NavigationViewItemBackgroundSelectedDisabled: 'NavigationView item background, selected disabled',
+	NavigationViewItemForeground: 'NavigationView item foreground, at rest',
+	NavigationViewItemForegroundPointerOver: 'NavigationView item foreground, pointer over',
+	NavigationViewItemForegroundPressed: 'NavigationView item foreground, pressed',
+	NavigationViewItemForegroundDisabled: 'NavigationView item foreground, disabled',
+	NavigationViewItemForegroundSelected: 'NavigationView item foreground, selected',
+	NavigationViewItemForegroundSelectedPointerOver:
+		'NavigationView item foreground, selected pointer over',
+	NavigationViewItemForegroundSelectedPressed: 'NavigationView item foreground, selected pressed',
+	NavigationViewItemForegroundSelectedDisabled: 'NavigationView item foreground, selected disabled',
+	NavigationViewItemBorderBrush: 'NavigationView item border, at rest',
+	NavigationViewItemBorderBrushPointerOver: 'NavigationView item border, pointer over',
+	NavigationViewItemBorderBrushPressed: 'NavigationView item border, pressed',
+	NavigationViewItemBorderBrushDisabled: 'NavigationView item border, disabled',
+	NavigationViewItemBorderBrushSelected: 'NavigationView item border, selected',
+	NavigationViewItemBorderBrushSelectedPointerOver:
+		'NavigationView item border, selected pointer over',
+	NavigationViewItemBorderBrushSelectedPressed: 'NavigationView item border, selected pressed',
+	NavigationViewItemBorderBrushSelectedDisabled: 'NavigationView item border, selected disabled',
+
+	// The rest of an item: the icon box, the selection indicator, the separator, the
+	// group header, and the chevron on an item that expands.
+	NavigationViewItemIconBackground: 'NavigationView item, behind the icon',
+	NavigationViewItemMargin: 'NavigationView item, its two nested insets',
+	NavigationViewItemButtonMargin: 'NavigationView item, its two nested insets',
+	NavigationViewItemOnLeftMinHeight: 'NavigationView item, its height in the left pane',
+	NavigationViewItemOnLeftIconBoxHeight: 'NavigationView item, the icon box',
+	NavigationViewItemOnLeftIconBoxMargin: 'NavigationView item, the icon box',
+	NavigationViewItemContentPresenterMargin: 'NavigationView item, around its label',
+	NavigationViewItemBorderThickness: 'NavigationView item, its border width',
+	NavigationViewSelectionIndicatorForeground: 'NavigationView item, the selection indicator',
+	NavigationViewSelectionIndicatorWidth: 'NavigationView item, the selection indicator',
+	NavigationViewSelectionIndicatorHeight: 'NavigationView item, the selection indicator',
+	NavigationViewSelectionIndicatorRadius: 'NavigationView item, the selection indicator',
+	NavigationViewItemSeparatorForeground: 'NavigationView, the separator between item groups',
+	NavigationViewItemSeparatorHeight: 'NavigationView, the separator between item groups',
+	NavigationViewItemSeparatorMargin: 'NavigationView, the separator between item groups',
+	NavigationViewCompactItemSeparatorMargin:
+		'NavigationView, the separator between item groups when the pane is compact',
+	NavigationViewItemHeaderForeground: 'NavigationView, a group header in the pane',
+	NavigationViewItemExpandChevronMargin: 'NavigationView item, the expand chevron',
+	NavigationViewItemExpandedGlyph: 'NavigationView item, the expand chevron',
+	NavigationViewItemExpandedGlyphFontSize: 'NavigationView item, the expand chevron',
+
+	// The pane-toggle and back buttons, which are Buttons with their own brushes.
+	NavigationViewButtonBackgroundPointerOver: 'NavigationView pane button background, pointer over',
+	NavigationViewButtonBackgroundPressed: 'NavigationView pane button background, pressed',
+	NavigationViewButtonBackgroundDisabled: 'NavigationView pane button background, disabled',
+	NavigationViewButtonForegroundPointerOver: 'NavigationView pane button foreground, pointer over',
+	NavigationViewButtonForegroundPressed: 'NavigationView pane button foreground, pressed',
+	NavigationViewButtonForegroundDisabled: 'NavigationView pane button foreground, disabled',
+	NavigationViewBackButtonBackground: 'NavigationView back button',
+	NavigationBackButtonWidth: 'NavigationView back button',
+	NavigationBackButtonHeight: 'NavigationView back button',
+
+	// TitleBar: the row itself, then its two buttons in each of their four states.
+	TitleBarForegroundBrush: 'TitleBar, the title text',
+	TitleBarCompactHeight: 'TitleBar, its two heights',
+	TitleBarExpandedHeight: 'TitleBar, its two heights',
+	TitleBarLeftPaddingWidth: 'TitleBar, the insets the window controls reserve',
+	TitleBarRightPaddingWidth: 'TitleBar, the insets the window controls reserve',
+	TitleBarLeftHeaderPaddingWidth: 'TitleBar, the insets the window controls reserve',
+	TitleBarCompactContentMargin: 'TitleBar, around its content when compact',
+	TitleBarIconMaxWidth: 'TitleBar, the app icon',
+	TitleBarIconMaxHeight: 'TitleBar, the app icon',
+	TitleBarIconMargin: 'TitleBar, the app icon',
+	TitleBarTitleMargin: 'TitleBar, the title text',
+	TitleBarTitleMinWidth: 'TitleBar, the title text',
+	TitleBarBackButtonWidth: 'TitleBar, its two buttons',
+	TitleBarPaneToggleButtonWidth: 'TitleBar, its two buttons',
+	TitleBarBackButtonBackground: 'TitleBar back button background, at rest',
+	TitleBarBackButtonBackgroundPointerOver: 'TitleBar back button background, pointer over',
+	TitleBarBackButtonBackgroundPressed: 'TitleBar back button background, pressed',
+	TitleBarBackButtonBackgroundDisabled: 'TitleBar back button background, disabled',
+	TitleBarBackButtonForeground: 'TitleBar back button foreground, at rest',
+	TitleBarBackButtonForegroundPointerOver: 'TitleBar back button foreground, pointer over',
+	TitleBarBackButtonForegroundPressed: 'TitleBar back button foreground, pressed',
+	TitleBarBackButtonForegroundDisabled: 'TitleBar back button foreground, disabled',
+	TitleBarPaneToggleButtonBackground: 'TitleBar pane-toggle button background, at rest',
+	TitleBarPaneToggleButtonBackgroundPointerOver:
+		'TitleBar pane-toggle button background, pointer over',
+	TitleBarPaneToggleButtonBackgroundPressed: 'TitleBar pane-toggle button background, pressed',
+	TitleBarPaneToggleButtonBackgroundDisabled: 'TitleBar pane-toggle button background, disabled',
+	TitleBarPaneToggleButtonForeground: 'TitleBar pane-toggle button foreground, at rest',
+	TitleBarPaneToggleButtonForegroundPointerOver:
+		'TitleBar pane-toggle button foreground, pointer over',
+	TitleBarPaneToggleButtonForegroundPressed: 'TitleBar pane-toggle button foreground, pressed',
+	TitleBarPaneToggleButtonForegroundDisabled: 'TitleBar pane-toggle button foreground, disabled',
+
+	// The search box in the title bar.
+	AutoSuggestBoxIconFontSize: 'AutoSuggestBox, the query glyph'
+};
+
+/**
  * Selected keys that are deliberately not emitted, each with its reason.
  *
  * The generator fails on a selected key that is neither emitted nor listed here, so
@@ -102,6 +273,55 @@ export const TYPE_RAMP = {
 };
 
 /**
+ * The `x:Double` keys that are lengths, and so emit `px`.
+ *
+ * A double is not a length by default: an opacity, a ratio and a line count are spelled
+ * the same way, and `*FontSize` is the only suffix the generator will take on trust. Every
+ * other double is named here, with the thing it measures, or the generator stops on it.
+ *
+ * Note `NavigationViewCompactPaneLength` and `NavigationViewIconBoxWidth`: WinUI computes
+ * the icon column's real width from the two together at runtime, and a component reading
+ * these gets the inputs rather than the answer.
+ */
+export const DOUBLE_LENGTHS = {
+	NavigationBackButtonHeight: 'the back button box',
+	NavigationBackButtonWidth: 'the back button box',
+	NavigationViewAutoSuggestAreaHeight: 'the search row in the pane',
+	NavigationViewCompactPaneLength: 'the collapsed pane',
+	NavigationViewIconBoxWidth: "an item's icon column",
+	NavigationViewItemOnLeftIconBoxHeight: "an item's icon box",
+	NavigationViewItemOnLeftMinHeight: 'an item in the left pane',
+	NavigationViewItemSeparatorHeight: 'the rule between item groups',
+	NavigationViewSelectionIndicatorHeight: 'the selection indicator',
+	NavigationViewSelectionIndicatorRadius: 'the selection indicator',
+	NavigationViewSelectionIndicatorWidth: 'the selection indicator',
+	PaneToggleButtonHeight: 'the pane toggle button box',
+	PaneToggleButtonWidth: 'the pane toggle button box',
+	TitleBarBackButtonWidth: 'the title bar back button',
+	TitleBarCompactHeight: 'the title bar row',
+	TitleBarExpandedHeight: 'the title bar row',
+	TitleBarIconMaxHeight: 'the app icon',
+	TitleBarIconMaxWidth: 'the app icon',
+	TitleBarLeftHeaderPaddingWidth: 'the inset before the header content',
+	TitleBarLeftPaddingWidth: 'the inset the window controls reserve',
+	TitleBarPaneToggleButtonWidth: 'the title bar pane toggle button',
+	TitleBarRightPaddingWidth: 'the inset the window controls reserve',
+	TitleBarTitleMinWidth: 'the title text'
+};
+
+/**
+ * `x:String` keys whose value is a single glyph, emitted as a CSS string so a component
+ * can put it in `content`.
+ *
+ * Named rather than matched on a `Glyph` suffix: the suffix is what these happen to be
+ * called, not what makes them convertible, and an `x:String` this file has not read is a
+ * value the generator should stop on rather than escape.
+ */
+export const GLYPHS = {
+	NavigationViewItemExpandedGlyph: "an expandable item's chevron"
+};
+
+/**
  * The eight OS system colors, and the CSS system color each one corresponds to.
  *
  * `value` is Windows' own High Contrast theme, read from
@@ -153,6 +373,64 @@ export const SYSTEM_COLORS = {
  */
 export const PLATFORM_FONTS = {
 	SymbolThemeFontFamily: "'Segoe Fluent Icons'"
+};
+
+/**
+ * The UWP-era brushes Windows supplies and no dictionary here defines, each with the
+ * system colour it resolves to and the themes that mapping is warranted for. ADR 0008.
+ *
+ * Substituted at emission, never emitted: a reference to one of these becomes
+ * `var(--winui-<to>)` directly, so the name itself never reaches the stylesheet. The
+ * alternative — a token per name — fails on the first objection, that these names appear
+ * only under high contrast and no source gives them a light or dark value.
+ *
+ * `themes` is a guard, not decoration. Six of these ten are referenced from `Default` and
+ * `Light` records elsewhere in the extraction; those references are outside this
+ * selection today, and the day a tranche reaches one, the generator stops rather than
+ * silently applying a high-contrast reading to a light one.
+ *
+ * The values are read from `RevealBrush_themeresources.xaml`, the one place in the pinned
+ * source that states high-contrast values for this family; ADR 0008 carries the evidence
+ * per row and marks the two that rest on a single witness.
+ */
+export const PLATFORM_BRUSHES = {
+	SystemControlForegroundBaseHighBrush: {
+		to: 'SystemColorButtonTextColor',
+		themes: ['HighContrast']
+	},
+	SystemControlBackgroundBaseLowBrush: {
+		to: 'SystemColorButtonFaceColor',
+		themes: ['HighContrast']
+	},
+	SystemControlHighlightAltBaseHighBrush: {
+		to: 'SystemColorHighlightTextColor',
+		themes: ['HighContrast']
+	},
+	SystemControlHighlightListLowBrush: { to: 'SystemColorHighlightColor', themes: ['HighContrast'] },
+	SystemControlHighlightListMediumBrush: {
+		to: 'SystemColorHighlightColor',
+		themes: ['HighContrast']
+	},
+	SystemControlDisabledBaseMediumLowBrush: {
+		to: 'SystemColorGrayTextColor',
+		themes: ['HighContrast']
+	},
+	SystemControlHighlightListLowRevealBackgroundBrush: {
+		to: 'SystemColorHighlightColor',
+		themes: ['HighContrast']
+	},
+	SystemControlHighlightListMediumRevealBackgroundBrush: {
+		to: 'SystemColorHighlightColor',
+		themes: ['HighContrast']
+	},
+	SystemControlHighlightAltTransparentRevealBorderBrush: {
+		to: 'SystemColorHighlightTextColor',
+		themes: ['HighContrast']
+	},
+	SystemControlBackgroundTransparentRevealBorderBrush: {
+		to: 'SystemColorButtonTextColor',
+		themes: ['HighContrast']
+	}
 };
 
 /**

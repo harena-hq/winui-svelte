@@ -7,6 +7,10 @@ import {
 	EXCLUDED,
 	PLATFORM_FONTS,
 	SOURCE_FILES,
+	DOUBLE_LENGTHS,
+	GLYPHS,
+	SHELL_KEYS,
+	PLATFORM_BRUSHES,
 	SYSTEM_COLORS,
 	TYPE_RAMP
 } from './manifest.mjs';
@@ -132,6 +136,30 @@ function systemColorBrush(record, reference, where) {
 	return `var(--winui-${SYSTEM_COLOR_BRUSHES.get(record.key)})`;
 }
 
+/**
+ * One resource reference as the `var()` that reads it.
+ *
+ * Every reference goes through here rather than being interpolated at the site that found
+ * it, because a name Windows supplies and no dictionary defines has to be substituted
+ * before it reaches the output — see `PLATFORM_BRUSHES` and ADR 0008. A site that builds
+ * its own `var(--winui-…)` from a source reference is a site that would emit one of those
+ * names as though it were a token.
+ *
+ * `theme` is the scope the *reference* was written in, not the scope of what it names: the
+ * mapping is warranted per theme and applying a high-contrast reading to a light record is
+ * exactly the silent wrongness a table of ten hand-chosen values could produce.
+ */
+function ref(key, theme, where) {
+	const platform = PLATFORM_BRUSHES[key];
+	if (!platform) return `var(--winui-${key})`;
+	if (!platform.themes.includes(theme))
+		fail(
+			`${where}: references \`${key}\` from the ${theme ?? 'theme-independent'} scope, ` +
+				`which ADR 0008 maps under ${platform.themes.join(', ')} only`
+		);
+	return `var(--winui-${platform.to})`;
+}
+
 function brush(record) {
 	const where = at(record);
 	if (record.color === undefined) fail(`${where}: brush with no Color`);
@@ -139,7 +167,7 @@ function brush(record) {
 	const reference = REFERENCE.exec(record.color.trim());
 	let base;
 	if (SYSTEM_COLOR_BRUSHES.has(record.key)) base = systemColorBrush(record, reference, where);
-	else if (reference) base = `var(--winui-${reference[1].trim()})`;
+	else if (reference) base = ref(reference[1].trim(), record.theme, where);
 	else base = color(record.color, where);
 	if (record.opacity === undefined) return base;
 
@@ -154,19 +182,23 @@ const number = (text, where) => {
 };
 
 /**
- * A one- or four-part XAML length list as a CSS shorthand, `order` mapping the four
- * parts into CSS order.
+ * A XAML length list as a CSS shorthand. `order.four` maps the four-part form into CSS
+ * order; `order.two` maps the two-part form, and a caller that omits it is a caller for
+ * which two parts have no agreed meaning.
  *
- * Two- and three-part forms fail rather than being guessed at. XAML's two-part
- * Thickness is (horizontal, vertical) and CSS's is (vertical, horizontal), so the value
- * that looks most convertible is exactly the one worth stopping on.
+ * Three-part forms fail everywhere, and two-part ones fail wherever `order.two` is
+ * absent, rather than being guessed at. XAML's two-part Thickness is
+ * (horizontal, vertical) and CSS's is (vertical, horizontal), so the value that looks
+ * most convertible is exactly the one worth stopping on.
  */
 function lengths(value, where, order) {
 	const parts = value.split(',').map((part) => number(part.trim(), where));
 	if (parts.length === 1) return `${parts[0]}px`;
-	if (parts.length !== 4) fail(`${where}: \`${value}\` has ${parts.length} parts, not 1 or 4`);
 	if (parts.every((part) => part === parts[0])) return `${parts[0]}px`;
-	return order(parts)
+	const map = parts.length === 4 ? order.four : parts.length === 2 ? order.two : undefined;
+	if (!map)
+		fail(`${where}: \`${value}\` has ${parts.length} parts, which this type does not convert`);
+	return map(parts)
 		.map((part) => `${part}px`)
 		.join(' ');
 }
@@ -192,35 +224,56 @@ function keySpline(value, where) {
 	return `cubic-bezier(${parts.map((part) => number(part, where)).join(', ')})`;
 }
 
+/**
+ * A single glyph as a CSS string, for a component to put in `content`.
+ *
+ * Six hex digits always, never the character itself and never a shorter escape. The
+ * character would make the stylesheet's bytes depend on an editor's encoding, and a CSS
+ * escape shorter than six digits ends at the next space — which is fine here and is a trap
+ * the day one of these is concatenated with anything.
+ */
+function glyph(value, where) {
+	if ([...value].length !== 1)
+		fail(`${where}: glyph is ${[...value].length} code points; expected 1`);
+	return `'\\${value.codePointAt(0).toString(16).padStart(6, '0')}'`;
+}
+
 function scalar(record) {
 	const where = at(record);
 	const value = record.value.trim();
 
 	switch (record.type) {
 		case 'x:Double':
-			// Only the seven `*FontSize` keys are doubles in this selection. A length unit
-			// is not right for every double — an opacity, a ratio and a line count are all
-			// spelled the same way — so the next one to appear gets read rather than
-			// assumed.
-			if (!record.key.endsWith('FontSize'))
-				fail(`${where}: x:Double outside the type ramp; decide its unit before emitting it`);
+			// A length unit is not right for every double — an opacity, a ratio and a line
+			// count are all spelled the same way — so `*FontSize` is the only suffix taken
+			// on trust and every other length is named in `DOUBLE_LENGTHS`. The next
+			// double to appear gets read rather than assumed.
+			if (!record.key.endsWith('FontSize') && !(record.key in DOUBLE_LENGTHS))
+				fail(
+					`${where}: an x:Double that neither ends in FontSize nor DOUBLE_LENGTHS names; ` +
+						'decide what it measures before emitting it'
+				);
 			return `${number(value, where)}px`;
 
 		case 'CornerRadius':
 			// WinUI writes TopLeft,TopRight,BottomRight,BottomLeft, and so does CSS
 			// `border-radius`. Here the orders agree and this is only a unit suffix.
-			return lengths(value, where, (parts) => parts);
+			return lengths(value, where, { four: (parts) => parts });
 
 		case 'Thickness':
 			// WinUI writes Left,Top,Right,Bottom; the CSS shorthand is Top,Right,Bottom,Left.
 			// The two agree on nothing except the uniform case, which is what makes an
 			// unpermuted four-part value look plausible in review.
-			return lengths(value, where, ([left, top, right, bottom]) => [top, right, bottom, left]);
+			return lengths(value, where, {
+				four: ([left, top, right, bottom]) => [top, right, bottom, left],
+				two: ([horizontal, vertical]) => [vertical, horizontal]
+			});
 
 		case 'x:String':
 			if (record.key.endsWith('Duration')) return duration(value, where);
 			if (record.key.endsWith('KeySpline')) return keySpline(value, where);
-			return fail(`${where}: x:String that is neither a Duration nor a KeySpline`);
+			if (record.key in GLYPHS) return glyph(value, where);
+			return fail(`${where}: x:String that is neither a Duration, a KeySpline nor a glyph`);
 
 		default:
 			return fail(`${where}: no conversion for the scalar type \`${record.type}\``);
@@ -240,7 +293,9 @@ function highContrastColor(record, siblings) {
 	const sibling = siblings.get(`${record.key}Brush`);
 	if (sibling?.kind === 'brush' && sibling.color !== undefined) {
 		const reference = REFERENCE.exec(sibling.color.trim());
-		return reference ? `var(--winui-${reference[1].trim()})` : color(sibling.color, at(sibling));
+		return reference
+			? ref(reference[1].trim(), 'HighContrast', at(sibling))
+			: color(sibling.color, at(sibling));
 	}
 
 	// `SolidBackgroundFillColorTransparent` is the one poisoned key with no sibling brush
@@ -258,9 +313,9 @@ const POISON = '#FF0000';
  * alias, a literal is a literal. Shared by gradient stops and by an acrylic brush's
  * fallback, which is why it is not named for either.
  */
-function resolvedColor(raw, where) {
+function resolvedColor(raw, where, theme) {
 	const reference = REFERENCE.exec(raw.trim());
-	return reference ? `var(--winui-${reference[1].trim()})` : color(raw, where);
+	return reference ? ref(reference[1].trim(), theme, where) : color(raw, where);
 }
 
 /**
@@ -339,7 +394,7 @@ function gradient(record) {
 	const direction = flip ? 'to top' : 'to bottom';
 
 	return `linear-gradient(${direction}, ${stops
-		.map((stop) => `${resolvedColor(stop.color, where)} ${position(stop.offset)}`)
+		.map((stop) => `${resolvedColor(stop.color, where, record.theme)} ${position(stop.offset)}`)
 		.join(', ')})`;
 }
 
@@ -350,7 +405,7 @@ function gradient(record) {
 function acrylic(record) {
 	const where = at(record);
 	if (record.fallbackColor === undefined) fail(`${where}: acrylic brush with no FallbackColor`);
-	return resolvedColor(record.fallbackColor, where);
+	return resolvedColor(record.fallbackColor, where, record.theme);
 }
 
 // The two `FontWeight` names the ramp uses. Anything else stops here rather than
@@ -492,7 +547,7 @@ function style(record, byKey) {
 
 	return {
 		fontFamily: `'Segoe UI Variable ${face}', 'Segoe UI', sans-serif`,
-		fontSize: `var(--winui-${fontSizeKey})`,
+		fontSize: ref(fontSizeKey, record.theme, where),
 		fontWeight,
 		lineHeight: `${ramp.lineHeight}px`
 	};
@@ -572,7 +627,7 @@ function convert(record, siblings) {
 			return brush(record);
 
 		case 'alias':
-			return `var(--winui-${record.to})`;
+			return ref(record.to, record.theme, at(record));
 
 		case 'scalar':
 			return scalar(record);
@@ -623,7 +678,16 @@ function references(record) {
  */
 function select(resources) {
 	const files = new Set(SOURCE_FILES);
-	const seeds = new Set(Object.keys(ADDITIONAL_KEYS));
+	// Two seed maps, one per acceptance surface: the Design pages name theirs as page
+	// content, the shell reads its own in component CSS. They are kept apart so each
+	// stays deletable with the thing that needs it, and merged here because the closure
+	// does not care which surface asked.
+	for (const key of Object.keys(SHELL_KEYS))
+		if (key in ADDITIONAL_KEYS)
+			fail(`\`${key}\` is seeded by both ADDITIONAL_KEYS and SHELL_KEYS; it belongs to one`);
+	const seedNames = { ...ADDITIONAL_KEYS, ...SHELL_KEYS };
+	const seedMap = (key) => (key in ADDITIONAL_KEYS ? 'ADDITIONAL_KEYS' : 'SHELL_KEYS');
+	const seeds = new Set(Object.keys(seedNames));
 
 	// A key the acceptance surface names is a seed even when it lives outside the four
 	// base files; its records join the initial pass by key rather than by file. The
@@ -633,7 +697,7 @@ function select(resources) {
 	const initial = resources.filter((record) => files.has(record.file));
 	for (const key of seeds)
 		if (!resources.some((record) => record.key === key))
-			fail(`ADDITIONAL_KEYS lists \`${key}\`, which the record file does not contain`);
+			fail(`${seedMap(key)} lists \`${key}\`, which the record file does not contain`);
 	// Unconditional, and not `&& seeds.size === 0`: the seeds cannot stand in for the base
 	// files. A record file that matches none of them is a re-pin that moved or renamed
 	// something, and the seeds being non-empty would otherwise let this run produce a
@@ -657,7 +721,7 @@ function select(resources) {
 		// stale list — and saying `defined twice in the Light scope` would send the reader
 		// looking through the XAML for a conflict that is not there.
 		if (byKey.has(key))
-			fail(`ADDITIONAL_KEYS lists \`${key}\`, which the base files already define`);
+			fail(`${seedMap(key)} lists \`${key}\`, which the base files already define`);
 		for (const record of resources) {
 			if (record.key !== key) continue;
 			const themes = byKey.get(record.key) ?? new Map();
@@ -672,7 +736,17 @@ function select(resources) {
 	// names the OS supplies; anything else means the four base files no longer close over
 	// themselves, and emitting a `var()` nobody defines would hide that inside a
 	// declaration the browser silently drops.
-	const external = new Set([...Object.keys(SYSTEM_COLORS), ...Object.keys(ACCENT_COLORS)]);
+	// The names the OS supplies, from all four places this file knows one. `PLATFORM_FONTS`
+	// belonged here from the moment it existed and was not: nothing in v1's selection
+	// referenced `SymbolThemeFontFamily`, so the omission was unreachable rather than
+	// harmless, and the first shell dictionary to reference it would have failed the walk
+	// on a name the generator itself writes into the output.
+	const external = new Set([
+		...Object.keys(SYSTEM_COLORS),
+		...Object.keys(ACCENT_COLORS),
+		...Object.keys(PLATFORM_FONTS),
+		...Object.keys(PLATFORM_BRUSHES)
+	]);
 	const reached = new Set();
 	const queue = [...byKey.keys()];
 	while (queue.length) {

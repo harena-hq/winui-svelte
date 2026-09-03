@@ -27,14 +27,28 @@ TitleBar have under high contrast:
 | `SystemControlHighlightListMediumBrush`   | 10   | button background when pressed                        |
 | `SystemControlHighlightListLowBrush`      | 10   | button background when hovered                        |
 
+Four more join them for a second reason. `SystemControlHighlightListLowRevealBackgroundBrush`,
+`…HighlightListMediumRevealBackgroundBrush`, `SystemControlHighlightAltTransparentRevealBorderBrush`
+and `SystemControlBackgroundTransparentRevealBorderBrush` **are** defined — in
+`RevealBrush_themeresources.xaml`, and their high-contrast values are plain system colours.
+Their light and dark values are not: those resolve through `SystemListLowColor` and
+`SystemListMediumColor`, which the extraction does not define either. So they are the same
+problem one layer down — a definition this project cannot complete — and the shell reads
+them only under high contrast, where the definition is complete and readable.
+
 Doing nothing is not available: the generator fails on a reference nothing defines, which
 is the correct behaviour and the reason this decision is being made rather than discovered
 later.
 
 ## Decision
 
-**Resolve each legacy name to a system colour through an explicit table in
-`scripts/tokens/manifest.mjs`, and emit no token for the name itself.** A reference to a
+**Resolve each name to a system colour through an explicit table in
+`scripts/tokens/manifest.mjs` — `PLATFORM_BRUSHES` — and emit no token for the name
+itself.** Each row carries the themes its mapping is warranted for, and a reference from
+any other theme fails the run. That guard is not hypothetical: six of the ten rows are
+referenced from `Default` and `Light` records elsewhere in the extraction, outside this
+selection, and `PivotHeaderItemForegroundSelected` is the one a Navigation tranche will
+reach first. A reference to a
 mapped name is replaced at emission by `var(--winui-<SystemColor…>)`, so the six do not
 appear in the output at all — only the eight names ADR 0005 already established do.
 
@@ -68,16 +82,24 @@ text** — 31 `SystemColorGrayTextColorBrush` and one `SystemColorGrayTextColor`
 
 So:
 
-| legacy name                               | resolves to                     | evidence                                          |
-| ----------------------------------------- | ------------------------------- | ------------------------------------------------- |
-| `SystemControlForegroundBaseHighBrush`    | `SystemColorButtonTextColor`    | Reveal `Foreground…`; the most-used HC foreground |
-| `SystemControlBackgroundBaseLowBrush`     | `SystemColorButtonFaceColor`    | Reveal `Background…`, 16 of 17                    |
-| `SystemControlHighlightAltBaseHighBrush`  | `SystemColorHighlightTextColor` | Reveal `HighlightAlt…`                            |
-| `SystemControlHighlightListLowBrush`      | `SystemColorHighlightColor`     | its own Reveal counterpart                        |
-| `SystemControlHighlightListMediumBrush`   | `SystemColorHighlightColor`     | its own Reveal counterpart                        |
-| `SystemControlDisabledBaseMediumLowBrush` | `SystemColorGrayTextColor`      | 32 of 32 resolving `*ForegroundDisabled` keys     |
+| legacy name                                             | resolves to                     | evidence                                          |
+| ------------------------------------------------------- | ------------------------------- | ------------------------------------------------- |
+| `SystemControlForegroundBaseHighBrush`                  | `SystemColorButtonTextColor`    | Reveal `Foreground…`; the most-used HC foreground |
+| `SystemControlBackgroundBaseLowBrush`                   | `SystemColorButtonFaceColor`    | Reveal `Background…`, 16 of 17                    |
+| `SystemControlHighlightAltBaseHighBrush`                | `SystemColorHighlightTextColor` | Reveal `HighlightAlt…`                            |
+| `SystemControlHighlightListLowBrush`                    | `SystemColorHighlightColor`     | its own Reveal counterpart                        |
+| `SystemControlHighlightListMediumBrush`                 | `SystemColorHighlightColor`     | its own Reveal counterpart                        |
+| `SystemControlDisabledBaseMediumLowBrush`               | `SystemColorGrayTextColor`      | 32 of 32 resolving `*ForegroundDisabled` keys     |
+| `SystemControlHighlightListLowRevealBackgroundBrush`    | `SystemColorHighlightColor`     | its own high-contrast record                      |
+| `SystemControlHighlightListMediumRevealBackgroundBrush` | `SystemColorHighlightColor`     | its own high-contrast record                      |
+| `SystemControlHighlightAltTransparentRevealBorderBrush` | `SystemColorHighlightTextColor` | its own high-contrast record                      |
+| `SystemControlBackgroundTransparentRevealBorderBrush`   | `SystemColorButtonTextColor`    | its own high-contrast record                      |
 
-The two strongest and the two weakest are named as such on purpose. `HighlightListLow` and
+The last four are not chosen at all: each is what its own record says under high contrast,
+and substitution is only how their light and dark halves — which resolve through two more
+undefined platform colours, and which nothing here reads — are kept out of the output.
+
+The two strongest and the two weakest are named in the paragraph below rather than in the table, because a mark in a column is read as a footnote and skipped. `HighlightListLow` and
 `HighlightListMedium` are settled by their own namesakes. `ForegroundBaseHigh` and
 `HighlightAltBaseHigh` each rest on a single Reveal witness plus corroboration from the
 same file the shell reads: `NavigationViewSelectionIndicatorForeground` is
@@ -128,7 +150,7 @@ reference parameter, and the measurement needs it changed.
 
 ## Downstream impact
 
-v2's shell needs the six rows above. Later tranches will reach more of the 61: the largest
+v2's shell needs the ten rows above. Later tranches will reach more of the 61: the largest
 untouched ones are `SystemControlForegroundTransparentBrush` (30 uses),
 `SystemControlPageBackgroundMediumAltMediumBrush` (27) and
 `SystemControlHighlightTransparentBrush` (21). Each arrives with its control and is added

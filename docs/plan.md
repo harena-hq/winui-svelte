@@ -250,7 +250,7 @@ dependencies.
 **D15 — a tranche seeds by key, not by file.** v1 seeded four whole dictionaries because they
 are the shared vocabulary. Seeding the shell's four the same way was tried and measured:
 the closure reaches the Reveal material brushes, which nothing here can express, and sixteen
-names the extraction never defines — the legacy `SystemControl*` brushes and
+names that nothing it walks through defines — the legacy `SystemControl*` brushes and
 `ContentControlThemeFontFamily` among them — because the dictionaries also carry whole
 `Style` records for controls this version does not build. A per-control dictionary is
 therefore a place to look keys up, not a set to take wholesale.
