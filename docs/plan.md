@@ -39,6 +39,7 @@ pnpm workspace. The library is publishable and imposes no build tooling on its c
 | D7  | Out-of-scope Gallery groups keep their pages, implemented where the web allows                   | this file, "Roadmap → v4" |
 | D8  | Accent is six tokens with a baked default, plus an optional derivation from one base             | this file, "Accent"       |
 | D9  | bits-ui as the primitive base; individual Zag machines for TreeView, ColorPicker, NumberBox      | ADR 0004                  |
+| D10 | High contrast is generated as aliases onto eight system colors, not as a third palette           | ADR 0005                  |
 
 ## Verification
 
@@ -126,6 +127,8 @@ themes, generated rather than hand-written.**
   / WinUI 3 branch question is settled in ADR 0001: no value differs, WinUI 3 adds four colors.
 - Colors (light / dark / high contrast), the type ramp, corner radii, the elevation-border
   gradient, motion durations and easings.
+- High contrast is not a third set of values. It is a remapping onto eight system colors, and
+  the palette colors the source carries for it are deliberate `#FF0000` tripwires — ADR 0005.
 - A generator turns the extracted source into CSS; a parity test fails if the committed CSS
   and the generator's output disagree.
 
