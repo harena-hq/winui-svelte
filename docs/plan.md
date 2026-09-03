@@ -250,9 +250,11 @@ An observed, time-boxed side-by-side of the full Gallery against Windows 11, pag
 
 Automated, and a unit that fails one cannot be sealed.
 
-- **C1 — no raw visual literals.** No hex color, no px size in a component's CSS except
-  through `var(--winui-*)`. The token cascade _is_ the design system; a literal is a value
-  that will not follow a theme switch.
+- **C1 — no raw visual literals.** No hex color, no px size except through `var(--winui-*)`,
+  in the library **and in the Gallery**. The token cascade _is_ the design system; a literal
+  is a value that will not follow a theme switch. The Gallery is in scope because its Design
+  pages are where the tokens are judged: a color hard-coded there would make the acceptance
+  surface match the original for a reason unrelated to the token layer.
 - **C2 — tokens are generated.** The committed token CSS must equal the generator's output.
 - **C3 — layer separation.** `packages/winui-svelte` must not import from `apps/gallery`.
 - **C4 — three themes, always.** Every exported component renders under light, dark and high

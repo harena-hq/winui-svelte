@@ -102,8 +102,13 @@ export function declarations(source, startLine = 1) {
 		buffer = '';
 		if (!depth || !text.includes(':')) return;
 		const at = text.indexOf(':');
+		const prop = text.slice(0, at).trim();
 		out.push({
-			prop: text.slice(0, at).trim().toLowerCase(),
+			// Property names are case-insensitive in CSS and lower-cased so a gate can match
+			// them; custom properties are case-SENSITIVE, so lower-casing one produces a name
+			// that is not in the file — which a failure message then tells the reader to go
+			// and look for.
+			prop: prop.startsWith('--') ? prop : prop.toLowerCase(),
 			value: text.slice(at + 1).trim(),
 			line: bufferLine
 		});
