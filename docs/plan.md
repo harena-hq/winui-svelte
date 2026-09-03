@@ -262,6 +262,11 @@ Automated, and a unit that fails one cannot be sealed.
 - **C5 — divergences are declared.** Every intentional departure from WinUI behaviour carries
   a `WD-NNN` id in a code comment resolving to an entry in `docs/divergences.md`, and every
   entry is cited by at least one site. Neither direction may dangle.
+- **C7 — the acceptance surface is covered.** Every resource the Design pages display is
+  emitted by the token layer, or listed in the generator's exclusions with a reason. This is
+  D12's second clause made checkable: the first half of the selection is structural and the
+  generator enforces it, while the second was a promise kept by hand until the page content
+  existed as data to check against.
 - **C6 — no consumer build tooling.** A smoke app consuming the built package with bare Vite +
   Svelte and nothing else must render correctly.
 
