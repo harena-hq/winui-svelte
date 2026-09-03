@@ -176,7 +176,7 @@ five pages is a table of tokens **wrapped in a control from a later version**:
 
 | page        | the table v1 reproduces                              | the frame around it, and where it lands   |
 | ----------- | ---------------------------------------------------- | ----------------------------------------- |
-| Color       | 132 tiles and 27 captioned examples, in six sections | `SelectorBar` — v4, Navigation            |
+| Color       | 130 tiles and 27 captioned examples, in six sections | `SelectorBar` — v4, Navigation            |
 | Typography  | 9 type-ramp rows                                     | `ControlExample` — v3                     |
 | Geometry    | 3 corner-radius rows                                 | `ControlExample` — v3                     |
 | Spacing     | 7 spacing rows                                       | none; two annotated images v1 cannot draw |
@@ -189,7 +189,7 @@ reduction in scope — the tables are the part that shows the tokens, and the ch
 controls that do not exist yet — but it does mean these five pages are not a side-by-side
 match until v4, and only the tables are compared before then.
 
-Four of the 132 color tiles cannot be reproduced at all in v1: they display the Acrylic
+Four of the 130 color tiles cannot be reproduced at all in v1: they display the Acrylic
 brushes, which need a backdrop this version has nothing to put behind them. Recorded as a
 divergence rather than dropped, because a missing tile is indistinguishable from a page that
 was never finished.
