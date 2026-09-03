@@ -1,0 +1,29 @@
+/*
+ * The Gallery's own `Style` resources, the ones in its `Styles/Grid.xaml` and
+ * `App.xaml`, as CSS classes.
+ *
+ * Kebab-case: these are the Gallery's names rather than WinUI resource keys, so
+ * ADR 0006's rule does not reach them and CSS convention wins.
+ *
+ * `GalleryBackgroundBrush` and `GalleryBorderBrush` are the Gallery's aliases onto
+ * `SolidBackgroundFillColorBaseBrush` and `CardStrokeColorDefaultBrush`; resolved
+ * here rather than carrying two more indirections.
+ */
+
+.gallery-tile-grid {
+	background: var(--winui-SolidBackgroundFillColorBaseBrush);
+	/* c1-allow: 1px is the Gallery's card stroke width, not a tokenized theme value */
+	border: 1px solid var(--winui-CardStrokeColorDefaultBrush);
+	border-radius: var(--winui-OverlayCornerRadius);
+}
+
+.design-row {
+	min-height: 68px;
+	border-radius: var(--winui-ControlCornerRadius);
+}
+
+.design-row-light {
+	min-height: 68px;
+	border-radius: var(--winui-ControlCornerRadius);
+	background: var(--winui-CardBackgroundFillColorDefaultBrush);
+}

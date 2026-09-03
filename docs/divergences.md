@@ -82,7 +82,26 @@ worth closing. "Would be hard" is not a reason — the reason is always a specif
 
 ---
 
-_Two entries. The next is expected to be TabView's arrow-key traversal. Every surveyed
+### WD-003 — the two Mica Background tiles on the Color page render without a fill
+
+- **Control**: the token layer, the two `Mica Background / Base` and
+  `Mica Background / Base Alt` tiles on `/design/color`.
+- **WinUI does**: fill them with a live Mica backdrop — a tinted, blurred sample of the
+  desktop behind the window — sampled by the OS at composition time.
+- **We do**: render the tile with no fill at all, leaving it transparent over the page
+  background.
+- **Why accepted**: Mica is a window material. It samples whatever the OS has drawn
+  behind the window, and v1 has no window shell — no title bar, no backdrop region,
+  nothing for a Mica approximation to read. A flat fill would not be Mica, and
+  reproducing the material is the shell's job. v2 builds a Mica approximation, at
+  which point the divergence closes.
+- **Would reconsider if**: v2 lands. This entry is deleted rather than amended, because
+  by then the tile is rendered correctly, and a divergence that names a working site
+  is a divergence that has stopped being real.
+
+---
+
+_Three entries. The next is expected to be TabView's arrow-key traversal. Every surveyed
 primitive library — bits-ui, Zag and therefore Ark, and Melt — builds its roving-focus
 candidate set by querying for a role or data attribute, which cannot match a close button
 nested inside a tab trigger. So the button is reachable by Tab and not by arrow keys, and that
