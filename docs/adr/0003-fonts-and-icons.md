@@ -38,6 +38,18 @@ Reference by name; embed nothing.
   working fallback step. `tests/visual/fonts.spec.ts` fails if any of the families the
   token layer names stops resolving.
 
+  **The suffix itself is not portable, which is the same finding on a second platform.**
+  Microsoft's design-downloads page — the one this ADR already cites for the EULA — ships
+  the same font file for macOS, and Font Book registers it as `"Segoe UI Variable Static
+Small"` / `"Static Text"` / `"Static Display"`, not the Windows names. A stack written
+  for one platform is silently inert on the other; this project makes no attempt to
+  reconcile them, because doing so would mean carrying a second family-name table for a
+  platform outside the acceptance environment, or worse, adding the macOS names to the
+  Windows stack and quietly widening what a Windows user's browser is allowed to
+  substitute. Measured 2026-09-03, reported from a contributor's own machine, not the
+  reference guest — recorded here because it is exactly the shape of trap this ADR warns
+  about, arriving from an unplanned direction.
+
 - Icons: `"Segoe Fluent Icons"` first, with a redistributable set behind it for non-Windows
   viewers. Glyphs are addressed by their WinUI codepoint.
 
