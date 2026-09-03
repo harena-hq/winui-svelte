@@ -1,6 +1,7 @@
 import { createHash } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { dirname, join, relative } from 'node:path';
+import { dirname, join, relative, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { CHECKOUT, head, ROOT, UPSTREAM } from './fetch.mjs';
 import { parse } from '../tokens/xaml.mjs';
 
@@ -726,9 +727,32 @@ function main(argv) {
 	console.log(`written           ${relative(ROOT, OUTPUT_SHELL)}`);
 }
 
-try {
-	main(process.argv.slice(2));
-} catch (error) {
-	console.error(error.message);
-	process.exit(1);
+/**
+ * Both records, freshly derived, for a caller that wants to compare rather than write.
+ *
+ * Exported so conformance gate C8 re-derives through this module instead of restating
+ * how a record is built. A second implementation of the same derivation would agree with
+ * the committed files right up to the day one of them was changed.
+ */
+export function records() {
+	const at = head();
+	if (at !== UPSTREAM.commit) {
+		const state = at === null ? 'is missing' : `is at ${at || 'no commit'}`;
+		throw new Error(
+			`.upstream/WinUI-Gallery ${state}, not ${UPSTREAM.commit}. Run \`pnpm gallery:fetch\`.`
+		);
+	}
+	return { design: extractDesign(), shell: extractShell() };
+}
+
+// Importing this module must not write files or exit: C8 wants `records()`, not the side
+// effect. `resolve` rather than a string compare — `node scripts/gallery/extract.mjs` and
+// an absolute invocation are the same entry point and must both take this branch.
+if (process.argv[1] && fileURLToPath(import.meta.url) === resolve(process.argv[1])) {
+	try {
+		main(process.argv.slice(2));
+	} catch (error) {
+		console.error(error.message);
+		process.exit(1);
+	}
 }
