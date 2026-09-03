@@ -40,6 +40,8 @@ pnpm workspace. The library is publishable and imposes no build tooling on its c
 | D8  | Accent is six tokens with a baked default, plus an optional derivation from one base             | this file, "Accent"       |
 | D9  | bits-ui as the primitive base; individual Zag machines for TreeView, ColorPicker, NumberBox      | ADR 0004                  |
 | D10 | High contrast is generated as aliases onto eight system colors, not as a third palette           | ADR 0005                  |
+| D11 | A token is named `--winui-` plus the WinUI resource key, unchanged                               | ADR 0006                  |
+| D12 | The token layer is a curated closure of four base files, not every key                           | this file, "Roadmap → v1" |
 
 ## Verification
 
@@ -131,6 +133,11 @@ themes, generated rather than hand-written.**
   the palette colors the source carries for it are deliberate `#FF0000` tripwires — ADR 0005.
 - A generator turns the extracted source into CSS; a parity test fails if the committed CSS
   and the generator's output disagree.
+- **Scope is a closure, not the whole extraction.** v1 emits the keys defined in four base
+  files — the palette, the small common dictionary, corner radii and the type ramp — plus what
+  they transitively reference. Measured: 236 keys, closing over exactly 14 names the OS
+  supplies. Per-control tokens land with their control tranche, because emitting all 3074 keys
+  would drag in Acrylic and Reveal, which v1 cannot express and must not fake.
 
 Acceptance surface: the Gallery's **Design** pages — Color, Typography, Geometry, Spacing,
 Iconography. These render tokens with almost no control chrome, which makes them the
