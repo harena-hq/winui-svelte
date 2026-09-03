@@ -37,17 +37,64 @@ React-coupled. No maintained WinUI-3-for-CSS project exists — the Windows 11 e
 ## Decision
 
 Derive the token layer from `microsoft/microsoft-ui-xaml` (MIT), extracting numeric values
-from the theme-resource dictionaries under `controls/dev/CommonStyles/` on `main`. Use
-Fluent 2's type-ramp numbers only as a cross-check. Depend on no Fluent 2 package.
+from the theme-resource dictionaries under `controls/dev/` on `main` — see the scope note
+below. Use Fluent 2's type-ramp numbers only as a cross-check. Depend on no Fluent 2 package.
 
 Preserve the alpha-composited model rather than flattening it: fills stay as `rgb(… / α)`
 custom properties layered over a backdrop token, because flattening them is the specific
 mistake that makes a port look almost right.
 
-**Branch matters.** Values gathered so far came from `winui2/main` (`dev/CommonStyles/`),
-which is WinUI 2 for UWP. Re-extract from `main` (`controls/dev/CommonStyles/`), diff against
-what was gathered, and record any difference. Assumed parity between the two lines would be
-invisible and would poison every downstream color.
+**Branch — settled by measurement.** The values gathered before this decision came from
+`winui2/main` (`dev/CommonStyles/`), which is WinUI 2 for UWP. Both branches were extracted
+and compared, `main` at `79646b4`:
+
+- **No value differs.** Every key present in both carries the same color in all three theme
+  dictionaries, and `CornerRadius_themeresources.xaml` carries the same two radii.
+- **WinUI 3 adds four colors**, and their brushes, in each theme:
+  `ControlFillColorQuarternary`, `CardBackgroundFillColorTertiary`,
+  `SolidBackgroundFillColorQuinary`, `SolidBackgroundFillColorSenary`. 83 colors per theme
+  against WinUI 2's 79, and 184 entries per theme against 176 — the same counts in all three
+  dictionaries.
+- **WinUI 3 removes nothing.**
+
+The parity that would have been assumed happens to hold. It was still worth measuring: the
+four added keys are exactly the surface on which an assumption fails silently, since a missing
+key resolves to nothing rather than to a wrong color. Extraction targets `main`.
+
+**Scope — the dictionaries are not confined to `CommonStyles/`.** 85 `*_themeresources.xaml`
+files sit under `controls/dev/**` outside the `perf2026` set, and **78 of them carry theme
+dictionaries** — somewhat under 8,000 keyed resource definitions between them.
+`controls/dev/CommonStyles/Common_themeresources_any.xaml` holds the base palette; the rest are
+per-control derivations from it. An extractor pointed at `CommonStyles/` alone would silently
+miss every control-level token, which is why this ADR's original wording is corrected here
+rather than left to be discovered by an implementer.
+
+**The other seven carry no theme dictionary, and that is not a failure.** Their resources do
+not vary by theme — and one of them is where the type ramp lives:
+`TextBlock_themeresources.xaml` defines the seven font sizes (12, 14, 18, 20, 28, 40, 68) at
+file level, outside the three-theme model entirely. An extractor must accept a file with no
+theme dictionary as ordinary input, and must emit a theme-independent resource once rather
+than triplicating it.
+
+**A second, parallel set exists and is token-neutral.** 40 controls also ship
+`*_themeresources_perf2026.xaml`. `CommonStyles.vcxitems` declares two page sets, tagged
+`<Type>ThemeResources</Type>` and `<Type>ThemeResourcesPerf2026</Type>`, 42 entries each; which
+set a running app resolves is decided somewhere that file does not say, so treat the selection
+mechanism as unknown rather than as build-time or runtime.
+
+Comparing the resource definitions of all 40 pairs, **38 are identical** and the two that
+differ carry no token difference either:
+
+- `TitleBar` renames one key — `TitleBarPaneToggleButtonForegroundDisabled` →
+  `TitleBarPaneToggleForegroundDisabled`, same value.
+- `ScrollBar` turns five keyed `ControlTemplate`s into five keyed `Style`s under new names.
+
+What the variants change is visual-state mechanics: `Storyboard` with `DiscreteObjectKeyFrame`
+becomes `VisualState.Setters`. That is a performance rewrite. **Extract the non-`perf2026` set
+and ignore the other** — with the corroboration that 14 of the `perf2026`-tagged pages point at
+base filenames anyway, `Common_themeresources_any.xaml`, `CornerRadius_themeresources.xaml` and
+`TextBlock_themeresources.xaml` among them. Both sets read the same palette, radii and type
+ramp; only the templates fork.
 
 ## Status
 
