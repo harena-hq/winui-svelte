@@ -363,12 +363,12 @@
 			"brush": 1517,
 			"scalar": 1285,
 			"color": 368,
-			"unsupported": 290,
+			"unsupported": 200,
+			"acrylic": 90,
 			"gradient": 15
 		},
 		"unsupportedTags": {
 			"Style": 166,
-			"AcrylicBrush": 90,
 			"primitives:CornerRadiusFilterConverter": 10,
 			"DataTemplate": 7,
 			"primitives:CornerRadiusToThicknessConverter": 6,
@@ -22774,10 +22774,12 @@
 		{
 			"key": "SystemControlTransientBackgroundBrush",
 			"theme": "Default",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/CommonStyles/Deprecated_themeresources_any.xaml",
 			"line": 5,
-			"tag": "AcrylicBrush"
+			"tintColor": "#2C2C2C",
+			"tintOpacity": "0.15",
+			"fallbackColor": "#2C2C2C"
 		},
 		{
 			"key": "TextOnAccentFillColorDefault",
@@ -22966,10 +22968,12 @@
 		{
 			"key": "SystemControlTransientBackgroundBrush",
 			"theme": "Light",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/CommonStyles/Deprecated_themeresources_any.xaml",
 			"line": 31,
-			"tag": "AcrylicBrush"
+			"tintColor": "#FCFCFC",
+			"tintOpacity": "0.0",
+			"fallbackColor": "#FCFCFC"
 		},
 		{
 			"key": "TextOnAccentFillColorDefault",
@@ -47848,274 +47852,342 @@
 		{
 			"key": "SystemControlAcrylicWindowBrush",
 			"theme": "Default",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/Materials/Acrylic/AcrylicBrush_themeresources.xaml",
 			"line": 8,
-			"tag": "AcrylicBrush"
+			"tintColor": "{StaticResource SystemChromeAltHighColor}",
+			"tintOpacity": "0.8",
+			"fallbackColor": "{StaticResource SystemChromeMediumColor}"
 		},
 		{
 			"key": "SystemControlAcrylicElementBrush",
 			"theme": "Default",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/Materials/Acrylic/AcrylicBrush_themeresources.xaml",
 			"line": 9,
-			"tag": "AcrylicBrush"
+			"tintColor": "{StaticResource SystemChromeAltHighColor}",
+			"tintOpacity": "0.8",
+			"fallbackColor": "{StaticResource SystemChromeMediumColor}"
 		},
 		{
 			"key": "SystemControlAccentAcrylicWindowAccentMediumHighBrush",
 			"theme": "Default",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/Materials/Acrylic/AcrylicBrush_themeresources.xaml",
 			"line": 10,
-			"tag": "AcrylicBrush"
+			"tintColor": "{ThemeResource SystemAccentColor}",
+			"tintOpacity": "0.7",
+			"fallbackColor": "{ThemeResource SystemAccentColor}"
 		},
 		{
 			"key": "SystemControlAccentAcrylicElementAccentMediumHighBrush",
 			"theme": "Default",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/Materials/Acrylic/AcrylicBrush_themeresources.xaml",
 			"line": 11,
-			"tag": "AcrylicBrush"
+			"tintColor": "{ThemeResource SystemAccentColor}",
+			"tintOpacity": "0.7",
+			"fallbackColor": "{ThemeResource SystemAccentColor}"
 		},
 		{
 			"key": "SystemControlAccentDark1AcrylicWindowAccentDark1Brush",
 			"theme": "Default",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/Materials/Acrylic/AcrylicBrush_themeresources.xaml",
 			"line": 12,
-			"tag": "AcrylicBrush"
+			"tintColor": "{ThemeResource SystemAccentColorDark1}",
+			"tintOpacity": "0.8",
+			"fallbackColor": "{ThemeResource SystemAccentColorDark1}"
 		},
 		{
 			"key": "SystemControlAccentDark1AcrylicElementAccentDark1Brush",
 			"theme": "Default",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/Materials/Acrylic/AcrylicBrush_themeresources.xaml",
 			"line": 13,
-			"tag": "AcrylicBrush"
+			"tintColor": "{ThemeResource SystemAccentColorDark1}",
+			"tintOpacity": "0.8",
+			"fallbackColor": "{ThemeResource SystemAccentColorDark1}"
 		},
 		{
 			"key": "SystemControlAccentDark2AcrylicWindowAccentDark2MediumHighBrush",
 			"theme": "Default",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/Materials/Acrylic/AcrylicBrush_themeresources.xaml",
 			"line": 14,
-			"tag": "AcrylicBrush"
+			"tintColor": "{ThemeResource SystemAccentColorDark2}",
+			"tintOpacity": "0.7",
+			"fallbackColor": "{ThemeResource SystemAccentColorDark2}"
 		},
 		{
 			"key": "SystemControlAccentDark2AcrylicElementAccentDark2MediumHighBrush",
 			"theme": "Default",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/Materials/Acrylic/AcrylicBrush_themeresources.xaml",
 			"line": 15,
-			"tag": "AcrylicBrush"
+			"tintColor": "{ThemeResource SystemAccentColorDark2}",
+			"tintOpacity": "0.7",
+			"fallbackColor": "{ThemeResource SystemAccentColorDark2}"
 		},
 		{
 			"key": "SystemControlAcrylicWindowMediumHighBrush",
 			"theme": "Default",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/Materials/Acrylic/AcrylicBrush_themeresources.xaml",
 			"line": 16,
-			"tag": "AcrylicBrush"
+			"tintColor": "{StaticResource SystemChromeAltHighColor}",
+			"tintOpacity": "0.7",
+			"fallbackColor": "{StaticResource SystemChromeMediumColor}"
 		},
 		{
 			"key": "SystemControlAcrylicElementMediumHighBrush",
 			"theme": "Default",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/Materials/Acrylic/AcrylicBrush_themeresources.xaml",
 			"line": 17,
-			"tag": "AcrylicBrush"
+			"tintColor": "{StaticResource SystemChromeAltHighColor}",
+			"tintOpacity": "0.7",
+			"fallbackColor": "{StaticResource SystemChromeMediumColor}"
 		},
 		{
 			"key": "SystemControlChromeMediumLowAcrylicWindowMediumBrush",
 			"theme": "Default",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/Materials/Acrylic/AcrylicBrush_themeresources.xaml",
 			"line": 18,
-			"tag": "AcrylicBrush"
+			"tintColor": "{StaticResource SystemChromeAltHighColor}",
+			"tintOpacity": "0.6",
+			"fallbackColor": "{StaticResource SystemChromeMediumLowColor}"
 		},
 		{
 			"key": "SystemControlChromeMediumLowAcrylicElementMediumBrush",
 			"theme": "Default",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/Materials/Acrylic/AcrylicBrush_themeresources.xaml",
 			"line": 19,
-			"tag": "AcrylicBrush"
+			"tintColor": "{StaticResource SystemChromeAltHighColor}",
+			"tintOpacity": "0.6",
+			"fallbackColor": "{StaticResource SystemChromeMediumLowColor}"
 		},
 		{
 			"key": "SystemControlBaseHighAcrylicWindowBrush",
 			"theme": "Default",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/Materials/Acrylic/AcrylicBrush_themeresources.xaml",
 			"line": 20,
-			"tag": "AcrylicBrush"
+			"tintColor": "{StaticResource SystemChromeAltHighColor}",
+			"tintOpacity": "0.8",
+			"fallbackColor": "{StaticResource SystemBaseHighColor}"
 		},
 		{
 			"key": "SystemControlBaseHighAcrylicElementBrush",
 			"theme": "Default",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/Materials/Acrylic/AcrylicBrush_themeresources.xaml",
 			"line": 21,
-			"tag": "AcrylicBrush"
+			"tintColor": "{StaticResource SystemChromeAltHighColor}",
+			"tintOpacity": "0.8",
+			"fallbackColor": "{StaticResource SystemBaseHighColor}"
 		},
 		{
 			"key": "SystemControlBaseHighAcrylicWindowMediumHighBrush",
 			"theme": "Default",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/Materials/Acrylic/AcrylicBrush_themeresources.xaml",
 			"line": 22,
-			"tag": "AcrylicBrush"
+			"tintColor": "{StaticResource SystemChromeAltHighColor}",
+			"tintOpacity": "0.7",
+			"fallbackColor": "{StaticResource SystemBaseHighColor}"
 		},
 		{
 			"key": "SystemControlBaseHighAcrylicElementMediumHighBrush",
 			"theme": "Default",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/Materials/Acrylic/AcrylicBrush_themeresources.xaml",
 			"line": 23,
-			"tag": "AcrylicBrush"
+			"tintColor": "{StaticResource SystemChromeAltHighColor}",
+			"tintOpacity": "0.7",
+			"fallbackColor": "{StaticResource SystemBaseHighColor}"
 		},
 		{
 			"key": "SystemControlBaseHighAcrylicWindowMediumBrush",
 			"theme": "Default",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/Materials/Acrylic/AcrylicBrush_themeresources.xaml",
 			"line": 24,
-			"tag": "AcrylicBrush"
+			"tintColor": "{StaticResource SystemChromeAltHighColor}",
+			"tintOpacity": "0.6",
+			"fallbackColor": "{StaticResource SystemBaseHighColor}"
 		},
 		{
 			"key": "SystemControlBaseHighAcrylicElementMediumBrush",
 			"theme": "Default",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/Materials/Acrylic/AcrylicBrush_themeresources.xaml",
 			"line": 25,
-			"tag": "AcrylicBrush"
+			"tintColor": "{StaticResource SystemChromeAltHighColor}",
+			"tintOpacity": "0.6",
+			"fallbackColor": "{StaticResource SystemBaseHighColor}"
 		},
 		{
 			"key": "SystemControlChromeLowAcrylicWindowBrush",
 			"theme": "Default",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/Materials/Acrylic/AcrylicBrush_themeresources.xaml",
 			"line": 26,
-			"tag": "AcrylicBrush"
+			"tintColor": "{StaticResource SystemChromeAltHighColor}",
+			"tintOpacity": "0.8",
+			"fallbackColor": "{StaticResource SystemChromeLowColor}"
 		},
 		{
 			"key": "SystemControlChromeLowAcrylicElementBrush",
 			"theme": "Default",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/Materials/Acrylic/AcrylicBrush_themeresources.xaml",
 			"line": 27,
-			"tag": "AcrylicBrush"
+			"tintColor": "{StaticResource SystemChromeAltHighColor}",
+			"tintOpacity": "0.8",
+			"fallbackColor": "{StaticResource SystemChromeLowColor}"
 		},
 		{
 			"key": "SystemControlChromeMediumAcrylicWindowMediumBrush",
 			"theme": "Default",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/Materials/Acrylic/AcrylicBrush_themeresources.xaml",
 			"line": 28,
-			"tag": "AcrylicBrush"
+			"tintColor": "{StaticResource SystemChromeAltHighColor}",
+			"tintOpacity": "0.6",
+			"fallbackColor": "{StaticResource SystemChromeMediumColor}"
 		},
 		{
 			"key": "SystemControlChromeMediumAcrylicElementMediumBrush",
 			"theme": "Default",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/Materials/Acrylic/AcrylicBrush_themeresources.xaml",
 			"line": 29,
-			"tag": "AcrylicBrush"
+			"tintColor": "{StaticResource SystemChromeAltHighColor}",
+			"tintOpacity": "0.6",
+			"fallbackColor": "{StaticResource SystemChromeMediumColor}"
 		},
 		{
 			"key": "SystemControlChromeHighAcrylicWindowMediumBrush",
 			"theme": "Default",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/Materials/Acrylic/AcrylicBrush_themeresources.xaml",
 			"line": 30,
-			"tag": "AcrylicBrush"
+			"tintColor": "{StaticResource SystemChromeAltHighColor}",
+			"tintOpacity": "0.6",
+			"fallbackColor": "{StaticResource SystemChromeHighColor}"
 		},
 		{
 			"key": "SystemControlChromeHighAcrylicElementMediumBrush",
 			"theme": "Default",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/Materials/Acrylic/AcrylicBrush_themeresources.xaml",
 			"line": 31,
-			"tag": "AcrylicBrush"
+			"tintColor": "{StaticResource SystemChromeAltHighColor}",
+			"tintOpacity": "0.6",
+			"fallbackColor": "{StaticResource SystemChromeHighColor}"
 		},
 		{
 			"key": "SystemControlBaseLowAcrylicWindowBrush",
 			"theme": "Default",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/Materials/Acrylic/AcrylicBrush_themeresources.xaml",
 			"line": 32,
-			"tag": "AcrylicBrush"
+			"tintColor": "{StaticResource SystemChromeAltHighColor}",
+			"tintOpacity": "0.8",
+			"fallbackColor": "{StaticResource SystemBaseLowColor}"
 		},
 		{
 			"key": "SystemControlBaseLowAcrylicElementBrush",
 			"theme": "Default",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/Materials/Acrylic/AcrylicBrush_themeresources.xaml",
 			"line": 33,
-			"tag": "AcrylicBrush"
+			"tintColor": "{StaticResource SystemChromeAltHighColor}",
+			"tintOpacity": "0.8",
+			"fallbackColor": "{StaticResource SystemBaseLowColor}"
 		},
 		{
 			"key": "SystemControlBaseMediumLowAcrylicWindowMediumBrush",
 			"theme": "Default",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/Materials/Acrylic/AcrylicBrush_themeresources.xaml",
 			"line": 34,
-			"tag": "AcrylicBrush"
+			"tintColor": "{StaticResource SystemChromeAltHighColor}",
+			"tintOpacity": "0.6",
+			"fallbackColor": "{StaticResource SystemBaseMediumLowColor}"
 		},
 		{
 			"key": "SystemControlBaseMediumLowAcrylicElementMediumBrush",
 			"theme": "Default",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/Materials/Acrylic/AcrylicBrush_themeresources.xaml",
 			"line": 35,
-			"tag": "AcrylicBrush"
+			"tintColor": "{StaticResource SystemChromeAltHighColor}",
+			"tintOpacity": "0.6",
+			"fallbackColor": "{StaticResource SystemBaseMediumLowColor}"
 		},
 		{
 			"key": "SystemControlAltLowAcrylicWindowBrush",
 			"theme": "Default",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/Materials/Acrylic/AcrylicBrush_themeresources.xaml",
 			"line": 36,
-			"tag": "AcrylicBrush"
+			"tintColor": "{StaticResource SystemChromeAltHighColor}",
+			"tintOpacity": "0.8",
+			"fallbackColor": "{StaticResource SystemAltLowColor}"
 		},
 		{
 			"key": "SystemControlAltLowAcrylicElementBrush",
 			"theme": "Default",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/Materials/Acrylic/AcrylicBrush_themeresources.xaml",
 			"line": 37,
-			"tag": "AcrylicBrush"
+			"tintColor": "{StaticResource SystemChromeAltHighColor}",
+			"tintOpacity": "0.8",
+			"fallbackColor": "{StaticResource SystemAltLowColor}"
 		},
 		{
 			"key": "SystemControlAltMediumLowAcrylicWindowMediumBrush",
 			"theme": "Default",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/Materials/Acrylic/AcrylicBrush_themeresources.xaml",
 			"line": 38,
-			"tag": "AcrylicBrush"
+			"tintColor": "{StaticResource SystemChromeAltHighColor}",
+			"tintOpacity": "0.6",
+			"fallbackColor": "{StaticResource SystemAltMediumLowColor}"
 		},
 		{
 			"key": "SystemControlAltMediumLowAcrylicElementMediumBrush",
 			"theme": "Default",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/Materials/Acrylic/AcrylicBrush_themeresources.xaml",
 			"line": 39,
-			"tag": "AcrylicBrush"
+			"tintColor": "{StaticResource SystemChromeAltHighColor}",
+			"tintOpacity": "0.6",
+			"fallbackColor": "{StaticResource SystemAltMediumLowColor}"
 		},
 		{
 			"key": "SystemControlAltHighAcrylicWindowBrush",
 			"theme": "Default",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/Materials/Acrylic/AcrylicBrush_themeresources.xaml",
 			"line": 40,
-			"tag": "AcrylicBrush"
+			"tintColor": "{StaticResource SystemChromeAltHighColor}",
+			"tintOpacity": "0.8",
+			"fallbackColor": "{StaticResource SystemAltHighColor}"
 		},
 		{
 			"key": "SystemControlAltHighAcrylicElementBrush",
 			"theme": "Default",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/Materials/Acrylic/AcrylicBrush_themeresources.xaml",
 			"line": 41,
-			"tag": "AcrylicBrush"
+			"tintColor": "{StaticResource SystemChromeAltHighColor}",
+			"tintOpacity": "0.8",
+			"fallbackColor": "{StaticResource SystemAltHighColor}"
 		},
 		{
 			"key": "SystemControlTransientBorderBrush",
@@ -48129,82 +48201,112 @@
 		{
 			"key": "AcrylicBackgroundFillColorDefaultBrush",
 			"theme": "Default",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/Materials/Acrylic/AcrylicBrush_themeresources.xaml",
 			"line": 43,
-			"tag": "AcrylicBrush"
+			"tintColor": "#2C2C2C",
+			"tintOpacity": "0.15",
+			"tintLuminosityOpacity": "0.96",
+			"fallbackColor": "#2C2C2C"
 		},
 		{
 			"key": "AcrylicInAppFillColorDefaultBrush",
 			"theme": "Default",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/Materials/Acrylic/AcrylicBrush_themeresources.xaml",
 			"line": 44,
-			"tag": "AcrylicBrush"
+			"tintColor": "#2C2C2C",
+			"tintOpacity": "0.15",
+			"tintLuminosityOpacity": "0.96",
+			"fallbackColor": "#2C2C2C"
 		},
 		{
 			"key": "AcrylicBackgroundFillColorDefaultInverseBrush",
 			"theme": "Default",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/Materials/Acrylic/AcrylicBrush_themeresources.xaml",
 			"line": 45,
-			"tag": "AcrylicBrush"
+			"tintColor": "#FCFCFC",
+			"tintOpacity": "0.0",
+			"tintLuminosityOpacity": "0.85",
+			"fallbackColor": "#F9F9F9"
 		},
 		{
 			"key": "AcrylicInAppFillColorDefaultInverseBrush",
 			"theme": "Default",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/Materials/Acrylic/AcrylicBrush_themeresources.xaml",
 			"line": 46,
-			"tag": "AcrylicBrush"
+			"tintColor": "#FCFCFC",
+			"tintOpacity": "0.0",
+			"tintLuminosityOpacity": "0.85",
+			"fallbackColor": "#F9F9F9"
 		},
 		{
 			"key": "AcrylicBackgroundFillColorBaseBrush",
 			"theme": "Default",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/Materials/Acrylic/AcrylicBrush_themeresources.xaml",
 			"line": 47,
-			"tag": "AcrylicBrush"
+			"tintColor": "#202020",
+			"tintOpacity": "0.5",
+			"tintLuminosityOpacity": "0.96",
+			"fallbackColor": "#1C1C1C"
 		},
 		{
 			"key": "AcrylicInAppFillColorBaseBrush",
 			"theme": "Default",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/Materials/Acrylic/AcrylicBrush_themeresources.xaml",
 			"line": 48,
-			"tag": "AcrylicBrush"
+			"tintColor": "#202020",
+			"tintOpacity": "0.5",
+			"tintLuminosityOpacity": "0.96",
+			"fallbackColor": "#1C1C1C"
 		},
 		{
 			"key": "AccentAcrylicBackgroundFillColorDefaultBrush",
 			"theme": "Default",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/Materials/Acrylic/AcrylicBrush_themeresources.xaml",
 			"line": 49,
-			"tag": "AcrylicBrush"
+			"tintColor": "{ThemeResource SystemAccentColorDark1}",
+			"tintOpacity": "0.8",
+			"tintLuminosityOpacity": "0.8",
+			"fallbackColor": "{ThemeResource SystemAccentColorDark1}"
 		},
 		{
 			"key": "AccentAcrylicInAppFillColorDefaultBrush",
 			"theme": "Default",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/Materials/Acrylic/AcrylicBrush_themeresources.xaml",
 			"line": 50,
-			"tag": "AcrylicBrush"
+			"tintColor": "{ThemeResource SystemAccentColorDark1}",
+			"tintOpacity": "0.8",
+			"tintLuminosityOpacity": "0.8",
+			"fallbackColor": "{ThemeResource SystemAccentColorDark1}"
 		},
 		{
 			"key": "AccentAcrylicBackgroundFillColorBaseBrush",
 			"theme": "Default",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/Materials/Acrylic/AcrylicBrush_themeresources.xaml",
 			"line": 51,
-			"tag": "AcrylicBrush"
+			"tintColor": "{ThemeResource SystemAccentColorDark2}",
+			"tintOpacity": "0.8",
+			"tintLuminosityOpacity": "0.8",
+			"fallbackColor": "{ThemeResource SystemAccentColorDark2}"
 		},
 		{
 			"key": "AccentAcrylicInAppFillColorBaseBrush",
 			"theme": "Default",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/Materials/Acrylic/AcrylicBrush_themeresources.xaml",
 			"line": 52,
-			"tag": "AcrylicBrush"
+			"tintColor": "{ThemeResource SystemAccentColorDark2}",
+			"tintOpacity": "0.8",
+			"tintLuminosityOpacity": "0.8",
+			"fallbackColor": "{ThemeResource SystemAccentColorDark2}"
 		},
 		{
 			"key": "DesktopAcrylicTransparentBrush",
@@ -48249,274 +48351,342 @@
 		{
 			"key": "SystemControlAcrylicWindowBrush",
 			"theme": "Light",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/Materials/Acrylic/AcrylicBrush_themeresources.xaml",
 			"line": 60,
-			"tag": "AcrylicBrush"
+			"tintColor": "{StaticResource SystemChromeAltHighColor}",
+			"tintOpacity": "0.8",
+			"fallbackColor": "{StaticResource SystemChromeMediumColor}"
 		},
 		{
 			"key": "SystemControlAcrylicElementBrush",
 			"theme": "Light",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/Materials/Acrylic/AcrylicBrush_themeresources.xaml",
 			"line": 61,
-			"tag": "AcrylicBrush"
+			"tintColor": "{StaticResource SystemChromeAltHighColor}",
+			"tintOpacity": "0.8",
+			"fallbackColor": "{StaticResource SystemChromeMediumColor}"
 		},
 		{
 			"key": "SystemControlAccentAcrylicWindowAccentMediumHighBrush",
 			"theme": "Light",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/Materials/Acrylic/AcrylicBrush_themeresources.xaml",
 			"line": 62,
-			"tag": "AcrylicBrush"
+			"tintColor": "{ThemeResource SystemAccentColor}",
+			"tintOpacity": "0.7",
+			"fallbackColor": "{ThemeResource SystemAccentColor}"
 		},
 		{
 			"key": "SystemControlAccentAcrylicElementAccentMediumHighBrush",
 			"theme": "Light",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/Materials/Acrylic/AcrylicBrush_themeresources.xaml",
 			"line": 63,
-			"tag": "AcrylicBrush"
+			"tintColor": "{ThemeResource SystemAccentColor}",
+			"tintOpacity": "0.7",
+			"fallbackColor": "{ThemeResource SystemAccentColor}"
 		},
 		{
 			"key": "SystemControlAccentDark1AcrylicWindowAccentDark1Brush",
 			"theme": "Light",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/Materials/Acrylic/AcrylicBrush_themeresources.xaml",
 			"line": 64,
-			"tag": "AcrylicBrush"
+			"tintColor": "{ThemeResource SystemAccentColorDark1}",
+			"tintOpacity": "0.8",
+			"fallbackColor": "{ThemeResource SystemAccentColorDark1}"
 		},
 		{
 			"key": "SystemControlAccentDark1AcrylicElementAccentDark1Brush",
 			"theme": "Light",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/Materials/Acrylic/AcrylicBrush_themeresources.xaml",
 			"line": 65,
-			"tag": "AcrylicBrush"
+			"tintColor": "{ThemeResource SystemAccentColorDark1}",
+			"tintOpacity": "0.8",
+			"fallbackColor": "{ThemeResource SystemAccentColorDark1}"
 		},
 		{
 			"key": "SystemControlAccentDark2AcrylicWindowAccentDark2MediumHighBrush",
 			"theme": "Light",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/Materials/Acrylic/AcrylicBrush_themeresources.xaml",
 			"line": 66,
-			"tag": "AcrylicBrush"
+			"tintColor": "{ThemeResource SystemAccentColorDark2}",
+			"tintOpacity": "0.7",
+			"fallbackColor": "{ThemeResource SystemAccentColorDark2}"
 		},
 		{
 			"key": "SystemControlAccentDark2AcrylicElementAccentDark2MediumHighBrush",
 			"theme": "Light",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/Materials/Acrylic/AcrylicBrush_themeresources.xaml",
 			"line": 67,
-			"tag": "AcrylicBrush"
+			"tintColor": "{ThemeResource SystemAccentColorDark2}",
+			"tintOpacity": "0.7",
+			"fallbackColor": "{ThemeResource SystemAccentColorDark2}"
 		},
 		{
 			"key": "SystemControlAcrylicWindowMediumHighBrush",
 			"theme": "Light",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/Materials/Acrylic/AcrylicBrush_themeresources.xaml",
 			"line": 68,
-			"tag": "AcrylicBrush"
+			"tintColor": "{StaticResource SystemChromeAltHighColor}",
+			"tintOpacity": "0.7",
+			"fallbackColor": "{StaticResource SystemChromeMediumColor}"
 		},
 		{
 			"key": "SystemControlAcrylicElementMediumHighBrush",
 			"theme": "Light",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/Materials/Acrylic/AcrylicBrush_themeresources.xaml",
 			"line": 69,
-			"tag": "AcrylicBrush"
+			"tintColor": "{StaticResource SystemChromeAltHighColor}",
+			"tintOpacity": "0.7",
+			"fallbackColor": "{StaticResource SystemChromeMediumColor}"
 		},
 		{
 			"key": "SystemControlChromeMediumLowAcrylicWindowMediumBrush",
 			"theme": "Light",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/Materials/Acrylic/AcrylicBrush_themeresources.xaml",
 			"line": 70,
-			"tag": "AcrylicBrush"
+			"tintColor": "{StaticResource SystemChromeAltHighColor}",
+			"tintOpacity": "0.6",
+			"fallbackColor": "{StaticResource SystemChromeMediumLowColor}"
 		},
 		{
 			"key": "SystemControlChromeMediumLowAcrylicElementMediumBrush",
 			"theme": "Light",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/Materials/Acrylic/AcrylicBrush_themeresources.xaml",
 			"line": 71,
-			"tag": "AcrylicBrush"
+			"tintColor": "{StaticResource SystemChromeAltHighColor}",
+			"tintOpacity": "0.6",
+			"fallbackColor": "{StaticResource SystemChromeMediumLowColor}"
 		},
 		{
 			"key": "SystemControlBaseHighAcrylicWindowBrush",
 			"theme": "Light",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/Materials/Acrylic/AcrylicBrush_themeresources.xaml",
 			"line": 72,
-			"tag": "AcrylicBrush"
+			"tintColor": "{StaticResource SystemChromeAltHighColor}",
+			"tintOpacity": "0.8",
+			"fallbackColor": "{StaticResource SystemBaseHighColor}"
 		},
 		{
 			"key": "SystemControlBaseHighAcrylicElementBrush",
 			"theme": "Light",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/Materials/Acrylic/AcrylicBrush_themeresources.xaml",
 			"line": 73,
-			"tag": "AcrylicBrush"
+			"tintColor": "{StaticResource SystemChromeAltHighColor}",
+			"tintOpacity": "0.8",
+			"fallbackColor": "{StaticResource SystemBaseHighColor}"
 		},
 		{
 			"key": "SystemControlBaseHighAcrylicWindowMediumHighBrush",
 			"theme": "Light",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/Materials/Acrylic/AcrylicBrush_themeresources.xaml",
 			"line": 74,
-			"tag": "AcrylicBrush"
+			"tintColor": "{StaticResource SystemChromeAltHighColor}",
+			"tintOpacity": "0.7",
+			"fallbackColor": "{StaticResource SystemBaseHighColor}"
 		},
 		{
 			"key": "SystemControlBaseHighAcrylicElementMediumHighBrush",
 			"theme": "Light",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/Materials/Acrylic/AcrylicBrush_themeresources.xaml",
 			"line": 75,
-			"tag": "AcrylicBrush"
+			"tintColor": "{StaticResource SystemChromeAltHighColor}",
+			"tintOpacity": "0.7",
+			"fallbackColor": "{StaticResource SystemBaseHighColor}"
 		},
 		{
 			"key": "SystemControlBaseHighAcrylicWindowMediumBrush",
 			"theme": "Light",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/Materials/Acrylic/AcrylicBrush_themeresources.xaml",
 			"line": 76,
-			"tag": "AcrylicBrush"
+			"tintColor": "{StaticResource SystemChromeAltHighColor}",
+			"tintOpacity": "0.6",
+			"fallbackColor": "{StaticResource SystemBaseHighColor}"
 		},
 		{
 			"key": "SystemControlBaseHighAcrylicElementMediumBrush",
 			"theme": "Light",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/Materials/Acrylic/AcrylicBrush_themeresources.xaml",
 			"line": 77,
-			"tag": "AcrylicBrush"
+			"tintColor": "{StaticResource SystemChromeAltHighColor}",
+			"tintOpacity": "0.6",
+			"fallbackColor": "{StaticResource SystemBaseHighColor}"
 		},
 		{
 			"key": "SystemControlChromeLowAcrylicWindowBrush",
 			"theme": "Light",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/Materials/Acrylic/AcrylicBrush_themeresources.xaml",
 			"line": 78,
-			"tag": "AcrylicBrush"
+			"tintColor": "{StaticResource SystemChromeAltHighColor}",
+			"tintOpacity": "0.8",
+			"fallbackColor": "{StaticResource SystemChromeLowColor}"
 		},
 		{
 			"key": "SystemControlChromeLowAcrylicElementBrush",
 			"theme": "Light",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/Materials/Acrylic/AcrylicBrush_themeresources.xaml",
 			"line": 79,
-			"tag": "AcrylicBrush"
+			"tintColor": "{StaticResource SystemChromeAltHighColor}",
+			"tintOpacity": "0.8",
+			"fallbackColor": "{StaticResource SystemChromeLowColor}"
 		},
 		{
 			"key": "SystemControlChromeMediumAcrylicWindowMediumBrush",
 			"theme": "Light",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/Materials/Acrylic/AcrylicBrush_themeresources.xaml",
 			"line": 80,
-			"tag": "AcrylicBrush"
+			"tintColor": "{StaticResource SystemChromeAltHighColor}",
+			"tintOpacity": "0.6",
+			"fallbackColor": "{StaticResource SystemChromeMediumColor}"
 		},
 		{
 			"key": "SystemControlChromeMediumAcrylicElementMediumBrush",
 			"theme": "Light",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/Materials/Acrylic/AcrylicBrush_themeresources.xaml",
 			"line": 81,
-			"tag": "AcrylicBrush"
+			"tintColor": "{StaticResource SystemChromeAltHighColor}",
+			"tintOpacity": "0.6",
+			"fallbackColor": "{StaticResource SystemChromeMediumColor}"
 		},
 		{
 			"key": "SystemControlChromeHighAcrylicWindowMediumBrush",
 			"theme": "Light",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/Materials/Acrylic/AcrylicBrush_themeresources.xaml",
 			"line": 82,
-			"tag": "AcrylicBrush"
+			"tintColor": "{StaticResource SystemChromeAltHighColor}",
+			"tintOpacity": "0.6",
+			"fallbackColor": "{StaticResource SystemChromeHighColor}"
 		},
 		{
 			"key": "SystemControlChromeHighAcrylicElementMediumBrush",
 			"theme": "Light",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/Materials/Acrylic/AcrylicBrush_themeresources.xaml",
 			"line": 83,
-			"tag": "AcrylicBrush"
+			"tintColor": "{StaticResource SystemChromeAltHighColor}",
+			"tintOpacity": "0.6",
+			"fallbackColor": "{StaticResource SystemChromeHighColor}"
 		},
 		{
 			"key": "SystemControlBaseLowAcrylicWindowBrush",
 			"theme": "Light",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/Materials/Acrylic/AcrylicBrush_themeresources.xaml",
 			"line": 84,
-			"tag": "AcrylicBrush"
+			"tintColor": "{StaticResource SystemChromeAltHighColor}",
+			"tintOpacity": "0.8",
+			"fallbackColor": "{StaticResource SystemBaseLowColor}"
 		},
 		{
 			"key": "SystemControlBaseLowAcrylicElementBrush",
 			"theme": "Light",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/Materials/Acrylic/AcrylicBrush_themeresources.xaml",
 			"line": 85,
-			"tag": "AcrylicBrush"
+			"tintColor": "{StaticResource SystemChromeAltHighColor}",
+			"tintOpacity": "0.8",
+			"fallbackColor": "{StaticResource SystemBaseLowColor}"
 		},
 		{
 			"key": "SystemControlBaseMediumLowAcrylicWindowMediumBrush",
 			"theme": "Light",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/Materials/Acrylic/AcrylicBrush_themeresources.xaml",
 			"line": 86,
-			"tag": "AcrylicBrush"
+			"tintColor": "{StaticResource SystemChromeAltHighColor}",
+			"tintOpacity": "0.6",
+			"fallbackColor": "{StaticResource SystemBaseMediumLowColor}"
 		},
 		{
 			"key": "SystemControlBaseMediumLowAcrylicElementMediumBrush",
 			"theme": "Light",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/Materials/Acrylic/AcrylicBrush_themeresources.xaml",
 			"line": 87,
-			"tag": "AcrylicBrush"
+			"tintColor": "{StaticResource SystemChromeAltHighColor}",
+			"tintOpacity": "0.6",
+			"fallbackColor": "{StaticResource SystemBaseMediumLowColor}"
 		},
 		{
 			"key": "SystemControlAltLowAcrylicWindowBrush",
 			"theme": "Light",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/Materials/Acrylic/AcrylicBrush_themeresources.xaml",
 			"line": 88,
-			"tag": "AcrylicBrush"
+			"tintColor": "{StaticResource SystemChromeAltHighColor}",
+			"tintOpacity": "0.8",
+			"fallbackColor": "{StaticResource SystemAltLowColor}"
 		},
 		{
 			"key": "SystemControlAltLowAcrylicElementBrush",
 			"theme": "Light",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/Materials/Acrylic/AcrylicBrush_themeresources.xaml",
 			"line": 89,
-			"tag": "AcrylicBrush"
+			"tintColor": "{StaticResource SystemChromeAltHighColor}",
+			"tintOpacity": "0.8",
+			"fallbackColor": "{StaticResource SystemAltLowColor}"
 		},
 		{
 			"key": "SystemControlAltMediumLowAcrylicWindowMediumBrush",
 			"theme": "Light",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/Materials/Acrylic/AcrylicBrush_themeresources.xaml",
 			"line": 90,
-			"tag": "AcrylicBrush"
+			"tintColor": "{StaticResource SystemChromeAltHighColor}",
+			"tintOpacity": "0.6",
+			"fallbackColor": "{StaticResource SystemAltMediumLowColor}"
 		},
 		{
 			"key": "SystemControlAltMediumLowAcrylicElementMediumBrush",
 			"theme": "Light",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/Materials/Acrylic/AcrylicBrush_themeresources.xaml",
 			"line": 91,
-			"tag": "AcrylicBrush"
+			"tintColor": "{StaticResource SystemChromeAltHighColor}",
+			"tintOpacity": "0.6",
+			"fallbackColor": "{StaticResource SystemAltMediumLowColor}"
 		},
 		{
 			"key": "SystemControlAltHighAcrylicWindowBrush",
 			"theme": "Light",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/Materials/Acrylic/AcrylicBrush_themeresources.xaml",
 			"line": 92,
-			"tag": "AcrylicBrush"
+			"tintColor": "{StaticResource SystemChromeAltHighColor}",
+			"tintOpacity": "0.8",
+			"fallbackColor": "{StaticResource SystemAltHighColor}"
 		},
 		{
 			"key": "SystemControlAltHighAcrylicElementBrush",
 			"theme": "Light",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/Materials/Acrylic/AcrylicBrush_themeresources.xaml",
 			"line": 93,
-			"tag": "AcrylicBrush"
+			"tintColor": "{StaticResource SystemChromeAltHighColor}",
+			"tintOpacity": "0.8",
+			"fallbackColor": "{StaticResource SystemAltHighColor}"
 		},
 		{
 			"key": "SystemControlTransientBorderBrush",
@@ -48530,82 +48700,112 @@
 		{
 			"key": "AcrylicBackgroundFillColorDefaultBrush",
 			"theme": "Light",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/Materials/Acrylic/AcrylicBrush_themeresources.xaml",
 			"line": 95,
-			"tag": "AcrylicBrush"
+			"tintColor": "#FCFCFC",
+			"tintOpacity": "0.0",
+			"tintLuminosityOpacity": "0.85",
+			"fallbackColor": "#F9F9F9"
 		},
 		{
 			"key": "AcrylicInAppFillColorDefaultBrush",
 			"theme": "Light",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/Materials/Acrylic/AcrylicBrush_themeresources.xaml",
 			"line": 96,
-			"tag": "AcrylicBrush"
+			"tintColor": "#FCFCFC",
+			"tintOpacity": "0.0",
+			"tintLuminosityOpacity": "0.85",
+			"fallbackColor": "#F9F9F9"
 		},
 		{
 			"key": "AcrylicBackgroundFillColorDefaultInverseBrush",
 			"theme": "Light",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/Materials/Acrylic/AcrylicBrush_themeresources.xaml",
 			"line": 97,
-			"tag": "AcrylicBrush"
+			"tintColor": "#2C2C2C",
+			"tintOpacity": "0.15",
+			"tintLuminosityOpacity": "0.96",
+			"fallbackColor": "#2C2C2C"
 		},
 		{
 			"key": "AcrylicInAppFillColorDefaultInverseBrush",
 			"theme": "Light",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/Materials/Acrylic/AcrylicBrush_themeresources.xaml",
 			"line": 98,
-			"tag": "AcrylicBrush"
+			"tintColor": "#2C2C2C",
+			"tintOpacity": "0.15",
+			"tintLuminosityOpacity": "0.96",
+			"fallbackColor": "#2C2C2C"
 		},
 		{
 			"key": "AcrylicBackgroundFillColorBaseBrush",
 			"theme": "Light",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/Materials/Acrylic/AcrylicBrush_themeresources.xaml",
 			"line": 99,
-			"tag": "AcrylicBrush"
+			"tintColor": "#F3F3F3",
+			"tintOpacity": "0.0",
+			"tintLuminosityOpacity": "0.9",
+			"fallbackColor": "#EEEEEE"
 		},
 		{
 			"key": "AcrylicInAppFillColorBaseBrush",
 			"theme": "Light",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/Materials/Acrylic/AcrylicBrush_themeresources.xaml",
 			"line": 100,
-			"tag": "AcrylicBrush"
+			"tintColor": "#F3F3F3",
+			"tintOpacity": "0.0",
+			"tintLuminosityOpacity": "0.9",
+			"fallbackColor": "#EEEEEE"
 		},
 		{
 			"key": "AccentAcrylicBackgroundFillColorDefaultBrush",
 			"theme": "Light",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/Materials/Acrylic/AcrylicBrush_themeresources.xaml",
 			"line": 101,
-			"tag": "AcrylicBrush"
+			"tintColor": "{ThemeResource SystemAccentColorLight3}",
+			"tintOpacity": "0.8",
+			"tintLuminosityOpacity": "0.9",
+			"fallbackColor": "{ThemeResource SystemAccentColorLight3}"
 		},
 		{
 			"key": "AccentAcrylicInAppFillColorDefaultBrush",
 			"theme": "Light",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/Materials/Acrylic/AcrylicBrush_themeresources.xaml",
 			"line": 102,
-			"tag": "AcrylicBrush"
+			"tintColor": "{ThemeResource SystemAccentColorLight3}",
+			"tintOpacity": "0.8",
+			"tintLuminosityOpacity": "0.9",
+			"fallbackColor": "{ThemeResource SystemAccentColorLight3}"
 		},
 		{
 			"key": "AccentAcrylicBackgroundFillColorBaseBrush",
 			"theme": "Light",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/Materials/Acrylic/AcrylicBrush_themeresources.xaml",
 			"line": 103,
-			"tag": "AcrylicBrush"
+			"tintColor": "{ThemeResource SystemAccentColorLight3}",
+			"tintOpacity": "0.8",
+			"tintLuminosityOpacity": "0.9",
+			"fallbackColor": "{ThemeResource SystemAccentColorLight3}"
 		},
 		{
 			"key": "AccentAcrylicInAppFillColorBaseBrush",
 			"theme": "Light",
-			"kind": "unsupported",
+			"kind": "acrylic",
 			"file": "controls/dev/Materials/Acrylic/AcrylicBrush_themeresources.xaml",
 			"line": 104,
-			"tag": "AcrylicBrush"
+			"tintColor": "{ThemeResource SystemAccentColorLight3}",
+			"tintOpacity": "0.8",
+			"tintLuminosityOpacity": "0.9",
+			"fallbackColor": "{ThemeResource SystemAccentColorLight3}"
 		},
 		{
 			"key": "DesktopAcrylicTransparentBrush",

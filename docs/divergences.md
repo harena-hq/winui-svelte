@@ -57,7 +57,32 @@ worth closing. "Would be hard" is not a reason — the reason is always a specif
 
 ---
 
-_One entry so far. The next is expected to be TabView's arrow-key traversal. Every surveyed
+### WD-002 — AcrylicBrush emits its FallbackColor rather than the material it cannot compose
+
+- **Control**: the token layer, the four `*AcrylicBackgroundFillColor*Brush` keys.
+- **WinUI does**: composes a material — a blurred, tinted, noise-textured sample of whatever
+  is behind the element — and falls back to a flat `FallbackColor` when it cannot, which
+  happens under transparency-disabled, battery saver, and a remote session, among others.
+  The value WinUI itself paints under that documented condition is the one the XAML carries
+  as `FallbackColor` on every `AcrylicBrush`.
+- **We do**: emit `FallbackColor` in every theme, with no attempt to reproduce the material.
+  The high-contrast theme takes `SystemColorWindowColor` for these four keys, matching the
+  flat `SolidColorBrush` that `AcrylicBrush_themeresources.xaml` writes itself for the
+  high-contrast dictionary — under high contrast the source does not compose the material
+  either.
+- **Why accepted**: the material samples a backdrop the web does not expose to a custom
+  property — `backdrop-filter` exists but the thing it samples is whatever the browser has
+  drawn under the element, and a layer the project has not put there is not a value a token
+  can name. A `backdrop-filter` recipe is a component with a backdrop under it, and that
+  belongs to whatever builds `AcrylicBrush` in the Styles tranche. The color emitted here
+  is the one WinUI itself shows under a documented condition rather than an approximation
+  of the one it does not, so nothing is being invented.
+- **Would reconsider if**: the Styles tranche builds an acrylic component, at which point
+  the token becomes that component's fallback and this entry is deleted rather than amended.
+
+---
+
+_Two entries. The next is expected to be TabView's arrow-key traversal. Every surveyed
 primitive library — bits-ui, Zag and therefore Ark, and Melt — builds its roving-focus
 candidate set by querying for a role or data attribute, which cannot match a close button
 nested inside a tab trigger. So the button is reachable by Tab and not by arrow keys, and that

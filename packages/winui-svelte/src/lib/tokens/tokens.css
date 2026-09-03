@@ -246,6 +246,21 @@
 	--winui-SystemFillColorSolidNeutralBackgroundBrush: var(
 		--winui-SystemFillColorSolidNeutralBackground
 	);
+	--winui-ControlElevationBorderBrush: linear-gradient(
+		to top,
+		var(--winui-ControlStrokeColorSecondary) 0.99px,
+		var(--winui-ControlStrokeColorDefault) 3px
+	);
+	--winui-CircleElevationBorderBrush: linear-gradient(
+		to bottom,
+		var(--winui-ControlStrokeColorDefault) 50%,
+		var(--winui-ControlStrokeColorSecondary) 70%
+	);
+	--winui-AccentControlElevationBorderBrush: linear-gradient(
+		to top,
+		var(--winui-ControlStrokeColorOnAccentSecondary) 0.99px,
+		var(--winui-ControlStrokeColorOnAccentDefault) 3px
+	);
 	--winui-SystemColorWindowTextColorBrush: var(--winui-SystemColorWindowTextColor);
 	--winui-SystemColorWindowColorBrush: var(--winui-SystemColorWindowColor);
 	--winui-SystemColorButtonFaceColorBrush: var(--winui-SystemColorButtonFaceColor);
@@ -261,6 +276,9 @@
 	--winui-ControlFasterAnimationDuration: 83ms;
 	--winui-ControlCornerRadius: 4px;
 	--winui-OverlayCornerRadius: 8px;
+	--winui-TextOnAccentFillColorDefault: #ffffff;
+	--winui-ControlAAStrokeColorDefault: #00000072;
+	--winui-TextOnAccentFillColorDefaultBrush: var(--winui-TextOnAccentFillColorDefault);
 	--winui-CaptionTextBlockFontSize: 12px;
 	--winui-BodyTextBlockFontSize: 14px;
 	--winui-BodyLargeTextBlockFontSize: 18px;
@@ -268,6 +286,20 @@
 	--winui-TitleTextBlockFontSize: 28px;
 	--winui-TitleLargeTextBlockFontSize: 40px;
 	--winui-DisplayTextBlockFontSize: 68px;
+	--winui-TextControlElevationBorderBrush: linear-gradient(
+		to top,
+		var(--winui-ControlStrongStrokeColorDefault) 1px,
+		var(--winui-ControlStrokeColorDefault) 2px
+	);
+	--winui-TextControlElevationBorderFocusedBrush: linear-gradient(
+		to top,
+		var(--winui-SystemAccentColorDark1) 2px,
+		var(--winui-ControlStrokeColorDefault) 2px
+	);
+	--winui-AcrylicBackgroundFillColorDefaultBrush: #f9f9f9;
+	--winui-AcrylicBackgroundFillColorBaseBrush: #eeeeee;
+	--winui-AccentAcrylicBackgroundFillColorDefaultBrush: var(--winui-SystemAccentColorLight3);
+	--winui-AccentAcrylicBackgroundFillColorBaseBrush: var(--winui-SystemAccentColorLight3);
 }
 
 :root[data-theme='dark'] {
@@ -508,8 +540,40 @@
 	--winui-SystemColorHighlightTextColorBrush: var(--winui-SystemColorHighlightTextColor);
 	--winui-SystemColorHotlightColorBrush: var(--winui-SystemColorHotlightColor);
 	--winui-SystemColorGrayTextColorBrush: var(--winui-SystemColorGrayTextColor);
+	--winui-ControlElevationBorderBrush: linear-gradient(
+		to bottom,
+		var(--winui-ControlStrokeColorSecondary) 0.99px,
+		var(--winui-ControlStrokeColorDefault) 3px
+	);
+	--winui-CircleElevationBorderBrush: linear-gradient(
+		to bottom,
+		var(--winui-ControlStrokeColorDefault) 50%,
+		var(--winui-ControlStrokeColorSecondary) 70%
+	);
+	--winui-AccentControlElevationBorderBrush: linear-gradient(
+		to top,
+		var(--winui-ControlStrokeColorOnAccentSecondary) 0.99px,
+		var(--winui-ControlStrokeColorOnAccentDefault) 3px
+	);
 	--winui-ControlCornerRadius: 4px;
 	--winui-OverlayCornerRadius: 8px;
+	--winui-TextOnAccentFillColorDefault: #ffffff;
+	--winui-ControlAAStrokeColorDefault: #ffffff8b;
+	--winui-TextOnAccentFillColorDefaultBrush: var(--winui-TextOnAccentFillColorDefault);
+	--winui-TextControlElevationBorderBrush: linear-gradient(
+		to top,
+		var(--winui-ControlStrongStrokeColorDefault) 1px,
+		var(--winui-ControlStrokeColorDefault) 2px
+	);
+	--winui-TextControlElevationBorderFocusedBrush: linear-gradient(
+		to top,
+		var(--winui-SystemAccentColorLight2) 2px,
+		var(--winui-ControlStrokeColorDefault) 2px
+	);
+	--winui-AcrylicBackgroundFillColorDefaultBrush: #2c2c2c;
+	--winui-AcrylicBackgroundFillColorBaseBrush: #1c1c1c;
+	--winui-AccentAcrylicBackgroundFillColorDefaultBrush: var(--winui-SystemAccentColorDark1);
+	--winui-AccentAcrylicBackgroundFillColorBaseBrush: var(--winui-SystemAccentColorDark2);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -759,8 +823,40 @@
 		--winui-SystemColorHighlightTextColorBrush: var(--winui-SystemColorHighlightTextColor);
 		--winui-SystemColorHotlightColorBrush: var(--winui-SystemColorHotlightColor);
 		--winui-SystemColorGrayTextColorBrush: var(--winui-SystemColorGrayTextColor);
+		--winui-ControlElevationBorderBrush: linear-gradient(
+			to bottom,
+			var(--winui-ControlStrokeColorSecondary) 0.99px,
+			var(--winui-ControlStrokeColorDefault) 3px
+		);
+		--winui-CircleElevationBorderBrush: linear-gradient(
+			to bottom,
+			var(--winui-ControlStrokeColorDefault) 50%,
+			var(--winui-ControlStrokeColorSecondary) 70%
+		);
+		--winui-AccentControlElevationBorderBrush: linear-gradient(
+			to top,
+			var(--winui-ControlStrokeColorOnAccentSecondary) 0.99px,
+			var(--winui-ControlStrokeColorOnAccentDefault) 3px
+		);
 		--winui-ControlCornerRadius: 4px;
 		--winui-OverlayCornerRadius: 8px;
+		--winui-TextOnAccentFillColorDefault: #ffffff;
+		--winui-ControlAAStrokeColorDefault: #ffffff8b;
+		--winui-TextOnAccentFillColorDefaultBrush: var(--winui-TextOnAccentFillColorDefault);
+		--winui-TextControlElevationBorderBrush: linear-gradient(
+			to top,
+			var(--winui-ControlStrongStrokeColorDefault) 1px,
+			var(--winui-ControlStrokeColorDefault) 2px
+		);
+		--winui-TextControlElevationBorderFocusedBrush: linear-gradient(
+			to top,
+			var(--winui-SystemAccentColorLight2) 2px,
+			var(--winui-ControlStrokeColorDefault) 2px
+		);
+		--winui-AcrylicBackgroundFillColorDefaultBrush: #2c2c2c;
+		--winui-AcrylicBackgroundFillColorBaseBrush: #1c1c1c;
+		--winui-AccentAcrylicBackgroundFillColorDefaultBrush: var(--winui-SystemAccentColorDark1);
+		--winui-AccentAcrylicBackgroundFillColorBaseBrush: var(--winui-SystemAccentColorDark2);
 	}
 }
 
@@ -877,6 +973,9 @@
 	--winui-SystemFillColorNeutralBackgroundBrush: var(--winui-SystemColorWindowColor);
 	--winui-SystemFillColorSolidAttentionBackgroundBrush: var(--winui-SystemColorWindowColor);
 	--winui-SystemFillColorSolidNeutralBackgroundBrush: var(--winui-SystemColorWindowColor);
+	--winui-ControlElevationBorderBrush: var(--winui-SystemColorWindowTextColor);
+	--winui-CircleElevationBorderBrush: var(--winui-SystemColorWindowTextColor);
+	--winui-AccentControlElevationBorderBrush: var(--winui-SystemColorWindowTextColor);
 	--winui-SystemColorWindowTextColorBrush: var(--winui-SystemColorWindowTextColor);
 	--winui-SystemColorWindowColorBrush: var(--winui-SystemColorWindowColor);
 	--winui-SystemColorButtonFaceColorBrush: var(--winui-SystemColorButtonFaceColor);
@@ -970,6 +1069,23 @@
 	--winui-ControlStrongStrokeColorDisabled: var(--winui-SystemColorButtonTextColor);
 	--winui-ControlCornerRadius: 4px;
 	--winui-OverlayCornerRadius: 8px;
+	--winui-TextOnAccentFillColorDefault: #ffffff;
+	--winui-ControlAAStrokeColorDefault: #ffffff8b;
+	--winui-TextOnAccentFillColorDefaultBrush: var(--winui-SystemColorWindowTextColor);
+	--winui-TextControlElevationBorderBrush: linear-gradient(
+		to top,
+		var(--winui-ControlAAStrokeColorDefault) 1px,
+		var(--winui-ControlStrokeColorDefault) 2px
+	);
+	--winui-TextControlElevationBorderFocusedBrush: linear-gradient(
+		to top,
+		var(--winui-SystemAccentColorLight2) 2px,
+		var(--winui-ControlStrokeColorDefault) 2px
+	);
+	--winui-AcrylicBackgroundFillColorDefaultBrush: var(--winui-SystemColorWindowColor);
+	--winui-AcrylicBackgroundFillColorBaseBrush: var(--winui-SystemColorWindowColor);
+	--winui-AccentAcrylicBackgroundFillColorDefaultBrush: var(--winui-SystemColorWindowColor);
+	--winui-AccentAcrylicBackgroundFillColorBaseBrush: var(--winui-SystemColorWindowColor);
 }
 
 /* In forced-colors mode the browser fills the same eight from the actual Windows */
