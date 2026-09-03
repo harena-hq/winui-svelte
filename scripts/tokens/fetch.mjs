@@ -15,16 +15,24 @@ export const UPSTREAM = {
 export const ROOT = fileURLToPath(new URL('../../', import.meta.url)).replace(/[\\/]$/, '');
 export const CHECKOUT = join(ROOT, '.upstream', 'microsoft-ui-xaml');
 
-// The upstream repository is large, so the working copy is narrowed to the XAML under
-// `controls/dev` — theme dictionaries, which the extractor reads, and control templates,
-// which it does not. The templates are here for a reader rather than for a program: a
-// control reproduced from scratch is reproduced from its `ControlTemplate`, and guessing
-// at a structure the source states is the failure this checkout exists to prevent. The
-// per-control test pages are excluded; they are app markup, not the control.
+// The upstream repository is large, so the working copy is narrowed to two file types
+// under `controls/dev`. The XAML — theme dictionaries, which the extractor reads, and
+// control templates, which it does not — and the `.idl`, which carries each property's
+// default in a `MUX_DEFAULT_VALUE` attribute.
+//
+// Both are here for a reader rather than for a program: a control reproduced from scratch
+// is reproduced from its `ControlTemplate` and its declared defaults, and guessing at
+// either when the source states it is the failure this checkout exists to prevent.
+// `NavigationView`'s display-mode thresholds — 641 and 1008 — are in the `.idl` and
+// nowhere else, and they would otherwise have been two numbers someone remembered.
+//
+// The per-control test pages are excluded; they are app markup, not the control. The C++
+// is not here: it is where behaviour lives, and behavioural fidelity is not this
+// project's bar.
 //
 // `--no-cone` because cone mode can express neither a `**`-and-suffix pattern nor the
 // exclusion.
-const SPARSE = ['/controls/dev/**/*.xaml', '!/controls/dev/**/TestUI/**'];
+const SPARSE = ['/controls/dev/**/*.xaml', '/controls/dev/**/*.idl', '!/controls/dev/**/TestUI/**'];
 
 const git = (args) =>
 	execFileSync('git', args, { cwd: ROOT, encoding: 'utf8', stdio: ['ignore', 'pipe', 'inherit'] });
