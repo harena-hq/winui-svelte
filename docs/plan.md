@@ -198,6 +198,17 @@ Done-when: the five Design pages render, each carrying its full table; every tok
 in all three themes; the parity test passes; and the Color page's tiles compare clean against
 Windows 11, tile for tile, ignoring the chrome around them.
 
+**Met.** The real WinUI 3 Gallery, launched on the reference guest and captured over VNC, next
+to our Color page captured through the same guest's Edge over CDP at a matching viewport —
+the one comparison in this project no automated gate can make. Seven brushes sampled
+pixel-for-pixel at matching tile coordinates (`TextFillColorPrimary/Secondary/Tertiary/
+DisabledBrush`, `AccentTextFillColorPrimary/Secondary/TertiaryBrush`): six exact matches, one
+off by a single bit in one channel, consistent with VNC's framebuffer encoding rather than a
+real difference. The comparison itself caught a real defect first — `.gallery-tile-grid` never
+set `display: grid`, so all 130 tiles stacked in one column instead of laying out the way the
+record's per-grid `columns` field says. Fixed; see the commit history. Captures are in
+`.private/captures/`, untracked, sent to the user rather than committed.
+
 ### v2 — the app shell
 
 Goal: **the Gallery's frame is navigable and looks right.**
