@@ -4,3 +4,11 @@
  * component is snapshotted in all three themes.
  */
 export const VERSION = '0.0.0';
+
+export { default as NavigationView } from './components/NavigationView.svelte';
+export type {
+	NavigationViewDisplayMode,
+	NavigationViewEntry,
+	NavigationViewHeaderData,
+	NavigationViewItemData
+} from './components/NavigationView.svelte';
