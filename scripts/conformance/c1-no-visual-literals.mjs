@@ -85,7 +85,11 @@ export async function run() {
 		(n) => n.endsWith('.svelte') || n.endsWith('.css')
 	);
 	const subject = files.filter((f) => !isTokenLayer(f));
-	if (files.length === 0) return pending('v1', 'the library has no styles yet');
+	// Tested against the subject, not against every file found: the token layer is
+	// exempt, so a repository holding only `tokens.css` has nothing for this gate to
+	// read. Keyed to `files` instead, C1 reports `ok — 0 file(s) clean` the moment the
+	// token layer lands, which is a gate that has gone quiet wearing a pass.
+	if (subject.length === 0) return pending('v1', 'the library has no component styles yet');
 
 	const sites = [];
 	for (const file of subject) {
