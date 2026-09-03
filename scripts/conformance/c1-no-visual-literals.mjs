@@ -1,7 +1,18 @@
 import { declarations, fail, pass, pending, read, styleBlocks, walk } from './lib.mjs';
 
 export const id = 'C1';
-export const title = 'no raw visual literals in component styles';
+export const title = 'no raw visual literals in the library or the Gallery';
+
+/**
+ * Both trees, because the token cascade is judged in both.
+ *
+ * The library is the obvious subject. The Gallery is the less obvious one and the more
+ * urgent: its Design pages exist to show what the tokens are worth, so a color hard-coded
+ * there does not merely fail to follow a theme switch — it makes the acceptance surface
+ * agree with the original for a reason that has nothing to do with the token layer, which
+ * is the one confusion this whole arrangement is built to prevent.
+ */
+const SUBJECTS = ['packages/winui-svelte/src', 'apps/gallery/src'];
 
 // Scope: the value families that carry the theme. A literal here is a value that will
 // not follow a light/dark/high-contrast switch, which is the whole reason the token
@@ -80,16 +91,17 @@ function violation({ prop, value }) {
 }
 
 export async function run() {
-	const files = await walk(
-		'packages/winui-svelte/src',
-		(n) => n.endsWith('.svelte') || n.endsWith('.css')
-	);
+	const files = (
+		await Promise.all(
+			SUBJECTS.map((dir) => walk(dir, (n) => n.endsWith('.svelte') || n.endsWith('.css')))
+		)
+	).flat();
 	const subject = files.filter((f) => !isTokenLayer(f));
 	// Tested against the subject, not against every file found: the token layer is
 	// exempt, so a repository holding only `tokens.css` has nothing for this gate to
 	// read. Keyed to `files` instead, C1 reports `ok — 0 file(s) clean` the moment the
 	// token layer lands, which is a gate that has gone quiet wearing a pass.
-	if (subject.length === 0) return pending('v1', 'the library has no component styles yet');
+	if (subject.length === 0) return pending('v1', 'neither tree has any styles yet');
 
 	const sites = [];
 	for (const file of subject) {
@@ -147,5 +159,5 @@ export async function run() {
 
 	return sites.length
 		? fail(`${sites.length} literal(s) outside the token layer`, sites)
-		: pass(`${subject.length} file(s) clean`);
+		: pass(`${subject.length} file(s) clean across ${SUBJECTS.length} tree(s)`);
 }
