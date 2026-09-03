@@ -1,7 +1,13 @@
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { ACCENT_COLORS, EXCLUDED, SOURCE_FILES, SYSTEM_COLORS } from './manifest.mjs';
+import {
+	ACCENT_COLORS,
+	ADDITIONAL_KEYS,
+	EXCLUDED,
+	SOURCE_FILES,
+	SYSTEM_COLORS
+} from './manifest.mjs';
 
 /**
  * The v1 token CSS, generated from the committed extraction.
@@ -244,6 +250,106 @@ function highContrastColor(record, siblings) {
 
 const POISON = '#FF0000';
 
+/**
+ * A color attribute resolved the way `brush()` resolves a `Color`: a `{…Resource}` is an
+ * alias, a literal is a literal. Shared by gradient stops and by an acrylic brush's
+ * fallback, which is why it is not named for either.
+ */
+function resolvedColor(raw, where) {
+	const reference = REFERENCE.exec(raw.trim());
+	return reference ? `var(--winui-${reference[1].trim()})` : color(raw, where);
+}
+
+/**
+ * One XAML `LinearGradientBrush` as a CSS `linear-gradient()`.
+ *
+ * XAML and CSS both order stops by offset and both default to Pad; everything else
+ * needs an explicit conversion. `RelativeTransform` and `MappingMode` are two
+ * independent axes — a transform on a bounding-box gradient, or absent — and both
+ * axes must agree before the value is emitted.
+ */
+function gradient(record) {
+	const where = at(record);
+
+	// XAML supplies defaults for all three when they are absent — a bounding-box gradient
+	// running corner to corner — so a record missing one is a diagonal this file has never
+	// seen and cannot convert. Named here rather than left to throw on `undefined.split`,
+	// because a TypeError names a line of this file and not the resource that caused it.
+	for (const field of ['mappingMode', 'startPoint', 'endPoint'])
+		if (record[field] === undefined) fail(`${where}: gradient with no ${field}`);
+
+	const [startX] = record.startPoint.split(',').map((part) => part.trim());
+	if (startX !== '0') fail(`${where}: gradient StartPoint x is \`${startX}\`, not 0`);
+
+	const [endX, endY] = record.endPoint.split(',').map((part) => part.trim());
+	if (endX !== '0') fail(`${where}: gradient EndPoint x is \`${endX}\`, not 0`);
+
+	const flip =
+		record.relativeTransform?.scaleY === '-1' && record.relativeTransform.centerY === '0.5';
+	if (record.relativeTransform && !flip)
+		fail(
+			`${where}: gradient RelativeTransform is \`${JSON.stringify(record.relativeTransform)}\`, ` +
+				'not the single flip the source uses. A transform that does not flip is one we ' +
+				'do not know how to invert, so emit a value rather than ignore it.'
+		);
+
+	if (record.mappingMode === 'Absolute') {
+		if (endY === '0')
+			fail(`${where}: gradient EndPoint y is 0, which has no length to draw across`);
+	} else if (record.mappingMode === 'RelativeToBoundingBox') {
+		if (endY !== '1')
+			fail(
+				`${where}: gradient EndPoint y is \`${endY}\`, not 1. A bounding-box gradient that ` +
+					'does not span the full height cannot be expressed without a length that is the ' +
+					"element's own, which CSS does not expose at value time."
+			);
+	} else {
+		fail(
+			`${where}: gradient MappingMode is \`${record.mappingMode}\`, not Absolute or RelativeToBoundingBox`
+		);
+	}
+
+	if ((record.stops ?? []).length < 2) fail(`${where}: gradient has fewer than two stops`);
+
+	// Stable sort by offset: a stop below its predecessor in offset is a hard edge in
+	// CSS, because the spec clamps its position. `CircleElevationBorderBrush` in the
+	// `Default` dictionary writes its stops in descending order; without this sort the
+	// light and dark values would disagree. Two stops at the same offset keep source
+	// order — `Array.prototype.sort` is stable, and `TextControlElevationBorderFocusedBrush`
+	// relies on that to put the accent band ahead of the stroke.
+	const stops = [...record.stops]
+		.map((stop, i) => ({ offset: Number(stop.offset), sourceIndex: i, color: stop.color }))
+		.sort((a, b) => a.offset - b.offset || a.sourceIndex - b.sourceIndex);
+
+	for (const stop of stops) {
+		if (!Number.isFinite(stop.offset) || stop.offset < 0 || stop.offset > 1)
+			fail(`${where}: gradient stop offset \`${stop.offset}\` is not in [0, 1]`);
+	}
+
+	const unit = record.mappingMode === 'Absolute' ? 'px' : '%';
+	const position = (offset) =>
+		`${Number((offset * (unit === 'px' ? Number(endY) : 100)).toFixed(6))}${unit}`;
+
+	// `to bottom` and `to top` are the only two directions the source uses; a third
+	// direction would mean a relative transform we cannot model, which would have
+	// failed at the flip check above.
+	const direction = flip ? 'to top' : 'to bottom';
+
+	return `linear-gradient(${direction}, ${stops
+		.map((stop) => `${resolvedColor(stop.color, where)} ${position(stop.offset)}`)
+		.join(', ')})`;
+}
+
+/**
+ * One XAML `AcrylicBrush` as the color WinUI paints when it cannot compose the
+ * material. WD-002.
+ */
+function acrylic(record) {
+	const where = at(record);
+	if (record.fallbackColor === undefined) fail(`${where}: acrylic brush with no FallbackColor`);
+	return resolvedColor(record.fallbackColor, where);
+}
+
 function convert(record, siblings) {
 	switch (record.kind) {
 		case 'color':
@@ -259,6 +365,12 @@ function convert(record, siblings) {
 
 		case 'scalar':
 			return scalar(record);
+
+		case 'gradient':
+			return gradient(record);
+
+		case 'acrylic':
+			return acrylic(record);
 
 		default:
 			return fail(`${at(record)}: no conversion for a \`${record.kind}\` resource`);
@@ -278,20 +390,41 @@ function references(record) {
 	if (record.kind === 'alias') out.push(record.to);
 	if (record.kind === 'brush') reference(record.color);
 	if (record.kind === 'gradient') for (const stop of record.stops ?? []) reference(stop.color);
+	if (record.kind === 'acrylic') {
+		// The walk is over the record, not today's emission: `tintColor` is not converted,
+		// but a later unit that reads it must not find a dangling name.
+		reference(record.fallbackColor);
+		reference(record.tintColor);
+	}
 	return out;
 }
 
 /**
- * The v1 selection: every record defined in the four base files, indexed by key and
- * theme, with the invariants the rest of this file relies on already asserted.
+ * The v1 selection: every record defined in the four base files, plus every key the
+ * acceptance surface names, indexed by key and theme, with the invariants the rest of
+ * this file relies on already asserted.
  */
 function select(resources) {
 	const files = new Set(SOURCE_FILES);
-	const records = resources.filter((record) => files.has(record.file));
-	if (records.length === 0) fail(`${RECORD} holds no records from any of the base files`);
+	const seeds = new Set(Object.keys(ADDITIONAL_KEYS));
+
+	// A key the acceptance surface names is a seed even when it lives outside the four
+	// base files; its records join the initial pass by key rather than by file. The
+	// file-based filter is what the closure then extends through — a reference to a
+	// key the seeds do not define lands on a record in the full `resources` array, and
+	// that record joins the selection on its own merits.
+	const initial = resources.filter((record) => files.has(record.file));
+	for (const key of seeds)
+		if (!resources.some((record) => record.key === key))
+			fail(`ADDITIONAL_KEYS lists \`${key}\`, which the record file does not contain`);
+	// Unconditional, and not `&& seeds.size === 0`: the seeds cannot stand in for the base
+	// files. A record file that matches none of them is a re-pin that moved or renamed
+	// something, and the seeds being non-empty would otherwise let this run produce a
+	// stylesheet of nine keys and call it a selection.
+	if (initial.length === 0) fail(`${RECORD} holds no records from any of the base files`);
 
 	const byKey = new Map();
-	for (const record of records) {
+	for (const record of initial) {
 		const themes = byKey.get(record.key) ?? new Map();
 		// The extractor merges nothing, so two definitions of one key in one theme arrive
 		// as two records. Keeping the last would be a precedence decision made silently,
@@ -300,6 +433,22 @@ function select(resources) {
 			fail(`${at(record)}: defined twice in the ${record.theme ?? 'theme-independent'} scope`);
 		themes.set(record.theme, record);
 		byKey.set(record.key, themes);
+	}
+
+	for (const key of seeds) {
+		// The base files already reaching a seed is not a duplicate definition, it is a
+		// stale list — and saying `defined twice in the Light scope` would send the reader
+		// looking through the XAML for a conflict that is not there.
+		if (byKey.has(key))
+			fail(`ADDITIONAL_KEYS lists \`${key}\`, which the base files already define`);
+		for (const record of resources) {
+			if (record.key !== key) continue;
+			const themes = byKey.get(record.key) ?? new Map();
+			if (themes.has(record.theme))
+				fail(`${at(record)}: defined twice in the ${record.theme ?? 'theme-independent'} scope`);
+			themes.set(record.theme, record);
+			byKey.set(record.key, themes);
+		}
 	}
 
 	// The transitive closure. A reference that resolves to nothing has to be one of the
@@ -315,8 +464,28 @@ function select(resources) {
 		reached.add(key);
 		for (const record of (byKey.get(key) ?? new Map()).values()) {
 			for (const target of references(record)) {
-				if (!byKey.has(target) && !external.has(target))
-					fail(`${at(record)} references \`${target}\`, which nothing in the selection defines`);
+				if (!byKey.has(target) && !external.has(target)) {
+					// A reference the seeds do not define may still be a real record in
+					// the full extraction — pull it in, and the walk continues from there.
+					const pulled = resources.filter((record) => record.key === target);
+					if (pulled.length === 0)
+						fail(`${at(record)} references \`${target}\`, which nothing in the selection defines`);
+					for (const record of pulled) {
+						const themes = byKey.get(record.key) ?? new Map();
+						// The same stop as the other two passes, and the one most likely to
+						// fire: this path reaches the whole extraction, where 48 (key, theme)
+						// pairs are defined in more than one file. Keeping the first would
+						// answer a precedence question by whichever filename sorts earlier.
+						if (themes.has(record.theme))
+							fail(
+								`${at(record)}: defined twice in the ${record.theme ?? 'theme-independent'} ` +
+									'scope, and reached by the closure rather than named — decide which ' +
+									'definition v1 means before emitting either.'
+							);
+						themes.set(record.theme, record);
+						byKey.set(record.key, themes);
+					}
+				}
 				if (!reached.has(target)) queue.push(target);
 			}
 		}
@@ -338,6 +507,13 @@ function select(resources) {
 
 	for (const key of Object.keys(EXCLUDED))
 		if (!byKey.has(key)) fail(`EXCLUDED lists \`${key}\`, which this selection does not contain`);
+
+	// The emission order is the record file's own order: a key pulled in late lands
+	// where its file does rather than at the end, so the cascade reads as it did before
+	// the closure was extended. A key the extraction defines twice — once in a base
+	// file and once outside it — has both records in `resources`; only the one the
+	// selection actually kept joins the rebuild.
+	const records = resources.filter((record) => byKey.get(record.key)?.get(record.theme) === record);
 
 	return { records, byKey, external: reached.size - byKey.size };
 }

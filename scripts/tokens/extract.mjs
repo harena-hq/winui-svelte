@@ -99,6 +99,17 @@ function payload(node) {
 			return record;
 		}
 
+		case 'AcrylicBrush':
+			return {
+				kind: 'acrylic',
+				...pick(node.attrs, {
+					tintColor: 'TintColor',
+					tintOpacity: 'TintOpacity',
+					tintLuminosityOpacity: 'TintLuminosityOpacity',
+					fallbackColor: 'FallbackColor'
+				})
+			};
+
 		case 'StaticResource':
 			return { kind: 'alias', to: node.attrs.ResourceKey };
 

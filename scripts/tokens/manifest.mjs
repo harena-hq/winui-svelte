@@ -9,13 +9,14 @@
 
 /**
  * The four base dictionaries v1 emits from — the palette, the small common
- * dictionary, the corner radii, and the type ramp. The token set is every key
- * defined in them plus the transitive closure of what those definitions reference:
- * 236 keys, closing over 14 names the OS supplies rather than the XAML.
+ * dictionary, the corner radii, and the type ramp. They are the larger half of the
+ * seed; `ADDITIONAL_KEYS` below is the other, and the closure runs over both.
  *
- * Per-control tokens land with their control tranche. Emitting all 3074 extracted
- * keys would drag in Acrylic and Reveal, which v1 cannot express and must not fake.
- * D12, plan.md "Roadmap → v1".
+ * Per-control tokens land with their control tranche: emitting all 3074 extracted keys
+ * would drag in Reveal and the rest of the material vocabulary, which v1 cannot express
+ * and must not fake. Acrylic is the exception the acceptance surface forced, and it is
+ * not an exception to that rule — WD-002 emits the `FallbackColor` WinUI itself paints,
+ * not an approximation of the material. D12, plan.md "Roadmap → v1".
  */
 export const SOURCE_FILES = [
 	'controls/dev/CommonStyles/Common_themeresources_any.xaml',
@@ -23,6 +24,27 @@ export const SOURCE_FILES = [
 	'controls/dev/CommonStyles/CornerRadius_themeresources.xaml',
 	'controls/dev/CommonStyles/TextBlock_themeresources.xaml'
 ];
+
+/**
+ * Keys the acceptance surface — the Gallery's Design pages — names that the four base
+ * files do not. They are seeds the same way `SOURCE_FILES` are: the closure walks
+ * through the records they describe and pulls in everything they reference, so a
+ * single line here can drag in a whole second file's worth of tokens.
+ *
+ * Each entry names the page and the column the brush sits in, which is the only
+ * documentation an absent reader can trust. A key that stops being named by the page
+ * is a reason to delete the line, and a reason that is harder to manufacture than
+ * "we still emit it".
+ */
+export const ADDITIONAL_KEYS = {
+	TextControlElevationBorderBrush: "Color page, Stroke — defined in TextBox's dictionary",
+	TextControlElevationBorderFocusedBrush: "Color page, Stroke — defined in TextBox's dictionary",
+	TextOnAccentFillColorDefaultBrush: 'Color page, Fill — defined in the deprecated dictionary',
+	AcrylicBackgroundFillColorDefaultBrush: 'Color page, Background',
+	AcrylicBackgroundFillColorBaseBrush: 'Color page, Background',
+	AccentAcrylicBackgroundFillColorDefaultBrush: 'Color page, Background',
+	AccentAcrylicBackgroundFillColorBaseBrush: 'Color page, Background'
+};
 
 /**
  * Selected keys that are deliberately not emitted, each with its reason.
@@ -70,14 +92,7 @@ export const EXCLUDED = {
 	SubtitleTextBlockStyle: 'composed text style; deferred to the typography unit',
 	TitleTextBlockStyle: 'composed text style; deferred to the typography unit',
 	TitleLargeTextBlockStyle: 'composed text style; deferred to the typography unit',
-	DisplayTextBlockStyle: 'composed text style; deferred to the typography unit',
-
-	// Multi-stop gradients with a relative transform, flattened to solid brushes under
-	// high contrast. A custom property can hold the gradient, but reproducing what
-	// WinUI does with it is a unit of its own.
-	ControlElevationBorderBrush: 'elevation gradient; deferred to the elevation unit',
-	CircleElevationBorderBrush: 'elevation gradient; deferred to the elevation unit',
-	AccentControlElevationBorderBrush: 'elevation gradient; deferred to the elevation unit'
+	DisplayTextBlockStyle: 'composed text style; deferred to the typography unit'
 };
 
 /**
