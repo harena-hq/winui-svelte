@@ -46,6 +46,7 @@ pnpm workspace. The library is publishable and imposes no build tooling on its c
 | D14 | A composed WinUI `Style` ships as a CSS class, not as a custom property                          | this file, "Roadmap → v1"         |
 | D15 | A control tranche seeds the token selection by key, never by dictionary file                     | this file, "Roadmap → v2"         |
 | D16 | The window backdrop paints Mica's solid counterpart; the material is not approximated            | this file, "Roadmap → v2"; WD-003 |
+| D17 | A legacy `SystemControl*Brush` resolves through a table to a system colour, and is never emitted | ADR 0008                          |
 
 ## Verification
 
