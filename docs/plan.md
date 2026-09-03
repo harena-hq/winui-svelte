@@ -43,6 +43,7 @@ pnpm workspace. The library is publishable and imposes no build tooling on its c
 | D11 | A token is named `--winui-` plus the WinUI resource key, unchanged                               | ADR 0006                  |
 | D12 | The token layer is a curated closure of four base files plus what the Design pages name          | this file, "Roadmap → v1" |
 | D13 | Gallery page structure and page data are read from the pinned `WinUI-Gallery` source             | ADR 0007                  |
+| D14 | A composed WinUI `Style` ships as a CSS class, not as a custom property                          | this file, "Roadmap → v1" |
 
 ## Verification
 
@@ -130,6 +131,21 @@ themes, generated rather than hand-written.**
   / WinUI 3 branch question is settled in ADR 0001: no value differs, WinUI 3 adds four colors.
 - Colors (light / dark / high contrast), the type ramp, corner radii, the elevation-border
   gradient, motion durations and easings.
+- **The type ramp ships as classes, in a file of its own.** A WinUI `Style` bundles a font
+  family, size, weight and line height under one name, and its CSS analogue is a class rather
+  than a custom property: naming the parts would mean minting `--winui-…StyleFontSize`, which
+  names no WinUI resource and costs the token layer the property that makes it auditable —
+  every `--winui-X` corresponds to an X in the source. ADR 0006. The one-property alternative,
+  a `font` shorthand, was measured and rejected: at roughly 130 characters Prettier wraps it
+  by a rule the generator does not implement, and a generator that emits what the formatter
+  would rewrite puts `pnpm format` and gate C2 into a fight C2 loses every time.
+
+  Half of each step is read from the XAML and half is not, and the split is worth stating.
+  `FontSize` and `FontWeight` come from the `Style`'s own setters, resolved through `BasedOn`.
+  Family and line height are in no dictionary — the source says `XamlAutoFontFamily` and sets
+  no line height at all — so they come from ADR 0003, and the generator fails if that table
+  and the source ever stop naming the same ten styles.
+
 - High contrast is not a third set of values. It is a remapping onto eight system colors, and
   the palette colors the source carries for it are deliberate `#FF0000` tripwires — ADR 0005.
 - A generator turns the extracted source into CSS; a parity test fails if the committed CSS

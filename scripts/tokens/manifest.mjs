@@ -77,22 +77,28 @@ export const EXCLUDED = {
 
 	// Engine switches the XAML framework reads. Nothing about them is styling.
 	UseSystemFocusVisuals: 'XAML engine flag, not a style value',
-	ThemeShadowIsUsingDropShadows: 'XAML engine flag, not a style value',
+	ThemeShadowIsUsingDropShadows: 'XAML engine flag, not a style value'
+};
 
-	// The type ramp's composed `Style` elements: a font size, weight, family and line
-	// height bundled into one named style. The seven `*FontSize` keys they read are
-	// emitted; the bundles belong to the typography unit, which decides how a
-	// composed style becomes a CSS class rather than a custom property.
-	BaseTextBlockStyle: 'composed text style; deferred to the typography unit',
-	CaptionTextBlockStyle: 'composed text style; deferred to the typography unit',
-	BodyTextBlockStyle: 'composed text style; deferred to the typography unit',
-	BodyStrongTextBlockStyle: 'composed text style; deferred to the typography unit',
-	BodyLargeTextBlockStyle: 'composed text style; deferred to the typography unit',
-	BodyLargeStrongTextBlockStyle: 'composed text style; deferred to the typography unit',
-	SubtitleTextBlockStyle: 'composed text style; deferred to the typography unit',
-	TitleTextBlockStyle: 'composed text style; deferred to the typography unit',
-	TitleLargeTextBlockStyle: 'composed text style; deferred to the typography unit',
-	DisplayTextBlockStyle: 'composed text style; deferred to the typography unit'
+/**
+ * The two columns of the type ramp the XAML does not carry: the optical-size face
+ * and the line height for each step. The ramp's `FontSize` and `FontWeight` come
+ * from the `Style` records; `FontFamily` is `XamlAutoFontFamily` in the source and
+ * is replaced by an explicit per-step family here because Windows registers Segoe
+ * UI Variable as three separate families rather than one with an `opsz` axis.
+ * ADR 0003 is where both decisions were made.
+ */
+export const TYPE_RAMP = {
+	BaseTextBlockStyle: { face: 'Text', lineHeight: 20 },
+	CaptionTextBlockStyle: { face: 'Small', lineHeight: 16 },
+	BodyTextBlockStyle: { face: 'Text', lineHeight: 20 },
+	BodyStrongTextBlockStyle: { face: 'Text', lineHeight: 20 },
+	BodyLargeTextBlockStyle: { face: 'Text', lineHeight: 24 },
+	BodyLargeStrongTextBlockStyle: { face: 'Text', lineHeight: 24 },
+	SubtitleTextBlockStyle: { face: 'Display', lineHeight: 28 },
+	TitleTextBlockStyle: { face: 'Display', lineHeight: 36 },
+	TitleLargeTextBlockStyle: { face: 'Display', lineHeight: 52 },
+	DisplayTextBlockStyle: { face: 'Display', lineHeight: 92 }
 };
 
 /**

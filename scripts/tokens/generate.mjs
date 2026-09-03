@@ -6,7 +6,8 @@ import {
 	ADDITIONAL_KEYS,
 	EXCLUDED,
 	SOURCE_FILES,
-	SYSTEM_COLORS
+	SYSTEM_COLORS,
+	TYPE_RAMP
 } from './manifest.mjs';
 
 /**
@@ -29,6 +30,7 @@ const ROOT = fileURLToPath(new URL('../../', import.meta.url)).replace(/[\\/]$/,
 
 const RECORD = 'data/winui-tokens.json';
 const OUTPUT = 'packages/winui-svelte/src/lib/tokens/tokens.css';
+const RAMP_OUTPUT = 'packages/winui-svelte/src/lib/tokens/type-ramp.css';
 
 const fail = (message) => {
 	throw new Error(message);
@@ -350,6 +352,214 @@ function acrylic(record) {
 	return resolvedColor(record.fallbackColor, where);
 }
 
+// The two `FontWeight` names the ramp uses. Anything else stops here rather than
+// guessing at a weight the next one to appear should be read for, not assumed — see
+// `FONT_WEIGHTS` below for the contrast with the XAML's full set.
+const FONT_WEIGHTS = new Map([
+	['Normal', 400],
+	['SemiBold', 600]
+]);
+
+/**
+ * The six setter properties the type-ramp converter deliberately ignores.
+ *
+ * `FontFamily` is `XamlAutoFontFamily` in the source — the OS default with automatic
+ * optical sizing — and `TYPE_RAMP` replaces it with an explicit per-step family,
+ * because Windows registers Segoe UI Variable as three families rather than one with
+ * an `opsz` axis. ADR 0003. The other five are layout behaviour of a `TextBlock`
+ * element rather than font values — and
+ * `TextTrimming="CharacterEllipsis"` with `TextWrapping="Wrap"` cannot both hold
+ * in CSS, which is a component's problem to resolve and not a stylesheet's.
+ */
+const IGNORED_SETTERS = new Set([
+	'FontFamily',
+	'TextTrimming',
+	'TextWrapping',
+	'LineStackingStrategy',
+	'TextLineBounds',
+	'OpticalMarginAlignment'
+]);
+
+/**
+ * Flatten a `Style`'s `BasedOn` chain into the effective list of setters.
+ *
+ * A derived style's own setters win over the ones it inherits — same property,
+ * the later one replaces the earlier — and a cycle in the chain fails rather than
+ * recursing until the stack dies. Tracking the path explicitly is what names the
+ * cycle in the failure; `Set.has` would say "seen before" without naming where.
+ */
+function flattenStyle(record, byKey) {
+	const flattened = [];
+	const seen = new Set();
+	const visit = (node, path) => {
+		if (seen.has(node.key)) fail(`${at(node)}: BasedOn cycle: ${path.join(' -> ')} -> ${node.key}`);
+		seen.add(node.key);
+		const next = [...path, node.key];
+
+		if (node.basedOn !== undefined) {
+			const reference = REFERENCE.exec(node.basedOn.trim());
+			if (!reference)
+				fail(
+					`${at(node)}: BasedOn \`${node.basedOn}\` is not a {StaticResource X} or {ThemeResource X}`
+				);
+			const baseKey = reference[1].trim();
+			const baseRecord = byKey.get(baseKey);
+			if (!baseRecord) fail(`${at(node)}: BasedOn references \`${baseKey}\`, which is not a Style`);
+			const baseNode = baseRecord.get(null);
+			if (!baseNode)
+				fail(
+					`${at(node)}: BasedOn references \`${baseKey}\`, which has no theme-independent record`
+				);
+			visit(baseNode, next);
+		}
+
+		for (const setter of node.setters ?? []) flattened.push(setter);
+	};
+	visit(record, []);
+	return flattened;
+}
+
+/**
+ * One `Style` record as the four declarations its CSS class carries.
+ *
+ * Resolves the BasedOn chain, then resolves `FontSize` and `FontWeight` from the
+ * flattened setters and ignores everything else — see `IGNORED_SETTERS` for why
+ * the choice not to error on them is the rule rather than a shortcut. The two
+ * values the XAML does not carry — `font-family` and `line-height` — are filled
+ * in from `TYPE_RAMP`.
+ */
+function style(record, byKey) {
+	const where = at(record);
+	const ramp = TYPE_RAMP[record.key];
+	if (!ramp) {
+		// The reverse check lives in `typeRamp()`, which knows the selection. This one
+		// is "the generator was asked to convert a style it has no TYPE_RAMP entry for",
+		// which would only happen if a `convert()` caller was wrong.
+		fail(`${where}: no TYPE_RAMP entry for \`${record.key}\``);
+	}
+
+	const setters = flattenStyle(record, byKey);
+
+	let fontSizeKey;
+	let fontWeight;
+	for (const setter of setters) {
+		if (IGNORED_SETTERS.has(setter.property)) continue;
+		if (setter.property === 'FontSize') {
+			// A FontSize that is not a `{…Resource X}` would be a second source of truth
+			// for the same number the seven `*FontSize` tokens already name, and the
+			// token layer cannot hold that without silently disagreeing with the source.
+			const reference = setter.value === undefined ? null : REFERENCE.exec(setter.value.trim());
+			if (!reference)
+				fail(
+					`${where}: FontSize setter is \`${setter.value}\`, not a {StaticResource X} or ` +
+						'{ThemeResource X}; a literal would be a second source of truth for the size'
+				);
+			fontSizeKey = reference[1].trim();
+		} else if (setter.property === 'FontWeight') {
+			if (setter.value === undefined || !FONT_WEIGHTS.has(setter.value))
+				fail(
+					`${where}: FontWeight setter is \`${setter.value}\`, not one of ` +
+						`${[...FONT_WEIGHTS.keys()].map((n) => `\`${n}\``).join(', ')}; ` +
+						'add a mapping rather than mapping it silently'
+				);
+			fontWeight = FONT_WEIGHTS.get(setter.value);
+		} else if (setter.unsupported !== undefined) {
+			// Element-form setters the type-ramp converter does not interpret are
+			// recorded rather than ignored, so a later unit that needs one finds it
+			// listed — same principle as `unsupported` in the census.
+			fail(
+				`${where}: setter \`${setter.property}\` holds an unsupported value of shape ` +
+					`\`${setter.unsupported ?? 'no child element'}\`; the type-ramp converter does not ` +
+					'interpret it'
+			);
+		} else {
+			fail(
+				`${where}: setter \`${setter.property}\` is not a FontSize, FontWeight, or an ` +
+					`ignored name; add a converter or list it in IGNORED_SETTERS`
+			);
+		}
+	}
+	if (fontSizeKey === undefined) fail(`${where}: no FontSize in the flattened setter chain`);
+	if (fontWeight === undefined) fail(`${where}: no FontWeight in the flattened setter chain`);
+
+	const face = ramp.face;
+	if (face !== 'Small' && face !== 'Text' && face !== 'Display')
+		fail(
+			`TYPE_RAMP[${record.key}].face is \`${face}\`, not Small, Text, or Display; the three ` +
+				'registered Segoe UI Variable families are the only valid faces — ADR 0003'
+		);
+
+	return {
+		fontFamily: `'Segoe UI Variable ${face}', 'Segoe UI', sans-serif`,
+		fontSize: `var(--winui-${fontSizeKey})`,
+		fontWeight,
+		lineHeight: `${ramp.lineHeight}px`
+	};
+}
+
+/**
+ * The type-ramp file's source, run through the cross-checks that keep
+ * `TYPE_RAMP` and the XAML from drifting.
+ *
+ * `extraEmitted` is the set of keys emitted here, for the completeness check in
+ * `stylesheet()` to count as emitted rather than flag as a hole. Building this
+ * file first is what makes that possible: the other file has to know what the
+ * one not yet built already emitted, and the only answer is to build it first.
+ */
+function typeRamp(records, byKey, commit) {
+	const styles = records.filter(
+		(record) => record.kind === 'style' && record.targetType === 'TextBlock'
+	);
+
+	// A `*TextBlockStyle` in the selection that `TYPE_RAMP` does not name. Without
+	// this check an upstream rename leaves a class emitting a stale face and line
+	// height while looking entirely healthy.
+	for (const record of styles) {
+		if (!(record.key in TYPE_RAMP))
+			fail(`${at(record)}: a TextBlock Style in the selection that TYPE_RAMP does not name`);
+	}
+	// The reverse direction: a TYPE_RAMP entry whose key the selection does not
+	// define. The cross-check is what stops a deleted upstream style from leaving
+	// a class that no source backs.
+	for (const key of Object.keys(TYPE_RAMP)) {
+		if (!byKey.has(key)) fail(`TYPE_RAMP[${key}] is not defined in the selection`);
+	}
+
+	const lines = [
+		'/*',
+		' * WinUI 3 type ramp, generated by scripts/tokens/generate.mjs from',
+		` * ${RECORD} — microsoft/microsoft-ui-xaml @ ${commit}.`,
+		' *',
+		' * Generated file — do not edit. Run `pnpm tokens:build`.',
+		' */',
+		''
+	];
+
+	const emitted = new Set();
+	for (const record of styles) {
+		const values = style(record, byKey);
+		lines.push(
+			`.winui-${record.key} {`,
+			`\tfont-family: ${values.fontFamily};`,
+			`\tfont-size: ${values.fontSize};`,
+			`\tfont-weight: ${values.fontWeight};`,
+			`\tline-height: ${values.lineHeight};`,
+			'}',
+			''
+		);
+		emitted.add(record.key);
+	}
+
+	// Each rule pushes a blank line after itself, which leaves one too many at the end.
+	// Trimming it makes the file end at `}\n`, the way `tokens.css` does and the way
+	// Prettier would rewrite it to — a blank line before EOF is the kind of difference
+	// that turns `pnpm format` into a fight C2 loses.
+	return {
+		css: `${lines.join('\n').replace(/\n$/, '')}\n`,
+		emitted
+	};
+}
+
 function convert(record, siblings) {
 	switch (record.kind) {
 		case 'color':
@@ -395,6 +605,12 @@ function references(record) {
 		// but a later unit that reads it must not find a dangling name.
 		reference(record.fallbackColor);
 		reference(record.tintColor);
+	}
+	if (record.kind === 'style') {
+		// `basedOn` keeps its braces through extraction, so the same regex that resolves a
+		// brush color resolves the inheritance edge — the closure then walks through it.
+		reference(record.basedOn);
+		for (const setter of record.setters ?? []) reference(setter.value);
 	}
 	return out;
 }
@@ -575,8 +791,8 @@ function topLevelParts(args) {
 	return parts;
 }
 
-function stylesheet(doc) {
-	const { records, byKey, external } = select(doc.resources);
+function stylesheet(doc, selection, extraEmitted) {
+	const { records, byKey, external } = selection;
 
 	// The HighContrast dictionary, keyed by resource name, for the palette resolution
 	// WD-001 describes.
@@ -584,10 +800,16 @@ function stylesheet(doc) {
 		records.filter((record) => record.theme === HIGH_CONTRAST).map((record) => [record.key, record])
 	);
 
-	const emitted = new Set();
+	// The type-ramp file is built first, and the keys it emitted join the
+	// completeness check here — without this set, every `*TextBlockStyle` would
+	// look like a hole the moment it was no longer in `EXCLUDED`. Styles are
+	// skipped at this layer: they have a class analogue, not a custom-property
+	// analogue, and `convert()` has no case for them — see `typeRamp()`.
+	const emitted = new Set(extraEmitted);
 	const forThemes = (themes, depth) => {
 		const out = [];
 		for (const record of records) {
+			if (record.kind === 'style') continue;
 			if (record.key in EXCLUDED || !themes.includes(record.theme)) continue;
 			emitted.add(record.key);
 			out.push(...declaration(record.key, convert(record, siblings), depth));
@@ -698,8 +920,24 @@ function stylesheet(doc) {
 
 async function build() {
 	const doc = JSON.parse(await readFile(join(ROOT, RECORD), 'utf8'));
-	const { css, stats } = stylesheet(doc);
-	return { files: { [OUTPUT]: css }, stats };
+
+	// One selection, computed here and handed to both writers. Selecting twice would
+	// read the same records twice to answer the same question, and would leave two
+	// callers able to drift apart on which one they asked. The order matters:
+	// `stylesheet()`'s completeness check has to know which keys the other file
+	// already emitted, and the only way to know is to build that one first.
+	const selection = select(doc.resources);
+	const { css: rampCss, emitted: rampEmitted } = typeRamp(
+		selection.records,
+		selection.byKey,
+		doc.source.commit
+	);
+	const { css, stats } = stylesheet(doc, selection, rampEmitted);
+	const rampLines = rampCss.split('\n').length - 1;
+	return {
+		files: { [OUTPUT]: css, [RAMP_OUTPUT]: rampCss },
+		stats: { ...stats, rampLines }
+	};
 }
 
 /** Repo-relative path to file content, for the caller to write or to compare. */
@@ -721,7 +959,8 @@ async function main() {
 			`emitted           ${stats.emitted} keys`,
 			`excluded          ${stats.excluded} keys`,
 			`declarations      light ${stats.light}, dark ${stats.dark}, high contrast ${stats.highContrast}, forced-colors ${stats.forcedColors}`,
-			`written           ${OUTPUT} (${stats.lines} lines)`
+			`written           ${OUTPUT} (${stats.lines} lines)`,
+			`written           ${RAMP_OUTPUT} (${stats.rampLines} lines)`
 		].join('\n')
 	);
 }

@@ -113,6 +113,40 @@ function payload(node) {
 		case 'StaticResource':
 			return { kind: 'alias', to: node.attrs.ResourceKey };
 
+		case 'Style': {
+			// The record mirrors the source shape rather than flattening it: `basedOn`
+			// stays a raw `{StaticResource X}` so the generator can resolve it through
+			// its existing REFERENCE regex, and `setters` keeps every <Setter> in
+			// document order — including the ones that are not font values, which the
+			// type-ramp converter names and ignores rather than dropping.
+			const record = {
+				kind: 'style',
+				targetType: node.attrs.TargetType,
+				setters: []
+			};
+			if (node.attrs.BasedOn !== undefined) record.basedOn = node.attrs.BasedOn;
+			for (const child of node.children) {
+				if (child.tag !== 'Setter') continue;
+				// A <Setter> holds its value one of three ways: a `Value` attribute, a
+				// `<Setter.Value>` child carrying a whole object, or neither. The first is
+				// what every type-ramp setter uses; the second is mostly a `ControlTemplate`;
+				// the third is a malformed source, recorded so the census keeps listing it.
+				//
+				// Counts belong to the census, not to this comment — read them out of
+				// `data/winui-tokens.json`, where they are derived from what was actually
+				// read. A number written here is counted once, over whatever scope the
+				// person had in their shell, and is wrong from the next re-pin onward.
+				const setter = { property: child.attrs.Property };
+				if (child.attrs.Value !== undefined) setter.value = child.attrs.Value;
+				else {
+					const valueChild = child.children.find((c) => c.tag === 'Setter.Value');
+					setter.unsupported = valueChild ? (valueChild.children[0]?.tag ?? null) : null;
+				}
+				record.setters.push(setter);
+			}
+			return record;
+		}
+
 		default:
 			if (SCALARS.has(node.tag)) return { kind: 'scalar', type: node.tag, value: node.text };
 			return { kind: 'unsupported', tag: node.tag };

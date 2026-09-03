@@ -363,12 +363,12 @@
 			"brush": 1517,
 			"scalar": 1285,
 			"color": 368,
-			"unsupported": 200,
+			"style": 166,
 			"acrylic": 90,
+			"unsupported": 34,
 			"gradient": 15
 		},
 		"unsupportedTags": {
-			"Style": 166,
 			"primitives:CornerRadiusFilterConverter": 10,
 			"DataTemplate": 7,
 			"primitives:CornerRadiusToThicknessConverter": 6,
@@ -642,10 +642,53 @@
 		{
 			"key": "ScrollButtonStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/AnnotatedScrollBar/AnnotatedScrollBar_themeresources.xaml",
 			"line": 42,
-			"tag": "Style"
+			"targetType": "RepeatButton",
+			"setters": [
+				{
+					"property": "MinWidth",
+					"value": "16"
+				},
+				{
+					"property": "MinHeight",
+					"value": "16"
+				},
+				{
+					"property": "Background",
+					"value": "{ThemeResource ScrollButtonBackground}"
+				},
+				{
+					"property": "Foreground",
+					"value": "{ThemeResource ScrollButtonForeground}"
+				},
+				{
+					"property": "BorderBrush",
+					"value": "{ThemeResource ScrollButtonBorderBrush}"
+				},
+				{
+					"property": "BorderThickness",
+					"value": "{ThemeResource ScrollButtonStyleBorderThickness}"
+				},
+				{
+					"property": "CornerRadius",
+					"value": "{ThemeResource ControlCornerRadius}"
+				},
+				{
+					"property": "FontFamily",
+					"value": "{ThemeResource SymbolThemeFontFamily}"
+				},
+				{
+					"property": "FontSize",
+					"value": "8"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			],
+			"basedOn": "{StaticResource DefaultRepeatButtonStyle}"
 		},
 		{
 			"key": "AutoSuggestBoxSuggestionsListBackground",
@@ -803,18 +846,146 @@
 		{
 			"key": "AutoSuggestBoxTextBoxStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/AutoSuggestBox/AutoSuggestBox_themeresources.xaml",
 			"line": 29,
-			"tag": "Style"
+			"targetType": "TextBox",
+			"setters": [
+				{
+					"property": "MinWidth",
+					"value": "{ThemeResource TextControlThemeMinWidth}"
+				},
+				{
+					"property": "MinHeight",
+					"value": "{ThemeResource TextControlThemeMinHeight}"
+				},
+				{
+					"property": "Foreground",
+					"value": "{ThemeResource TextControlForeground}"
+				},
+				{
+					"property": "Background",
+					"value": "{ThemeResource TextControlBackground}"
+				},
+				{
+					"property": "BorderBrush",
+					"value": "{ThemeResource TextControlBorderBrush}"
+				},
+				{
+					"property": "SelectionHighlightColor",
+					"value": "{ThemeResource TextControlSelectionHighlightColor}"
+				},
+				{
+					"property": "BorderThickness",
+					"value": "{ThemeResource TextControlBorderThemeThickness}"
+				},
+				{
+					"property": "FontFamily",
+					"value": "{ThemeResource ContentControlThemeFontFamily}"
+				},
+				{
+					"property": "FontSize",
+					"value": "{ThemeResource ControlContentThemeFontSize}"
+				},
+				{
+					"property": "ScrollViewer.HorizontalScrollMode",
+					"value": "Auto"
+				},
+				{
+					"property": "ScrollViewer.VerticalScrollMode",
+					"value": "Auto"
+				},
+				{
+					"property": "ScrollViewer.HorizontalScrollBarVisibility",
+					"value": "Hidden"
+				},
+				{
+					"property": "ScrollViewer.VerticalScrollBarVisibility",
+					"value": "Hidden"
+				},
+				{
+					"property": "ScrollViewer.IsDeferredScrollingEnabled",
+					"value": "False"
+				},
+				{
+					"property": "Padding",
+					"value": "{ThemeResource TextControlThemePadding}"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "DefaultAutoSuggestBoxStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/AutoSuggestBox/AutoSuggestBox_themeresources.xaml",
 			"line": 250,
-			"tag": "Style"
+			"targetType": "AutoSuggestBox",
+			"setters": [
+				{
+					"property": "VerticalAlignment",
+					"value": "Stretch"
+				},
+				{
+					"property": "VerticalContentAlignment",
+					"value": "Stretch"
+				},
+				{
+					"property": "HorizontalContentAlignment",
+					"value": "Stretch"
+				},
+				{
+					"property": "IsTabStop",
+					"value": "False"
+				},
+				{
+					"property": "Foreground",
+					"value": "{ThemeResource TextControlForeground}"
+				},
+				{
+					"property": "Background",
+					"value": "{ThemeResource TextControlBackground}"
+				},
+				{
+					"property": "BorderBrush",
+					"value": "{ThemeResource TextControlBorderBrush}"
+				},
+				{
+					"property": "BorderThickness",
+					"value": "{ThemeResource TextControlBorderThemeThickness}"
+				},
+				{
+					"property": "FontFamily",
+					"value": "{ThemeResource ContentControlThemeFontFamily}"
+				},
+				{
+					"property": "FontSize",
+					"value": "{ThemeResource ControlContentThemeFontSize}"
+				},
+				{
+					"property": "TextBoxStyle",
+					"value": "{StaticResource AutoSuggestBoxTextBoxStyle}"
+				},
+				{
+					"property": "UseSystemFocusVisuals",
+					"value": "{ThemeResource IsApplicationFocusVisualKindReveal}"
+				},
+				{
+					"property": "CornerRadius",
+					"value": "{ThemeResource ControlCornerRadius}"
+				},
+				{
+					"property": "primitives:AutoSuggestBoxHelper.KeepInteriorCornersSquare",
+					"value": "true"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "BreadcrumbBarChevronLeftToRight",
@@ -1773,10 +1944,20 @@
 		{
 			"key": "ColorPickerBorderStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/ColorPicker/ColorPicker_themeresources.xaml",
 			"line": 40,
-			"tag": "Style"
+			"targetType": "Shape",
+			"setters": [
+				{
+					"property": "Stroke",
+					"value": "{ThemeResource ColorPickerBorderBrush}"
+				},
+				{
+					"property": "StrokeThickness",
+					"value": "2"
+				}
+			]
 		},
 		{
 			"key": "ComboBoxItemForeground",
@@ -4517,34 +4698,210 @@
 		{
 			"key": "ComboBoxItemPill",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/ComboBox/ComboBox_themeresources.xaml",
 			"line": 349,
-			"tag": "Style"
+			"targetType": "Rectangle",
+			"setters": [
+				{
+					"property": "HorizontalAlignment",
+					"value": "Left"
+				},
+				{
+					"property": "Height",
+					"value": "{StaticResource ComboBoxItemPillHeight}"
+				},
+				{
+					"property": "Width",
+					"value": "{StaticResource ComboBoxItemPillWidth}"
+				},
+				{
+					"property": "Fill",
+					"value": "{ThemeResource ComboBoxItemPillFillBrush}"
+				},
+				{
+					"property": "RadiusX",
+					"value": "{Binding Source={StaticResource ComboBoxItemPillCornerRadius}, Converter={StaticResource TopLeftCornerRadiusDoubleValueConverter}}"
+				},
+				{
+					"property": "RadiusY",
+					"value": "{Binding Source={StaticResource ComboBoxItemPillCornerRadius}, Converter={StaticResource BottomRightCornerRadiusDoubleValueConverter}}"
+				},
+				{
+					"property": "RenderTransformOrigin",
+					"value": "0.5,0.5"
+				}
+			]
 		},
 		{
 			"key": "DefaultComboBoxStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/ComboBox/ComboBox_themeresources.xaml",
 			"line": 359,
-			"tag": "Style"
+			"targetType": "ComboBox",
+			"setters": [
+				{
+					"property": "Padding",
+					"value": "{ThemeResource ComboBoxPadding}"
+				},
+				{
+					"property": "MaxDropDownHeight",
+					"value": "504"
+				},
+				{
+					"property": "Foreground",
+					"value": "{ThemeResource ComboBoxForeground}"
+				},
+				{
+					"property": "Background",
+					"value": "{ThemeResource ComboBoxBackground}"
+				},
+				{
+					"property": "BorderBrush",
+					"value": "{ThemeResource ComboBoxBorderBrush}"
+				},
+				{
+					"property": "BorderThickness",
+					"value": "{ThemeResource ComboBoxBorderThemeThickness}"
+				},
+				{
+					"property": "TabNavigation",
+					"value": "Once"
+				},
+				{
+					"property": "TextBoxStyle",
+					"value": "{StaticResource ComboBoxTextBoxStyle}"
+				},
+				{
+					"property": "ScrollViewer.HorizontalScrollBarVisibility",
+					"value": "Disabled"
+				},
+				{
+					"property": "ScrollViewer.VerticalScrollBarVisibility",
+					"value": "Auto"
+				},
+				{
+					"property": "ScrollViewer.HorizontalScrollMode",
+					"value": "Disabled"
+				},
+				{
+					"property": "ScrollViewer.VerticalScrollMode",
+					"value": "Auto"
+				},
+				{
+					"property": "ScrollViewer.IsVerticalRailEnabled",
+					"value": "True"
+				},
+				{
+					"property": "ScrollViewer.IsDeferredScrollingEnabled",
+					"value": "False"
+				},
+				{
+					"property": "ScrollViewer.BringIntoViewOnFocusChange",
+					"value": "True"
+				},
+				{
+					"property": "HorizontalContentAlignment",
+					"value": "Stretch"
+				},
+				{
+					"property": "HorizontalAlignment",
+					"value": "Left"
+				},
+				{
+					"property": "VerticalAlignment",
+					"value": "Top"
+				},
+				{
+					"property": "FontFamily",
+					"value": "{ThemeResource ContentControlThemeFontFamily}"
+				},
+				{
+					"property": "FontSize",
+					"value": "{ThemeResource ControlContentThemeFontSize}"
+				},
+				{
+					"property": "UseSystemFocusVisuals",
+					"value": "{ThemeResource IsApplicationFocusVisualKindReveal}"
+				},
+				{
+					"property": "primitives:ComboBoxHelper.KeepInteriorCornersSquare",
+					"value": "true"
+				},
+				{
+					"property": "CornerRadius",
+					"value": "{ThemeResource ControlCornerRadius}"
+				},
+				{
+					"property": "ItemsPanel",
+					"unsupported": "ItemsPanelTemplate"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "DefaultComboBoxItemStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/ComboBox/ComboBox_themeresources.xaml",
 			"line": 602,
-			"tag": "Style"
+			"targetType": "ComboBoxItem",
+			"setters": [
+				{
+					"property": "Foreground",
+					"value": "{ThemeResource ComboBoxItemForeground}"
+				},
+				{
+					"property": "Background",
+					"value": "{ThemeResource ComboBoxItemBackground}"
+				},
+				{
+					"property": "TabNavigation",
+					"value": "Local"
+				},
+				{
+					"property": "Padding",
+					"value": "{ThemeResource ComboBoxItemThemePadding}"
+				},
+				{
+					"property": "HorizontalContentAlignment",
+					"value": "Stretch"
+				},
+				{
+					"property": "UseSystemFocusVisuals",
+					"value": "True"
+				},
+				{
+					"property": "FocusVisualMargin",
+					"value": "-3"
+				},
+				{
+					"property": "CornerRadius",
+					"value": "{StaticResource ComboBoxItemCornerRadius}"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "ComboBoxTextBoxStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/ComboBox/ComboBox_themeresources.xaml",
 			"line": 770,
-			"tag": "Style"
+			"targetType": "TextBox",
+			"setters": [
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "CommandBarFlyoutBackground",
@@ -5361,58 +5718,383 @@
 		{
 			"key": "CommandBarFlyoutAppBarButtonStyleBase",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommandBarFlyout/CommandBarFlyout_themeresources.xaml",
 			"line": 111,
-			"tag": "Style"
+			"targetType": "AppBarButton",
+			"setters": [
+				{
+					"property": "Background",
+					"value": "{ThemeResource CommandBarFlyoutAppBarButtonBackground}"
+				},
+				{
+					"property": "Foreground",
+					"value": "{ThemeResource CommandBarFlyoutAppBarButtonForeground}"
+				},
+				{
+					"property": "BorderBrush",
+					"value": "{ThemeResource CommandBarFlyoutAppBarButtonBorderBrush}"
+				},
+				{
+					"property": "BorderThickness",
+					"value": "0"
+				},
+				{
+					"property": "HorizontalAlignment",
+					"value": "Stretch"
+				},
+				{
+					"property": "VerticalAlignment",
+					"value": "Stretch"
+				},
+				{
+					"property": "FontFamily",
+					"value": "{ThemeResource ContentControlThemeFontFamily}"
+				},
+				{
+					"property": "FontWeight",
+					"value": "Normal"
+				},
+				{
+					"property": "Width",
+					"value": "NaN"
+				},
+				{
+					"property": "UseSystemFocusVisuals",
+					"value": "{StaticResource UseSystemFocusVisuals}"
+				},
+				{
+					"property": "AllowFocusOnInteraction",
+					"value": "False"
+				},
+				{
+					"property": "CornerRadius",
+					"value": "{ThemeResource ControlCornerRadius}"
+				},
+				{
+					"property": "primitives:CommandBarFlyoutCommandBarAutomationProperties.ControlType",
+					"value": "MenuItem"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "CommandBarFlyoutAppBarButtonStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommandBarFlyout/CommandBarFlyout_themeresources.xaml",
 			"line": 310,
-			"tag": "Style"
+			"targetType": "AppBarButton",
+			"setters": [
+				{
+					"property": "KeyboardAcceleratorPlacementMode",
+					"value": "Hidden"
+				}
+			],
+			"basedOn": "{StaticResource CommandBarFlyoutAppBarButtonStyleBase}"
 		},
 		{
 			"key": "CommandBarFlyoutAppBarToggleButtonStyleBase",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommandBarFlyout/CommandBarFlyout_themeresources.xaml",
 			"line": 313,
-			"tag": "Style"
+			"targetType": "AppBarToggleButton",
+			"setters": [
+				{
+					"property": "Background",
+					"value": "{ThemeResource CommandBarFlyoutAppBarButtonBackground}"
+				},
+				{
+					"property": "Foreground",
+					"value": "{ThemeResource CommandBarFlyoutAppBarButtonForeground}"
+				},
+				{
+					"property": "BorderBrush",
+					"value": "{ThemeResource CommandBarFlyoutAppBarButtonBorderBrush}"
+				},
+				{
+					"property": "HorizontalAlignment",
+					"value": "Stretch"
+				},
+				{
+					"property": "VerticalAlignment",
+					"value": "Stretch"
+				},
+				{
+					"property": "FontFamily",
+					"value": "{ThemeResource ContentControlThemeFontFamily}"
+				},
+				{
+					"property": "FontWeight",
+					"value": "Normal"
+				},
+				{
+					"property": "Width",
+					"value": "NaN"
+				},
+				{
+					"property": "UseSystemFocusVisuals",
+					"value": "{StaticResource UseSystemFocusVisuals}"
+				},
+				{
+					"property": "AllowFocusOnInteraction",
+					"value": "False"
+				},
+				{
+					"property": "primitives:CommandBarFlyoutCommandBarAutomationProperties.ControlType",
+					"value": "MenuItem"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "CommandBarFlyoutAppBarToggleButtonStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommandBarFlyout/CommandBarFlyout_themeresources.xaml",
 			"line": 524,
-			"tag": "Style"
+			"targetType": "AppBarToggleButton",
+			"setters": [
+				{
+					"property": "KeyboardAcceleratorPlacementMode",
+					"value": "Hidden"
+				}
+			],
+			"basedOn": "{StaticResource CommandBarFlyoutAppBarToggleButtonStyleBase}"
 		},
 		{
 			"key": "CommandBarFlyoutCommandBarOverflowPresenterStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommandBarFlyout/CommandBarFlyout_themeresources.xaml",
 			"line": 527,
-			"tag": "Style"
+			"targetType": "CommandBarOverflowPresenter",
+			"setters": [
+				{
+					"property": "Background",
+					"value": "{ThemeResource CommandBarFlyoutButtonBackground}"
+				},
+				{
+					"property": "BorderThickness",
+					"value": "0"
+				},
+				{
+					"property": "MinWidth",
+					"value": "136"
+				},
+				{
+					"property": "MaxWidth",
+					"value": "440"
+				},
+				{
+					"property": "MaxHeight",
+					"value": "480"
+				},
+				{
+					"property": "ScrollViewer.HorizontalScrollMode",
+					"value": "Disabled"
+				},
+				{
+					"property": "ScrollViewer.HorizontalScrollBarVisibility",
+					"value": "Disabled"
+				},
+				{
+					"property": "ScrollViewer.VerticalScrollMode",
+					"value": "Auto"
+				},
+				{
+					"property": "ScrollViewer.VerticalScrollBarVisibility",
+					"value": "Auto"
+				},
+				{
+					"property": "ScrollViewer.ZoomMode",
+					"value": "Disabled"
+				},
+				{
+					"property": "AllowFocusOnInteraction",
+					"value": "False"
+				},
+				{
+					"property": "TabNavigation",
+					"value": "Once"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "CommandBarFlyoutEllipsisButtonStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommandBarFlyout/CommandBarFlyout_themeresources.xaml",
 			"line": 563,
-			"tag": "Style"
+			"targetType": "Button",
+			"setters": [
+				{
+					"property": "Background",
+					"value": "{ThemeResource CommandBarFlyoutAppBarButtonBackground}"
+				},
+				{
+					"property": "Foreground",
+					"value": "{ThemeResource CommandBarFlyoutAppBarButtonForeground}"
+				},
+				{
+					"property": "BorderBrush",
+					"value": "{ThemeResource CommandBarFlyoutAppBarButtonBorderBrush}"
+				},
+				{
+					"property": "Padding",
+					"value": "0"
+				},
+				{
+					"property": "Width",
+					"value": "44"
+				},
+				{
+					"property": "MinHeight",
+					"value": "40"
+				},
+				{
+					"property": "HorizontalContentAlignment",
+					"value": "Center"
+				},
+				{
+					"property": "HorizontalAlignment",
+					"value": "Stretch"
+				},
+				{
+					"property": "VerticalContentAlignment",
+					"value": "Center"
+				},
+				{
+					"property": "VerticalAlignment",
+					"value": "Stretch"
+				},
+				{
+					"property": "FontFamily",
+					"value": "{ThemeResource ContentControlThemeFontFamily}"
+				},
+				{
+					"property": "FontWeight",
+					"value": "SemiBold"
+				},
+				{
+					"property": "FontSize",
+					"value": "{ThemeResource ControlContentThemeFontSize}"
+				},
+				{
+					"property": "UseSystemFocusVisuals",
+					"value": "{StaticResource UseSystemFocusVisuals}"
+				},
+				{
+					"property": "FocusVisualMargin",
+					"value": "0"
+				},
+				{
+					"property": "CornerRadius",
+					"value": "{ThemeResource ControlCornerRadius}"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			],
+			"basedOn": "{StaticResource EllipsisButton}"
 		},
 		{
 			"key": "DefaultCommandBarFlyoutCommandBarStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommandBarFlyout/CommandBarFlyout_themeresources.xaml",
 			"line": 625,
-			"tag": "Style"
+			"targetType": "primitives:CommandBarFlyoutCommandBar",
+			"setters": [
+				{
+					"property": "SystemBackdrop",
+					"value": "{StaticResource CommandBarFlyoutSystemBackdrop}"
+				},
+				{
+					"property": "Background",
+					"value": "{ThemeResource CommandBarFlyoutBackground}"
+				},
+				{
+					"property": "Foreground",
+					"value": "{ThemeResource CommandBarFlyoutForeground}"
+				},
+				{
+					"property": "BorderBrush",
+					"value": "{ThemeResource CommandBarFlyoutBorderBrush}"
+				},
+				{
+					"property": "BorderThickness",
+					"value": "{ThemeResource CommandBarFlyoutBorderThemeThickness}"
+				},
+				{
+					"property": "IsTabStop",
+					"value": "False"
+				},
+				{
+					"property": "VerticalAlignment",
+					"value": "Top"
+				},
+				{
+					"property": "HorizontalAlignment",
+					"value": "Left"
+				},
+				{
+					"property": "HorizontalContentAlignment",
+					"value": "Left"
+				},
+				{
+					"property": "VerticalContentAlignment",
+					"value": "Top"
+				},
+				{
+					"property": "ClosedDisplayMode",
+					"value": "Compact"
+				},
+				{
+					"property": "ExitDisplayModeOnAccessKeyInvoked",
+					"value": "False"
+				},
+				{
+					"property": "DefaultLabelPosition",
+					"value": "Collapsed"
+				},
+				{
+					"property": "MaxWidth",
+					"value": "440"
+				},
+				{
+					"property": "IsDynamicOverflowEnabled",
+					"value": "True"
+				},
+				{
+					"property": "CommandBarOverflowPresenterStyle",
+					"value": "{StaticResource CommandBarFlyoutCommandBarOverflowPresenterStyle}"
+				},
+				{
+					"property": "CornerRadius",
+					"value": "{ThemeResource OverlayCornerRadius}"
+				},
+				{
+					"property": "primitives:CommandBarFlyoutCommandBarAutomationProperties.ControlType",
+					"value": "Menu"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "AppBarButtonBackground",
@@ -6350,18 +7032,91 @@
 		{
 			"key": "AppBarButtonOverflowStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommonStyles/AppBarButton_themeresources.xaml",
 			"line": 124,
-			"tag": "Style"
+			"targetType": "AppBarButton",
+			"setters": [
+				{
+					"property": "HorizontalAlignment",
+					"value": "Stretch"
+				},
+				{
+					"property": "Width",
+					"value": "NaN"
+				}
+			],
+			"basedOn": "{StaticResource DefaultAppBarButtonStyle}"
 		},
 		{
 			"key": "DefaultAppBarButtonStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommonStyles/AppBarButton_themeresources.xaml",
 			"line": 128,
-			"tag": "Style"
+			"targetType": "AppBarButton",
+			"setters": [
+				{
+					"property": "Background",
+					"value": "{ThemeResource AppBarButtonBackground}"
+				},
+				{
+					"property": "Foreground",
+					"value": "{ThemeResource AppBarButtonForeground}"
+				},
+				{
+					"property": "BorderBrush",
+					"value": "{ThemeResource AppBarButtonBorderBrush}"
+				},
+				{
+					"property": "HorizontalAlignment",
+					"value": "Left"
+				},
+				{
+					"property": "VerticalAlignment",
+					"value": "Top"
+				},
+				{
+					"property": "FontFamily",
+					"value": "{ThemeResource ContentControlThemeFontFamily}"
+				},
+				{
+					"property": "FontWeight",
+					"value": "Normal"
+				},
+				{
+					"property": "Width",
+					"value": "68"
+				},
+				{
+					"property": "UseSystemFocusVisuals",
+					"value": "{StaticResource UseSystemFocusVisuals}"
+				},
+				{
+					"property": "FocusVisualMargin",
+					"value": "-3"
+				},
+				{
+					"property": "AllowFocusOnInteraction",
+					"value": "False"
+				},
+				{
+					"property": "CornerRadius",
+					"value": "{ThemeResource ControlCornerRadius}"
+				},
+				{
+					"property": "KeyboardAcceleratorPlacementMode",
+					"value": "Hidden"
+				},
+				{
+					"property": "BackgroundSizing",
+					"value": "InnerBorderEdge"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "AppBarSeparatorForeground",
@@ -6435,10 +7190,28 @@
 		{
 			"key": "DefaultAppBarSeparatorStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommonStyles/AppBarSeparator_themeresources.xaml",
 			"line": 20,
-			"tag": "Style"
+			"targetType": "AppBarSeparator",
+			"setters": [
+				{
+					"property": "Foreground",
+					"value": "{ThemeResource AppBarSeparatorForeground}"
+				},
+				{
+					"property": "Padding",
+					"value": "{ThemeResource AppBarSeparatorMargin}"
+				},
+				{
+					"property": "IsTabStop",
+					"value": "False"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "AppBarToggleButtonBackground",
@@ -8018,18 +8791,95 @@
 		{
 			"key": "AppBarToggleButtonOverflowStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommonStyles/AppBarToggleButton_themeresources.xaml",
 			"line": 208,
-			"tag": "Style"
+			"targetType": "AppBarToggleButton",
+			"setters": [
+				{
+					"property": "HorizontalAlignment",
+					"value": "Stretch"
+				},
+				{
+					"property": "Width",
+					"value": "NaN"
+				}
+			],
+			"basedOn": "{StaticResource DefaultAppBarToggleButtonStyle}"
 		},
 		{
 			"key": "DefaultAppBarToggleButtonStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommonStyles/AppBarToggleButton_themeresources.xaml",
 			"line": 212,
-			"tag": "Style"
+			"targetType": "AppBarToggleButton",
+			"setters": [
+				{
+					"property": "Background",
+					"value": "{ThemeResource AppBarToggleButtonBackground}"
+				},
+				{
+					"property": "Foreground",
+					"value": "{ThemeResource AppBarToggleButtonForeground}"
+				},
+				{
+					"property": "BorderBrush",
+					"value": "{ThemeResource AppBarToggleButtonBorderBrush}"
+				},
+				{
+					"property": "BorderThickness",
+					"value": "{ThemeResource AppBarToggleButtonBorderThemeThickness}"
+				},
+				{
+					"property": "HorizontalAlignment",
+					"value": "Left"
+				},
+				{
+					"property": "VerticalAlignment",
+					"value": "Top"
+				},
+				{
+					"property": "FontFamily",
+					"value": "{ThemeResource ContentControlThemeFontFamily}"
+				},
+				{
+					"property": "FontWeight",
+					"value": "Normal"
+				},
+				{
+					"property": "Width",
+					"value": "68"
+				},
+				{
+					"property": "UseSystemFocusVisuals",
+					"value": "{StaticResource UseSystemFocusVisuals}"
+				},
+				{
+					"property": "FocusVisualMargin",
+					"value": "-3"
+				},
+				{
+					"property": "AllowFocusOnInteraction",
+					"value": "False"
+				},
+				{
+					"property": "CornerRadius",
+					"value": "{ThemeResource ControlCornerRadius}"
+				},
+				{
+					"property": "KeyboardAcceleratorPlacementMode",
+					"value": "Hidden"
+				},
+				{
+					"property": "BackgroundSizing",
+					"value": "InnerBorderEdge"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "AccentButtonBackground",
@@ -9174,26 +10024,176 @@
 		{
 			"key": "DefaultButtonStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommonStyles/Button_themeresources.xaml",
 			"line": 154,
-			"tag": "Style"
+			"targetType": "Button",
+			"setters": [
+				{
+					"property": "Background",
+					"value": "{ThemeResource ButtonBackground}"
+				},
+				{
+					"property": "BackgroundSizing",
+					"value": "InnerBorderEdge"
+				},
+				{
+					"property": "Foreground",
+					"value": "{ThemeResource ButtonForeground}"
+				},
+				{
+					"property": "BorderBrush",
+					"value": "{ThemeResource ButtonBorderBrush}"
+				},
+				{
+					"property": "BorderThickness",
+					"value": "{ThemeResource ButtonBorderThemeThickness}"
+				},
+				{
+					"property": "Padding",
+					"value": "{StaticResource ButtonPadding}"
+				},
+				{
+					"property": "HorizontalAlignment",
+					"value": "Left"
+				},
+				{
+					"property": "VerticalAlignment",
+					"value": "Center"
+				},
+				{
+					"property": "FontFamily",
+					"value": "{ThemeResource ContentControlThemeFontFamily}"
+				},
+				{
+					"property": "FontWeight",
+					"value": "Normal"
+				},
+				{
+					"property": "FontSize",
+					"value": "{ThemeResource ControlContentThemeFontSize}"
+				},
+				{
+					"property": "UseSystemFocusVisuals",
+					"value": "{StaticResource UseSystemFocusVisuals}"
+				},
+				{
+					"property": "FocusVisualMargin",
+					"value": "-3"
+				},
+				{
+					"property": "CornerRadius",
+					"value": "{ThemeResource ControlCornerRadius}"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "AccentButtonStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommonStyles/Button_themeresources.xaml",
 			"line": 235,
-			"tag": "Style"
+			"targetType": "Button",
+			"setters": [
+				{
+					"property": "Foreground",
+					"value": "{ThemeResource AccentButtonForeground}"
+				},
+				{
+					"property": "Background",
+					"value": "{ThemeResource AccentButtonBackground}"
+				},
+				{
+					"property": "BackgroundSizing",
+					"value": "OuterBorderEdge"
+				},
+				{
+					"property": "BorderBrush",
+					"value": "{ThemeResource AccentButtonBorderBrush}"
+				},
+				{
+					"property": "CornerRadius",
+					"value": "{ThemeResource ControlCornerRadius}"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "SubtleButtonStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommonStyles/Button_themeresources.xaml",
 			"line": 297,
-			"tag": "Style"
+			"targetType": "Button",
+			"setters": [
+				{
+					"property": "Background",
+					"value": "{ThemeResource SubtleButtonBackground}"
+				},
+				{
+					"property": "BackgroundSizing",
+					"value": "InnerBorderEdge"
+				},
+				{
+					"property": "Foreground",
+					"value": "{ThemeResource SubtleButtonForeground}"
+				},
+				{
+					"property": "BorderBrush",
+					"value": "{ThemeResource SubtleButtonBorderBrush}"
+				},
+				{
+					"property": "BorderThickness",
+					"value": "{ThemeResource ButtonBorderThemeThickness}"
+				},
+				{
+					"property": "Padding",
+					"value": "{StaticResource ButtonPadding}"
+				},
+				{
+					"property": "HorizontalAlignment",
+					"value": "Left"
+				},
+				{
+					"property": "VerticalAlignment",
+					"value": "Center"
+				},
+				{
+					"property": "FontFamily",
+					"value": "{ThemeResource ContentControlThemeFontFamily}"
+				},
+				{
+					"property": "FontWeight",
+					"value": "Normal"
+				},
+				{
+					"property": "FontSize",
+					"value": "{ThemeResource ControlContentThemeFontSize}"
+				},
+				{
+					"property": "UseSystemFocusVisuals",
+					"value": "{StaticResource UseSystemFocusVisuals}"
+				},
+				{
+					"property": "FocusVisualMargin",
+					"value": "-3"
+				},
+				{
+					"property": "CornerRadius",
+					"value": "{ThemeResource ControlCornerRadius}"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "CalendarDatePickerBorderThemeThickness",
@@ -9786,10 +10786,56 @@
 		{
 			"key": "DefaultCalendarDatePicker",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommonStyles/CalendarDatePicker_themeresources.xaml",
 			"line": 85,
-			"tag": "Style"
+			"targetType": "CalendarDatePicker",
+			"setters": [
+				{
+					"property": "Foreground",
+					"value": "{ThemeResource CalendarDatePickerTextForeground}"
+				},
+				{
+					"property": "Background",
+					"value": "{ThemeResource CalendarDatePickerBackground}"
+				},
+				{
+					"property": "BorderBrush",
+					"value": "{ThemeResource CalendarDatePickerBorderBrush}"
+				},
+				{
+					"property": "BorderThickness",
+					"value": "{ThemeResource CalendarDatePickerBorderThemeThickness}"
+				},
+				{
+					"property": "HorizontalAlignment",
+					"value": "Left"
+				},
+				{
+					"property": "VerticalAlignment",
+					"value": "Center"
+				},
+				{
+					"property": "UseSystemFocusVisuals",
+					"value": "{StaticResource UseSystemFocusVisuals}"
+				},
+				{
+					"property": "FocusVisualMargin",
+					"value": "-3"
+				},
+				{
+					"property": "CornerRadius",
+					"value": "{ThemeResource ControlCornerRadius}"
+				},
+				{
+					"property": "CalendarViewStyle",
+					"value": "{ThemeResource DefaultCalendarViewStyle}"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "CalendarViewFocusBorderBrush",
@@ -11711,18 +12757,386 @@
 		{
 			"key": "DefaultCalendarViewStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommonStyles/CalendarView_themeresources.xaml",
 			"line": 261,
-			"tag": "Style"
+			"targetType": "CalendarView",
+			"setters": [
+				{
+					"property": "BlackoutStrikethroughBrush",
+					"value": "{ThemeResource CalendarViewBlackoutStrikethroughBrush}"
+				},
+				{
+					"property": "SelectedHoverBorderBrush",
+					"value": "{ThemeResource CalendarViewSelectedHoverBorderBrush}"
+				},
+				{
+					"property": "SelectedPressedBorderBrush",
+					"value": "{ThemeResource CalendarViewSelectedPressedBorderBrush}"
+				},
+				{
+					"property": "SelectedDisabledBorderBrush",
+					"value": "{ThemeResource CalendarViewSelectedDisabledBorderBrush}"
+				},
+				{
+					"property": "SelectedBorderBrush",
+					"value": "{ThemeResource CalendarViewSelectedBorderBrush}"
+				},
+				{
+					"property": "HoverBorderBrush",
+					"value": "{ThemeResource CalendarViewHoverBorderBrush}"
+				},
+				{
+					"property": "PressedBorderBrush",
+					"value": "{ThemeResource CalendarViewPressedBorderBrush}"
+				},
+				{
+					"property": "CalendarItemBorderBrush",
+					"value": "{ThemeResource  CalendarViewCalendarItemBorderBrush}"
+				},
+				{
+					"property": "TodaySelectedInnerBorderBrush",
+					"value": "{ThemeResource  CalendarViewTodaySelectedInnerBorderBrush}"
+				},
+				{
+					"property": "TodayForeground",
+					"value": "{ThemeResource CalendarViewTodayForeground}"
+				},
+				{
+					"property": "DisabledForeground",
+					"value": "{ThemeResource CalendarViewDisabledForeground}"
+				},
+				{
+					"property": "BlackoutForeground",
+					"value": "{ThemeResource CalendarViewBlackoutForeground}"
+				},
+				{
+					"property": "SelectedForeground",
+					"value": "{ThemeResource CalendarViewSelectedForeground}"
+				},
+				{
+					"property": "SelectedHoverForeground",
+					"value": "{ThemeResource CalendarViewSelectedHoverForeground}"
+				},
+				{
+					"property": "SelectedPressedForeground",
+					"value": "{ThemeResource CalendarViewSelectedPressedForeground}"
+				},
+				{
+					"property": "SelectedDisabledForeground",
+					"value": "{ThemeResource CalendarViewSelectedDisabledForeground}"
+				},
+				{
+					"property": "PressedForeground",
+					"value": "{ThemeResource CalendarViewPressedForeground}"
+				},
+				{
+					"property": "OutOfScopeForeground",
+					"value": "{ThemeResource CalendarViewOutOfScopeForeground}"
+				},
+				{
+					"property": "OutOfScopeHoverForeground",
+					"value": "{ThemeResource CalendarViewOutOfScopeHoverForeground}"
+				},
+				{
+					"property": "OutOfScopePressedForeground",
+					"value": "{ThemeResource CalendarViewOutOfScopePressedForeground}"
+				},
+				{
+					"property": "CalendarItemForeground",
+					"value": "{ThemeResource CalendarViewCalendarItemForeground}"
+				},
+				{
+					"property": "TodayBackground",
+					"value": "{ThemeResource CalendarViewTodayBackground}"
+				},
+				{
+					"property": "TodayBlackoutBackground",
+					"value": "{ThemeResource CalendarViewTodayBlackoutBackground}"
+				},
+				{
+					"property": "TodayBlackoutForeground",
+					"value": "{ThemeResource CalendarViewTodayBlackoutForeground}"
+				},
+				{
+					"property": "TodayHoverBackground",
+					"value": "{ThemeResource CalendarViewTodayHoverBackground}"
+				},
+				{
+					"property": "TodayPressedBackground",
+					"value": "{ThemeResource CalendarViewTodayPressedBackground}"
+				},
+				{
+					"property": "TodayDisabledBackground",
+					"value": "{ThemeResource CalendarViewTodayDisabledBackground}"
+				},
+				{
+					"property": "BlackoutBackground",
+					"value": "{ThemeResource CalendarViewBlackoutBackground}"
+				},
+				{
+					"property": "OutOfScopeBackground",
+					"value": "{ThemeResource CalendarViewOutOfScopeBackground}"
+				},
+				{
+					"property": "CalendarItemBackground",
+					"value": "{ThemeResource CalendarViewCalendarItemBackground}"
+				},
+				{
+					"property": "CalendarItemHoverBackground",
+					"value": "{ThemeResource CalendarViewCalendarItemHoverBackground}"
+				},
+				{
+					"property": "CalendarItemPressedBackground",
+					"value": "{ThemeResource CalendarViewCalendarItemPressedBackground}"
+				},
+				{
+					"property": "CalendarItemDisabledBackground",
+					"value": "{ThemeResource CalendarViewCalendarItemDisabledBackground}"
+				},
+				{
+					"property": "Foreground",
+					"value": "{ThemeResource CalendarViewForeground}"
+				},
+				{
+					"property": "Background",
+					"value": "{ThemeResource CalendarViewBackground}"
+				},
+				{
+					"property": "BorderBrush",
+					"value": "{ThemeResource CalendarViewBorderBrush}"
+				},
+				{
+					"property": "DayItemFontFamily",
+					"value": "XamlAutoFontFamily"
+				},
+				{
+					"property": "DayItemFontSize",
+					"value": "{ThemeResource CalendarViewDayItemFontSize}"
+				},
+				{
+					"property": "DayItemMargin",
+					"value": "{ThemeResource CalendarViewDayItemMargin}"
+				},
+				{
+					"property": "FirstOfMonthLabelFontFamily",
+					"value": "XamlAutoFontFamily"
+				},
+				{
+					"property": "FirstOfMonthLabelFontSize",
+					"value": "{ThemeResource CalendarViewFirstOfMonthLabelFontSize}"
+				},
+				{
+					"property": "FirstOfMonthLabelMargin",
+					"value": "{ThemeResource CalendarViewFirstOfMonthLabelMargin}"
+				},
+				{
+					"property": "MonthYearItemFontFamily",
+					"value": "XamlAutoFontFamily"
+				},
+				{
+					"property": "MonthYearItemFontSize",
+					"value": "{ThemeResource CalendarViewMonthYearItemFontSize}"
+				},
+				{
+					"property": "MonthYearItemMargin",
+					"value": "{ThemeResource CalendarViewMonthYearItemMargin}"
+				},
+				{
+					"property": "FirstOfYearDecadeLabelFontFamily",
+					"value": "XamlAutoFontFamily"
+				},
+				{
+					"property": "FirstOfYearDecadeLabelFontSize",
+					"value": "{ThemeResource CalendarViewFirstOfYearDecadeLabelFontSize}"
+				},
+				{
+					"property": "FirstOfYearDecadeLabelMargin",
+					"value": "{ThemeResource CalendarViewFirstOfYearDecadeLabelMargin}"
+				},
+				{
+					"property": "TodayFontWeight",
+					"value": "{ThemeResource CalendarViewTodayFontWeight}"
+				},
+				{
+					"property": "CalendarItemBorderThickness",
+					"value": "1"
+				},
+				{
+					"property": "BorderThickness",
+					"value": "1"
+				},
+				{
+					"property": "HorizontalAlignment",
+					"value": "Left"
+				},
+				{
+					"property": "VerticalAlignment",
+					"value": "Center"
+				},
+				{
+					"property": "HorizontalContentAlignment",
+					"value": "Stretch"
+				},
+				{
+					"property": "VerticalContentAlignment",
+					"value": "Stretch"
+				},
+				{
+					"property": "IsTabStop",
+					"value": "False"
+				},
+				{
+					"property": "UseSystemFocusVisuals",
+					"value": "{StaticResource UseSystemFocusVisuals}"
+				},
+				{
+					"property": "CornerRadius",
+					"value": "{ThemeResource ControlCornerRadius}"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "CalendarViewRevealStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommonStyles/CalendarView_themeresources.xaml",
 			"line": 744,
-			"tag": "Style"
+			"targetType": "CalendarView",
+			"setters": [
+				{
+					"property": "FocusBorderBrush",
+					"value": "{ThemeResource CalendarViewFocusBorderBrush}"
+				},
+				{
+					"property": "SelectedHoverBorderBrush",
+					"value": "{ThemeResource CalendarViewSelectedHoverBorderBrush}"
+				},
+				{
+					"property": "SelectedPressedBorderBrush",
+					"value": "{ThemeResource CalendarViewSelectedPressedBorderBrush}"
+				},
+				{
+					"property": "SelectedBorderBrush",
+					"value": "{ThemeResource CalendarViewSelectedBorderBrush}"
+				},
+				{
+					"property": "HoverBorderBrush",
+					"value": "{ThemeResource CalendarViewHoverBorderBrush}"
+				},
+				{
+					"property": "PressedBorderBrush",
+					"value": "{ThemeResource CalendarViewPressedBorderBrush}"
+				},
+				{
+					"property": "CalendarItemBorderBrush",
+					"value": "{ThemeResource  CalendarViewCalendarItemRevealBorderBrush}"
+				},
+				{
+					"property": "TodayForeground",
+					"value": "{ThemeResource CalendarViewTodayForeground}"
+				},
+				{
+					"property": "BlackoutForeground",
+					"value": "{ThemeResource CalendarViewBlackoutForeground}"
+				},
+				{
+					"property": "SelectedForeground",
+					"value": "{ThemeResource CalendarViewSelectedForeground}"
+				},
+				{
+					"property": "PressedForeground",
+					"value": "{ThemeResource CalendarViewPressedForeground}"
+				},
+				{
+					"property": "OutOfScopeForeground",
+					"value": "{ThemeResource CalendarViewOutOfScopeForeground}"
+				},
+				{
+					"property": "CalendarItemForeground",
+					"value": "{ThemeResource CalendarViewCalendarItemForeground}"
+				},
+				{
+					"property": "OutOfScopeBackground",
+					"value": "{ThemeResource CalendarViewOutOfScopeBackground}"
+				},
+				{
+					"property": "CalendarItemBackground",
+					"value": "{ThemeResource CalendarViewCalendarItemRevealBackground}"
+				},
+				{
+					"property": "Foreground",
+					"value": "{ThemeResource CalendarViewForeground}"
+				},
+				{
+					"property": "Background",
+					"value": "{ThemeResource CalendarViewBackground}"
+				},
+				{
+					"property": "BorderBrush",
+					"value": "{ThemeResource CalendarViewBorderBrush}"
+				},
+				{
+					"property": "DayItemFontFamily",
+					"value": "XamlAutoFontFamily"
+				},
+				{
+					"property": "FirstOfMonthLabelFontFamily",
+					"value": "XamlAutoFontFamily"
+				},
+				{
+					"property": "MonthYearItemFontFamily",
+					"value": "XamlAutoFontFamily"
+				},
+				{
+					"property": "FirstOfYearDecadeLabelFontFamily",
+					"value": "XamlAutoFontFamily"
+				},
+				{
+					"property": "CalendarItemBorderThickness",
+					"value": "2"
+				},
+				{
+					"property": "BorderThickness",
+					"value": "1"
+				},
+				{
+					"property": "HorizontalAlignment",
+					"value": "Left"
+				},
+				{
+					"property": "VerticalAlignment",
+					"value": "Center"
+				},
+				{
+					"property": "HorizontalContentAlignment",
+					"value": "Stretch"
+				},
+				{
+					"property": "VerticalContentAlignment",
+					"value": "Stretch"
+				},
+				{
+					"property": "IsTabStop",
+					"value": "False"
+				},
+				{
+					"property": "UseSystemFocusVisuals",
+					"value": "{StaticResource UseSystemFocusVisuals}"
+				},
+				{
+					"property": "CornerRadius",
+					"value": "{ThemeResource ControlCornerRadius}"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "CheckBoxForegroundUnchecked",
@@ -13872,10 +15286,76 @@
 		{
 			"key": "DefaultCheckBoxStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommonStyles/CheckBox_themeresources.xaml",
 			"line": 279,
-			"tag": "Style"
+			"targetType": "CheckBox",
+			"setters": [
+				{
+					"property": "Background",
+					"value": "{ThemeResource CheckBoxBackgroundUnchecked}"
+				},
+				{
+					"property": "Foreground",
+					"value": "{ThemeResource CheckBoxForegroundUnchecked}"
+				},
+				{
+					"property": "BorderBrush",
+					"value": "{ThemeResource CheckBoxBorderBrushUnchecked}"
+				},
+				{
+					"property": "Padding",
+					"value": "{StaticResource CheckBoxPadding}"
+				},
+				{
+					"property": "HorizontalAlignment",
+					"value": "Left"
+				},
+				{
+					"property": "VerticalAlignment",
+					"value": "Center"
+				},
+				{
+					"property": "HorizontalContentAlignment",
+					"value": "Left"
+				},
+				{
+					"property": "VerticalContentAlignment",
+					"value": "Top"
+				},
+				{
+					"property": "FontFamily",
+					"value": "{ThemeResource ContentControlThemeFontFamily}"
+				},
+				{
+					"property": "FontSize",
+					"value": "{ThemeResource ControlContentThemeFontSize}"
+				},
+				{
+					"property": "MinWidth",
+					"value": "{StaticResource CheckBoxMinWidth}"
+				},
+				{
+					"property": "MinHeight",
+					"value": "{StaticResource CheckBoxHeight}"
+				},
+				{
+					"property": "UseSystemFocusVisuals",
+					"value": "{StaticResource UseSystemFocusVisuals}"
+				},
+				{
+					"property": "FocusVisualMargin",
+					"value": "{StaticResource CheckBoxFocusVisualMargin}"
+				},
+				{
+					"property": "CornerRadius",
+					"value": "{ThemeResource ControlCornerRadius}"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "CommandBarOverflowMinWidth",
@@ -14438,34 +15918,214 @@
 		{
 			"key": "DefaultCommandBarStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommonStyles/CommandBar_themeresources.xaml",
 			"line": 77,
-			"tag": "Style"
+			"targetType": "CommandBar",
+			"setters": [
+				{
+					"property": "Background",
+					"value": "{ThemeResource CommandBarBackground}"
+				},
+				{
+					"property": "Foreground",
+					"value": "{ThemeResource CommandBarForeground}"
+				},
+				{
+					"property": "Padding",
+					"value": "4,0,0,0"
+				},
+				{
+					"property": "IsTabStop",
+					"value": "False"
+				},
+				{
+					"property": "VerticalAlignment",
+					"value": "Top"
+				},
+				{
+					"property": "HorizontalAlignment",
+					"value": "Stretch"
+				},
+				{
+					"property": "HorizontalContentAlignment",
+					"value": "Left"
+				},
+				{
+					"property": "VerticalContentAlignment",
+					"value": "Top"
+				},
+				{
+					"property": "ClosedDisplayMode",
+					"value": "Compact"
+				},
+				{
+					"property": "ExitDisplayModeOnAccessKeyInvoked",
+					"value": "False"
+				},
+				{
+					"property": "CommandBarOverflowPresenterStyle",
+					"value": "{ThemeResource DefaultCommandBarOverflowPresenterStyle}"
+				},
+				{
+					"property": "CornerRadius",
+					"value": "{ThemeResource ControlCornerRadius}"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "DefaultCommandBarOverflowPresenterStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommonStyles/CommandBar_themeresources.xaml",
 			"line": 892,
-			"tag": "Style"
+			"targetType": "CommandBarOverflowPresenter",
+			"setters": [
+				{
+					"property": "Background",
+					"value": "{ThemeResource CommandBarOverflowPresenterBackground}"
+				},
+				{
+					"property": "BorderBrush",
+					"value": "{ThemeResource CommandBarOverflowPresenterBorderBrush}"
+				},
+				{
+					"property": "Padding",
+					"value": "{ThemeResource CommandBarOverflowPresenterBorderPadding}"
+				},
+				{
+					"property": "MaxWidth",
+					"value": "{ThemeResource CommandBarOverflowMaxWidth}"
+				},
+				{
+					"property": "ScrollViewer.HorizontalScrollMode",
+					"value": "Disabled"
+				},
+				{
+					"property": "ScrollViewer.HorizontalScrollBarVisibility",
+					"value": "Disabled"
+				},
+				{
+					"property": "ScrollViewer.VerticalScrollMode",
+					"value": "Auto"
+				},
+				{
+					"property": "ScrollViewer.VerticalScrollBarVisibility",
+					"value": "Auto"
+				},
+				{
+					"property": "ScrollViewer.ZoomMode",
+					"value": "Disabled"
+				},
+				{
+					"property": "AllowFocusOnInteraction",
+					"value": "False"
+				},
+				{
+					"property": "TabNavigation",
+					"value": "Once"
+				},
+				{
+					"property": "CornerRadius",
+					"value": "{ThemeResource OverlayCornerRadius}"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "CommandBarWithoutRevealStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommonStyles/CommandBar_themeresources.xaml",
 			"line": 946,
-			"tag": "Style"
+			"targetType": "CommandBar",
+			"setters": [],
+			"basedOn": "{StaticResource DefaultCommandBarStyle}"
 		},
 		{
 			"key": "EllipsisButton",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommonStyles/CommandBar_themeresources.xaml",
 			"line": 947,
-			"tag": "Style"
+			"targetType": "Button",
+			"setters": [
+				{
+					"property": "Background",
+					"value": "{ThemeResource AppBarButtonBackground}"
+				},
+				{
+					"property": "Foreground",
+					"value": "{ThemeResource AppBarButtonForeground}"
+				},
+				{
+					"property": "BorderBrush",
+					"value": "{ThemeResource AppBarButtonBorderBrush}"
+				},
+				{
+					"property": "BorderThickness",
+					"value": "0"
+				},
+				{
+					"property": "Padding",
+					"value": "0"
+				},
+				{
+					"property": "HorizontalAlignment",
+					"value": "Stretch"
+				},
+				{
+					"property": "HorizontalContentAlignment",
+					"value": "Center"
+				},
+				{
+					"property": "VerticalAlignment",
+					"value": "Stretch"
+				},
+				{
+					"property": "VerticalContentAlignment",
+					"value": "Center"
+				},
+				{
+					"property": "FontFamily",
+					"value": "{ThemeResource ContentControlThemeFontFamily}"
+				},
+				{
+					"property": "FontWeight",
+					"value": "SemiBold"
+				},
+				{
+					"property": "FontSize",
+					"value": "{ThemeResource ControlContentThemeFontSize}"
+				},
+				{
+					"property": "Width",
+					"value": "{ThemeResource AppBarExpandButtonThemeWidth}"
+				},
+				{
+					"property": "UseSystemFocusVisuals",
+					"value": "{StaticResource UseSystemFocusVisuals}"
+				},
+				{
+					"property": "FocusVisualMargin",
+					"value": "-3"
+				},
+				{
+					"property": "CornerRadius",
+					"value": "{ThemeResource ControlCornerRadius}"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "SystemControlTransparentColor",
@@ -19745,10 +21405,52 @@
 		{
 			"key": "DefaultContentDialogStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommonStyles/ContentDialog_themeresources.xaml",
 			"line": 57,
-			"tag": "Style"
+			"targetType": "ContentDialog",
+			"setters": [
+				{
+					"property": "Foreground",
+					"value": "{ThemeResource ContentDialogForeground}"
+				},
+				{
+					"property": "Background",
+					"value": "{ThemeResource ContentDialogBackground}"
+				},
+				{
+					"property": "BorderThickness",
+					"value": "{ThemeResource ContentDialogBorderWidth}"
+				},
+				{
+					"property": "BorderBrush",
+					"value": "{ThemeResource ContentDialogBorderBrush}"
+				},
+				{
+					"property": "IsTabStop",
+					"value": "False"
+				},
+				{
+					"property": "PrimaryButtonStyle",
+					"value": "{ThemeResource DefaultButtonStyle}"
+				},
+				{
+					"property": "SecondaryButtonStyle",
+					"value": "{ThemeResource DefaultButtonStyle}"
+				},
+				{
+					"property": "CloseButtonStyle",
+					"value": "{ThemeResource DefaultButtonStyle}"
+				},
+				{
+					"property": "CornerRadius",
+					"value": "{ThemeResource OverlayCornerRadius}"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "ControlCornerRadius",
@@ -20848,18 +22550,134 @@
 		{
 			"key": "DefaultDatePickerStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommonStyles/DatePicker_themeresources.xaml",
 			"line": 126,
-			"tag": "Style"
+			"targetType": "DatePicker",
+			"setters": [
+				{
+					"property": "Orientation",
+					"value": "Horizontal"
+				},
+				{
+					"property": "FocusVisualMargin",
+					"value": "0"
+				},
+				{
+					"property": "IsTabStop",
+					"value": "False"
+				},
+				{
+					"property": "FontFamily",
+					"value": "{ThemeResource ContentControlThemeFontFamily}"
+				},
+				{
+					"property": "FontSize",
+					"value": "{ThemeResource ControlContentThemeFontSize}"
+				},
+				{
+					"property": "Background",
+					"value": "{ThemeResource DatePickerButtonBackground}"
+				},
+				{
+					"property": "Foreground",
+					"value": "{ThemeResource DatePickerButtonForeground}"
+				},
+				{
+					"property": "BorderBrush",
+					"value": "{ThemeResource DatePickerButtonBorderBrush}"
+				},
+				{
+					"property": "BorderThickness",
+					"value": "{ThemeResource DatePickerBorderThemeThickness}"
+				},
+				{
+					"property": "HorizontalAlignment",
+					"value": "Left"
+				},
+				{
+					"property": "VerticalAlignment",
+					"value": "Center"
+				},
+				{
+					"property": "UseSystemFocusVisuals",
+					"value": "{StaticResource UseSystemFocusVisuals}"
+				},
+				{
+					"property": "FocusVisualMargin",
+					"value": "-3"
+				},
+				{
+					"property": "CornerRadius",
+					"value": "{ThemeResource ControlCornerRadius}"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "DefaultDatePickerFlyoutPresenterStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommonStyles/DatePicker_themeresources.xaml",
 			"line": 260,
-			"tag": "Style"
+			"targetType": "DatePickerFlyoutPresenter",
+			"setters": [
+				{
+					"property": "Width",
+					"value": "296"
+				},
+				{
+					"property": "MinWidth",
+					"value": "296"
+				},
+				{
+					"property": "MaxHeight",
+					"value": "398"
+				},
+				{
+					"property": "IsTabStop",
+					"value": "False"
+				},
+				{
+					"property": "FontFamily",
+					"value": "{ThemeResource ContentControlThemeFontFamily}"
+				},
+				{
+					"property": "FontWeight",
+					"value": "Normal"
+				},
+				{
+					"property": "FontSize",
+					"value": "{ThemeResource ControlContentThemeFontSize}"
+				},
+				{
+					"property": "Background",
+					"value": "{ThemeResource DatePickerFlyoutPresenterBackground}"
+				},
+				{
+					"property": "AutomationProperties.AutomationId",
+					"value": "DatePickerFlyoutPresenter"
+				},
+				{
+					"property": "BorderBrush",
+					"value": "{ThemeResource DatePickerFlyoutPresenterBorderBrush}"
+				},
+				{
+					"property": "BorderThickness",
+					"value": "{ThemeResource DateTimeFlyoutBorderThickness}"
+				},
+				{
+					"property": "CornerRadius",
+					"value": "{ThemeResource ControlCornerRadius}"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "DateTimePickerFlyoutButtonBackground",
@@ -21404,26 +23222,84 @@
 		{
 			"key": "DateTimePickerFlyoutButtonStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommonStyles/DateTimePickerFlyout_themeresources.xaml",
 			"line": 78,
-			"tag": "Style"
+			"targetType": "ButtonBase",
+			"setters": [
+				{
+					"property": "Background",
+					"value": "{ThemeResource DateTimePickerFlyoutButtonBackground}"
+				},
+				{
+					"property": "BackgroundSizing",
+					"value": "InnerBorderEdge"
+				},
+				{
+					"property": "UseSystemFocusVisuals",
+					"value": "{StaticResource UseSystemFocusVisuals}"
+				},
+				{
+					"property": "FocusVisualMargin",
+					"value": "0"
+				},
+				{
+					"property": "CornerRadius",
+					"value": "{ThemeResource ControlCornerRadius}"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "DateTimePickerFlyoutLoopingSelectorNavigationButtonStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommonStyles/DateTimePickerFlyout_themeresources.xaml",
 			"line": 125,
-			"tag": "Style"
+			"targetType": "ButtonBase",
+			"setters": [
+				{
+					"property": "Foreground",
+					"value": "{ThemeResource LoopingSelectorUpDownButtonForeground}"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "DefaultLoopingSelectorStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommonStyles/DateTimePickerFlyout_themeresources.xaml",
 			"line": 177,
-			"tag": "Style"
+			"targetType": "LoopingSelector",
+			"setters": [
+				{
+					"property": "ShouldLoop",
+					"value": "True"
+				},
+				{
+					"property": "CornerRadius",
+					"value": "{ThemeResource ControlCornerRadius}"
+				},
+				{
+					"property": "UseSystemFocusVisuals",
+					"value": "{StaticResource UseSystemFocusVisuals}"
+				},
+				{
+					"property": "ItemTemplate",
+					"unsupported": "DataTemplate"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "TopNavigationViewItemRevealBackgroundFocused",
@@ -22589,10 +24465,11 @@
 		{
 			"key": "DefaultProgressBarStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommonStyles/Deprecated_themeresources.xaml",
 			"line": 149,
-			"tag": "Style"
+			"targetType": "ProgressBar",
+			"setters": []
 		},
 		{
 			"key": "PaneToggleButtonSize",
@@ -22758,18 +24635,54 @@
 		{
 			"key": "MUX_NavigationViewItemPresenterStyleWhenOnTopPaneWithRevealFocus",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommonStyles/Deprecated_themeresources.xaml",
 			"line": 169,
-			"tag": "Style"
+			"targetType": "primitives:NavigationViewItemPresenter",
+			"setters": [
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "MUX_NavigationViewItemPresenterStyleWhenOnLeftPaneWithRevealFocus",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommonStyles/Deprecated_themeresources.xaml",
 			"line": 233,
-			"tag": "Style"
+			"targetType": "primitives:NavigationViewItemPresenter",
+			"setters": [
+				{
+					"property": "Foreground",
+					"value": "{ThemeResource NavigationViewItemForeground}"
+				},
+				{
+					"property": "Background",
+					"value": "{ThemeResource NavigationViewItemBackground}"
+				},
+				{
+					"property": "BorderBrush",
+					"value": "{ThemeResource NavigationViewItemBorderBrush}"
+				},
+				{
+					"property": "BorderThickness",
+					"value": "{StaticResource NavigationViewItemBorderThickness}"
+				},
+				{
+					"property": "UseSystemFocusVisuals",
+					"value": "True"
+				},
+				{
+					"property": "HorizontalContentAlignment",
+					"value": "Stretch"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "SystemControlTransientBackgroundBrush",
@@ -23515,18 +25428,54 @@
 		{
 			"key": "MUX_NavigationViewItemPresenterStyleWhenOnTopPaneWithRevealFocus",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommonStyles/Deprecated_themeresources_any.xaml",
 			"line": 101,
-			"tag": "Style"
+			"targetType": "primitives:NavigationViewItemPresenter",
+			"setters": [
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "MUX_NavigationViewItemPresenterStyleWhenOnLeftPaneWithRevealFocus",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommonStyles/Deprecated_themeresources_any.xaml",
 			"line": 165,
-			"tag": "Style"
+			"targetType": "primitives:NavigationViewItemPresenter",
+			"setters": [
+				{
+					"property": "Foreground",
+					"value": "{ThemeResource NavigationViewItemForeground}"
+				},
+				{
+					"property": "Background",
+					"value": "{ThemeResource NavigationViewItemBackground}"
+				},
+				{
+					"property": "BorderBrush",
+					"value": "{ThemeResource NavigationViewItemBorderBrush}"
+				},
+				{
+					"property": "BorderThickness",
+					"value": "{StaticResource NavigationViewItemBorderThickness}"
+				},
+				{
+					"property": "UseSystemFocusVisuals",
+					"value": "True"
+				},
+				{
+					"property": "HorizontalContentAlignment",
+					"value": "Stretch"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "FlipViewItemBackground",
@@ -23555,10 +25504,36 @@
 		{
 			"key": "DefaultFlipViewItemStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommonStyles/FlipViewItem_themeresources.xaml",
 			"line": 15,
-			"tag": "Style"
+			"targetType": "FlipViewItem",
+			"setters": [
+				{
+					"property": "Background",
+					"value": "{ThemeResource FlipViewItemBackground}"
+				},
+				{
+					"property": "HorizontalContentAlignment",
+					"value": "Stretch"
+				},
+				{
+					"property": "VerticalContentAlignment",
+					"value": "Stretch"
+				},
+				{
+					"property": "TabNavigation",
+					"value": "Local"
+				},
+				{
+					"property": "UseSystemFocusVisuals",
+					"value": "{StaticResource UseSystemFocusVisuals}"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "FlipViewButtonBorderThemeThickness",
@@ -24088,10 +26063,76 @@
 		{
 			"key": "DefaultFlipViewStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommonStyles/FlipView_themeresources.xaml",
 			"line": 77,
-			"tag": "Style"
+			"targetType": "FlipView",
+			"setters": [
+				{
+					"property": "Background",
+					"value": "{ThemeResource FlipViewBackground}"
+				},
+				{
+					"property": "BorderThickness",
+					"value": "0"
+				},
+				{
+					"property": "TabNavigation",
+					"value": "Once"
+				},
+				{
+					"property": "IsTabStop",
+					"value": "False"
+				},
+				{
+					"property": "ScrollViewer.HorizontalScrollBarVisibility",
+					"value": "Hidden"
+				},
+				{
+					"property": "ScrollViewer.VerticalScrollBarVisibility",
+					"value": "Hidden"
+				},
+				{
+					"property": "ScrollViewer.IsHorizontalRailEnabled",
+					"value": "False"
+				},
+				{
+					"property": "ScrollViewer.IsVerticalRailEnabled",
+					"value": "False"
+				},
+				{
+					"property": "ScrollViewer.IsHorizontalScrollChainingEnabled",
+					"value": "True"
+				},
+				{
+					"property": "ScrollViewer.IsVerticalScrollChainingEnabled",
+					"value": "True"
+				},
+				{
+					"property": "ScrollViewer.IsDeferredScrollingEnabled",
+					"value": "False"
+				},
+				{
+					"property": "ScrollViewer.BringIntoViewOnFocusChange",
+					"value": "True"
+				},
+				{
+					"property": "UseSystemFocusVisuals",
+					"value": "{StaticResource UseSystemFocusVisuals}"
+				},
+				{
+					"property": "ItemsPanel",
+					"unsupported": "ItemsPanelTemplate"
+				},
+				{
+					"property": "CornerRadius",
+					"value": "{ThemeResource ControlCornerRadius}"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "FlyoutPresenterBackground",
@@ -24180,10 +26221,84 @@
 		{
 			"key": "DefaultFlyoutPresenterStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommonStyles/FlyoutPresenter_themeresources.xaml",
 			"line": 22,
-			"tag": "Style"
+			"targetType": "FlyoutPresenter",
+			"setters": [
+				{
+					"property": "HorizontalContentAlignment",
+					"value": "Stretch"
+				},
+				{
+					"property": "VerticalContentAlignment",
+					"value": "Stretch"
+				},
+				{
+					"property": "IsTabStop",
+					"value": "False"
+				},
+				{
+					"property": "Background",
+					"value": "{ThemeResource FlyoutPresenterBackground}"
+				},
+				{
+					"property": "BorderBrush",
+					"value": "{ThemeResource FlyoutBorderThemeBrush}"
+				},
+				{
+					"property": "BorderThickness",
+					"value": "{ThemeResource FlyoutBorderThemeThickness}"
+				},
+				{
+					"property": "Padding",
+					"value": "{StaticResource FlyoutContentPadding}"
+				},
+				{
+					"property": "MinWidth",
+					"value": "{ThemeResource FlyoutThemeMinWidth}"
+				},
+				{
+					"property": "MaxWidth",
+					"value": "{ThemeResource FlyoutThemeMaxWidth}"
+				},
+				{
+					"property": "MinHeight",
+					"value": "{ThemeResource FlyoutThemeMinHeight}"
+				},
+				{
+					"property": "MaxHeight",
+					"value": "{ThemeResource FlyoutThemeMaxHeight}"
+				},
+				{
+					"property": "ScrollViewer.HorizontalScrollMode",
+					"value": "Auto"
+				},
+				{
+					"property": "ScrollViewer.HorizontalScrollBarVisibility",
+					"value": "Auto"
+				},
+				{
+					"property": "ScrollViewer.VerticalScrollMode",
+					"value": "Auto"
+				},
+				{
+					"property": "ScrollViewer.VerticalScrollBarVisibility",
+					"value": "Auto"
+				},
+				{
+					"property": "ScrollViewer.ZoomMode",
+					"value": "Disabled"
+				},
+				{
+					"property": "CornerRadius",
+					"value": "{ThemeResource OverlayCornerRadius}"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "GridViewItemBackground",
@@ -25181,10 +27296,88 @@
 		{
 			"key": "DefaultGridViewItemStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommonStyles/GridViewItem_themeresources.xaml",
 			"line": 135,
-			"tag": "Style"
+			"targetType": "GridViewItem",
+			"setters": [
+				{
+					"property": "FontFamily",
+					"value": "{ThemeResource ContentControlThemeFontFamily}"
+				},
+				{
+					"property": "FontSize",
+					"value": "{ThemeResource ControlContentThemeFontSize}"
+				},
+				{
+					"property": "Background",
+					"value": "{ThemeResource GridViewItemBackground}"
+				},
+				{
+					"property": "Foreground",
+					"value": "{ThemeResource GridViewItemForeground}"
+				},
+				{
+					"property": "TabNavigation",
+					"value": "Local"
+				},
+				{
+					"property": "IsHoldingEnabled",
+					"value": "True"
+				},
+				{
+					"property": "HorizontalContentAlignment",
+					"value": "Center"
+				},
+				{
+					"property": "VerticalContentAlignment",
+					"value": "Center"
+				},
+				{
+					"property": "Margin",
+					"value": "0,0,4,4"
+				},
+				{
+					"property": "MinWidth",
+					"value": "{ThemeResource GridViewItemMinWidth}"
+				},
+				{
+					"property": "MinHeight",
+					"value": "{ThemeResource GridViewItemMinHeight}"
+				},
+				{
+					"property": "AllowDrop",
+					"value": "True"
+				},
+				{
+					"property": "UseSystemFocusVisuals",
+					"value": "{StaticResource UseSystemFocusVisuals}"
+				},
+				{
+					"property": "FocusVisualMargin",
+					"value": "-3"
+				},
+				{
+					"property": "FocusVisualPrimaryBrush",
+					"value": "{ThemeResource GridViewItemFocusVisualPrimaryBrush}"
+				},
+				{
+					"property": "FocusVisualPrimaryThickness",
+					"value": "2"
+				},
+				{
+					"property": "FocusVisualSecondaryBrush",
+					"value": "{ThemeResource GridViewItemFocusVisualSecondaryBrush}"
+				},
+				{
+					"property": "FocusVisualSecondaryThickness",
+					"value": "1"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "HyperlinkButtonForeground",
@@ -25504,10 +27697,68 @@
 		{
 			"key": "DefaultHyperlinkButtonStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommonStyles/HyperlinkButton_themeresources.xaml",
 			"line": 51,
-			"tag": "Style"
+			"targetType": "HyperlinkButton",
+			"setters": [
+				{
+					"property": "Background",
+					"value": "{ThemeResource HyperlinkButtonBackground}"
+				},
+				{
+					"property": "BackgroundSizing",
+					"value": "OuterBorderEdge"
+				},
+				{
+					"property": "Foreground",
+					"value": "{ThemeResource HyperlinkButtonForeground}"
+				},
+				{
+					"property": "BorderBrush",
+					"value": "{ThemeResource HyperlinkButtonBorderBrush}"
+				},
+				{
+					"property": "BorderThickness",
+					"value": "{ThemeResource HyperlinkButtonBorderThemeThickness}"
+				},
+				{
+					"property": "Padding",
+					"value": "{ThemeResource ButtonPadding}"
+				},
+				{
+					"property": "HorizontalAlignment",
+					"value": "Left"
+				},
+				{
+					"property": "VerticalAlignment",
+					"value": "Center"
+				},
+				{
+					"property": "FontFamily",
+					"value": "{ThemeResource ContentControlThemeFontFamily}"
+				},
+				{
+					"property": "FontSize",
+					"value": "{ThemeResource ControlContentThemeFontSize}"
+				},
+				{
+					"property": "UseSystemFocusVisuals",
+					"value": "True"
+				},
+				{
+					"property": "FocusVisualMargin",
+					"value": "-3"
+				},
+				{
+					"property": "CornerRadius",
+					"value": "{ThemeResource ControlCornerRadius}"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "HyperlinkForeground",
@@ -27042,74 +29293,390 @@
 		{
 			"key": "InkToolbarGlyphFontStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommonStyles/InkToolbar_themeresources.xaml",
 			"line": 191,
-			"tag": "Style"
+			"targetType": "TextBlock",
+			"setters": [
+				{
+					"property": "FontFamily",
+					"value": "{ThemeResource SymbolThemeFontFamily}"
+				},
+				{
+					"property": "FontSize",
+					"value": "{StaticResource InkToolbarButtonFontSize}"
+				},
+				{
+					"property": "LineHeight",
+					"value": "{StaticResource InkToolbarButtonFontSize}"
+				},
+				{
+					"property": "LineStackingStrategy",
+					"value": "BlockLineHeight"
+				},
+				{
+					"property": "TextLineBounds",
+					"value": "Tight"
+				},
+				{
+					"property": "TextAlignment",
+					"value": "Center"
+				},
+				{
+					"property": "VerticalAlignment",
+					"value": "Center"
+				},
+				{
+					"property": "AutomationProperties.AccessibilityView",
+					"value": "Content"
+				},
+				{
+					"property": "HighContrastAdjustment",
+					"value": "None"
+				}
+			]
 		},
 		{
 			"key": "InkToolbarGlyphFillFontStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommonStyles/InkToolbar_themeresources.xaml",
 			"line": 202,
-			"tag": "Style"
+			"targetType": "TextBlock",
+			"setters": [
+				{
+					"property": "FontFamily",
+					"value": "{ThemeResource SymbolThemeFontFamily}"
+				},
+				{
+					"property": "FontSize",
+					"value": "{StaticResource InkToolbarButtonFontSize}"
+				},
+				{
+					"property": "LineHeight",
+					"value": "{StaticResource InkToolbarButtonFontSize}"
+				},
+				{
+					"property": "LineStackingStrategy",
+					"value": "BlockLineHeight"
+				},
+				{
+					"property": "TextLineBounds",
+					"value": "Tight"
+				},
+				{
+					"property": "TextAlignment",
+					"value": "Center"
+				},
+				{
+					"property": "VerticalAlignment",
+					"value": "Center"
+				},
+				{
+					"property": "AutomationProperties.AccessibilityView",
+					"value": "Content"
+				},
+				{
+					"property": "HighContrastAdjustment",
+					"value": "None"
+				}
+			]
 		},
 		{
 			"key": "InkToolbarFlyoutStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommonStyles/InkToolbar_themeresources.xaml",
 			"line": 213,
-			"tag": "Style"
+			"targetType": "FlyoutPresenter",
+			"setters": [
+				{
+					"property": "Padding",
+					"value": "0,0,0,0"
+				},
+				{
+					"property": "Background",
+					"value": "{ThemeResource AcrylicBackgroundFillColorDefaultBrush}"
+				},
+				{
+					"property": "BorderBrush",
+					"value": "{ThemeResource SurfaceStrokeColorDefaultBrush}"
+				},
+				{
+					"property": "BorderThickness",
+					"value": "1"
+				},
+				{
+					"property": "MinWidth",
+					"value": "0"
+				},
+				{
+					"property": "MinHeight",
+					"value": "0"
+				},
+				{
+					"property": "Margin",
+					"value": "2,4,2,4"
+				},
+				{
+					"property": "CornerRadius",
+					"value": "{ThemeResource ControlCornerRadius}"
+				}
+			]
 		},
 		{
 			"key": "InkToolbarCommonButtonStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommonStyles/InkToolbar_themeresources.xaml",
 			"line": 223,
-			"tag": "Style"
+			"targetType": "ToggleButton",
+			"setters": [
+				{
+					"property": "MinWidth",
+					"value": "{StaticResource InkToolbarButtonWidth}"
+				},
+				{
+					"property": "MinHeight",
+					"value": "{StaticResource InkToolbarButtonHeight}"
+				},
+				{
+					"property": "MaxWidth",
+					"value": "{StaticResource InkToolbarButtonWidth}"
+				},
+				{
+					"property": "MaxHeight",
+					"value": "{StaticResource InkToolbarButtonHeight}"
+				},
+				{
+					"property": "BorderThickness",
+					"value": "{ThemeResource InkToolbarButtonBorderThemeThickness}"
+				},
+				{
+					"property": "Background",
+					"value": "{ThemeResource InkToolbarButtonBackground}"
+				},
+				{
+					"property": "Foreground",
+					"value": "{ThemeResource InkToolbarButtonForeground}"
+				},
+				{
+					"property": "BorderBrush",
+					"value": "{ThemeResource InkToolbarButtonBorderBrush}"
+				},
+				{
+					"property": "UseSystemFocusVisuals",
+					"value": "True"
+				},
+				{
+					"property": "FocusVisualMargin",
+					"value": "-3"
+				},
+				{
+					"property": "Padding",
+					"value": "2,2,2,2"
+				},
+				{
+					"property": "Margin",
+					"value": "2,2,2,2"
+				},
+				{
+					"property": "IsTextScaleFactorEnabled",
+					"value": "False"
+				},
+				{
+					"property": "CornerRadius",
+					"value": "{ThemeResource ControlCornerRadius}"
+				}
+			]
 		},
 		{
 			"key": "InkToolbarExtensionGlyphStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommonStyles/InkToolbar_themeresources.xaml",
 			"line": 239,
-			"tag": "Style"
+			"targetType": "TextBlock",
+			"setters": [
+				{
+					"property": "FontFamily",
+					"value": "{ThemeResource SymbolThemeFontFamily}"
+				},
+				{
+					"property": "FontSize",
+					"value": "10"
+				},
+				{
+					"property": "LineHeight",
+					"value": "10"
+				},
+				{
+					"property": "LineStackingStrategy",
+					"value": "BlockLineHeight"
+				},
+				{
+					"property": "TextLineBounds",
+					"value": "Tight"
+				},
+				{
+					"property": "TextAlignment",
+					"value": "Center"
+				},
+				{
+					"property": "HorizontalAlignment",
+					"value": "Center"
+				},
+				{
+					"property": "VerticalAlignment",
+					"value": "Bottom"
+				},
+				{
+					"property": "Margin",
+					"value": "0,0,0,0"
+				},
+				{
+					"property": "Foreground",
+					"value": "{ThemeResource InkToolbarAccentColorForegroundThemeBrush}"
+				},
+				{
+					"property": "Opacity",
+					"value": "0"
+				},
+				{
+					"property": "Text",
+					"value": ""
+				},
+				{
+					"property": "HighContrastAdjustment",
+					"value": "None"
+				}
+			]
 		},
 		{
 			"key": "InkToolbarFlyoutItemContentTextStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommonStyles/InkToolbar_themeresources.xaml",
 			"line": 254,
-			"tag": "Style"
+			"targetType": "TextBlock",
+			"setters": [
+				{
+					"property": "HorizontalAlignment",
+					"value": "Left"
+				},
+				{
+					"property": "VerticalAlignment",
+					"value": "Center"
+				},
+				{
+					"property": "HighContrastAdjustment",
+					"value": "None"
+				}
+			],
+			"basedOn": "{StaticResource BodyTextBlockStyle}"
 		},
 		{
 			"key": "InkToolbarPenConfigurationControlTextStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommonStyles/InkToolbar_themeresources.xaml",
 			"line": 259,
-			"tag": "Style"
+			"targetType": "TextBlock",
+			"setters": [
+				{
+					"property": "FontWeight",
+					"value": "SemiBold"
+				}
+			],
+			"basedOn": "{StaticResource BodyTextBlockStyle}"
 		},
 		{
 			"key": "InkToolbarFlyoutItemSelectionAccentStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommonStyles/InkToolbar_themeresources.xaml",
 			"line": 262,
-			"tag": "Style"
+			"targetType": "Rectangle",
+			"setters": [
+				{
+					"property": "Opacity",
+					"value": "0"
+				},
+				{
+					"property": "VerticalAlignment",
+					"value": "Center"
+				},
+				{
+					"property": "HorizontalAlignment",
+					"value": "Left"
+				},
+				{
+					"property": "Height",
+					"value": "16"
+				},
+				{
+					"property": "Width",
+					"value": "3"
+				},
+				{
+					"property": "Fill",
+					"value": "{ThemeResource InkToolbarAccentColorForegroundThemeBrush}"
+				},
+				{
+					"property": "RadiusX",
+					"value": "1.5"
+				},
+				{
+					"property": "RadiusY",
+					"value": "1.5"
+				}
+			]
 		},
 		{
 			"key": "InkToolbarFlyoutItemStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommonStyles/InkToolbar_themeresources.xaml",
 			"line": 877,
-			"tag": "Style"
+			"targetType": "InkToolbarFlyoutItem",
+			"setters": [
+				{
+					"property": "Background",
+					"value": "Transparent"
+				},
+				{
+					"property": "BorderThickness",
+					"value": "0"
+				},
+				{
+					"property": "HorizontalAlignment",
+					"value": "Stretch"
+				},
+				{
+					"property": "VerticalAlignment",
+					"value": "Center"
+				},
+				{
+					"property": "MinWidth",
+					"value": "136"
+				},
+				{
+					"property": "Height",
+					"value": "40"
+				},
+				{
+					"property": "UseSystemFocusVisuals",
+					"value": "{StaticResource UseSystemFocusVisuals}"
+				},
+				{
+					"property": "CornerRadius",
+					"value": "{ThemeResource ControlCornerRadius}"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "InkToolbarEraserButtonFlyoutContentTemplate",
@@ -27130,10 +29697,16 @@
 		{
 			"key": "FlyoutStrokeWidthSelectorStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommonStyles/InkToolbar_themeresources.xaml",
 			"line": 1645,
-			"tag": "Style"
+			"targetType": "Slider",
+			"setters": [
+				{
+					"property": "IsThumbToolTipEnabled",
+					"value": "true"
+				}
+			]
 		},
 		{
 			"key": "HighContrastItemTemplate",
@@ -27782,18 +30355,126 @@
 		{
 			"key": "DefaultListBoxItemStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommonStyles/ListBox_themeresources.xaml",
 			"line": 91,
-			"tag": "Style"
+			"targetType": "ListBoxItem",
+			"setters": [
+				{
+					"property": "Background",
+					"value": "Transparent"
+				},
+				{
+					"property": "TabNavigation",
+					"value": "Local"
+				},
+				{
+					"property": "Padding",
+					"value": "{StaticResource ListBoxItemPadding}"
+				},
+				{
+					"property": "HorizontalContentAlignment",
+					"value": "Left"
+				},
+				{
+					"property": "UseSystemFocusVisuals",
+					"value": "{StaticResource UseSystemFocusVisuals}"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "DefaultListBoxStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommonStyles/ListBox_themeresources.xaml",
 			"line": 196,
-			"tag": "Style"
+			"targetType": "ListBox",
+			"setters": [
+				{
+					"property": "Foreground",
+					"value": "{ThemeResource ListBoxForeground}"
+				},
+				{
+					"property": "Background",
+					"value": "{ThemeResource ListBoxBackground}"
+				},
+				{
+					"property": "BorderBrush",
+					"value": "{ThemeResource ListBoxBorder}"
+				},
+				{
+					"property": "BorderThickness",
+					"value": "{ThemeResource ListBoxBorderThemeThickness}"
+				},
+				{
+					"property": "ScrollViewer.HorizontalScrollBarVisibility",
+					"value": "Disabled"
+				},
+				{
+					"property": "ScrollViewer.VerticalScrollBarVisibility",
+					"value": "Auto"
+				},
+				{
+					"property": "ScrollViewer.HorizontalScrollMode",
+					"value": "Disabled"
+				},
+				{
+					"property": "ScrollViewer.IsHorizontalRailEnabled",
+					"value": "True"
+				},
+				{
+					"property": "ScrollViewer.VerticalScrollMode",
+					"value": "Enabled"
+				},
+				{
+					"property": "ScrollViewer.IsVerticalRailEnabled",
+					"value": "True"
+				},
+				{
+					"property": "ScrollViewer.ZoomMode",
+					"value": "Disabled"
+				},
+				{
+					"property": "ScrollViewer.IsDeferredScrollingEnabled",
+					"value": "False"
+				},
+				{
+					"property": "ScrollViewer.BringIntoViewOnFocusChange",
+					"value": "True"
+				},
+				{
+					"property": "IsTabStop",
+					"value": "False"
+				},
+				{
+					"property": "TabNavigation",
+					"value": "Once"
+				},
+				{
+					"property": "FontFamily",
+					"value": "{ThemeResource ContentControlThemeFontFamily}"
+				},
+				{
+					"property": "FontSize",
+					"value": "{ThemeResource ControlContentThemeFontSize}"
+				},
+				{
+					"property": "UseSystemFocusVisuals",
+					"value": "{StaticResource UseSystemFocusVisuals}"
+				},
+				{
+					"property": "ItemsPanel",
+					"unsupported": "ItemsPanelTemplate"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "ListViewItemContentOffsetX",
@@ -29625,26 +32306,212 @@
 		{
 			"key": "DefaultListViewItemStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommonStyles/ListViewItem_themeresources.xaml",
 			"line": 234,
-			"tag": "Style"
+			"targetType": "ListViewItem",
+			"setters": [
+				{
+					"property": "FontFamily",
+					"value": "{ThemeResource ContentControlThemeFontFamily}"
+				},
+				{
+					"property": "FontSize",
+					"value": "{ThemeResource ControlContentThemeFontSize}"
+				},
+				{
+					"property": "Background",
+					"value": "{ThemeResource ListViewItemBackground}"
+				},
+				{
+					"property": "Foreground",
+					"value": "{ThemeResource ListViewItemForeground}"
+				},
+				{
+					"property": "TabNavigation",
+					"value": "Local"
+				},
+				{
+					"property": "IsHoldingEnabled",
+					"value": "True"
+				},
+				{
+					"property": "Padding",
+					"value": "16,0,12,0"
+				},
+				{
+					"property": "HorizontalContentAlignment",
+					"value": "Stretch"
+				},
+				{
+					"property": "VerticalContentAlignment",
+					"value": "Center"
+				},
+				{
+					"property": "MinWidth",
+					"value": "{ThemeResource ListViewItemMinWidth}"
+				},
+				{
+					"property": "MinHeight",
+					"value": "{ThemeResource ListViewItemMinHeight}"
+				},
+				{
+					"property": "AllowDrop",
+					"value": "False"
+				},
+				{
+					"property": "UseSystemFocusVisuals",
+					"value": "True"
+				},
+				{
+					"property": "FocusVisualMargin",
+					"value": "1"
+				},
+				{
+					"property": "FocusVisualPrimaryBrush",
+					"value": "{ThemeResource ListViewItemFocusVisualPrimaryBrush}"
+				},
+				{
+					"property": "FocusVisualPrimaryThickness",
+					"value": "2"
+				},
+				{
+					"property": "FocusVisualSecondaryBrush",
+					"value": "{ThemeResource ListViewItemFocusVisualSecondaryBrush}"
+				},
+				{
+					"property": "FocusVisualSecondaryThickness",
+					"value": "1"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "ListViewItemExpanded",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommonStyles/ListViewItem_themeresources.xaml",
 			"line": 261,
-			"tag": "Style"
+			"targetType": "ListViewItem",
+			"setters": [
+				{
+					"property": "FontFamily",
+					"value": "{ThemeResource ContentControlThemeFontFamily}"
+				},
+				{
+					"property": "FontSize",
+					"value": "{ThemeResource ControlContentThemeFontSize}"
+				},
+				{
+					"property": "BorderBrush",
+					"value": "{x:Null}"
+				},
+				{
+					"property": "BorderThickness",
+					"value": "0"
+				},
+				{
+					"property": "Background",
+					"value": "Transparent"
+				},
+				{
+					"property": "Foreground",
+					"value": "{ThemeResource ListViewItemForeground}"
+				},
+				{
+					"property": "TabNavigation",
+					"value": "Local"
+				},
+				{
+					"property": "IsHoldingEnabled",
+					"value": "True"
+				},
+				{
+					"property": "Padding",
+					"value": "12,0,12,0"
+				},
+				{
+					"property": "HorizontalContentAlignment",
+					"value": "Left"
+				},
+				{
+					"property": "VerticalContentAlignment",
+					"value": "Center"
+				},
+				{
+					"property": "MinWidth",
+					"value": "{ThemeResource ListViewItemMinWidth}"
+				},
+				{
+					"property": "MinHeight",
+					"value": "{ThemeResource ListViewItemMinHeight}"
+				},
+				{
+					"property": "AllowDrop",
+					"value": "False"
+				},
+				{
+					"property": "UseSystemFocusVisuals",
+					"value": "{StaticResource UseSystemFocusVisuals}"
+				},
+				{
+					"property": "FocusVisualMargin",
+					"value": "0"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "ListPickerFlyoutPresenterItemStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommonStyles/ListViewItem_themeresources.xaml",
 			"line": 569,
-			"tag": "Style"
+			"targetType": "ListViewItem",
+			"setters": [
+				{
+					"property": "FontFamily",
+					"value": "{ThemeResource ContentControlThemeFontFamily}"
+				},
+				{
+					"property": "FontSize",
+					"value": "{ThemeResource ControlContentThemeFontSize}"
+				},
+				{
+					"property": "Background",
+					"value": "Transparent"
+				},
+				{
+					"property": "TabNavigation",
+					"value": "Local"
+				},
+				{
+					"property": "IsHoldingEnabled",
+					"value": "False"
+				},
+				{
+					"property": "Margin",
+					"value": "{ThemeResource ListPickerFlyoutPresenterItemMargin}"
+				},
+				{
+					"property": "HorizontalContentAlignment",
+					"value": "Left"
+				},
+				{
+					"property": "VerticalContentAlignment",
+					"value": "Top"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "ListViewBaseItemRoundedChromeEnabled",
@@ -30099,10 +32966,52 @@
 		{
 			"key": "DefaultMediaTransportControlsStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommonStyles/MediaTransportControls_themeresources.xaml",
 			"line": 63,
-			"tag": "Style"
+			"targetType": "MediaTransportControls",
+			"setters": [
+				{
+					"property": "IsTabStop",
+					"value": "False"
+				},
+				{
+					"property": "Background",
+					"value": "Transparent"
+				},
+				{
+					"property": "FlowDirection",
+					"value": "LeftToRight"
+				},
+				{
+					"property": "Margin",
+					"value": "{ThemeResource MediaTransportControlsMargin}"
+				},
+				{
+					"property": "MaxWidth",
+					"value": "{ThemeResource MediaTransportControlsMaxWidth}"
+				},
+				{
+					"property": "MinWidth",
+					"value": "{ThemeResource MediaTransportControlsMinWidth}"
+				},
+				{
+					"property": "UseSystemFocusVisuals",
+					"value": "{StaticResource UseSystemFocusVisuals}"
+				},
+				{
+					"property": "IsTextScaleFactorEnabled",
+					"value": "False"
+				},
+				{
+					"property": "CornerRadius",
+					"value": "{ThemeResource OverlayCornerRadius}"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "MenuFlyoutSeparatorBackground",
@@ -32176,66 +35085,415 @@
 		{
 			"key": "DefaultMenuFlyoutPresenterStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommonStyles/MenuFlyout_themeresources.xaml",
 			"line": 270,
-			"tag": "Style"
+			"targetType": "MenuFlyoutPresenter",
+			"setters": [
+				{
+					"property": "SystemBackdrop",
+					"value": "{StaticResource MenuFlyoutSystemBackdrop}"
+				},
+				{
+					"property": "Background",
+					"value": "{ThemeResource MenuFlyoutPresenterBackground}"
+				},
+				{
+					"property": "BorderBrush",
+					"value": "{ThemeResource MenuFlyoutPresenterBorderBrush}"
+				},
+				{
+					"property": "BorderThickness",
+					"value": "{ThemeResource MenuFlyoutPresenterBorderThemeThickness}"
+				},
+				{
+					"property": "Padding",
+					"value": "{StaticResource MenuFlyoutPresenterThemePadding}"
+				},
+				{
+					"property": "ScrollViewer.HorizontalScrollMode",
+					"value": "Disabled"
+				},
+				{
+					"property": "ScrollViewer.HorizontalScrollBarVisibility",
+					"value": "Disabled"
+				},
+				{
+					"property": "ScrollViewer.VerticalScrollMode",
+					"value": "Auto"
+				},
+				{
+					"property": "ScrollViewer.VerticalScrollBarVisibility",
+					"value": "Auto"
+				},
+				{
+					"property": "ScrollViewer.IsHorizontalRailEnabled",
+					"value": "False"
+				},
+				{
+					"property": "ScrollViewer.IsVerticalRailEnabled",
+					"value": "False"
+				},
+				{
+					"property": "ScrollViewer.ZoomMode",
+					"value": "Disabled"
+				},
+				{
+					"property": "MinWidth",
+					"value": "{ThemeResource FlyoutThemeMinWidth}"
+				},
+				{
+					"property": "MinHeight",
+					"value": "{StaticResource MenuFlyoutThemeMinHeight}"
+				},
+				{
+					"property": "CornerRadius",
+					"value": "{ThemeResource OverlayCornerRadius}"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "DefaultMenuFlyoutItemStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommonStyles/MenuFlyout_themeresources.xaml",
 			"line": 298,
-			"tag": "Style"
+			"targetType": "MenuFlyoutItem",
+			"setters": [
+				{
+					"property": "Background",
+					"value": "{ThemeResource MenuFlyoutItemBackground}"
+				},
+				{
+					"property": "BorderBrush",
+					"value": "{ThemeResource MenuFlyoutItemBackgroundBrush}"
+				},
+				{
+					"property": "BorderThickness",
+					"value": "{ThemeResource MenuFlyoutItemBorderThickness}"
+				},
+				{
+					"property": "Foreground",
+					"value": "{ThemeResource MenuFlyoutItemForeground}"
+				},
+				{
+					"property": "Padding",
+					"value": "{StaticResource MenuFlyoutItemThemePadding}"
+				},
+				{
+					"property": "FontSize",
+					"value": "{ThemeResource ControlContentThemeFontSize}"
+				},
+				{
+					"property": "HorizontalContentAlignment",
+					"value": "Stretch"
+				},
+				{
+					"property": "VerticalContentAlignment",
+					"value": "Center"
+				},
+				{
+					"property": "UseSystemFocusVisuals",
+					"value": "{StaticResource UseSystemFocusVisuals}"
+				},
+				{
+					"property": "KeyboardAcceleratorPlacementMode",
+					"value": "Hidden"
+				},
+				{
+					"property": "CornerRadius",
+					"value": "{ThemeResource ControlCornerRadius}"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "DefaultToggleMenuFlyoutItemStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommonStyles/MenuFlyout_themeresources.xaml",
 			"line": 398,
-			"tag": "Style"
+			"targetType": "ToggleMenuFlyoutItem",
+			"setters": [
+				{
+					"property": "Background",
+					"value": "Transparent"
+				},
+				{
+					"property": "BorderBrush",
+					"value": "{ThemeResource MenuFlyoutItemBackgroundBrush}"
+				},
+				{
+					"property": "BorderThickness",
+					"value": "{ThemeResource MenuFlyoutItemBorderThickness}"
+				},
+				{
+					"property": "Foreground",
+					"value": "{ThemeResource MenuFlyoutItemForeground}"
+				},
+				{
+					"property": "Padding",
+					"value": "{StaticResource MenuFlyoutItemThemePadding}"
+				},
+				{
+					"property": "FontSize",
+					"value": "{ThemeResource ControlContentThemeFontSize}"
+				},
+				{
+					"property": "HorizontalContentAlignment",
+					"value": "Stretch"
+				},
+				{
+					"property": "VerticalContentAlignment",
+					"value": "Center"
+				},
+				{
+					"property": "UseSystemFocusVisuals",
+					"value": "True"
+				},
+				{
+					"property": "CornerRadius",
+					"value": "{ThemeResource ControlCornerRadius}"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "DefaultSplitMenuFlyoutItemStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommonStyles/MenuFlyout_themeresources.xaml",
 			"line": 499,
-			"tag": "Style"
+			"targetType": "SplitMenuFlyoutItem",
+			"setters": [
+				{
+					"property": "UseSystemFocusVisuals",
+					"value": "False"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			],
+			"basedOn": "{StaticResource DefaultMenuFlyoutItemStyle}"
 		},
 		{
 			"key": "DefaultMenuFlyoutSubItemStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommonStyles/MenuFlyout_themeresources.xaml",
 			"line": 628,
-			"tag": "Style"
+			"targetType": "MenuFlyoutSubItem",
+			"setters": [
+				{
+					"property": "Background",
+					"value": "{ThemeResource MenuFlyoutSubItemBackground}"
+				},
+				{
+					"property": "BorderBrush",
+					"value": "{ThemeResource MenuFlyoutSubItemBackgroundBrush}"
+				},
+				{
+					"property": "BorderThickness",
+					"value": "{ThemeResource MenuFlyoutSubItemBorderThickness}"
+				},
+				{
+					"property": "Foreground",
+					"value": "{ThemeResource MenuFlyoutSubItemForeground}"
+				},
+				{
+					"property": "Padding",
+					"value": "{StaticResource MenuFlyoutItemThemePadding}"
+				},
+				{
+					"property": "FontSize",
+					"value": "{ThemeResource ControlContentThemeFontSize}"
+				},
+				{
+					"property": "HorizontalContentAlignment",
+					"value": "Stretch"
+				},
+				{
+					"property": "VerticalContentAlignment",
+					"value": "Center"
+				},
+				{
+					"property": "UseSystemFocusVisuals",
+					"value": "{StaticResource UseSystemFocusVisuals}"
+				},
+				{
+					"property": "CornerRadius",
+					"value": "{ThemeResource ControlCornerRadius}"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "MenuFlyoutItemRevealStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommonStyles/MenuFlyout_themeresources.xaml",
 			"line": 738,
-			"tag": "Style"
+			"targetType": "MenuFlyoutItem",
+			"setters": [
+				{
+					"property": "Background",
+					"value": "{ThemeResource MenuFlyoutItemRevealBackground}"
+				},
+				{
+					"property": "BorderBrush",
+					"value": "{ThemeResource MenuFlyoutItemRevealBorderBrush}"
+				},
+				{
+					"property": "BorderThickness",
+					"value": "{ThemeResource MenuFlyoutItemRevealBorderThickness}"
+				},
+				{
+					"property": "Foreground",
+					"value": "{ThemeResource MenuFlyoutItemForeground}"
+				},
+				{
+					"property": "Padding",
+					"value": "{StaticResource MenuFlyoutItemThemePadding}"
+				},
+				{
+					"property": "FontSize",
+					"value": "{ThemeResource ControlContentThemeFontSize}"
+				},
+				{
+					"property": "HorizontalContentAlignment",
+					"value": "Stretch"
+				},
+				{
+					"property": "VerticalContentAlignment",
+					"value": "Center"
+				},
+				{
+					"property": "UseSystemFocusVisuals",
+					"value": "{StaticResource UseSystemFocusVisuals}"
+				},
+				{
+					"property": "KeyboardAcceleratorPlacementMode",
+					"value": "Hidden"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "ToggleMenuFlyoutItemRevealStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommonStyles/MenuFlyout_themeresources.xaml",
 			"line": 840,
-			"tag": "Style"
+			"targetType": "ToggleMenuFlyoutItem",
+			"setters": [
+				{
+					"property": "Background",
+					"value": "{ThemeResource ToggleMenuFlyoutItemRevealBackground}"
+				},
+				{
+					"property": "BorderBrush",
+					"value": "{ThemeResource ToggleMenuFlyoutItemRevealBorderBrush}"
+				},
+				{
+					"property": "BorderThickness",
+					"value": "{ThemeResource ToggleMenuFlyoutItemRevealBorderThickness}"
+				},
+				{
+					"property": "Foreground",
+					"value": "{ThemeResource ToggleMenuFlyoutItemForeground}"
+				},
+				{
+					"property": "Padding",
+					"value": "{StaticResource MenuFlyoutItemThemePadding}"
+				},
+				{
+					"property": "FontSize",
+					"value": "{ThemeResource ControlContentThemeFontSize}"
+				},
+				{
+					"property": "HorizontalContentAlignment",
+					"value": "Stretch"
+				},
+				{
+					"property": "VerticalContentAlignment",
+					"value": "Center"
+				},
+				{
+					"property": "UseSystemFocusVisuals",
+					"value": "{StaticResource UseSystemFocusVisuals}"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "MenuFlyoutSubItemRevealStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommonStyles/MenuFlyout_themeresources.xaml",
 			"line": 946,
-			"tag": "Style"
+			"targetType": "MenuFlyoutSubItem",
+			"setters": [
+				{
+					"property": "Background",
+					"value": "{ThemeResource MenuFlyoutSubItemRevealBackground}"
+				},
+				{
+					"property": "BorderBrush",
+					"value": "{ThemeResource MenuFlyoutSubItemRevealBorderBrush}"
+				},
+				{
+					"property": "BorderThickness",
+					"value": "{ThemeResource MenuFlyoutSubItemRevealBorderThickness}"
+				},
+				{
+					"property": "Foreground",
+					"value": "{ThemeResource MenuFlyoutSubItemForeground}"
+				},
+				{
+					"property": "Padding",
+					"value": "{StaticResource MenuFlyoutItemThemePadding}"
+				},
+				{
+					"property": "FontSize",
+					"value": "{ThemeResource ControlContentThemeFontSize}"
+				},
+				{
+					"property": "HorizontalContentAlignment",
+					"value": "Stretch"
+				},
+				{
+					"property": "VerticalContentAlignment",
+					"value": "Center"
+				},
+				{
+					"property": "UseSystemFocusVisuals",
+					"value": "{StaticResource UseSystemFocusVisuals}"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "PasswordBoxTopHeaderMargin",
@@ -32258,10 +35516,76 @@
 		{
 			"key": "DefaultPasswordBoxStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommonStyles/PasswordBox_themeresources.xaml",
 			"line": 11,
-			"tag": "Style"
+			"targetType": "PasswordBox",
+			"setters": [
+				{
+					"property": "Foreground",
+					"value": "{ThemeResource TextControlForeground}"
+				},
+				{
+					"property": "Background",
+					"value": "{ThemeResource TextControlBackground}"
+				},
+				{
+					"property": "SelectionHighlightColor",
+					"value": "{ThemeResource TextControlSelectionHighlightColor}"
+				},
+				{
+					"property": "BorderBrush",
+					"value": "{ThemeResource TextControlBorderBrush}"
+				},
+				{
+					"property": "BorderThickness",
+					"value": "{ThemeResource TextControlBorderThemeThickness}"
+				},
+				{
+					"property": "FontFamily",
+					"value": "{ThemeResource ContentControlThemeFontFamily}"
+				},
+				{
+					"property": "FontSize",
+					"value": "{ThemeResource ControlContentThemeFontSize}"
+				},
+				{
+					"property": "ScrollViewer.HorizontalScrollMode",
+					"value": "Auto"
+				},
+				{
+					"property": "ScrollViewer.VerticalScrollMode",
+					"value": "Auto"
+				},
+				{
+					"property": "ScrollViewer.HorizontalScrollBarVisibility",
+					"value": "Hidden"
+				},
+				{
+					"property": "ScrollViewer.VerticalScrollBarVisibility",
+					"value": "Hidden"
+				},
+				{
+					"property": "Padding",
+					"value": "{ThemeResource TextControlThemePadding}"
+				},
+				{
+					"property": "ContextFlyout",
+					"value": "{StaticResource TextControlCommandBarContextFlyout}"
+				},
+				{
+					"property": "SelectionFlyout",
+					"value": "{StaticResource TextControlCommandBarSelectionFlyout}"
+				},
+				{
+					"property": "CornerRadius",
+					"value": "{ThemeResource ControlCornerRadius}"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "PivotHeaderItemFontFamily",
@@ -33877,34 +37201,162 @@
 		{
 			"key": "DefaultPivotStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommonStyles/Pivot_themeresources.xaml",
 			"line": 208,
-			"tag": "Style"
+			"targetType": "Pivot",
+			"setters": [
+				{
+					"property": "Margin",
+					"value": "0"
+				},
+				{
+					"property": "Padding",
+					"value": "0"
+				},
+				{
+					"property": "Background",
+					"value": "{ThemeResource PivotBackground}"
+				},
+				{
+					"property": "IsTabStop",
+					"value": "False"
+				},
+				{
+					"property": "ItemsPanel",
+					"unsupported": "ItemsPanelTemplate"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "DefaultPivotItemStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommonStyles/Pivot_themeresources.xaml",
 			"line": 450,
-			"tag": "Style"
+			"targetType": "PivotItem",
+			"setters": [
+				{
+					"property": "Background",
+					"value": "{ThemeResource PivotItemBackground}"
+				},
+				{
+					"property": "Margin",
+					"value": "{ThemeResource PivotItemMargin}"
+				},
+				{
+					"property": "Padding",
+					"value": "0"
+				},
+				{
+					"property": "HorizontalContentAlignment",
+					"value": "Stretch"
+				},
+				{
+					"property": "VerticalContentAlignment",
+					"value": "Stretch"
+				},
+				{
+					"property": "IsTabStop",
+					"value": "False"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "DefaultPivotHeaderItemStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommonStyles/Pivot_themeresources.xaml",
 			"line": 475,
-			"tag": "Style"
+			"targetType": "PivotHeaderItem",
+			"setters": [
+				{
+					"property": "FontSize",
+					"value": "{ThemeResource PivotHeaderItemFontSize}"
+				},
+				{
+					"property": "FontFamily",
+					"value": "{ThemeResource PivotHeaderItemFontFamily}"
+				},
+				{
+					"property": "FontWeight",
+					"value": "{ThemeResource PivotHeaderItemThemeFontWeight}"
+				},
+				{
+					"property": "CharacterSpacing",
+					"value": "{ThemeResource PivotHeaderItemCharacterSpacing}"
+				},
+				{
+					"property": "Background",
+					"value": "{ThemeResource PivotHeaderItemBackgroundUnselected}"
+				},
+				{
+					"property": "Foreground",
+					"value": "{ThemeResource PivotHeaderItemForegroundUnselected}"
+				},
+				{
+					"property": "Padding",
+					"value": "{ThemeResource PivotHeaderItemMargin}"
+				},
+				{
+					"property": "Height",
+					"value": "48"
+				},
+				{
+					"property": "VerticalContentAlignment",
+					"value": "Center"
+				},
+				{
+					"property": "IsTabStop",
+					"value": "False"
+				},
+				{
+					"property": "UseSystemFocusVisuals",
+					"value": "False"
+				},
+				{
+					"property": "CornerRadius",
+					"value": "{ThemeResource PivotHeaderItemSelectedPipeCornerRadius}"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "PivotTitleContentControlStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommonStyles/Pivot_themeresources.xaml",
 			"line": 593,
-			"tag": "Style"
+			"targetType": "ContentControl",
+			"setters": [
+				{
+					"property": "FontFamily",
+					"value": "{ThemeResource PhoneFontFamilyNormal}"
+				},
+				{
+					"property": "FontWeight",
+					"value": "SemiBold"
+				},
+				{
+					"property": "FontSize",
+					"value": "{ThemeResource TextStyleLargeFontSize}"
+				},
+				{
+					"property": "Margin",
+					"value": "{StaticResource PivotPortraitThemePadding}"
+				}
+			]
 		},
 		{
 			"key": "RadioButtonBorderThemeThickness",
@@ -35283,10 +38735,72 @@
 		{
 			"key": "DefaultRadioButtonStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommonStyles/RadioButton_themeresources.xaml",
 			"line": 183,
-			"tag": "Style"
+			"targetType": "RadioButton",
+			"setters": [
+				{
+					"property": "Background",
+					"value": "{ThemeResource RadioButtonBackground}"
+				},
+				{
+					"property": "Foreground",
+					"value": "{ThemeResource RadioButtonForeground}"
+				},
+				{
+					"property": "BorderBrush",
+					"value": "{ThemeResource RadioButtonBorderBrush}"
+				},
+				{
+					"property": "Padding",
+					"value": "8,6,0,0"
+				},
+				{
+					"property": "HorizontalAlignment",
+					"value": "Left"
+				},
+				{
+					"property": "VerticalAlignment",
+					"value": "Center"
+				},
+				{
+					"property": "HorizontalContentAlignment",
+					"value": "Left"
+				},
+				{
+					"property": "VerticalContentAlignment",
+					"value": "Top"
+				},
+				{
+					"property": "FontFamily",
+					"value": "{ThemeResource ContentControlThemeFontFamily}"
+				},
+				{
+					"property": "FontSize",
+					"value": "{ThemeResource ControlContentThemeFontSize}"
+				},
+				{
+					"property": "MinWidth",
+					"value": "120"
+				},
+				{
+					"property": "UseSystemFocusVisuals",
+					"value": "{StaticResource UseSystemFocusVisuals}"
+				},
+				{
+					"property": "FocusVisualMargin",
+					"value": "-7,-3,-7,-3"
+				},
+				{
+					"property": "CornerRadius",
+					"value": "{StaticResource ControlCornerRadius}"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "RepeatButtonBorderThemeThickness",
@@ -35822,10 +39336,72 @@
 		{
 			"key": "DefaultRepeatButtonStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommonStyles/RepeatButton_themeresources.xaml",
 			"line": 78,
-			"tag": "Style"
+			"targetType": "RepeatButton",
+			"setters": [
+				{
+					"property": "Background",
+					"value": "{ThemeResource RepeatButtonBackground}"
+				},
+				{
+					"property": "BackgroundSizing",
+					"value": "InnerBorderEdge"
+				},
+				{
+					"property": "Foreground",
+					"value": "{ThemeResource RepeatButtonForeground}"
+				},
+				{
+					"property": "BorderBrush",
+					"value": "{ThemeResource RepeatButtonBorderBrush}"
+				},
+				{
+					"property": "BorderThickness",
+					"value": "{ThemeResource ButtonBorderThemeThickness}"
+				},
+				{
+					"property": "Padding",
+					"value": "{StaticResource ButtonPadding}"
+				},
+				{
+					"property": "HorizontalAlignment",
+					"value": "Left"
+				},
+				{
+					"property": "VerticalAlignment",
+					"value": "Center"
+				},
+				{
+					"property": "FontFamily",
+					"value": "{ThemeResource ContentControlThemeFontFamily}"
+				},
+				{
+					"property": "FontWeight",
+					"value": "Normal"
+				},
+				{
+					"property": "FontSize",
+					"value": "{ThemeResource ControlContentThemeFontSize}"
+				},
+				{
+					"property": "UseSystemFocusVisuals",
+					"value": "{StaticResource UseSystemFocusVisuals}"
+				},
+				{
+					"property": "FocusVisualMargin",
+					"value": "-3"
+				},
+				{
+					"property": "CornerRadius",
+					"value": "{ThemeResource ControlCornerRadius}"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "RichEditBoxTopHeaderMargin",
@@ -35839,10 +39415,88 @@
 		{
 			"key": "DefaultRichEditBoxStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommonStyles/RichEditBox_themeresources.xaml",
 			"line": 5,
-			"tag": "Style"
+			"targetType": "RichEditBox",
+			"setters": [
+				{
+					"property": "Foreground",
+					"value": "{ThemeResource TextControlForeground}"
+				},
+				{
+					"property": "Background",
+					"value": "{ThemeResource TextControlBackground}"
+				},
+				{
+					"property": "SelectionHighlightColor",
+					"value": "{ThemeResource TextControlSelectionHighlightColor}"
+				},
+				{
+					"property": "BorderBrush",
+					"value": "{ThemeResource TextControlBorderBrush}"
+				},
+				{
+					"property": "BorderThickness",
+					"value": "{ThemeResource TextControlBorderThemeThickness}"
+				},
+				{
+					"property": "FontFamily",
+					"value": "{ThemeResource ContentControlThemeFontFamily}"
+				},
+				{
+					"property": "FontSize",
+					"value": "{ThemeResource ControlContentThemeFontSize}"
+				},
+				{
+					"property": "ScrollViewer.HorizontalScrollMode",
+					"value": "Auto"
+				},
+				{
+					"property": "ScrollViewer.VerticalScrollMode",
+					"value": "Auto"
+				},
+				{
+					"property": "ScrollViewer.HorizontalScrollBarVisibility",
+					"value": "Auto"
+				},
+				{
+					"property": "ScrollViewer.VerticalScrollBarVisibility",
+					"value": "Auto"
+				},
+				{
+					"property": "ScrollViewer.IsDeferredScrollingEnabled",
+					"value": "False"
+				},
+				{
+					"property": "TextWrapping",
+					"value": "Wrap"
+				},
+				{
+					"property": "Padding",
+					"value": "{ThemeResource TextControlThemePadding}"
+				},
+				{
+					"property": "UseSystemFocusVisuals",
+					"value": "{ThemeResource IsApplicationFocusVisualKindReveal}"
+				},
+				{
+					"property": "ContextFlyout",
+					"value": "{StaticResource TextControlCommandBarContextFlyout}"
+				},
+				{
+					"property": "SelectionFlyout",
+					"value": "{StaticResource TextControlCommandBarSelectionFlyout}"
+				},
+				{
+					"property": "CornerRadius",
+					"value": "{ThemeResource ControlCornerRadius}"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "ScrollBarTrackBorderThemeThickness",
@@ -37379,10 +41033,44 @@
 		{
 			"key": "DefaultScrollBarStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommonStyles/ScrollBar_themeresources.xaml",
 			"line": 200,
-			"tag": "Style"
+			"targetType": "ScrollBar",
+			"setters": [
+				{
+					"property": "MinWidth",
+					"value": "{StaticResource ScrollBarSize}"
+				},
+				{
+					"property": "MinHeight",
+					"value": "{StaticResource ScrollBarSize}"
+				},
+				{
+					"property": "Background",
+					"value": "{ThemeResource ScrollBarBackground}"
+				},
+				{
+					"property": "Foreground",
+					"value": "{ThemeResource ScrollBarForeground}"
+				},
+				{
+					"property": "BorderBrush",
+					"value": "{ThemeResource ScrollBarBorderBrush}"
+				},
+				{
+					"property": "IsTabStop",
+					"value": "False"
+				},
+				{
+					"property": "CornerRadius",
+					"value": "{ThemeResource ScrollBarCornerRadius}"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "ScrollViewerScrollBarSeparatorBackground",
@@ -37474,10 +41162,72 @@
 		{
 			"key": "DefaultScrollViewerStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommonStyles/ScrollViewer_themeresources.xaml",
 			"line": 22,
-			"tag": "Style"
+			"targetType": "ScrollViewer",
+			"setters": [
+				{
+					"property": "HorizontalScrollMode",
+					"value": "Auto"
+				},
+				{
+					"property": "VerticalScrollMode",
+					"value": "Auto"
+				},
+				{
+					"property": "IsHorizontalRailEnabled",
+					"value": "True"
+				},
+				{
+					"property": "IsVerticalRailEnabled",
+					"value": "True"
+				},
+				{
+					"property": "IsTabStop",
+					"value": "False"
+				},
+				{
+					"property": "ZoomMode",
+					"value": "Disabled"
+				},
+				{
+					"property": "HorizontalContentAlignment",
+					"value": "Left"
+				},
+				{
+					"property": "VerticalContentAlignment",
+					"value": "Top"
+				},
+				{
+					"property": "VerticalScrollBarVisibility",
+					"value": "Visible"
+				},
+				{
+					"property": "Padding",
+					"value": "0"
+				},
+				{
+					"property": "BorderThickness",
+					"value": "0"
+				},
+				{
+					"property": "BorderBrush",
+					"value": "Transparent"
+				},
+				{
+					"property": "Background",
+					"value": "Transparent"
+				},
+				{
+					"property": "UseSystemFocusVisuals",
+					"value": "{StaticResource UseSystemFocusVisuals}"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "SliderOutsideTickBarThemeHeight",
@@ -38814,10 +42564,60 @@
 		{
 			"key": "DefaultSliderStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommonStyles/Slider_themeresources.xaml",
 			"line": 175,
-			"tag": "Style"
+			"targetType": "Slider",
+			"setters": [
+				{
+					"property": "Background",
+					"value": "{ThemeResource SliderTrackFill}"
+				},
+				{
+					"property": "BorderThickness",
+					"value": "{ThemeResource SliderBorderThemeThickness}"
+				},
+				{
+					"property": "BorderBrush",
+					"value": "{ThemeResource SliderThumbBorderBrush}"
+				},
+				{
+					"property": "Foreground",
+					"value": "{ThemeResource SliderTrackValueFill}"
+				},
+				{
+					"property": "FontFamily",
+					"value": "{ThemeResource ContentControlThemeFontFamily}"
+				},
+				{
+					"property": "FontSize",
+					"value": "{ThemeResource ControlContentThemeFontSize}"
+				},
+				{
+					"property": "ManipulationMode",
+					"value": "None"
+				},
+				{
+					"property": "UseSystemFocusVisuals",
+					"value": "{StaticResource UseSystemFocusVisuals}"
+				},
+				{
+					"property": "FocusVisualMargin",
+					"value": "-7,0,-7,0"
+				},
+				{
+					"property": "IsFocusEngagementEnabled",
+					"value": "True"
+				},
+				{
+					"property": "CornerRadius",
+					"value": "{ThemeResource SliderTrackCornerRadius}"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "TabularSurfaceRowBackgroundBrush",
@@ -40397,82 +44197,202 @@
 		{
 			"key": "BaseTextBlockStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommonStyles/TextBlock_themeresources.xaml",
 			"line": 10,
-			"tag": "Style"
+			"targetType": "TextBlock",
+			"setters": [
+				{
+					"property": "FontFamily",
+					"value": "XamlAutoFontFamily"
+				},
+				{
+					"property": "FontSize",
+					"value": "{StaticResource BodyTextBlockFontSize}"
+				},
+				{
+					"property": "FontWeight",
+					"value": "SemiBold"
+				},
+				{
+					"property": "TextTrimming",
+					"value": "CharacterEllipsis"
+				},
+				{
+					"property": "TextWrapping",
+					"value": "Wrap"
+				},
+				{
+					"property": "LineStackingStrategy",
+					"value": "MaxHeight"
+				},
+				{
+					"property": "TextLineBounds",
+					"value": "Full"
+				}
+			]
 		},
 		{
 			"key": "CaptionTextBlockStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommonStyles/TextBlock_themeresources.xaml",
 			"line": 19,
-			"tag": "Style"
+			"targetType": "TextBlock",
+			"setters": [
+				{
+					"property": "FontSize",
+					"value": "{StaticResource CaptionTextBlockFontSize}"
+				},
+				{
+					"property": "FontWeight",
+					"value": "Normal"
+				}
+			],
+			"basedOn": "{StaticResource BaseTextBlockStyle}"
 		},
 		{
 			"key": "BodyTextBlockStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommonStyles/TextBlock_themeresources.xaml",
 			"line": 23,
-			"tag": "Style"
+			"targetType": "TextBlock",
+			"setters": [
+				{
+					"property": "FontWeight",
+					"value": "Normal"
+				}
+			],
+			"basedOn": "{StaticResource BaseTextBlockStyle}"
 		},
 		{
 			"key": "BodyStrongTextBlockStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommonStyles/TextBlock_themeresources.xaml",
 			"line": 26,
-			"tag": "Style"
+			"targetType": "TextBlock",
+			"setters": [],
+			"basedOn": "{StaticResource BaseTextBlockStyle}"
 		},
 		{
 			"key": "BodyLargeTextBlockStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommonStyles/TextBlock_themeresources.xaml",
 			"line": 27,
-			"tag": "Style"
+			"targetType": "TextBlock",
+			"setters": [
+				{
+					"property": "FontWeight",
+					"value": "Normal"
+				},
+				{
+					"property": "FontSize",
+					"value": "{StaticResource BodyLargeTextBlockFontSize}"
+				},
+				{
+					"property": "OpticalMarginAlignment",
+					"value": "TrimSideBearings"
+				}
+			],
+			"basedOn": "{StaticResource BaseTextBlockStyle}"
 		},
 		{
 			"key": "BodyLargeStrongTextBlockStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommonStyles/TextBlock_themeresources.xaml",
 			"line": 32,
-			"tag": "Style"
+			"targetType": "TextBlock",
+			"setters": [
+				{
+					"property": "FontSize",
+					"value": "{StaticResource BodyLargeTextBlockFontSize}"
+				},
+				{
+					"property": "OpticalMarginAlignment",
+					"value": "TrimSideBearings"
+				}
+			],
+			"basedOn": "{StaticResource BaseTextBlockStyle}"
 		},
 		{
 			"key": "SubtitleTextBlockStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommonStyles/TextBlock_themeresources.xaml",
 			"line": 36,
-			"tag": "Style"
+			"targetType": "TextBlock",
+			"setters": [
+				{
+					"property": "FontSize",
+					"value": "{StaticResource SubtitleTextBlockFontSize}"
+				},
+				{
+					"property": "OpticalMarginAlignment",
+					"value": "TrimSideBearings"
+				}
+			],
+			"basedOn": "{StaticResource BaseTextBlockStyle}"
 		},
 		{
 			"key": "TitleTextBlockStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommonStyles/TextBlock_themeresources.xaml",
 			"line": 40,
-			"tag": "Style"
+			"targetType": "TextBlock",
+			"setters": [
+				{
+					"property": "FontSize",
+					"value": "{StaticResource TitleTextBlockFontSize}"
+				},
+				{
+					"property": "OpticalMarginAlignment",
+					"value": "TrimSideBearings"
+				}
+			],
+			"basedOn": "{StaticResource BaseTextBlockStyle}"
 		},
 		{
 			"key": "TitleLargeTextBlockStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommonStyles/TextBlock_themeresources.xaml",
 			"line": 44,
-			"tag": "Style"
+			"targetType": "TextBlock",
+			"setters": [
+				{
+					"property": "FontSize",
+					"value": "{StaticResource TitleLargeTextBlockFontSize}"
+				},
+				{
+					"property": "OpticalMarginAlignment",
+					"value": "TrimSideBearings"
+				}
+			],
+			"basedOn": "{StaticResource BaseTextBlockStyle}"
 		},
 		{
 			"key": "DisplayTextBlockStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommonStyles/TextBlock_themeresources.xaml",
 			"line": 48,
-			"tag": "Style"
+			"targetType": "TextBlock",
+			"setters": [
+				{
+					"property": "FontSize",
+					"value": "{StaticResource DisplayTextBlockFontSize}"
+				},
+				{
+					"property": "OpticalMarginAlignment",
+					"value": "TrimSideBearings"
+				}
+			],
+			"basedOn": "{StaticResource BaseTextBlockStyle}"
 		},
 		{
 			"key": "BodyStrongTextBlockFontSize",
@@ -40504,26 +44424,55 @@
 		{
 			"key": "BodyStrongTextBlockStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommonStyles/TextBlock_themeresources_v2.5.xaml",
 			"line": 6,
-			"tag": "Style"
+			"targetType": "TextBlock",
+			"setters": [
+				{
+					"property": "FontSize",
+					"value": "{StaticResource BodyStrongTextBlockFontSize}"
+				}
+			],
+			"basedOn": "{StaticResource BaseTextBlockStyle}"
 		},
 		{
 			"key": "TitleLargeTextBlockStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommonStyles/TextBlock_themeresources_v2.5.xaml",
 			"line": 9,
-			"tag": "Style"
+			"targetType": "TextBlock",
+			"setters": [
+				{
+					"property": "FontSize",
+					"value": "{StaticResource TitleLargeTextBlockFontSize}"
+				},
+				{
+					"property": "OpticalMarginAlignment",
+					"value": "TrimSideBearings"
+				}
+			],
+			"basedOn": "{StaticResource BaseTextBlockStyle}"
 		},
 		{
 			"key": "DisplayTextBlockStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommonStyles/TextBlock_themeresources_v2.5.xaml",
 			"line": 13,
-			"tag": "Style"
+			"targetType": "TextBlock",
+			"setters": [
+				{
+					"property": "FontSize",
+					"value": "{StaticResource DisplayTextBlockFontSize}"
+				},
+				{
+					"property": "OpticalMarginAlignment",
+					"value": "TrimSideBearings"
+				}
+			],
+			"basedOn": "{StaticResource BaseTextBlockStyle}"
 		},
 		{
 			"key": "TextBoxForegroundHeaderThemeBrush",
@@ -41579,10 +45528,96 @@
 		{
 			"key": "DefaultTextBoxStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommonStyles/TextBox_themeresources.xaml",
 			"line": 179,
-			"tag": "Style"
+			"targetType": "TextBox",
+			"setters": [
+				{
+					"property": "Foreground",
+					"value": "{ThemeResource TextControlForeground}"
+				},
+				{
+					"property": "Background",
+					"value": "{ThemeResource TextControlBackground}"
+				},
+				{
+					"property": "BorderBrush",
+					"value": "{ThemeResource TextControlBorderBrush}"
+				},
+				{
+					"property": "SelectionHighlightColor",
+					"value": "{ThemeResource TextControlSelectionHighlightColor}"
+				},
+				{
+					"property": "BorderThickness",
+					"value": "{ThemeResource TextControlBorderThemeThickness}"
+				},
+				{
+					"property": "FontFamily",
+					"value": "{ThemeResource ContentControlThemeFontFamily}"
+				},
+				{
+					"property": "FontSize",
+					"value": "{ThemeResource ControlContentThemeFontSize}"
+				},
+				{
+					"property": "ScrollViewer.HorizontalScrollMode",
+					"value": "Auto"
+				},
+				{
+					"property": "ScrollViewer.VerticalScrollMode",
+					"value": "Auto"
+				},
+				{
+					"property": "ScrollViewer.HorizontalScrollBarVisibility",
+					"value": "Hidden"
+				},
+				{
+					"property": "ScrollViewer.VerticalScrollBarVisibility",
+					"value": "Hidden"
+				},
+				{
+					"property": "ScrollViewer.IsDeferredScrollingEnabled",
+					"value": "False"
+				},
+				{
+					"property": "MinHeight",
+					"value": "{ThemeResource TextControlThemeMinHeight}"
+				},
+				{
+					"property": "MinWidth",
+					"value": "{ThemeResource TextControlThemeMinWidth}"
+				},
+				{
+					"property": "Padding",
+					"value": "{ThemeResource TextControlThemePadding}"
+				},
+				{
+					"property": "UseSystemFocusVisuals",
+					"value": "{ThemeResource IsApplicationFocusVisualKindReveal}"
+				},
+				{
+					"property": "ContextFlyout",
+					"value": "{StaticResource TextControlCommandBarContextFlyout}"
+				},
+				{
+					"property": "SelectionFlyout",
+					"value": "{StaticResource TextControlCommandBarSelectionFlyout}"
+				},
+				{
+					"property": "CornerRadius",
+					"value": "{ThemeResource ControlCornerRadius}"
+				},
+				{
+					"property": "BackgroundSizing",
+					"value": "InnerBorderEdge"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "TextControlCommandBarContextFlyout",
@@ -42512,10 +46547,20 @@
 		{
 			"key": "TimePickerFlyoutButtonStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommonStyles/TimePicker_themeresources.xaml",
 			"line": 140,
-			"tag": "Style"
+			"targetType": "Button",
+			"setters": [
+				{
+					"property": "ElementSoundMode",
+					"value": "FocusOnly"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "ToggleButtonBorderThemeThickness",
@@ -43870,10 +47915,72 @@
 		{
 			"key": "DefaultToggleButtonStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommonStyles/ToggleButton_themeresources.xaml",
 			"line": 180,
-			"tag": "Style"
+			"targetType": "ToggleButton",
+			"setters": [
+				{
+					"property": "Background",
+					"value": "{ThemeResource ToggleButtonBackground}"
+				},
+				{
+					"property": "BackgroundSizing",
+					"value": "InnerBorderEdge"
+				},
+				{
+					"property": "Foreground",
+					"value": "{ThemeResource ToggleButtonForeground}"
+				},
+				{
+					"property": "BorderBrush",
+					"value": "{ThemeResource ToggleButtonBorderBrush}"
+				},
+				{
+					"property": "BorderThickness",
+					"value": "{ThemeResource ToggleButtonBorderThemeThickness}"
+				},
+				{
+					"property": "Padding",
+					"value": "{StaticResource ButtonPadding}"
+				},
+				{
+					"property": "HorizontalAlignment",
+					"value": "Left"
+				},
+				{
+					"property": "VerticalAlignment",
+					"value": "Center"
+				},
+				{
+					"property": "FontFamily",
+					"value": "{ThemeResource ContentControlThemeFontFamily}"
+				},
+				{
+					"property": "FontWeight",
+					"value": "Normal"
+				},
+				{
+					"property": "FontSize",
+					"value": "{ThemeResource ControlContentThemeFontSize}"
+				},
+				{
+					"property": "UseSystemFocusVisuals",
+					"value": "{StaticResource UseSystemFocusVisuals}"
+				},
+				{
+					"property": "FocusVisualMargin",
+					"value": "-3"
+				},
+				{
+					"property": "CornerRadius",
+					"value": "{ThemeResource ControlCornerRadius}"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "ToggleSwitchOnStrokeThickness",
@@ -45312,10 +49419,60 @@
 		{
 			"key": "DefaultToggleSwitchStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommonStyles/ToggleSwitch_themeresources.xaml",
 			"line": 190,
-			"tag": "Style"
+			"targetType": "ToggleSwitch",
+			"setters": [
+				{
+					"property": "Foreground",
+					"value": "{ThemeResource ToggleSwitchContentForeground}"
+				},
+				{
+					"property": "HorizontalAlignment",
+					"value": "Left"
+				},
+				{
+					"property": "VerticalAlignment",
+					"value": "Center"
+				},
+				{
+					"property": "HorizontalContentAlignment",
+					"value": "Left"
+				},
+				{
+					"property": "FontFamily",
+					"value": "{ThemeResource ContentControlThemeFontFamily}"
+				},
+				{
+					"property": "FontSize",
+					"value": "{ThemeResource ControlContentThemeFontSize}"
+				},
+				{
+					"property": "ManipulationMode",
+					"value": "System,TranslateX"
+				},
+				{
+					"property": "UseSystemFocusVisuals",
+					"value": "{StaticResource UseSystemFocusVisuals}"
+				},
+				{
+					"property": "MinWidth",
+					"value": "{StaticResource ToggleSwitchThemeMinWidth}"
+				},
+				{
+					"property": "FocusVisualMargin",
+					"value": "-7,-3,-7,-3"
+				},
+				{
+					"property": "CornerRadius",
+					"value": "{StaticResource ControlCornerRadius}"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "ToolTipContentThemeFontSize",
@@ -45566,10 +49723,56 @@
 		{
 			"key": "DefaultToolTipStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/CommonStyles/ToolTip_themeresources.xaml",
 			"line": 42,
-			"tag": "Style"
+			"targetType": "ToolTip",
+			"setters": [
+				{
+					"property": "Foreground",
+					"value": "{ThemeResource ToolTipForegroundBrush}"
+				},
+				{
+					"property": "Background",
+					"value": "{ThemeResource ToolTipBackgroundBrush}"
+				},
+				{
+					"property": "BackgroundSizing",
+					"value": "InnerBorderEdge"
+				},
+				{
+					"property": "BorderBrush",
+					"value": "{ThemeResource ToolTipBorderBrush}"
+				},
+				{
+					"property": "BorderThickness",
+					"value": "{ThemeResource ToolTipBorderThemeThickness}"
+				},
+				{
+					"property": "FontFamily",
+					"value": "{ThemeResource ContentControlThemeFontFamily}"
+				},
+				{
+					"property": "FontSize",
+					"value": "{ThemeResource ToolTipContentThemeFontSize}"
+				},
+				{
+					"property": "Padding",
+					"value": "{StaticResource ToolTipBorderPadding}"
+				},
+				{
+					"property": "MaxWidth",
+					"value": "{StaticResource ToolTipMaxWidth}"
+				},
+				{
+					"property": "CornerRadius",
+					"value": "{ThemeResource ControlCornerRadius}"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "ToolTipBorderPadding",
@@ -46306,18 +50509,55 @@
 		{
 			"key": "ExpanderHeaderDownStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/Expander/Expander_themeresources.xaml",
 			"line": 89,
-			"tag": "Style"
+			"targetType": "ToggleButton",
+			"setters": [
+				{
+					"property": "Padding",
+					"value": "{StaticResource ExpanderHeaderPadding}"
+				},
+				{
+					"property": "HorizontalContentAlignment",
+					"value": "Left"
+				},
+				{
+					"property": "BackgroundSizing",
+					"value": "InnerBorderEdge"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "ExpanderHeaderUpStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/Expander/Expander_themeresources.xaml",
 			"line": 295,
-			"tag": "Style"
+			"targetType": "ToggleButton",
+			"setters": [
+				{
+					"property": "Padding",
+					"value": "{StaticResource ExpanderHeaderPadding}"
+				},
+				{
+					"property": "HorizontalContentAlignment",
+					"value": "Left"
+				},
+				{
+					"property": "BackgroundSizing",
+					"value": "InnerBorderEdge"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			],
+			"basedOn": "{StaticResource ExpanderHeaderDownStyle}"
 		},
 		{
 			"key": "InfoBadgeForeground",
@@ -46640,130 +50880,252 @@
 		{
 			"key": "DefaultInfoBadgeStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/InfoBadge/InfoBadge_themeresources.xaml",
 			"line": 47,
-			"tag": "Style"
+			"targetType": "controls:InfoBadge",
+			"setters": [
+				{
+					"property": "MinHeight",
+					"value": "{ThemeResource InfoBadgeMinHeight}"
+				},
+				{
+					"property": "MinWidth",
+					"value": "{ThemeResource InfoBadgeMinWidth}"
+				},
+				{
+					"property": "MaxHeight",
+					"value": "{ThemeResource InfoBadgeMaxHeight}"
+				},
+				{
+					"property": "Background",
+					"value": "{ThemeResource InfoBadgeBackground}"
+				},
+				{
+					"property": "Foreground",
+					"value": "{ThemeResource InfoBadgeForeground}"
+				},
+				{
+					"property": "Padding",
+					"value": "{ThemeResource InfoBadgePadding}"
+				},
+				{
+					"property": "IsTabStop",
+					"value": "False"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "AttentionDotInfoBadgeStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/InfoBadge/InfoBadge_themeresources.xaml",
 			"line": 91,
-			"tag": "Style"
+			"targetType": "controls:InfoBadge",
+			"setters": [
+				{
+					"property": "Background",
+					"value": "{ThemeResource SystemFillColorAttentionBrush}"
+				}
+			],
+			"basedOn": "{StaticResource DefaultInfoBadgeStyle}"
 		},
 		{
 			"key": "AttentionValueInfoBadgeStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/InfoBadge/InfoBadge_themeresources.xaml",
 			"line": 94,
-			"tag": "Style"
+			"targetType": "controls:InfoBadge",
+			"setters": [],
+			"basedOn": "{StaticResource AttentionDotInfoBadgeStyle}"
 		},
 		{
 			"key": "AttentionIconInfoBadgeStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/InfoBadge/InfoBadge_themeresources.xaml",
 			"line": 95,
-			"tag": "Style"
+			"targetType": "controls:InfoBadge",
+			"setters": [
+				{
+					"property": "Padding",
+					"value": "0,4,0,2"
+				},
+				{
+					"property": "IconSource",
+					"unsupported": "controls:FontIconSource"
+				}
+			],
+			"basedOn": "{StaticResource AttentionDotInfoBadgeStyle}"
 		},
 		{
 			"key": "InformationalDotInfoBadgeStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/InfoBadge/InfoBadge_themeresources.xaml",
 			"line": 103,
-			"tag": "Style"
+			"targetType": "controls:InfoBadge",
+			"setters": [
+				{
+					"property": "Background",
+					"value": "{ThemeResource SystemFillColorSolidNeutralBrush}"
+				}
+			],
+			"basedOn": "{StaticResource DefaultInfoBadgeStyle}"
 		},
 		{
 			"key": "InformationalValueInfoBadgeStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/InfoBadge/InfoBadge_themeresources.xaml",
 			"line": 106,
-			"tag": "Style"
+			"targetType": "controls:InfoBadge",
+			"setters": [],
+			"basedOn": "{StaticResource InformationalDotInfoBadgeStyle}"
 		},
 		{
 			"key": "InformationalIconInfoBadgeStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/InfoBadge/InfoBadge_themeresources.xaml",
 			"line": 107,
-			"tag": "Style"
+			"targetType": "controls:InfoBadge",
+			"setters": [
+				{
+					"property": "Padding",
+					"value": "0,4,0,2"
+				},
+				{
+					"property": "IconSource",
+					"unsupported": "controls:FontIconSource"
+				}
+			],
+			"basedOn": "{StaticResource InformationalDotInfoBadgeStyle}"
 		},
 		{
 			"key": "SuccessDotInfoBadgeStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/InfoBadge/InfoBadge_themeresources.xaml",
 			"line": 115,
-			"tag": "Style"
+			"targetType": "controls:InfoBadge",
+			"setters": [
+				{
+					"property": "Background",
+					"value": "{ThemeResource SystemFillColorSuccessBrush}"
+				}
+			],
+			"basedOn": "{StaticResource DefaultInfoBadgeStyle}"
 		},
 		{
 			"key": "SuccessValueInfoBadgeStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/InfoBadge/InfoBadge_themeresources.xaml",
 			"line": 118,
-			"tag": "Style"
+			"targetType": "controls:InfoBadge",
+			"setters": [],
+			"basedOn": "{StaticResource SuccessDotInfoBadgeStyle}"
 		},
 		{
 			"key": "SuccessIconInfoBadgeStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/InfoBadge/InfoBadge_themeresources.xaml",
 			"line": 119,
-			"tag": "Style"
+			"targetType": "controls:InfoBadge",
+			"setters": [
+				{
+					"property": "IconSource",
+					"unsupported": "controls:SymbolIconSource"
+				}
+			],
+			"basedOn": "{StaticResource SuccessDotInfoBadgeStyle}"
 		},
 		{
 			"key": "CautionDotInfoBadgeStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/InfoBadge/InfoBadge_themeresources.xaml",
 			"line": 126,
-			"tag": "Style"
+			"targetType": "controls:InfoBadge",
+			"setters": [
+				{
+					"property": "Background",
+					"value": "{ThemeResource SystemFillColorCautionBrush}"
+				}
+			],
+			"basedOn": "{StaticResource DefaultInfoBadgeStyle}"
 		},
 		{
 			"key": "CautionValueInfoBadgeStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/InfoBadge/InfoBadge_themeresources.xaml",
 			"line": 129,
-			"tag": "Style"
+			"targetType": "controls:InfoBadge",
+			"setters": [],
+			"basedOn": "{StaticResource CautionDotInfoBadgeStyle}"
 		},
 		{
 			"key": "CautionIconInfoBadgeStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/InfoBadge/InfoBadge_themeresources.xaml",
 			"line": 130,
-			"tag": "Style"
+			"targetType": "controls:InfoBadge",
+			"setters": [
+				{
+					"property": "IconSource",
+					"unsupported": "controls:SymbolIconSource"
+				}
+			],
+			"basedOn": "{StaticResource CautionDotInfoBadgeStyle}"
 		},
 		{
 			"key": "CriticalDotInfoBadgeStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/InfoBadge/InfoBadge_themeresources.xaml",
 			"line": 137,
-			"tag": "Style"
+			"targetType": "controls:InfoBadge",
+			"setters": [
+				{
+					"property": "Background",
+					"value": "{ThemeResource SystemFillColorCriticalBrush}"
+				}
+			],
+			"basedOn": "{StaticResource DefaultInfoBadgeStyle}"
 		},
 		{
 			"key": "CriticalValueInfoBadgeStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/InfoBadge/InfoBadge_themeresources.xaml",
 			"line": 140,
-			"tag": "Style"
+			"targetType": "controls:InfoBadge",
+			"setters": [],
+			"basedOn": "{StaticResource CriticalDotInfoBadgeStyle}"
 		},
 		{
 			"key": "CriticalIconInfoBadgeStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/InfoBadge/InfoBadge_themeresources.xaml",
 			"line": 141,
-			"tag": "Style"
+			"targetType": "controls:InfoBadge",
+			"setters": [
+				{
+					"property": "IconSource",
+					"unsupported": "controls:SymbolIconSource"
+				}
+			],
+			"basedOn": "{StaticResource CriticalDotInfoBadgeStyle}"
 		},
 		{
 			"key": "InfoBarErrorSeverityBackgroundBrush",
@@ -47413,10 +51775,12 @@
 		{
 			"key": "InfoBarCloseButtonStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/InfoBar/InfoBar_themeresources.xaml",
 			"line": 88,
-			"tag": "Style"
+			"targetType": "Button",
+			"setters": [],
+			"basedOn": "{StaticResource DefaultButtonStyle}"
 		},
 		{
 			"key": "ItemContainerBackground",
@@ -47820,10 +52184,44 @@
 		{
 			"key": "ItemContainerSelectionCheckboxStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/ItemContainer/ItemContainer_themeresources.xaml",
 			"line": 63,
-			"tag": "Style"
+			"targetType": "CheckBox",
+			"setters": [
+				{
+					"property": "Margin",
+					"value": "{ThemeResource ItemContainerCheckboxMargin}"
+				},
+				{
+					"property": "MinWidth",
+					"value": "{ThemeResource ItemContainerCheckboxMinWidth}"
+				},
+				{
+					"property": "HorizontalAlignment",
+					"value": "{ThemeResource ItemContainerCheckboxHorizontalAlignment}"
+				},
+				{
+					"property": "VerticalAlignment",
+					"value": "{ThemeResource ItemContainerCheckboxVerticalAlignment}"
+				},
+				{
+					"property": "IsHitTestVisible",
+					"value": "False"
+				},
+				{
+					"property": "IsTabStop",
+					"value": "False"
+				},
+				{
+					"property": "AutomationProperties.AccessibilityView",
+					"value": "Raw"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "SystemChromeMediumHighColor",
@@ -53645,154 +58043,912 @@
 		{
 			"key": "ButtonRevealStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/Materials/Reveal/RevealBrush_themeresources.xaml",
 			"line": 566,
-			"tag": "Style"
+			"targetType": "Button",
+			"setters": [
+				{
+					"property": "Background",
+					"value": "{ThemeResource ButtonRevealBackground}"
+				},
+				{
+					"property": "Foreground",
+					"value": "{ThemeResource ButtonForeground}"
+				},
+				{
+					"property": "BorderBrush",
+					"value": "{ThemeResource ButtonRevealBorderBrush}"
+				},
+				{
+					"property": "BorderThickness",
+					"value": "{ThemeResource ButtonRevealBorderThemeThickness}"
+				},
+				{
+					"property": "Padding",
+					"value": "{ThemeResource ButtonPadding}"
+				},
+				{
+					"property": "HorizontalAlignment",
+					"value": "Left"
+				},
+				{
+					"property": "VerticalAlignment",
+					"value": "Center"
+				},
+				{
+					"property": "FontFamily",
+					"value": "{ThemeResource ContentControlThemeFontFamily}"
+				},
+				{
+					"property": "FontWeight",
+					"value": "Normal"
+				},
+				{
+					"property": "FontSize",
+					"value": "{ThemeResource ControlContentThemeFontSize}"
+				},
+				{
+					"property": "UseSystemFocusVisuals",
+					"value": "{StaticResource UseSystemFocusVisuals}"
+				},
+				{
+					"property": "FocusVisualMargin",
+					"value": "-3"
+				},
+				{
+					"property": "CornerRadius",
+					"value": "{ThemeResource ControlCornerRadius}"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "RepeatButtonRevealStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/Materials/Reveal/RevealBrush_themeresources.xaml",
 			"line": 628,
-			"tag": "Style"
+			"targetType": "RepeatButton",
+			"setters": [
+				{
+					"property": "Background",
+					"value": "{ThemeResource RepeatButtonRevealBackground}"
+				},
+				{
+					"property": "Foreground",
+					"value": "{ThemeResource RepeatButtonForeground}"
+				},
+				{
+					"property": "BorderBrush",
+					"value": "{ThemeResource RepeatButtonRevealBorderBrush}"
+				},
+				{
+					"property": "BorderThickness",
+					"value": "{ThemeResource RepeatButtonRevealBorderThemeThickness}"
+				},
+				{
+					"property": "Padding",
+					"value": "{ThemeResource ButtonPadding}"
+				},
+				{
+					"property": "HorizontalAlignment",
+					"value": "Left"
+				},
+				{
+					"property": "VerticalAlignment",
+					"value": "Center"
+				},
+				{
+					"property": "FontFamily",
+					"value": "{ThemeResource ContentControlThemeFontFamily}"
+				},
+				{
+					"property": "FontWeight",
+					"value": "Normal"
+				},
+				{
+					"property": "FontSize",
+					"value": "{ThemeResource ControlContentThemeFontSize}"
+				},
+				{
+					"property": "UseSystemFocusVisuals",
+					"value": "{StaticResource UseSystemFocusVisuals}"
+				},
+				{
+					"property": "FocusVisualMargin",
+					"value": "-3"
+				},
+				{
+					"property": "CornerRadius",
+					"value": "{ThemeResource ControlCornerRadius}"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "ToggleButtonRevealStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/Materials/Reveal/RevealBrush_themeresources.xaml",
 			"line": 680,
-			"tag": "Style"
+			"targetType": "ToggleButton",
+			"setters": [
+				{
+					"property": "Background",
+					"value": "{ThemeResource ToggleButtonRevealBackground}"
+				},
+				{
+					"property": "Foreground",
+					"value": "{ThemeResource ToggleButtonForeground}"
+				},
+				{
+					"property": "BorderBrush",
+					"value": "{ThemeResource ToggleButtonRevealBorderBrush}"
+				},
+				{
+					"property": "BorderThickness",
+					"value": "{ThemeResource ToggleButtonRevealBorderThemeThickness}"
+				},
+				{
+					"property": "Padding",
+					"value": "{ThemeResource ButtonPadding}"
+				},
+				{
+					"property": "HorizontalAlignment",
+					"value": "Left"
+				},
+				{
+					"property": "VerticalAlignment",
+					"value": "Center"
+				},
+				{
+					"property": "FontFamily",
+					"value": "{ThemeResource ContentControlThemeFontFamily}"
+				},
+				{
+					"property": "FontWeight",
+					"value": "Normal"
+				},
+				{
+					"property": "FontSize",
+					"value": "{ThemeResource ControlContentThemeFontSize}"
+				},
+				{
+					"property": "UseSystemFocusVisuals",
+					"value": "{StaticResource UseSystemFocusVisuals}"
+				},
+				{
+					"property": "FocusVisualMargin",
+					"value": "-3"
+				},
+				{
+					"property": "CornerRadius",
+					"value": "{ThemeResource ControlCornerRadius}"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "EllipsisButtonRevealStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/Materials/Reveal/RevealBrush_themeresources.xaml",
 			"line": 820,
-			"tag": "Style"
+			"targetType": "Button",
+			"setters": [
+				{
+					"property": "Background",
+					"value": "{ThemeResource AppBarEllipsisButtonRevealBackground}"
+				},
+				{
+					"property": "Foreground",
+					"value": "{ThemeResource AppBarEllipsisButtonForeground}"
+				},
+				{
+					"property": "BorderBrush",
+					"value": "{ThemeResource AppBarEllipsisButtonRevealBorderBrush}"
+				},
+				{
+					"property": "BorderThickness",
+					"value": "{ThemeResource AppBarEllipsisButtonRevealBorderThemeThickness}"
+				},
+				{
+					"property": "Padding",
+					"value": "0,0,9,0"
+				},
+				{
+					"property": "HorizontalAlignment",
+					"value": "Stretch"
+				},
+				{
+					"property": "HorizontalContentAlignment",
+					"value": "Right"
+				},
+				{
+					"property": "VerticalAlignment",
+					"value": "Stretch"
+				},
+				{
+					"property": "VerticalContentAlignment",
+					"value": "Top"
+				},
+				{
+					"property": "FontFamily",
+					"value": "{ThemeResource ContentControlThemeFontFamily}"
+				},
+				{
+					"property": "FontWeight",
+					"value": "SemiBold"
+				},
+				{
+					"property": "FontSize",
+					"value": "{ThemeResource ControlContentThemeFontSize}"
+				},
+				{
+					"property": "Width",
+					"value": "{ThemeResource AppBarExpandButtonThemeWidth}"
+				},
+				{
+					"property": "UseSystemFocusVisuals",
+					"value": "{StaticResource UseSystemFocusVisuals}"
+				},
+				{
+					"property": "FocusVisualMargin",
+					"value": "0"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "CommandBarRevealStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/Materials/Reveal/RevealBrush_themeresources.xaml",
 			"line": 902,
-			"tag": "Style"
+			"targetType": "CommandBar",
+			"setters": [
+				{
+					"property": "Background",
+					"value": "{ThemeResource CommandBarBackground}"
+				},
+				{
+					"property": "Foreground",
+					"value": "{ThemeResource CommandBarForeground}"
+				},
+				{
+					"property": "IsTabStop",
+					"value": "False"
+				},
+				{
+					"property": "VerticalAlignment",
+					"value": "Top"
+				},
+				{
+					"property": "HorizontalAlignment",
+					"value": "Stretch"
+				},
+				{
+					"property": "HorizontalContentAlignment",
+					"value": "Left"
+				},
+				{
+					"property": "VerticalContentAlignment",
+					"value": "Top"
+				},
+				{
+					"property": "ClosedDisplayMode",
+					"value": "Compact"
+				},
+				{
+					"property": "ExitDisplayModeOnAccessKeyInvoked",
+					"value": "False"
+				},
+				{
+					"property": "CommandBarOverflowPresenterStyle",
+					"value": "{ThemeResource DefaultCommandBarOverflowPresenterStyle}"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "AppBarButtonRevealStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/Materials/Reveal/RevealBrush_themeresources.xaml",
 			"line": 1652,
-			"tag": "Style"
+			"targetType": "AppBarButton",
+			"setters": [
+				{
+					"property": "Background",
+					"value": "{ThemeResource AppBarButtonRevealBackground}"
+				},
+				{
+					"property": "Foreground",
+					"value": "{ThemeResource AppBarButtonForeground}"
+				},
+				{
+					"property": "BorderBrush",
+					"value": "{ThemeResource AppBarButtonRevealBorderBrush}"
+				},
+				{
+					"property": "BorderThickness",
+					"value": "{ThemeResource AppBarButtonRevealBorderThemeThickness}"
+				},
+				{
+					"property": "HorizontalAlignment",
+					"value": "Left"
+				},
+				{
+					"property": "VerticalAlignment",
+					"value": "Top"
+				},
+				{
+					"property": "FontFamily",
+					"value": "{ThemeResource ContentControlThemeFontFamily}"
+				},
+				{
+					"property": "FontWeight",
+					"value": "Normal"
+				},
+				{
+					"property": "Width",
+					"value": "68"
+				},
+				{
+					"property": "UseSystemFocusVisuals",
+					"value": "{StaticResource UseSystemFocusVisuals}"
+				},
+				{
+					"property": "AllowFocusOnInteraction",
+					"value": "False"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "AppBarButtonRevealOverflowStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/Materials/Reveal/RevealBrush_themeresources.xaml",
 			"line": 1878,
-			"tag": "Style"
+			"targetType": "AppBarButton",
+			"setters": [
+				{
+					"property": "Width",
+					"value": "Auto"
+				},
+				{
+					"property": "HorizontalAlignment",
+					"value": "Stretch"
+				}
+			],
+			"basedOn": "{StaticResource AppBarButtonRevealStyle}"
 		},
 		{
 			"key": "AppBarButtonRevealLabelsOnRightStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/Materials/Reveal/RevealBrush_themeresources.xaml",
 			"line": 1882,
-			"tag": "Style"
+			"targetType": "AppBarButton",
+			"setters": [
+				{
+					"property": "Width",
+					"value": "Auto"
+				}
+			],
+			"basedOn": "{StaticResource AppBarButtonRevealStyle}"
 		},
 		{
 			"key": "AppBarToggleButtonRevealStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/Materials/Reveal/RevealBrush_themeresources.xaml",
 			"line": 1885,
-			"tag": "Style"
+			"targetType": "AppBarToggleButton",
+			"setters": [
+				{
+					"property": "Foreground",
+					"value": "{ThemeResource AppBarToggleButtonForeground}"
+				},
+				{
+					"property": "BorderBrush",
+					"value": "{ThemeResource AppBarToggleButtonRevealBorderBrush}"
+				},
+				{
+					"property": "BorderThickness",
+					"value": "{ThemeResource AppBarToggleButtonRevealBorderThemeThickness}"
+				},
+				{
+					"property": "HorizontalAlignment",
+					"value": "Left"
+				},
+				{
+					"property": "VerticalAlignment",
+					"value": "Top"
+				},
+				{
+					"property": "FontFamily",
+					"value": "{ThemeResource ContentControlThemeFontFamily}"
+				},
+				{
+					"property": "FontWeight",
+					"value": "Normal"
+				},
+				{
+					"property": "Width",
+					"value": "68"
+				},
+				{
+					"property": "UseSystemFocusVisuals",
+					"value": "{StaticResource UseSystemFocusVisuals}"
+				},
+				{
+					"property": "AllowFocusOnInteraction",
+					"value": "False"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "AppBarToggleButtonRevealOverflowStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/Materials/Reveal/RevealBrush_themeresources.xaml",
 			"line": 2204,
-			"tag": "Style"
+			"targetType": "AppBarToggleButton",
+			"setters": [
+				{
+					"property": "Width",
+					"value": "Auto"
+				},
+				{
+					"property": "HorizontalAlignment",
+					"value": "Stretch"
+				}
+			],
+			"basedOn": "{StaticResource AppBarToggleButtonRevealStyle}"
 		},
 		{
 			"key": "AppBarToggleButtonRevealLabelsOnRightStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/Materials/Reveal/RevealBrush_themeresources.xaml",
 			"line": 2208,
-			"tag": "Style"
+			"targetType": "AppBarToggleButton",
+			"setters": [
+				{
+					"property": "Width",
+					"value": "Auto"
+				}
+			],
+			"basedOn": "{StaticResource AppBarToggleButtonRevealStyle}"
 		},
 		{
 			"key": "ListViewItemRevealStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/Materials/Reveal/RevealBrush_themeresources.xaml",
 			"line": 2211,
-			"tag": "Style"
+			"targetType": "ListViewItem",
+			"setters": [
+				{
+					"property": "FontFamily",
+					"value": "{ThemeResource ContentControlThemeFontFamily}"
+				},
+				{
+					"property": "FontSize",
+					"value": "{ThemeResource ControlContentThemeFontSize}"
+				},
+				{
+					"property": "Background",
+					"value": "{ThemeResource ListViewItemBackground}"
+				},
+				{
+					"property": "Foreground",
+					"value": "{ThemeResource ListViewItemForeground}"
+				},
+				{
+					"property": "TabNavigation",
+					"value": "Local"
+				},
+				{
+					"property": "IsHoldingEnabled",
+					"value": "True"
+				},
+				{
+					"property": "Padding",
+					"value": "12,0,12,0"
+				},
+				{
+					"property": "HorizontalContentAlignment",
+					"value": "Left"
+				},
+				{
+					"property": "VerticalContentAlignment",
+					"value": "Center"
+				},
+				{
+					"property": "MinWidth",
+					"value": "{ThemeResource ListViewItemMinWidth}"
+				},
+				{
+					"property": "MinHeight",
+					"value": "{ThemeResource ListViewItemMinHeight}"
+				},
+				{
+					"property": "AllowDrop",
+					"value": "False"
+				},
+				{
+					"property": "UseSystemFocusVisuals",
+					"value": "{StaticResource UseSystemFocusVisuals}"
+				},
+				{
+					"property": "FocusVisualMargin",
+					"value": "0"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "GridViewItemRevealStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/Materials/Reveal/RevealBrush_themeresources.xaml",
 			"line": 2279,
-			"tag": "Style"
+			"targetType": "GridViewItem",
+			"setters": [
+				{
+					"property": "FontFamily",
+					"value": "{ThemeResource ContentControlThemeFontFamily}"
+				},
+				{
+					"property": "FontSize",
+					"value": "{ThemeResource ControlContentThemeFontSize}"
+				},
+				{
+					"property": "Background",
+					"value": "{ThemeResource GridViewItemBackground}"
+				},
+				{
+					"property": "Foreground",
+					"value": "{ThemeResource GridViewItemForeground}"
+				},
+				{
+					"property": "TabNavigation",
+					"value": "Local"
+				},
+				{
+					"property": "IsHoldingEnabled",
+					"value": "True"
+				},
+				{
+					"property": "HorizontalContentAlignment",
+					"value": "Center"
+				},
+				{
+					"property": "VerticalContentAlignment",
+					"value": "Center"
+				},
+				{
+					"property": "Margin",
+					"value": "0,0,4,4"
+				},
+				{
+					"property": "MinWidth",
+					"value": "{ThemeResource GridViewItemMinWidth}"
+				},
+				{
+					"property": "MinHeight",
+					"value": "{ThemeResource GridViewItemMinHeight}"
+				},
+				{
+					"property": "AllowDrop",
+					"value": "False"
+				},
+				{
+					"property": "UseSystemFocusVisuals",
+					"value": "{StaticResource UseSystemFocusVisuals}"
+				},
+				{
+					"property": "FocusVisualMargin",
+					"value": "-2"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "ComboBoxItemRevealStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/Materials/Reveal/RevealBrush_themeresources.xaml",
 			"line": 2342,
-			"tag": "Style"
+			"targetType": "ComboBoxItem",
+			"setters": [
+				{
+					"property": "Foreground",
+					"value": "{ThemeResource ComboBoxItemForeground}"
+				},
+				{
+					"property": "Background",
+					"value": "{ThemeResource ComboBoxItemRevealBackground}"
+				},
+				{
+					"property": "BorderBrush",
+					"value": "{ThemeResource ComboBoxItemRevealBorderBrush}"
+				},
+				{
+					"property": "BorderThickness",
+					"value": "{ThemeResource ComboBoxItemRevealBorderThemeThickness}"
+				},
+				{
+					"property": "TabNavigation",
+					"value": "Local"
+				},
+				{
+					"property": "Padding",
+					"value": "{ThemeResource ComboBoxItemRevealThemePadding}"
+				},
+				{
+					"property": "HorizontalContentAlignment",
+					"value": "Stretch"
+				},
+				{
+					"property": "UseSystemFocusVisuals",
+					"value": "{StaticResource UseSystemFocusVisuals}"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "SemanticZoomRevealStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/Materials/Reveal/RevealBrush_themeresources.xaml",
 			"line": 2455,
-			"tag": "Style"
+			"targetType": "SemanticZoom",
+			"setters": [
+				{
+					"property": "Background",
+					"value": "Transparent"
+				},
+				{
+					"property": "BorderThickness",
+					"value": "0"
+				},
+				{
+					"property": "IsTabStop",
+					"value": "False"
+				},
+				{
+					"property": "TabNavigation",
+					"value": "Once"
+				},
+				{
+					"property": "ScrollViewer.HorizontalScrollMode",
+					"value": "Disabled"
+				},
+				{
+					"property": "ScrollViewer.IsHorizontalRailEnabled",
+					"value": "False"
+				},
+				{
+					"property": "ScrollViewer.VerticalScrollMode",
+					"value": "Disabled"
+				},
+				{
+					"property": "ScrollViewer.IsVerticalRailEnabled",
+					"value": "False"
+				},
+				{
+					"property": "IsZoomOutButtonEnabled",
+					"value": "False"
+				},
+				{
+					"property": "ScrollViewer.ZoomMode",
+					"value": "Disabled"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "DropDownButtonRevealStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/Materials/Reveal/RevealBrush_themeresources.xaml",
 			"line": 2547,
-			"tag": "Style"
+			"targetType": "controls:DropDownButton",
+			"setters": [
+				{
+					"property": "Background",
+					"value": "{ThemeResource ButtonRevealBackground}"
+				},
+				{
+					"property": "Foreground",
+					"value": "{ThemeResource ButtonForeground}"
+				},
+				{
+					"property": "BorderBrush",
+					"value": "{ThemeResource ButtonRevealBorderBrush}"
+				},
+				{
+					"property": "BorderThickness",
+					"value": "{ThemeResource ButtonRevealBorderThemeThickness}"
+				},
+				{
+					"property": "Padding",
+					"value": "{ThemeResource ButtonPadding}"
+				},
+				{
+					"property": "HorizontalAlignment",
+					"value": "Left"
+				},
+				{
+					"property": "VerticalAlignment",
+					"value": "Center"
+				},
+				{
+					"property": "FontFamily",
+					"value": "{ThemeResource ContentControlThemeFontFamily}"
+				},
+				{
+					"property": "FontWeight",
+					"value": "Normal"
+				},
+				{
+					"property": "FontSize",
+					"value": "{ThemeResource ControlContentThemeFontSize}"
+				},
+				{
+					"property": "UseSystemFocusVisuals",
+					"value": "True"
+				},
+				{
+					"property": "FocusVisualMargin",
+					"value": "-3"
+				},
+				{
+					"property": "CornerRadius",
+					"value": "{ThemeResource ControlCornerRadius}"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "SplitButtonRevealStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/Materials/Reveal/RevealBrush_themeresources.xaml",
 			"line": 2637,
-			"tag": "Style"
+			"targetType": "controls:SplitButton",
+			"setters": [
+				{
+					"property": "Background",
+					"value": "{ThemeResource SplitButtonBackground}"
+				},
+				{
+					"property": "Foreground",
+					"value": "{ThemeResource SplitButtonForeground}"
+				},
+				{
+					"property": "BorderBrush",
+					"value": "{ThemeResource SplitButtonBorderBrush}"
+				},
+				{
+					"property": "BorderThickness",
+					"value": "{ThemeResource SplitButtonBorderThemeThickness}"
+				},
+				{
+					"property": "HorizontalAlignment",
+					"value": "Left"
+				},
+				{
+					"property": "VerticalAlignment",
+					"value": "Center"
+				},
+				{
+					"property": "FontFamily",
+					"value": "{ThemeResource ContentControlThemeFontFamily}"
+				},
+				{
+					"property": "FontWeight",
+					"value": "Normal"
+				},
+				{
+					"property": "FontSize",
+					"value": "{ThemeResource ControlContentThemeFontSize}"
+				},
+				{
+					"property": "UseSystemFocusVisuals",
+					"value": "True"
+				},
+				{
+					"property": "FocusVisualMargin",
+					"value": "-3"
+				},
+				{
+					"property": "IsTabStop",
+					"value": "True"
+				},
+				{
+					"property": "Padding",
+					"value": "{ThemeResource ButtonPadding}"
+				},
+				{
+					"property": "CornerRadius",
+					"value": "{ThemeResource ControlCornerRadius}"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "ListViewItemRevealBackgroundShowsAboveContentStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/Materials/Reveal/RevealBrush_themeresources.xaml",
 			"line": 2867,
-			"tag": "Style"
+			"targetType": "ListViewItem",
+			"setters": [
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "GridViewItemRevealBackgroundShowsAboveContentStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/Materials/Reveal/RevealBrush_themeresources.xaml",
 			"line": 2916,
-			"tag": "Style"
+			"targetType": "GridViewItem",
+			"setters": [
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "MenuBarBackground",
@@ -56272,82 +61428,419 @@
 		{
 			"key": "PaneToggleButtonStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/NavigationView/NavigationView_themeresources.xaml",
 			"line": 270,
-			"tag": "Style"
+			"targetType": "Button",
+			"setters": [
+				{
+					"property": "FontSize",
+					"value": "16"
+				},
+				{
+					"property": "FontFamily",
+					"value": "{StaticResource SymbolThemeFontFamily}"
+				},
+				{
+					"property": "MinHeight",
+					"value": "{StaticResource PaneToggleButtonHeight}"
+				},
+				{
+					"property": "MinWidth",
+					"value": "{StaticResource PaneToggleButtonWidth}"
+				},
+				{
+					"property": "HorizontalAlignment",
+					"value": "Center"
+				},
+				{
+					"property": "VerticalAlignment",
+					"value": "Top"
+				},
+				{
+					"property": "HorizontalContentAlignment",
+					"value": "Center"
+				},
+				{
+					"property": "VerticalContentAlignment",
+					"value": "Center"
+				},
+				{
+					"property": "Background",
+					"value": "{ThemeResource NavigationViewItemBackground}"
+				},
+				{
+					"property": "Foreground",
+					"value": "{ThemeResource NavigationViewItemForeground}"
+				},
+				{
+					"property": "BorderThickness",
+					"value": "{ThemeResource NavigationViewToggleBorderThickness}"
+				},
+				{
+					"property": "Padding",
+					"value": "{ThemeResource NavigationViewItemButtonMargin}"
+				},
+				{
+					"property": "CornerRadius",
+					"value": "{ThemeResource ControlCornerRadius}"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "NavigationViewPaneSearchButtonStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/NavigationView/NavigationView_themeresources.xaml",
 			"line": 336,
-			"tag": "Style"
+			"targetType": "Button",
+			"setters": [
+				{
+					"property": "FontFamily",
+					"value": "{ThemeResource SymbolThemeFontFamily}"
+				},
+				{
+					"property": "BorderThickness",
+					"value": "{ThemeResource NavigationViewToggleBorderThickness}"
+				},
+				{
+					"property": "Background",
+					"value": "{ThemeResource NavigationViewItemBackground}"
+				},
+				{
+					"property": "Foreground",
+					"value": "{ThemeResource NavigationViewItemForeground}"
+				},
+				{
+					"property": "Content",
+					"value": ""
+				},
+				{
+					"property": "MinHeight",
+					"value": "36"
+				},
+				{
+					"property": "HorizontalAlignment",
+					"value": "Center"
+				},
+				{
+					"property": "FocusVisualMargin",
+					"value": "-4,0"
+				},
+				{
+					"property": "CornerRadius",
+					"value": "{ThemeResource ControlCornerRadius}"
+				},
+				{
+					"property": "IsTextScaleFactorEnabled",
+					"value": "False"
+				}
+			]
 		},
 		{
 			"key": "NavigationViewOverflowButtonStyleWhenPaneOnTop",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/NavigationView/NavigationView_themeresources.xaml",
 			"line": 348,
-			"tag": "Style"
+			"targetType": "Button",
+			"setters": [
+				{
+					"property": "Background",
+					"value": "{ThemeResource NavigationViewItemBackground}"
+				},
+				{
+					"property": "Foreground",
+					"value": "{ThemeResource TopNavigationViewItemForeground}"
+				},
+				{
+					"property": "BorderBrush",
+					"value": "{ThemeResource NavigationViewItemBorderBrush}"
+				},
+				{
+					"property": "BorderThickness",
+					"value": "{StaticResource NavigationViewItemBorderThickness}"
+				},
+				{
+					"property": "Height",
+					"value": "{StaticResource TopNavigationViewOverflowButtonHeight}"
+				},
+				{
+					"property": "Width",
+					"value": "{StaticResource TopNavigationViewOverflowButtonWidth}"
+				},
+				{
+					"property": "HorizontalAlignment",
+					"value": "Left"
+				},
+				{
+					"property": "VerticalAlignment",
+					"value": "Stretch"
+				},
+				{
+					"property": "UseSystemFocusVisuals",
+					"value": "True"
+				},
+				{
+					"property": "FocusVisualMargin",
+					"value": "0"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "NavigationViewOverflowButtonNoLabelStyleWhenPaneOnTop",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/NavigationView/NavigationView_themeresources.xaml",
 			"line": 394,
-			"tag": "Style"
+			"targetType": "Button",
+			"setters": [
+				{
+					"property": "Background",
+					"value": "{ThemeResource NavigationViewItemBackground}"
+				},
+				{
+					"property": "Foreground",
+					"value": "{ThemeResource TopNavigationViewItemForeground}"
+				},
+				{
+					"property": "BorderBrush",
+					"value": "{ThemeResource NavigationViewItemBorderBrush}"
+				},
+				{
+					"property": "BorderThickness",
+					"value": "{StaticResource NavigationViewItemBorderThickness}"
+				},
+				{
+					"property": "Height",
+					"value": "{StaticResource TopNavigationViewOverflowButtonHeight}"
+				},
+				{
+					"property": "Width",
+					"value": "{StaticResource TopNavigationViewOverflowButtonWidth}"
+				},
+				{
+					"property": "HorizontalAlignment",
+					"value": "Left"
+				},
+				{
+					"property": "VerticalAlignment",
+					"value": "Top"
+				},
+				{
+					"property": "UseSystemFocusVisuals",
+					"value": "True"
+				},
+				{
+					"property": "FocusVisualMargin",
+					"value": "0"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "MUX_NavigationViewItemPresenterStyleWhenOnLeftPane",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/NavigationView/NavigationView_themeresources.xaml",
 			"line": 440,
-			"tag": "Style"
+			"targetType": "primitives:NavigationViewItemPresenter",
+			"setters": [
+				{
+					"property": "Foreground",
+					"value": "{ThemeResource NavigationViewItemForeground}"
+				},
+				{
+					"property": "Background",
+					"value": "{ThemeResource NavigationViewItemBackground}"
+				},
+				{
+					"property": "BorderBrush",
+					"value": "{ThemeResource NavigationViewItemBorderBrush}"
+				},
+				{
+					"property": "BorderThickness",
+					"value": "{StaticResource NavigationViewItemBorderThickness}"
+				},
+				{
+					"property": "UseSystemFocusVisuals",
+					"value": "True"
+				},
+				{
+					"property": "HorizontalContentAlignment",
+					"value": "Stretch"
+				},
+				{
+					"property": "CornerRadius",
+					"value": "{ThemeResource OverlayCornerRadius}"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "MUX_NavigationViewSettingsItemStyleWhenOnTopPane",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/NavigationView/NavigationView_themeresources.xaml",
 			"line": 635,
-			"tag": "Style"
+			"targetType": "controls:NavigationViewItem",
+			"setters": [
+				{
+					"property": "Foreground",
+					"value": "{ThemeResource NavigationViewItemForeground}"
+				},
+				{
+					"property": "Background",
+					"value": "{ThemeResource NavigationViewItemBackground}"
+				},
+				{
+					"property": "BorderBrush",
+					"value": "{ThemeResource NavigationViewItemBorderBrush}"
+				},
+				{
+					"property": "BorderThickness",
+					"value": "{StaticResource NavigationViewItemBorderThickness}"
+				},
+				{
+					"property": "FontFamily",
+					"value": "{ThemeResource ContentControlThemeFontFamily}"
+				},
+				{
+					"property": "FontWeight",
+					"value": "Normal"
+				},
+				{
+					"property": "FontSize",
+					"value": "{ThemeResource ControlContentThemeFontSize}"
+				},
+				{
+					"property": "UseSystemFocusVisuals",
+					"value": "True"
+				},
+				{
+					"property": "HorizontalContentAlignment",
+					"value": "Stretch"
+				},
+				{
+					"property": "CornerRadius",
+					"value": "{ThemeResource ControlCornerRadius}"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "MUX_NavigationViewItemPresenterStyleWhenOnTopPane",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/NavigationView/NavigationView_themeresources.xaml",
 			"line": 723,
-			"tag": "Style"
+			"targetType": "primitives:NavigationViewItemPresenter",
+			"setters": [
+				{
+					"property": "Foreground",
+					"value": "{ThemeResource TopNavigationViewItemForeground}"
+				},
+				{
+					"property": "CornerRadius",
+					"value": "{ThemeResource ControlCornerRadius}"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "MUX_NavigationViewItemPresenterStyleWhenOnTopPaneOverflow",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/NavigationView/NavigationView_themeresources.xaml",
 			"line": 912,
-			"tag": "Style"
+			"targetType": "primitives:NavigationViewItemPresenter",
+			"setters": [
+				{
+					"property": "Foreground",
+					"value": "{ThemeResource TopNavigationViewItemForeground}"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "NavigationViewItemHeaderTextStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/NavigationView/NavigationView_themeresources.xaml",
 			"line": 1081,
-			"tag": "Style"
+			"targetType": "TextBlock",
+			"setters": [
+				{
+					"property": "FontSize",
+					"value": "14"
+				},
+				{
+					"property": "FontWeight",
+					"value": "SemiBold"
+				},
+				{
+					"property": "OpticalMarginAlignment",
+					"value": "TrimSideBearings"
+				},
+				{
+					"property": "TextWrapping",
+					"value": "NoWrap"
+				}
+			],
+			"basedOn": "{StaticResource BaseTextBlockStyle}"
 		},
 		{
 			"key": "NavigationViewTitleHeaderContentControlTextStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/NavigationView/NavigationView_themeresources.xaml",
 			"line": 1087,
-			"tag": "Style"
+			"targetType": "ContentControl",
+			"setters": [
+				{
+					"property": "FontWeight",
+					"value": "SemiBold"
+				},
+				{
+					"property": "FontSize",
+					"value": "28"
+				},
+				{
+					"property": "FontFamily",
+					"value": "XamlAutoFontFamily"
+				},
+				{
+					"property": "Margin",
+					"value": "{ThemeResource NavigationViewHeaderMargin}"
+				},
+				{
+					"property": "VerticalAlignment",
+					"value": "Stretch"
+				}
+			]
 		},
 		{
 			"key": "NumberBoxPopupIndicatorForeground",
@@ -56742,18 +62235,70 @@
 		{
 			"key": "PagerControlPageNavigationButtonStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/PagerControl/PagerControl_themeresources.xaml",
 			"line": 33,
-			"tag": "Style"
+			"targetType": "Button",
+			"setters": [
+				{
+					"property": "Background",
+					"value": "Transparent"
+				},
+				{
+					"property": "Width",
+					"value": "40"
+				},
+				{
+					"property": "Height",
+					"value": "40"
+				},
+				{
+					"property": "HorizontalContentAlignment",
+					"value": "Center"
+				},
+				{
+					"property": "VerticalContentAlignment",
+					"value": "Center"
+				},
+				{
+					"property": "UseSystemFocusVisuals",
+					"value": "{StaticResource UseSystemFocusVisuals}"
+				},
+				{
+					"property": "CornerRadius",
+					"value": "{StaticResource ControlCornerRadius}"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "PagerControlNumberPanelButtonStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/PagerControl/PagerControl_themeresources.xaml",
 			"line": 86,
-			"tag": "Style"
+			"targetType": "Button",
+			"setters": [
+				{
+					"property": "MinWidth",
+					"value": "{StaticResource PagerControlNumberPanelButtonWidth}"
+				},
+				{
+					"property": "MinHeight",
+					"value": "20"
+				},
+				{
+					"property": "Background",
+					"value": "Transparent"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "PersonPictureForegroundThemeBrush",
@@ -57847,50 +63392,214 @@
 		{
 			"key": "PipsPagerNavigationButtonBaseStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/PipsPager/PipsPager_themeresources.xaml",
 			"line": 110,
-			"tag": "Style"
+			"targetType": "Button",
+			"setters": [
+				{
+					"property": "Background",
+					"value": "{ThemeResource PipsPagerNavigationButtonBackground}"
+				},
+				{
+					"property": "Foreground",
+					"value": "{ThemeResource PipsPagerNavigationButtonForeground}"
+				},
+				{
+					"property": "BorderBrush",
+					"value": "{ThemeResource PipsPagerNavigationButtonBorderBrush}"
+				},
+				{
+					"property": "BorderThickness",
+					"value": "{StaticResource PipsPagerNavigationButtonBorderThickness}"
+				},
+				{
+					"property": "FontFamily",
+					"value": "{ThemeResource SymbolThemeFontFamily}"
+				},
+				{
+					"property": "FontSize",
+					"value": "{StaticResource PipsPagerNavigationButtonFontSize}"
+				},
+				{
+					"property": "UseSystemFocusVisuals",
+					"value": "{StaticResource UseSystemFocusVisuals}"
+				},
+				{
+					"property": "FocusVisualMargin",
+					"value": "0"
+				},
+				{
+					"property": "HorizontalAlignment",
+					"value": "Center"
+				},
+				{
+					"property": "HorizontalContentAlignment",
+					"value": "Center"
+				},
+				{
+					"property": "VerticalContentAlignment",
+					"value": "Center"
+				},
+				{
+					"property": "Width",
+					"value": "{StaticResource PipsPagerNavigationButtonWidth}"
+				},
+				{
+					"property": "Height",
+					"value": "{StaticResource PipsPagerNavigationButtonHeight}"
+				},
+				{
+					"property": "CornerRadius",
+					"value": "{StaticResource ControlCornerRadius}"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "PipsPagerPreviousPageButtonStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/PipsPager/PipsPager_themeresources.xaml",
 			"line": 192,
-			"tag": "Style"
+			"targetType": "Button",
+			"setters": [
+				{
+					"property": "Content",
+					"value": "{StaticResource PipsPagerPreviousPageButtonGlyph}"
+				}
+			],
+			"basedOn": "{StaticResource PipsPagerNavigationButtonBaseStyle}"
 		},
 		{
 			"key": "PipsPagerNextPageButtonStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/PipsPager/PipsPager_themeresources.xaml",
 			"line": 195,
-			"tag": "Style"
+			"targetType": "Button",
+			"setters": [
+				{
+					"property": "Content",
+					"value": "{StaticResource PipsPagerNextPageButtonGlyph}"
+				}
+			],
+			"basedOn": "{StaticResource PipsPagerNavigationButtonBaseStyle}"
 		},
 		{
 			"key": "PipsPagerButtonBaseStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/PipsPager/PipsPager_themeresources.xaml",
 			"line": 198,
-			"tag": "Style"
+			"targetType": "Button",
+			"setters": [
+				{
+					"property": "Background",
+					"value": "{ThemeResource PipsPagerSelectionIndicatorBackground}"
+				},
+				{
+					"property": "Foreground",
+					"value": "{ThemeResource PipsPagerSelectionIndicatorForeground}"
+				},
+				{
+					"property": "BorderBrush",
+					"value": "{ThemeResource PipsPagerSelectionIndicatorBorderBrush}"
+				},
+				{
+					"property": "BorderThickness",
+					"value": "{StaticResource PipsPagerButtonBorderThickness}"
+				},
+				{
+					"property": "FontFamily",
+					"value": "{ThemeResource SymbolThemeFontFamily}"
+				},
+				{
+					"property": "HorizontalContentAlignment",
+					"value": "Center"
+				},
+				{
+					"property": "VerticalContentAlignment",
+					"value": "Center"
+				},
+				{
+					"property": "UseSystemFocusVisuals",
+					"value": "{StaticResource UseSystemFocusVisuals}"
+				},
+				{
+					"property": "FocusVisualMargin",
+					"value": "0"
+				},
+				{
+					"property": "Content",
+					"value": "{StaticResource PipsPagerNormalGlyph}"
+				},
+				{
+					"property": "FontSize",
+					"value": "{StaticResource PipsPagerNormalGlyphFontSize}"
+				},
+				{
+					"property": "CornerRadius",
+					"value": "{StaticResource ControlCornerRadius}"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "PipsPagerSelectedPipButtonStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/PipsPager/PipsPager_themeresources.xaml",
 			"line": 280,
-			"tag": "Style"
+			"targetType": "Button",
+			"setters": [
+				{
+					"property": "Content",
+					"value": "{StaticResource PipsPagerSelectedGlyph}"
+				},
+				{
+					"property": "FontSize",
+					"value": "{StaticResource PipsPagerSelectedGlyphFontSize}"
+				},
+				{
+					"property": "Background",
+					"value": "{ThemeResource PipsPagerSelectionIndicatorBackgroundSelected}"
+				},
+				{
+					"property": "BorderBrush",
+					"value": "{ThemeResource PipsPagerSelectionIndicatorBorderBrushSelected}"
+				},
+				{
+					"property": "Foreground",
+					"value": "{ThemeResource PipsPagerSelectionIndicatorForegroundSelected}"
+				}
+			],
+			"basedOn": "{StaticResource PipsPagerButtonBaseStyle}"
 		},
 		{
 			"key": "PipsPagerNormalPipButtonStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/PipsPager/PipsPager_themeresources.xaml",
 			"line": 287,
-			"tag": "Style"
+			"targetType": "Button",
+			"setters": [
+				{
+					"property": "Content",
+					"value": "{StaticResource PipsPagerNormalGlyph}"
+				},
+				{
+					"property": "FontSize",
+					"value": "{StaticResource PipsPagerNormalGlyphFontSize}"
+				}
+			],
+			"basedOn": "{StaticResource PipsPagerButtonBaseStyle}"
 		},
 		{
 			"key": "ProgressBarBorderThemeThickness",
@@ -58306,18 +64015,71 @@
 		{
 			"key": "DefaultRadioMenuFlyoutItemStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/RadioMenuFlyoutItem/RadioMenuFlyoutItem_themeresources.xaml",
 			"line": 4,
-			"tag": "Style"
+			"targetType": "controls:RadioMenuFlyoutItem",
+			"setters": [
+				{
+					"property": "Background",
+					"value": "{ThemeResource MenuFlyoutItemBackground}"
+				},
+				{
+					"property": "Foreground",
+					"value": "{ThemeResource MenuFlyoutItemForeground}"
+				},
+				{
+					"property": "Padding",
+					"value": "{StaticResource MenuFlyoutItemThemePadding}"
+				},
+				{
+					"property": "FontSize",
+					"value": "{ThemeResource ControlContentThemeFontSize}"
+				},
+				{
+					"property": "HorizontalContentAlignment",
+					"value": "Stretch"
+				},
+				{
+					"property": "VerticalContentAlignment",
+					"value": "Center"
+				},
+				{
+					"property": "UseSystemFocusVisuals",
+					"value": "True"
+				},
+				{
+					"property": "CornerRadius",
+					"value": "{ThemeResource ControlCornerRadius}"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "RadioMenuFlyoutSubItemStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/RadioMenuFlyoutItem/RadioMenuFlyoutItem_themeresources.xaml",
 			"line": 105,
-			"tag": "Style"
+			"targetType": "MenuFlyoutSubItem",
+			"setters": [
+				{
+					"property": "controls:RadioMenuFlyoutItem.AreCheckStatesEnabled",
+					"value": "True"
+				},
+				{
+					"property": "BorderThickness",
+					"value": "0"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			],
+			"basedOn": "{StaticResource DefaultMenuFlyoutSubItemStyle}"
 		},
 		{
 			"key": "RatingControlUnselectedForeground",
@@ -59422,10 +65184,25 @@
 		{
 			"key": "SelectorBarItemPill",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/SelectorBar/SelectorBar_themeresources.xaml",
 			"line": 101,
-			"tag": "Style"
+			"targetType": "Rectangle",
+			"setters": [
+				{
+					"property": "Fill",
+					"value": "{ThemeResource SelectorBarItemPillFill}"
+				},
+				{
+					"property": "Height",
+					"value": "{ThemeResource SelectorBarItemPillHeight}"
+				},
+				{
+					"property": "Width",
+					"value": "{ThemeResource SelectorBarItemPillWidth}"
+				}
+			],
+			"basedOn": "{StaticResource ComboBoxItemPill}"
 		},
 		{
 			"key": "SortIndicatorForeground",
@@ -60222,10 +65999,76 @@
 		{
 			"key": "SplitButtonCommandBarStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/SplitButton/SplitButton_themeresources.xaml",
 			"line": 104,
-			"tag": "Style"
+			"targetType": "controls:SplitButton",
+			"setters": [
+				{
+					"property": "Background",
+					"value": "{ThemeResource AppBarButtonBackground}"
+				},
+				{
+					"property": "Foreground",
+					"value": "{ThemeResource AppBarButtonForeground}"
+				},
+				{
+					"property": "BorderBrush",
+					"value": "{ThemeResource AppBarButtonBorderBrush}"
+				},
+				{
+					"property": "HorizontalAlignment",
+					"value": "Left"
+				},
+				{
+					"property": "VerticalAlignment",
+					"value": "Top"
+				},
+				{
+					"property": "HorizontalContentAlignment",
+					"value": "Right"
+				},
+				{
+					"property": "FontFamily",
+					"value": "{ThemeResource ContentControlThemeFontFamily}"
+				},
+				{
+					"property": "FontWeight",
+					"value": "Normal"
+				},
+				{
+					"property": "FontSize",
+					"value": "12"
+				},
+				{
+					"property": "UseSystemFocusVisuals",
+					"value": "True"
+				},
+				{
+					"property": "FocusVisualMargin",
+					"value": "-3"
+				},
+				{
+					"property": "IsTabStop",
+					"value": "True"
+				},
+				{
+					"property": "Padding",
+					"value": "12,8,4,8"
+				},
+				{
+					"property": "MinHeight",
+					"value": "{ThemeResource AppBarThemeCompactHeight}"
+				},
+				{
+					"property": "CornerRadius",
+					"value": "{ThemeResource ControlCornerRadius}"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "SplitViewOpenPaneThemeLength",
@@ -60470,10 +66313,48 @@
 		{
 			"key": "DefaultSplitViewStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/SplitView/SplitView_themeresources.xaml",
 			"line": 39,
-			"tag": "Style"
+			"targetType": "SplitView",
+			"setters": [
+				{
+					"property": "BorderBrush",
+					"value": "{ThemeResource SystemControlForegroundTransparentBrush}"
+				},
+				{
+					"property": "BorderThickness",
+					"value": "{ThemeResource SplitViewLeftBorderThemeThickness}"
+				},
+				{
+					"property": "HorizontalContentAlignment",
+					"value": "Stretch"
+				},
+				{
+					"property": "VerticalContentAlignment",
+					"value": "Stretch"
+				},
+				{
+					"property": "OpenPaneLength",
+					"value": "{ThemeResource SplitViewOpenPaneThemeLength}"
+				},
+				{
+					"property": "CompactPaneLength",
+					"value": "{ThemeResource SplitViewCompactPaneThemeLength}"
+				},
+				{
+					"property": "PaneBackground",
+					"value": "{ThemeResource SystemControlPageBackgroundChromeLowBrush}"
+				},
+				{
+					"property": "CornerRadius",
+					"value": "{ThemeResource SplitViewPaneRootCornerRadius}"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "SwipeItemBackground",
@@ -60646,10 +66527,48 @@
 		{
 			"key": "SwipeItemStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/SwipeControl/SwipeControl_themeresources.xaml",
 			"line": 32,
-			"tag": "Style"
+			"targetType": "AppBarButton",
+			"setters": [
+				{
+					"property": "HorizontalAlignment",
+					"value": "Center"
+				},
+				{
+					"property": "VerticalAlignment",
+					"value": "Center"
+				},
+				{
+					"property": "FontFamily",
+					"value": "{ThemeResource ContentControlThemeFontFamily}"
+				},
+				{
+					"property": "FontWeight",
+					"value": "Normal"
+				},
+				{
+					"property": "MinWidth",
+					"value": "68"
+				},
+				{
+					"property": "Width",
+					"value": "Auto"
+				},
+				{
+					"property": "MinHeight",
+					"value": "40"
+				},
+				{
+					"property": "AutomationProperties.AccessibilityView",
+					"value": "Raw"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "TabViewBackground",
@@ -63696,10 +69615,76 @@
 		{
 			"key": "AlternateCloseButtonStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/TeachingTip/TeachingTip_themeresources.xaml",
 			"line": 101,
-			"tag": "Style"
+			"targetType": "Button",
+			"setters": [
+				{
+					"property": "BackgroundSizing",
+					"value": "InnerBorderEdge"
+				},
+				{
+					"property": "Width",
+					"value": "{ThemeResource TeachingTipAlternateCloseButtonSize}"
+				},
+				{
+					"property": "Height",
+					"value": "{ThemeResource TeachingTipAlternateCloseButtonSize}"
+				},
+				{
+					"property": "Background",
+					"value": "{ThemeResource TeachingTipAlternateCloseButtonBackground}"
+				},
+				{
+					"property": "Foreground",
+					"value": "{ThemeResource TeachingTipAlternateCloseButtonForeground}"
+				},
+				{
+					"property": "BorderBrush",
+					"value": "{ThemeResource TeachingTipAlternateCloseButtonBorderBrush}"
+				},
+				{
+					"property": "FontFamily",
+					"value": "{ThemeResource SymbolThemeFontFamily}"
+				},
+				{
+					"property": "FontSize",
+					"value": "{ThemeResource TeachingTipAlternateCloseButtonGlyphSize}"
+				},
+				{
+					"property": "VerticalAlignment",
+					"value": "Top"
+				},
+				{
+					"property": "HorizontalAlignment",
+					"value": "Right"
+				},
+				{
+					"property": "Padding",
+					"value": "4"
+				},
+				{
+					"property": "BorderThickness",
+					"value": "{ThemeResource TeachingTipAlternateCloseButtonBorderThickness}"
+				},
+				{
+					"property": "Content",
+					"value": ""
+				},
+				{
+					"property": "CornerRadius",
+					"value": "{ThemeResource ControlCornerRadius}"
+				},
+				{
+					"property": "FocusVisualMargin",
+					"value": "-3"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "TitleBarForegroundBrush",
@@ -64400,18 +70385,126 @@
 		{
 			"key": "TitleBarBackButtonStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/TitleBar/TitleBar_themeresources.xaml",
 			"line": 102,
-			"tag": "Style"
+			"targetType": "Button",
+			"setters": [
+				{
+					"property": "Background",
+					"value": "{ThemeResource TitleBarBackButtonBackground}"
+				},
+				{
+					"property": "Foreground",
+					"value": "{ThemeResource TitleBarBackButtonForeground}"
+				},
+				{
+					"property": "FontFamily",
+					"value": "{ThemeResource SymbolThemeFontFamily}"
+				},
+				{
+					"property": "FontSize",
+					"value": "16"
+				},
+				{
+					"property": "Width",
+					"value": "{ThemeResource TitleBarBackButtonWidth}"
+				},
+				{
+					"property": "VerticalAlignment",
+					"value": "Stretch"
+				},
+				{
+					"property": "HorizontalContentAlignment",
+					"value": "Center"
+				},
+				{
+					"property": "VerticalContentAlignment",
+					"value": "Center"
+				},
+				{
+					"property": "UseSystemFocusVisuals",
+					"value": "{StaticResource UseSystemFocusVisuals}"
+				},
+				{
+					"property": "Content",
+					"value": ""
+				},
+				{
+					"property": "Margin",
+					"value": "2"
+				},
+				{
+					"property": "CornerRadius",
+					"value": "{ThemeResource ControlCornerRadius}"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "TitleBarPaneToggleButtonStyle",
 			"theme": null,
-			"kind": "unsupported",
+			"kind": "style",
 			"file": "controls/dev/TitleBar/TitleBar_themeresources.xaml",
 			"line": 172,
-			"tag": "Style"
+			"targetType": "Button",
+			"setters": [
+				{
+					"property": "Background",
+					"value": "{ThemeResource TitleBarPaneToggleButtonBackground}"
+				},
+				{
+					"property": "Foreground",
+					"value": "{ThemeResource TitleBarPaneToggleButtonForeground}"
+				},
+				{
+					"property": "FontFamily",
+					"value": "{ThemeResource SymbolThemeFontFamily}"
+				},
+				{
+					"property": "FontSize",
+					"value": "16"
+				},
+				{
+					"property": "Width",
+					"value": "{ThemeResource TitleBarPaneToggleButtonWidth}"
+				},
+				{
+					"property": "VerticalAlignment",
+					"value": "Stretch"
+				},
+				{
+					"property": "HorizontalContentAlignment",
+					"value": "Center"
+				},
+				{
+					"property": "VerticalContentAlignment",
+					"value": "Center"
+				},
+				{
+					"property": "UseSystemFocusVisuals",
+					"value": "{StaticResource UseSystemFocusVisuals}"
+				},
+				{
+					"property": "Content",
+					"value": ""
+				},
+				{
+					"property": "Margin",
+					"value": "2"
+				},
+				{
+					"property": "CornerRadius",
+					"value": "{ThemeResource ControlCornerRadius}"
+				},
+				{
+					"property": "Template",
+					"unsupported": "ControlTemplate"
+				}
+			]
 		},
 		{
 			"key": "TreeViewItemBackground",
