@@ -13,6 +13,8 @@
 		"lint": "prettier --check . && eslint .",
 		"format": "prettier --write .",
 		"conform": "node scripts/conformance/run.mjs",
+		"tokens:fetch": "node scripts/tokens/fetch.mjs",
+		"tokens:extract": "node scripts/tokens/extract.mjs",
 		"test": "playwright test",
 		"verify": "pnpm build && pnpm check && pnpm lint && pnpm conform && pnpm test"
 	},
