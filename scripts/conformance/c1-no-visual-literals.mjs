@@ -108,11 +108,22 @@ export async function run() {
 		const source = await read(file);
 
 		// The escape hatch has to state a reason, so it surfaces in review rather than
-		// becoming a silent habit. It exempts one line, not a file and not a rule.
+		// becoming a silent habit. It exempts one declaration, not a file and not a rule.
+		//
+		// Accepted on the declaration's own line or on the line directly above it. Only the
+		// same line worked at first, which meant the form everyone reaches for — a comment
+		// above, the way `eslint-disable-next-line` reads — failed with a message about the
+		// declaration and nothing about placement. A hatch nobody can find is a rule with no
+		// way out, and the way out is the reason the rule can afford to be absolute.
 		const exempt = new Set();
 		source.split('\n').forEach((text, i) => {
-			if (/\/\*\s*c1-allow:\s*\S/.test(text) || /<!--\s*c1-allow:\s*\S/.test(text))
+			// The lookahead is what makes the reason mandatory. `\S` alone is satisfied by the
+			// comment's own terminator, so `/* c1-allow: */` — an exemption stating nothing —
+			// was accepted by the check that exists to stop exactly that.
+			if (/\/\*\s*c1-allow:\s*(?!\*\/)\S/.test(text) || /<!--\s*c1-allow:\s*(?!-->)\S/.test(text)) {
 				exempt.add(i + 1);
+				exempt.add(i + 2);
+			}
 		});
 
 		const blocks = file.endsWith('.css') ? [{ body: source, line: 1 }] : styleBlocks(source);
