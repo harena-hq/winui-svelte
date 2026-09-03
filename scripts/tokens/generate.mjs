@@ -5,6 +5,7 @@ import {
 	ACCENT_COLORS,
 	ADDITIONAL_KEYS,
 	EXCLUDED,
+	PLATFORM_FONTS,
 	SOURCE_FILES,
 	SYSTEM_COLORS,
 	TYPE_RAMP
@@ -835,6 +836,10 @@ function stylesheet(doc, selection, extraEmitted) {
 		...Object.entries(ACCENT_COLORS).flatMap(([key, value]) =>
 			declaration(key, color(value, `ACCENT_COLORS.${key} in manifest.mjs`), 1)
 		),
+		// Theme-independent, so `:root` only — the same treatment the accent ramp gets, and
+		// for the same reason: a family that changed with the theme would be a different
+		// decision than the one ADR 0003 made.
+		...Object.entries(PLATFORM_FONTS).flatMap(([key, value]) => declaration(key, value, 1)),
 		'',
 		...forThemes([LIGHT, null], 1)
 	];
