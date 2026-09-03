@@ -118,9 +118,12 @@ known. The rest of v0 does not wait on it.
 Goal: **every WinUI theme resource we need exists as a CSS custom property, in all three
 themes, generated rather than hand-written.**
 
-- Extract from `microsoft-ui-xaml` **`main`** branch, `controls/dev/CommonStyles/` — this is
-  WinUI 3. Diff against the `winui2/main` values already gathered and record any difference;
-  do not assume parity.
+- Extract from `microsoft-ui-xaml` **`main`**, from all 85 `*_themeresources.xaml` under
+  `controls/dev/**` — not `CommonStyles/` alone, which holds the base palette but none of the
+  per-control derivations. Skip the parallel `*_perf2026.xaml` set: it rewrites visual-state
+  mechanics and changes no token. Seven of the 85 carry no theme dictionary at all, the type
+  ramp among them — theme-independent resources are emitted once, not triplicated. The WinUI 2
+  / WinUI 3 branch question is settled in ADR 0001: no value differs, WinUI 3 adds four colors.
 - Colors (light / dark / high contrast), the type ramp, corner radii, the elevation-border
   gradient, motion durations and easings.
 - A generator turns the extracted source into CSS; a parity test fails if the committed CSS
