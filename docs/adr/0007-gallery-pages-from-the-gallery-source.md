@@ -53,6 +53,18 @@ the fonts out for the same kind of reason, and the licences differ but the habit
 keeping. Where a page's illustration is an image, v1 renders the page without it and the plan
 says so.
 
+**The line between extraction and transcription is the component shape.** A page's content
+is extracted where the source declares a repeated component with named attributes — `ColorTile`
+on the Color page, `TypographyControl` on the Typography page, the icon rows already
+serialised as JSON on the Iconography page. A reader for those is mechanical, and the values
+it recovers can be checked against the source one-for-one. The Geometry (3 rows) and Spacing
+(7 rows) pages are ad-hoc `Grid`s with positional children and no shared component: a reader
+for them would be a parser for one page's layout, which is the coupling the Consequences
+below names as the cost. Measured against the colour page's 130 tiles and 9 type-ramp rows,
+those 10 rows do not justify the brittleness, and the unit that renders them transcribes
+them with a citation instead. This applies per-page: a future page that picks up a repeated
+component earns extraction; one that stays positional stays transcribed.
+
 ## Consequences
 
 - A fidelity claim about a page is checkable: the record file names the commit it was read
