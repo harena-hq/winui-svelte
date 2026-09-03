@@ -28,22 +28,24 @@ pnpm workspace. The library is publishable and imposes no build tooling on its c
 
 ## Locked decisions
 
-| #   | Decision                                                                                         | Where                     |
-| --- | ------------------------------------------------------------------------------------------------ | ------------------------- |
-| D1  | Library + Gallery showcase, split as above                                                       | this file                 |
-| D2  | Token values are extracted from `microsoft-ui-xaml` (MIT), not from Fluent 2 web packages        | ADR 0001                  |
-| D3  | Styling is Svelte scoped CSS over a CSS custom-property token cascade. No Tailwind, no CSS-in-JS | ADR 0002                  |
-| D4  | Fonts and icons are referenced by name from the local system, never embedded                     | ADR 0003                  |
-| D5  | Visual truth is a human side-by-side against Windows 11; automation gates regression only        | this file, "Verification" |
-| D6  | Snapshots run on a local Windows VM runner, not on the Linux host                                | this file, "Verification" |
-| D7  | Out-of-scope Gallery groups keep their pages, implemented where the web allows                   | this file, "Roadmap → v4" |
-| D8  | Accent is six tokens with a baked default, plus an optional derivation from one base             | this file, "Accent"       |
-| D9  | bits-ui as the primitive base; individual Zag machines for TreeView, ColorPicker, NumberBox      | ADR 0004                  |
-| D10 | High contrast is generated as aliases onto eight system colors, not as a third palette           | ADR 0005                  |
-| D11 | A token is named `--winui-` plus the WinUI resource key, unchanged                               | ADR 0006                  |
-| D12 | The token layer is a curated closure of four base files plus what the Design pages name          | this file, "Roadmap → v1" |
-| D13 | Gallery page structure and page data are read from the pinned `WinUI-Gallery` source             | ADR 0007                  |
-| D14 | A composed WinUI `Style` ships as a CSS class, not as a custom property                          | this file, "Roadmap → v1" |
+| #   | Decision                                                                                         | Where                             |
+| --- | ------------------------------------------------------------------------------------------------ | --------------------------------- |
+| D1  | Library + Gallery showcase, split as above                                                       | this file                         |
+| D2  | Token values are extracted from `microsoft-ui-xaml` (MIT), not from Fluent 2 web packages        | ADR 0001                          |
+| D3  | Styling is Svelte scoped CSS over a CSS custom-property token cascade. No Tailwind, no CSS-in-JS | ADR 0002                          |
+| D4  | Fonts and icons are referenced by name from the local system, never embedded                     | ADR 0003                          |
+| D5  | Visual truth is a human side-by-side against Windows 11; automation gates regression only        | this file, "Verification"         |
+| D6  | Snapshots run on a local Windows VM runner, not on the Linux host                                | this file, "Verification"         |
+| D7  | Out-of-scope Gallery groups keep their pages, implemented where the web allows                   | this file, "Roadmap → v4"         |
+| D8  | Accent is six tokens with a baked default, plus an optional derivation from one base             | this file, "Accent"               |
+| D9  | bits-ui as the primitive base; individual Zag machines for TreeView, ColorPicker, NumberBox      | ADR 0004                          |
+| D10 | High contrast is generated as aliases onto eight system colors, not as a third palette           | ADR 0005                          |
+| D11 | A token is named `--winui-` plus the WinUI resource key, unchanged                               | ADR 0006                          |
+| D12 | The token layer is a curated closure of four base files plus what the Design pages name          | this file, "Roadmap → v1"         |
+| D13 | Gallery page structure and page data are read from the pinned `WinUI-Gallery` source             | ADR 0007                          |
+| D14 | A composed WinUI `Style` ships as a CSS class, not as a custom property                          | this file, "Roadmap → v1"         |
+| D15 | A control tranche seeds the token selection by key, never by dictionary file                     | this file, "Roadmap → v2"         |
+| D16 | The window backdrop paints Mica's solid counterpart; the material is not approximated            | this file, "Roadmap → v2"; WD-003 |
 
 ## Verification
 
@@ -213,11 +215,52 @@ record's per-grid `columns` field says. Fixed; see the commit history. Captures 
 
 Goal: **the Gallery's frame is navigable and looks right.**
 
-NavigationView (built from scratch — no primitive library has it), title bar, search box,
-routing, theme switching, and a Mica approximation for the window backdrop.
+`MainWindow.xaml`'s three parts — the title bar carrying the icon, the title and the search
+box; the left NavigationView carrying the menu tree; the content area the pages render into —
+plus routing, live theme switching, and the window backdrop. NavigationView and TitleBar are
+built from scratch: no primitive library has either.
 
-Done-when: home page and left navigation compare clean against Windows 11 in light and dark;
-theme switch changes every token live with no reload.
+Six units, each sealed on its own:
+
+1. **The control templates.** The upstream checkout carries `NavigationView.xaml` and
+   `TitleBar.xaml`, not only the theme dictionaries — a control reproduced from scratch is
+   reproduced from its `ControlTemplate` rather than from a screenshot.
+2. **The shell record.** `MainWindow.xaml`'s menu tree, and the control groups
+   `ControlInfoData.json` supplies at runtime, extracted the way the Design pages were.
+   D13 and ADR 0007 already govern this; the extractor grows, the rule does not change.
+3. **The shell's tokens.** The keys the shell reads, added to the selection under D15.
+4. **NavigationView.** The left pane, its items, the selection indicator, the expand
+   chevron, and the display modes the pane width selects between.
+5. **TitleBar.** The title bar row, the pane-toggle and back buttons, and the search box.
+6. **The frame.** Routing, live theme switching, the backdrop, and the five Design pages
+   rendered inside the shell rather than beside it.
+
+Done-when: the frame reproduces `MainWindow.xaml`'s structure; the left navigation and a page
+inside the frame compare clean against Windows 11 in light and dark; the theme control changes
+every token live with no reload; `pnpm verify` is green with C4 — which has been pending since
+v0 for want of an exported component — live.
+
+**The Gallery's own home page is not in this version.** It is built from `SelectorBar` and
+`GridView` over a recently-viewed list, which are the Navigation and Collections tranches;
+pulling them forward would make v2 three goals wearing one name. The frame is what v2 is
+judged on, and it is judged with the Design pages inside it. The home page lands with its
+dependencies.
+
+**D15 — a tranche seeds by key, not by file.** v1 seeded four whole dictionaries because they
+are the shared vocabulary. Seeding the shell's four the same way was tried and measured:
+the closure reaches the Reveal material brushes, which nothing here can express, and sixteen
+names the extraction never defines — the legacy `SystemControl*` brushes and
+`ContentControlThemeFontFamily` among them — because the dictionaries also carry whole
+`Style` records for controls this version does not build. A per-control dictionary is
+therefore a place to look keys up, not a set to take wholesale.
+
+**D16 — the backdrop is Mica's solid counterpart.** Mica's input is the desktop behind the
+window, and a web page has no such thing: nothing exposes what is behind the viewport to CSS,
+and neither pinned source states the tint and luminosity that would let one be faked
+faithfully. The Gallery's own Color page gives `Mica Background / Base` and
+`Solid Background / Base` the same caption — "used for the bottom most layer of an
+experience" — so the solid pair is the value Microsoft itself names for that role. WD-003 is
+amended to this permanent reason rather than deleted.
 
 ### v3 — the sample-page frame
 
