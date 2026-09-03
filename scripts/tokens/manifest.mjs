@@ -111,7 +111,17 @@ export const TYPE_RAMP = {
  * forced-colors mode; `keyword` is what the browser fills from the user's actual
  * theme when it is. ADR 0005.
  *
- * These are the only colors in the project written by hand rather than extracted.
+ * These are the only colors in the project written by hand rather than extracted, and
+ * seven of the eight are corroborated by the Gallery's own High Contrast chart, which
+ * documents all four contrast themes Windows ships.
+ *
+ * The eighth is not, and the disagreement is recorded here because it is the value
+ * someone will eventually doubt. That chart gives `Hilight` as `#ABCFF2`; this guest's
+ * `hc1.theme` gives `Hilight=161 191 222`, which is `#A1BFDE`, and the theme file is what
+ * Windows actually paints. The other seven agree to the byte, so it is one stale entry in
+ * Microsoft's documentation rather than a different theme. The Gallery reproduction still
+ * shows `#ABCFF2` on that tile, because that tile is a picture of the original's chart and
+ * reproducing the original includes reproducing what it gets wrong.
  */
 export const SYSTEM_COLORS = {
 	SystemColorWindowColor: { value: '#2D3236', keyword: 'Canvas' },
