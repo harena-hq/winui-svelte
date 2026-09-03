@@ -135,6 +135,27 @@ export const SYSTEM_COLORS = {
 };
 
 /**
+ * Font families the platform supplies rather than the dictionaries this project reads.
+ *
+ * `SymbolThemeFontFamily` is referenced from theme resources all over the source — every
+ * `FontIcon` in every control template resolves its family through it — and defined in none
+ * of them. Its definition lives in the framework dictionary that ships with WinUI rather
+ * than in the per-control `*_themeresources.xaml` files the extractor walks, so there is
+ * nothing to extract and the value is written here.
+ *
+ * The value is ADR 0003's decision, not a new one: reference the family by name and embed
+ * nothing. `tests/visual/fonts.spec.ts` fails if it stops resolving where the baselines are
+ * taken, which is the only place the reference can be checked.
+ *
+ * One entry, because one is what the acceptance surface needs. WinUI's text-family resource
+ * is not here for the same reason the rest of the per-control vocabulary is not: emitting a
+ * name nothing reads makes the layer harder to audit and easier to trust wrongly.
+ */
+export const PLATFORM_FONTS = {
+	SymbolThemeFontFamily: "'Segoe Fluent Icons'"
+};
+
+/**
  * The Windows accent ramp: the stock accent `#0078D4` and the six steps WinUI
  * derives from it, measured on the same guest through
  * `Windows.UI.ViewManagement.UISettings.GetColorValue`.
