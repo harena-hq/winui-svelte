@@ -26,6 +26,7 @@
 			"svelte": "./dist/index.js",
 			"default": "./dist/index.js"
 		},
+		"./tokens.css": "./dist/tokens/tokens.css",
 		"./*": "./dist/*"
 	},
 	"peerDependencies": {

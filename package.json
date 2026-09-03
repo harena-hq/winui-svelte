@@ -15,6 +15,7 @@
 		"conform": "node scripts/conformance/run.mjs",
 		"tokens:fetch": "node scripts/tokens/fetch.mjs",
 		"tokens:extract": "node scripts/tokens/extract.mjs",
+		"tokens:build": "node scripts/tokens/generate.mjs",
 		"test": "playwright test",
 		"verify": "pnpm build && pnpm check && pnpm lint && pnpm conform && pnpm test"
 	},
