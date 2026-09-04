@@ -10,7 +10,7 @@
 <div class="search-box">
 	<input type="search" {placeholder} aria-label={placeholder} />
 	<button type="button" class="query" aria-label="Search">
-		{String.fromCodePoint(parseInt(glyph, 16))}
+		<span class="glyph">{String.fromCodePoint(parseInt(glyph, 16))}</span>
 	</button>
 </div>
 
@@ -151,23 +151,9 @@
 		/* c1-allow: AutoSuggestBox_themeresources.xaml:244, QueryButton Height="28" */
 		height: 28px;
 		padding: 0;
-		/* The fill is inset from the button. `QueryButtonStyle`'s presenter — the element
-		   that paints the background, :101 inside the style at :97 — carries
-		   `AutoSuggestBoxInnerButtonMargin`, so a 32 by 28 button fills 30 by 22. Measured
-		   on the original with the pointer over it: 30 wide and 22 tall, which is why the
-		   fill has a gap above and below and ours did not. A transparent border of that
-		   width, with the background clipped to the padding box, is that inset without a
-		   second element. */
-		border-style: solid;
-		border-color: transparent;
-		/* Longhand, because the `border` shorthand takes one width and this token is two —
-		   written as a shorthand the whole declaration is dropped, silently, exactly as a
-		   negative padding was earlier in this repository. */
-		border-width: var(--winui-AutoSuggestBoxInnerButtonMargin);
+		border: 0;
 		background: transparent;
-		background-clip: padding-box;
 		cursor: pointer;
-		border-radius: var(--winui-ControlCornerRadius);
 		font-family: var(--winui-SymbolThemeFontFamily);
 		/* 14 is what `{TemplateBinding FontSize}` resolves to and it overshoots: it draws 13
 		   by 12 of ink against the original's 11 by 11, where 12 draws 11 by 10 and 13
@@ -178,14 +164,36 @@
 		color: var(--winui-TextFillColorSecondaryBrush);
 	}
 
-	.query:hover {
+	/* The fill is inset from the button and rounded on its own. `QueryButtonStyle`'s
+	   presenter — the element that paints the background, :101 inside the style at :97 —
+	   carries `AutoSuggestBoxInnerButtonMargin` and its own `CornerRadius`, so a 32 by 28
+	   button fills 30 by 22 with rounded corners. Measured on the original with the
+	   pointer over it: 30 by 22.
+
+	   Its own element rather than a transparent border on the button, because a border
+	   shrinks the radius by its own width and this one has two different widths — the
+	   corners came out square. */
+	.query::before {
+		content: '';
+		position: absolute;
+		inset: var(--winui-AutoSuggestBoxInnerButtonMargin);
+		border-radius: var(--winui-ControlCornerRadius);
+	}
+
+	/* Positioned, so it paints above the fill rather than under it. */
+	.glyph {
+		position: relative;
+	}
+
+	.query:hover::before {
 		background: var(--winui-SubtleFillColorSecondaryBrush);
-		background-clip: padding-box;
+	}
+
+	.query:active::before {
+		background: var(--winui-SubtleFillColorTertiaryBrush);
 	}
 
 	.query:active {
-		background: var(--winui-SubtleFillColorTertiaryBrush);
-		background-clip: padding-box;
 		color: var(--winui-TextFillColorTertiaryBrush);
 	}
 </style>
