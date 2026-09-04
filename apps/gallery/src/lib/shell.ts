@@ -190,6 +190,16 @@ function findById(
 	return null;
 }
 
+/**
+ * Whether the row at `path` has children, and so is somewhere to open rather than
+ * somewhere to go. `Design` is the Gallery's own example: clicking it expands the section
+ * and leaves the page where it was.
+ */
+export function isParent(path: string): boolean {
+	const f = findById(menu, path);
+	return f !== null && (f.children?.length ?? 0) > 0;
+}
+
 export function titleOf(path: string): string | null {
 	const f = findById(menu, path);
 	return f === null ? null : f.content;
