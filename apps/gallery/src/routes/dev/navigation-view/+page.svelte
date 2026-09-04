@@ -77,6 +77,16 @@
 	</NavigationView>
 </div>
 
+<h2 class="winui-SubtitleTextBlockStyle">settings item hidden</h2>
+<p class="winui-BodyTextBlockStyle">
+	The settings row is absent because <code>settingsVisible</code> is false.
+</p>
+<div class="frame">
+	<NavigationView {items} {selected} onselect={select('hidden')} settingsVisible={false}>
+		<p class="winui-BodyTextBlockStyle">The pane carries no settings row.</p>
+	</NavigationView>
+</div>
+
 <h2 class="winui-SubtitleTextBlockStyle">selection</h2>
 <pre class="log">{events.length ? events.join('\n') : 'nothing selected yet'}</pre>
 
