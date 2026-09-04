@@ -40,6 +40,9 @@ const SPARSE = [
 	'/controls/dev/**/*.xaml',
 	'/controls/dev/**/*.idl',
 	'/controls/dev/**/*.h',
+	'/controls/dev/**/*.cpp',
+	'/controls/dev/**/Strings/en-us/Resources.resw',
+	'/controls/dev/**/Strings/en-US/Resources.resw',
 	'!/controls/dev/**/TestUI/**'
 ];
 
