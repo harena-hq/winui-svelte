@@ -96,6 +96,10 @@
 
 <style>
 	.root {
+		/* A row, not a thing that gives way. As a flex child of a column whose other child
+		   is taller than the space, the default `flex-shrink: 1` squeezed 48 pixels into
+		   41. */
+		flex: 0 0 auto;
 		display: flex;
 		align-items: stretch;
 		color: var(--winui-TitleBarForegroundBrush);
