@@ -130,6 +130,31 @@
 		paneOpen = mode === 'expanded';
 	});
 
+	// `UpdatePaneLayout` shows the pane's separator exactly when the menu items do not fit
+	// beside the footer group — NavigationView.cpp, and the `SeparatorVisible` state at
+	// NavigationView.xaml:171. On the web that is the same question as "does the menu
+	// region scroll", and the answer is a measurement rather than a value, so it is
+	// observed rather than derived.
+	//
+	// The observer writes `menuOverflows` and nothing here reads it back, so the effect
+	// has nothing to fight — the trap the display-mode effect below documents.
+	let menuViewport: HTMLElement | undefined = $state();
+	let menuOverflows = $state(false);
+	$effect(() => {
+		const el = menuViewport;
+		if (!el) return;
+		const measure = () => {
+			menuOverflows = el.scrollHeight > el.clientHeight;
+		};
+		measure();
+		const observer = new ResizeObserver(measure);
+		observer.observe(el);
+		// The list as well as its viewport: expanding an item changes the content's height
+		// without changing the box that holds it.
+		if (el.firstElementChild) observer.observe(el.firstElementChild);
+		return () => observer.disconnect();
+	});
+
 	// Minimal hides the pane entirely when it is closed; the other two keep it, narrowed.
 	const paneVisible = $derived(mode !== 'minimal' || paneOpen);
 	// Overlaying is what makes compact and minimal different from expanded: the pane is
@@ -162,7 +187,7 @@
 					</div>
 				{/if}
 
-				<div class="items-container-grid">
+				<div class="items-container-grid" bind:this={menuViewport}>
 					<ul role="tree" class="menu-items">
 						{#each items as entry, i (isNavigationViewHeader(entry) ? `h${i}` : entry.id)}
 							{#if isNavigationViewHeader(entry)}
@@ -175,6 +200,10 @@
 						{/each}
 					</ul>
 				</div>
+
+				{#if menuOverflows}
+					<div class="items-separator"></div>
+				{/if}
 
 				{#if paneFooter}
 					<div class="footer-content-border">{@render paneFooter()}</div>
@@ -203,6 +232,7 @@
 
 <style>
 	.root {
+		flex: 1 1 auto;
 		/* `c_itemIndentation`, the inset a child menu item gets per level of depth —
 		   microsoft-ui-xaml @ 79646b4e, NavigationViewItemBase.h:63, multiplied by the
 		   item's depth in `NavigationViewItem::UpdateItemIndentation`. A layout constant
@@ -300,6 +330,10 @@
 		min-height: 0;
 		overflow-y: auto;
 		overflow-x: hidden;
+		/* Windows' scrollbars are thin overlays and the browser's default is not. The real
+		   ScrollBar arrives with the Scrolling tranche. */
+		scrollbar-width: thin;
+		scrollbar-color: var(--winui-ControlStrongFillColorDefaultBrush) transparent;
 	}
 
 	/* `NavigationViewPaneContentGridMargin` belongs to `PaneContentGrid` — NavigationView.xaml:291
@@ -334,6 +368,17 @@
 	   still occupy a row. */
 	.root[data-collapsed='true'] .item-header {
 		display: none;
+	}
+
+	/* `VisualItemsSeparator` — NavigationView.xaml:375. The instance's own `Margin="0,0,0,2"`
+	   overrides the `NavigationViewItemSeparator` style's, so the token for that margin is
+	   deliberately not read here. */
+	.items-separator {
+		flex: 0 0 auto;
+		height: var(--winui-NavigationViewItemSeparatorHeight);
+		/* c1-allow: NavigationView.xaml:375, VisualItemsSeparator Margin="0,0,0,2" */
+		margin: 0 0 2px;
+		background: var(--winui-NavigationViewItemSeparatorForeground);
 	}
 
 	.footer-content-border {
