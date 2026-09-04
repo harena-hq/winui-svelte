@@ -355,7 +355,12 @@
 		   leaves the 2 the original draws. */
 		/* c1-allow: measured 2px on a capture of the real Gallery's pane */
 		border: 5px solid transparent;
-		border-radius: var(--winui-ControlCornerRadius);
+		/* A capsule at both widths. `border-radius` applies to the border box and the
+		   visible thumb is the padding box, so the radius it sees is this minus the border:
+		   1 against a 2 wide thumb at rest, 3 against a 6 wide one on hover. Half of
+		   `ScrollBarSize` is the number that makes both come out round. */
+		/* c1-allow: ScrollBar_themeresources.xaml:180, half of ScrollBarSize 12 */
+		border-radius: 6px;
 	}
 
 	/* `Expanded` — ScrollBar_themeresources.xaml:587, the rail at `ScrollBarSize` with the
