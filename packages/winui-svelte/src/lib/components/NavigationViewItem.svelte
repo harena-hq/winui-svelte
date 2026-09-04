@@ -260,7 +260,13 @@
 		color: inherit;
 		cursor: pointer;
 		font-family: var(--winui-SymbolThemeFontFamily);
-		font-size: var(--winui-NavigationViewItemExpandedGlyphFontSize);
+		/* WD-006: what the original draws here is an `AnimatedIcon` in a 12 by 12 box —
+		   NavigationView_themeresources.xaml:617 — and
+		   `NavigationViewItemExpandedGlyphFontSize` is 8, the size of the *fallback* glyph
+		   inside it. Drawing the fallback at 8 leaves a chevron visibly smaller and fainter
+		   than the original's, so it is drawn at the box the icon occupies instead. */
+		/* c1-allow: NavigationView_themeresources.xaml:617, AnimatedIcon Width="12" Height="12" */
+		font-size: 12px;
 		line-height: normal;
 	}
 
