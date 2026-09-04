@@ -104,11 +104,10 @@
 		field-sizing: content;
 		min-width: 0;
 		padding: 0;
-		/* The query button is out of flow, so the text reserves its width here: the glyph,
-		   its own padding and margin, and the spacer column at the right end. */
-		/* c1-allow: AutoSuggestBox_themeresources.xaml:24, :26 and :28 — the inner margin's
-		   1 a side, the query padding's 3 a side, and the 4 of the right spacer column */
-		margin-right: calc(var(--winui-AutoSuggestBoxIconFontSize) + 12px);
+		/* The query button is out of flow, so the text reserves its width here: the button's
+		   32, its 2 of left margin, and the 4 of the spacer column at the right end. */
+		/* c1-allow: AutoSuggestBox_themeresources.xaml:244, Width="32" and Margin="2,0,0,0" */
+		margin-right: 38px;
 		border: 0;
 		background: transparent;
 		color: inherit;
@@ -129,29 +128,35 @@
 		background: var(--winui-AccentFillColorSelectedTextBackgroundBrush);
 	}
 
-	/* Out of flow, and that is the template's own structure rather than a trick: the button
-	   sits in a grid column whose row height is the text box's, so it stretches to the row
-	   and never sets it — AutoSuggestBox_themeresources.xaml:230. In flow its glyph's line
-	   box was the tallest thing in the row and drove the box three pixels past the 32 the
-	   original measures.
-	   Stretching it is also what widens the pointer target: the original's is a rectangle
-	   taller and wider than the glyph, not a box drawn around it. */
+	/* `QueryButton` is 32 by 28 with 2 of left margin — AutoSuggestBox_themeresources.xaml:244
+	   — and it sits in a grid column, so it is a fixed rectangle rather than a box drawn
+	   around its glyph. Out of flow here for the same reason: in the template the row's
+	   height comes from the text box, and in flow this button's line box was the tallest
+	   thing in the row and pushed the box three pixels past the 32 the original measures.
+
+	   Its glyph takes `{TemplateBinding FontSize}` — the text box's own, not
+	   `AutoSuggestBoxIconFontSize`, which this template applies to the delete button at
+	   :101 and never to this one. That is why the magnifier was reading light: 12 where
+	   the original draws 14. */
 	.query {
 		position: absolute;
-		top: 0;
-		bottom: 0;
+		top: 50%;
+		translate: 0 -50%;
 		right: var(--winui-AutoSuggestBoxRightButtonMargin);
 		display: flex;
 		align-items: center;
 		justify-content: center;
+		/* c1-allow: AutoSuggestBox_themeresources.xaml:244, QueryButton Width="32" */
+		width: 32px;
+		/* c1-allow: AutoSuggestBox_themeresources.xaml:244, QueryButton Height="28" */
+		height: 28px;
+		padding: 0;
 		border: 0;
 		background: transparent;
 		cursor: pointer;
-		margin: var(--winui-AutoSuggestBoxInnerButtonMargin);
-		padding: var(--winui-AutoSuggestBoxQueryButtonPadding);
 		border-radius: var(--winui-ControlCornerRadius);
 		font-family: var(--winui-SymbolThemeFontFamily);
-		font-size: var(--winui-AutoSuggestBoxIconFontSize);
+		font-size: inherit;
 		line-height: normal;
 		color: var(--winui-TextFillColorSecondaryBrush);
 	}

@@ -28,9 +28,6 @@
 	--winui-SystemAccentColorLight3: #99ebff;
 	--winui-SymbolThemeFontFamily: 'Segoe Fluent Icons';
 
-	--winui-AutoSuggestBoxIconFontSize: 12px;
-	--winui-AutoSuggestBoxInnerButtonMargin: 3px 1px;
-	--winui-AutoSuggestBoxQueryButtonPadding: 2px 3px;
 	--winui-AutoSuggestBoxRightButtonMargin: 4px;
 	--winui-SystemControlTransparentColor: #00000000;
 	--winui-SystemControlTransparentBrush: transparent;
@@ -435,7 +432,6 @@
 	--winui-SystemColorHighlightTextColor: #212d3b;
 	--winui-SystemColorHotlightColor: #70ebde;
 
-	--winui-AutoSuggestBoxIconFontSize: 12px;
 	--winui-SystemControlTransparentColor: #00000000;
 	--winui-SystemControlTransparentBrush: transparent;
 	--winui-SystemControlHighlightListAccentVeryHighBrush: color-mix(
@@ -777,7 +773,6 @@
 		--winui-SystemColorHighlightTextColor: #212d3b;
 		--winui-SystemColorHotlightColor: #70ebde;
 
-		--winui-AutoSuggestBoxIconFontSize: 12px;
 		--winui-SystemControlTransparentColor: #00000000;
 		--winui-SystemControlTransparentBrush: transparent;
 		--winui-SystemControlHighlightListAccentVeryHighBrush: color-mix(
@@ -1131,7 +1126,6 @@
 	--winui-SystemColorHighlightTextColor: #212d3b;
 	--winui-SystemColorHotlightColor: #70ebde;
 
-	--winui-AutoSuggestBoxIconFontSize: 12px;
 	--winui-SystemControlTransparentColor: #00000000;
 	--winui-SystemControlTransparentBrush: transparent;
 	--winui-SystemControlHighlightListAccentVeryHighBrush: var(--winui-SystemColorHighlightColor);
