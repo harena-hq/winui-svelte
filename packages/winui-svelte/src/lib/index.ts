@@ -12,3 +12,4 @@ export type {
 	NavigationViewHeaderData,
 	NavigationViewItemData
 } from './components/NavigationView.svelte';
+export { default as TitleBar } from './components/TitleBar.svelte';
