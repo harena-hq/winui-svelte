@@ -441,9 +441,9 @@ binary state, a grouped exclusive choice, a bound toggle — not for count. Comb
 are deliberately not here: a popup and a drag gesture would test the contract's edges before
 its middle is settled.
 
-Done-when: each control renders under the three themes in the snapshot suite; the C6 smoke app
-consumes each from the built package; each compares clean against the original on the reference
-guest; and every prop follows D21 with its TSDoc naming the WinUI member.
+Done-when: each control renders under the three themes in the snapshot suite; each compares
+clean against the original on the reference guest; and every prop follows D21 with its TSDoc
+naming the WinUI member.
 
 The comparison surface is the control, not the page. Each gets a Gallery route with a plain
 frame — the original shows it inside `ControlExample`, and ours will not until v10 — which is
@@ -478,10 +478,11 @@ group sizes, which no longer line up one-to-one with a version.
     Backdrops, transitions, easing, connected animation. WD-006 closes here.
 15. **Media / Windowing / System / Shell** (18) — see open question O2.
 
-**A release is possible from v3 onward**, and its gate already exists: C6 requires a bare
-Vite + Svelte app to consume the built package and render correctly, which is the whole of what
-"publishable" means here. Whether to cut one is a separate decision from whether the code
-supports it.
+**A release becomes possible from v3 onward**, and one thing has to be built before it is:
+C6 as implemented reads the shipped `dist` for preprocessor and Tailwind markers, which proves
+the package needs no build tooling but not that a consumer can mount what it exports. The
+smoke app the gate description promises does not exist. Building it is the first unit of
+whichever version cuts a release, not a prerequisite for writing controls.
 
 ### Final — the acceptance gate
 
@@ -508,8 +509,10 @@ Automated, and a unit that fails one cannot be sealed.
   D12's second clause made checkable: the first half of the selection is structural and the
   generator enforces it, while the second was a promise kept by hand until the page content
   existed as data to check against.
-- **C6 — no consumer build tooling.** A smoke app consuming the built package with bare Vite +
-  Svelte and nothing else must render correctly.
+- **C6 — no consumer build tooling.** The shipped `dist` may contain no preprocessor `lang=`
+  attribute and no Tailwind directive, so a consumer with bare Vite + Svelte and nothing else
+  can build it. What it does not yet do is mount the result: the smoke app that would close
+  that half is unbuilt, and until it exists the gate proves buildability, not usability.
 - **C8 — the Gallery records are current.** C2's sibling for the other generated pair. The
   records are derived from a checkout that is deliberately not committed, so the gate always
   checks what a fresh clone can — the commit each record names against the pin, and each
