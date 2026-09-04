@@ -191,13 +191,24 @@ function findById(
 }
 
 /**
- * Whether the row at `path` has children, and so is somewhere to open rather than
- * somewhere to go. `Design` is the Gallery's own example: clicking it expands the section
- * and leaves the page where it was.
+ * The rows that open rather than go. Having children is not the test — `Basic input` has
+ * children *and* a page of its own. `MainWindow.xaml.cs`'s `OnNavigationViewSelectionChanged`
+ * enumerates every XAML row it navigates for and the three special sections are not among
+ * them, while everything the code-behind added falls through to the `ControlInfoDataGroup`
+ * and `ControlInfoDataItem` branches and does navigate.
+ *
+ * So the set is exactly the XAML menu's rows that have children, which is what the record
+ * marks `isSpecialSection`.
  */
-export function isParent(path: string): boolean {
-	const f = findById(menu, path);
-	return f !== null && (f.children?.length ?? 0) > 0;
+const CONTAINERS: ReadonlySet<string> = new Set(
+	xamlMenu
+		.filter((e): e is Extract<NavigationViewEntry, { id: string }> => !('header' in e))
+		.filter((e) => (e.children?.length ?? 0) > 0)
+		.map((e) => e.id)
+);
+
+export function isContainer(path: string): boolean {
+	return CONTAINERS.has(path);
 }
 
 export function titleOf(path: string): string | null {
