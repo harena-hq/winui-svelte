@@ -16,6 +16,13 @@ the real app on Windows 11 reads as the same application.
 model disagrees with WinUI, the divergence is recorded and accepted rather than forced. See
 `divergences.md`.
 
+**The library is the product; the Gallery is the harness that judges it.** Both sentences of
+the goal are load-bearing, and their order is too. Work that leaves nothing in
+`packages/winui-svelte` buys only a better test rig, so it is scheduled behind work that does,
+and the control order is what an application reaches for rather than what the Gallery's
+navigation happens to list first. The harness earns its keep by being the only honest measure
+of fidelity — not by being finished.
+
 ## Shape
 
 ```
@@ -28,28 +35,30 @@ pnpm workspace. The library is publishable and imposes no build tooling on its c
 
 ## Locked decisions
 
-| #   | Decision                                                                                         | Where                             |
-| --- | ------------------------------------------------------------------------------------------------ | --------------------------------- |
-| D1  | Library + Gallery showcase, split as above                                                       | this file                         |
-| D2  | Token values are extracted from `microsoft-ui-xaml` (MIT), not from Fluent 2 web packages        | ADR 0001                          |
-| D3  | Styling is Svelte scoped CSS over a CSS custom-property token cascade. No Tailwind, no CSS-in-JS | ADR 0002                          |
-| D4  | Fonts and icons are referenced by name from the local system, never embedded                     | ADR 0003                          |
-| D5  | Visual truth is a human side-by-side against Windows 11; automation gates regression only        | this file, "Verification"         |
-| D6  | Snapshots run on a local Windows VM runner, not on the Linux host                                | this file, "Verification"         |
-| D7  | Out-of-scope Gallery groups keep their pages, implemented where the web allows                   | this file, "Roadmap → v4"         |
-| D8  | Accent is six tokens with a baked default, plus an optional derivation from one base             | this file, "Accent"               |
-| D9  | bits-ui as the primitive base; individual Zag machines for TreeView, ColorPicker, NumberBox      | ADR 0004                          |
-| D10 | High contrast is generated as aliases onto eight system colors, not as a third palette           | ADR 0005                          |
-| D11 | A token is named `--winui-` plus the WinUI resource key, unchanged                               | ADR 0006                          |
-| D12 | The token layer is a curated closure of four base files plus what the Design pages name          | this file, "Roadmap → v1"         |
-| D13 | Gallery page structure and page data are read from the pinned `WinUI-Gallery` source             | ADR 0007                          |
-| D14 | A composed WinUI `Style` ships as a CSS class, not as a custom property                          | this file, "Roadmap → v1"         |
-| D15 | A control tranche seeds the token selection by key, never by dictionary file                     | this file, "Roadmap → v2"         |
-| D16 | The window backdrop paints Mica's solid counterpart; the material is not approximated            | this file, "Roadmap → v2"; WD-003 |
-| D17 | A legacy `SystemControl*Brush` resolves through a table to a system colour, and is never emitted | ADR 0008                          |
-| D18 | Every menu entry is a route; the path is derived from the record, never hand-written             | this file, "Roadmap → v2"         |
-| D19 | The shell is the Gallery's layout, and the selected navigation item is the URL                   | this file, "Roadmap → v2"         |
-| D20 | The title bar's search box is the Gallery's own, not a half-built published control              | this file, "Roadmap → v2"         |
+| #   | Decision                                                                                           | Where                             |
+| --- | -------------------------------------------------------------------------------------------------- | --------------------------------- |
+| D1  | Library + Gallery showcase, split as above                                                         | this file                         |
+| D2  | Token values are extracted from `microsoft-ui-xaml` (MIT), not from Fluent 2 web packages          | ADR 0001                          |
+| D3  | Styling is Svelte scoped CSS over a CSS custom-property token cascade. No Tailwind, no CSS-in-JS   | ADR 0002                          |
+| D4  | Fonts and icons are referenced by name from the local system, never embedded                       | ADR 0003                          |
+| D5  | Visual truth is a human side-by-side against Windows 11; automation gates regression only          | this file, "Verification"         |
+| D6  | Snapshots run on a local Windows VM runner, not on the Linux host                                  | this file, "Verification"         |
+| D7  | Out-of-scope Gallery groups keep their pages, implemented where the web allows                     | this file, "Roadmap → v4"         |
+| D8  | Accent is six tokens with a baked default, plus an optional derivation from one base               | this file, "Accent"               |
+| D9  | bits-ui as the primitive base; individual Zag machines for TreeView, ColorPicker, NumberBox        | ADR 0004                          |
+| D10 | High contrast is generated as aliases onto eight system colors, not as a third palette             | ADR 0005                          |
+| D11 | A token is named `--winui-` plus the WinUI resource key, unchanged                                 | ADR 0006                          |
+| D12 | The token layer is a curated closure of four base files plus what the Design pages name            | this file, "Roadmap → v1"         |
+| D13 | Gallery page structure and page data are read from the pinned `WinUI-Gallery` source               | ADR 0007                          |
+| D14 | A composed WinUI `Style` ships as a CSS class, not as a custom property                            | this file, "Roadmap → v1"         |
+| D15 | A control tranche seeds the token selection by key, never by dictionary file                       | this file, "Roadmap → v2"         |
+| D16 | The window backdrop paints Mica's solid counterpart; the material is not approximated              | this file, "Roadmap → v2"; WD-003 |
+| D17 | A legacy `SystemControl*Brush` resolves through a table to a system colour, and is never emitted   | ADR 0008                          |
+| D18 | Every menu entry is a route; the path is derived from the record, never hand-written               | this file, "Roadmap → v2"         |
+| D19 | The shell is the Gallery's layout, and the selected navigation item is the URL                     | this file, "Roadmap → v2"         |
+| D20 | The title bar's search box is the Gallery's own, not a half-built published control                | this file, "Roadmap → v2"         |
+| D21 | A WinUI member becomes a Svelte prop by one stated rule, and every component takes `...rest`/`ref` | ADR 0009                          |
+| D22 | Tranches are ordered by what an application reaches for; harness scaffolding follows the controls  | this file, "Roadmap → v3"         |
 
 ## Verification
 
@@ -182,18 +191,19 @@ five pages is a table of tokens **wrapped in a control from a later version**:
 
 | page        | the table v1 reproduces                              | the frame around it, and where it lands   |
 | ----------- | ---------------------------------------------------- | ----------------------------------------- |
-| Color       | 130 tiles and 27 captioned examples, in six sections | `SelectorBar` — v4, Navigation            |
-| Typography  | 9 type-ramp rows                                     | `ControlExample` — v3                     |
-| Geometry    | 3 corner-radius rows                                 | `ControlExample` — v3                     |
+| Color       | 130 tiles and 27 captioned examples, in six sections | `SelectorBar` — v8                        |
+| Typography  | 9 type-ramp rows                                     | `ControlExample` — v10                    |
+| Geometry    | 3 corner-radius rows                                 | `ControlExample` — v10                    |
 | Spacing     | 7 spacing rows                                       | none; two annotated images v1 cannot draw |
-| Iconography | 1533 Segoe Fluent Icons tiles                        | `AutoSuggestBox` + `ItemsView` — v4       |
+| Iconography | 1533 Segoe Fluent Icons tiles                        | `AutoSuggestBox` v4 + `ItemsView` v9      |
 
 **v1 builds the tables and a plain frame; it does not build the chrome.** The pages are
 reachable from a list on the Gallery's index and switch theme from a control the shell later
 replaces. Each version that brings a page's real frame moves that page onto it. This is not a
 reduction in scope — the tables are the part that shows the tokens, and the chrome shows
 controls that do not exist yet — but it does mean these five pages are not a side-by-side
-match until v4, and only the tables are compared before then.
+match until the version that brings each one's frame — v4 through v10 — and only the tables
+are compared before then.
 
 Four of the 130 color tiles cannot be reproduced at all in v1: they display the Acrylic
 brushes, which need a backdrop this version has nothing to put behind them. Recorded as a
@@ -398,39 +408,80 @@ its width is a floor rather than a measure of the text — `TextControlThemeMinW
 at `TextBox_themeresources.xaml:193` and defined nowhere in `controls/dev`, measured as 318
 on the reference capture the same way `TextControlThemeMinHeight` was measured as 32.
 
-### v3 — the sample-page frame
+### v3 — the component contract, and five controls that prove it
 
-Goal: **one control's sample page has the real page structure.**
+Goal: **the package is worth installing.**
 
-`ControlExample`'s three panes (example / output / options), and the collapsed "Source code"
-Expander containing a SelectorBar with XAML and C# tabs, a syntax-highlighted viewer, and the
-floating copy button.
+An earlier draft of this version built `ControlExample` and the source-code viewer first, on
+the argument that every later control page reuses the frame. Costed unit by unit, six of its
+eight units left nothing in `packages/winui-svelte` — that argument holds only while the
+Gallery is the deliverable, and it is not. The frame moves to v10, where it is also cheaper:
+its Expander and SelectorBar are real WinUI controls that this roadmap now builds on their own
+account, so the frame no longer has to drag them forward.
 
-Done-when: a single control's page reproduces the structure; the source-code viewer works;
-the page compares clean.
+What this version adds instead is the thing two versions of components were written without: a
+stated rule for how a WinUI member becomes a Svelte prop, and an escape hatch. Today nothing
+the library exports can be given a class, an id, an `aria-label` or a `ref`; a component a
+consumer cannot place is a demo. ADR 0009 is that rule, and D21 locks it.
 
-This is deliberately before the bulk of the controls: every later control page reuses it, so
-getting it wrong late is expensive.
+Units:
+
+1. **The contract, applied to what exists.** NavigationView, NavigationViewItem and TitleBar
+   migrated onto ADR 0009 — names, `on<Prop>Change` callbacks, `...rest` and `ref` — and the
+   Gallery updated to the new surface. First, because the cost of this migration is linear in
+   the number of components and this is the cheapest it will ever be.
+2. **Button.** Also the base every later button variant and the Gallery's own chrome stands on.
+3. **TextBox.**
+4. **CheckBox.**
+5. **RadioButton**, and the group that owns the selection.
+6. **ToggleSwitch.**
+
+The five are chosen for the shapes they force the contract through — a command, free text, a
+binary state, a grouped exclusive choice, a bound toggle — not for count. ComboBox and Slider
+are deliberately not here: a popup and a drag gesture would test the contract's edges before
+its middle is settled.
+
+Done-when: each control renders under the three themes in the snapshot suite; the C6 smoke app
+consumes each from the built package; each compares clean against the original on the reference
+guest; and every prop follows D21 with its TSDoc naming the WinUI member.
+
+The comparison surface is the control, not the page. Each gets a Gallery route with a plain
+frame — the original shows it inside `ControlExample`, and ours will not until v10 — which is
+the same arrangement v1 used for the Design pages and for the same reason: the chrome shows
+controls that do not exist yet.
 
 ### v4 onwards — control tranches
 
-The Gallery's 19 groups, ordered so that each tranche's dependencies are already built.
+Ordered by what an application reaches for (D22), not by the Gallery's navigation. Each tranche
+is one version with one goal, sealed independently. Counts in parentheses are the Gallery's
+group sizes, which no longer line up one-to-one with a version.
 
-1. **Basic input** (14) — Button, DropDownButton, SplitButton, ToggleSwitch, CheckBox, RadioButton, Slider, ComboBox, ColorPicker, RatingControl, …
-2. **Text** (7) — TextBox, AutoSuggestBox, NumberBox, PasswordBox, RichEditBox, TextBlock, RichTextBlock
-3. **Status & info** (5) — InfoBar, InfoBadge, ProgressBar, ProgressRing, ToolTip
-4. **Layout** (9) — Border, Expander, Grid, SplitView, StackPanel, Viewbox, …
-5. **Dialogs & flyouts** (4) — ContentDialog, Flyout, Popup, TeachingTip
-6. **Menus & toolbars** (10) — CommandBar, MenuBar, MenuFlyout, AppBar*, …
-7. **Navigation** (5) — BreadcrumbBar, Pivot, SelectorBar, TabView, (NavigationView done in v2)
-8. **Collections** (7) — ListView, GridView, TreeView, ItemsRepeater, ItemsView, FlipView, …
-9. **Date & time** (4) — CalendarView, CalendarDatePicker, DatePicker, TimePicker
-10. **Scrolling** (5) — ScrollView, PipsPager, AnnotatedScrollBar, SemanticZoom, …
-11. **Styles** (10) — AcrylicBrush, AnimatedIcon, ThemeShadow, System Backdrops, …
-12. **Motion** (7) — transitions, easing, connected animation
-13. **Media / Windowing / System / Shell** (18) — see open question O2
+4.  **The rest of input** — ComboBox, Slider, NumberBox, PasswordBox, AutoSuggestBox. The last
+    of these also retires D20: the title bar's search box becomes the published control.
+5.  **Status and feedback** — InfoBar, InfoBadge, ProgressBar, ProgressRing, ToolTip.
+6.  **Surfaces** — Expander, ContentDialog, Flyout, MenuFlyout, TeachingTip, Popup.
+7.  **Commands and menus** — DropDownButton, SplitButton, ToggleButton, CommandBar, MenuBar,
+    AppBar\*.
+8.  **Navigation** — BreadcrumbBar, Pivot, SelectorBar, TabView. NavigationView was v2.
+9.  **Collections** — ListView, GridView, TreeView, ItemsRepeater, ItemsView, FlipView.
+10. **The sample-page frame** — `ControlExample`'s three panes, `SampleCodePresenter`, the
+    copy button, and `ItemPage`'s content root. Its syntax highlighting is ColorCode, pinned by
+    the Gallery's own `standalone.props` at 2.0.15; the palette and the XML and C# grammars are
+    generated from that source rather than transcribed, as ADR 0001 and 0007 do for the other
+    two upstreams. Expander and SelectorBar are already built by here.
+    The Gallery's Typography and Geometry pages move onto the frame in this version.
+11. **Layout** — Border, SplitView, Viewbox, and the Gallery's Grid and StackPanel pages, which
+    are mostly documentation of CSS this library does not need to reimplement.
+12. **Date and time** — CalendarView, CalendarDatePicker, DatePicker, TimePicker.
+13. **Scrolling** — ScrollView, PipsPager, AnnotatedScrollBar, SemanticZoom.
+14. **Styles** (10) and **Motion** (7) — AcrylicBrush, AnimatedIcon, ThemeShadow, System
+    Backdrops, transitions, easing, connected animation. WD-006 closes here.
+15. **Media / Windowing / System / Shell** (18) — see open question O2.
 
-Each tranche is one version with one goal, sealed independently.
+**A release is possible from v3 onward**, and its gate already exists: C6 requires a bare
+Vite + Svelte app to consume the built package and render correctly, which is the whole of what
+"publishable" means here. Whether to cut one is a separate decision from whether the code
+supports it.
 
 ### Final — the acceptance gate
 
