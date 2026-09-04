@@ -340,8 +340,11 @@ mechanism behind the alignment: a child without an icon puts its label almost wh
 parent's label is. `NavigationViewItemPresenter.cpp:289` computes
 `SmallerIconWidth = CompactPaneLength - 8`, the template binds the icon column to it —
 `NavigationView_themeresources.xaml:611` — and the `IconCollapsed` state at `:509` drops
-that column to 8. We use `NavigationViewIconBoxWidth`, which is 40 and is not what the
-template binds, and we render the column at full width whether or not there is a glyph.
+that column to 8. We used `NavigationViewIconBoxWidth` and rendered the column at full
+width whether or not there was a glyph. Measured while fixing it: `CompactPaneLength` is
+48 at this pin, so `SmallerIconWidth` is 40 and lands on the same number
+`NavigationViewIconBoxWidth` carries — the width was right by coincidence and only the
+collapsed case was wrong.
 
 **Not counted as gaps.** Page contents and item labels are still being filled in; the
 comparison was of the frame.

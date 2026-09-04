@@ -57,7 +57,7 @@
 		{onkeydown}
 	>
 		<span class="selection-indicator"></span>
-		<span class="icon-column">
+		<span class="icon-column" data-icon={item.glyph ? true : undefined}>
 			{#if item.glyph}
 				<span class="icon">{String.fromCodePoint(parseInt(item.glyph, 16))}</span>
 			{/if}
@@ -200,12 +200,27 @@
 		opacity: 1;
 	}
 
+	/* `IconColumn.Width` binds `TemplateSettings.SmallerIconWidth` —
+	   NavigationView_themeresources.xaml:611 — which
+	   `NavigationViewItemPresenter::UpdateCompactPaneLength` computes as
+	   `CompactPaneLength - 8`. At this pin that is `48 - 8`, so it lands on the same 40 as
+	   `NavigationViewIconBoxWidth` and the two are indistinguishable on screen. They are
+	   still different quantities, and the expression is the one the template evaluates. */
 	.icon-column {
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
-		width: var(--winui-NavigationViewIconBoxWidth);
+		/* c1-allow: NavigationViewItemPresenter.cpp:289, `SmallerIconWidth` is
+		   `CompactPaneLength - 8` */
+		width: calc(var(--winui-NavigationViewCompactPaneLength) - 8px);
 		height: var(--winui-NavigationViewItemOnLeftIconBoxHeight);
+	}
+
+	/* `IconCollapsed` — NavigationView_themeresources.xaml:509. The box goes away and the
+	   column keeps 8, which is the gap that stays between the indentation and the label. */
+	.icon-column:not([data-icon]) {
+		/* c1-allow: NavigationView_themeresources.xaml:510, IconColumn.Width Value="8" */
+		width: 8px;
 	}
 
 	.icon {
