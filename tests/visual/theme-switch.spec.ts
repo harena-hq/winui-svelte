@@ -7,7 +7,7 @@ import { expect, test } from './fixtures';
 // real answer of "no": the theme select silently reverted every choice to System because
 // its persistence effect read its own previous write back on every re-run.
 test('choosing a theme from the control actually changes and persists it', async ({ page }) => {
-	await page.goto('/design/color');
+	await page.goto('/settings');
 	await expect(page.locator('html')).not.toHaveAttribute('data-theme');
 
 	await page.selectOption('select', 'dark');

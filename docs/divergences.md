@@ -90,14 +90,15 @@ worth closing. "Would be hard" is not a reason — the reason is always a specif
   desktop behind the window — sampled by the OS at composition time.
 - **We do**: render the tile with no fill at all, leaving it transparent over the page
   background.
-- **Why accepted**: Mica is a window material. It samples whatever the OS has drawn
-  behind the window, and v1 has no window shell — no title bar, no backdrop region,
-  nothing for a Mica approximation to read. A flat fill would not be Mica, and
-  reproducing the material is the shell's job. v2 builds a Mica approximation, at
-  which point the divergence closes.
-- **Would reconsider if**: v2 lands. This entry is deleted rather than amended, because
-  by then the tile is rendered correctly, and a divergence that names a working site
-  is a divergence that has stopped being real.
+- **Why accepted**: Mica's input is the desktop behind the window, and nothing exposes
+  what is behind a web page to it. Neither pinned source states the tint and luminosity
+  that would let one be faked faithfully. The Gallery's own Color page gives
+  `Mica Background / Base` and `Solid Background / Base` the same caption — "used for
+  the bottom most layer of an experience" — so the solid pair is the value Microsoft
+  itself names for that role, and v2's window paints it as the backdrop. D16.
+- **Would reconsider if**: a future browser exposes what is behind the viewport to CSS,
+  at which point the material can be sampled directly and this entry is deleted
+  rather than amended, because the tile will then render the way the original does.
 
 ---
 
@@ -190,7 +191,27 @@ worth closing. "Would be hard" is not a reason — the reason is always a specif
 
 ---
 
-_Six entries. The next is expected to be TabView's arrow-key traversal. Every surveyed
+### WD-007 — the title bar's icon is absent
+
+- **Control**: the Gallery's title bar.
+- **WinUI does**: `MainWindow.xaml` gives `TitleBar.IconSource` an `ImageIconSource` whose
+  `ImageSource` is `/Assets/Tiles/GalleryIcon.ico`, and the row draws that image left of
+  the title.
+- **We do**: render no icon there.
+- **Why accepted**: `TitleBar` takes `iconGlyph`, a Segoe Fluent Icons code point, and has
+  no image slot — an app icon is a bitmap, not a glyph, so the slot would be a new
+  feature of the control rather than a value to pass. The file itself is Microsoft's
+  artwork in a checkout this project reads as source and copies nothing out of. Neither
+  of those is difficulty; together they are the mechanism.
+- **Would reconsider if**: `TitleBar` grows an image slot — a URL and a rendered `<img>`
+  beside the icon glyph — and this project settles how a reproduction ships an app icon
+  that is not the original's artwork. The entry is amended rather than deleted in that
+  case: the row would carry an icon, and it would still not be the one the original
+  draws.
+
+---
+
+_Seven entries. The next is expected to be TabView's arrow-key traversal. Every surveyed
 primitive library — bits-ui, Zag and therefore Ark, and Melt — builds its roving-focus
 candidate set by querying for a role or data attribute, which cannot match a close button
 nested inside a tab trigger. So the button is reachable by Tab and not by arrow keys, and that
