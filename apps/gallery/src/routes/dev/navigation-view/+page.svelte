@@ -23,7 +23,18 @@
 				{ id: 'typography', content: 'Typography', glyph: 'E8D2' }
 			]
 		},
-		{ id: 'accessibility', content: 'Accessibility', glyph: 'E776' },
+		{
+			// Children with no glyph of their own, as the real menu's Accessibility section
+			// has: it is the case where the icon column collapses to 8 and the child's label
+			// lands almost under its parent's.
+			id: 'accessibility',
+			content: 'Accessibility',
+			glyph: 'E776',
+			children: [
+				{ id: 'screen-reader', content: 'Screen reader support' },
+				{ id: 'keyboard', content: 'Keyboard support' }
+			]
+		},
 		{ header: 'Controls' },
 		{ id: 'all', content: 'All', glyph: 'E8A9' },
 		{ id: 'basic-input', content: 'Basic input', glyph: 'E73A' },
