@@ -361,9 +361,18 @@
 	/* `Expanded` — ScrollBar_themeresources.xaml:587, the rail at `ScrollBarSize` with the
 	   thumb at `ScrollBarVerticalThumbMinWidth`. WinUI animates between the two; a hover
 	   rule is the same two states without the animation. */
+	/* Measured on the original with the pointer over it: the track fills with
+	   `ScrollBarTrackFillPointerOver` — `AcrylicInAppFillColorDefaultBrush`,
+	   ScrollBar_themeresources.xaml:32 — across the full 12, and the thumb inside it is 6,
+	   not the 8 the `Expanded` state's own number suggests. The padding either side of the
+	   thumb is what makes it read as thinner than a bar drawn edge to edge. */
+	.items-container-grid:hover::-webkit-scrollbar-track {
+		background: var(--winui-AcrylicInAppFillColorDefaultBrush);
+	}
+
 	.items-container-grid:hover::-webkit-scrollbar-thumb {
-		/* c1-allow: ScrollBar_themeresources.xaml:182 and :180 — an 8 wide thumb in a 12 wide rail */
-		border: 2px solid transparent;
+		/* c1-allow: measured 6px of thumb inside the 12 of ScrollBarSize on the original */
+		border: 3px solid transparent;
 	}
 
 	/* `NavigationViewPaneContentGridMargin` belongs to `PaneContentGrid` — NavigationView.xaml:291
