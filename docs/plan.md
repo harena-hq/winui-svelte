@@ -47,6 +47,9 @@ pnpm workspace. The library is publishable and imposes no build tooling on its c
 | D15 | A control tranche seeds the token selection by key, never by dictionary file                     | this file, "Roadmap → v2"         |
 | D16 | The window backdrop paints Mica's solid counterpart; the material is not approximated            | this file, "Roadmap → v2"; WD-003 |
 | D17 | A legacy `SystemControl*Brush` resolves through a table to a system colour, and is never emitted | ADR 0008                          |
+| D18 | Every menu entry is a route; the path is derived from the record, never hand-written             | this file, "Roadmap → v2"         |
+| D19 | The shell is the Gallery's layout, and the selected navigation item is the URL                   | this file, "Roadmap → v2"         |
+| D20 | The title bar's search box is the Gallery's own, not a half-built published control              | this file, "Roadmap → v2"         |
 
 ## Verification
 
@@ -221,7 +224,7 @@ box; the left NavigationView carrying the menu tree; the content area the pages 
 plus routing, live theme switching, and the window backdrop. NavigationView and TitleBar are
 built from scratch: no primitive library has either.
 
-Six units, each sealed on its own:
+Seven units, each sealed on its own:
 
 1. **The control templates.** The upstream checkout carries `NavigationView.xaml` and
    `TitleBar.xaml`, not only the theme dictionaries — a control reproduced from scratch is
@@ -232,9 +235,14 @@ Six units, each sealed on its own:
 3. **The shell's tokens.** The keys the shell reads, added to the selection under D15.
 4. **NavigationView.** The left pane, its items, the selection indicator, the expand
    chevron, and the display modes the pane width selects between.
-5. **TitleBar.** The title bar row, the pane-toggle and back buttons, and the search box.
-6. **The frame.** Routing, live theme switching, the backdrop, and the five Design pages
-   rendered inside the shell rather than beside it.
+5. **TitleBar.** The title bar row, the pane-toggle and back buttons, and the slot the
+   search box goes in — the box itself is the Gallery's, under D20.
+6. **The pane's settings item.** `IsSettingsVisible` defaults to true and the Gallery does
+   not turn it off, so the real pane ends in a Settings row that unit 4 does not build.
+   The frame needs somewhere to put the theme control, and this is where the Gallery
+   puts it.
+7. **The frame.** Routing, the search box, live theme switching, the backdrop, and the five
+   Design pages rendered inside the shell rather than beside it.
 
 Done-when: the frame reproduces `MainWindow.xaml`'s structure; the left navigation and a page
 inside the frame compare clean against Windows 11 in light and dark; the theme control changes
@@ -254,6 +262,28 @@ names that nothing it walks through defines — the legacy `SystemControl*` brus
 `ContentControlThemeFontFamily` among them — because the dictionaries also carry whole
 `Style` records for controls this version does not build. A per-control dictionary is
 therefore a place to look keys up, not a set to take wholesale.
+
+**D18 — every menu entry is a route, and its path comes from the record.** The pane shows
+141 selectable rows and this version builds five of their pages. The alternative — a row
+that changes a local selection without changing the URL — makes the back button meaningless
+and leaves v3 to invent the route scheme it will then have to migrate. So one function turns
+a record entry into a path, a catch-all route renders the ones with no page yet, and its
+`entries()` come from the record so the set is prerendered rather than guessed. v3 replaces
+placeholders; it does not replace the scheme.
+
+**D19 — the shell is the layout, and the selected item is the URL.** The window is a layout,
+not a component the pages each mount: a page that drew its own title bar would remount the
+pane on every navigation. Selection is derived from the path and never stored, which is what
+makes the browser's own back and forward work without a second source of truth to reconcile.
+The `/dev/` harness pages sit outside it — they exist to photograph one control against
+nothing, and a shell around them would defeat that.
+
+**D20 — the title bar's search box belongs to the Gallery, not to the library.** The
+original is an `AutoSuggestBox`, which is the Text tranche's to build. Publishing an
+unfinished one now would put it on the library's public surface and into C4's theme matrix,
+and the Text tranche would then be rewriting a shipped control rather than writing one. The
+Gallery gets a local search box built from the TextBox theme resources instead: it looks
+right, which is the bar, and it suggests nothing, which is recorded rather than hidden.
 
 **D16 — the backdrop is Mica's solid counterpart.** Mica's input is the desktop behind the
 window, and a web page has no such thing: nothing exposes what is behind the viewport to CSS,
