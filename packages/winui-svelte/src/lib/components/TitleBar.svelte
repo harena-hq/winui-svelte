@@ -147,6 +147,9 @@
 		color: var(--winui-TitleBarBackButtonForeground);
 	}
 
+	/* WD-006: the original's glyph is an `AnimatedIcon` that plays on pointer-over and
+	   press; this is its `FallbackIconSource`, drawn with no transition between states.
+	   See docs/divergences.md. */
 	.back-button::before {
 		/* c1-allow: TitleBar_themeresources.xaml:112, Content="&#xE72B;" */
 		content: '\00e72b';
@@ -175,6 +178,7 @@
 		color: var(--winui-TitleBarPaneToggleButtonForeground);
 	}
 
+	/* WD-006 again, for the same reason and from the same pair of styles. */
 	.pane-toggle-button::before {
 		/* c1-allow: TitleBar_themeresources.xaml:182, Content="&#xE700;" */
 		content: '\00e700';

@@ -349,6 +349,18 @@ collapsed case was wrong.
 **Not counted as gaps.** Page contents and item labels are still being filled in; the
 comparison was of the frame.
 
+**Where they landed.** F1 through F6 and F8 are fixed, each in its own commit with the
+measurement that closed it. F7 is not a fix and became a divergence instead: the press the
+review saw is an `AnimatedIcon` playing its `Pressed` segment, which is the same compiled
+Composition data WD-006 already declines to re-author, so that entry widened from the
+settings item to the family — the settings gear and both title bar buttons.
+
+Two residuals, recorded rather than guessed. The search box is 227 wide against the
+original's 318 now that it is sized by its content instead of stretched; the difference is
+`TextControlThemeMinWidth`, referenced by `TextBox_themeresources.xaml:193` and defined
+nowhere in this checkout. And the page gutter does not yet shrink to 16 at narrow widths the
+way `ItemPage.xaml:87` does.
+
 ### v3 — the sample-page frame
 
 Goal: **one control's sample page has the real page structure.**
