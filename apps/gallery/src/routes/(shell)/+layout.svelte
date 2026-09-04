@@ -5,7 +5,7 @@
 	import { SvelteSet } from 'svelte/reactivity';
 	import { NavigationView, TitleBar } from 'winui-svelte';
 	import SearchBox from '$lib/SearchBox.svelte';
-	import { QUERY_GLYPH, ancestorsOf, menu, titleBar } from '$lib/shell';
+	import { QUERY_GLYPH, ancestorsOf, isParent, menu, titleBar } from '$lib/shell';
 
 	let { children } = $props();
 
@@ -20,6 +20,11 @@
 	// where it learns about it. Its parameter accepts any absolute pathname, which every
 	// id but the reserved `'settings'` is — the assertion states that and nothing more.
 	function go(id: string) {
+		// A row with children opens rather than navigates — the control has already
+		// toggled it by the time this runs, and the original leaves the page alone. Its
+		// path is still a route, because a link somebody types or bookmarks should still
+		// land somewhere; it is simply not what the row does.
+		if (id !== 'settings' && isParent(id)) return;
 		void goto(resolve(id === 'settings' ? '/settings' : (id as `/${string}`)));
 	}
 

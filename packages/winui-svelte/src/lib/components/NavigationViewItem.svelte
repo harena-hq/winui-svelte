@@ -19,10 +19,18 @@
 	const isSelected = $derived(selected === item.id);
 
 	function activate() {
-		// An expandable item that is clicked on its label both selects and expands. The
-		// chevron is the only way to collapse one, which is what NavigationView does: a
-		// second click on the label would otherwise navigate and close in one gesture.
-		if (hasChildren && !open) expanded.add(item.id);
+		// `OnNavigationViewItemInvoked` calls `ToggleIsExpandedNavigationViewItem`
+		// unconditionally — NavigationView.cpp:1062 — so invoking a row opens *and* closes
+		// it, and a row with no children has nothing to toggle. An earlier comment here
+		// claimed the chevron was the only way to collapse one; the side-by-side against
+		// the original said otherwise.
+		//
+		// The invoke is still reported. Whether the id is somewhere to go is the caller's
+		// question, and in the Gallery a row with children is not.
+		if (hasChildren) {
+			if (open) expanded.delete(item.id);
+			else expanded.add(item.id);
+		}
 		onselect?.(item.id);
 	}
 
