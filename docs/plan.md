@@ -355,6 +355,30 @@ review saw is an `AnimatedIcon` playing its `Pressed` segment, which is the same
 Composition data WD-006 already declines to re-author, so that entry widened from the
 settings item to the family — the settings gear and both title bar buttons.
 
+#### The second pass
+
+Five more, four of them fixed and one measured and left alone.
+
+- **The title bar had shrunk to 41.** A regression from constraining the window: a height
+  on a flex child is a starting offer unless the child says otherwise. Fixed.
+- **The chevron was smaller and fainter than the original's.**
+  `NavigationViewItemExpandedGlyphFontSize` is 8 and that is the _fallback_ glyph inside an
+  `AnimatedIcon` the template gives a 12 by 12 box — NavigationView_themeresources.xaml:617.
+  Drawn at the box now.
+- **The scrollbar was still the browser's.** `scrollbar-width: thin` silently disables every
+  `::-webkit-scrollbar` rule on the same element, so the styling never applied. Removed, and
+  both scrollers now draw `ScrollBarSize` 12 with an 8-wide thumb.
+- **`Basic input` has children and a page**, unlike `Design`. The earlier fix made every row
+  with children open rather than go, which is right for exactly the three special sections
+  and wrong for the sixteen groups. And such a row keeps the pane's selection while the page
+  stays put, because `SelectsOnInvoked` is true and WinUI selects what it does not navigate
+  to.
+- **The query button's glyph is not too small.** The original's magnifier measures 11 by 11
+  of ink on the reference capture, which is what a 12-pixel Segoe Fluent Icons magnifier
+  draws, and `AutoSuggestBoxIconFontSize` is 12. What changed around it is the button: it is
+  now a stretched rectangle rather than a box drawn tight to the glyph, which makes the same
+  glyph read as smaller. Left alone.
+
 One residual: the page gutter does not yet shrink to 16 at narrow widths the way
 `ItemPage.xaml:87` does.
 
