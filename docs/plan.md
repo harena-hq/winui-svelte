@@ -379,6 +379,15 @@ Five more, four of them fixed and one measured and left alone.
   now a stretched rectangle rather than a box drawn tight to the glyph, which makes the same
   glyph read as smaller. Left alone.
 
+**Where the search box sits, and why it is still not the original's x.** The box is centred
+in the title bar's `*` column, in both. Ours ends 36 pixels right of the original's, and the
+two halves of that are accounted for rather than open: the original's row reserves its
+window's caption-button inset on the right — `TitleBarRightPaddingWidth`, which the theme
+resource sets to 0 and `TitleBar::UpdatePadding` fills at run time from the `AppWindow`, and
+a web page has no `AppWindow` — while ours draws no icon on the left, which is WD-007. Half
+of the first pushes ours right, half of the second pulls it left, and the arithmetic closes
+to the pixel. Reproducing either would mean drawing chrome this window does not have.
+
 One residual: the page gutter does not yet shrink to 16 at narrow widths the way
 `ItemPage.xaml:87` does.
 

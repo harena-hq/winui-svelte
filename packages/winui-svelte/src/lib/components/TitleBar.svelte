@@ -91,6 +91,7 @@
 		<div class="right-header">{@render rightHeader()}</div>
 	{/if}
 
+	<div class="min-drag-region"></div>
 	<div class="right-padding"></div>
 </div>
 
@@ -120,6 +121,16 @@
 
 	.right-padding {
 		width: var(--winui-TitleBarRightPaddingWidth);
+		flex: 0 0 auto;
+	}
+
+	/* Column 10 — TitleBar.xaml:190. The row keeps it clear so there is always somewhere to
+	   grab the window, and the content column ends before it rather than at the row's edge.
+	   `TitleBarRightPaddingWidth` beside it is 0 in the theme resource and filled at run
+	   time by `UpdatePadding` from the window's caption-button inset, which a web page does
+	   not have; that one stays 0 here. */
+	.min-drag-region {
+		width: var(--winui-TitleBarMinDragRegionWidth);
 		flex: 0 0 auto;
 	}
 
