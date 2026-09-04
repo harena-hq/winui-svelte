@@ -330,10 +330,30 @@
 		min-height: 0;
 		overflow-y: auto;
 		overflow-x: hidden;
-		/* Windows' scrollbars are thin overlays and the browser's default is not. The real
-		   ScrollBar arrives with the Scrolling tranche. */
-		scrollbar-width: thin;
-		scrollbar-color: var(--winui-ControlStrongFillColorDefaultBrush) transparent;
+	}
+
+	/* `ScrollBarSize` is 12 and `ScrollBarVerticalThumbMinWidth` is 8 —
+	   ScrollBar_themeresources.xaml:180 and :182 — where the browser's default rail is half
+	   again as wide. The thumb is inset into the rail with a transparent border, so both
+	   numbers are the source's rather than one being the other minus a guess. The real
+	   ScrollBar, with the collapse and expand its visual states drive, is the Scrolling
+	   tranche's. */
+	.items-container-grid::-webkit-scrollbar {
+		/* c1-allow: ScrollBar_themeresources.xaml:180, ScrollBarSize 12 */
+		width: 12px;
+	}
+
+	.items-container-grid::-webkit-scrollbar-track {
+		background: transparent;
+	}
+
+	.items-container-grid::-webkit-scrollbar-thumb {
+		background: var(--winui-ControlStrongFillColorDefaultBrush);
+		background-clip: padding-box;
+		/* c1-allow: ScrollBar_themeresources.xaml:182 and :180 — an 8 wide thumb inside a 12 wide rail */
+		border: 2px solid transparent;
+		/* Half of the thumb's own width, so it is a capsule the way the original's is. */
+		border-radius: var(--winui-ControlCornerRadius);
 	}
 
 	/* `NavigationViewPaneContentGridMargin` belongs to `PaneContentGrid` — NavigationView.xaml:291

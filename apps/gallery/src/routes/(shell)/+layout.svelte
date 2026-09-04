@@ -5,7 +5,7 @@
 	import { SvelteSet } from 'svelte/reactivity';
 	import { NavigationView, TitleBar } from 'winui-svelte';
 	import SearchBox from '$lib/SearchBox.svelte';
-	import { QUERY_GLYPH, ancestorsOf, isParent, menu, titleBar } from '$lib/shell';
+	import { QUERY_GLYPH, ancestorsOf, isContainer, menu, titleBar } from '$lib/shell';
 
 	let { children } = $props();
 
@@ -13,18 +13,28 @@
 	// forward buttons stay coherent without a binding. `'settings'` is the id
 	// NavigationView reserves for the row it renders itself — every other row's id is
 	// already a path.
-	const selected = $derived(page.url.pathname === '/settings' ? 'settings' : page.url.pathname);
+	// A row that opens rather than goes still takes the pane's selection: `SelectsOnInvoked`
+	// defaults to true and `OnNavigationViewItemInvoked` updates the selection model —
+	// NavigationView.cpp:1044 — so the original leaves the shade on the section you opened
+	// while the page stays where it was. The URL cannot express that, so it is held here
+	// and cleared by the next navigation.
+	let openedContainer = $state<string | null>(null);
+	const selected = $derived(
+		openedContainer ?? (page.url.pathname === '/settings' ? 'settings' : page.url.pathname)
+	);
 
 	// `resolve` rather than a bare string because `svelte/no-navigation-without-resolve`
 	// says so, and it is right: the day this app is served under a base path, this is
 	// where it learns about it. Its parameter accepts any absolute pathname, which every
 	// id but the reserved `'settings'` is — the assertion states that and nothing more.
 	function go(id: string) {
-		// A row with children opens rather than navigates — the control has already
-		// toggled it by the time this runs, and the original leaves the page alone. Its
-		// path is still a route, because a link somebody types or bookmarks should still
-		// land somewhere; it is simply not what the row does.
-		if (id !== 'settings' && isParent(id)) return;
+		// Only the three special sections open without going. A control group has children
+		// and a page of its own, and the original navigates to it.
+		if (id !== 'settings' && isContainer(id)) {
+			openedContainer = id;
+			return;
+		}
+		openedContainer = null;
 		void goto(resolve(id === 'settings' ? '/settings' : (id as `/${string}`)));
 	}
 
@@ -48,6 +58,7 @@
 	// narrowing is on `type` first.
 	let depth = $state(0);
 	afterNavigate((navigation) => {
+		openedContainer = null;
 		if (navigation.type === 'popstate') depth = Math.max(0, depth + navigation.delta);
 		else if (navigation.type !== 'enter') depth += 1;
 	});
@@ -91,6 +102,28 @@
 	/* The page scrolls, not the window. In the original each Gallery page carries its own
 	   ScrollViewer, so the scrolling belongs to the page rather than to NavigationView —
 	   which is why this is a wrapper here and not a rule in the control. */
+	/* The same rail the pane's scroller uses — `ScrollBarSize` 12 with an 8 wide thumb,
+	   ScrollBar_themeresources.xaml:180 and :182. Setting `scrollbar-width` as well would
+	   be worse than useless: Chromium ignores every `::-webkit-scrollbar` rule on an
+	   element that has it, which is how the first attempt at this ended up with the
+	   browser's default rail and a comment claiming otherwise. */
+	.page::-webkit-scrollbar {
+		/* c1-allow: ScrollBar_themeresources.xaml:180, ScrollBarSize 12 */
+		width: 12px;
+	}
+
+	.page::-webkit-scrollbar-track {
+		background: transparent;
+	}
+
+	.page::-webkit-scrollbar-thumb {
+		background: var(--winui-ControlStrongFillColorDefaultBrush);
+		background-clip: padding-box;
+		/* c1-allow: ScrollBar_themeresources.xaml:182 and :180 — an 8 wide thumb inside a 12 wide rail */
+		border: 2px solid transparent;
+		border-radius: var(--winui-ControlCornerRadius);
+	}
+
 	.page {
 		height: 100%;
 		overflow-y: auto;
@@ -102,10 +135,5 @@
 		   does not reproduce yet. */
 		/* c1-allow: ItemPage.xaml:39 and :48, the Gallery's page gutter */
 		padding: 24px 36px 36px;
-		/* Windows' scrollbars are thin overlays and the browser's default is not. The real
-		   ScrollBar arrives with the Scrolling tranche; until then this is the closest the
-		   platform's own control gets. */
-		scrollbar-width: thin;
-		scrollbar-color: var(--winui-ControlStrongFillColorDefaultBrush) transparent;
 	}
 </style>
