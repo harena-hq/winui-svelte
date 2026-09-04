@@ -413,6 +413,7 @@
 	--winui-TitleBarLeftPaddingWidth: 2px;
 	--winui-TitleBarRightPaddingWidth: 0px;
 	--winui-TitleBarLeftHeaderPaddingWidth: 14px;
+	--winui-TitleBarMinDragRegionWidth: 48px;
 	--winui-TitleBarCompactContentMargin: 0px 16px 0px 0px;
 	--winui-TitleBarIconMaxWidth: 16px;
 	--winui-TitleBarIconMaxHeight: 16px;

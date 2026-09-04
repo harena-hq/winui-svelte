@@ -205,9 +205,12 @@
 					<div class="items-separator"></div>
 				{/if}
 
-				{#if paneFooter}
-					<div class="footer-content-border">{@render paneFooter()}</div>
-				{/if}
+				<!-- Always in the grid, as `FooterContentBorder` is — NavigationView.xaml:377.
+				     Empty it is 4 pixels of bottom margin, and those 4 are part of the space
+				     the footer sits in whether or not an app fills the slot. -->
+				<div class="footer-content-border">
+					{#if paneFooter}{@render paneFooter()}{/if}
+				</div>
 
 				{#if settingsVisible}
 					<div class="footer-items">
