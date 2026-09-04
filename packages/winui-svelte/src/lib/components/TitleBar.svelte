@@ -225,6 +225,9 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
+		/* The column is `*` — TitleBar.xaml:186 — and its content keeps its own width, so
+		   a window narrow enough clips the content rather than squeezing it. */
+		overflow: hidden;
 	}
 
 	.right-header {

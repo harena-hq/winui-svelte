@@ -25,9 +25,17 @@
 -->
 <style>
 	.search-box {
+		position: relative;
 		display: flex;
 		align-items: center;
-		width: 100%;
+		/* Not stretched. The original keeps its width when the window is resized and is
+		   clipped from the right when the window is narrow, so it is sized to its content
+		   and `MainWindow.xaml`'s `Stretch` override does not take. `field-sizing: content`
+		   is the one declaration that gives an input a XAML measure pass: its width comes
+		   from its own content, and from the placeholder while it is empty. Where the
+		   property is unsupported the input falls back to its default width, which is
+		   narrower and not wrong in the way stretching was. */
+		flex: 0 0 auto;
 		/* XAML's `MaxWidth` and `MinHeight` are measured to the outside of the border,
 		   which is CSS's border box and not its default. Without this the 580 and the 32
 		   below are both understated by the padding and the border — measured 598 by 45
@@ -84,9 +92,14 @@
 	}
 
 	.search-box input {
-		flex: 1 1 auto;
+		field-sizing: content;
 		min-width: 0;
 		padding: 0;
+		/* The query button is out of flow, so the text reserves its width here: the glyph,
+		   its own padding and margin, and the spacer column at the right end. */
+		/* c1-allow: AutoSuggestBox_themeresources.xaml:24, :26 and :28 — the inner margin's
+		   1 a side, the query padding's 3 a side, and the 4 of the right spacer column */
+		margin-right: calc(var(--winui-AutoSuggestBoxIconFontSize) + 12px);
 		border: 0;
 		background: transparent;
 		color: inherit;
@@ -107,7 +120,18 @@
 		background: var(--winui-AccentFillColorSelectedTextBackgroundBrush);
 	}
 
+	/* Out of flow, and that is the template's own structure rather than a trick: the button
+	   sits in a grid column whose row height is the text box's, so it stretches to the row
+	   and never sets it — AutoSuggestBox_themeresources.xaml:230. In flow its glyph's line
+	   box was the tallest thing in the row and drove the box three pixels past the 32 the
+	   original measures.
+	   Stretching it is also what widens the pointer target: the original's is a rectangle
+	   taller and wider than the glyph, not a box drawn around it. */
 	.query {
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		right: var(--winui-AutoSuggestBoxRightButtonMargin);
 		display: flex;
 		align-items: center;
 		justify-content: center;
@@ -116,7 +140,6 @@
 		cursor: pointer;
 		margin: var(--winui-AutoSuggestBoxInnerButtonMargin);
 		padding: var(--winui-AutoSuggestBoxQueryButtonPadding);
-		margin-right: var(--winui-AutoSuggestBoxRightButtonMargin);
 		border-radius: var(--winui-ControlCornerRadius);
 		font-family: var(--winui-SymbolThemeFontFamily);
 		font-size: var(--winui-AutoSuggestBoxIconFontSize);
