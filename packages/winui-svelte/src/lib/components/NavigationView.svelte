@@ -176,7 +176,6 @@
 		position: relative;
 		display: flex;
 		min-height: 0;
-		background: var(--winui-NavigationViewContentBackground);
 	}
 
 	.pane {
@@ -184,9 +183,17 @@
 		flex-direction: column;
 		flex: 0 0 auto;
 		overflow: hidden;
-		/* The pane is transparent over the window's backdrop in light and dark, and a
-		   system colour under high contrast — which is why the shell paints something
-		   behind it rather than leaving the page's own background to show through. */
+		/* `RootSplitView.PaneBackground`, NavigationView.xaml:289. An overlaying pane is
+		   drawn on top of the content, so it is opaque; a pane sitting beside the content
+		   is transparent and shows the window's backdrop. Both are solid colours at this
+		   pin — `AcrylicInAppFillColorDefaultBrush` is defined as one, not as a material. */
+		background: var(--winui-NavigationViewDefaultPaneBackground);
+	}
+
+	/* NavigationView.xaml:126, the `PaneNotOverlaying` visual state. `data-overlay` is
+	   already that distinction: it is true exactly when the pane is drawn above the
+	   content rather than beside it. */
+	.root:not([data-overlay='true']) .pane {
 		background: var(--winui-NavigationViewExpandedPaneBackground);
 	}
 
