@@ -37,13 +37,21 @@
 
 	interface Props {
 		items: NavigationViewEntry[];
-		/** Controlled: the caller owns selection, because for an app it is the route. */
+		/**
+		 * Controlled: the caller owns selection, because for an app it is the route.
+		 *
+		 * The id `'settings'` is reserved for the row the control renders when
+		 * `settingsVisible` is true. `onselect` reports it the same way it reports any
+		 * other id, so a caller's own menu must not use it.
+		 */
 		selected?: string | null;
 		onselect?: (id: string) => void;
 		paneOpen?: boolean;
 		/** An app whose title bar carries the toggle hides this one. */
 		paneToggleVisible?: boolean;
 		displayMode?: NavigationViewDisplayMode;
+		/** WinUI's `IsSettingsVisible`, whose default is likewise true. */
+		settingsVisible?: boolean;
 		header?: Snippet;
 		paneFooter?: Snippet;
 		children?: Snippet;
@@ -56,6 +64,7 @@
 		paneOpen = $bindable(true),
 		paneToggleVisible = true,
 		displayMode = 'auto',
+		settingsVisible = true,
 		header,
 		paneFooter,
 		children
@@ -70,6 +79,19 @@
 	// `MUX_DEFAULT_VALUE` of `CompactModeThresholdWidth` and `ExpandedModeThresholdWidth`.
 	const COMPACT_THRESHOLD = 641;
 	const EXPANDED_THRESHOLD = 1008;
+
+	// `CreateAndHookEventsToSettings` — NavigationView.cpp:1319 — gives the settings item an
+	// `AnimatedIcon` whose fallback is a `SymbolIconSource` set to `Symbol::Setting`. The
+	// Gallery's own icon catalogue lists that symbol as `Settings`, E713. WD-006 records that
+	// we render the fallback and never the animation.
+	//
+	// The label is the localized `SettingsButtonName`, which
+	// `NavigationView/Strings/en-us/Resources.resw` gives as "Settings".
+	const SETTINGS_ITEM: NavigationViewItemData = {
+		id: 'settings',
+		content: 'Settings',
+		glyph: 'E713'
+	};
 
 	const mode = $derived.by((): Exclude<NavigationViewDisplayMode, 'auto'> => {
 		if (displayMode !== 'auto') return displayMode;
@@ -121,35 +143,45 @@
 >
 	{#if paneVisible}
 		<div class="pane">
-			{#if paneToggleVisible}
-				<div class="button-holder-grid">
-					<button
-						type="button"
-						class="pane-toggle"
-						aria-label={paneOpen ? 'Close navigation' : 'Open navigation'}
-						aria-expanded={paneOpen}
-						onclick={() => (paneOpen = !paneOpen)}
-					></button>
+			<div class="pane-content-grid">
+				{#if paneToggleVisible}
+					<div class="button-holder-grid">
+						<button
+							type="button"
+							class="pane-toggle"
+							aria-label={paneOpen ? 'Close navigation' : 'Open navigation'}
+							aria-expanded={paneOpen}
+							onclick={() => (paneOpen = !paneOpen)}
+						></button>
+					</div>
+				{/if}
+
+				<div class="items-container-grid">
+					<ul role="tree" class="menu-items">
+						{#each items as entry, i (isNavigationViewHeader(entry) ? `h${i}` : entry.id)}
+							{#if isNavigationViewHeader(entry)}
+								<li role="none">
+									<div class="item-header winui-BodyStrongTextBlockStyle">{entry.header}</div>
+								</li>
+							{:else}
+								<NavigationViewItem item={entry} level={1} {selected} {expanded} {onselect} />
+							{/if}
+						{/each}
+					</ul>
 				</div>
-			{/if}
 
-			<div class="items-container-grid">
-				<ul role="tree" class="menu-items">
-					{#each items as entry, i (isNavigationViewHeader(entry) ? `h${i}` : entry.id)}
-						{#if isNavigationViewHeader(entry)}
-							<li role="none">
-								<div class="item-header winui-BodyStrongTextBlockStyle">{entry.header}</div>
-							</li>
-						{:else}
-							<NavigationViewItem item={entry} level={1} {selected} {expanded} {onselect} />
-						{/if}
-					{/each}
-				</ul>
+				{#if paneFooter}
+					<div class="footer-content-border">{@render paneFooter()}</div>
+				{/if}
+
+				{#if settingsVisible}
+					<div class="footer-items">
+						<ul role="tree" class="menu-items">
+							<NavigationViewItem item={SETTINGS_ITEM} level={1} {selected} {expanded} {onselect} />
+						</ul>
+					</div>
+				{/if}
 			</div>
-
-			{#if paneFooter}
-				<div class="footer-content-border">{@render paneFooter()}</div>
-			{/if}
 		</div>
 	{/if}
 
@@ -262,6 +294,16 @@
 		min-height: 0;
 		overflow-y: auto;
 		overflow-x: hidden;
+	}
+
+	/* `NavigationViewPaneContentGridMargin` belongs to `PaneContentGrid` — NavigationView.xaml:291
+	   — which encloses the toggle button, the menu items, the pane footer and the footer
+	   items. `ItemsContainerGrid` itself carries no margin. */
+	.pane-content-grid {
+		display: flex;
+		flex-direction: column;
+		flex: 1 1 auto;
+		min-height: 0;
 		margin: var(--winui-NavigationViewPaneContentGridMargin);
 	}
 
@@ -289,6 +331,12 @@
 	}
 
 	.footer-content-border {
+		flex: 0 0 auto;
+		/* c1-allow: NavigationView.xaml:377, FooterContentBorder Margin="0,0,0,4" */
+		margin: 0 0 4px;
+	}
+
+	.footer-items {
 		flex: 0 0 auto;
 	}
 
