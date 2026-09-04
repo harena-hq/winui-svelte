@@ -95,6 +95,13 @@
 		height: 100%;
 		overflow-y: auto;
 		box-sizing: border-box;
+		/* The Gallery's own gutter, not NavigationView's — `NavigationViewContentPresenterMargin`
+		   is 0. `ItemPage.xaml:39` gives the page header `Margin="36,24,36,0"` and `:48` gives
+		   the content root `Padding="36,0,36,36"`, which together are 36 a side, 24 above and
+		   36 below. Its narrow adaptive state drops both to 16 — `:87` and `:88` — which this
+		   does not reproduce yet. */
+		/* c1-allow: ItemPage.xaml:39 and :48, the Gallery's page gutter */
+		padding: 24px 36px 36px;
 		/* Windows' scrollbars are thin overlays and the browser's default is not. The real
 		   ScrollBar arrives with the Scrolling tranche; until then this is the closest the
 		   platform's own control gets. */
