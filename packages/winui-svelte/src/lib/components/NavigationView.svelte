@@ -50,6 +50,14 @@
 		/** An app whose title bar carries the toggle hides this one. */
 		paneToggleVisible?: boolean;
 		displayMode?: NavigationViewDisplayMode;
+		/**
+		 * The ids of the items whose children are shown. Mutated in place by the control as
+		 * the user expands and collapses; pass your own `SvelteSet` to seed it or to watch it.
+		 *
+		 * `SvelteSet` rather than `Set` because a plain `Set` mutated in place is not reactive
+		 * in Svelte 5; `SvelteSet` is.
+		 */
+		expanded?: SvelteSet<string>;
 		/** WinUI's `IsSettingsVisible`, whose default is likewise true. */
 		settingsVisible?: boolean;
 		header?: Snippet;
@@ -64,6 +72,7 @@
 		paneOpen = $bindable(true),
 		paneToggleVisible = true,
 		displayMode = 'auto',
+		expanded = new SvelteSet<string>(),
 		settingsVisible = true,
 		header,
 		paneFooter,
@@ -103,9 +112,6 @@
 		if (width < EXPANDED_THRESHOLD) return 'compact';
 		return 'expanded';
 	});
-
-	// A plain `Set` mutated in place is not reactive in Svelte 5; `SvelteSet` is.
-	const expanded = new SvelteSet<string>();
 
 	// `paneOpen` is written in exactly one place: crossing into expanded opens the pane,
 	// crossing into either narrower mode closes it, which is what NavigationView does —
