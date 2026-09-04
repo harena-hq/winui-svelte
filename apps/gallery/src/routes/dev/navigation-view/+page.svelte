@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { SvelteSet } from 'svelte/reactivity';
 	import { NavigationView, type NavigationViewEntry } from 'winui-svelte';
 
 	/*
@@ -42,6 +43,10 @@
 	// Bound rather than passed: the component closes its own pane on entering minimal, and
 	// a literal would leave that write with nowhere to go.
 	let minimalPaneOpen = $state(true);
+
+	// Seeded before the control mounts, which is the point: a page reached at a child's URL
+	// has to render with that child's parent already open.
+	const seeded = new SvelteSet(['design']);
 </script>
 
 <svelte:head><title>NavigationView — harness</title></svelte:head>
@@ -84,6 +89,16 @@
 <div class="frame">
 	<NavigationView {items} {selected} onselect={select('hidden')} settingsVisible={false}>
 		<p class="winui-BodyTextBlockStyle">The pane carries no settings row.</p>
+	</NavigationView>
+</div>
+
+<h2 class="winui-SubtitleTextBlockStyle">seeded expansion</h2>
+<p class="winui-BodyTextBlockStyle">
+	The frame starts with <code>design</code> already open because the page seeded the set.
+</p>
+<div class="frame">
+	<NavigationView {items} {selected} onselect={select('seeded')} expanded={seeded}>
+		<p class="winui-BodyTextBlockStyle">Content sits beside the pane.</p>
 	</NavigationView>
 </div>
 
