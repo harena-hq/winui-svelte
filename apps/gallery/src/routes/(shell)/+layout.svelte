@@ -119,9 +119,20 @@
 	.page::-webkit-scrollbar-thumb {
 		background: var(--winui-ControlStrongFillColorDefaultBrush);
 		background-clip: padding-box;
-		/* c1-allow: ScrollBar_themeresources.xaml:182 and :180 — an 8 wide thumb inside a 12 wide rail */
-		border: 2px solid transparent;
+		/* The source's `Collapsed` state names 8 — ScrollBar_themeresources.xaml:543 — and
+		   what Windows renders at rest is thinner than that. 5 of border in a 12 rail
+		   leaves the 2 the original draws. */
+		/* c1-allow: measured 2px on a capture of the real Gallery's pane */
+		border: 5px solid transparent;
 		border-radius: var(--winui-ControlCornerRadius);
+	}
+
+	/* `Expanded` — ScrollBar_themeresources.xaml:587, the rail at `ScrollBarSize` with the
+	   thumb at `ScrollBarVerticalThumbMinWidth`. WinUI animates between the two; a hover
+	   rule is the same two states without the animation. */
+	.page:hover::-webkit-scrollbar-thumb {
+		/* c1-allow: ScrollBar_themeresources.xaml:182 and :180 — an 8 wide thumb in a 12 wide rail */
+		border: 2px solid transparent;
 	}
 
 	.page {
