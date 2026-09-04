@@ -355,11 +355,15 @@ review saw is an `AnimatedIcon` playing its `Pressed` segment, which is the same
 Composition data WD-006 already declines to re-author, so that entry widened from the
 settings item to the family — the settings gear and both title bar buttons.
 
-Two residuals, recorded rather than guessed. The search box is 227 wide against the
-original's 318 now that it is sized by its content instead of stretched; the difference is
-`TextControlThemeMinWidth`, referenced by `TextBox_themeresources.xaml:193` and defined
-nowhere in this checkout. And the page gutter does not yet shrink to 16 at narrow widths the
-way `ItemPage.xaml:87` does.
+One residual: the page gutter does not yet shrink to 16 at narrow widths the way
+`ItemPage.xaml:87` does.
+
+The search box's width was briefly a second one and is not. Sized by its content it came
+out 227 against the original's 318, which is a gap in the other direction and just as
+visible. The original's placeholder ends about seventy pixels short of its query button, so
+its width is a floor rather than a measure of the text — `TextControlThemeMinWidth`, bound
+at `TextBox_themeresources.xaml:193` and defined nowhere in `controls/dev`, measured as 318
+on the reference capture the same way `TextControlThemeMinHeight` was measured as 32.
 
 ### v3 — the sample-page frame
 

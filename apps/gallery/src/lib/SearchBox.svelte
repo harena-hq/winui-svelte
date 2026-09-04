@@ -28,14 +28,23 @@
 		position: relative;
 		display: flex;
 		align-items: center;
-		/* Not stretched. The original keeps its width when the window is resized and is
-		   clipped from the right when the window is narrow, so it is sized to its content
-		   and `MainWindow.xaml`'s `Stretch` override does not take. `field-sizing: content`
-		   is the one declaration that gives an input a XAML measure pass: its width comes
-		   from its own content, and from the placeholder while it is empty. Where the
-		   property is unsupported the input falls back to its default width, which is
-		   narrower and not wrong in the way stretching was. */
+		/* Not stretched, and not tight to its content either. The original keeps its width
+		   when the window is resized and is clipped from the right when the window is
+		   narrow, so `MainWindow.xaml`'s `Stretch` override does not take; and its
+		   placeholder ends about seventy pixels short of the query button, so the width is
+		   a floor rather than a measure of the text. That floor is
+		   `TextControlThemeMinWidth`, which `TextBox_themeresources.xaml:193` binds and
+		   which nothing in `controls/dev` defines — the same hole ADR 0008 describes for
+		   the legacy brushes, and measured here instead.
+
+		   `field-sizing: content` on the input is what lets the box grow past the floor as
+		   text is typed, up to the `MaxWidth` the Gallery sets. Where the property is
+		   unsupported the box simply stays at its floor. */
 		flex: 0 0 auto;
+		/* c1-allow: TextBox_themeresources.xaml:193 binds MinWidth to
+		   TextControlThemeMinWidth, which controls/dev defines nowhere. Measured 318px on a
+		   capture of the real Gallery — box edges at x=657 and x=975. */
+		min-width: 318px;
 		/* XAML's `MaxWidth` and `MinHeight` are measured to the outside of the border,
 		   which is CSS's border box and not its default. Without this the 580 and the 32
 		   below are both understated by the padding and the border — measured 598 by 45
