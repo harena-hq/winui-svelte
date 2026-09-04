@@ -2,20 +2,10 @@
 	import 'winui-svelte/tokens.css';
 	import 'winui-svelte/type-ramp.css';
 	import '$lib/gallery-styles.css';
-	import { resolve } from '$app/paths';
 	import favicon from '$lib/assets/favicon.svg';
-	import { nav } from '$lib/design';
+	import { theme } from '$lib/theme.svelte';
 
 	let { children } = $props();
-
-	const themes = [
-		{ value: '', label: 'System' },
-		{ value: 'light', label: 'Light' },
-		{ value: 'dark', label: 'Dark' },
-		{ value: 'high-contrast', label: 'High contrast' }
-	];
-
-	let theme = $state('');
 
 	// Two effects, not one, because a single effect that both reads and writes `theme`
 	// fights itself: every re-run re-reads `localStorage`, which the previous run just
@@ -25,14 +15,14 @@
 	// `localStorage` back, so it has nothing to fight.
 	$effect(() => {
 		const stored = localStorage.getItem('winui-svelte:theme');
-		if (stored !== null) theme = stored;
+		if (stored !== null) theme.value = stored as '' | 'light' | 'dark' | 'high-contrast';
 	});
 
 	$effect(() => {
-		if (theme) document.documentElement.dataset.theme = theme;
+		if (theme.value) document.documentElement.dataset.theme = theme.value;
 		else delete document.documentElement.dataset.theme;
 
-		localStorage.setItem('winui-svelte:theme', theme);
+		localStorage.setItem('winui-svelte:theme', theme.value);
 	});
 </script>
 
@@ -40,63 +30,23 @@
 	<link rel="icon" href={favicon} />
 </svelte:head>
 
-<div class="page winui-BodyTextBlockStyle">
-	<header>
-		<nav>
-			{#each nav as item (item.uniqueId)}
-				<a
-					href={resolve(
-						`/design/${item.uniqueId.toLowerCase()}` as
-							| '/design/color'
-							| '/design/geometry'
-							| '/design/iconography'
-							| '/design/spacing'
-							| '/design/typography'
-					)}>{item.title}</a
-				>
-			{/each}
-		</nav>
-		<label class="theme">
-			<select bind:value={theme}>
-				{#each themes as t (t.value)}
-					<option value={t.value}>{t.label}</option>
-				{/each}
-			</select>
-		</label>
-	</header>
-
-	<main>
-		{@render children()}
-	</main>
+<!--
+	The window background is D16: Mica's input is the desktop behind the window, which
+	a web page has no access to. The Gallery's own Color page gives `Mica Background /
+	Base` and `Solid Background / Base` the same caption — "used for the bottom most
+	layer of an experience" — so the solid pair is the value Microsoft itself names
+	for that role. WD-003.
+-->
+<div class="window winui-BodyTextBlockStyle">
+	{@render children()}
 </div>
 
 <style>
-	.page {
+	.window {
+		min-height: 100vh;
 		background: var(--winui-SolidBackgroundFillColorBaseBrush);
 		color: var(--winui-TextFillColorPrimaryBrush);
-		min-height: 100vh;
-	}
-
-	header {
 		display: flex;
-		gap: 24px;
-		align-items: center;
-		padding: 16px 24px;
-		/* c1-allow: 1px is the Gallery's own stroke width; WinUI tokenizes no border width here */
-		border-bottom: 1px solid var(--winui-CardStrokeColorDefaultBrush);
-	}
-
-	nav {
-		display: flex;
-		gap: 16px;
-	}
-
-	nav a {
-		color: var(--winui-TextFillColorPrimaryBrush);
-		text-decoration: none;
-	}
-
-	main {
-		padding: 24px;
+		flex-direction: column;
 	}
 </style>

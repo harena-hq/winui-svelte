@@ -388,8 +388,23 @@ work staged, that reset discards the work.
 
 ## Open questions
 
-None. The remaining input is operational rather than a decision: the Windows VM's access and
-start procedure, needed to wire v0's snapshot job.
+Two, both raised by the shell and both of a kind this project settles the same way: by
+looking at the two windows side by side rather than by arguing from a screenshot. They are
+recorded here so the comparison has a list to work from.
+
+**O-shell1 — the search box's width.** `MainWindow.xaml` gives the `AutoSuggestBox`
+`MaxWidth="580"` and `HorizontalAlignment="Stretch"`, and overrides
+`TitleBarContentHorizontalAlignment` from `Center` to `Stretch` so it fills its column;
+`TitleBar.xaml:186` makes that column `*`. Ours therefore renders 580 wide at a 1600-wide
+window. A capture of the shipped app at that width shows the box **318** wide — its content
+width — which reads as the override not taking. Settled by putting the two windows side by
+side at the same width, not by inferring chrome insets from one screenshot.
+
+**O-shell2 — the search box's height.** The original is 32 pixels, measured. Ours is 38 on
+the Linux host, and the difference is not layout: the row's height comes from the query
+button's line box, which is a 12-pixel Segoe Fluent Icons glyph at `line-height: normal`,
+and the host has a substitute face. XAML sizes the same button from the same font. Measure
+it on the guest before changing anything.
 
 ## Sources
 
