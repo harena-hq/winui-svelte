@@ -237,12 +237,11 @@ export const SHELL_KEYS = {
 	// aliased onto system colours under D10. So the search box reads through the alias to
 	// the key the source itself names, which is identical in light and dark and is defined
 	// under high contrast where the alias is not.
-	// Only the spacer column survives. `AutoSuggestBoxIconFontSize` and
-	// `AutoSuggestBoxInnerButtonMargin` belong to the *delete* button —
-	// AutoSuggestBox_themeresources.xaml:101 — which the Gallery's box never shows, and
-	// `AutoSuggestBoxQueryButtonPadding` is defined and applied nowhere in that template.
-	// The query button takes a literal 32 by 28 at :244, and its glyph the text box's own
-	// font size.
+	// `AutoSuggestBoxQueryButtonPadding` is deliberately absent: it is defined at :26 and
+	// applied nowhere in that file. The other two are the query button's — its style is
+	// `QueryButtonStyle` at :97 and the presenter that paints its background is at :101,
+	// inside it.
+	AutoSuggestBoxInnerButtonMargin: 'AutoSuggestBox query button, the inset of its fill',
 	AutoSuggestBoxRightButtonMargin: 'AutoSuggestBox query button, the spacer column right of it'
 };
 

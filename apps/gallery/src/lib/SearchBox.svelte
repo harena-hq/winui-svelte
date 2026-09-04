@@ -151,8 +151,21 @@
 		/* c1-allow: AutoSuggestBox_themeresources.xaml:244, QueryButton Height="28" */
 		height: 28px;
 		padding: 0;
-		border: 0;
+		/* The fill is inset from the button. `QueryButtonStyle`'s presenter — the element
+		   that paints the background, :101 inside the style at :97 — carries
+		   `AutoSuggestBoxInnerButtonMargin`, so a 32 by 28 button fills 30 by 22. Measured
+		   on the original with the pointer over it: 30 wide and 22 tall, which is why the
+		   fill has a gap above and below and ours did not. A transparent border of that
+		   width, with the background clipped to the padding box, is that inset without a
+		   second element. */
+		border-style: solid;
+		border-color: transparent;
+		/* Longhand, because the `border` shorthand takes one width and this token is two —
+		   written as a shorthand the whole declaration is dropped, silently, exactly as a
+		   negative padding was earlier in this repository. */
+		border-width: var(--winui-AutoSuggestBoxInnerButtonMargin);
 		background: transparent;
+		background-clip: padding-box;
 		cursor: pointer;
 		border-radius: var(--winui-ControlCornerRadius);
 		font-family: var(--winui-SymbolThemeFontFamily);
@@ -167,10 +180,12 @@
 
 	.query:hover {
 		background: var(--winui-SubtleFillColorSecondaryBrush);
+		background-clip: padding-box;
 	}
 
 	.query:active {
 		background: var(--winui-SubtleFillColorTertiaryBrush);
+		background-clip: padding-box;
 		color: var(--winui-TextFillColorTertiaryBrush);
 	}
 </style>
