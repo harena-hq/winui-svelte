@@ -237,9 +237,17 @@
 		line-height: normal;
 	}
 
+	/* `NavigationViewItemContentPresenterMargin` is `4,-1,8,-1` — a *margin*, and it has
+	   negative parts, so writing it as padding is not a near miss: CSS drops the whole
+	   declaration and the label sat flush against the icon column with nothing between them.
+
+	   The presenter also binds the item's `Padding`, and that is 0 here: the only `Padding`
+	   setter naming `NavigationViewItemButtonMargin` is on `PaneToggleButtonStyle` — the
+	   hamburger — at NavigationView_themeresources.xaml:282, not on the item's presenter
+	   style at :440. Adding it put the label four pixels past where the original draws it. */
 	.content-presenter {
 		min-width: 0;
-		padding: var(--winui-NavigationViewItemContentPresenterMargin);
+		margin: var(--winui-NavigationViewItemContentPresenterMargin);
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
