@@ -293,6 +293,59 @@ faithfully. The Gallery's own Color page gives `Mica Background / Base` and
 experience" — so the solid pair is the value Microsoft itself names for that role. WD-003 is
 amended to this permanent reason rather than deleted.
 
+#### What the side-by-side found
+
+The frame was compared against the real Gallery on the reference guest, both windows the
+same width. Eight gaps, in the order they were reported. Each is a unit; none is a
+divergence, because every one of them is reproducible.
+
+**F1 — the search box does not stretch.** Settles O-shell1. The original's box keeps its
+width when the window is resized and is _clipped from the right_ when the window gets
+narrow, so it is sized to its content and not to its column: the `Stretch` override
+`MainWindow.xaml` sets does not take. Ours stretches to `MaxWidth="580"`. The width to
+reproduce is the box's desired width — for a XAML `TextBox`, the width of its placeholder
+text plus the padding and the query button.
+
+**F2 — the pane and the content scroll separately, and the scrollbar is Windows'.** Ours
+scrolls the whole document instead, because the window is `min-height: 100vh` and grows.
+Two changes: the window is exactly the viewport's height and each region scrolls inside
+itself, and the scrollbar is styled — Windows' is a thin overlay, ours is the browser's
+default and much wider.
+
+**F3 — the query button's hit area is wider than its glyph.** Ours wraps the glyph;
+the original's is a rectangle wider than it is tall. `AutoSuggestBoxQueryButtonPadding`
+and the button's own width are already seeded.
+
+**F4 — the Gallery's pages have a gutter and ours have none.** Not the control's:
+`NavigationViewContentPresenterMargin` is `0`, and on the reference capture the page
+heading starts about 37 pixels inside the content grid. The padding belongs to the
+Gallery's own page style, which is where it has to be read from.
+
+**F5 — a parent item toggles on click.** In the original, clicking an item that has
+children expands _and collapses_ it, and such an item has no page of its own — `Design`
+navigates nowhere. Ours expands on click and collapses only from the chevron, and D18
+gives every row a route including the parents. The comment in `NavigationViewItem.svelte`
+asserting the opposite is wrong and goes with the fix.
+
+**F6 — a separator sits above the settings item.** It is `VisualItemsSeparator`, and the
+condition is not the one this repository's shell unit assumed. `NavigationView.cpp`'s
+`UpdatePaneLayout` enters `SeparatorVisible` — `NavigationView.xaml:171` — exactly when the
+menu items do not fit beside the footer group, which for a menu of this size is always.
+
+**F7 — the title bar's buttons animate on press.** The glyph scales down on pointer-down
+and returns on release. Both the back button and the pane toggle.
+
+**F8 — the icon column is 32 wide, and 8 when the item has no icon.** This is the
+mechanism behind the alignment: a child without an icon puts its label almost where its
+parent's label is. `NavigationViewItemPresenter.cpp:289` computes
+`SmallerIconWidth = CompactPaneLength - 8`, the template binds the icon column to it —
+`NavigationView_themeresources.xaml:611` — and the `IconCollapsed` state at `:509` drops
+that column to 8. We use `NavigationViewIconBoxWidth`, which is 40 and is not what the
+template binds, and we render the column at full width whether or not there is a glyph.
+
+**Not counted as gaps.** Page contents and item labels are still being filled in; the
+comparison was of the frame.
+
 ### v3 — the sample-page frame
 
 Goal: **one control's sample page has the real page structure.**
