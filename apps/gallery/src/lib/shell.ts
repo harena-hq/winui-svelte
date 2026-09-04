@@ -47,7 +47,13 @@ interface RecordGroup {
 interface RecordShape {
 	titleBar: {
 		title: string;
-		placeholderText: string;
+		// The box lives under `content` because that is where `TitleBar.Content` puts it,
+		// and the record keeps the source's shape. Flattening it here once cost a silently
+		// empty placeholder: the cast below asserts this interface over the record, so a
+		// field named at the wrong depth reads as `undefined` and nothing complains.
+		content: {
+			placeholderText: string;
+		};
 	};
 	menu: RecordMenuEntry[];
 	groups: RecordGroup[];
@@ -136,7 +142,7 @@ export const menu: NavigationViewEntry[] = [...xamlMenu, ...groupMenu];
 
 export const titleBar = {
 	title: r.titleBar.title,
-	placeholderText: r.titleBar.placeholderText
+	placeholderText: r.titleBar.content.placeholderText
 };
 
 // `QueryIcon="Find"` is a `Symbol` again, and the Gallery's catalogue has no `Find`:
