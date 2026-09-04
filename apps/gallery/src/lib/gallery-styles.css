@@ -10,6 +10,16 @@
  * here rather than carrying two more indirections.
  */
 
+/*
+ * The window is exactly the viewport, so what surrounds it has to contribute nothing.
+ * The browser's default 8-pixel body margin was the whole of the outer scrollbar this
+ * page had: 860 of window inside 876 of document.
+ */
+body {
+	margin: 0;
+	overflow: hidden;
+}
+
 .gallery-tile-grid {
 	display: grid;
 	background: var(--winui-SolidBackgroundFillColorBaseBrush);

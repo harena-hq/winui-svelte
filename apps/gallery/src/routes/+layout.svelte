@@ -43,7 +43,11 @@
 
 <style>
 	.window {
-		min-height: 100vh;
+		/* Exactly the viewport, not at least it. The original is a window: its pane and its
+		   content each scroll inside a frame that does not move, and a page that grows past
+		   the viewport gives the whole thing one outer scrollbar instead. */
+		height: 100vh;
+		overflow: hidden;
 		background: var(--winui-SolidBackgroundFillColorBaseBrush);
 		color: var(--winui-TextFillColorPrimaryBrush);
 		display: flex;

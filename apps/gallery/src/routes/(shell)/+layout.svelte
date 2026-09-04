@@ -76,7 +76,7 @@
 		paneToggleVisible={false}
 		{expanded}
 	>
-		{@render children()}
+		<div class="page">{@render children()}</div>
 	</NavigationView>
 </div>
 
@@ -86,5 +86,19 @@
 		min-height: 0;
 		display: flex;
 		flex-direction: column;
+	}
+
+	/* The page scrolls, not the window. In the original each Gallery page carries its own
+	   ScrollViewer, so the scrolling belongs to the page rather than to NavigationView —
+	   which is why this is a wrapper here and not a rule in the control. */
+	.page {
+		height: 100%;
+		overflow-y: auto;
+		box-sizing: border-box;
+		/* Windows' scrollbars are thin overlays and the browser's default is not. The real
+		   ScrollBar arrives with the Scrolling tranche; until then this is the closest the
+		   platform's own control gets. */
+		scrollbar-width: thin;
+		scrollbar-color: var(--winui-ControlStrongFillColorDefaultBrush) transparent;
 	}
 </style>
