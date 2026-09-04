@@ -29,6 +29,9 @@
 	--winui-SymbolThemeFontFamily: 'Segoe Fluent Icons';
 
 	--winui-AutoSuggestBoxIconFontSize: 12px;
+	--winui-AutoSuggestBoxInnerButtonMargin: 3px 1px;
+	--winui-AutoSuggestBoxQueryButtonPadding: 2px 3px;
+	--winui-AutoSuggestBoxRightButtonMargin: 4px;
 	--winui-SystemControlTransparentColor: #00000000;
 	--winui-SystemControlTransparentBrush: transparent;
 	--winui-SystemControlHighlightListAccentVeryHighBrush: color-mix(

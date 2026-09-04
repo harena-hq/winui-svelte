@@ -216,8 +216,31 @@ export const SHELL_KEYS = {
 	TitleBarPaneToggleButtonForegroundPressed: 'TitleBar pane-toggle button foreground, pressed',
 	TitleBarPaneToggleButtonForegroundDisabled: 'TitleBar pane-toggle button foreground, disabled',
 
-	// The search box in the title bar.
-	AutoSuggestBoxIconFontSize: 'AutoSuggestBox, the query glyph'
+	// The search box in the title bar. The Gallery puts an AutoSuggestBox in
+	// `TitleBar.Content`, and an AutoSuggestBox is a TextBox with a query button.
+	//
+	// Only the box's own metrics are seeded. Its colours are deliberately not, and the
+	// reason is a property of the source rather than a preference: the `TextControl*`
+	// family is defined in `Default` and `Light` and almost entirely absent from the
+	// `HighContrast` dictionary — TextBox_themeresources.xaml defines six of them there and
+	// no more — because Windows supplies the rest, the way it supplies the legacy brushes of
+	// ADR 0008. A key defined in two themes of three cannot be emitted; the generator says
+	// so and is right to.
+	//
+	// What the Default and Light dictionaries do say is that each of those names is a
+	// `StaticResource` alias onto a base-palette key: `TextControlBackground` is
+	// `ControlFillColorDefaultBrush` (:23), the placeholder and the query glyph are
+	// `TextFillColorSecondaryBrush` (:35, :45), the query button's states are
+	// `SubtleFillColor{Secondary,Tertiary}Brush` (:40, :41), the selection is
+	// `AccentFillColorSelectedTextBackgroundBrush` (:39). Every one of those is already
+	// emitted in all three themes, because the base palette is where high contrast is
+	// aliased onto system colours under D10. So the search box reads through the alias to
+	// the key the source itself names, which is identical in light and dark and is defined
+	// under high contrast where the alias is not.
+	AutoSuggestBoxIconFontSize: 'AutoSuggestBox, the query glyph',
+	AutoSuggestBoxQueryButtonPadding: 'AutoSuggestBox query button, its inset',
+	AutoSuggestBoxRightButtonMargin: 'AutoSuggestBox query button, its margin at the right end',
+	AutoSuggestBoxInnerButtonMargin: 'AutoSuggestBox query button, its margin inside the box'
 };
 
 /**
@@ -289,6 +312,7 @@ export const TYPE_RAMP = {
 export const DOUBLE_LENGTHS = {
 	NavigationBackButtonHeight: 'the back button box',
 	NavigationBackButtonWidth: 'the back button box',
+	AutoSuggestBoxRightButtonMargin: 'the spacer column right of the query button',
 	NavigationViewAutoSuggestAreaHeight: 'the search row in the pane',
 	NavigationViewCompactPaneLength: 'the collapsed pane',
 	NavigationViewIconBoxWidth: "an item's icon column",
