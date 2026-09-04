@@ -156,7 +156,11 @@
 		cursor: pointer;
 		border-radius: var(--winui-ControlCornerRadius);
 		font-family: var(--winui-SymbolThemeFontFamily);
-		font-size: inherit;
+		/* 14 is what `{TemplateBinding FontSize}` resolves to and it overshoots: it draws 13
+		   by 12 of ink against the original's 11 by 11, where 12 draws 11 by 10 and 13
+		   draws 12 by 11. */
+		/* c1-allow: measured 13px against a capture of the real Gallery's magnifier */
+		font-size: 13px;
 		line-height: normal;
 		color: var(--winui-TextFillColorSecondaryBrush);
 	}
