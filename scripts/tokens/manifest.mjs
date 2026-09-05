@@ -227,6 +227,7 @@ export const TEXTBOX_KEYS = {
 	// have chosen. See ADR 0010.
 	TextControlHeaderForeground: 'TextBox header, at rest',
 	TextControlHeaderForegroundDisabled: 'TextBox header, disabled',
+	TextBoxTopHeaderMargin: 'TextBox header, the gap between it and the box',
 	SystemControlDescriptionTextForegroundBrush: 'TextBox description, every state',
 
 	// The delete button: its three brushes and the three states each paints.

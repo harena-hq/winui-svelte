@@ -593,6 +593,15 @@ Automated, and a unit that fails one cannot be sealed.
   where the fonts are. Promoting it means either baselines per engine on a Windows runner, or
   assertions about geometry and computed style rather than pictures. Neither is decided.
 
+  **A third gap is what the baselines can see at all.** `snapshotAllThemes` photographs
+  `body`, and `/dev/`'s layout scrolls inside a `.dev` element with `overflow-y: auto`, so
+  `body` is exactly the viewport and every tracked baseline is a 1280×720 crop of the top of
+  a page. Every dev page fitted above that fold until TextBox grew a header and a
+  description, whose two sections are the first content this suite renders and never
+  photographs. The fix is the harness's, not any control's — the dev layout stops being the
+  scroller and the capture becomes full-page — and it re-takes all 22 tracked baselines,
+  which is why it is a unit of its own rather than a line in the unit that found it.
+
   **A second gap sits in the suite itself: `--update-snapshots` does not rewrite a baseline
   whose difference falls under Playwright's default per-pixel threshold.** The gradient-border
   fix moved a button's face by four levels — the exact defect a user had spotted by eye on

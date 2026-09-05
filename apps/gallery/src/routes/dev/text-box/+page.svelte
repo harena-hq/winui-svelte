@@ -4,9 +4,10 @@
 
 	/*
 	 * The component's own harness, not part of the Gallery reproduction: `/dev/` is where
-	 * each control gets a page to be photographed on, and nothing links to it. The five
+	 * each control gets a page to be photographed on, and nothing links to it. The seven
 	 * rows below exercise the surface the unit names: empty, with text, read-only,
-	 * disabled, and multi-line — five states on a single control.
+	 * disabled, multi-line, with a header, and with a header and description — seven
+	 * states on a single control.
 	 */
 
 	let empty: TextBoxProps['value'] = $state('');
@@ -14,14 +15,17 @@
 	let readOnly: TextBoxProps['value'] = $state('Read-only text');
 	let disabled: TextBoxProps['value'] = $state('Disabled text');
 	let multiLine: TextBoxProps['value'] = $state('Line one\nLine two');
+	let withHeader: TextBoxProps['value'] = $state('');
+	let withHeaderDescription: TextBoxProps['value'] = $state('');
+	let withHeaderDescriptionDisabled: TextBoxProps['value'] = $state('Prefilled');
 </script>
 
 <svelte:head><title>TextBox — harness</title></svelte:head>
 
 <h1 class="winui-TitleTextBlockStyle">TextBox</h1>
 <p class="winui-BodyTextBlockStyle">
-	Five rows, in the order the unit names them: empty with a placeholder, with text, read-only, with
-	text, disabled, and multi-line.
+	Seven rows, in the order the unit names them: empty with a placeholder, with text, read-only, with
+	text disabled, multi-line, with a header, and with a header and a description.
 </p>
 
 <h2 class="winui-SubtitleTextBlockStyle">empty</h2>
@@ -47,6 +51,22 @@
 <h2 class="winui-SubtitleTextBlockStyle">multi-line</h2>
 <div class="row">
 	<TextBox bind:value={multiLine} placeholder="Multi-line" acceptsReturn />
+</div>
+
+<h2 class="winui-SubtitleTextBlockStyle">a header</h2>
+<div class="row">
+	<TextBox header="Enter your name:" bind:value={withHeader} placeholder="Name" />
+</div>
+
+<h2 class="winui-SubtitleTextBlockStyle">a header and a description</h2>
+<div class="row">
+	<TextBox header="Name" description="Your full legal name." bind:value={withHeaderDescription} />
+	<TextBox
+		header="Name"
+		description="Your full legal name."
+		bind:value={withHeaderDescriptionDisabled}
+		disabled
+	/>
 </div>
 
 <style>
