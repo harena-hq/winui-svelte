@@ -43,6 +43,12 @@ const NON_COLOUR_WORDS = new Set(
 
 const COLOUR_FN = /\b(rgba?|hsla?|hwb|lab|lch|oklab|oklch|color|color-mix|device-cmyk)\s*\(/i;
 const HEX = /#[0-9a-f]{3,8}\b/i;
+// A known hole, stated rather than left to be rediscovered: the trailing `\b` never matches
+// after `%`, because a percent sign and the `;` or `)` that follows it are both non-word
+// characters. `border-radius: 50%` and `font-size: 120%` are therefore not flagged. The first
+// is fine and arguably right — `50%` on a circle means "circle", not a design value anyone
+// would tokenise — and the second is a real miss. Left alone because closing it newly flags
+// declarations across the tree, which is its own unit rather than a line changed in passing.
 const SIZE =
 	/(?<![\w.-])-?\d*\.?\d+\s*(px|rem|em|pt|pc|in|cm|mm|ex|ch|vw|vh|vmin|vmax|q|%|s|ms)\b/i;
 const ZERO = /^-?0*\.?0+\s*[a-z%]*$/i;
@@ -123,14 +129,30 @@ export async function run() {
 		// declaration and nothing about placement. A hatch nobody can find is a rule with no
 		// way out, and the way out is the reason the rule can afford to be absolute.
 		const exempt = new Set();
-		source.split('\n').forEach((text, i) => {
+		const lines = source.split('\n');
+		lines.forEach((text, i) => {
 			// The lookahead is what makes the reason mandatory. `\S` alone is satisfied by the
 			// comment's own terminator, so `/* c1-allow: */` — an exemption stating nothing —
 			// was accepted by the check that exists to stop exactly that.
-			if (/\/\*\s*c1-allow:\s*(?!\*\/)\S/.test(text) || /<!--\s*c1-allow:\s*(?!-->)\S/.test(text)) {
-				exempt.add(i + 1);
-				exempt.add(i + 2);
-			}
+			const css = /\/\*\s*c1-allow:\s*(?!\*\/)\S/.test(text);
+			const markup = /<!--\s*c1-allow:\s*(?!-->)\S/.test(text);
+			if (!css && !markup) return;
+
+			// The exemption runs to the line after the comment CLOSES, not to the line after
+			// the `c1-allow:` token. Only the opening line matches the pattern above, so a
+			// reason long enough to wrap used to leave its own declaration unexempted — and
+			// the failure names the declaration and says nothing about the comment, which is
+			// the shape of message that sends an author looking in the wrong place. It cost a
+			// round trip in v3's last unit, and it had quietly made every multi-line
+			// `c1-allow:` already in the tree inert.
+			const closer = css ? '*/' : '-->';
+			let end = i;
+			while (end < lines.length && !lines[end].includes(closer)) end++;
+			// An unterminated comment is a syntax error the parser will report on its own
+			// terms; exempting to the end of the file on the way there is not this gate's
+			// business.
+			if (end === lines.length) end = i;
+			for (let line = i + 1; line <= end + 2; line++) exempt.add(line);
 		});
 
 		const blocks = file.endsWith('.css') ? [{ body: source, line: 1 }] : styleBlocks(source);
