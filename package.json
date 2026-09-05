@@ -19,6 +19,7 @@
 		"gallery:fetch": "node scripts/gallery/fetch.mjs",
 		"gallery:extract": "node scripts/gallery/extract.mjs",
 		"framework:fetch": "node scripts/framework/fetch.mjs",
+		"framework:extract": "node scripts/framework/extract.mjs",
 		"test": "playwright test",
 		"verify": "pnpm build && pnpm check && pnpm lint && pnpm conform && pnpm test"
 	},

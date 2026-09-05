@@ -560,6 +560,16 @@ Automated, and a unit that fails one cannot be sealed.
   pages are where the tokens are judged: a color hard-coded there would make the acceptance
   surface match the original for a reason unrelated to the token layer.
 - **C2 — tokens are generated.** The committed token CSS must equal the generator's output.
+
+  **What it does not check is the layer beneath it.** C2 compares the CSS with the
+  generator, and the generator's inputs are two committed record files; nothing gates
+  either record against the checkout it was read from. Both extractors have a `--check`
+  mode that does exactly this, and neither is wired into `pnpm conform` — so a
+  hand-edited record would pass every gate, which is the failure C8 exists to catch for
+  the Gallery's records. It is one gate, running both `--check` modes, and it is written
+  down here rather than added in the unit that noticed it because the unit that noticed
+  it was adding the second record file and would have been sealing its own gate.
+
 - **C3 — layer separation.** `packages/winui-svelte` must not import from `apps/gallery`.
 - **C4 — three themes, always.** Every exported component renders under light, dark and high
   contrast in the snapshot suite. A component that only works in one theme cannot land.
