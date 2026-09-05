@@ -408,7 +408,7 @@ its width is a floor rather than a measure of the text — `TextControlThemeMinW
 at `TextBox_themeresources.xaml:193` and defined nowhere in `controls/dev`, measured as 318
 on the reference capture the same way `TextControlThemeMinHeight` was measured as 32.
 
-### v3 — the component contract, and five controls that prove it
+### v3 — the component contract, and five controls that prove it — **done**
 
 Goal: **the package is worth installing.**
 
@@ -449,6 +449,43 @@ The comparison surface is the control, not the page. Each gets a Gallery route w
 frame — the original shows it inside `ControlExample`, and ours will not until v10 — which is
 the same arrangement v1 used for the Design pages and for the same reason: the chrome shows
 controls that do not exist yet.
+
+#### What the five controls cost, and what they settled
+
+Sealed. Seven exported components, nineteen tracked baselines, and a token layer that has
+grown from the shared vocabulary to five control dictionaries taken whole.
+
+Each control's tokens were selected by asserting the selection **equal** to the set of keys
+its upstream dictionary defines — 95 for CheckBox, 59 for RadioButton, 62 for ToggleSwitch,
+with 19, 18 and 23 of those named in `EXCLUDED` — so a key missed and a key invented both
+fail. That check replaced the cold read for the manifest half of each unit, and it is
+stronger than one: a table resolving names to colours cannot be reviewed by reading its rows,
+which is what the Button near-miss demonstrated. What a reader still has to do by hand is
+resolve the pairs a control actually **paints**, per theme, and that found the one thing
+worth recording — a pressed unselected RadioButton takes the same brush for its ring stroke
+and its ring fill under high contrast, upstream's mapping, left faithful.
+
+Three questions came up that the resources alone could not answer, and each was settled by
+running the original on the reference guest rather than by reasoning:
+
+- **CheckBox's three-state cycle** — unchecked, checked, indeterminate — because `IsThreeState`
+  lives in system XAML, not in the pin.
+- **CheckBox's unchecked glyph.** The resources define four brushes for it; the animated
+  original draws nothing. They exist for the down-level path, which hides the glyph by
+  painting it the colour of the fill — a trick that holds in Light and Dark and breaks under
+  high contrast. WD-006 accepts the fallback glyph, not a state the original never shows.
+- **ToggleSwitch's default content** — "On" and "Off", which the control's own code supplies
+  and the pin does not carry.
+
+The contract itself needed two amendments, both written after the code rather than before it:
+`ref` points at the interactive element rather than at the root, which TextBox had already
+done without saying so; and an HTML attribute from the reserved set that belongs on an inner
+element is declared as a prop rather than left to the rest spread, which is the second half
+of why that set is closed.
+
+Two gaps were recorded rather than closed. WD-008: no control draws the system focus visual,
+because its four brushes are in the framework dictionary that also holds TextBox's header —
+one measurement pass will close both. WD-009: the toggle switch cannot be dragged.
 
 ### v4 onwards — control tranches
 
