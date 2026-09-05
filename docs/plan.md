@@ -499,6 +499,20 @@ group sizes, which no longer line up one-to-one with a version.
 4.  **The rest of input** — ComboBox, Slider, NumberBox, PasswordBox, AutoSuggestBox. The last
     of these also retires D20: the title bar's search box becomes the published control.
 
+    **Closed.** All five exist and are exported; twelve components now render under the
+    three themes in the snapshot suite, thirteen baseline sets pass on the reference guest,
+    and the nine gates are green. The version's own Done-when is v3's, applied to five more
+    controls: each control snapshotted in three themes, each compared against the original
+    on the guest, each prop following D21 with its TSDoc naming the WinUI member.
+
+    What the version cost that its goal did not predict: a third pinned upstream, because
+    four of the five controls read resources the control pin does not carry; a rewrite of
+    the merge rule from per-key to per-key-and-theme, which found every text control drawing
+    light-theme colours in high contrast; and a gate, C9. Three of the five controls also
+    turned out to have been shipped 13px too tall since v3, on a `box-sizing` the resources
+    had been saying all along. None of that was found by a gate — all of it by measuring a
+    rendered control against the resource it claims to read.
+
     **What this version still owes, once its five controls exist.** Each is a later unit and
     none is a divergence: nothing here is being declined, it is simply not built yet, and
     every one of them is on the Gallery page the acceptance gate will compare against.
