@@ -527,6 +527,7 @@
 		var(--winui-SystemAccentColorDark1) 2px,
 		var(--winui-ControlStrokeColorDefault) 2px
 	);
+	--winui-TextBoxTopHeaderMargin: 0px 0px 8px 0px;
 	--winui-TextBoxInnerButtonMargin: 4px 4px 4px 0px;
 	--winui-TextBoxIconFontSize: 12px;
 	--winui-ToggleSwitchOnStrokeThickness: 0px;

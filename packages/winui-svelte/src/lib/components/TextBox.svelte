@@ -1,4 +1,6 @@
 <script lang="ts" module>
+	import type { Snippet } from 'svelte';
+
 	export interface TextBoxProps {
 		/** Text, under HTML's name for it — ADR 0009. */
 		value?: string;
@@ -15,23 +17,19 @@
 		maxLength?: number;
 		/** AcceptsReturn. True renders a `<textarea>`, false an `<input type="text">`. */
 		acceptsReturn?: boolean;
+		/** Header. A string or a snippet; nothing is rendered when it is not given. */
+		header?: Snippet | string;
+		/** Description. A string or a snippet; nothing is rendered when it is not given. */
+		description?: Snippet | string;
 		class?: string;
 		style?: string;
 		ref?: HTMLInputElement | HTMLTextAreaElement | null;
 		[key: string]: unknown;
 	}
 
-	// Four WinUI members are deliberately absent, and a plain comment says so rather
+	// Two WinUI members are deliberately absent, and a plain comment says so rather
 	// than a `/** */` one: a doc comment here would attach itself to `placeholder` below
 	// and a consumer hovering that prop would be told about one of them.
-	//
-	// `Header` and `Description` are out of scope per the unit brief §2: their resources
-	// (`TextControlHeaderForeground`, `TextControlHeaderForegroundDisabled`,
-	// `SystemControlDescriptionTextForegroundBrush`) are defined in the XAML framework
-	// dictionary rather than in any per-control `*_themeresources.xaml` file, the same
-	// hole ADR 0008 describes for the legacy brushes. AutoSuggestBox, PasswordBox and
-	// NumberBox read the same names, and they are measured once for the whole Text
-	// family rather than guessed here for one control.
 	//
 	// `TextWrapping` follows `acceptsReturn` — a `<textarea>` wraps and an `<input>`
 	// does not — so the prop adds nothing on either branch.
@@ -49,6 +47,8 @@
 		disabled = false,
 		maxLength,
 		acceptsReturn = false,
+		header,
+		description,
 		class: className,
 		style,
 		ref = $bindable(null),
@@ -71,60 +71,77 @@
 	}
 </script>
 
-<div
-	class={['root', className]}
-	{style}
-	data-multiline={acceptsReturn}
-	data-disabled={disabled || undefined}
-	onfocusin={() => (focused = true)}
-	onfocusout={() => (focused = false)}
-	{...rest}
->
-	{#if acceptsReturn}
-		<textarea
-			bind:this={ref}
-			bind:value
-			{placeholder}
-			{readonly}
-			{disabled}
-			maxlength={maxLength === undefined || maxLength === 0 ? undefined : maxLength}
-			oninput={onInput}
-			rows="3"></textarea>
-	{:else}
-		<input
-			bind:this={ref}
-			type="text"
-			bind:value
-			{placeholder}
-			{readonly}
-			{disabled}
-			maxlength={maxLength === undefined || maxLength === 0 ? undefined : maxLength}
-			oninput={onInput}
-		/>
+<div class={['root', className]} {style} data-disabled={disabled || undefined} {...rest}>
+	{#if header !== undefined}
+		<span class="header">
+			{#if typeof header === 'string'}{header}{:else}{@render header()}{/if}
+		</span>
 	{/if}
-	{#if showDelete}
-		<!-- `onmousedown` preventing default is what keeps this button working outside
-		     Chromium. The row is shown only while the box has focus, upstream's
-		     `ButtonStates` group; focus leaving the input therefore unmounts the button.
-		     Chromium focuses a `<button>` on mousedown, so the `focusin` that follows
-		     cancels the `focusout` and the click still lands — Firefox and Safari do not,
-		     so the button is gone before `click` fires and the box never clears. Measured
-		     on Svelte 5.57.0 by blurring the input with nothing else taking focus.
-		     Preventing the default keeps focus on the input, which is also what upstream's
-		     `IsTabStop="False"` says this button is: not a focus target at all. -->
-		<button
-			type="button"
-			class="delete"
-			tabindex="-1"
-			aria-label="Clear text"
-			onmousedown={(event) => event.preventDefault()}
-			onclick={clear}
-		></button>
+	<div
+		class="box"
+		data-multiline={acceptsReturn}
+		onfocusin={() => (focused = true)}
+		onfocusout={() => (focused = false)}
+	>
+		{#if acceptsReturn}
+			<textarea
+				bind:this={ref}
+				bind:value
+				{placeholder}
+				{readonly}
+				{disabled}
+				maxlength={maxLength === undefined || maxLength === 0 ? undefined : maxLength}
+				oninput={onInput}
+				rows="3"></textarea>
+		{:else}
+			<input
+				bind:this={ref}
+				type="text"
+				bind:value
+				{placeholder}
+				{readonly}
+				{disabled}
+				maxlength={maxLength === undefined || maxLength === 0 ? undefined : maxLength}
+				oninput={onInput}
+			/>
+		{/if}
+		{#if showDelete}
+			<!-- `onmousedown` preventing default is what keeps this button working outside
+			     Chromium. The row is shown only while the box has focus, upstream's
+			     `ButtonStates` group; focus leaving the input therefore unmounts the button.
+			     Chromium focuses a `<button>` on mousedown, so the `focusin` that follows
+			     cancels the `focusout` and the click still lands — Firefox and Safari do not,
+			     so the button is gone before `click` fires and the box never clears. Measured
+			     on Svelte 5.57.0 by blurring the input with nothing else taking focus.
+			     Preventing the default keeps focus on the input, which is also what upstream's
+			     `IsTabStop="False"` says this button is: not a focus target at all. -->
+			<button
+				type="button"
+				class="delete"
+				tabindex="-1"
+				aria-label="Clear text"
+				onmousedown={(event) => event.preventDefault()}
+				onclick={clear}
+			></button>
+		{/if}
+	</div>
+	<!-- Upstream marks the `DescriptionPresenter` `AutomationProperties.AccessibilityView="Raw"`
+	     (`TextBox_themeresources.xaml:339`), which keeps the description out of the control's
+	     accessibility view; no `aria-describedby` on the input here, for the same reason. -->
+	{#if description !== undefined}
+		<span class="description">
+			{#if typeof description === 'string'}{description}{:else}{@render description()}{/if}
+		</span>
 	{/if}
 </div>
 
 <style>
 	.root {
+		display: flex;
+		flex-direction: column;
+	}
+
+	.box {
 		position: relative;
 		display: flex;
 		align-items: stretch;
@@ -143,7 +160,7 @@
 		   (aliases onto `TextControlElevationBorderBrush` and `…FocusedBrush`). A gradient
 		   named as a `border-color` is invalid CSS and silently dropped — the same reason
 		   Button.svelte carries its own transparent border. The gradient is painted by
-		   `.root::after` so it sits on the ring alone — a two-layer background clipped to
+		   `.box::after` so it sits on the ring alone — a two-layer background clipped to
 		   `border-box` paints across the whole element rather than across the ring. The
 		   fill on the element clips to `padding-box` and `BackgroundSizing="InnerBorderEdge"`
 		   upstream sets that clip. */
@@ -166,7 +183,7 @@
 	   The mask is two layers, the inner one clipped to the content box, composited so the
 	   content box is punched out. `-webkit-mask-composite: xor` is the same operation under
 	   the prefixed property, which is what Safari reads. */
-	.root::after {
+	.box::after {
 		content: '';
 		position: absolute;
 		inset: calc(-1 * var(--winui-TextControlBorderThemeThickness));
@@ -184,15 +201,34 @@
 		background: var(--winui-TextControlBorderBrush);
 	}
 
-	.root:hover {
+	/* Row 0 of `TextBox_themeresources.xaml:326`: the header presenter above the box, with its
+	   `Margin="{ThemeResource TextBoxTopHeaderMargin}"` and `Foreground="{ThemeResource
+	   TextControlHeaderForeground}"`. `TextWrapping="Wrap"` upstream maps to `white-space:
+	   normal` here; `FontWeight="Normal"` is the inherited default, and a declaration
+	   restating it is a value no token can change. */
+	.header {
+		margin: var(--winui-TextBoxTopHeaderMargin);
+		color: var(--winui-TextControlHeaderForeground);
+		white-space: normal;
+	}
+
+	/* Row 2 of `TextBox_themeresources.xaml:339`: the description presenter below the box, with
+	   `Foreground="{ThemeResource SystemControlDescriptionTextForegroundBrush}"` and no margin.
+	   One colour in every state, including disabled — upstream's template never overrides it. */
+	.description {
+		color: var(--winui-SystemControlDescriptionTextForegroundBrush);
+		white-space: normal;
+	}
+
+	.root:hover .box {
 		background: var(--winui-TextControlBackgroundPointerOver) padding-box;
 		color: var(--winui-TextControlForegroundPointerOver);
 	}
-	.root:hover::after {
+	.root:hover .box::after {
 		background: var(--winui-TextControlBorderBrushPointerOver);
 	}
 
-	.root:focus-within {
+	.root:focus-within .box {
 		border-width: var(--winui-TextControlBorderThemeThicknessFocused);
 		background: var(--winui-TextControlBackgroundFocused) padding-box;
 		color: var(--winui-TextControlForegroundFocused);
@@ -205,7 +241,7 @@
 	   resting rule above can use `calc()` because `TextControlBorderThemeThickness` is the
 	   uniform `1px`; the day it is not, it breaks the same way and silently, because `inset`
 	   is not a property C1 checks. */
-	.root:focus-within::after {
+	.root:focus-within .box::after {
 		inset: -1px -1px -2px -1px;
 		padding: var(--winui-TextControlBorderThemeThicknessFocused);
 		background: var(--winui-TextControlBorderBrushFocused);
@@ -251,13 +287,14 @@
 	/* The `data-disabled` rules are written last so they win over `:hover` and
 	   `:focus-within`: a disabled box must not light up under the pointer or gain
 	   focus styling. `data-disabled` is on the root rather than `:disabled` because
-	   `:disabled` matches a form control and the root is a `<div>`. */
-	.root[data-disabled] {
+	   `:disabled` matches a form control and the root is a `<div>`; the header sits on the
+	   root and not the box, so its disabled colour needs the same hook. */
+	.root[data-disabled] .box {
 		background: var(--winui-TextControlBackgroundDisabled) padding-box;
 		color: var(--winui-TextControlForegroundDisabled);
 		cursor: default;
 	}
-	.root[data-disabled]::after {
+	.root[data-disabled] .box::after {
 		background: var(--winui-TextControlBorderBrushDisabled);
 	}
 
@@ -269,6 +306,12 @@
 	.root[data-disabled] textarea,
 	.root[data-disabled] input {
 		cursor: default;
+	}
+
+	/* No `.root[data-disabled] .description` rule: the description's colour is the same in every
+	   state, including disabled — `TextBox_themeresources.xaml` never overrides it. */
+	.root[data-disabled] .header {
+		color: var(--winui-TextControlHeaderForegroundDisabled);
 	}
 
 	/* The delete button. `Width="30"` and `VerticalAlignment="Stretch"` upstream land
