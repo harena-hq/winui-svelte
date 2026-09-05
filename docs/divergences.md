@@ -229,53 +229,6 @@ worth closing. "Would be hard" is not a reason — the reason is always a specif
 
 ---
 
-### WD-008 — no control draws the system focus visual
-
-- **Control**: every control this library exports. `Button`, `TextBox` and `CheckBox` are
-  where it is cited; the entry covers the ones that follow.
-- **WinUI does**: set `UseSystemFocusVisuals="{StaticResource UseSystemFocusVisuals}"` on each
-  style and inset the visual with `FocusVisualMargin` — `-3` for Button
-  (`Button_themeresources.xaml:167`, `:310`), `-7,-3,-7,-3` for CheckBox
-  (`CheckBox_themeresources.xaml:276`), RadioButton (`:196`) and ToggleSwitch (`:200`). The
-  XAML framework then draws a two-tone rectangle around the keyboard-focused control: an
-  outer stroke in `SystemControlFocusVisualPrimaryBrush` and an inner one in
-  `…SecondaryBrush`, at a thickness the framework owns rather than the control's dictionary.
-- **We do**: draw nothing. A keyboard-focused control is not visually distinguished from an
-  unfocused one, except where the control's own template already changes — TextBox's focused
-  border does, Button and CheckBox do not.
-- **Why accepted**: the visual is not in any control's dictionary. It was recorded as four
-  values none of which `controls/dev` defines. **That count was wrong, and the correction is
-  why this entry now carries numbers instead of a wait.** Two of the four are defined:
-  `Common_themeresources.xaml:15` and `:16` alias
-  `SystemControlFocusVisualPrimaryBrush` and `…SecondaryBrush` onto `FocusStrokeColorOuterBrush`
-  and `FocusStrokeColorInnerBrush` in all three themes, and both have been emitted in
-  `tokens.css` since v1. The other two are not resources at all — `FocusVisualPrimaryThickness`
-  and `FocusVisualSecondaryThickness` are `Control` property defaults, which is why the
-  framework dictionary has no entry for them either and why measurement, not a second
-  dictionary, is what settles them.
-
-  **Measured on the reference guest** (WinUI 3 Gallery, light theme, a keyboard-focused
-  split button): outward from the control's border box, 1 px of `FocusStrokeColorInner` then
-  2 px of `FocusStrokeColorOuter`, on all four edges, with the corner radius growing with the
-  offset so the two rings stay concentric with the control. Both are drawn **outside** the
-  control's bounds — the neighbours do not move, and the button's own border is untouched
-  underneath. The colours are exact: the outer band reads `rgb(26, 26, 26)`, which is
-  `#E4000000` over the `#F9F9F9` page, and the inner band `rgb(253, 253, 253)`, which is
-  `#B3FFFFFF` over the same. The two thicknesses agree with every `Setter` in the pin that
-  overrides them — 2 and 1, at `GridViewItem_themeresources.xaml:151`, `:153` and four other
-  sites.
-
-  In CSS that is one `box-shadow` with two rings, or an `::after` at a negative inset; it
-  costs no layout and it is the same shape on every control, which is the reason it is one
-  entry rather than one per control.
-
-- **Would reconsider if**: nothing further — the values are in hand and the entry closes in
-  this version. It is deleted rather than amended when a control draws the visual, along
-  with every `WD-008` citation, because the citations and the entry have to go in the same
-  commit for C5 to stay green in both directions.
-
----
-
 ### WD-009 — the toggle switch cannot be dragged
 
 - **Control**: `ToggleSwitch`.
@@ -302,7 +255,7 @@ worth closing. "Would be hard" is not a reason — the reason is always a specif
 
 ---
 
-_Seven entries. The next is expected to be TabView's arrow-key traversal. Every surveyed
+_Eight entries. The next is expected to be TabView's arrow-key traversal. Every surveyed
 primitive library — bits-ui, Zag and therefore Ark, and Melt — builds its roving-focus
 candidate set by querying for a role or data attribute, which cannot match a close button
 nested inside a tab trigger. So the button is reachable by Tab and not by arrow keys, and that

@@ -28,6 +28,8 @@
 	--winui-SystemAccentColorLight2: #4cc2ff;
 	--winui-SystemAccentColorLight3: #99ebff;
 	--winui-SymbolThemeFontFamily: 'Segoe Fluent Icons';
+	--winui-FocusVisualPrimaryThickness: 2px;
+	--winui-FocusVisualSecondaryThickness: 1px;
 
 	--winui-AutoSuggestBoxInnerButtonMargin: 3px 1px;
 	--winui-AutoSuggestBoxRightButtonMargin: 4px;
@@ -183,6 +185,7 @@
 	--winui-CheckBoxHeight: 32px;
 	--winui-CheckBoxMinWidth: 120px;
 	--winui-CheckBoxPadding: 5px 0px 0px 8px;
+	--winui-CheckBoxFocusVisualMargin: -3px -7px -3px -7px;
 	--winui-CheckBoxCheckedGlyph: '\00e73e';
 	--winui-CheckBoxIndeterminateGlyph: '\00e9ae';
 	--winui-SystemControlTransparentColor: #00000000;

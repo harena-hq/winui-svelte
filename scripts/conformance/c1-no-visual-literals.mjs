@@ -30,6 +30,12 @@ const TOKEN_ONLY_PROPS = /^(font-family|font-weight|line-height|font)$/;
 // Identifiers a colour-bearing value may contain that are not themselves colours.
 // An allowlist, because enumerating every named CSS colour is the version of this
 // check that silently misses `rebeccapurple`.
+//
+// `calc` and its siblings earn their place the hard way. `dropVars` removes the `var()`
+// calls and leaves the arithmetic behind, so `calc(var(a) + var(b))` reduces to `calc( + )`
+// and `calc` reads as a colour nobody wrote. The focus-visual unit hit that on five
+// declarations and its first fix was five `c1-allow` comments — which would have exempted
+// five real `box-shadow`s from the gate to satisfy a false positive in it.
 const NON_COLOUR_WORDS = new Set(
 	`transparent currentcolor inherit initial unset revert none auto
 	 solid dashed dotted double groove ridge inset outset hidden thin medium thick
@@ -38,7 +44,8 @@ const NON_COLOUR_WORDS = new Set(
 	 cover contain border-box padding-box content-box fixed scroll local
 	 linear-gradient radial-gradient conic-gradient url image-set
 	 repeating-linear-gradient repeating-radial-gradient repeating-conic-gradient
-	 underline overline line-through wavy`.split(/\s+/)
+	 underline overline line-through wavy
+	 calc min max clamp`.split(/\s+/)
 );
 
 const COLOUR_FN = /\b(rgba?|hsla?|hwb|lab|lch|oklab|oklch|color|color-mix|device-cmyk)\s*\(/i;

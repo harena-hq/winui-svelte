@@ -400,6 +400,7 @@
 	}
 
 	.pane-toggle {
+		position: relative;
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
@@ -419,6 +420,24 @@
 	   handed a private-use code point. */
 	.pane-toggle::before {
 		content: '\e700';
+	}
+
+	/* The focus visual; see Button.svelte in this package for the shape. `::after` because
+	   `::before` above is the glyph. `NavigationView.xaml:197` sets `FocusVisualMargin="0"`
+	   on `TogglePaneButton` explicitly, so the band is drawn inside the button's own bounds
+	   and inherits its corner radius. */
+	.pane-toggle:focus-visible::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		border-radius: inherit;
+		box-shadow:
+			inset 0 0 0 var(--winui-FocusVisualPrimaryThickness)
+				var(--winui-SystemControlFocusVisualPrimaryBrush),
+			inset 0 0 0
+				calc(var(--winui-FocusVisualPrimaryThickness) + var(--winui-FocusVisualSecondaryThickness))
+				var(--winui-SystemControlFocusVisualSecondaryBrush);
+		pointer-events: none;
 	}
 
 	.pane-toggle:hover {

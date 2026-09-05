@@ -129,6 +129,31 @@
 		transition: background 83ms;
 	}
 
+	/* The system focus visual. WinUI draws a 3px band — `FocusVisualPrimaryThickness` of
+	   `SystemControlFocusVisualPrimaryBrush` outermost, then `FocusVisualSecondaryThickness`
+	   of `…SecondaryBrush` inward — whose outer edge sits at the control's border box
+	   expanded by `−FocusVisualMargin`. Two inset shadows rather than two outset ones,
+	   because an outset pair paints the wider stroke under the narrower and puts the light
+	   ring outside the dark one; inset, the first listed wins and the order comes out right.
+	   `:focus-visible` and not `:focus`: WinUI draws this for `FocusState.Keyboard` only, so
+	   a control reached with the pointer shows nothing. */
+	.root:focus-visible::before {
+		content: '';
+		position: absolute;
+		/* c1-allow: Button_themeresources.xaml:167 and :310, both `FocusVisualMargin="-3"` */
+		inset: -3px;
+		/* c1-allow: Button_themeresources.xaml:167 and :310, the same `-3` inset as the band
+		   itself, so the ring stays concentric with the control's own corner */
+		border-radius: calc(var(--winui-ControlCornerRadius) + 3px);
+		box-shadow:
+			inset 0 0 0 var(--winui-FocusVisualPrimaryThickness)
+				var(--winui-SystemControlFocusVisualPrimaryBrush),
+			inset 0 0 0
+				calc(var(--winui-FocusVisualPrimaryThickness) + var(--winui-FocusVisualSecondaryThickness))
+				var(--winui-SystemControlFocusVisualSecondaryBrush);
+		pointer-events: none;
+	}
+
 	/* ----- default (DefaultButtonStyle at Button_themeresources.xaml:154) ----- */
 
 	.root[data-variant='default'] {

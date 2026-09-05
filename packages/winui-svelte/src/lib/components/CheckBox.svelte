@@ -145,11 +145,8 @@
 		   connected rather than dropped. */
 		border-width: 0;
 		border-radius: var(--winui-ControlCornerRadius);
-		/* WD-008: no system focus visual is drawn here, and a keyboard-focused CheckBox is
-		   not distinguished from an unfocused one; see docs/divergences.md.
-
-		   `line-height: normal` overrides the type ramp class on the same element, and does
-		   so deliberately. `winui-BodyTextBlockStyle` stands in for `ContentControlThemeFontFamily`
+		/* `line-height: normal` overrides the type ramp class on this element, and does so
+		   deliberately. `winui-BodyTextBlockStyle` stands in for `ContentControlThemeFontFamily`
 		   and `ControlContentThemeFontSize`, which `controls/dev` defines nowhere — the
 		   substitution `Button.svelte` records. It is a stand-in for the family and the size
 		   only: upstream's ContentPresenter carries no TextBlock style, so its line spacing is
@@ -173,6 +170,23 @@
 		padding: 0;
 		border: 0;
 		opacity: 0;
+		pointer-events: none;
+	}
+
+	/* The focus visual; see Button.svelte for the shape. */
+	.root:has(input:focus-visible)::before {
+		content: '';
+		position: absolute;
+		inset: var(--winui-CheckBoxFocusVisualMargin);
+		/* c1-allow: the same 3px vertical offset Button, RadioButton and ToggleSwitch carry,
+		   so the band stays concentric with the control's own corner */
+		border-radius: calc(var(--winui-ControlCornerRadius) + 3px);
+		box-shadow:
+			inset 0 0 0 var(--winui-FocusVisualPrimaryThickness)
+				var(--winui-SystemControlFocusVisualPrimaryBrush),
+			inset 0 0 0
+				calc(var(--winui-FocusVisualPrimaryThickness) + var(--winui-FocusVisualSecondaryThickness))
+				var(--winui-SystemControlFocusVisualSecondaryBrush);
 		pointer-events: none;
 	}
 
