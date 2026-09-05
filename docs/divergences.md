@@ -164,8 +164,8 @@ worth closing. "Would be hard" is not a reason — the reason is always a specif
 
 ### WD-006 — an animated icon renders as the static glyph WinUI falls back to
 
-- **Control**: `NavigationView`'s settings item, and `TitleBar`'s back and pane-toggle
-  buttons.
+- **Control**: `NavigationView`'s settings item, `TitleBar`'s back and pane-toggle buttons,
+  and `CheckBox`'s check glyph.
 - **WinUI does**: give each of them an `AnimatedIcon` with a `FallbackIconSource` — the
   settings item in `CreateAndHookEventsToSettings`, `NavigationView.cpp:1319`; the two title
   bar buttons in their styles, `TitleBar_themeresources.xaml:160` and `:230`. The buttons'
@@ -176,8 +176,24 @@ worth closing. "Would be hard" is not a reason — the reason is always a specif
   is 63 `CompositionObject`s driven by seven expression animators and six keyframe
   animators, and its `Markers()` map at `:730` names six segments between `Normal`,
   `PointerOver` and `Pressed`.
-- **We do**: render each `FallbackIconSource`'s glyph — `Symbol::Setting` as E713, and the
-  two title bar glyphs — with no transition between pointer states.
+- **We do**: render each `FallbackIconSource`'s glyph — `Symbol::Setting` as E713, the two
+  title bar glyphs, and CheckBox's E73E and E9AE — with no transition between pointer states.
+
+  **Where the fallback's own visibility differs from the animated original's, the original
+  wins.** CheckBox is the case that forced the distinction. Its `CheckGlyph` is an
+  `AnimatedIcon` whose four unchecked visual states set `AnimatedIcon.State` to an `…Off`
+  value, so the animated original draws no glyph at all on an unchecked box.
+  `AnimatedIcon::SetRootPanelChildToFallbackIcon` — `AnimatedIcon.cpp:579` — puts a static
+  `IconElement` in the root panel and `OnStatePropertyChanged` at `:214` only ever drives
+  `m_animatedVisual`, which is null there; so the down-level path draws the checkmark in
+  every state and hides it by painting it the colour of the fill. That works in Light and
+  Dark, where `TextOnAccentFillColorPrimary` on `ControlAltFillColorSecondary` is white on
+  near-white and black on near-black. It does not work under high contrast, where
+  pointer-over pairs a `SystemColorHighlight` glyph with a `SystemColorHighlightText` fill
+  and the down-level path would show a checkmark on an unchecked box. This library draws no
+  glyph when unchecked, and the four
+  `CheckBoxCheckGlyphForegroundUnchecked*` brushes are not emitted.
+
 - **Why accepted**: `AnimatedIcon` is a control in the Styles group and arrives with that
   tranche, so the animation has no home yet. The gap is not one of effort but of input: the
   motion exists here only as a compiled Composition graph, which is not a format CSS can
@@ -210,6 +226,35 @@ worth closing. "Would be hard" is not a reason — the reason is always a specif
   that is not the original's artwork. The entry is amended rather than deleted in that
   case: the row would carry an icon, and it would still not be the one the original
   draws.
+
+---
+
+### WD-008 — no control draws the system focus visual
+
+- **Control**: every control this library exports. `Button`, `TextBox` and `CheckBox` are
+  where it is cited; the entry covers the ones that follow.
+- **WinUI does**: set `UseSystemFocusVisuals="{StaticResource UseSystemFocusVisuals}"` on each
+  style and inset the visual with `FocusVisualMargin` — `-3` for Button
+  (`Button_themeresources.xaml:167`, `:310`), `-7,-3,-7,-3` for CheckBox
+  (`CheckBox_themeresources.xaml:276`), RadioButton (`:196`) and ToggleSwitch (`:200`). The
+  XAML framework then draws a two-tone rectangle around the keyboard-focused control: an
+  outer stroke in `SystemControlFocusVisualPrimaryBrush` and an inner one in
+  `…SecondaryBrush`, at a thickness the framework owns rather than the control's dictionary.
+- **We do**: draw nothing. A keyboard-focused control is not visually distinguished from an
+  unfocused one, except where the control's own template already changes — TextBox's focused
+  border does, Button and CheckBox do not.
+- **Why accepted**: the visual is not in any control's dictionary. It is drawn by the XAML
+  framework from `FocusVisualPrimaryBrush`, `FocusVisualSecondaryBrush`,
+  `FocusVisualPrimaryThickness` and `FocusVisualSecondaryThickness`, none of which is defined
+  in `controls/dev` — the same hole ADR 0008 describes for the legacy brushes, and the same
+  one that deferred TextBox's header. Four values guessed once become four values wrong on
+  every control at once, so this waits for the pass that measures the framework dictionary
+  rather than being invented per control. It is recorded here rather than left silent
+  because it was already true of Button and TextBox before CheckBox made it worth naming.
+- **Would reconsider if**: the framework dictionary's focus brushes and thicknesses are
+  measured on the reference guest, as the Text tranche will do for the header brushes. The
+  entry is deleted rather than amended then — the focus visual is one shape drawn one way,
+  and every control gets it in the same pass.
 
 ---
 

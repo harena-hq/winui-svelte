@@ -559,24 +559,36 @@ work staged, that reset discards the work.
 ## What the second-reviewer lane is worth
 
 A second model (`Hermes:solar-pro4` in the trailers) reads each unit's diff cold against a
-written rule list, in its own sandbox, as a finder that never gates. Two units in, its range is
-narrow enough to state:
+written rule list, in its own sandbox, as a finder that never gates. Three units in, its range
+is narrow enough to state:
 
-| unit    | real defects | it found | false positives |
-| ------- | ------------ | -------- | --------------- |
-| Button  | 4            | 1        | 2               |
-| TextBox | 1            | 0        | 0               |
+| unit     | real defects | it found | false positives |
+| -------- | ------------ | -------- | --------------- |
+| Button   | 4            | 1        | 2               |
+| TextBox  | 1            | 0        | 0               |
+| CheckBox | 3            | 0        | 1               |
 
 The one it found was a comment contradicting the line directly beneath it. The one it missed
 was the cross-engine focus defect above — and it missed that on a control run against the
 _unfixed_ file, with the mechanism spelled out in its rule list and its attention pointed at
-focus order. Both false positives came from the rule list compressing a real rule into a
-sentence that was stricter than the gate it described.
+focus order. Both of Button's false positives came from the rule list compressing a real rule
+into a sentence that was stricter than the gate it described.
 
-So: it catches local textual contradiction and misses anything that requires simulating
-behaviour. Worth its cost as a second pair of eyes on comments, citations and stated rules;
-worthless as coverage, and never a gate. Keeping the table honest matters more than keeping
-the lane — a finder credited with more than it finds is worse than no finder.
+CheckBox's false positive is a different and more expensive shape: not a rule mis-stated but a
+platform fact asserted wrongly with an argument attached. It reported that a comment about
+`preventDefault()` on a checkbox click described a mechanism that does not exist — that the
+browser does not toggle `checked` before the handler runs, so there is nothing to put back.
+The HTML activation behaviour says otherwise and a browser confirms it: inside the handler an
+unchecked box reads `checked === true`, a checked one reads `false`, `indeterminate` reads
+`false`, and after `preventDefault()` all three hold their original value. A finding of that
+shape costs a measurement to dismiss, where a mis-stated rule costs a re-read. It is also the
+one that would do real damage if taken on trust, because the "fix" is to delete the line the
+control's correctness rests on.
+
+So: it catches local textual contradiction, misses anything that requires simulating behaviour, and
+can assert a platform fact it has not checked. It is useful as a second pair of eyes on comments,
+citations and stated rules, not as coverage, and never a gate. Keeping the table honest matters more
+than keeping the lane — a finder credited with more than it finds is worse than no finder.
 
 ## Open questions
 

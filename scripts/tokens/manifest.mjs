@@ -261,6 +261,164 @@ export const TEXTBOX_KEYS = {
 		'Pre-Fluent TextBox *ThemeBrush family, not referenced by the current template'
 };
 
+/**
+ * Keys CheckBox reads — the fifth seed set.
+ *
+ * The dictionary is a product: six painted properties across three checked states and
+ * four pointer states. Every one of the 72 combinations is defined upstream, and
+ * `CheckBox_themeresources.xaml:297` drives all of them from a single `CombinedStates`
+ * group, so the list below is the template read straight through rather than a selection
+ * made from it.
+ *
+ * Two things it leaves out, so a gap reads as a decision rather than an oversight.
+ *
+ * - **The four `CheckBoxCheckGlyphForegroundUnchecked*` brushes.** They are seeded for
+ *   EXCLUDED, not emitted, because nothing paints them here: an unchecked box draws no
+ *   glyph. Upstream's `CheckGlyph` is an `AnimatedIcon` whose four unchecked states set
+ *   `AnimatedIcon.State` to a `…Off` value, and the glyph is hidden by the animation
+ *   rather than by a colour. The four brushes exist for the down-level path, where
+ *   `AnimatedIcon` shows its `FallbackIconSource` and ignores state entirely — there the
+ *   glyph is always drawn and these four hide it by matching the fill. They almost do:
+ *   in Light and Dark the pair is `TextOnAccentFillColorPrimary` on
+ *   `ControlAltFillColorSecondary`, which is white on near-white and black on near-black.
+ *   In HighContrast it breaks — `SystemColorHighlightColorBrush` glyph on
+ *   `SystemColorHighlightTextColorBrush` fill, pointer over, is a checkmark on an
+ *   unchecked box. WD-006 accepts rendering the fallback glyph; it does not accept
+ *   rendering a state the original never shows, so this control follows the animated
+ *   original's visibility and the four brushes have nothing to paint.
+ * - **The fourteen pre-Fluent `CheckBox*ThemeBrush` resources** — the same family and the
+ *   same reason as Button's ten and TextBox's seventeen. The current template references
+ *   none of them.
+ *
+ * `CheckBoxFocusVisualMargin` is seeded for EXCLUDED for a third reason again: the system
+ * focus visual it insets is not drawn by any control here. WD-008.
+ */
+export const CHECKBOX_KEYS = {
+	// The box, the glyph inside it, and the row they sit in.
+	CheckBoxSize: 'CheckBox, the box the glyph is drawn in',
+	CheckBoxBorderThickness: "CheckBox, the box's stroke width",
+	CheckBoxGlyphSize: 'CheckBox, the glyph inside the box',
+	CheckBoxHeight: 'CheckBox, the row',
+	CheckBoxMinWidth: 'CheckBox, the row',
+	CheckBoxPadding: 'CheckBox, the inset between the box and its content',
+
+	// The two glyphs, both from Segoe Fluent Icons.
+	CheckBoxCheckedGlyph: 'CheckBox, the checked glyph',
+	CheckBoxIndeterminateGlyph: 'CheckBox, the indeterminate glyph',
+
+	CheckBoxBackgroundUnchecked: 'CheckBox background, unchecked at rest',
+	CheckBoxBackgroundUncheckedPointerOver: 'CheckBox background, unchecked pointer over',
+	CheckBoxBackgroundUncheckedPressed: 'CheckBox background, unchecked pressed',
+	CheckBoxBackgroundUncheckedDisabled: 'CheckBox background, unchecked disabled',
+	CheckBoxBackgroundChecked: 'CheckBox background, checked at rest',
+	CheckBoxBackgroundCheckedPointerOver: 'CheckBox background, checked pointer over',
+	CheckBoxBackgroundCheckedPressed: 'CheckBox background, checked pressed',
+	CheckBoxBackgroundCheckedDisabled: 'CheckBox background, checked disabled',
+	CheckBoxBackgroundIndeterminate: 'CheckBox background, indeterminate at rest',
+	CheckBoxBackgroundIndeterminatePointerOver: 'CheckBox background, indeterminate pointer over',
+	CheckBoxBackgroundIndeterminatePressed: 'CheckBox background, indeterminate pressed',
+	CheckBoxBackgroundIndeterminateDisabled: 'CheckBox background, indeterminate disabled',
+
+	CheckBoxBorderBrushUnchecked: 'CheckBox border, unchecked at rest',
+	CheckBoxBorderBrushUncheckedPointerOver: 'CheckBox border, unchecked pointer over',
+	CheckBoxBorderBrushUncheckedPressed: 'CheckBox border, unchecked pressed',
+	CheckBoxBorderBrushUncheckedDisabled: 'CheckBox border, unchecked disabled',
+	CheckBoxBorderBrushChecked: 'CheckBox border, checked at rest',
+	CheckBoxBorderBrushCheckedPointerOver: 'CheckBox border, checked pointer over',
+	CheckBoxBorderBrushCheckedPressed: 'CheckBox border, checked pressed',
+	CheckBoxBorderBrushCheckedDisabled: 'CheckBox border, checked disabled',
+	CheckBoxBorderBrushIndeterminate: 'CheckBox border, indeterminate at rest',
+	CheckBoxBorderBrushIndeterminatePointerOver: 'CheckBox border, indeterminate pointer over',
+	CheckBoxBorderBrushIndeterminatePressed: 'CheckBox border, indeterminate pressed',
+	CheckBoxBorderBrushIndeterminateDisabled: 'CheckBox border, indeterminate disabled',
+
+	CheckBoxForegroundUnchecked: 'CheckBox content foreground, unchecked at rest',
+	CheckBoxForegroundUncheckedPointerOver: 'CheckBox content foreground, unchecked pointer over',
+	CheckBoxForegroundUncheckedPressed: 'CheckBox content foreground, unchecked pressed',
+	CheckBoxForegroundUncheckedDisabled: 'CheckBox content foreground, unchecked disabled',
+	CheckBoxForegroundChecked: 'CheckBox content foreground, checked at rest',
+	CheckBoxForegroundCheckedPointerOver: 'CheckBox content foreground, checked pointer over',
+	CheckBoxForegroundCheckedPressed: 'CheckBox content foreground, checked pressed',
+	CheckBoxForegroundCheckedDisabled: 'CheckBox content foreground, checked disabled',
+	CheckBoxForegroundIndeterminate: 'CheckBox content foreground, indeterminate at rest',
+	CheckBoxForegroundIndeterminatePointerOver:
+		'CheckBox content foreground, indeterminate pointer over',
+	CheckBoxForegroundIndeterminatePressed: 'CheckBox content foreground, indeterminate pressed',
+	CheckBoxForegroundIndeterminateDisabled: 'CheckBox content foreground, indeterminate disabled',
+
+	CheckBoxCheckBackgroundFillUnchecked: 'CheckBox box fill, unchecked at rest',
+	CheckBoxCheckBackgroundFillUncheckedPointerOver: 'CheckBox box fill, unchecked pointer over',
+	CheckBoxCheckBackgroundFillUncheckedPressed: 'CheckBox box fill, unchecked pressed',
+	CheckBoxCheckBackgroundFillUncheckedDisabled: 'CheckBox box fill, unchecked disabled',
+	CheckBoxCheckBackgroundFillChecked: 'CheckBox box fill, checked at rest',
+	CheckBoxCheckBackgroundFillCheckedPointerOver: 'CheckBox box fill, checked pointer over',
+	CheckBoxCheckBackgroundFillCheckedPressed: 'CheckBox box fill, checked pressed',
+	CheckBoxCheckBackgroundFillCheckedDisabled: 'CheckBox box fill, checked disabled',
+	CheckBoxCheckBackgroundFillIndeterminate: 'CheckBox box fill, indeterminate at rest',
+	CheckBoxCheckBackgroundFillIndeterminatePointerOver:
+		'CheckBox box fill, indeterminate pointer over',
+	CheckBoxCheckBackgroundFillIndeterminatePressed: 'CheckBox box fill, indeterminate pressed',
+	CheckBoxCheckBackgroundFillIndeterminateDisabled: 'CheckBox box fill, indeterminate disabled',
+
+	CheckBoxCheckBackgroundStrokeUnchecked: 'CheckBox box stroke, unchecked at rest',
+	CheckBoxCheckBackgroundStrokeUncheckedPointerOver: 'CheckBox box stroke, unchecked pointer over',
+	CheckBoxCheckBackgroundStrokeUncheckedPressed: 'CheckBox box stroke, unchecked pressed',
+	CheckBoxCheckBackgroundStrokeUncheckedDisabled: 'CheckBox box stroke, unchecked disabled',
+	CheckBoxCheckBackgroundStrokeChecked: 'CheckBox box stroke, checked at rest',
+	CheckBoxCheckBackgroundStrokeCheckedPointerOver: 'CheckBox box stroke, checked pointer over',
+	CheckBoxCheckBackgroundStrokeCheckedPressed: 'CheckBox box stroke, checked pressed',
+	CheckBoxCheckBackgroundStrokeCheckedDisabled: 'CheckBox box stroke, checked disabled',
+	CheckBoxCheckBackgroundStrokeIndeterminate: 'CheckBox box stroke, indeterminate at rest',
+	CheckBoxCheckBackgroundStrokeIndeterminatePointerOver:
+		'CheckBox box stroke, indeterminate pointer over',
+	CheckBoxCheckBackgroundStrokeIndeterminatePressed: 'CheckBox box stroke, indeterminate pressed',
+	CheckBoxCheckBackgroundStrokeIndeterminateDisabled: 'CheckBox box stroke, indeterminate disabled',
+
+	CheckBoxCheckGlyphForegroundChecked: 'CheckBox glyph, checked at rest',
+	CheckBoxCheckGlyphForegroundCheckedPointerOver: 'CheckBox glyph, checked pointer over',
+	CheckBoxCheckGlyphForegroundCheckedPressed: 'CheckBox glyph, checked pressed',
+	CheckBoxCheckGlyphForegroundCheckedDisabled: 'CheckBox glyph, checked disabled',
+	CheckBoxCheckGlyphForegroundIndeterminate: 'CheckBox glyph, indeterminate at rest',
+	CheckBoxCheckGlyphForegroundIndeterminatePointerOver:
+		'CheckBox glyph, indeterminate pointer over',
+	CheckBoxCheckGlyphForegroundIndeterminatePressed: 'CheckBox glyph, indeterminate pressed',
+	CheckBoxCheckGlyphForegroundIndeterminateDisabled: 'CheckBox glyph, indeterminate disabled',
+
+	// Seeded only so the EXCLUDED list below can name them — the generator stops if an
+	// EXCLUDED key is not selected. The four unchecked glyph brushes, the focus visual's
+	// inset, and the fourteen pre-Fluent `*ThemeBrush` resources; the reasons are the
+	// three above, one each.
+	CheckBoxCheckGlyphForegroundUnchecked: 'Unchecked glyph, listed for EXCLUDED',
+	CheckBoxCheckGlyphForegroundUncheckedPointerOver: 'Unchecked glyph, listed for EXCLUDED',
+	CheckBoxCheckGlyphForegroundUncheckedPressed: 'Unchecked glyph, listed for EXCLUDED',
+	CheckBoxCheckGlyphForegroundUncheckedDisabled: 'Unchecked glyph, listed for EXCLUDED',
+
+	CheckBoxFocusVisualMargin: 'System focus visual inset, listed for EXCLUDED',
+
+	CheckBoxBackgroundThemeBrush: 'Pre-Fluent CheckBox *ThemeBrush family, listed for EXCLUDED',
+	CheckBoxBorderThemeBrush: 'Pre-Fluent CheckBox *ThemeBrush family, listed for EXCLUDED',
+	CheckBoxContentDisabledForegroundThemeBrush:
+		'Pre-Fluent CheckBox *ThemeBrush family, listed for EXCLUDED',
+	CheckBoxContentForegroundThemeBrush:
+		'Pre-Fluent CheckBox *ThemeBrush family, listed for EXCLUDED',
+	CheckBoxDisabledBackgroundThemeBrush:
+		'Pre-Fluent CheckBox *ThemeBrush family, listed for EXCLUDED',
+	CheckBoxDisabledBorderThemeBrush: 'Pre-Fluent CheckBox *ThemeBrush family, listed for EXCLUDED',
+	CheckBoxDisabledForegroundThemeBrush:
+		'Pre-Fluent CheckBox *ThemeBrush family, listed for EXCLUDED',
+	CheckBoxForegroundThemeBrush: 'Pre-Fluent CheckBox *ThemeBrush family, listed for EXCLUDED',
+	CheckBoxPointerOverBackgroundThemeBrush:
+		'Pre-Fluent CheckBox *ThemeBrush family, listed for EXCLUDED',
+	CheckBoxPointerOverBorderThemeBrush:
+		'Pre-Fluent CheckBox *ThemeBrush family, listed for EXCLUDED',
+	CheckBoxPointerOverForegroundThemeBrush:
+		'Pre-Fluent CheckBox *ThemeBrush family, listed for EXCLUDED',
+	CheckBoxPressedBackgroundThemeBrush:
+		'Pre-Fluent CheckBox *ThemeBrush family, listed for EXCLUDED',
+	CheckBoxPressedBorderThemeBrush: 'Pre-Fluent CheckBox *ThemeBrush family, listed for EXCLUDED',
+	CheckBoxPressedForegroundThemeBrush: 'Pre-Fluent CheckBox *ThemeBrush family, listed for EXCLUDED'
+};
+
 export const SHELL_KEYS = {
 	// NavigationView — the pane, the content area, and the metrics that size them.
 	NavigationViewDefaultPaneBackground: 'NavigationView pane, the surface behind the items',
@@ -522,7 +680,60 @@ export const EXCLUDED = {
 	TextBoxButtonPressedBorderThemeBrush:
 		'Pre-Fluent TextBox *ThemeBrush family, not referenced by the current template',
 	TextBoxButtonPressedForegroundThemeBrush:
-		'Pre-Fluent TextBox *ThemeBrush family, not referenced by the current template'
+		'Pre-Fluent TextBox *ThemeBrush family, not referenced by the current template',
+
+	// The four brushes an unchecked CheckBox would paint its glyph with, if it painted
+	// one. It does not: the four unchecked visual states of
+	// `CheckBox_themeresources.xaml:297` set `AnimatedIcon.State` to a `…Off` value and the
+	// glyph is hidden by the animation. These exist for the down-level path, where
+	// `AnimatedIcon` shows its `FallbackIconSource` and ignores state, so the glyph is
+	// hidden by being painted the colour of the fill instead — which holds in Light and
+	// Dark and fails in HighContrast, where pointer-over pairs a `Highlight` glyph with a
+	// `HighlightText` fill. WD-006 accepts the fallback glyph, not a checkmark on an
+	// unchecked box, so nothing here reads these four.
+	CheckBoxCheckGlyphForegroundUnchecked:
+		'Unchecked CheckBox draws no glyph; the animated original hides it by state',
+	CheckBoxCheckGlyphForegroundUncheckedPointerOver:
+		'Unchecked CheckBox draws no glyph; the animated original hides it by state',
+	CheckBoxCheckGlyphForegroundUncheckedPressed:
+		'Unchecked CheckBox draws no glyph; the animated original hides it by state',
+	CheckBoxCheckGlyphForegroundUncheckedDisabled:
+		'Unchecked CheckBox draws no glyph; the animated original hides it by state',
+
+	// The inset of the system focus visual, which no control in this library draws. WD-008.
+	CheckBoxFocusVisualMargin: 'System focus visual inset; WD-008 records that none is drawn',
+
+	// The pre-Fluent CheckBox `*ThemeBrush` family, defined in CheckBox_themeresources.xaml
+	// and referenced nowhere in the template at :297. Same family and same reason as
+	// Button's ten and TextBox's seventeen.
+	CheckBoxBackgroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current CheckBox template',
+	CheckBoxBorderThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current CheckBox template',
+	CheckBoxContentDisabledForegroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current CheckBox template',
+	CheckBoxContentForegroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current CheckBox template',
+	CheckBoxDisabledBackgroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current CheckBox template',
+	CheckBoxDisabledBorderThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current CheckBox template',
+	CheckBoxDisabledForegroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current CheckBox template',
+	CheckBoxForegroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current CheckBox template',
+	CheckBoxPointerOverBackgroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current CheckBox template',
+	CheckBoxPointerOverBorderThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current CheckBox template',
+	CheckBoxPointerOverForegroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current CheckBox template',
+	CheckBoxPressedBackgroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current CheckBox template',
+	CheckBoxPressedBorderThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current CheckBox template',
+	CheckBoxPressedForegroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current CheckBox template'
 };
 
 /**
@@ -584,7 +795,13 @@ export const DOUBLE_LENGTHS = {
 	TitleBarRightPaddingWidth: 'the inset the window controls reserve',
 	TitleBarTitleMinWidth: 'the title text',
 
-	ButtonBorderThemeThickness: 'the border all three Button styles share'
+	ButtonBorderThemeThickness: 'the border all three Button styles share',
+
+	CheckBoxSize: 'the box a CheckBox draws its glyph in',
+	CheckBoxBorderThickness: "the stroke around a CheckBox's box",
+	CheckBoxGlyphSize: "the glyph inside a CheckBox's box",
+	CheckBoxHeight: 'the row a CheckBox occupies',
+	CheckBoxMinWidth: 'the row a CheckBox occupies'
 };
 
 /**
@@ -596,7 +813,9 @@ export const DOUBLE_LENGTHS = {
  * value the generator should stop on rather than escape.
  */
 export const GLYPHS = {
-	NavigationViewItemExpandedGlyph: "an expandable item's chevron"
+	NavigationViewItemExpandedGlyph: "an expandable item's chevron",
+	CheckBoxCheckedGlyph: "a checked CheckBox's checkmark",
+	CheckBoxIndeterminateGlyph: "an indeterminate CheckBox's dash"
 };
 
 /**
