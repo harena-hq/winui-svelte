@@ -14,6 +14,8 @@ export { default as RadioButton } from './components/RadioButton.svelte';
 export type { RadioButtonProps } from './components/RadioButton.svelte';
 export { default as TextBox } from './components/TextBox.svelte';
 export type { TextBoxProps } from './components/TextBox.svelte';
+export { default as ToggleSwitch } from './components/ToggleSwitch.svelte';
+export type { ToggleSwitchProps } from './components/ToggleSwitch.svelte';
 export type {
 	NavigationViewDisplayMode,
 	NavigationViewEntry,

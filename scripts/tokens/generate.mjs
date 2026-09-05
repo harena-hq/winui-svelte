@@ -16,6 +16,7 @@ import {
 	PLATFORM_BRUSHES,
 	SYSTEM_COLORS,
 	TEXTBOX_KEYS,
+	TOGGLESWITCH_KEYS,
 	TYPE_RAMP
 } from './manifest.mjs';
 
@@ -697,7 +698,8 @@ function select(resources) {
 		['BUTTON_KEYS', BUTTON_KEYS],
 		['TEXTBOX_KEYS', TEXTBOX_KEYS],
 		['CHECKBOX_KEYS', CHECKBOX_KEYS],
-		['RADIOBUTTON_KEYS', RADIOBUTTON_KEYS]
+		['RADIOBUTTON_KEYS', RADIOBUTTON_KEYS],
+		['TOGGLESWITCH_KEYS', TOGGLESWITCH_KEYS]
 	];
 	for (let i = 0; i < SEED_SETS.length; i++)
 		for (let j = i + 1; j < SEED_SETS.length; j++) {
