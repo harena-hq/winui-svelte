@@ -39,6 +39,7 @@ import {
 const ROOT = fileURLToPath(new URL('../../', import.meta.url)).replace(/[\\/]$/, '');
 
 const RECORD = 'data/winui-tokens.json';
+const FRAMEWORK_RECORD = 'data/winui-framework.json';
 const OUTPUT = 'packages/winui-svelte/src/lib/tokens/tokens.css';
 const RAMP_OUTPUT = 'packages/winui-svelte/src/lib/tokens/type-ramp.css';
 
@@ -681,8 +682,17 @@ function references(record) {
  * acceptance surface names, indexed by key and theme, with the invariants the rest of
  * this file relies on already asserted.
  */
-function select(resources) {
+function select(resources, framework) {
 	const files = new Set(SOURCE_FILES);
+
+	// D23: on a key both dictionaries define, the control pin wins. The framework
+	// dictionary answers only for a key the pin does not define **at all** — never
+	// theme by theme, because merging one key's themes across two dictionaries would
+	// produce a definition neither of them makes and no source could be cited for it.
+	const definitionsOf = (key) => {
+		const own = resources.filter((record) => record.key === key);
+		return own.length ? own : framework.filter((record) => record.key === key);
+	};
 	// One seed map per surface that reads its own keys: the Design pages name theirs as
 	// page content, and the shell and each control tranche read theirs in component CSS.
 	// Each stays deletable with the thing that needs it, and they merge here because the
@@ -720,8 +730,8 @@ function select(resources) {
 	// that record joins the selection on its own merits.
 	const initial = resources.filter((record) => files.has(record.file));
 	for (const key of seeds)
-		if (!resources.some((record) => record.key === key))
-			fail(`${seedMap(key)} lists \`${key}\`, which the record file does not contain`);
+		if (!definitionsOf(key).length)
+			fail(`${seedMap(key)} lists \`${key}\`, which neither record file contains`);
 	// Unconditional, and not `&& seeds.size === 0`: the seeds cannot stand in for the base
 	// files. A record file that matches none of them is a re-pin that moved or renamed
 	// something, and the seeds being non-empty would otherwise let this run produce a
@@ -746,8 +756,7 @@ function select(resources) {
 		// looking through the XAML for a conflict that is not there.
 		if (byKey.has(key))
 			fail(`${seedMap(key)} lists \`${key}\`, which the base files already define`);
-		for (const record of resources) {
-			if (record.key !== key) continue;
+		for (const record of definitionsOf(key)) {
 			const themes = byKey.get(record.key) ?? new Map();
 			if (themes.has(record.theme))
 				fail(`${at(record)}: defined twice in the ${record.theme ?? 'theme-independent'} scope`);
@@ -781,16 +790,18 @@ function select(resources) {
 			for (const target of references(record)) {
 				if (!byKey.has(target) && !external.has(target)) {
 					// A reference the seeds do not define may still be a real record in
-					// the full extraction — pull it in, and the walk continues from there.
-					const pulled = resources.filter((record) => record.key === target);
+					// either record file — pull it in, and the walk continues from there.
+					const pulled = definitionsOf(target);
 					if (pulled.length === 0)
 						fail(`${at(record)} references \`${target}\`, which nothing in the selection defines`);
 					for (const record of pulled) {
 						const themes = byKey.get(record.key) ?? new Map();
 						// The same stop as the other two passes, and the one most likely to
-						// fire: this path reaches the whole extraction, where 48 (key, theme)
-						// pairs are defined in more than one file. Keeping the first would
-						// answer a precedence question by whichever filename sorts earlier.
+						// fire: this path reaches both record files, where a key the pin
+						// defines in one theme and the framework defines in another would
+						// land two records on the same theme — a definition neither of them
+						// makes. Keeping the first would answer a precedence question by
+						// whichever filename sorts earlier.
 						if (themes.has(record.theme))
 							fail(
 								`${at(record)}: defined twice in the ${record.theme ?? 'theme-independent'} ` +
@@ -875,7 +886,13 @@ function select(resources) {
 	// the closure was extended. A key the extraction defines twice — once in a base
 	// file and once outside it — has both records in `resources`; only the one the
 	// selection actually kept joins the rebuild.
-	const records = resources.filter((record) => byKey.get(record.key)?.get(record.theme) === record);
+	//
+	// A framework-sourced key emits after every pin key, in framework document order.
+	// Pinning a fallback after the cascade means a key the pin does not define cannot
+	// reorder one the pin already emits.
+	const records = [...resources, ...framework].filter(
+		(record) => byKey.get(record.key)?.get(record.theme) === record
+	);
 
 	return { records, byKey, external: reached.size - byKey.size };
 }
@@ -937,7 +954,7 @@ function topLevelParts(args) {
 	return parts;
 }
 
-function stylesheet(doc, selection, extraEmitted) {
+function stylesheet(doc, framework, selection, extraEmitted) {
 	const { records, byKey, external } = selection;
 
 	// The HighContrast dictionary, keyed by resource name, for the palette resolution
@@ -1018,7 +1035,8 @@ function stylesheet(doc, selection, extraEmitted) {
 	const lines = [
 		'/*',
 		' * WinUI 3 design tokens, generated by scripts/tokens/generate.mjs from',
-		` * ${RECORD} — microsoft/microsoft-ui-xaml @ ${doc.source.commit}.`,
+		` * ${RECORD} — microsoft/microsoft-ui-xaml @ ${doc.source.commit}, and`,
+		` * ${FRAMEWORK_RECORD} — ${framework.source.package} ${framework.source.version}.`,
 		' *',
 		' * Generated file — do not edit. Run `pnpm tokens:build`.',
 		' */',
@@ -1070,19 +1088,20 @@ function stylesheet(doc, selection, extraEmitted) {
 
 async function build() {
 	const doc = JSON.parse(await readFile(join(ROOT, RECORD), 'utf8'));
+	const framework = JSON.parse(await readFile(join(ROOT, FRAMEWORK_RECORD), 'utf8'));
 
 	// One selection, computed here and handed to both writers. Selecting twice would
 	// read the same records twice to answer the same question, and would leave two
 	// callers able to drift apart on which one they asked. The order matters:
 	// `stylesheet()`'s completeness check has to know which keys the other file
 	// already emitted, and the only way to know is to build that one first.
-	const selection = select(doc.resources);
+	const selection = select(doc.resources, framework.resources);
 	const { css: rampCss, emitted: rampEmitted } = typeRamp(
 		selection.records,
 		selection.byKey,
 		doc.source.commit
 	);
-	const { css, stats } = stylesheet(doc, selection, rampEmitted);
+	const { css, stats } = stylesheet(doc, framework, selection, rampEmitted);
 	const rampLines = rampCss.split('\n').length - 1;
 	return {
 		files: { [OUTPUT]: css, [RAMP_OUTPUT]: rampCss },
@@ -1104,7 +1123,7 @@ async function main() {
 
 	console.log(
 		[
-			`source            ${RECORD}, ${SOURCE_FILES.length} base files`,
+			`source            ${RECORD} + ${FRAMEWORK_RECORD}, ${SOURCE_FILES.length} base files`,
 			`selection         ${stats.selected} keys, closing over ${stats.external} OS-supplied names`,
 			`emitted           ${stats.emitted} keys`,
 			`excluded          ${stats.excluded} keys`,
