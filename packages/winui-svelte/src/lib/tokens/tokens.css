@@ -436,6 +436,51 @@
 	--winui-TextOnAccentFillColorDefault: #ffffff;
 	--winui-ControlAAStrokeColorDefault: #00000072;
 	--winui-TextOnAccentFillColorDefaultBrush: var(--winui-TextOnAccentFillColorDefault);
+	--winui-RadioButtonBorderThemeThickness: 1px;
+	--winui-RadioButtonForeground: var(--winui-TextFillColorPrimaryBrush);
+	--winui-RadioButtonForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
+	--winui-RadioButtonForegroundPressed: var(--winui-TextFillColorPrimaryBrush);
+	--winui-RadioButtonForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+	--winui-RadioButtonBackground: var(--winui-ControlFillColorTransparentBrush);
+	--winui-RadioButtonBackgroundPointerOver: var(--winui-ControlFillColorTransparentBrush);
+	--winui-RadioButtonBackgroundPressed: var(--winui-ControlFillColorTransparentBrush);
+	--winui-RadioButtonBackgroundDisabled: var(--winui-ControlFillColorTransparentBrush);
+	--winui-RadioButtonBorderBrush: var(--winui-ControlFillColorTransparentBrush);
+	--winui-RadioButtonBorderBrushPointerOver: var(--winui-ControlFillColorTransparentBrush);
+	--winui-RadioButtonBorderBrushPressed: var(--winui-ControlFillColorTransparentBrush);
+	--winui-RadioButtonBorderBrushDisabled: var(--winui-ControlFillColorTransparentBrush);
+	--winui-RadioButtonOuterEllipseStroke: var(--winui-ControlStrongStrokeColorDefaultBrush);
+	--winui-RadioButtonOuterEllipseStrokePointerOver: var(
+		--winui-ControlStrongStrokeColorDefaultBrush
+	);
+	--winui-RadioButtonOuterEllipseStrokePressed: var(--winui-ControlStrongStrokeColorDisabledBrush);
+	--winui-RadioButtonOuterEllipseStrokeDisabled: var(--winui-ControlStrongStrokeColorDisabledBrush);
+	--winui-RadioButtonOuterEllipseFill: var(--winui-ControlAltFillColorSecondaryBrush);
+	--winui-RadioButtonOuterEllipseFillPointerOver: var(--winui-ControlAltFillColorTertiaryBrush);
+	--winui-RadioButtonOuterEllipseFillPressed: var(--winui-ControlAltFillColorQuarternaryBrush);
+	--winui-RadioButtonOuterEllipseFillDisabled: var(--winui-ControlAltFillColorDisabledBrush);
+	--winui-RadioButtonOuterEllipseCheckedStroke: var(--winui-AccentFillColorDefaultBrush);
+	--winui-RadioButtonOuterEllipseCheckedStrokePointerOver: var(
+		--winui-AccentFillColorSecondaryBrush
+	);
+	--winui-RadioButtonOuterEllipseCheckedStrokePressed: var(--winui-AccentFillColorTertiaryBrush);
+	--winui-RadioButtonOuterEllipseCheckedStrokeDisabled: var(--winui-AccentFillColorDisabledBrush);
+	--winui-RadioButtonOuterEllipseCheckedFill: var(--winui-AccentFillColorDefaultBrush);
+	--winui-RadioButtonOuterEllipseCheckedFillPointerOver: var(--winui-AccentFillColorSecondaryBrush);
+	--winui-RadioButtonOuterEllipseCheckedFillPressed: var(--winui-AccentFillColorTertiaryBrush);
+	--winui-RadioButtonOuterEllipseCheckedFillDisabled: var(--winui-AccentFillColorDisabledBrush);
+	--winui-RadioButtonCheckGlyphFill: var(--winui-TextOnAccentFillColorPrimaryBrush);
+	--winui-RadioButtonCheckGlyphFillPointerOver: var(--winui-TextOnAccentFillColorPrimaryBrush);
+	--winui-RadioButtonCheckGlyphFillPressed: var(--winui-TextOnAccentFillColorPrimaryBrush);
+	--winui-RadioButtonCheckGlyphFillDisabled: var(--winui-TextOnAccentFillColorPrimary);
+	--winui-RadioButtonCheckGlyphStroke: var(--winui-CircleElevationBorderBrush);
+	--winui-RadioButtonCheckGlyphStrokePointerOver: var(--winui-CircleElevationBorderBrush);
+	--winui-RadioButtonCheckGlyphStrokePressed: var(--winui-CircleElevationBorderBrush);
+	--winui-RadioButtonCheckGlyphStrokeDisabled: var(--winui-CircleElevationBorderBrush);
+	--winui-RadioButtonCheckGlyphStrokeChecked: var(--winui-AccentControlElevationBorderBrush);
+	--winui-RadioButtonCheckGlyphSize: 12px;
+	--winui-RadioButtonCheckGlyphPointerOverSize: 14px;
+	--winui-RadioButtonCheckGlyphPressedOverSize: 10px;
 	--winui-CaptionTextBlockFontSize: 12px;
 	--winui-BodyTextBlockFontSize: 14px;
 	--winui-BodyLargeTextBlockFontSize: 18px;
@@ -1009,6 +1054,48 @@
 	--winui-TextOnAccentFillColorDefault: #ffffff;
 	--winui-ControlAAStrokeColorDefault: #ffffff8b;
 	--winui-TextOnAccentFillColorDefaultBrush: var(--winui-TextOnAccentFillColorDefault);
+	--winui-RadioButtonBorderThemeThickness: 1px;
+	--winui-RadioButtonForeground: var(--winui-TextFillColorPrimaryBrush);
+	--winui-RadioButtonForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
+	--winui-RadioButtonForegroundPressed: var(--winui-TextFillColorPrimaryBrush);
+	--winui-RadioButtonForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+	--winui-RadioButtonBackground: var(--winui-ControlFillColorTransparentBrush);
+	--winui-RadioButtonBackgroundPointerOver: var(--winui-ControlFillColorTransparentBrush);
+	--winui-RadioButtonBackgroundPressed: var(--winui-ControlFillColorTransparentBrush);
+	--winui-RadioButtonBackgroundDisabled: var(--winui-ControlFillColorTransparentBrush);
+	--winui-RadioButtonBorderBrush: var(--winui-ControlFillColorTransparentBrush);
+	--winui-RadioButtonBorderBrushPointerOver: var(--winui-ControlFillColorTransparentBrush);
+	--winui-RadioButtonBorderBrushPressed: var(--winui-ControlFillColorTransparentBrush);
+	--winui-RadioButtonBorderBrushDisabled: var(--winui-ControlFillColorTransparentBrush);
+	--winui-RadioButtonOuterEllipseStroke: var(--winui-ControlStrongStrokeColorDefaultBrush);
+	--winui-RadioButtonOuterEllipseStrokePointerOver: var(
+		--winui-ControlStrongStrokeColorDefaultBrush
+	);
+	--winui-RadioButtonOuterEllipseStrokePressed: var(--winui-ControlStrongStrokeColorDisabledBrush);
+	--winui-RadioButtonOuterEllipseStrokeDisabled: var(--winui-ControlStrongStrokeColorDisabledBrush);
+	--winui-RadioButtonOuterEllipseFill: var(--winui-ControlAltFillColorSecondaryBrush);
+	--winui-RadioButtonOuterEllipseFillPointerOver: var(--winui-ControlAltFillColorTertiaryBrush);
+	--winui-RadioButtonOuterEllipseFillPressed: var(--winui-ControlAltFillColorQuarternaryBrush);
+	--winui-RadioButtonOuterEllipseFillDisabled: var(--winui-ControlAltFillColorDisabledBrush);
+	--winui-RadioButtonOuterEllipseCheckedStroke: var(--winui-AccentFillColorDefaultBrush);
+	--winui-RadioButtonOuterEllipseCheckedStrokePointerOver: var(
+		--winui-AccentFillColorSecondaryBrush
+	);
+	--winui-RadioButtonOuterEllipseCheckedStrokePressed: var(--winui-AccentFillColorTertiaryBrush);
+	--winui-RadioButtonOuterEllipseCheckedStrokeDisabled: var(--winui-AccentFillColorDisabledBrush);
+	--winui-RadioButtonOuterEllipseCheckedFill: var(--winui-AccentFillColorDefaultBrush);
+	--winui-RadioButtonOuterEllipseCheckedFillPointerOver: var(--winui-AccentFillColorSecondaryBrush);
+	--winui-RadioButtonOuterEllipseCheckedFillPressed: var(--winui-AccentFillColorTertiaryBrush);
+	--winui-RadioButtonOuterEllipseCheckedFillDisabled: var(--winui-AccentFillColorDisabledBrush);
+	--winui-RadioButtonCheckGlyphFill: var(--winui-TextOnAccentFillColorPrimaryBrush);
+	--winui-RadioButtonCheckGlyphFillPointerOver: var(--winui-TextOnAccentFillColorPrimaryBrush);
+	--winui-RadioButtonCheckGlyphFillPressed: var(--winui-TextOnAccentFillColorPrimaryBrush);
+	--winui-RadioButtonCheckGlyphFillDisabled: var(--winui-TextOnAccentFillColorPrimary);
+	--winui-RadioButtonCheckGlyphStroke: var(--winui-CircleElevationBorderBrush);
+	--winui-RadioButtonCheckGlyphStrokePointerOver: var(--winui-CircleElevationBorderBrush);
+	--winui-RadioButtonCheckGlyphStrokePressed: var(--winui-CircleElevationBorderBrush);
+	--winui-RadioButtonCheckGlyphStrokeDisabled: var(--winui-CircleElevationBorderBrush);
+	--winui-RadioButtonCheckGlyphStrokeChecked: var(--winui-AccentControlElevationBorderBrush);
 	--winui-TemporaryTextFillColorDisabled: #fefefe5d;
 	--winui-TextControlBackground: var(--winui-ControlFillColorDefaultBrush);
 	--winui-TextControlBackgroundPointerOver: var(--winui-ControlFillColorSecondaryBrush);
@@ -1541,6 +1628,54 @@
 		--winui-TextOnAccentFillColorDefault: #ffffff;
 		--winui-ControlAAStrokeColorDefault: #ffffff8b;
 		--winui-TextOnAccentFillColorDefaultBrush: var(--winui-TextOnAccentFillColorDefault);
+		--winui-RadioButtonBorderThemeThickness: 1px;
+		--winui-RadioButtonForeground: var(--winui-TextFillColorPrimaryBrush);
+		--winui-RadioButtonForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
+		--winui-RadioButtonForegroundPressed: var(--winui-TextFillColorPrimaryBrush);
+		--winui-RadioButtonForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+		--winui-RadioButtonBackground: var(--winui-ControlFillColorTransparentBrush);
+		--winui-RadioButtonBackgroundPointerOver: var(--winui-ControlFillColorTransparentBrush);
+		--winui-RadioButtonBackgroundPressed: var(--winui-ControlFillColorTransparentBrush);
+		--winui-RadioButtonBackgroundDisabled: var(--winui-ControlFillColorTransparentBrush);
+		--winui-RadioButtonBorderBrush: var(--winui-ControlFillColorTransparentBrush);
+		--winui-RadioButtonBorderBrushPointerOver: var(--winui-ControlFillColorTransparentBrush);
+		--winui-RadioButtonBorderBrushPressed: var(--winui-ControlFillColorTransparentBrush);
+		--winui-RadioButtonBorderBrushDisabled: var(--winui-ControlFillColorTransparentBrush);
+		--winui-RadioButtonOuterEllipseStroke: var(--winui-ControlStrongStrokeColorDefaultBrush);
+		--winui-RadioButtonOuterEllipseStrokePointerOver: var(
+			--winui-ControlStrongStrokeColorDefaultBrush
+		);
+		--winui-RadioButtonOuterEllipseStrokePressed: var(
+			--winui-ControlStrongStrokeColorDisabledBrush
+		);
+		--winui-RadioButtonOuterEllipseStrokeDisabled: var(
+			--winui-ControlStrongStrokeColorDisabledBrush
+		);
+		--winui-RadioButtonOuterEllipseFill: var(--winui-ControlAltFillColorSecondaryBrush);
+		--winui-RadioButtonOuterEllipseFillPointerOver: var(--winui-ControlAltFillColorTertiaryBrush);
+		--winui-RadioButtonOuterEllipseFillPressed: var(--winui-ControlAltFillColorQuarternaryBrush);
+		--winui-RadioButtonOuterEllipseFillDisabled: var(--winui-ControlAltFillColorDisabledBrush);
+		--winui-RadioButtonOuterEllipseCheckedStroke: var(--winui-AccentFillColorDefaultBrush);
+		--winui-RadioButtonOuterEllipseCheckedStrokePointerOver: var(
+			--winui-AccentFillColorSecondaryBrush
+		);
+		--winui-RadioButtonOuterEllipseCheckedStrokePressed: var(--winui-AccentFillColorTertiaryBrush);
+		--winui-RadioButtonOuterEllipseCheckedStrokeDisabled: var(--winui-AccentFillColorDisabledBrush);
+		--winui-RadioButtonOuterEllipseCheckedFill: var(--winui-AccentFillColorDefaultBrush);
+		--winui-RadioButtonOuterEllipseCheckedFillPointerOver: var(
+			--winui-AccentFillColorSecondaryBrush
+		);
+		--winui-RadioButtonOuterEllipseCheckedFillPressed: var(--winui-AccentFillColorTertiaryBrush);
+		--winui-RadioButtonOuterEllipseCheckedFillDisabled: var(--winui-AccentFillColorDisabledBrush);
+		--winui-RadioButtonCheckGlyphFill: var(--winui-TextOnAccentFillColorPrimaryBrush);
+		--winui-RadioButtonCheckGlyphFillPointerOver: var(--winui-TextOnAccentFillColorPrimaryBrush);
+		--winui-RadioButtonCheckGlyphFillPressed: var(--winui-TextOnAccentFillColorPrimaryBrush);
+		--winui-RadioButtonCheckGlyphFillDisabled: var(--winui-TextOnAccentFillColorPrimary);
+		--winui-RadioButtonCheckGlyphStroke: var(--winui-CircleElevationBorderBrush);
+		--winui-RadioButtonCheckGlyphStrokePointerOver: var(--winui-CircleElevationBorderBrush);
+		--winui-RadioButtonCheckGlyphStrokePressed: var(--winui-CircleElevationBorderBrush);
+		--winui-RadioButtonCheckGlyphStrokeDisabled: var(--winui-CircleElevationBorderBrush);
+		--winui-RadioButtonCheckGlyphStrokeChecked: var(--winui-AccentControlElevationBorderBrush);
 		--winui-TemporaryTextFillColorDisabled: #fefefe5d;
 		--winui-TextControlBackground: var(--winui-ControlFillColorDefaultBrush);
 		--winui-TextControlBackgroundPointerOver: var(--winui-ControlFillColorSecondaryBrush);
@@ -2007,6 +2142,48 @@
 	--winui-TextOnAccentFillColorDefault: #ffffff;
 	--winui-ControlAAStrokeColorDefault: #ffffff8b;
 	--winui-TextOnAccentFillColorDefaultBrush: var(--winui-SystemColorWindowTextColor);
+	--winui-RadioButtonBorderThemeThickness: 1px;
+	--winui-RadioButtonForeground: var(--winui-SystemColorButtonTextColorBrush);
+	--winui-RadioButtonForegroundPointerOver: var(--winui-SystemColorButtonTextColorBrush);
+	--winui-RadioButtonForegroundPressed: var(--winui-SystemColorButtonTextColorBrush);
+	--winui-RadioButtonForegroundDisabled: var(--winui-SystemColorGrayTextColorBrush);
+	--winui-RadioButtonBackground: var(--winui-SystemControlTransparentBrush);
+	--winui-RadioButtonBackgroundPointerOver: var(--winui-SystemControlTransparentBrush);
+	--winui-RadioButtonBackgroundPressed: var(--winui-SystemControlTransparentBrush);
+	--winui-RadioButtonBackgroundDisabled: var(--winui-SystemControlTransparentBrush);
+	--winui-RadioButtonBorderBrush: var(--winui-SystemControlTransparentBrush);
+	--winui-RadioButtonBorderBrushPointerOver: var(--winui-SystemControlTransparentBrush);
+	--winui-RadioButtonBorderBrushPressed: var(--winui-SystemControlTransparentBrush);
+	--winui-RadioButtonBorderBrushDisabled: var(--winui-SystemControlTransparentBrush);
+	--winui-RadioButtonOuterEllipseStroke: var(--winui-SystemColorButtonTextColorBrush);
+	--winui-RadioButtonOuterEllipseStrokePointerOver: var(--winui-SystemColorHighlightColorBrush);
+	--winui-RadioButtonOuterEllipseStrokePressed: var(--winui-SystemColorHighlightTextColorBrush);
+	--winui-RadioButtonOuterEllipseStrokeDisabled: var(--winui-SystemColorGrayTextColor);
+	--winui-RadioButtonOuterEllipseFill: var(--winui-SystemColorButtonFaceColorBrush);
+	--winui-RadioButtonOuterEllipseFillPointerOver: var(--winui-SystemColorHighlightTextColorBrush);
+	--winui-RadioButtonOuterEllipseFillPressed: var(--winui-SystemColorHighlightTextColorBrush);
+	--winui-RadioButtonOuterEllipseFillDisabled: var(--winui-SystemColorWindowColorBrush);
+	--winui-RadioButtonOuterEllipseCheckedStroke: var(--winui-SystemColorHighlightColorBrush);
+	--winui-RadioButtonOuterEllipseCheckedStrokePointerOver: var(
+		--winui-SystemColorButtonTextColorBrush
+	);
+	--winui-RadioButtonOuterEllipseCheckedStrokePressed: var(--winui-SystemColorButtonFaceColorBrush);
+	--winui-RadioButtonOuterEllipseCheckedStrokeDisabled: var(--winui-SystemColorGrayTextColor);
+	--winui-RadioButtonOuterEllipseCheckedFill: var(--winui-SystemColorHighlightTextColorBrush);
+	--winui-RadioButtonOuterEllipseCheckedFillPointerOver: var(
+		--winui-SystemColorButtonFaceColorBrush
+	);
+	--winui-RadioButtonOuterEllipseCheckedFillPressed: var(--winui-SystemColorButtonFaceColorBrush);
+	--winui-RadioButtonOuterEllipseCheckedFillDisabled: var(--winui-SystemColorWindowColorBrush);
+	--winui-RadioButtonCheckGlyphFill: var(--winui-SystemColorHighlightColorBrush);
+	--winui-RadioButtonCheckGlyphFillPointerOver: var(--winui-SystemColorButtonTextColorBrush);
+	--winui-RadioButtonCheckGlyphFillPressed: var(--winui-SystemColorButtonTextColorBrush);
+	--winui-RadioButtonCheckGlyphFillDisabled: var(--winui-SystemColorGrayTextColorBrush);
+	--winui-RadioButtonCheckGlyphStroke: var(--winui-SystemControlTransparentBrush);
+	--winui-RadioButtonCheckGlyphStrokePointerOver: var(--winui-SystemControlTransparentBrush);
+	--winui-RadioButtonCheckGlyphStrokePressed: var(--winui-SystemControlTransparentBrush);
+	--winui-RadioButtonCheckGlyphStrokeDisabled: var(--winui-SystemColorGrayTextColorBrush);
+	--winui-RadioButtonCheckGlyphStrokeChecked: var(--winui-SystemControlTransparentBrush);
 	--winui-TemporaryTextFillColorDisabled: #0101015c;
 	--winui-TextControlBackgroundFocused: var(--winui-SystemColorButtonFaceColor);
 	--winui-TextControlBorderBrush: var(--winui-SystemColorButtonTextColor);
