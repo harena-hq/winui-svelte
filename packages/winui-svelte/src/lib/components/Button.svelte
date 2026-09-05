@@ -60,6 +60,7 @@
 
 <style>
 	.root {
+		position: relative;
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
@@ -69,12 +70,12 @@
 		   `AccentButtonBorderBrush` to `AccentControlElevationBorderBrush`. Both are
 		   `linear-gradient(...)` in the token layer — tokens.css:252 and :262 — and a
 		   border-style declaration that named one of them as its colour would be invalid
-		   and silently dropped (a CSS gradient is not a `border-color`). The two-layer
-		   background form `apps/gallery/src/lib/SearchBox.svelte` already uses for
-		   exactly this reason carries the gradient under a transparent border: the fill
-		   clipped to the padding box on `InnerBorderEdge` variants, to the border box on
-		   `OuterBorderEdge`. The fill is written as a two-stop gradient of one colour
-		   because a background layer takes an image, not a colour. */
+		   and silently dropped (a CSS gradient is not a `border-color`). The gradient
+		   is painted by `.root::after` so it sits on the ring alone — a two-layer
+		   background clipped to `border-box` paints across the whole element rather than
+		   across the ring, and an opaque fill covers it completely (accent) or shows
+		   through at 70% white (default, subtle). The transparent border reserves the
+		   ring's space. */
 		border-color: transparent;
 		border-width: var(--winui-ButtonBorderThemeThickness);
 		border-radius: var(--winui-ControlCornerRadius);
@@ -96,100 +97,121 @@
 		user-select: none;
 	}
 
+	/* The border brush is a gradient, and a gradient cannot be a `border-color`. It used to be
+	   a second background layer clipped to `border-box`, which paints across the whole element
+	   rather than across the ring — invisible under an opaque fill and not under this one, at
+	   70% white. This paints it on the ring alone.
+
+	   `inset` is the negative border width because an absolutely positioned child is placed
+	   against its parent's padding box; backing it out by exactly the border width makes the
+	   ring's box the parent's border box, so `border-radius: inherit` puts the two curves on
+	   top of each other with no correction.
+
+	   The mask is two layers, the inner one clipped to the content box, composited so the
+	   content box is punched out. `-webkit-mask-composite: xor` is the same operation under
+	   the prefixed property, which is what Safari reads. */
+	.root::after {
+		content: '';
+		position: absolute;
+		inset: calc(-1 * var(--winui-ButtonBorderThemeThickness));
+		border-radius: inherit;
+		padding: var(--winui-ButtonBorderThemeThickness);
+		-webkit-mask:
+			linear-gradient(#000 0 0) content-box,
+			linear-gradient(#000 0 0);
+		-webkit-mask-composite: xor;
+		mask:
+			linear-gradient(#000 0 0) content-box,
+			linear-gradient(#000 0 0);
+		mask-composite: exclude;
+		pointer-events: none;
+		/* c1-allow: `BrushTransition Duration="0:0:0.083"` at Button_themeresources.xaml:174, :246, :317 — same value all three styles */
+		transition: background 83ms;
+	}
+
 	/* ----- default (DefaultButtonStyle at Button_themeresources.xaml:154) ----- */
 
 	.root[data-variant='default'] {
-		background:
-			linear-gradient(var(--winui-ButtonBackground), var(--winui-ButtonBackground)) padding-box,
-			var(--winui-ButtonBorderBrush) border-box;
+		background: var(--winui-ButtonBackground) padding-box;
 		color: var(--winui-ButtonForeground);
+	}
+	.root[data-variant='default']::after {
+		background: var(--winui-ButtonBorderBrush);
 	}
 
 	.root[data-variant='default']:hover {
-		background:
-			linear-gradient(
-					var(--winui-ButtonBackgroundPointerOver),
-					var(--winui-ButtonBackgroundPointerOver)
-				)
-				padding-box,
-			var(--winui-ButtonBorderBrushPointerOver) border-box;
+		background: var(--winui-ButtonBackgroundPointerOver) padding-box;
 		color: var(--winui-ButtonForegroundPointerOver);
+	}
+	.root[data-variant='default']:hover::after {
+		background: var(--winui-ButtonBorderBrushPointerOver);
 	}
 
 	.root[data-variant='default']:active {
-		background:
-			linear-gradient(var(--winui-ButtonBackgroundPressed), var(--winui-ButtonBackgroundPressed))
-				padding-box,
-			var(--winui-ButtonBorderBrushPressed) border-box;
+		background: var(--winui-ButtonBackgroundPressed) padding-box;
 		color: var(--winui-ButtonForegroundPressed);
+	}
+	.root[data-variant='default']:active::after {
+		background: var(--winui-ButtonBorderBrushPressed);
 	}
 
 	/* ----- accent (AccentButtonStyle at Button_themeresources.xaml:235) -----
-	   The one place `BackgroundSizing` differs upstream: accent sets it to
-	   `OuterBorderEdge` (:238), the other two to `InnerBorderEdge`. In CSS that is the
-	   fill clipped to the border box rather than the padding box — the border colour is
-	   still transparent so the gradient layer shows through. */
+	   The one place `BackgroundSizing` differs upstream: accent sets it to `OuterBorderEdge`
+	   (:238), the other two to `InnerBorderEdge`. The fill reaches the outer edge and the
+	   border is stroked over it, which is why this variant clips to `border-box` where the
+	   other two clip to `padding-box`. As two background layers that was inverted — a layer
+	   list paints the first layer on top, so the opaque accent fill covered the border brush
+	   and the button had no border at all. Measured before the fix: `#0067c0` from the
+	   button's first row to its last. */
 
 	.root[data-variant='accent'] {
-		background:
-			linear-gradient(var(--winui-AccentButtonBackground), var(--winui-AccentButtonBackground))
-				border-box,
-			var(--winui-AccentButtonBorderBrush) border-box;
+		background: var(--winui-AccentButtonBackground) border-box;
 		color: var(--winui-AccentButtonForeground);
+	}
+	.root[data-variant='accent']::after {
+		background: var(--winui-AccentButtonBorderBrush);
 	}
 
 	.root[data-variant='accent']:hover {
-		background:
-			linear-gradient(
-					var(--winui-AccentButtonBackgroundPointerOver),
-					var(--winui-AccentButtonBackgroundPointerOver)
-				)
-				border-box,
-			var(--winui-AccentButtonBorderBrushPointerOver) border-box;
+		background: var(--winui-AccentButtonBackgroundPointerOver) border-box;
 		color: var(--winui-AccentButtonForegroundPointerOver);
+	}
+	.root[data-variant='accent']:hover::after {
+		background: var(--winui-AccentButtonBorderBrushPointerOver);
 	}
 
 	.root[data-variant='accent']:active {
-		background:
-			linear-gradient(
-					var(--winui-AccentButtonBackgroundPressed),
-					var(--winui-AccentButtonBackgroundPressed)
-				)
-				border-box,
-			var(--winui-AccentButtonBorderBrushPressed) border-box;
+		background: var(--winui-AccentButtonBackgroundPressed) border-box;
 		color: var(--winui-AccentButtonForegroundPressed);
+	}
+	.root[data-variant='accent']:active::after {
+		background: var(--winui-AccentButtonBorderBrushPressed);
 	}
 
 	/* ----- subtle (SubtleButtonStyle at Button_themeresources.xaml:297) ----- */
 
 	.root[data-variant='subtle'] {
-		background:
-			linear-gradient(var(--winui-SubtleButtonBackground), var(--winui-SubtleButtonBackground))
-				padding-box,
-			var(--winui-SubtleButtonBorderBrush) border-box;
+		background: var(--winui-SubtleButtonBackground) padding-box;
 		color: var(--winui-SubtleButtonForeground);
+	}
+	.root[data-variant='subtle']::after {
+		background: var(--winui-SubtleButtonBorderBrush);
 	}
 
 	.root[data-variant='subtle']:hover {
-		background:
-			linear-gradient(
-					var(--winui-SubtleButtonBackgroundPointerOver),
-					var(--winui-SubtleButtonBackgroundPointerOver)
-				)
-				padding-box,
-			var(--winui-SubtleButtonBorderBrushPointerOver) border-box;
+		background: var(--winui-SubtleButtonBackgroundPointerOver) padding-box;
 		color: var(--winui-SubtleButtonForegroundPointerOver);
+	}
+	.root[data-variant='subtle']:hover::after {
+		background: var(--winui-SubtleButtonBorderBrushPointerOver);
 	}
 
 	.root[data-variant='subtle']:active {
-		background:
-			linear-gradient(
-					var(--winui-SubtleButtonBackgroundPressed),
-					var(--winui-SubtleButtonBackgroundPressed)
-				)
-				padding-box,
-			var(--winui-SubtleButtonBorderBrushPressed) border-box;
+		background: var(--winui-SubtleButtonBackgroundPressed) padding-box;
 		color: var(--winui-SubtleButtonForegroundPressed);
+	}
+	.root[data-variant='subtle']:active::after {
+		background: var(--winui-SubtleButtonBorderBrushPressed);
 	}
 
 	/* Disabled — written per variant because each one reads from its own brush family
@@ -197,35 +219,29 @@
 	   last so the variant rule wins over `:hover` and `:active`. A disabled button
 	   must not light up under the pointer. */
 	.root[data-variant='default']:disabled {
-		background:
-			linear-gradient(var(--winui-ButtonBackgroundDisabled), var(--winui-ButtonBackgroundDisabled))
-				padding-box,
-			var(--winui-ButtonBorderBrushDisabled) border-box;
+		background: var(--winui-ButtonBackgroundDisabled) padding-box;
 		color: var(--winui-ButtonForegroundDisabled);
 		cursor: default;
 	}
+	.root[data-variant='default']:disabled::after {
+		background: var(--winui-ButtonBorderBrushDisabled);
+	}
 
 	.root[data-variant='accent']:disabled {
-		background:
-			linear-gradient(
-					var(--winui-AccentButtonBackgroundDisabled),
-					var(--winui-AccentButtonBackgroundDisabled)
-				)
-				border-box,
-			var(--winui-AccentButtonBorderBrushDisabled) border-box;
+		background: var(--winui-AccentButtonBackgroundDisabled) border-box;
 		color: var(--winui-AccentButtonForegroundDisabled);
 		cursor: default;
 	}
+	.root[data-variant='accent']:disabled::after {
+		background: var(--winui-AccentButtonBorderBrushDisabled);
+	}
 
 	.root[data-variant='subtle']:disabled {
-		background:
-			linear-gradient(
-					var(--winui-SubtleButtonBackgroundDisabled),
-					var(--winui-SubtleButtonBackgroundDisabled)
-				)
-				padding-box,
-			var(--winui-SubtleButtonBorderBrushDisabled) border-box;
+		background: var(--winui-SubtleButtonBackgroundDisabled) padding-box;
 		color: var(--winui-SubtleButtonForegroundDisabled);
 		cursor: default;
+	}
+	.root[data-variant='subtle']:disabled::after {
+		background: var(--winui-SubtleButtonBorderBrushDisabled);
 	}
 </style>
