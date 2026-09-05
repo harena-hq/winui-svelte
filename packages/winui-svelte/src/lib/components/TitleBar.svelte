@@ -232,8 +232,16 @@
 		color: var(--winui-TitleBarPaneToggleButtonForegroundDisabled);
 	}
 
+	/* `align-self`, not only `align-items`: the row is `align-items: stretch`, and an item
+	   with a `max-height` stretches only as far as that cap and then sits at the top of the
+	   row. `align-items: center` below centres the glyph inside the 16-pixel box; it does
+	   nothing about where that box sits in a 48-pixel row. Upstream says which it wants —
+	   `PART_Icon` is `VerticalAlignment="Center"`, TitleBar.xaml:225 — and the title beside
+	   it says the same at :244, where it currently holds by accident: no `max-height`, so it
+	   stretches the full row and centres its own text. */
 	.icon {
 		display: inline-flex;
+		align-self: center;
 		align-items: center;
 		margin: var(--winui-TitleBarIconMargin);
 		max-width: var(--winui-TitleBarIconMaxWidth);
@@ -246,6 +254,7 @@
 
 	.title {
 		display: inline-flex;
+		align-self: center;
 		align-items: center;
 		margin: var(--winui-TitleBarTitleMargin);
 		min-width: var(--winui-TitleBarTitleMinWidth);
