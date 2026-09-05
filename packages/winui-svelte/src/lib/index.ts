@@ -10,6 +10,8 @@ export type { ButtonProps } from './components/Button.svelte';
 export { default as CheckBox } from './components/CheckBox.svelte';
 export type { CheckBoxProps } from './components/CheckBox.svelte';
 export { default as NavigationView } from './components/NavigationView.svelte';
+export { default as RadioButton } from './components/RadioButton.svelte';
+export type { RadioButtonProps } from './components/RadioButton.svelte';
 export { default as TextBox } from './components/TextBox.svelte';
 export type { TextBoxProps } from './components/TextBox.svelte';
 export type {

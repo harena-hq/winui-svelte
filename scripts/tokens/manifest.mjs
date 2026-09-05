@@ -419,6 +419,125 @@ export const CHECKBOX_KEYS = {
 	CheckBoxPressedForegroundThemeBrush: 'Pre-Fluent CheckBox *ThemeBrush family, listed for EXCLUDED'
 };
 
+/**
+ * Keys RadioButton reads — the sixth seed set.
+ *
+ * RadioButton's template has two orthogonal state groups where CheckBox has one combined
+ * one: `CommonStates` (Normal, PointerOver, Pressed, Disabled) paints, and `CheckStates`
+ * (Checked, Unchecked, Indeterminate) shows and hides. That is why the ring is two
+ * elements — `OuterEllipse` for unchecked and `CheckOuterEllipse` for checked, each with
+ * its own four-state brush pair — rather than one element with twelve. The XAML says so
+ * itself, at `RadioButton_themeresources.xaml:378`: "A seperate element is added since the
+ * two orthogonal state groups that cannot touch the same property".
+ *
+ * What this list leaves out:
+ *
+ * - **`RadioButtonCheckGlyphStrokeCheckedPointerOver`, `…CheckedPressed` and
+ *   `…CheckedDisabled`.** All three are defined and the template references none of them —
+ *   the `Checked` state sets `CheckGlyph.Stroke` once, to the base
+ *   `RadioButtonCheckGlyphStrokeChecked`, and the three pointer states set it from the
+ *   `CommonStates` family instead. This is the same category as the pre-Fluent
+ *   `*ThemeBrush` names — defined, unreferenced — reached by a modern name, which is why
+ *   it is called out separately rather than folded in with them.
+ * - **The fifteen pre-Fluent `RadioButton*ThemeBrush` resources.** Same family and same
+ *   reason as Button's ten, TextBox's seventeen and CheckBox's fourteen.
+ *
+ * `RadioButtonCheckGlyphFillDisabled` aliases `TextOnAccentFillColorPrimary`, a `Color`,
+ * where its three siblings alias `TextOnAccentFillColorPrimaryBrush`. That is what the
+ * source says and the values are the same one; it is noted because a reader comparing the
+ * four lines will otherwise take the odd one for a transcription error here.
+ */
+export const RADIOBUTTON_KEYS = {
+	// The ring, the dot, and the dot's two animated sizes.
+	RadioButtonBorderThemeThickness: "RadioButton, the ring's stroke width",
+	RadioButtonCheckGlyphSize: 'RadioButton, the dot at rest',
+	RadioButtonCheckGlyphPointerOverSize: 'RadioButton, the dot under the pointer',
+	RadioButtonCheckGlyphPressedOverSize: 'RadioButton, the dot while pressed',
+
+	RadioButtonBackground: 'RadioButton background, at rest',
+	RadioButtonBackgroundPointerOver: 'RadioButton background, pointer over',
+	RadioButtonBackgroundPressed: 'RadioButton background, pressed',
+	RadioButtonBackgroundDisabled: 'RadioButton background, disabled',
+
+	RadioButtonBorderBrush: 'RadioButton border, at rest',
+	RadioButtonBorderBrushPointerOver: 'RadioButton border, pointer over',
+	RadioButtonBorderBrushPressed: 'RadioButton border, pressed',
+	RadioButtonBorderBrushDisabled: 'RadioButton border, disabled',
+
+	RadioButtonForeground: 'RadioButton content foreground, at rest',
+	RadioButtonForegroundPointerOver: 'RadioButton content foreground, pointer over',
+	RadioButtonForegroundPressed: 'RadioButton content foreground, pressed',
+	RadioButtonForegroundDisabled: 'RadioButton content foreground, disabled',
+
+	RadioButtonOuterEllipseFill: 'RadioButton ring fill, unchecked, at rest',
+	RadioButtonOuterEllipseFillPointerOver: 'RadioButton ring fill, unchecked, pointer over',
+	RadioButtonOuterEllipseFillPressed: 'RadioButton ring fill, unchecked, pressed',
+	RadioButtonOuterEllipseFillDisabled: 'RadioButton ring fill, unchecked, disabled',
+
+	RadioButtonOuterEllipseStroke: 'RadioButton ring stroke, unchecked, at rest',
+	RadioButtonOuterEllipseStrokePointerOver: 'RadioButton ring stroke, unchecked, pointer over',
+	RadioButtonOuterEllipseStrokePressed: 'RadioButton ring stroke, unchecked, pressed',
+	RadioButtonOuterEllipseStrokeDisabled: 'RadioButton ring stroke, unchecked, disabled',
+
+	RadioButtonOuterEllipseCheckedFill: 'RadioButton ring fill, checked, at rest',
+	RadioButtonOuterEllipseCheckedFillPointerOver: 'RadioButton ring fill, checked, pointer over',
+	RadioButtonOuterEllipseCheckedFillPressed: 'RadioButton ring fill, checked, pressed',
+	RadioButtonOuterEllipseCheckedFillDisabled: 'RadioButton ring fill, checked, disabled',
+
+	RadioButtonOuterEllipseCheckedStroke: 'RadioButton ring stroke, checked, at rest',
+	RadioButtonOuterEllipseCheckedStrokePointerOver: 'RadioButton ring stroke, checked, pointer over',
+	RadioButtonOuterEllipseCheckedStrokePressed: 'RadioButton ring stroke, checked, pressed',
+	RadioButtonOuterEllipseCheckedStrokeDisabled: 'RadioButton ring stroke, checked, disabled',
+
+	RadioButtonCheckGlyphFill: 'RadioButton dot fill, at rest',
+	RadioButtonCheckGlyphFillPointerOver: 'RadioButton dot fill, pointer over',
+	RadioButtonCheckGlyphFillPressed: 'RadioButton dot fill, pressed',
+	RadioButtonCheckGlyphFillDisabled: 'RadioButton dot fill, disabled',
+
+	RadioButtonCheckGlyphStroke: 'RadioButton dot stroke, at rest',
+	RadioButtonCheckGlyphStrokePointerOver: 'RadioButton dot stroke, pointer over',
+	RadioButtonCheckGlyphStrokePressed: 'RadioButton dot stroke, pressed',
+	RadioButtonCheckGlyphStrokeDisabled: 'RadioButton dot stroke, disabled',
+
+	// The one `…StrokeChecked` the `Checked` state sets. Its three pointer siblings are
+	// seeded for EXCLUDED below.
+	RadioButtonCheckGlyphStrokeChecked: 'RadioButton dot stroke, checked',
+
+	// Seeded only so the EXCLUDED list below can name them — the generator stops if an
+	// EXCLUDED key is not selected.
+	RadioButtonCheckGlyphStrokeCheckedPointerOver: 'Defined, unreferenced; listed for EXCLUDED',
+	RadioButtonCheckGlyphStrokeCheckedPressed: 'Defined, unreferenced; listed for EXCLUDED',
+	RadioButtonCheckGlyphStrokeCheckedDisabled: 'Defined, unreferenced; listed for EXCLUDED',
+
+	RadioButtonBackgroundThemeBrush: 'Pre-Fluent RadioButton *ThemeBrush family, listed for EXCLUDED',
+	RadioButtonBorderThemeBrush: 'Pre-Fluent RadioButton *ThemeBrush family, listed for EXCLUDED',
+	RadioButtonContentDisabledForegroundThemeBrush:
+		'Pre-Fluent RadioButton *ThemeBrush family, listed for EXCLUDED',
+	RadioButtonContentForegroundThemeBrush:
+		'Pre-Fluent RadioButton *ThemeBrush family, listed for EXCLUDED',
+	RadioButtonContentPointerOverForegroundThemeBrush:
+		'Pre-Fluent RadioButton *ThemeBrush family, listed for EXCLUDED',
+	RadioButtonDisabledBackgroundThemeBrush:
+		'Pre-Fluent RadioButton *ThemeBrush family, listed for EXCLUDED',
+	RadioButtonDisabledBorderThemeBrush:
+		'Pre-Fluent RadioButton *ThemeBrush family, listed for EXCLUDED',
+	RadioButtonDisabledForegroundThemeBrush:
+		'Pre-Fluent RadioButton *ThemeBrush family, listed for EXCLUDED',
+	RadioButtonForegroundThemeBrush: 'Pre-Fluent RadioButton *ThemeBrush family, listed for EXCLUDED',
+	RadioButtonPointerOverBackgroundThemeBrush:
+		'Pre-Fluent RadioButton *ThemeBrush family, listed for EXCLUDED',
+	RadioButtonPointerOverBorderThemeBrush:
+		'Pre-Fluent RadioButton *ThemeBrush family, listed for EXCLUDED',
+	RadioButtonPointerOverForegroundThemeBrush:
+		'Pre-Fluent RadioButton *ThemeBrush family, listed for EXCLUDED',
+	RadioButtonPressedBackgroundThemeBrush:
+		'Pre-Fluent RadioButton *ThemeBrush family, listed for EXCLUDED',
+	RadioButtonPressedBorderThemeBrush:
+		'Pre-Fluent RadioButton *ThemeBrush family, listed for EXCLUDED',
+	RadioButtonPressedForegroundThemeBrush:
+		'Pre-Fluent RadioButton *ThemeBrush family, listed for EXCLUDED'
+};
+
 export const SHELL_KEYS = {
 	// NavigationView — the pane, the content area, and the metrics that size them.
 	NavigationViewDefaultPaneBackground: 'NavigationView pane, the surface behind the items',
@@ -733,7 +852,53 @@ export const EXCLUDED = {
 	CheckBoxPressedBorderThemeBrush:
 		'Pre-Fluent *ThemeBrush family; not referenced by the current CheckBox template',
 	CheckBoxPressedForegroundThemeBrush:
-		'Pre-Fluent *ThemeBrush family; not referenced by the current CheckBox template'
+		'Pre-Fluent *ThemeBrush family; not referenced by the current CheckBox template',
+
+	// Three modern names that are defined and referenced by nothing. RadioButton's `Checked`
+	// state sets `CheckGlyph.Stroke` once, to the base `RadioButtonCheckGlyphStrokeChecked`;
+	// the three pointer states set the same property from the `CommonStates` family instead,
+	// so these three have no template that reads them. Called out apart from the pre-Fluent
+	// families because the name gives no hint — a reader checking the four-value pattern will
+	// find three of the four missing from the output and needs to find a decision here.
+	RadioButtonCheckGlyphStrokeCheckedPointerOver:
+		'Defined upstream; no RadioButton visual state reads it',
+	RadioButtonCheckGlyphStrokeCheckedPressed:
+		'Defined upstream; no RadioButton visual state reads it',
+	RadioButtonCheckGlyphStrokeCheckedDisabled:
+		'Defined upstream; no RadioButton visual state reads it',
+
+	// The pre-Fluent RadioButton `*ThemeBrush` family, defined in
+	// RadioButton_themeresources.xaml and referenced nowhere in the template at :198.
+	RadioButtonBackgroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current RadioButton template',
+	RadioButtonBorderThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current RadioButton template',
+	RadioButtonContentDisabledForegroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current RadioButton template',
+	RadioButtonContentForegroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current RadioButton template',
+	RadioButtonContentPointerOverForegroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current RadioButton template',
+	RadioButtonDisabledBackgroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current RadioButton template',
+	RadioButtonDisabledBorderThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current RadioButton template',
+	RadioButtonDisabledForegroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current RadioButton template',
+	RadioButtonForegroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current RadioButton template',
+	RadioButtonPointerOverBackgroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current RadioButton template',
+	RadioButtonPointerOverBorderThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current RadioButton template',
+	RadioButtonPointerOverForegroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current RadioButton template',
+	RadioButtonPressedBackgroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current RadioButton template',
+	RadioButtonPressedBorderThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current RadioButton template',
+	RadioButtonPressedForegroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current RadioButton template'
 };
 
 /**
@@ -801,7 +966,12 @@ export const DOUBLE_LENGTHS = {
 	CheckBoxBorderThickness: "the stroke around a CheckBox's box",
 	CheckBoxGlyphSize: "the glyph inside a CheckBox's box",
 	CheckBoxHeight: 'the row a CheckBox occupies',
-	CheckBoxMinWidth: 'the row a CheckBox occupies'
+	CheckBoxMinWidth: 'the row a CheckBox occupies',
+
+	RadioButtonBorderThemeThickness: "the stroke around a RadioButton's ring",
+	RadioButtonCheckGlyphSize: 'the dot inside a checked RadioButton',
+	RadioButtonCheckGlyphPointerOverSize: 'the dot inside a RadioButton under the pointer',
+	RadioButtonCheckGlyphPressedOverSize: 'the dot inside a RadioButton while pressed'
 };
 
 /**

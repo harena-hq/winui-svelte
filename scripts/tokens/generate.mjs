@@ -8,6 +8,7 @@ import {
 	CHECKBOX_KEYS,
 	EXCLUDED,
 	PLATFORM_FONTS,
+	RADIOBUTTON_KEYS,
 	SOURCE_FILES,
 	DOUBLE_LENGTHS,
 	GLYPHS,
@@ -695,7 +696,8 @@ function select(resources) {
 		['SHELL_KEYS', SHELL_KEYS],
 		['BUTTON_KEYS', BUTTON_KEYS],
 		['TEXTBOX_KEYS', TEXTBOX_KEYS],
-		['CHECKBOX_KEYS', CHECKBOX_KEYS]
+		['CHECKBOX_KEYS', CHECKBOX_KEYS],
+		['RADIOBUTTON_KEYS', RADIOBUTTON_KEYS]
 	];
 	for (let i = 0; i < SEED_SETS.length; i++)
 		for (let j = i + 1; j < SEED_SETS.length; j++) {
