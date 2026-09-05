@@ -495,6 +495,19 @@ group sizes, which no longer line up one-to-one with a version.
 
 4.  **The rest of input** — ComboBox, Slider, NumberBox, PasswordBox, AutoSuggestBox. The last
     of these also retires D20: the title bar's search box becomes the published control.
+
+    **This is the version that owes the framework dictionary a measurement, and two open
+    items are waiting on it.** TextBox shipped without its `Header` and `Description` because
+    `TextControlHeaderForeground`, `TextControlHeaderForegroundDisabled` and
+    `SystemControlDescriptionTextForegroundBrush` are defined in the XAML framework dictionary
+    inside Windows and have no value anywhere in the pin; PasswordBox, NumberBox and
+    AutoSuggestBox read the same three, which is why they were deferred to be measured once
+    here rather than guessed three times. WD-008 is the same hole seen from the other side:
+    `FocusVisualPrimaryBrush`, `FocusVisualSecondaryBrush` and their two thicknesses are in
+    that dictionary too, and no control in this library draws a focus visual until they are
+    read. One pass on the reference guest closes both, and it is the first unit of this
+    version rather than the last — three controls here depend on its answer.
+
 5.  **Status and feedback** — InfoBar, InfoBadge, ProgressBar, ProgressRing, ToolTip.
 6.  **Surfaces** — Expander, ContentDialog, Flyout, MenuFlyout, TeachingTip, Popup.
 7.  **Commands and menus** — DropDownButton, SplitButton, ToggleButton, CommandBar, MenuBar,
