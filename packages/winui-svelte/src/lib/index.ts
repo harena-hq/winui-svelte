@@ -10,6 +10,9 @@ export type {
 	NavigationViewDisplayMode,
 	NavigationViewEntry,
 	NavigationViewHeaderData,
-	NavigationViewItemData
+	NavigationViewItemData,
+	NavigationViewPaneDisplayMode,
+	NavigationViewProps
 } from './components/NavigationView.svelte';
 export { default as TitleBar } from './components/TitleBar.svelte';
+export type { TitleBarProps } from './components/TitleBar.svelte';

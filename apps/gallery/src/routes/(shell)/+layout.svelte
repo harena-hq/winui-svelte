@@ -2,7 +2,6 @@
 	import { afterNavigate, goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import { resolve } from '$app/paths';
-	import { SvelteSet } from 'svelte/reactivity';
 	import { NavigationView, TitleBar } from 'winui-svelte';
 	import SearchBox from '$lib/SearchBox.svelte';
 	import { QUERY_GLYPH, ancestorsOf, isContainer, menu, titleBar } from '$lib/shell';
@@ -43,9 +42,13 @@
 	//
 	// Add only, never remove: a user who has collapsed a branch has said something, and
 	// an effect that also removed would undo it on the next navigation.
-	const expanded = new SvelteSet<string>();
+	//
+	// The `includes` guard is not optional: assigning unconditionally inside an effect
+	// that reads `expandedItems` makes the effect re-run on its own write.
+	let expandedItems = $state<string[]>([]);
 	$effect(() => {
-		for (const id of ancestorsOf(page.url.pathname)) expanded.add(id);
+		const add = ancestorsOf(page.url.pathname).filter((id) => !expandedItems.includes(id));
+		if (add.length > 0) expandedItems = [...expandedItems, ...add];
 	});
 
 	// `paneOpen` is bound so the control can close it itself on entering a narrower
@@ -70,9 +73,9 @@
 	<TitleBar
 		title={titleBar.title}
 		backButtonVisible={depth > 0}
-		onback={() => history.back()}
-		paneToggleVisible
-		onpanetoggle={() => (paneOpen = !paneOpen)}
+		onBackRequested={() => history.back()}
+		paneToggleButtonVisible
+		onPaneToggleRequested={() => (paneOpen = !paneOpen)}
 	>
 		{#snippet content()}
 			<SearchBox placeholder={titleBar.placeholderText} glyph={QUERY_GLYPH} />
@@ -82,10 +85,10 @@
 	<NavigationView
 		items={menu}
 		{selected}
-		onselect={go}
+		onItemInvoked={go}
 		bind:paneOpen
-		paneToggleVisible={false}
-		{expanded}
+		paneToggleButtonVisible={false}
+		bind:expandedItems
 	>
 		<div class="page">{@render children()}</div>
 	</NavigationView>

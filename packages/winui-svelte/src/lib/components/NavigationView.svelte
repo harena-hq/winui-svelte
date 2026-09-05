@@ -1,7 +1,9 @@
 <script lang="ts" module>
+	import type { Snippet } from 'svelte';
+
 	/** One selectable entry in the menu. */
 	export interface NavigationViewItemData {
-		/** Stable identity. What `selected` holds and what `onselect` reports. */
+		/** Stable identity. What `selected` holds and what `ItemInvoked` reports. */
 		id: string;
 		/** The label. */
 		content: string;
@@ -17,7 +19,19 @@
 
 	export type NavigationViewEntry = NavigationViewItemData | NavigationViewHeaderData;
 
-	export type NavigationViewDisplayMode = 'auto' | 'expanded' | 'compact' | 'minimal';
+	/**
+	 * The WinUI `NavigationViewDisplayMode` enum — `Minimal | Compact | Expanded` — which is
+	 * the mode the control computed, exposed upstream as the read-only `DisplayMode`. All
+	 * three members are here; the enum has no others.
+	 */
+	export type NavigationViewDisplayMode = 'minimal' | 'compact' | 'expanded';
+
+	/**
+	 * The WinUI `NavigationViewPaneDisplayMode` enum the consumer sets —
+	 * `Auto | Left | LeftCompact | LeftMinimal`. `Top` is absent for the same reason
+	 * it is absent from `NavigationViewDisplayMode`.
+	 */
+	export type NavigationViewPaneDisplayMode = 'auto' | 'left' | 'leftCompact' | 'leftMinimal';
 
 	/**
 	 * The two shapes are disjoint on their own, so the discriminant is a field one of them
@@ -28,56 +42,92 @@
 	): entry is NavigationViewHeaderData {
 		return 'header' in entry;
 	}
+
+	export interface NavigationViewProps {
+		/**
+		 * Narrows `MenuItemsSource` (objects that become `NavigationViewItem` elements) to
+		 * plain data records identified by `id`.
+		 */
+		items: NavigationViewEntry[];
+		/**
+		 * Narrows `SelectedItem` (one of the menu's `NavigationViewItem` objects) to an
+		 * `id` the consumer holds.
+		 *
+		 * The id `'settings'` is reserved for the row the control renders when
+		 * `settingsVisible` is true. `onItemInvoked` reports it the same way it reports
+		 * any other id, so a caller's own menu must not use it.
+		 */
+		selected?: string | null;
+		/** ItemInvoked — fires when a menu row is activated. */
+		onItemInvoked?: (id: string) => void;
+		/** IsPaneOpen — `$bindable`. */
+		paneOpen?: boolean;
+		/**
+		 * No WinUI member: ADR 0009 pairs every `$bindable` prop with its own
+		 * `on<Prop>Change` so a consumer can observe without binding. Upstream splits the
+		 * same signal four ways — `PaneOpening`, `PaneOpened`, `PaneClosing`, `PaneClosed`
+		 * — and none of those is implemented. Fires on every write the control makes to
+		 * `paneOpen`, and never on one the consumer makes through the binding.
+		 */
+		onPaneOpenChange?: (open: boolean) => void;
+		/** IsPaneToggleButtonVisible — an app whose title bar carries the toggle hides this one. */
+		paneToggleButtonVisible?: boolean;
+		/**
+		 * PaneDisplayMode — the settable mode the consumer chooses. `Top` is absent (see
+		 * `NavigationViewPaneDisplayMode`); the read-only `DisplayMode` member and its
+		 * `DisplayModeChanged` event are not implemented because nothing consumes them.
+		 */
+		paneDisplayMode?: NavigationViewPaneDisplayMode;
+		/**
+		 * The ids of the items whose children are shown. `$bindable`. No WinUI member:
+		 * upstream holds expansion on each `NavigationViewItem` as `IsExpanded`, and this
+		 * control takes data rather than elements, so the aggregate lives here. The control
+		 * replaces the array with a new one on each expand/collapse; observe it through
+		 * `onExpandedItemsChange` or by binding.
+		 */
+		expandedItems?: string[];
+		/**
+		 * No WinUI member, for the same reason `expandedItems` has none. Upstream signals
+		 * expansion per item, as `Expanding` and `Collapsed`; this reports the aggregate.
+		 */
+		onExpandedItemsChange?: (ids: string[]) => void;
+		/** IsSettingsVisible, whose default is likewise true. */
+		settingsVisible?: boolean;
+		/** Header — the slot above the content area. */
+		header?: Snippet;
+		/** PaneFooter — the slot at the bottom of the pane. */
+		paneFooter?: Snippet;
+		/** Content — the main content area. */
+		children?: Snippet;
+		class?: string;
+		style?: string;
+		ref?: HTMLElement | null;
+		[key: string]: unknown;
+	}
 </script>
 
 <script lang="ts">
-	import type { Snippet } from 'svelte';
-	import { SvelteSet } from 'svelte/reactivity';
 	import NavigationViewItem from './NavigationViewItem.svelte';
-
-	interface Props {
-		items: NavigationViewEntry[];
-		/**
-		 * Controlled: the caller owns selection, because for an app it is the route.
-		 *
-		 * The id `'settings'` is reserved for the row the control renders when
-		 * `settingsVisible` is true. `onselect` reports it the same way it reports any
-		 * other id, so a caller's own menu must not use it.
-		 */
-		selected?: string | null;
-		onselect?: (id: string) => void;
-		paneOpen?: boolean;
-		/** An app whose title bar carries the toggle hides this one. */
-		paneToggleVisible?: boolean;
-		displayMode?: NavigationViewDisplayMode;
-		/**
-		 * The ids of the items whose children are shown. Mutated in place by the control as
-		 * the user expands and collapses; pass your own `SvelteSet` to seed it or to watch it.
-		 *
-		 * `SvelteSet` rather than `Set` because a plain `Set` mutated in place is not reactive
-		 * in Svelte 5; `SvelteSet` is.
-		 */
-		expanded?: SvelteSet<string>;
-		/** WinUI's `IsSettingsVisible`, whose default is likewise true. */
-		settingsVisible?: boolean;
-		header?: Snippet;
-		paneFooter?: Snippet;
-		children?: Snippet;
-	}
 
 	let {
 		items,
 		selected = null,
-		onselect,
+		onItemInvoked,
 		paneOpen = $bindable(true),
-		paneToggleVisible = true,
-		displayMode = 'auto',
-		expanded = new SvelteSet<string>(),
+		onPaneOpenChange,
+		paneToggleButtonVisible = true,
+		paneDisplayMode = 'auto',
+		expandedItems = $bindable([]),
+		onExpandedItemsChange,
 		settingsVisible = true,
 		header,
 		paneFooter,
-		children
-	}: Props = $props();
+		children,
+		class: className,
+		style,
+		ref = $bindable(null),
+		...rest
+	}: NavigationViewProps = $props();
 
 	// The control's own width, not the viewport's: NavigationView measures itself, and a
 	// pane inside a split screen is meant to collapse on its own account. `bind:clientWidth`
@@ -102,8 +152,11 @@
 		glyph: 'E713'
 	};
 
-	const mode = $derived.by((): Exclude<NavigationViewDisplayMode, 'auto'> => {
-		if (displayMode !== 'auto') return displayMode;
+	const mode = $derived.by((): NavigationViewDisplayMode => {
+		if (paneDisplayMode === 'left') return 'expanded';
+		if (paneDisplayMode === 'leftCompact') return 'compact';
+		if (paneDisplayMode === 'leftMinimal') return 'minimal';
+		// 'auto' — measure.
 		// Before the first measurement `clientWidth` is 0, which is not "very narrow" but
 		// "not yet known". Rendering minimal for one frame would flash the pane away on
 		// every mount, so the widest mode is the one to guess with.
@@ -112,6 +165,17 @@
 		if (width < EXPANDED_THRESHOLD) return 'compact';
 		return 'expanded';
 	});
+
+	// Every write the control makes to `paneOpen` goes through this. The equality guard is
+	// not optional: the display-mode effect below runs on mount and would otherwise
+	// announce a change that did not happen. Consumer writes via `bind:paneOpen` bypass
+	// this on purpose — a binding round-trip is a write the consumer made, not one the
+	// control made.
+	function setPaneOpen(open: boolean) {
+		if (paneOpen === open) return;
+		paneOpen = open;
+		onPaneOpenChange?.(open);
+	}
 
 	// `paneOpen` is written in exactly one place: crossing into expanded opens the pane,
 	// crossing into either narrower mode closes it, which is what NavigationView does —
@@ -127,8 +191,30 @@
 	$effect(() => {
 		if (mode === acted) return;
 		acted = mode;
-		paneOpen = mode === 'expanded';
+		setPaneOpen(mode === 'expanded');
 	});
+
+	// Every write the control makes to `expandedItems` goes through this. A new array
+	// every time, never a mutation of the one the consumer holds — that is what makes the
+	// binding two-way and `onExpandedItemsChange` observable. `NavigationViewItem` calls
+	// it from `activate()` and `toggle()`; it does not touch the array itself.
+	function setExpanded(id: string, open: boolean) {
+		const present = expandedItems.includes(id);
+		// Both branches return the same array when there is nothing to do. `filter` builds a
+		// new one unconditionally, so without the `present` test collapsing an id that was
+		// never expanded would pass the identity guard below and announce a change that did
+		// not happen.
+		const next = open
+			? present
+				? expandedItems
+				: [...expandedItems, id]
+			: present
+				? expandedItems.filter((x) => x !== id)
+				: expandedItems;
+		if (next === expandedItems) return;
+		expandedItems = next;
+		onExpandedItemsChange?.(next);
+	}
 
 	// `UpdatePaneLayout` shows the pane's separator exactly when the menu items do not fit
 	// beside the footer group — NavigationView.cpp, and the `SeparatorVisible` state at
@@ -165,24 +251,27 @@
 </script>
 
 <div
+	bind:this={ref}
 	bind:clientWidth={width}
-	class="root"
+	class={['root', className]}
+	{style}
 	data-display-mode={mode}
 	data-pane-open={paneOpen}
 	data-overlay={overlay}
 	data-collapsed={collapsed}
+	{...rest}
 >
 	{#if paneVisible}
 		<div class="pane">
 			<div class="pane-content-grid">
-				{#if paneToggleVisible}
+				{#if paneToggleButtonVisible}
 					<div class="button-holder-grid">
 						<button
 							type="button"
 							class="pane-toggle"
 							aria-label={paneOpen ? 'Close navigation' : 'Open navigation'}
 							aria-expanded={paneOpen}
-							onclick={() => (paneOpen = !paneOpen)}
+							onclick={() => setPaneOpen(!paneOpen)}
 						></button>
 					</div>
 				{/if}
@@ -195,7 +284,14 @@
 									<div class="item-header winui-BodyStrongTextBlockStyle">{entry.header}</div>
 								</li>
 							{:else}
-								<NavigationViewItem item={entry} level={1} {selected} {expanded} {onselect} />
+								<NavigationViewItem
+									item={entry}
+									level={1}
+									{selected}
+									{expandedItems}
+									{setExpanded}
+									{onItemInvoked}
+								/>
 							{/if}
 						{/each}
 					</ul>
@@ -215,7 +311,14 @@
 				{#if settingsVisible}
 					<div class="footer-items">
 						<ul role="tree" class="menu-items">
-							<NavigationViewItem item={SETTINGS_ITEM} level={1} {selected} {expanded} {onselect} />
+							<NavigationViewItem
+								item={SETTINGS_ITEM}
+								level={1}
+								{selected}
+								{expandedItems}
+								{setExpanded}
+								{onItemInvoked}
+							/>
 						</ul>
 					</div>
 				{/if}
