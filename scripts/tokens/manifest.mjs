@@ -165,6 +165,102 @@ export const BUTTON_KEYS = {
 	ButtonPressedForegroundThemeBrush: 'Pre-Fluent Button *ThemeBrush family, listed for EXCLUDED'
 };
 
+/**
+ * Keys TextBox reads — the fourth seed set, and the Text family's first tranche.
+ *
+ * What this list leaves out, so a gap reads as a decision rather than an oversight.
+ * The TextBox dictionary carries forty-one resources; these are the ones not here:
+ *
+ * - **The header and description** — `TextBoxTopHeaderMargin`, and the four
+ *   `TextControlHeaderForeground*` and `SystemControlDescriptionTextForegroundBrush`
+ *   brushes. The header and description are deliberately out of scope for v1 — their
+ *   resources are defined in the XAML framework dictionary inside Windows rather than
+ *   in any per-control `*_themeresources.xaml`, the same hole ADR 0008 describes for
+ *   the legacy brushes — and AutoSuggestBox, PasswordBox and NumberBox read through
+ *   the same names, so they are measured once for the whole Text family in that
+ *   tranche rather than guessed here for one control.
+ * - **The seventeen pre-Fluent `TextBox*ThemeBrush` resources.** They are the
+ *   `TextBoxForegroundHeaderThemeBrush`, `TextBoxPlaceholderTextThemeBrush`,
+ *   `TextBoxBackgroundThemeBrush`, `TextBoxBorderThemeBrush`,
+ *   `TextBoxForegroundThemeBrush`, `TextBoxDisabledBackgroundThemeBrush`,
+ *   `TextBoxDisabledBorderThemeBrush`, `TextBoxDisabledForegroundThemeBrush`, and the
+ *   nine `TextBoxButton*ThemeBrush` family. The current template references none of
+ *   them and their `Default` values are literal colours from a palette this library
+ *   does not use. This is the same family and the same reason as Button's ten.
+ */
+export const TEXTBOX_KEYS = {
+	// The two layout keys the delete button needs.
+	TextBoxInnerButtonMargin: 'TextBox delete button, the inset of its fill',
+	TextBoxIconFontSize: 'TextBox delete button, the glyph inside it',
+
+	// The four brushes each state reaches, plus the placeholder and the selection.
+	TextControlBackground: 'TextBox background, at rest',
+	TextControlBackgroundPointerOver: 'TextBox background, pointer over',
+	TextControlBackgroundFocused: 'TextBox background, focused',
+	TextControlBackgroundDisabled: 'TextBox background, disabled',
+	TextControlBorderBrush: 'TextBox border, at rest',
+	TextControlBorderBrushPointerOver: 'TextBox border, pointer over',
+	TextControlBorderBrushFocused: 'TextBox border, focused',
+	TextControlBorderBrushDisabled: 'TextBox border, disabled',
+	TextControlForeground: 'TextBox foreground, at rest',
+	TextControlForegroundPointerOver: 'TextBox foreground, pointer over',
+	TextControlForegroundFocused: 'TextBox foreground, focused',
+	// Upstream resolves this one to `TemporaryTextFillColorDisabled`, a literal `<Color>`
+	// rather than an alias, and its HighContrast value is `#5C010101` — the same
+	// near-black at 36% alpha that Light uses, not a system colour. That is what
+	// TextBox_themeresources.xaml says, so it is what is emitted; the name upstream
+	// chose says how settled it considers it. Left faithful on purpose: a reader who
+	// finds a light literal in the high-contrast block will otherwise take it for our
+	// bug and 'fix' it away from the original.
+	TextControlForegroundDisabled: 'TextBox foreground, disabled',
+	TextControlPlaceholderForeground: 'TextBox placeholder, at rest',
+	TextControlPlaceholderForegroundPointerOver: 'TextBox placeholder, pointer over',
+	TextControlPlaceholderForegroundFocused: 'TextBox placeholder, focused',
+	TextControlPlaceholderForegroundDisabled: 'TextBox placeholder, disabled',
+	TextControlSelectionHighlightColor: 'TextBox selection highlight, the text-range background',
+
+	// The delete button: its three brushes and the three states each paints.
+	TextControlButtonBackgroundPointerOver: 'TextBox delete button background, pointer over',
+	TextControlButtonBackgroundPressed: 'TextBox delete button background, pressed',
+	TextControlButtonBorderBrush: 'TextBox delete button border, at rest',
+	TextControlButtonBorderBrushPointerOver: 'TextBox delete button border, pointer over',
+	TextControlButtonBorderBrushPressed: 'TextBox delete button border, pressed',
+	TextControlButtonForeground: 'TextBox delete button foreground, at rest',
+	TextControlButtonForegroundPointerOver: 'TextBox delete button foreground, pointer over',
+	TextControlButtonForegroundPressed: 'TextBox delete button foreground, pressed',
+
+	// The fourteen `*ThemeBrush` keys the TextBox dictionary defines and the template
+	// references nowhere. Seeded only so the EXCLUDED list below can name them — the
+	// generator stops if an EXCLUDED key is not selected. The upstream source carries
+	// fourteen of the family rather than the seventeen the family name suggests: the
+	// three `TextBoxButtonDisabled*ThemeBrush` names are referenced by no template in the
+	// pinned source and so were never defined as resources.
+	TextBoxForegroundHeaderThemeBrush: 'Pre-Fluent TextBox *ThemeBrush family, listed for EXCLUDED',
+	TextBoxPlaceholderTextThemeBrush: 'Pre-Fluent TextBox *ThemeBrush family, listed for EXCLUDED',
+	TextBoxBackgroundThemeBrush: 'Pre-Fluent TextBox *ThemeBrush family, listed for EXCLUDED',
+	TextBoxBorderThemeBrush: 'Pre-Fluent TextBox *ThemeBrush family, listed for EXCLUDED',
+	TextBoxForegroundThemeBrush: 'Pre-Fluent TextBox *ThemeBrush family, listed for EXCLUDED',
+	TextBoxDisabledBackgroundThemeBrush: 'Pre-Fluent TextBox *ThemeBrush family, listed for EXCLUDED',
+	TextBoxDisabledBorderThemeBrush: 'Pre-Fluent TextBox *ThemeBrush family, listed for EXCLUDED',
+	TextBoxDisabledForegroundThemeBrush: 'Pre-Fluent TextBox *ThemeBrush family, listed for EXCLUDED',
+	TextBoxButtonBackgroundThemeBrush: 'Pre-Fluent TextBox *ThemeBrush family, listed for EXCLUDED',
+	TextBoxButtonBorderThemeBrush: 'Pre-Fluent TextBox *ThemeBrush family, listed for EXCLUDED',
+	TextBoxButtonForegroundThemeBrush: 'Pre-Fluent TextBox *ThemeBrush family, listed for EXCLUDED',
+	TextBoxButtonPointerOverBackgroundThemeBrush:
+		'Pre-Fluent TextBox *ThemeBrush family, listed for EXCLUDED',
+	TextBoxButtonPointerOverBorderThemeBrush:
+		'Pre-Fluent TextBox *ThemeBrush family, listed for EXCLUDED',
+	TextBoxButtonPointerOverForegroundThemeBrush:
+		'Pre-Fluent TextBox *ThemeBrush family, listed for EXCLUDED',
+	// Seeded only so EXCLUDED can name them; see the note there.
+	TextBoxButtonPressedBackgroundThemeBrush:
+		'Pre-Fluent TextBox *ThemeBrush family, not referenced by the current template',
+	TextBoxButtonPressedBorderThemeBrush:
+		'Pre-Fluent TextBox *ThemeBrush family, not referenced by the current template',
+	TextBoxButtonPressedForegroundThemeBrush:
+		'Pre-Fluent TextBox *ThemeBrush family, not referenced by the current template'
+};
+
 export const SHELL_KEYS = {
 	// NavigationView — the pane, the content area, and the metrics that size them.
 	NavigationViewDefaultPaneBackground: 'NavigationView pane, the surface behind the items',
@@ -380,7 +476,53 @@ export const EXCLUDED = {
 	ButtonPressedBackgroundThemeBrush:
 		'Pre-Fluent *ThemeBrush family; not referenced by any of the three Button styles',
 	ButtonPressedForegroundThemeBrush:
-		'Pre-Fluent *ThemeBrush family; not referenced by any of the three Button styles'
+		'Pre-Fluent *ThemeBrush family; not referenced by any of the three Button styles',
+
+	// The pre-Fluent TextBox `*ThemeBrush` family, defined in TextBox_themeresources.xaml
+	// and referenced nowhere in the current TextBox template. Their `Default` values are
+	// literal colours from the UWP palette this library does not use, and emitting them
+	// would add a stylesheet full of values nobody reads. The upstream source carries
+	// fourteen of the family rather than the seventeen the family name suggests — the three
+	// `TextBoxButtonDisabled*ThemeBrush` names are referenced by no template and so were
+	// never defined as resources, and are not listed here for the same reason.
+	TextBoxForegroundHeaderThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current TextBox template',
+	TextBoxPlaceholderTextThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current TextBox template',
+	TextBoxBackgroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current TextBox template',
+	TextBoxBorderThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current TextBox template',
+	TextBoxForegroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current TextBox template',
+	TextBoxDisabledBackgroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current TextBox template',
+	TextBoxDisabledBorderThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current TextBox template',
+	TextBoxDisabledForegroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current TextBox template',
+	TextBoxButtonBackgroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current TextBox template',
+	TextBoxButtonBorderThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current TextBox template',
+	TextBoxButtonForegroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current TextBox template',
+	TextBoxButtonPointerOverBackgroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current TextBox template',
+	TextBoxButtonPointerOverBorderThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current TextBox template',
+	TextBoxButtonPointerOverForegroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current TextBox template',
+	// The pressed trio was reported absent from the extraction and is not: all three are
+	// there. Nothing emits them either way, which is why the omission was invisible — but
+	// EXCLUDED is the record of what this selection drops on purpose, and three real
+	// pre-Fluent literals were missing from it.
+	TextBoxButtonPressedBackgroundThemeBrush:
+		'Pre-Fluent TextBox *ThemeBrush family, not referenced by the current template',
+	TextBoxButtonPressedBorderThemeBrush:
+		'Pre-Fluent TextBox *ThemeBrush family, not referenced by the current template',
+	TextBoxButtonPressedForegroundThemeBrush:
+		'Pre-Fluent TextBox *ThemeBrush family, not referenced by the current template'
 };
 
 /**
@@ -622,6 +764,39 @@ export const PLATFORM_BRUSHES = {
 	},
 	SystemControlForegroundTransparentBrush: {
 		to: 'SystemColorButtonTextColor',
+		themes: ['HighContrast']
+	},
+
+	// The TextBox tranche's HighContrast dictionary reaches five more of the family.
+	// Each is resolved by ADR 0008's role rule and by nothing else — across the 34
+	// witnesses in `Materials/Reveal/RevealBrush_themeresources.xaml`'s HighContrast
+	// dictionary the tone word does not matter and the role word decides:
+	// `Background…` is `SystemColorButtonFaceColor`, `Foreground…` is
+	// `SystemColorButtonTextColor`, `Highlight…` is `SystemColorHighlightColor`.
+	//
+	// Why the rule rather than reading the name as a whole: the Button tranche first mapped four rows
+	// by reading names whole, and two of its states came out painting `SystemColorHighlightTextColor`
+	// on `SystemColorHighlightTextColor` — the label gone on hover, in high contrast, with every gate
+	// green. Resolving the pairs is the check; whoever adds or changes a row here resolves every
+	// foreground/background pair the row takes part in before relying on it.
+	SystemControlBackgroundAltHighBrush: {
+		to: 'SystemColorButtonFaceColor',
+		themes: ['HighContrast']
+	},
+	SystemControlForegroundBaseMediumBrush: {
+		to: 'SystemColorButtonTextColor',
+		themes: ['HighContrast']
+	},
+	SystemControlForegroundBaseMediumHighBrush: {
+		to: 'SystemColorButtonTextColor',
+		themes: ['HighContrast']
+	},
+	SystemControlForegroundBaseMediumLowBrush: {
+		to: 'SystemColorButtonTextColor',
+		themes: ['HighContrast']
+	},
+	SystemControlHighlightBaseMediumHighBrush: {
+		to: 'SystemColorHighlightColor',
 		themes: ['HighContrast']
 	}
 };

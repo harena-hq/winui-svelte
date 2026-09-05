@@ -13,6 +13,7 @@ import {
 	SHELL_KEYS,
 	PLATFORM_BRUSHES,
 	SYSTEM_COLORS,
+	TEXTBOX_KEYS,
 	TYPE_RAMP
 } from './manifest.mjs';
 
@@ -692,9 +693,24 @@ function select(resources) {
 	for (const key of Object.keys(BUTTON_KEYS))
 		if (key in SHELL_KEYS)
 			fail(`\`${key}\` is seeded by both SHELL_KEYS and BUTTON_KEYS; it belongs to one`);
-	const seedNames = { ...ADDITIONAL_KEYS, ...SHELL_KEYS, ...BUTTON_KEYS };
+	for (const key of Object.keys(TEXTBOX_KEYS))
+		if (key in ADDITIONAL_KEYS)
+			fail(`\`${key}\` is seeded by both ADDITIONAL_KEYS and TEXTBOX_KEYS; it belongs to one`);
+	for (const key of Object.keys(TEXTBOX_KEYS))
+		if (key in SHELL_KEYS)
+			fail(`\`${key}\` is seeded by both SHELL_KEYS and TEXTBOX_KEYS; it belongs to one`);
+	for (const key of Object.keys(TEXTBOX_KEYS))
+		if (key in BUTTON_KEYS)
+			fail(`\`${key}\` is seeded by both BUTTON_KEYS and TEXTBOX_KEYS; it belongs to one`);
+	const seedNames = { ...ADDITIONAL_KEYS, ...SHELL_KEYS, ...BUTTON_KEYS, ...TEXTBOX_KEYS };
 	const seedMap = (key) =>
-		key in ADDITIONAL_KEYS ? 'ADDITIONAL_KEYS' : key in SHELL_KEYS ? 'SHELL_KEYS' : 'BUTTON_KEYS';
+		key in ADDITIONAL_KEYS
+			? 'ADDITIONAL_KEYS'
+			: key in SHELL_KEYS
+				? 'SHELL_KEYS'
+				: key in BUTTON_KEYS
+					? 'BUTTON_KEYS'
+					: 'TEXTBOX_KEYS';
 	const seeds = new Set(Object.keys(seedNames));
 
 	// A key the acceptance surface names is a seed even when it lives outside the four
@@ -793,15 +809,62 @@ function select(resources) {
 	// Measured, and asserted rather than trusted: no key in this selection is themed in
 	// part. A partially themed key would resolve to another theme's value on the themes
 	// it is missing from, which reads as a design decision rather than as a hole.
+	//
+	// The TextBox tranche needed one exception, and it is narrower than "two themes are
+	// enough". The `TextControl*` family is defined in `Default` and `Light` and almost
+	// entirely absent from the `HighContrast` dictionary: Windows supplies those records
+	// from the framework dictionary inside the OS rather than writing them into the
+	// per-control `*_themeresources.xaml`, which is the same hole ADR 0008 describes for
+	// the legacy brushes.
+	//
+	// A web page has no framework dictionary, so what actually happens is a cascade: the
+	// key is emitted in light and dark and not in the high-contrast block, a page in high
+	// contrast falls through to the `:root` declaration, and that declaration is an alias
+	// onto a base key which the high-contrast block *does* redefine. The colour is
+	// therefore correct — but only because of that last clause, and nothing was checking
+	// it. A `Default`/`Light` key whose light value is a literal, or an alias onto a key
+	// the high-contrast block does not redefine, paints a light-theme value in high
+	// contrast and looks deliberate. That is precisely what the paragraph above forbids.
+	//
+	// So the exception carries its own condition: the light record must be an alias, and
+	// its target must itself be theme-independent or complete. Measured at the time of
+	// writing: 19 keys take this path and all 19 satisfy it.
+	const resolvable = (key, seen = new Set()) => {
+		if (seen.has(key)) return false;
+		seen.add(key);
+		const themes = byKey.get(key);
+		if (themes === undefined) return false;
+		const names = [...themes.keys()];
+		if (names.length === 1 && names[0] === null) return true;
+		if (names.length === THEMED.length && THEMED.every((name) => themes.has(name))) return true;
+		// A chain of `Default`/`Light` aliases is only as safe as the key it ends on.
+		const record = themes.get(LIGHT);
+		if (record === undefined || record.kind !== 'alias') return false;
+		return resolvable(record.to, seen);
+	};
+
 	for (const [key, themes] of byKey) {
 		const names = [...themes.keys()];
 		const independent = names.length === 1 && names[0] === null;
 		const complete = names.length === THEMED.length && THEMED.every((name) => themes.has(name));
-		if (!independent && !complete)
-			fail(
-				`${key} is defined in ${names.map((name) => name ?? 'no theme').join(', ')} only; ` +
-					'every key must be theme-independent or defined in all three themes'
-			);
+		const light = themes.get(LIGHT);
+		const partial =
+			names.length === 2 &&
+			themes.has(DARK) &&
+			themes.has(LIGHT) &&
+			light?.kind === 'alias' &&
+			resolvable(light.to);
+		if (!independent && !complete && !partial) {
+			const why =
+				names.length === 2 && themes.has(DARK) && themes.has(LIGHT)
+					? `${key} is defined in Default and Light only, and its Light record is ` +
+						`${light?.kind === 'alias' ? `an alias onto \`${light.to}\`, which the high-contrast block does not define either` : 'not an alias'}; ` +
+						'a key that skips high contrast must resolve there through a key that does not'
+					: `${key} is defined in ${names.map((name) => name ?? 'no theme').join(', ')} only; ` +
+						'every key must be theme-independent, defined in all three themes, or ' +
+						'defined in Default and Light as an alias that resolves under high contrast';
+			fail(why);
+		}
 	}
 
 	for (const key of Object.keys(EXCLUDED))
