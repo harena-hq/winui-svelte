@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 import {
 	ACCENT_COLORS,
 	ADDITIONAL_KEYS,
+	AUTOSUGGESTBOX_KEYS,
 	BUTTON_KEYS,
 	CHECKBOX_KEYS,
 	COMBOBOX_KEYS,
@@ -745,7 +746,8 @@ function select(resources, framework) {
 		['RADIOBUTTON_KEYS', RADIOBUTTON_KEYS],
 		['TOGGLESWITCH_KEYS', TOGGLESWITCH_KEYS],
 		['SLIDER_KEYS', SLIDER_KEYS],
-		['COMBOBOX_KEYS', COMBOBOX_KEYS]
+		['COMBOBOX_KEYS', COMBOBOX_KEYS],
+		['AUTOSUGGESTBOX_KEYS', AUTOSUGGESTBOX_KEYS]
 	];
 	for (let i = 0; i < SEED_SETS.length; i++)
 		for (let j = i + 1; j < SEED_SETS.length; j++) {

@@ -304,6 +304,77 @@ export const PASSWORDBOX_KEYS = {
 };
 
 /**
+ * Keys AutoSuggestBox reads — the eleventh seed set, and the third in the Text family.
+ *
+ * The text-editable popup is the `DefaultAutoSuggestBoxStyle` at
+ * AutoSuggestBox_themeresources.xaml:250, which carries a `TextBox` styled by
+ * `AutoSuggestBoxTextBoxStyle` so it reads the same `TextControl*` family TextBox does in
+ * the same four states — those keys belong to `TEXTBOX_KEYS` and are not repeated here,
+ * for the same disjointness reason `PasswordBox` does not repeat them.
+ *
+ * What this list leaves out, so a gap reads as a decision rather than an oversight.
+ *
+ * - **`AutoSuggestBoxLightDismissOverlayBackground`** — defined in all three themes but
+ *   painted on the light-dismiss overlay that is out of scope for this unit.
+ * - **`AutoSuggestBoxTextBoxStyle`** — a `Style` resource, not a value. This project writes
+ *   its own templates rather than reading XAML styles — the same reason every other
+ *   `*Style` resource is dropped.
+ * - **`AutoSuggestBoxDeleteButtonMargin`** — `0,4`, the inset of the delete button's fill.
+ *   The button this control renders paints no fill at rest — `TextControlButtonBackground`
+ *   aliases `SystemControlTransparentBrush` — so the margin has nothing to act on.
+ *
+ * The last four keys are framework-dictionary names — `generic.xaml` defines them in all
+ * three themes — and this is the third control to read through that pin after ComboBox and
+ * PasswordBox. `AutoSuggestListMaxHeight` is an `x:Double` that is a length, so it needs a
+ * `DOUBLE_LENGTHS` row; the generator stops and names it if it is missing, which is the
+ * guard working.
+ *
+ * `TextControl*`, `TextBoxInnerButtonMargin`, `TextBoxIconFontSize`, `TextControlButtonBackground*`,
+ * `TextControlButtonForeground*` and `TextControlButtonBorderBrush*` are seeded by
+ * `TEXTBOX_KEYS` already; `HelperButtonThemePadding` is seeded by `PASSWORDBOX_KEYS`;
+ * `ComboBoxItem*` is seeded by `COMBOBOX_KEYS`. The generator's disjointness check is what
+ * stops a key from being seeded twice.
+ *
+ * `TextControlThemeMinWidth` is added to the set even though the unit brief's enumeration
+ * names thirteen keys: the popup's `min-width` floor is `max(anchor-width, …)` and
+ * `TextControlThemeMinWidth` is the resource the source picks for that role on an
+ * editable text box — `generic.xaml` defines it as `64` in all three themes. Seeding
+ * here is the third control's read of it through the framework pin, and it is a key no
+ * other set holds.
+ */
+export const AUTOSUGGESTBOX_KEYS = {
+	// The two layout keys the header and the delete button reach, plus the four metrics the
+	// inner buttons read directly. `AutoSuggestBoxInnerButtonMargin` and
+	// `AutoSuggestBoxRightButtonMargin` are seeded by `SHELL_KEYS` already; the
+	// disjointness check is what stops a key from being seeded twice, and the same
+	// reason is why `TextControl*`, `TextBoxInnerButtonMargin`, `TextBoxIconFontSize`,
+	// `HelperButtonThemePadding` and `ComboBoxItem*` are not repeated here.
+	AutoSuggestBoxTopHeaderMargin: 'AutoSuggestBox header, the gap between it and the box',
+	AutoSuggestBoxIconFontSize: 'AutoSuggestBox buttons, the glyph inside them',
+	AutoSuggestBoxQueryButtonPadding: 'AutoSuggestBox query button, its padding',
+	AutoSuggestBoxLeftButtonMargin: 'AutoSuggestBox delete button, the spacer column left of it',
+
+	// The popup's two brushes — background and border — in each of the three themes the
+	// dictionary defines. `AutoSuggestBoxSuggestionsListBackground` aliases
+	// `AcrylicBackgroundFillColorDefaultBrush` rather than the in-app variant, the same
+	// paint the source picks.
+	AutoSuggestBoxSuggestionsListBackground: 'AutoSuggestBox popup, the background inside its border',
+	AutoSuggestBoxSuggestionsListBorderBrush: 'AutoSuggestBox popup, its border',
+
+	// The popup's four framework-dictionary keys: its `Margin`, its inner `Padding`, its
+	// `MaxHeight`, and the `BorderThickness` of the popup's own `Border`. `MaxHeight` is
+	// a `x:Double` length and so needs the `DOUBLE_LENGTHS` row below.
+	AutoSuggestListMargin: 'AutoSuggestBox popup, the padding inside its border',
+	AutoSuggestListPadding: 'AutoSuggestBox popup, the inset the list sits in',
+	AutoSuggestListMaxHeight: 'AutoSuggestBox popup, the height the list never exceeds',
+	AutoSuggestListBorderThemeThickness: 'AutoSuggestBox popup, its border width',
+
+	// The popup's `min-width` floor: the `MaxWidth` of the box itself, the same resource
+	// the editable text box reaches. `generic.xaml` defines it as `64` in all three themes.
+	TextControlThemeMinWidth: 'AutoSuggestBox popup, the floor its width never goes below'
+};
+
+/**
  * Keys CheckBox reads — the fifth seed set.
  *
  * The dictionary is a product: six painted properties across three checked states and
@@ -1685,7 +1756,11 @@ export const DOUBLE_LENGTHS = {
 	ComboBoxItemPillHeight: 'the selection pill height inside a ComboBox item',
 	ComboBoxThemeMinWidth: 'the minimum width the ComboBox reserves',
 	ComboBoxPopupThemeMinWidth: 'the floor the dropdown width never goes below',
-	ComboBoxMinHeight: 'the minimum height the ComboBox reserves'
+	ComboBoxMinHeight: 'the minimum height the ComboBox reserves',
+
+	AutoSuggestListMaxHeight: 'the height the AutoSuggestBox suggestion list never exceeds',
+	AutoSuggestBoxLeftButtonMargin: 'the spacer column left of the AutoSuggestBox delete button',
+	TextControlThemeMinWidth: 'the minimum width an editable text box reserves'
 };
 
 /**
