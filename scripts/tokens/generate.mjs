@@ -6,6 +6,7 @@ import {
 	ADDITIONAL_KEYS,
 	BUTTON_KEYS,
 	CHECKBOX_KEYS,
+	COMBOBOX_KEYS,
 	EXCLUDED,
 	PLATFORM_FONTS,
 	PLATFORM_METRICS,
@@ -13,6 +14,7 @@ import {
 	SLIDER_KEYS,
 	SOURCE_FILES,
 	DOUBLE_LENGTHS,
+	DOUBLE_RATIOS,
 	GLYPHS,
 	SHELL_KEYS,
 	PLATFORM_BRUSHES,
@@ -256,10 +258,14 @@ function scalar(record) {
 			// count are spelled the same way — so `*FontSize` is the only suffix taken
 			// on trust and every other length is named in `DOUBLE_LENGTHS`. The next
 			// double to appear gets read rather than assumed.
+			// A ratio is one of the things this comment warns about, and `DOUBLE_RATIOS` is
+			// where one is named. It emits unitless, because a scale factor with `px` on it
+			// is a number every reader has to divide back out at the point of use.
+			if (record.key in DOUBLE_RATIOS) return number(value, where);
 			if (!record.key.endsWith('FontSize') && !(record.key in DOUBLE_LENGTHS))
 				fail(
-					`${where}: an x:Double that neither ends in FontSize nor DOUBLE_LENGTHS names; ` +
-						'decide what it measures before emitting it'
+					`${where}: an x:Double that is neither a FontSize, a DOUBLE_LENGTHS length ` +
+						'nor a DOUBLE_RATIOS ratio; decide what it measures before emitting it'
 				);
 			return `${number(value, where)}px`;
 
@@ -429,12 +435,23 @@ function acrylic(record) {
 	return resolvedColor(record.fallbackColor, where, record.theme);
 }
 
-// The two `FontWeight` names the ramp uses. Anything else stops here rather than
-// guessing at a weight the next one to appear should be read for, not assumed — see
-// `FONT_WEIGHTS` below for the contrast with the XAML's full set.
+// The three `FontWeight` names the ramp and the ComboBox placeholder use. Anything else
+// stops here rather than guessing at a weight the next one to appear should be read for,
+// not assumed — see `FONT_WEIGHTS` below for the contrast with the XAML's full set.
+//
+// `SemiLight` is the weight `ComboBoxPlaceholderTextThemeFontWeight` declares; the
+// ComboBox tranche is the first one that reads it.
+// The XAML weight names, as the numbers CSS and OpenType use. No dictionary in either pin
+// states them numerically — they are `FontWeights` enum members — so this map is the one
+// place the correspondence is written down, and it is written to keep names the platform
+// distinguishes distinct: `Light` is 300 and `SemiLight` is 350, and collapsing the second
+// onto the first would render the ComboBox's placeholder at a weight the source does not
+// ask for. Add a row when a tranche reaches a name that is not here; the generator stops on
+// one it does not know rather than guessing a number.
 const FONT_WEIGHTS = new Map([
 	['Normal', 400],
-	['SemiBold', 600]
+	['SemiBold', 600],
+	['SemiLight', 350]
 ]);
 
 /**
@@ -725,7 +742,8 @@ function select(resources, framework) {
 		['CHECKBOX_KEYS', CHECKBOX_KEYS],
 		['RADIOBUTTON_KEYS', RADIOBUTTON_KEYS],
 		['TOGGLESWITCH_KEYS', TOGGLESWITCH_KEYS],
-		['SLIDER_KEYS', SLIDER_KEYS]
+		['SLIDER_KEYS', SLIDER_KEYS],
+		['COMBOBOX_KEYS', COMBOBOX_KEYS]
 	];
 	for (let i = 0; i < SEED_SETS.length; i++)
 		for (let j = i + 1; j < SEED_SETS.length; j++) {
