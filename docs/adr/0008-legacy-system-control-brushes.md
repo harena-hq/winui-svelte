@@ -128,10 +128,30 @@ Three reasons, in order of weight.
 Permanent as a mechanism. Individual rows are revisable: each is a best reading of the
 evidence named above, not a definition, and the two weakest are marked.
 
-Revisit a row if the value becomes measurable — a WinUI app on the reference guest reading
-`Application.Current.Resources` under a high-contrast theme would settle all six at once.
-That is not available today: `.private/ops.md` makes the guest's theme an untouchable
-reference parameter, and the measurement needs it changed.
+**Superseded in part by ADR 0010, and vindicated by it.** The six rows above were derived
+from the Reveal dictionary and from a 32-of-32 count, not read from a definition. The
+framework dictionary this project now pins defines every one of them, under high contrast,
+and agrees with all six: `ButtonFace`, `GrayText`, `ButtonText`, `HighlightText`,
+`Highlight`, `Highlight`. Six for six, from a source that had no part in the derivation.
+
+What that changes is not the readings but the reason for the mechanism. Reason 1 below —
+that these names exist only under high contrast and no source gives them a light or dark
+value — is no longer true of any of them, so a name is now substituted only until something
+references it from `Default` or `Light`. **The `themes` guard is what forces that moment,
+and it has fired once.** The Text tranche reached `TextControlHeaderForeground`, whose
+framework definition aliases `SystemControlForegroundBaseHighBrush` in all three themes;
+the generator stopped, exactly as this ADR said it would. That row and
+`SystemControlDisabledBaseMediumLowBrush` were **deleted** rather than widened, and both
+names are now ordinary tokens read from the dictionary. Deleting is the conservative move,
+not the bold one: it replaces a hand-chosen mapping with a definition, and the resolved
+colour of every declaration that referenced either name is unchanged in all three themes —
+checked declaration by declaration, not asserted.
+
+The rest of the table stays until something forces it, for the reason it was populated one
+tranche at a time in the first place: each departure rewrites the declarations that
+referenced the name, and those are worth reading in a diff small enough to read. Retiring
+the table entirely is a single unit whenever someone wants it; nothing depends on it
+happening.
 
 ## Alternatives rejected
 

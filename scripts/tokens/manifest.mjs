@@ -219,6 +219,16 @@ export const TEXTBOX_KEYS = {
 	TextControlPlaceholderForegroundDisabled: 'TextBox placeholder, disabled',
 	TextControlSelectionHighlightColor: 'TextBox selection highlight, the text-range background',
 
+	// The header and the description, which the pin references and does not define: both
+	// are in the XAML framework dictionary, and these are the first keys this project
+	// reads from it. `TextControlHeaderForeground` is `SystemControlForegroundBaseHighBrush`
+	// — pure black in light and pure white in dark, measured on the reference guest against
+	// the original, and notably *not* `TextFillColorPrimary`, which is what a guess would
+	// have chosen. See ADR 0010.
+	TextControlHeaderForeground: 'TextBox header, at rest',
+	TextControlHeaderForegroundDisabled: 'TextBox header, disabled',
+	SystemControlDescriptionTextForegroundBrush: 'TextBox description, every state',
+
 	// The delete button: its three brushes and the three states each paints.
 	TextControlButtonBackgroundPointerOver: 'TextBox delete button background, pointer over',
 	TextControlButtonBackgroundPressed: 'TextBox delete button background, pressed',
@@ -1236,20 +1246,30 @@ export const PLATFORM_FONTS = {
  * alternative — a token per name — fails on the first objection, that these names appear
  * only under high contrast and no source gives them a light or dark value.
  *
- * `themes` is a guard, not decoration. Six of these ten are referenced from `Default` and
- * `Light` records elsewhere in the extraction; those references are outside this
- * selection today, and the day a tranche reaches one, the generator stops rather than
- * silently applying a high-contrast reading to a light one.
+ * `themes` is a guard, not decoration, and it has now fired for real. It said that the
+ * day a tranche referenced one of these from `Default` or `Light` the generator would
+ * stop rather than silently apply a high-contrast reading to a light record, and the
+ * Text tranche is that day: the framework dictionary defines `TextControlHeaderForeground`
+ * as an alias onto `SystemControlForegroundBaseHighBrush` in all three themes.
+ *
+ * **A row is deleted, not widened, when that happens.** ADR 0008 chose substitution
+ * because these names had no definition anywhere and no light or dark value could be
+ * written without inventing one. ADR 0010 changed that: the framework dictionary defines
+ * every one of them, in all three themes, and it agrees with this table's high-contrast
+ * readings six times out of six. So a forced row stops being a hand-chosen mapping and
+ * becomes an ordinary token read from a source — which is strictly less judgement, not
+ * more. `SystemControlForegroundBaseHighBrush` and `SystemControlDisabledBaseMediumLowBrush`
+ * left this table that way.
+ *
+ * The rest stay until something forces them, for the same reason the table was populated
+ * one tranche at a time rather than all at once: each departure changes the declarations
+ * that referenced it, and those are worth reading in a diff small enough to read.
  *
  * The values are read from `RevealBrush_themeresources.xaml`, the one place in the pinned
  * source that states high-contrast values for this family; ADR 0008 carries the evidence
  * per row and marks the two that rest on a single witness.
  */
 export const PLATFORM_BRUSHES = {
-	SystemControlForegroundBaseHighBrush: {
-		to: 'SystemColorButtonTextColor',
-		themes: ['HighContrast']
-	},
 	SystemControlBackgroundBaseLowBrush: {
 		to: 'SystemColorButtonFaceColor',
 		themes: ['HighContrast']
@@ -1261,10 +1281,6 @@ export const PLATFORM_BRUSHES = {
 	SystemControlHighlightListLowBrush: { to: 'SystemColorHighlightColor', themes: ['HighContrast'] },
 	SystemControlHighlightListMediumBrush: {
 		to: 'SystemColorHighlightColor',
-		themes: ['HighContrast']
-	},
-	SystemControlDisabledBaseMediumLowBrush: {
-		to: 'SystemColorGrayTextColor',
 		themes: ['HighContrast']
 	},
 	SystemControlHighlightListLowRevealBackgroundBrush: {
