@@ -6,8 +6,9 @@ import * as c5 from './c5-divergences.mjs';
 import * as c6 from './c6-no-consumer-tooling.mjs';
 import * as c7 from './c7-acceptance-surface-covered.mjs';
 import * as c8 from './c8-gallery-records-current.mjs';
+import * as c9 from './c9-tokens-resolve.mjs';
 
-const GATES = [c1, c2, c3, c4, c5, c6, c7, c8];
+const GATES = [c1, c2, c3, c4, c5, c6, c7, c8, c9];
 
 const MARK = { pass: '  ok  ', fail: ' FAIL ', pending: 'pending' };
 

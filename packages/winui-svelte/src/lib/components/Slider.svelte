@@ -130,15 +130,22 @@
 	/* `HorizontalTemplate` at Slider_themeresources.xaml:400 has three rows whose heights
 	   are `SliderPreContentMargin` (14), `Auto`, `SliderPostContentMargin` (14) — 14 + 4 + 14
 	   = 32, which is `SliderHorizontalHeight`. Centring in the 32 is what replaces the two
-	   margins. The container's own background reaches all four states via
-	   `SliderContainerBackground*` and is transparent at this pin; the four are emitted
-	   anyway, so a re-pin that gives them a value is not silently ignored. */
+	   margins.
+
+	   No resting or disabled background, and the omission is upstream's rather than this
+	   component's. `SliderContainerBackground` is defined under `HighContrast` at :57 and
+	   `Light` at :114 and **not under `Default`**; `SliderContainerBackgroundDisabled` is
+	   defined twice under `Default`, at :12 onto `ControlFillColorTransparentBrush` and at
+	   :13 onto `ControlFillColorTransparent`, a `Color` where a `Brush` is wanted. Neither
+	   can be emitted as a token that resolves in all three themes, so neither is read here.
+	   Both are transparent wherever they are defined, so nothing is painted differently for
+	   it; what is lost is the ability to notice a re-pin that gives them a value. The
+	   pointer-over and pressed siblings are complete and are read below. */
 	.container {
 		position: relative;
 		display: flex;
 		align-items: center;
 		min-height: var(--winui-SliderHorizontalHeight);
-		background: var(--winui-SliderContainerBackground);
 		touch-action: none;
 	}
 
@@ -314,9 +321,6 @@
 		   same 14px circle hover shows. A disabled slider's accent dot is larger than a
 		   resting one, which reads as a mistake and is what the source says. */
 		scale: 1.167;
-	}
-	.root[data-disabled] .container {
-		background: var(--winui-SliderContainerBackgroundDisabled);
 	}
 	.root[data-disabled] .container .thumb {
 		cursor: default;
