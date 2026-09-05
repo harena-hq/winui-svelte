@@ -723,9 +723,30 @@ function select(resources, framework) {
 	// dictionary answers only for a key the pin does not define **at all** — never
 	// theme by theme, because merging one key's themes across two dictionaries would
 	// produce a definition neither of them makes and no source could be cited for it.
+	// D23: the control pin wins, per key **and theme**. Where the pin defines a key in a
+	// theme, that record is used; where it leaves a theme out, the framework dictionary
+	// answers for that theme alone.
+	//
+	// The rule read "per key" until the Text tranche measured what that cost. XAML resolves
+	// per theme itself — a theme dictionary that omits a key falls through to the framework
+	// dictionary for that theme and no other — so "per key" was the reading that disagreed
+	// with the platform, and its stated reason, that a per-theme merge invents a definition
+	// neither source makes, does not hold: the framework's value for the missing theme is a
+	// definition the framework makes. Twenty selected keys are affected and the framework
+	// covers every missing theme of all twenty; `SliderContainerBackground` had no `Default`
+	// and the whole `TextControl*` family had no `HighContrast`. See ADR 0010 and O-merge1.
 	const definitionsOf = (key) => {
 		const own = resources.filter((record) => record.key === key);
-		return own.length ? own : framework.filter((record) => record.key === key);
+		if (own.length === 0) return framework.filter((record) => record.key === key);
+		const themes = new Set(own.map((record) => record.theme));
+		// Only a themed scope is filled. A key the pin defines outside any theme dictionary
+		// is theme-independent and complete by definition; adding themed records beside it
+		// would make it two different things at once.
+		if (themes.has(null)) return own;
+		const missing = framework.filter(
+			(record) => record.key === key && THEMED.includes(record.theme) && !themes.has(record.theme)
+		);
+		return [...own, ...missing];
 	};
 	// One seed map per surface that reads its own keys: the Design pages name theirs as
 	// page content, and the shell and each control tranche read theirs in component CSS.
@@ -856,64 +877,31 @@ function select(resources, framework) {
 	}
 
 	// Measured, and asserted rather than trusted: no key in this selection is themed in
-	// part. A partially themed key would resolve to another theme's value on the themes
-	// it is missing from, which reads as a design decision rather than as a hole.
+	// part. A partially themed key would resolve to another theme's value on the themes it
+	// is missing from, which reads as a design decision rather than as a hole.
 	//
-	// The TextBox tranche needed one exception, and it is narrower than "two themes are
-	// enough". The `TextControl*` family is defined in `Default` and `Light` and almost
-	// entirely absent from the `HighContrast` dictionary: Windows supplies those records
-	// from the framework dictionary inside the OS rather than writing them into the
-	// per-control `*_themeresources.xaml`, which is the same hole ADR 0008 describes for
-	// the legacy brushes.
-	//
-	// A web page has no framework dictionary, so what actually happens is a cascade: the
-	// key is emitted in light and dark and not in the high-contrast block, a page in high
-	// contrast falls through to the `:root` declaration, and that declaration is an alias
-	// onto a base key which the high-contrast block *does* redefine. The colour is
-	// therefore correct — but only because of that last clause, and nothing was checking
-	// it. A `Default`/`Light` key whose light value is a literal, or an alias onto a key
-	// the high-contrast block does not redefine, paints a light-theme value in high
-	// contrast and looks deliberate. That is precisely what the paragraph above forbids.
-	//
-	// So the exception carries its own condition: the light record must be an alias, and
-	// its target must itself be theme-independent or complete. Measured at the time of
-	// writing: 19 keys take this path and all 19 satisfy it.
-	const resolvable = (key, seen = new Set()) => {
-		if (seen.has(key)) return false;
-		seen.add(key);
-		const themes = byKey.get(key);
-		if (themes === undefined) return false;
-		const names = [...themes.keys()];
-		if (names.length === 1 && names[0] === null) return true;
-		if (names.length === THEMED.length && THEMED.every((name) => themes.has(name))) return true;
-		// A chain of `Default`/`Light` aliases is only as safe as the key it ends on.
-		const record = themes.get(LIGHT);
-		if (record === undefined || record.kind !== 'alias') return false;
-		return resolvable(record.to, seen);
-	};
-
+	// This assertion used to carry an exception, and the exception is gone because its cause
+	// is. The `TextControl*` family is defined in `Default` and `Light` and almost entirely
+	// absent from the per-control `HighContrast` dictionary, because Windows supplies those
+	// records from the framework dictionary rather than from `controls/dev`. With no
+	// framework dictionary to read, the generator let such a key through on the argument
+	// that a page in high contrast would fall back to the `:root` declaration and that the
+	// alias there would resolve correctly — and the comment that carried the exception said
+	// plainly that nothing was checking the last clause. It was not correct:
+	// `TextControlBackground` resolved to `#ffffffb3` under high contrast, a translucent
+	// white from the light theme, where the framework dictionary says the system window
+	// colour. Reading the framework dictionary per theme (D23, above) supplies every missing
+	// theme of all twenty affected keys, so no key is partially themed any more and the
+	// exception has nothing left to permit.
 	for (const [key, themes] of byKey) {
 		const names = [...themes.keys()];
 		const independent = names.length === 1 && names[0] === null;
 		const complete = names.length === THEMED.length && THEMED.every((name) => themes.has(name));
-		const light = themes.get(LIGHT);
-		const partial =
-			names.length === 2 &&
-			themes.has(DARK) &&
-			themes.has(LIGHT) &&
-			light?.kind === 'alias' &&
-			resolvable(light.to);
-		if (!independent && !complete && !partial) {
-			const why =
-				names.length === 2 && themes.has(DARK) && themes.has(LIGHT)
-					? `${key} is defined in Default and Light only, and its Light record is ` +
-						`${light?.kind === 'alias' ? `an alias onto \`${light.to}\`, which the high-contrast block does not define either` : 'not an alias'}; ` +
-						'a key that skips high contrast must resolve there through a key that does not'
-					: `${key} is defined in ${names.map((name) => name ?? 'no theme').join(', ')} only; ` +
-						'every key must be theme-independent, defined in all three themes, or ' +
-						'defined in Default and Light as an alias that resolves under high contrast';
-			fail(why);
-		}
+		if (!independent && !complete)
+			fail(
+				`${key} is defined in ${names.map((name) => name ?? 'no theme').join(', ')} only; ` +
+					'every key must be theme-independent or defined in all three themes'
+			);
 	}
 
 	for (const key of Object.keys(EXCLUDED))

@@ -8,7 +8,10 @@ import ts from 'typescript-eslint';
 // configuration into vite.config.ts, so there is no svelte.config.js to hand it.
 // Nothing here preprocesses, so the parser does not need one.
 export default ts.config(
-	{ ignores: ['**/node_modules/', '**/.svelte-kit/', '**/dist/', '**/build/'] },
+	// `.private/` is untracked and unpublished — measurement scripts, dispatch logs, captures.
+	// It is not this project's code and linting it only means a throwaway probe can turn
+	// `pnpm verify` red, which is what happened.
+	{ ignores: ['**/node_modules/', '**/.svelte-kit/', '**/dist/', '**/build/', '.private/'] },
 	js.configs.recommended,
 	...ts.configs.recommended,
 	...svelte.configs.recommended,
