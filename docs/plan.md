@@ -501,6 +501,17 @@ Automated, and a unit that fails one cannot be sealed.
 - **C3 — layer separation.** `packages/winui-svelte` must not import from `apps/gallery`.
 - **C4 — three themes, always.** Every exported component renders under light, dark and high
   contrast in the snapshot suite. A component that only works in one theme cannot land.
+
+  **It says nothing about engines, and that gap has already cost a defect.** Baselines are
+  taken on Edge because that is where the fonts resolve (D6), so every snapshot is Chromium.
+  TextBox's clear button was dead in Firefox and Safari and green here: the button renders
+  only while the box has focus, Chromium focuses a `<button>` on mousedown and the following
+  `focusin` cancels the `focusout`, and the other two engines do not — so the button unmounted
+  before `click` fired. Found by running it in a browser during review, not by any gate. A
+  library sold to consumers eventually needs an engine matrix; until it has one, anything
+  whose correctness depends on focus order, pointer sequence or event timing is reviewed by
+  running it, not by reading it.
+
 - **C5 — divergences are declared.** Every intentional departure from WinUI behaviour carries
   a `WD-NNN` id in a code comment resolving to an entry in `docs/divergences.md`, and every
   entry is cited by at least one site. Neither direction may dangle.
@@ -544,6 +555,28 @@ work staged, that reset discards the work.
   primitives it lacks. See ADR 0004. The survey's headline was that the keyboard limitation
   which prompted it is universal across every candidate, so it never was a selection
   criterion.
+
+## What the second-reviewer lane is worth
+
+A second model (`Hermes:solar-pro4` in the trailers) reads each unit's diff cold against a
+written rule list, in its own sandbox, as a finder that never gates. Two units in, its range is
+narrow enough to state:
+
+| unit    | real defects | it found | false positives |
+| ------- | ------------ | -------- | --------------- |
+| Button  | 4            | 1        | 2               |
+| TextBox | 1            | 0        | 0               |
+
+The one it found was a comment contradicting the line directly beneath it. The one it missed
+was the cross-engine focus defect above — and it missed that on a control run against the
+_unfixed_ file, with the mechanism spelled out in its rule list and its attention pointed at
+focus order. Both false positives came from the rule list compressing a real rule into a
+sentence that was stricter than the gate it described.
+
+So: it catches local textual contradiction and misses anything that requires simulating
+behaviour. Worth its cost as a second pair of eyes on comments, citations and stated rules;
+worthless as coverage, and never a gate. Keeping the table honest matters more than keeping
+the lane — a finder credited with more than it finds is worse than no finder.
 
 ## Open questions
 
