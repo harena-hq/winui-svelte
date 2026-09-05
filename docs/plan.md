@@ -610,6 +610,17 @@ Automated, and a unit that fails one cannot be sealed.
   old 720 rows, and RadioButton differed in 24 pixels along row 714 to 719, which is the
   antialiasing of a ring the old crop cut in half.
 
+  **A fourth was the suite building the wrong half of the tree.** Its webServer ran
+  `pnpm --filter gallery build`, which does not rebuild `packages/winui-svelte/dist` — and
+  the Gallery imports the library from there. A change to a component was therefore liable
+  to be photographed against the previous build of that component, which is the failure the
+  command's own comment says it exists to prevent, one layer further down. Caught by editing
+  a component, building the Gallery and watching the rule stay absent from `dist`. The fix
+  is the trailing dots, `--filter gallery...`; it was checked by deleting `dist` outright and
+  watching the suite rebuild it and still pass 11 of 11, which also establishes that the
+  tracked baselines match a library built from current source rather than from whatever was
+  last left on disk.
+
   **A second gap sits in the suite itself: `--update-snapshots` does not rewrite a baseline
   whose difference falls under Playwright's default per-pixel threshold.** The gradient-border
   fix moved a button's face by four levels — the exact defect a user had spotted by eye on
