@@ -243,18 +243,36 @@ worth closing. "Would be hard" is not a reason — the reason is always a specif
 - **We do**: draw nothing. A keyboard-focused control is not visually distinguished from an
   unfocused one, except where the control's own template already changes — TextBox's focused
   border does, Button and CheckBox do not.
-- **Why accepted**: the visual is not in any control's dictionary. It is drawn by the XAML
-  framework from `FocusVisualPrimaryBrush`, `FocusVisualSecondaryBrush`,
-  `FocusVisualPrimaryThickness` and `FocusVisualSecondaryThickness`, none of which is defined
-  in `controls/dev` — the same hole ADR 0008 describes for the legacy brushes, and the same
-  one that deferred TextBox's header. Four values guessed once become four values wrong on
-  every control at once, so this waits for the pass that measures the framework dictionary
-  rather than being invented per control. It is recorded here rather than left silent
-  because it was already true of Button and TextBox before CheckBox made it worth naming.
-- **Would reconsider if**: the framework dictionary's focus brushes and thicknesses are
-  measured on the reference guest, as the Text tranche will do for the header brushes. The
-  entry is deleted rather than amended then — the focus visual is one shape drawn one way,
-  and every control gets it in the same pass.
+- **Why accepted**: the visual is not in any control's dictionary. It was recorded as four
+  values none of which `controls/dev` defines. **That count was wrong, and the correction is
+  why this entry now carries numbers instead of a wait.** Two of the four are defined:
+  `Common_themeresources.xaml:15` and `:16` alias
+  `SystemControlFocusVisualPrimaryBrush` and `…SecondaryBrush` onto `FocusStrokeColorOuterBrush`
+  and `FocusStrokeColorInnerBrush` in all three themes, and both have been emitted in
+  `tokens.css` since v1. The other two are not resources at all — `FocusVisualPrimaryThickness`
+  and `FocusVisualSecondaryThickness` are `Control` property defaults, which is why the
+  framework dictionary has no entry for them either and why measurement, not a second
+  dictionary, is what settles them.
+
+  **Measured on the reference guest** (WinUI 3 Gallery, light theme, a keyboard-focused
+  split button): outward from the control's border box, 1 px of `FocusStrokeColorInner` then
+  2 px of `FocusStrokeColorOuter`, on all four edges, with the corner radius growing with the
+  offset so the two rings stay concentric with the control. Both are drawn **outside** the
+  control's bounds — the neighbours do not move, and the button's own border is untouched
+  underneath. The colours are exact: the outer band reads `rgb(26, 26, 26)`, which is
+  `#E4000000` over the `#F9F9F9` page, and the inner band `rgb(253, 253, 253)`, which is
+  `#B3FFFFFF` over the same. The two thicknesses agree with every `Setter` in the pin that
+  overrides them — 2 and 1, at `GridViewItem_themeresources.xaml:151`, `:153` and four other
+  sites.
+
+  In CSS that is one `box-shadow` with two rings, or an `::after` at a negative inset; it
+  costs no layout and it is the same shape on every control, which is the reason it is one
+  entry rather than one per control.
+
+- **Would reconsider if**: nothing further — the values are in hand and the entry closes in
+  this version. It is deleted rather than amended when a control draws the visual, along
+  with every `WD-008` citation, because the citations and the entry have to go in the same
+  commit for C5 to stay green in both directions.
 
 ---
 
