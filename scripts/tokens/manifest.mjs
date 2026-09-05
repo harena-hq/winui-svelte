@@ -683,6 +683,147 @@ export const TOGGLESWITCH_KEYS = {
 		'Pre-Fluent ToggleSwitch *ThemeBrush family, listed for EXCLUDED'
 };
 
+/**
+ * Keys Slider reads — the eighth seed set.
+ *
+ * The horizontal template is the `DefaultSliderStyle` at Slider_themeresources.xaml:176,
+ * which paints a two-row grid: a header row carrying `HeaderContentPresenter`, and a
+ * `SliderContainer` row holding a `HorizontalTrackRect` and a `HorizontalDecreaseRect`
+ * flanked by a `HorizontalThumb`. `SliderContainerBackground` and its three pointer
+ * siblings all alias `ControlFillColorTransparentBrush`/`ControlFillColorTransparent` at
+ * every theme, which means they resolve to transparent at this pin and the four are
+ * read anyway so a re-pin that gives them a value is not silently ignored.
+ *
+ * What this list leaves out, so a gap reads as a decision rather than an oversight.
+ * The Slider dictionary carries sixty-one resources; these are the ones not here:
+ *
+ * - **`Orientation="Vertical"`** and the three vertical-template keys
+ *   (`SliderVerticalWidth`, `SliderVerticalThumbWidth`, `SliderVerticalThumbHeight`).
+ *   The vertical template is not built in this unit.
+ * - **Tick marks** — `TickPlacement`, `TickFrequency`, and the four `TickBar`s in the
+ *   template, plus the four tick brushes (`SliderTickBarFill`,
+ *   `SliderTickBarFillDisabled`, `SliderInlineTickBarFill`, `SliderOutsideTickBarThemeHeight`).
+ *   Tick marks are not built in this unit.
+ * - **The border** — `SliderBorderThemeThickness`. The `DefaultSliderStyle` sets it to
+ *   `0` and the template never paints it.
+ * - **The header's own margin** — `SliderHeaderThemeMargin`. The template applies it but
+ *   the header sits on a ContentPresenter that this component does not include, so the
+ *   margin has nothing to act on; `SliderTopHeaderMargin` is what the component reads.
+ * - **The twenty-two pre-Fluent `Slider*ThemeBrush` resources.** They are the `Border`,
+ *   `DisabledBorder`, `HeaderForeground`, `Thumb*`, `TickMark*` and `Track*` families.
+ *   The current template references none of them and their `Default` values are literal
+ *   colours from a palette this library does not use. Same family and same reason as
+ *   Button's ten, TextBox's seventeen, CheckBox's fourteen, RadioButton's fifteen and
+ *   ToggleSwitch's twenty-three.
+ */
+export const SLIDER_KEYS = {
+	// The horizontal track row's height, the four margins around the row, and the four
+	// metrics that size the thumb itself: its box, its two painted circles, and its corner.
+	SliderHorizontalHeight: 'Slider, the horizontal track row',
+	SliderTrackThemeHeight: 'Slider track, at rest',
+	SliderTrackCornerRadius: 'Slider track, its corner radius',
+	SliderHorizontalThumbWidth: 'Slider thumb, its box',
+	SliderHorizontalThumbHeight: 'Slider thumb, its box',
+	SliderThumbCornerRadius: 'Slider thumb, its corner radius',
+	SliderInnerThumbWidth: 'Slider thumb, the accent circle',
+	SliderInnerThumbHeight: 'Slider thumb, the accent circle',
+	SliderTopHeaderMargin: 'Slider header, the gap below it',
+	SliderHeaderThemeFontWeight: 'Slider header, its weight',
+
+	// The container background in all four states — all four alias a transparent brush
+	// at this pin, but they are read so a re-pin that gives them a value is not silently
+	// ignored.
+	//
+	// Two keys here are deliberately not seeded, both because of upstream source bugs
+	// that the generator correctly rejects:
+	//
+	// - `SliderContainerBackgroundDisabled` is defined twice in `Default` —
+	//   Slider_themeresources.xaml:12 aliases `ControlFillColorTransparentBrush` and
+	//   :13 aliases `ControlFillColorTransparent`. The generator's `select()` rejects
+	//   duplicate definitions of one key in one theme, which is the rule that stops
+	//   the run from being built on a precedence decision the source itself does not
+	//   make.
+	// - `SliderContainerBackground` is defined in `HighContrast` and `Light` only; the
+	//   `Default` dictionary never defines it. The generator's `select()` requires a
+	//   key to be defined in all three themes, in `Default` and `Light` only as an alias
+	//   that resolves under high contrast, or theme-independent, and `HighContrast`+
+	//   `Light` is none of those.
+	//
+	// Both records resolve to transparent so the rendered colour is right either way;
+	// the variables just do not exist in tokens.css.
+	SliderContainerBackgroundPointerOver: 'Slider container background, pointer over',
+	SliderContainerBackgroundPressed: 'Slider container background, pressed',
+
+	// The track's fill in all four states. Pointer over and pressed alias the same brush
+	// as rest, but are listed separately so the four paints track the source one-for-one.
+	SliderTrackFill: 'Slider track fill, at rest',
+	SliderTrackFillPointerOver: 'Slider track fill, pointer over',
+	SliderTrackFillPressed: 'Slider track fill, pressed',
+	SliderTrackFillDisabled: 'Slider track fill, disabled',
+
+	// The decrease-rect's fill — the accent portion from the track start to the value.
+	SliderTrackValueFill: 'Slider value fill, at rest',
+	SliderTrackValueFillPointerOver: 'Slider value fill, pointer over',
+	SliderTrackValueFillPressed: 'Slider value fill, pressed',
+	SliderTrackValueFillDisabled: 'Slider value fill, disabled',
+
+	// The thumb's accent fill in all four states. The `Disabled` brush keeps the accent
+	// family but switches to `AccentFillColorDisabledBrush` so the thumb fades with the
+	// palette rather than going neutral.
+	SliderThumbBackground: 'Slider thumb accent fill, at rest',
+	SliderThumbBackgroundPointerOver: 'Slider thumb accent fill, pointer over',
+	SliderThumbBackgroundPressed: 'Slider thumb accent fill, pressed',
+	SliderThumbBackgroundDisabled: 'Slider thumb accent fill, disabled',
+
+	// The outer ring the accent circle sits on and the gradient that strokes it.
+	SliderOuterThumbBackground: 'Slider thumb, the ring around the accent',
+	SliderThumbBorderBrush: 'Slider thumb, the stroke around the ring',
+
+	// The header text in both states.
+	SliderHeaderForeground: 'Slider header text, at rest',
+	SliderHeaderForegroundDisabled: 'Slider header text, disabled',
+
+	// Seeded only so the EXCLUDED list below can name them — the generator stops if an
+	// EXCLUDED key is not selected.
+	SliderBorderThemeBrush: 'Pre-Fluent Slider *ThemeBrush family, listed for EXCLUDED',
+	SliderDisabledBorderThemeBrush: 'Pre-Fluent Slider *ThemeBrush family, listed for EXCLUDED',
+	SliderHeaderForegroundThemeBrush: 'Pre-Fluent Slider *ThemeBrush family, listed for EXCLUDED',
+	SliderThumbBackgroundThemeBrush: 'Pre-Fluent Slider *ThemeBrush family, listed for EXCLUDED',
+	SliderThumbBorderThemeBrush: 'Pre-Fluent Slider *ThemeBrush family, listed for EXCLUDED',
+	SliderThumbDisabledBackgroundThemeBrush:
+		'Pre-Fluent Slider *ThemeBrush family, listed for EXCLUDED',
+	SliderThumbPointerOverBackgroundThemeBrush:
+		'Pre-Fluent Slider *ThemeBrush family, listed for EXCLUDED',
+	SliderThumbPointerOverBorderThemeBrush:
+		'Pre-Fluent Slider *ThemeBrush family, listed for EXCLUDED',
+	SliderThumbPressedBackgroundThemeBrush:
+		'Pre-Fluent Slider *ThemeBrush family, listed for EXCLUDED',
+	SliderThumbPressedBorderThemeBrush: 'Pre-Fluent Slider *ThemeBrush family, listed for EXCLUDED',
+	SliderTickMarkInlineBackgroundThemeBrush:
+		'Pre-Fluent Slider *ThemeBrush family, listed for EXCLUDED',
+	SliderTickMarkInlineDisabledForegroundThemeBrush:
+		'Pre-Fluent Slider *ThemeBrush family, listed for EXCLUDED',
+	SliderTickmarkOutsideBackgroundThemeBrush:
+		'Pre-Fluent Slider *ThemeBrush family, listed for EXCLUDED',
+	SliderTickMarkOutsideDisabledForegroundThemeBrush:
+		'Pre-Fluent Slider *ThemeBrush family, listed for EXCLUDED',
+	SliderTrackBackgroundThemeBrush: 'Pre-Fluent Slider *ThemeBrush family, listed for EXCLUDED',
+	SliderTrackDecreaseBackgroundThemeBrush:
+		'Pre-Fluent Slider *ThemeBrush family, listed for EXCLUDED',
+	SliderTrackDecreaseDisabledBackgroundThemeBrush:
+		'Pre-Fluent Slider *ThemeBrush family, listed for EXCLUDED',
+	SliderTrackDecreasePointerOverBackgroundThemeBrush:
+		'Pre-Fluent Slider *ThemeBrush family, listed for EXCLUDED',
+	SliderTrackDecreasePressedBackgroundThemeBrush:
+		'Pre-Fluent Slider *ThemeBrush family, listed for EXCLUDED',
+	SliderTrackDisabledBackgroundThemeBrush:
+		'Pre-Fluent Slider *ThemeBrush family, listed for EXCLUDED',
+	SliderTrackPointerOverBackgroundThemeBrush:
+		'Pre-Fluent Slider *ThemeBrush family, listed for EXCLUDED',
+	SliderTrackPressedBackgroundThemeBrush:
+		'Pre-Fluent Slider *ThemeBrush family, listed for EXCLUDED'
+};
+
 export const SHELL_KEYS = {
 	// NavigationView — the pane, the content area, and the metrics that size them.
 	NavigationViewDefaultPaneBackground: 'NavigationView pane, the surface behind the items',
@@ -1090,7 +1231,56 @@ export const EXCLUDED = {
 	ToggleSwitchTrackPointerOverBackgroundThemeBrush:
 		'Pre-Fluent *ThemeBrush family; not referenced by the current ToggleSwitch template',
 	ToggleSwitchTrackPressedBackgroundThemeBrush:
-		'Pre-Fluent *ThemeBrush family; not referenced by the current ToggleSwitch template'
+		'Pre-Fluent *ThemeBrush family; not referenced by the current ToggleSwitch template',
+
+	// The pre-Fluent Slider `*ThemeBrush` family — the `Border`, `DisabledBorder`,
+	// `HeaderForeground`, `Thumb*`, `TickMark*` and `Track*` names for the same parts the
+	// modern brushes paint. Defined in Slider_themeresources.xaml and referenced nowhere
+	// in the template at :176.
+	SliderBorderThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current Slider template',
+	SliderDisabledBorderThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current Slider template',
+	SliderHeaderForegroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current Slider template',
+	SliderThumbBackgroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current Slider template',
+	SliderThumbBorderThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current Slider template',
+	SliderThumbDisabledBackgroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current Slider template',
+	SliderThumbPointerOverBackgroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current Slider template',
+	SliderThumbPointerOverBorderThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current Slider template',
+	SliderThumbPressedBackgroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current Slider template',
+	SliderThumbPressedBorderThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current Slider template',
+	SliderTickMarkInlineBackgroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current Slider template',
+	SliderTickMarkInlineDisabledForegroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current Slider template',
+	SliderTickmarkOutsideBackgroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current Slider template',
+	SliderTickMarkOutsideDisabledForegroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current Slider template',
+	SliderTrackBackgroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current Slider template',
+	SliderTrackDecreaseBackgroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current Slider template',
+	SliderTrackDecreaseDisabledBackgroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current Slider template',
+	SliderTrackDecreasePointerOverBackgroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current Slider template',
+	SliderTrackDecreasePressedBackgroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current Slider template',
+	SliderTrackDisabledBackgroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current Slider template',
+	SliderTrackPointerOverBackgroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current Slider template',
+	SliderTrackPressedBackgroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current Slider template'
 };
 
 /**
@@ -1169,7 +1359,14 @@ export const DOUBLE_LENGTHS = {
 	ToggleSwitchOuterBorderStrokeThickness: "the stroke around a ToggleSwitch's off track",
 	ToggleSwitchPreContentMargin: 'the gutter above a ToggleSwitch track row',
 	ToggleSwitchPostContentMargin: 'the gutter below a ToggleSwitch track row',
-	ToggleSwitchThemeMinWidth: 'the width a ToggleSwitch reserves'
+	ToggleSwitchThemeMinWidth: 'the width a ToggleSwitch reserves',
+
+	SliderHorizontalHeight: 'the horizontal track row',
+	SliderTrackThemeHeight: 'the bar a Slider track draws',
+	SliderHorizontalThumbWidth: 'a Slider thumb box',
+	SliderHorizontalThumbHeight: 'a Slider thumb box',
+	SliderInnerThumbWidth: 'the accent circle inside a Slider thumb',
+	SliderInnerThumbHeight: 'the accent circle inside a Slider thumb'
 };
 
 /**

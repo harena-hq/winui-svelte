@@ -497,6 +497,11 @@ group sizes, which no longer line up one-to-one with a version.
 4.  **The rest of input** — ComboBox, Slider, NumberBox, PasswordBox, AutoSuggestBox. The last
     of these also retires D20: the title bar's search box becomes the published control.
 
+    Slider ships horizontal first. `Orientation="Vertical"` and the three `TickBar`s are a
+    second unit rather than a divergence — nothing is being declined, they are simply not
+    built yet, and the Gallery's own Slider page uses both, so the acceptance surface wants
+    them before this version closes.
+
     **The measurement this version owed has been made, and it found a bigger hole than the
     one it was sent to close.** The plan here was to read seven values off the reference
     guest: the three brushes TextBox's `Header` and `Description` need, and WD-008's four.
