@@ -589,6 +589,12 @@
 	}
 
 	.content-presenter {
+		/* XAML's `MinHeight` and `MinWidth` include the border and the padding; CSS's
+		   `min-height` and `min-width` do not, unless the box is `border-box`. Without
+		   this line a control whose minimum comes from a WinUI resource renders that
+		   minimum *plus* its own padding and border — measured: this box came out 45px
+		   tall against the original's 32. */
+		box-sizing: border-box;
 		flex: 1 1 auto;
 		min-height: 0;
 		padding: var(--winui-NavigationViewContentPresenterMargin);
