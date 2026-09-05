@@ -81,6 +81,12 @@
 	// a 336 box — so `--bits-floating-anchor-width` is the wrong number here and the box is
 	// measured instead. The popup is portalled to the body, so the value cannot be inherited
 	// through a custom property and is merged into the element's own `style` below.
+	// bits-ui types a `child` snippet's props as `Record<string, unknown>`, so a handler it
+	// put on the element is `unknown` and cannot be called without saying what it is. This
+	// says it in one place rather than at every call site.
+	const chain = <E extends Event>(handler: unknown, event: E) =>
+		(handler as ((event: E) => void) | undefined)?.(event);
+
 	let boxWidth = $state(0);
 	let boxEl = $state<HTMLDivElement | null>(null);
 
@@ -136,16 +142,16 @@
 	     `ChosenSuggestion`: choosing one raises `onSuggestionChosen` and, as upstream does,
 	     puts the suggestion's text in the box. Binding `value` to the selection instead is
 	     the mistake that renders a box showing its placeholder while its delete button says
-	     there is something to delete. -->
+	     there is something to delete.
+
+	     `inputValue` is passed, not bound: the primitive declares it non-bindable, which
+	     `pnpm check` says plainly and the browser does not — typing updated the DOM and left
+	     `value` behind. So the text comes back the way TextBox's does, from the element's own
+	     `oninput`, and the primitive's handler is called first so its filtering and its open
+	     state still see every keystroke. -->
 	<Combobox.Root
 		type="single"
-		bind:inputValue={
-			() => value,
-			(next) => {
-				value = next;
-				onValueChange?.(next);
-			}
-		}
+		inputValue={value}
 		onValueChange={(chosen) => {
 			if (!chosen) return;
 			value = chosen;
@@ -168,11 +174,22 @@
 					<!-- Every element the primitive would render is rendered here instead,
 					     through its `child` snippet — the escape ADR 0004 names first. See
 					     ComboBox.svelte:114 for the rationale. -->
+					<!-- Both handlers call the primitive's first and then add to it. Written the
+					     other way round — `{...props}` and then a bare `onkeydown` — the later
+					     attribute replaces the one bits-ui put there, and the arrow keys stop
+					     moving through the suggestions and Escape stops closing the list, with
+					     nothing failing loudly enough to notice. -->
 					<input
 						{...props}
 						bind:this={ref}
 						class="input"
+						oninput={(event) => {
+							chain(props.oninput, event);
+							value = event.currentTarget.value;
+							onValueChange?.(value);
+						}}
 						onkeydown={(event) => {
+							chain(props.onkeydown, event);
 							if (event.key === 'Enter') submit();
 						}}
 					/>
@@ -302,7 +319,6 @@
 		   Measured 32px on the same reference guest
 		   apps/gallery/src/lib/SearchBox.svelte records. */
 		min-height: 32px;
-		padding: var(--winui-TextControlThemePadding);
 		border-style: solid;
 		border-color: transparent;
 		border-width: var(--winui-TextControlBorderThemeThickness);
@@ -362,6 +378,13 @@
 	   `<input>` paints in the root's family, and `outline: none` because the focused
 	   border is the box's, not the input's. */
 	.input {
+		/* The padding belongs to the input, not to the box, and that is not a stylistic
+		   choice. Upstream puts `TextControlThemePadding` on the `TextBox` inside the
+		   control — `AutoSuggestBoxTextBoxStyle` — and the two buttons are its siblings
+		   outside that padding. Put it on the box instead and the query button's
+		   `Height="28"` at :242 stacks with it: measured 41px against the original's 32 on
+		   the reference guest, with the search box in the Gallery's own title bar. */
+		padding: var(--winui-TextControlThemePadding);
 		flex: 1 1 auto;
 		min-width: 0;
 		border: 0;

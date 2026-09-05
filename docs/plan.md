@@ -35,31 +35,31 @@ pnpm workspace. The library is publishable and imposes no build tooling on its c
 
 ## Locked decisions
 
-| #   | Decision                                                                                           | Where                             |
-| --- | -------------------------------------------------------------------------------------------------- | --------------------------------- |
-| D1  | Library + Gallery showcase, split as above                                                         | this file                         |
-| D2  | Token values are extracted from `microsoft-ui-xaml` (MIT), not from Fluent 2 web packages          | ADR 0001                          |
-| D3  | Styling is Svelte scoped CSS over a CSS custom-property token cascade. No Tailwind, no CSS-in-JS   | ADR 0002                          |
-| D4  | Fonts and icons are referenced by name from the local system, never embedded                       | ADR 0003                          |
-| D5  | Visual truth is a human side-by-side against Windows 11; automation gates regression only          | this file, "Verification"         |
-| D6  | Snapshots run on a local Windows VM runner, not on the Linux host                                  | this file, "Verification"         |
-| D7  | Out-of-scope Gallery groups keep their pages, implemented where the web allows                     | this file, "Roadmap → v4"         |
-| D8  | Accent is six tokens with a baked default, plus an optional derivation from one base               | this file, "Accent"               |
-| D9  | bits-ui as the primitive base; individual Zag machines for TreeView, ColorPicker, NumberBox        | ADR 0004                          |
-| D10 | High contrast is generated as aliases onto eight system colors, not as a third palette             | ADR 0005                          |
-| D11 | A token is named `--winui-` plus the WinUI resource key, unchanged                                 | ADR 0006                          |
-| D12 | The token layer is a curated closure of four base files plus what the Design pages name            | this file, "Roadmap → v1"         |
-| D13 | Gallery page structure and page data are read from the pinned `WinUI-Gallery` source               | ADR 0007                          |
-| D14 | A composed WinUI `Style` ships as a CSS class, not as a custom property                            | this file, "Roadmap → v1"         |
-| D15 | A control tranche seeds the token selection by key, never by dictionary file                       | this file, "Roadmap → v2"         |
-| D16 | The window backdrop paints Mica's solid counterpart; the material is not approximated              | this file, "Roadmap → v2"; WD-003 |
-| D17 | A legacy `SystemControl*Brush` resolves through a table to a system colour, and is never emitted   | ADR 0008                          |
-| D18 | Every menu entry is a route; the path is derived from the record, never hand-written               | this file, "Roadmap → v2"         |
-| D19 | The shell is the Gallery's layout, and the selected navigation item is the URL                     | this file, "Roadmap → v2"         |
-| D20 | The title bar's search box is the Gallery's own, not a half-built published control                | this file, "Roadmap → v2"         |
-| D21 | A WinUI member becomes a Svelte prop by one stated rule, and every component takes `...rest`/`ref` | ADR 0009                          |
-| D22 | Tranches are ordered by what an application reaches for; harness scaffolding follows the controls  | this file, "Roadmap → v3"         |
-| D23 | The XAML framework dictionary is a third pinned upstream; on a shared key the control pin wins     | ADR 0010                          |
+| #   | Decision                                                                                             | Where                             |
+| --- | ---------------------------------------------------------------------------------------------------- | --------------------------------- |
+| D1  | Library + Gallery showcase, split as above                                                           | this file                         |
+| D2  | Token values are extracted from `microsoft-ui-xaml` (MIT), not from Fluent 2 web packages            | ADR 0001                          |
+| D3  | Styling is Svelte scoped CSS over a CSS custom-property token cascade. No Tailwind, no CSS-in-JS     | ADR 0002                          |
+| D4  | Fonts and icons are referenced by name from the local system, never embedded                         | ADR 0003                          |
+| D5  | Visual truth is a human side-by-side against Windows 11; automation gates regression only            | this file, "Verification"         |
+| D6  | Snapshots run on a local Windows VM runner, not on the Linux host                                    | this file, "Verification"         |
+| D7  | Out-of-scope Gallery groups keep their pages, implemented where the web allows                       | this file, "Roadmap → v4"         |
+| D8  | Accent is six tokens with a baked default, plus an optional derivation from one base                 | this file, "Accent"               |
+| D9  | bits-ui as the primitive base; individual Zag machines for TreeView, ColorPicker, NumberBox          | ADR 0004                          |
+| D10 | High contrast is generated as aliases onto eight system colors, not as a third palette               | ADR 0005                          |
+| D11 | A token is named `--winui-` plus the WinUI resource key, unchanged                                   | ADR 0006                          |
+| D12 | The token layer is a curated closure of four base files plus what the Design pages name              | this file, "Roadmap → v1"         |
+| D13 | Gallery page structure and page data are read from the pinned `WinUI-Gallery` source                 | ADR 0007                          |
+| D14 | A composed WinUI `Style` ships as a CSS class, not as a custom property                              | this file, "Roadmap → v1"         |
+| D15 | A control tranche seeds the token selection by key, never by dictionary file                         | this file, "Roadmap → v2"         |
+| D16 | The window backdrop paints Mica's solid counterpart; the material is not approximated                | this file, "Roadmap → v2"; WD-003 |
+| D17 | A legacy `SystemControl*Brush` resolves through a table to a system colour, and is never emitted     | ADR 0008                          |
+| D18 | Every menu entry is a route; the path is derived from the record, never hand-written                 | this file, "Roadmap → v2"         |
+| D19 | The shell is the Gallery's layout, and the selected navigation item is the URL                       | this file, "Roadmap → v2"         |
+| D20 | ~~The title bar's search box is the Gallery's own~~ — **retired in v4**, it is the published control | this file, "Roadmap → v4"         |
+| D21 | A WinUI member becomes a Svelte prop by one stated rule, and every component takes `...rest`/`ref`   | ADR 0009                          |
+| D22 | Tranches are ordered by what an application reaches for; harness scaffolding follows the controls    | this file, "Roadmap → v3"         |
+| D23 | The XAML framework dictionary is a third pinned upstream; on a shared key the control pin wins       | ADR 0010                          |
 
 ## Verification
 
@@ -289,7 +289,9 @@ makes the browser's own back and forward work without a second source of truth t
 The `/dev/` harness pages sit outside it — they exist to photograph one control against
 nothing, and a shell around them would defeat that.
 
-**D20 — the title bar's search box belongs to the Gallery, not to the library.** The
+**D20 — the title bar's search box belongs to the Gallery, not to the library.**
+**Retired in v4**: the Text tranche built the control, and the shell now mounts it. What
+follows is why it was true while it was true. The
 original is an `AutoSuggestBox`, which is the Text tranche's to build. Publishing an
 unfinished one now would put it on the library's public surface and into C4's theme matrix,
 and the Text tranche would then be rewriting a shipped control rather than writing one. The
@@ -748,19 +750,24 @@ Two more, both raised by the shell and both of a kind this project settles the s
 looking at the two windows side by side rather than by arguing from a screenshot. They are
 recorded here so the comparison has a list to work from.
 
-**O-shell1 — the search box's width.** `MainWindow.xaml` gives the `AutoSuggestBox`
-`MaxWidth="580"` and `HorizontalAlignment="Stretch"`, and overrides
-`TitleBarContentHorizontalAlignment` from `Center` to `Stretch` so it fills its column;
-`TitleBar.xaml:186` makes that column `*`. Ours therefore renders 580 wide at a 1600-wide
-window. A capture of the shipped app at that width shows the box **318** wide — its content
-width — which reads as the override not taking. Settled by putting the two windows side by
-side at the same width, not by inferring chrome insets from one screenshot.
+**O-shell1 — the search box's width. _Resolved: 318, and the override does not take._**
+`MainWindow.xaml` gives the `AutoSuggestBox` `MaxWidth="580"` and
+`HorizontalAlignment="Stretch"`, and overrides `TitleBarContentHorizontalAlignment` from
+`Center` to `Stretch`; the shipped app nonetheless renders the box 318 wide at a 1600-wide
+window, which is `TextControlThemeMinWidth` rather than the ceiling. The published control
+now sits in that slot and renders 318 too, from the same resource. The ceiling stays at the
+call site, where the window's own markup puts it, and does nothing at this width — which is
+what the original does.
 
-**O-shell2 — the search box's height.** The original is 32 pixels, measured. Ours is 38 on
-the Linux host, and the difference is not layout: the row's height comes from the query
-button's line box, which is a 12-pixel Segoe Fluent Icons glyph at `line-height: normal`,
-and the host has a substitute face. XAML sizes the same button from the same font. Measure
-it on the guest before changing anything.
+**O-shell2 — the search box's height. _Resolved: 32, and the discrepancy was ours._** The
+original is 32 pixels. The stand-in read 38 on the Linux host and that was blamed on the
+substitute icon face; it was not that. The published control first rendered **41** in the
+title bar on the reference guest, and the cause was structural:
+`TextControlThemePadding` had been put on the box, where the query button's `Height="28"` at
+`AutoSuggestBox_themeresources.xaml:242` stacks with it. Upstream puts that padding on the
+`TextBox` inside the control and leaves both buttons outside it. Moved, and the box measures
+32 — top border on row 8 and bottom on row 39 in the original's capture and in ours, the
+same height at the same place in the row.
 
 ## Sources
 
