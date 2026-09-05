@@ -579,6 +579,17 @@ Automated, and a unit that fails one cannot be sealed.
   is a value that will not follow a theme switch. The Gallery is in scope because its Design
   pages are where the tokens are judged: a color hard-coded there would make the acceptance
   surface match the original for a reason unrelated to the token layer.
+
+  **A `c1-allow` proves a citation exists, not that the value follows from it.** The gate
+  reads the comment above a literal and checks that it names an upstream file and line; it
+  cannot read that file, so a real citation attached to a wrong reading passes. Unit 031
+  wrote `border-bottom-width: 1px` citing `NumberBoxSpinButtonBorderThickness` — "(`0,1,1,1`),
+  the bottom value". The resource exists, the line is right, and the bottom value is indeed
+  1; the border it drew is a divider between two stacked spin buttons, and upstream's two
+  spin buttons are side by side, so upstream has no such edge. C1 was green. What found it
+  was opening `NumberBox.xaml:174` and measuring the rendered buttons. The gate's floor is
+  that a literal must be argued for; it was never going to be that the argument is sound.
+
 - **C2 — tokens are generated.** The committed token CSS must equal the generator's output.
 
   **What it does not check is the layer beneath it.** C2 compares the CSS with the
@@ -658,6 +669,22 @@ Automated, and a unit that fails one cannot be sealed.
   runtime and the element keeps whatever it inherited. Four such references existed across
   two components when the gate was written, and all eight other gates were green. It covers
   the Gallery for C1's reason: the Design pages are where the token layer is judged.
+
+  **What it cannot see is a token used where its type does not fit.** Three components have
+  now hit the same one: `ControlElevationBorderBrush` and its relatives are
+  `linear-gradient(…)` in the token layer, and a gradient named as a `border-color` is
+  invalid CSS. The browser drops the declaration and `border-color` falls back to
+  `currentColor` — the text colour — so the control gains a heavy black edge where the
+  original has a subtle one. Button documented it, TextBox hit it again and documented it
+  again, and NumberBox's spin buttons hit it a third time with all nine gates green: C1
+  passes because a token was used, C9 passes because the token exists, and the snapshot
+  suite passes because it was the baseline's first photograph.
+
+  The fix each time is the same masked-`::before` ring, which means the defect is
+  mechanical enough to check for. The gate is a tenth: resolve each token to its final
+  value in the generated CSS, and fail any `border-color`, `color`, `outline-color` or
+  `caret-color` whose token bottoms out in a `gradient(`. Not written yet, and written down
+  here so the fourth occurrence is not discovered by eye either.
 
 - **C5 — divergences are declared.** Every intentional departure from WinUI behaviour carries
   a `WD-NNN` id in a code comment resolving to an entry in `docs/divergences.md`, and every
