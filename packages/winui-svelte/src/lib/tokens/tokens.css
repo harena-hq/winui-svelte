@@ -800,17 +800,22 @@
 	--winui-SystemBaseMediumColor: #00000099;
 	--winui-SystemBaseMediumLowColor: #00000066;
 	--winui-SystemChromeDisabledHighColor: #ccccccff;
+	--winui-SystemChromeDisabledLowColor: #7a7a7aff;
 	--winui-SystemChromeHighColor: #ccccccff;
 	--winui-SystemChromeMediumLowColor: #f2f2f2ff;
+	--winui-SystemChromeWhiteColor: #ffffffff;
 	--winui-SystemListMediumColor: #00000033;
+	--winui-SystemControlBackgroundAltMediumBrush: var(--winui-SystemAltMediumColor);
 	--winui-SystemControlBackgroundAltMediumLowBrush: var(--winui-SystemAltMediumLowColor);
 	--winui-SystemControlBackgroundChromeMediumLowBrush: var(--winui-SystemChromeMediumLowColor);
 	--winui-SystemControlBackgroundListMediumBrush: var(--winui-SystemListMediumColor);
 	--winui-SystemControlDisabledBaseLowBrush: var(--winui-SystemBaseLowColor);
 	--winui-SystemControlDisabledBaseMediumLowBrush: var(--winui-SystemBaseMediumLowColor);
 	--winui-SystemControlDisabledChromeDisabledHighBrush: var(--winui-SystemChromeDisabledHighColor);
+	--winui-SystemControlDisabledChromeDisabledLowBrush: var(--winui-SystemChromeDisabledLowColor);
 	--winui-SystemControlForegroundBaseHighBrush: var(--winui-SystemBaseHighColor);
 	--winui-SystemControlForegroundChromeHighBrush: var(--winui-SystemChromeHighColor);
+	--winui-SystemControlHighlightAltChromeWhiteBrush: var(--winui-SystemChromeWhiteColor);
 	--winui-SystemControlHighlightBaseMediumBrush: var(--winui-SystemBaseMediumColor);
 	--winui-SystemControlHighlightListAccentHighBrush: color-mix(
 		in srgb,
@@ -1503,17 +1508,22 @@
 	--winui-SystemBaseMediumColor: #ffffff99;
 	--winui-SystemBaseMediumLowColor: #ffffff66;
 	--winui-SystemChromeDisabledHighColor: #333333ff;
+	--winui-SystemChromeDisabledLowColor: #858585ff;
 	--winui-SystemChromeHighColor: #767676ff;
 	--winui-SystemChromeMediumLowColor: #2b2b2bff;
+	--winui-SystemChromeWhiteColor: #ffffffff;
 	--winui-SystemListMediumColor: #ffffff33;
+	--winui-SystemControlBackgroundAltMediumBrush: var(--winui-SystemAltMediumColor);
 	--winui-SystemControlBackgroundAltMediumLowBrush: var(--winui-SystemAltMediumLowColor);
 	--winui-SystemControlBackgroundChromeMediumLowBrush: var(--winui-SystemChromeMediumLowColor);
 	--winui-SystemControlBackgroundListMediumBrush: var(--winui-SystemListMediumColor);
 	--winui-SystemControlDisabledBaseLowBrush: var(--winui-SystemBaseLowColor);
 	--winui-SystemControlDisabledBaseMediumLowBrush: var(--winui-SystemBaseMediumLowColor);
 	--winui-SystemControlDisabledChromeDisabledHighBrush: var(--winui-SystemChromeDisabledHighColor);
+	--winui-SystemControlDisabledChromeDisabledLowBrush: var(--winui-SystemChromeDisabledLowColor);
 	--winui-SystemControlForegroundBaseHighBrush: var(--winui-SystemBaseHighColor);
 	--winui-SystemControlForegroundChromeHighBrush: var(--winui-SystemChromeHighColor);
+	--winui-SystemControlHighlightAltChromeWhiteBrush: var(--winui-SystemChromeWhiteColor);
 	--winui-SystemControlHighlightBaseMediumBrush: var(--winui-SystemBaseMediumColor);
 	--winui-SystemControlHighlightListAccentHighBrush: color-mix(
 		in srgb,
@@ -2235,9 +2245,12 @@
 		--winui-SystemBaseMediumColor: #ffffff99;
 		--winui-SystemBaseMediumLowColor: #ffffff66;
 		--winui-SystemChromeDisabledHighColor: #333333ff;
+		--winui-SystemChromeDisabledLowColor: #858585ff;
 		--winui-SystemChromeHighColor: #767676ff;
 		--winui-SystemChromeMediumLowColor: #2b2b2bff;
+		--winui-SystemChromeWhiteColor: #ffffffff;
 		--winui-SystemListMediumColor: #ffffff33;
+		--winui-SystemControlBackgroundAltMediumBrush: var(--winui-SystemAltMediumColor);
 		--winui-SystemControlBackgroundAltMediumLowBrush: var(--winui-SystemAltMediumLowColor);
 		--winui-SystemControlBackgroundChromeMediumLowBrush: var(--winui-SystemChromeMediumLowColor);
 		--winui-SystemControlBackgroundListMediumBrush: var(--winui-SystemListMediumColor);
@@ -2246,8 +2259,10 @@
 		--winui-SystemControlDisabledChromeDisabledHighBrush: var(
 			--winui-SystemChromeDisabledHighColor
 		);
+		--winui-SystemControlDisabledChromeDisabledLowBrush: var(--winui-SystemChromeDisabledLowColor);
 		--winui-SystemControlForegroundBaseHighBrush: var(--winui-SystemBaseHighColor);
 		--winui-SystemControlForegroundChromeHighBrush: var(--winui-SystemChromeHighColor);
+		--winui-SystemControlHighlightAltChromeWhiteBrush: var(--winui-SystemChromeWhiteColor);
 		--winui-SystemControlHighlightBaseMediumBrush: var(--winui-SystemBaseMediumColor);
 		--winui-SystemControlHighlightListAccentHighBrush: color-mix(
 			in srgb,
@@ -2882,17 +2897,22 @@
 	--winui-SystemBaseMediumColor: #ffffff99;
 	--winui-SystemBaseMediumLowColor: #ffffff66;
 	--winui-SystemChromeDisabledHighColor: #333333ff;
+	--winui-SystemChromeDisabledLowColor: #7a7a7aff;
 	--winui-SystemChromeHighColor: #767676ff;
 	--winui-SystemChromeMediumLowColor: #2b2b2bff;
+	--winui-SystemChromeWhiteColor: #ffffffff;
 	--winui-SystemListMediumColor: #ffffff33;
+	--winui-SystemControlBackgroundAltMediumBrush: var(--winui-SystemColorButtonFaceColor);
 	--winui-SystemControlBackgroundAltMediumLowBrush: var(--winui-SystemColorButtonFaceColor);
 	--winui-SystemControlBackgroundChromeMediumLowBrush: var(--winui-SystemColorButtonFaceColor);
 	--winui-SystemControlBackgroundListMediumBrush: var(--winui-SystemColorButtonFaceColor);
 	--winui-SystemControlDisabledBaseLowBrush: var(--winui-SystemColorGrayTextColor);
 	--winui-SystemControlDisabledBaseMediumLowBrush: var(--winui-SystemColorGrayTextColor);
 	--winui-SystemControlDisabledChromeDisabledHighBrush: var(--winui-SystemColorGrayTextColor);
+	--winui-SystemControlDisabledChromeDisabledLowBrush: var(--winui-SystemColorGrayTextColor);
 	--winui-SystemControlForegroundBaseHighBrush: var(--winui-SystemColorButtonTextColor);
 	--winui-SystemControlForegroundChromeHighBrush: var(--winui-SystemColorButtonTextColor);
+	--winui-SystemControlHighlightAltChromeWhiteBrush: var(--winui-SystemColorHighlightTextColor);
 	--winui-SystemControlHighlightBaseMediumBrush: var(--winui-SystemColorHighlightColor);
 	--winui-SystemControlHighlightListAccentHighBrush: var(--winui-SystemColorHighlightColor);
 	--winui-SystemControlHighlightListAccentLowBrush: var(--winui-SystemColorHighlightColor);
@@ -2902,9 +2922,34 @@
 	--winui-SystemControlDescriptionTextForegroundBrush: var(
 		--winui-SystemControlPageTextBaseMediumBrush
 	);
+	--winui-TextControlForeground: var(--winui-SystemControlForegroundBaseHighBrush);
+	--winui-TextControlForegroundPointerOver: var(--winui-SystemControlForegroundBaseHighBrush);
+	--winui-TextControlForegroundDisabled: var(--winui-SystemControlDisabledChromeDisabledLowBrush);
+	--winui-TextControlBackground: var(--winui-SystemControlBackgroundAltMediumLowBrush);
+	--winui-TextControlBackgroundPointerOver: var(--winui-SystemControlBackgroundAltMediumBrush);
+	--winui-TextControlBackgroundDisabled: var(--winui-SystemColorButtonFaceColor);
+	--winui-TextControlBorderBrushFocused: var(--winui-SystemColorHighlightColor);
+	--winui-TextControlBorderBrushDisabled: var(--winui-SystemControlDisabledBaseLowBrush);
+	--winui-TextControlPlaceholderForeground: var(--winui-SystemControlPageTextBaseMediumBrush);
+	--winui-TextControlPlaceholderForegroundPointerOver: var(
+		--winui-SystemControlPageTextBaseMediumBrush
+	);
+	--winui-TextControlPlaceholderForegroundDisabled: var(
+		--winui-SystemControlDisabledChromeDisabledLowBrush
+	);
 	--winui-TextControlHeaderForeground: var(--winui-SystemControlForegroundBaseHighBrush);
 	--winui-TextControlHeaderForegroundDisabled: var(--winui-SystemControlDisabledBaseMediumLowBrush);
+	--winui-TextControlSelectionHighlightColor: var(--winui-SystemColorHighlightColor);
 	--winui-TextControlButtonBackground: var(--winui-SystemControlTransparentBrush);
+	--winui-TextControlButtonBackgroundPointerOver: var(--winui-SystemControlTransparentBrush);
+	--winui-TextControlButtonBackgroundPressed: var(--winui-SystemColorHighlightColor);
+	--winui-TextControlButtonBorderBrush: var(--winui-SystemControlTransparentBrush);
+	--winui-TextControlButtonBorderBrushPointerOver: var(--winui-SystemControlTransparentBrush);
+	--winui-TextControlButtonBorderBrushPressed: var(--winui-SystemControlTransparentBrush);
+	--winui-TextControlButtonForegroundPointerOver: var(--winui-SystemColorHighlightColor);
+	--winui-TextControlButtonForegroundPressed: var(
+		--winui-SystemControlHighlightAltChromeWhiteBrush
+	);
 	--winui-AutoSuggestListMaxHeight: 374px;
 	--winui-TextControlThemeMinWidth: 64px;
 	--winui-AutoSuggestListBorderThemeThickness: 1px;

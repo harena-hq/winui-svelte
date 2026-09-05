@@ -97,7 +97,18 @@ footing as the other two pins: fetched on demand, never committed, verified by h
 - Nothing is transcribed by hand out of it, for ADR 0001's and ADR 0007's reason: a value
   copied into this repository is a value that stops tracking its source.
 
-**On a key defined in both dictionaries, the pin wins.** The two share 2984 keys, and
+**On a key defined in both dictionaries, the pin wins — per key and theme.** Where the pin
+defines a key in a theme, that record is used; where it leaves a theme out, the framework
+dictionary answers for that theme alone. This is what XAML does: a theme dictionary that
+omits a key falls through to the framework dictionary for that theme and no other.
+
+This ADR first said "per key", with no per-theme merge, on the grounds that merging would
+produce a definition neither source makes. That was wrong on both counts and the correction
+is recorded as O-merge1 in `docs/plan.md`: twenty selected keys are partially themed in the
+pin, the framework covers every missing theme of all twenty, and the framework's value for a
+missing theme is a definition the framework makes. The narrower reading had been hiding a
+real defect — the `TextControl*` family fell back to its light-theme values under high
+contrast. The two share 2984 keys, and
 `generic.xaml` adds 418 the pin does not have. `microsoft-ui-xaml` is checked out at `main`
 and is therefore ahead of a released SDK, so preferring it keeps every token this project
 already emits exactly where it is: the new source can only add, never move, and the first

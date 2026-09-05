@@ -59,7 +59,7 @@ pnpm workspace. The library is publishable and imposes no build tooling on its c
 | D20 | ~~The title bar's search box is the Gallery's own~~ — **retired in v4**, it is the published control | this file, "Roadmap → v4"         |
 | D21 | A WinUI member becomes a Svelte prop by one stated rule, and every component takes `...rest`/`ref`   | ADR 0009                          |
 | D22 | Tranches are ordered by what an application reaches for; harness scaffolding follows the controls    | this file, "Roadmap → v3"         |
-| D23 | The XAML framework dictionary is a third pinned upstream; on a shared key the control pin wins       | ADR 0010                          |
+| D23 | The XAML framework dictionary is a third pinned upstream; the control pin wins per key and theme     | ADR 0010                          |
 
 ## Verification
 
@@ -726,25 +726,31 @@ than keeping the lane — a finder credited with more than it finds is worse tha
 
 ## Open questions
 
-**O-merge1 — does the pin win per key, or per key and theme?** D23 says the control pin
-wins on a key both dictionaries define, and that the framework dictionary answers only for a
-key the pin does not define **at all** — never theme by theme, because merging one key's
-themes across two dictionaries would produce a definition neither of them makes. Slider met
-the first case where that reading costs something. `SliderContainerBackground` is defined in
-`Slider_themeresources.xaml` under `HighContrast` and `Light` and **not** under `Default`, so
-the pin defines the key, the pin wins, and the result is a two-theme key the completeness
-check refuses. The framework dictionary defines all three.
+**O-merge1 — does the pin win per key, or per key and theme? _Resolved: per key and theme._**
+D23 first said the pin wins on any key it defines, and that the framework dictionary answers
+only for a key the pin does not define at all — never theme by theme, because merging one
+key's themes across two dictionaries would produce a definition neither of them makes.
 
-What makes it a real question rather than a bug is that XAML itself resolves per theme: a
-theme dictionary that omits a key falls through to the framework dictionary for that theme
-only, which is exactly the merge D23 forbids. So the platform does the thing the rule was
-written to prevent, and the rule's stated reason — inventing a definition neither source
-makes — does not apply, because the framework's `Default` value is a definition it does make.
+The count the question asked for: **20 selected keys** are defined by the pin in some themed
+scopes and not all, and the framework dictionary supplies **every missing theme of all 20**.
+`SliderContainerBackground` has no `Default`; the whole `TextControl*` family has no
+`HighContrast`.
 
-Not settled here, because the answer changes which value every partially-defined key
-resolves to and that blast radius has not been measured. Slider reads neither key instead,
-and says why at the site. Settle it by counting the selected keys the pin defines in some
-themes and the framework in others, then deciding with the number in hand.
+That settles it two ways. XAML resolves per theme itself — a theme dictionary that omits a
+key falls through to the framework dictionary for that theme and no other — so "per key" was
+the reading that disagreed with the platform. And the rule's stated reason does not hold: the
+framework's value for the missing theme is a definition the framework makes.
+
+What it fixed is larger than the rule. The generator carried an exception for exactly these
+keys, letting a `Default`/`Light` key through on the argument that a page in high contrast
+falls back to the `:root` declaration and resolves correctly there — and the comment carrying
+it said plainly that nothing checked the last clause. Nothing did, and it was wrong:
+`TextControlBackground` resolved under high contrast to `#ffffffb3`, a translucent white from
+the light theme, where the framework dictionary says the system window colour, and the
+foreground was near-black where the system says button text. **Every text control had been
+drawing light-theme colours in high contrast.** Reading per theme gives all twenty their
+missing values, moves no value that already resolved, and the exception is deleted along with
+its cause.
 
 Two more, both raised by the shell and both of a kind this project settles the same way: by
 looking at the two windows side by side rather than by arguing from a screenshot. They are
