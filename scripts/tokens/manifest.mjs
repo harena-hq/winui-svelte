@@ -375,6 +375,69 @@ export const AUTOSUGGESTBOX_KEYS = {
 };
 
 /**
+ * Keys NumberBox reads — the twelfth seed set, and the fourth in the Text family.
+ *
+ * NumberBox is a TextBox with two RepeatButton spin buttons side by side beside it. The
+ * header, description, placeholder and the box itself read the same `TextControl*` family
+ * TextBox reads in the same four states — those keys belong to `TEXTBOX_KEYS` and are
+ * not repeated here, for the same disjointness reason `PasswordBox` and
+ * `AutoSuggestBox` do not repeat them.
+ *
+ * The spin buttons are `RepeatButton`s in `SourceNames` — `RepeatButton_themeresources.xaml`,
+ * defined alongside the rest of the CommonStyles — rather than in the NumberBox dictionary
+ * itself, so every brush the buttons paint is a `RepeatButton*` name. The button's own
+ * style at `NumberBox_themeresources.xaml:182` is `BasedOn` the default `RepeatButton`
+ * style, so the background, foreground and border it paints come from the `RepeatButton*`
+ * families, in the four `CommonStates` the source paints (Normal, PointerOver, Pressed,
+ * Disabled).
+ *
+ * What this list leaves out, so a gap reads as a decision rather than an oversight. The
+ * NumberBox dictionary and the framework dictionary together carry 26 `NumberBox*` keys;
+ * these are the ones not here:
+ *
+ * - **The `NumberBoxPopup*` family and `NumberBoxIconMargin`.** The compact placement,
+ *   where the spin buttons live in a popup beside the box. Not built in this unit — the
+ *   brief's scope names only `Hidden` and `Inline`, and `SpinButtonPlacementMode="Compact"`
+ *   arrives with its own tranche. `NumberBoxTextBoxStyle` is a `Style` resource, the same
+ *   reason every other `*Style` resource is dropped: this project writes its own
+ *   templates.
+ *
+ * `TextControl*` is seeded by `TEXTBOX_KEYS` already; the generator's disjointness check
+ * is what stops a key from being seeded twice. `RepeatButton*` is seeded by no other set
+ * and is unique to this control. `NumberBoxMinWidth` is an `x:Double` and a length, so it
+ * needs a `DOUBLE_LENGTHS` row; the generator stops and names it otherwise. The five
+ * pre-Fluent `RepeatButton*ThemeBrush` names — `RepeatButtonBackgroundThemeBrush`,
+ * `RepeatButtonBorderThemeBrush`, `RepeatButtonDisabled*ThemeBrush`,
+ * `RepeatButtonForegroundThemeBrush`, `RepeatButtonPointerOver*ThemeBrush` and
+ * `RepeatButtonPressed*ThemeBrush` — are defined in the dictionary and referenced nowhere
+ * in the current `RepeatButton` template, the same family and same reason as Button's
+ * ten and TextBox's seventeen. They are not seeded here because nothing in this component
+ * reads them; if a later RepeatButton tranche takes the family whole, they arrive with it.
+ */
+export const NUMBERBOX_KEYS = {
+	// The two NumberBox-only keys: the box's minimum width and the spin buttons' border
+	// thickness (a four-part `Thickness` — `0,1,1,1`, no left border on a spin button).
+	NumberBoxMinWidth: 'NumberBox, the width the box reserves when spin buttons are inline',
+	NumberBoxSpinButtonBorderThickness: 'NumberBox spin button, the border the four sides paint',
+
+	// The spin button's `Background`, `Foreground` and `BorderBrush` in the four
+	// `CommonStates` the source paints. The button's own style is `BasedOn` the default
+	// `RepeatButton` style, so these are the brushes the buttons read.
+	RepeatButtonBackground: 'NumberBox spin button background, at rest',
+	RepeatButtonBackgroundPointerOver: 'NumberBox spin button background, pointer over',
+	RepeatButtonBackgroundPressed: 'NumberBox spin button background, pressed',
+	RepeatButtonBackgroundDisabled: 'NumberBox spin button background, disabled',
+	RepeatButtonForeground: 'NumberBox spin button foreground, at rest',
+	RepeatButtonForegroundPointerOver: 'NumberBox spin button foreground, pointer over',
+	RepeatButtonForegroundPressed: 'NumberBox spin button foreground, pressed',
+	RepeatButtonForegroundDisabled: 'NumberBox spin button foreground, disabled',
+	RepeatButtonBorderBrush: 'NumberBox spin button border, at rest',
+	RepeatButtonBorderBrushPointerOver: 'NumberBox spin button border, pointer over',
+	RepeatButtonBorderBrushPressed: 'NumberBox spin button border, pressed',
+	RepeatButtonBorderBrushDisabled: 'NumberBox spin button border, disabled'
+};
+
+/**
  * Keys CheckBox reads — the fifth seed set.
  *
  * The dictionary is a product: six painted properties across three checked states and
@@ -1760,7 +1823,8 @@ export const DOUBLE_LENGTHS = {
 
 	AutoSuggestListMaxHeight: 'the height the AutoSuggestBox suggestion list never exceeds',
 	AutoSuggestBoxLeftButtonMargin: 'the spacer column left of the AutoSuggestBox delete button',
-	TextControlThemeMinWidth: 'the minimum width an editable text box reserves'
+	TextControlThemeMinWidth: 'the minimum width an editable text box reserves',
+	NumberBoxMinWidth: 'the width the NumberBox reserves when spin buttons are inline'
 };
 
 /**
