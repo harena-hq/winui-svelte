@@ -11,7 +11,16 @@ export default ts.config(
 	// `.private/` is untracked and unpublished — measurement scripts, dispatch logs, captures.
 	// It is not this project's code and linting it only means a throwaway probe can turn
 	// `pnpm verify` red, which is what happened.
-	{ ignores: ['**/node_modules/', '**/.svelte-kit/', '**/dist/', '**/build/', '.private/'] },
+	{
+		ignores: [
+			'**/node_modules/',
+			'**/.svelte-kit/',
+			'**/dist/',
+			'**/build/',
+			'.private/',
+			'.pnpm-store/'
+		]
+	},
 	js.configs.recommended,
 	...ts.configs.recommended,
 	...svelte.configs.recommended,
