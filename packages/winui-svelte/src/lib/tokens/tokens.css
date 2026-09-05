@@ -31,7 +31,15 @@
 	--winui-FocusVisualPrimaryThickness: 2px;
 	--winui-FocusVisualSecondaryThickness: 1px;
 
+	--winui-AutoSuggestBoxSuggestionsListBackground: var(
+		--winui-AcrylicBackgroundFillColorDefaultBrush
+	);
+	--winui-AutoSuggestBoxSuggestionsListBorderBrush: var(--winui-SurfaceStrokeColorFlyoutBrush);
+	--winui-AutoSuggestBoxIconFontSize: 12px;
+	--winui-AutoSuggestBoxTopHeaderMargin: 0px 0px 8px 0px;
 	--winui-AutoSuggestBoxInnerButtonMargin: 3px 1px;
+	--winui-AutoSuggestBoxQueryButtonPadding: 2px 3px;
+	--winui-AutoSuggestBoxLeftButtonMargin: 3px;
 	--winui-AutoSuggestBoxRightButtonMargin: 4px;
 	--winui-ComboBoxItemForeground: var(--winui-TextFillColorPrimaryBrush);
 	--winui-ComboBoxItemForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
@@ -657,6 +665,7 @@
 	--winui-ToggleSwitchPreContentMargin: 10px;
 	--winui-ToggleSwitchPostContentMargin: 10px;
 	--winui-ToggleSwitchThemeMinWidth: 154px;
+	--winui-SystemControlTransientBorderBrush: color-mix(in srgb, #000000 14%, transparent);
 	--winui-AcrylicBackgroundFillColorDefaultBrush: #f9f9f9;
 	--winui-AcrylicInAppFillColorDefaultBrush: #f9f9f9;
 	--winui-AcrylicBackgroundFillColorBaseBrush: #eeeeee;
@@ -778,6 +787,11 @@
 	--winui-TitleBarTitleMinWidth: 0px;
 	--winui-TitleBarIconMargin: 0px 16px 0px 0px;
 	--winui-TitleBarTitleMargin: 0px 8px 0px 0px;
+	--winui-AutoSuggestListMaxHeight: 374px;
+	--winui-TextControlThemeMinWidth: 64px;
+	--winui-AutoSuggestListBorderThemeThickness: 1px;
+	--winui-AutoSuggestListMargin: 2px 0px 2px 0px;
+	--winui-AutoSuggestListPadding: 0px -1px 0px -1px;
 	--winui-HelperButtonThemePadding: 0px -2px 0px 0px;
 	--winui-SystemAltMediumColor: #ffffff99;
 	--winui-SystemAltMediumLowColor: #ffffff66;
@@ -835,6 +849,11 @@
 	--winui-SystemColorHighlightTextColor: #212d3b;
 	--winui-SystemColorHotlightColor: #70ebde;
 
+	--winui-AutoSuggestBoxSuggestionsListBackground: var(
+		--winui-AcrylicBackgroundFillColorDefaultBrush
+	);
+	--winui-AutoSuggestBoxSuggestionsListBorderBrush: var(--winui-SurfaceStrokeColorFlyoutBrush);
+	--winui-AutoSuggestBoxIconFontSize: 12px;
 	--winui-ComboBoxItemForeground: var(--winui-TextFillColorPrimaryBrush);
 	--winui-ComboBoxItemForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
 	--winui-ComboBoxItemForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
@@ -1400,6 +1419,7 @@
 	--winui-ToggleSwitchKnobFillOnPressed: var(--winui-TextOnAccentFillColorPrimaryBrush);
 	--winui-ToggleSwitchKnobFillOnDisabled: var(--winui-TextOnAccentFillColorDisabledBrush);
 	--winui-ToggleSwitchKnobStrokeOn: var(--winui-CircleElevationBorderBrush);
+	--winui-SystemControlTransientBorderBrush: color-mix(in srgb, #000000 36%, transparent);
 	--winui-AcrylicBackgroundFillColorDefaultBrush: #2c2c2c;
 	--winui-AcrylicInAppFillColorDefaultBrush: #2c2c2c;
 	--winui-AcrylicBackgroundFillColorBaseBrush: #1c1c1c;
@@ -1470,6 +1490,11 @@
 	--winui-TitleBarPaneToggleButtonForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
 	--winui-TitleBarPaneToggleButtonForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
 	--winui-TitleBarPaneToggleButtonForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+	--winui-AutoSuggestListMaxHeight: 374px;
+	--winui-TextControlThemeMinWidth: 64px;
+	--winui-AutoSuggestListBorderThemeThickness: 1px;
+	--winui-AutoSuggestListMargin: 2px 0px 2px 0px;
+	--winui-AutoSuggestListPadding: 0px -1px 0px -1px;
 	--winui-HelperButtonThemePadding: 0px -2px 0px 0px;
 	--winui-SystemAltMediumColor: #00000099;
 	--winui-SystemAltMediumLowColor: #00000066;
@@ -1528,6 +1553,11 @@
 		--winui-SystemColorHighlightTextColor: #212d3b;
 		--winui-SystemColorHotlightColor: #70ebde;
 
+		--winui-AutoSuggestBoxSuggestionsListBackground: var(
+			--winui-AcrylicBackgroundFillColorDefaultBrush
+		);
+		--winui-AutoSuggestBoxSuggestionsListBorderBrush: var(--winui-SurfaceStrokeColorFlyoutBrush);
+		--winui-AutoSuggestBoxIconFontSize: 12px;
 		--winui-ComboBoxItemForeground: var(--winui-TextFillColorPrimaryBrush);
 		--winui-ComboBoxItemForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
 		--winui-ComboBoxItemForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
@@ -2117,6 +2147,7 @@
 		--winui-ToggleSwitchKnobFillOnPressed: var(--winui-TextOnAccentFillColorPrimaryBrush);
 		--winui-ToggleSwitchKnobFillOnDisabled: var(--winui-TextOnAccentFillColorDisabledBrush);
 		--winui-ToggleSwitchKnobStrokeOn: var(--winui-CircleElevationBorderBrush);
+		--winui-SystemControlTransientBorderBrush: color-mix(in srgb, #000000 36%, transparent);
 		--winui-AcrylicBackgroundFillColorDefaultBrush: #2c2c2c;
 		--winui-AcrylicInAppFillColorDefaultBrush: #2c2c2c;
 		--winui-AcrylicBackgroundFillColorBaseBrush: #1c1c1c;
@@ -2191,6 +2222,11 @@
 		--winui-TitleBarPaneToggleButtonForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
 		--winui-TitleBarPaneToggleButtonForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
 		--winui-TitleBarPaneToggleButtonForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+		--winui-AutoSuggestListMaxHeight: 374px;
+		--winui-TextControlThemeMinWidth: 64px;
+		--winui-AutoSuggestListBorderThemeThickness: 1px;
+		--winui-AutoSuggestListMargin: 2px 0px 2px 0px;
+		--winui-AutoSuggestListPadding: 0px -1px 0px -1px;
 		--winui-HelperButtonThemePadding: 0px -2px 0px 0px;
 		--winui-SystemAltMediumColor: #00000099;
 		--winui-SystemAltMediumLowColor: #00000066;
@@ -2253,6 +2289,11 @@
 	--winui-SystemColorHighlightTextColor: #212d3b;
 	--winui-SystemColorHotlightColor: #70ebde;
 
+	--winui-AutoSuggestBoxSuggestionsListBackground: var(
+		--winui-SystemControlBackgroundChromeMediumLowBrush
+	);
+	--winui-AutoSuggestBoxSuggestionsListBorderBrush: var(--winui-SystemControlTransientBorderBrush);
+	--winui-AutoSuggestBoxIconFontSize: 12px;
 	--winui-ComboBoxItemForeground: var(--winui-SystemControlForegroundBaseHighBrush);
 	--winui-ComboBoxItemForegroundPressed: var(--winui-SystemColorHighlightTextColor);
 	--winui-ComboBoxItemForegroundPointerOver: var(--winui-SystemColorHighlightTextColor);
@@ -2755,6 +2796,7 @@
 	--winui-ToggleSwitchKnobFillOnPressed: var(--winui-SystemColorButtonTextColorBrush);
 	--winui-ToggleSwitchKnobFillOnDisabled: var(--winui-SystemColorGrayTextColorBrush);
 	--winui-ToggleSwitchKnobStrokeOn: var(--winui-SystemControlTransparentBrush);
+	--winui-SystemControlTransientBorderBrush: var(--winui-SystemColorWindowTextColor);
 	--winui-AcrylicBackgroundFillColorDefaultBrush: var(--winui-SystemColorWindowColor);
 	--winui-AcrylicInAppFillColorDefaultBrush: var(--winui-SystemColorWindowColor);
 	--winui-AcrylicBackgroundFillColorBaseBrush: var(--winui-SystemColorWindowColor);
@@ -2863,6 +2905,11 @@
 	--winui-TextControlHeaderForeground: var(--winui-SystemControlForegroundBaseHighBrush);
 	--winui-TextControlHeaderForegroundDisabled: var(--winui-SystemControlDisabledBaseMediumLowBrush);
 	--winui-TextControlButtonBackground: var(--winui-SystemControlTransparentBrush);
+	--winui-AutoSuggestListMaxHeight: 374px;
+	--winui-TextControlThemeMinWidth: 64px;
+	--winui-AutoSuggestListBorderThemeThickness: 1px;
+	--winui-AutoSuggestListMargin: 2px 0px 2px 0px;
+	--winui-AutoSuggestListPadding: 0px -1px 0px -1px;
 	--winui-HelperButtonThemePadding: 0px -2px 0px 0px;
 }
 

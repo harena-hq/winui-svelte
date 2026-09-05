@@ -5,6 +5,8 @@
  */
 export const VERSION = '0.0.0';
 
+export { default as AutoSuggestBox } from './components/AutoSuggestBox.svelte';
+export type { AutoSuggestBoxProps } from './components/AutoSuggestBox.svelte';
 export { default as Button } from './components/Button.svelte';
 export type { ButtonProps } from './components/Button.svelte';
 export { default as CheckBox } from './components/CheckBox.svelte';
