@@ -149,6 +149,12 @@
 	}
 
 	.box {
+		/* XAML's `MinHeight` and `MinWidth` include the border and the padding; CSS's
+		   `min-height` and `min-width` do not, unless the box is `border-box`. Without
+		   this line a control whose minimum comes from a WinUI resource renders that
+		   minimum *plus* its own padding and border — measured: this box came out 45px
+		   tall against the original's 32. */
+		box-sizing: border-box;
 		position: relative;
 		display: flex;
 		align-items: stretch;
