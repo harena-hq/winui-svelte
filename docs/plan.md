@@ -59,6 +59,7 @@ pnpm workspace. The library is publishable and imposes no build tooling on its c
 | D20 | The title bar's search box is the Gallery's own, not a half-built published control                | this file, "Roadmap → v2"         |
 | D21 | A WinUI member becomes a Svelte prop by one stated rule, and every component takes `...rest`/`ref` | ADR 0009                          |
 | D22 | Tranches are ordered by what an application reaches for; harness scaffolding follows the controls  | this file, "Roadmap → v3"         |
+| D23 | The XAML framework dictionary is a third pinned upstream; on a shared key the control pin wins     | ADR 0010                          |
 
 ## Verification
 
@@ -496,17 +497,28 @@ group sizes, which no longer line up one-to-one with a version.
 4.  **The rest of input** — ComboBox, Slider, NumberBox, PasswordBox, AutoSuggestBox. The last
     of these also retires D20: the title bar's search box becomes the published control.
 
-    **This is the version that owes the framework dictionary a measurement, and two open
-    items are waiting on it.** TextBox shipped without its `Header` and `Description` because
-    `TextControlHeaderForeground`, `TextControlHeaderForegroundDisabled` and
-    `SystemControlDescriptionTextForegroundBrush` are defined in the XAML framework dictionary
-    inside Windows and have no value anywhere in the pin; PasswordBox, NumberBox and
-    AutoSuggestBox read the same three, which is why they were deferred to be measured once
-    here rather than guessed three times. WD-008 is the same hole seen from the other side:
-    `FocusVisualPrimaryBrush`, `FocusVisualSecondaryBrush` and their two thicknesses are in
-    that dictionary too, and no control in this library draws a focus visual until they are
-    read. One pass on the reference guest closes both, and it is the first unit of this
-    version rather than the last — three controls here depend on its answer.
+    **The measurement this version owed has been made, and it found a bigger hole than the
+    one it was sent to close.** The plan here was to read seven values off the reference
+    guest: the three brushes TextBox's `Header` and `Description` need, and WD-008's four.
+    Two of the seven were never missing — `SystemControlFocusVisualPrimaryBrush` and its
+    sibling are defined in `Common_themeresources.xaml` and have been in `tokens.css` since
+    v1. Two more are not resources at all, and were measured on the guest instead: the focus
+    visual is 1 px inner and 2 px outer, outside the control's bounds, recorded in WD-008.
+    The remaining three are in the XAML framework dictionary, and they are not alone
+    there. Counting what each of this version's controls references that neither the pin
+    defines nor the manifest already supplies: Slider 1, ComboBox 3, NumberBox 8,
+    PasswordBox 8, AutoSuggestBox 14. Four of the five need the same three text-control
+    brushes, which is the coupling that made this one decision rather than three, and the
+    rest is not only colour — `TextControlThemeMinWidth`, `HelperButtonThemePadding` and
+    four `AutoSuggestList*` sizes have no pixel to sample.
+
+    So the dictionary is pinned rather than sampled. ADR 0010 records it and the three
+    independent checks that the design-time `generic.xaml` in the Windows App SDK is the
+    dictionary the running framework loads — one of which is the guest measurement this
+    version set out to make, which now serves as the file's warrant instead of as a source.
+    D23 locks it. **The first two units of this version are therefore the pin and the
+    pipeline**, and the five controls follow; WD-008 closes here rather than eventually,
+    since its four values are now three read and one measured.
 
 5.  **Status and feedback** — InfoBar, InfoBadge, ProgressBar, ProgressRing, ToolTip.
 6.  **Surfaces** — Expander, ContentDialog, Flyout, MenuFlyout, TeachingTip, Popup.
