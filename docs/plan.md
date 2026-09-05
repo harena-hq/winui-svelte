@@ -593,14 +593,22 @@ Automated, and a unit that fails one cannot be sealed.
   where the fonts are. Promoting it means either baselines per engine on a Windows runner, or
   assertions about geometry and computed style rather than pictures. Neither is decided.
 
-  **A third gap is what the baselines can see at all.** `snapshotAllThemes` photographs
-  `body`, and `/dev/`'s layout scrolls inside a `.dev` element with `overflow-y: auto`, so
-  `body` is exactly the viewport and every tracked baseline is a 1280×720 crop of the top of
-  a page. Every dev page fitted above that fold until TextBox grew a header and a
-  description, whose two sections are the first content this suite renders and never
-  photographs. The fix is the harness's, not any control's — the dev layout stops being the
-  scroller and the capture becomes full-page — and it re-takes all 22 tracked baselines,
-  which is why it is a unit of its own rather than a line in the unit that found it.
+  **A third gap was what the baselines could see at all, and it was much larger than the
+  page that exposed it.** `snapshotAllThemes` photographs `body`; `/dev/`'s layout scrolls
+  inside a `.dev` element with `overflow-y: auto`, and the window above it is exactly
+  `100vh` by D16 — so `body` was always the viewport and every tracked baseline was a
+  1280×720 crop of the top of a page. TextBox's header and description were the first
+  content the suite rendered and never photographed, but measuring the rest found six of
+  the seven component pages already cropped: NavigationView by 1786 pixels, which is 71% of
+  it, and TextBox, CheckBox, RadioButton, TitleBar and ToggleSwitch by 439, 173, 77, 21 and 4. Three quarters of the NavigationView harness had never been in a picture. C4 was true
+  the whole time — every component did render in three themes — and what it checked was the
+  top of each page.
+
+  Closed by growing the viewport to the content before the capture rather than by changing
+  the layout: the window semantics the shell is judged on stay exactly as D16 wrote them.
+  The visible region did not move — five of the six pages were pixel-identical over their
+  old 720 rows, and RadioButton differed in 24 pixels along row 714 to 719, which is the
+  antialiasing of a ring the old crop cut in half.
 
   **A second gap sits in the suite itself: `--update-snapshots` does not rewrite a baseline
   whose difference falls under Playwright's default per-pixel threshold.** The gradient-border
