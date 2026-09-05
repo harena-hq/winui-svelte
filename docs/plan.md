@@ -636,6 +636,14 @@ Automated, and a unit that fails one cannot be sealed.
   every baseline sensitive to antialiasing noise across a re-pin; it is written down so the
   next person to trust a green suite about a small colour shift knows not to.
 
+- **C9 — every token a component reads is one the layer emits.** C1's opposite direction,
+  and the one nothing was checking. C1 fails a value written without a token; C9 fails a
+  token written without a value. A browser drops a declaration whose custom property is
+  undefined — silently, no console message, no build error — so the rule is simply absent at
+  runtime and the element keeps whatever it inherited. Four such references existed across
+  two components when the gate was written, and all eight other gates were green. It covers
+  the Gallery for C1's reason: the Design pages are where the token layer is judged.
+
 - **C5 — divergences are declared.** Every intentional departure from WinUI behaviour carries
   a `WD-NNN` id in a code comment resolving to an entry in `docs/divergences.md`, and every
   entry is cited by at least one site. Neither direction may dangle.
@@ -716,7 +724,27 @@ than keeping the lane — a finder credited with more than it finds is worse tha
 
 ## Open questions
 
-Two, both raised by the shell and both of a kind this project settles the same way: by
+**O-merge1 — does the pin win per key, or per key and theme?** D23 says the control pin
+wins on a key both dictionaries define, and that the framework dictionary answers only for a
+key the pin does not define **at all** — never theme by theme, because merging one key's
+themes across two dictionaries would produce a definition neither of them makes. Slider met
+the first case where that reading costs something. `SliderContainerBackground` is defined in
+`Slider_themeresources.xaml` under `HighContrast` and `Light` and **not** under `Default`, so
+the pin defines the key, the pin wins, and the result is a two-theme key the completeness
+check refuses. The framework dictionary defines all three.
+
+What makes it a real question rather than a bug is that XAML itself resolves per theme: a
+theme dictionary that omits a key falls through to the framework dictionary for that theme
+only, which is exactly the merge D23 forbids. So the platform does the thing the rule was
+written to prevent, and the rule's stated reason — inventing a definition neither source
+makes — does not apply, because the framework's `Default` value is a definition it does make.
+
+Not settled here, because the answer changes which value every partially-defined key
+resolves to and that blast radius has not been measured. Slider reads neither key instead,
+and says why at the site. Settle it by counting the selected keys the pin defines in some
+themes and the framework in others, then deciding with the number in hand.
+
+Two more, both raised by the shell and both of a kind this project settles the same way: by
 looking at the two windows side by side rather than by arguing from a screenshot. They are
 recorded here so the comparison has a list to work from.
 
