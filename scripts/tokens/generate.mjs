@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 import {
 	ACCENT_COLORS,
 	ADDITIONAL_KEYS,
+	BUTTON_KEYS,
 	EXCLUDED,
 	PLATFORM_FONTS,
 	SOURCE_FILES,
@@ -678,15 +679,22 @@ function references(record) {
  */
 function select(resources) {
 	const files = new Set(SOURCE_FILES);
-	// Two seed maps, one per acceptance surface: the Design pages name theirs as page
-	// content, the shell reads its own in component CSS. They are kept apart so each
-	// stays deletable with the thing that needs it, and merged here because the closure
+	// Three seed maps: the Design pages name theirs as page content, the shell reads its
+	// own in component CSS, and Button reads its own in component CSS. Each stays
+	// deletable with the thing that needs it, and they merge here because the closure
 	// does not care which surface asked.
 	for (const key of Object.keys(SHELL_KEYS))
 		if (key in ADDITIONAL_KEYS)
 			fail(`\`${key}\` is seeded by both ADDITIONAL_KEYS and SHELL_KEYS; it belongs to one`);
-	const seedNames = { ...ADDITIONAL_KEYS, ...SHELL_KEYS };
-	const seedMap = (key) => (key in ADDITIONAL_KEYS ? 'ADDITIONAL_KEYS' : 'SHELL_KEYS');
+	for (const key of Object.keys(BUTTON_KEYS))
+		if (key in ADDITIONAL_KEYS)
+			fail(`\`${key}\` is seeded by both ADDITIONAL_KEYS and BUTTON_KEYS; it belongs to one`);
+	for (const key of Object.keys(BUTTON_KEYS))
+		if (key in SHELL_KEYS)
+			fail(`\`${key}\` is seeded by both SHELL_KEYS and BUTTON_KEYS; it belongs to one`);
+	const seedNames = { ...ADDITIONAL_KEYS, ...SHELL_KEYS, ...BUTTON_KEYS };
+	const seedMap = (key) =>
+		key in ADDITIONAL_KEYS ? 'ADDITIONAL_KEYS' : key in SHELL_KEYS ? 'SHELL_KEYS' : 'BUTTON_KEYS';
 	const seeds = new Set(Object.keys(seedNames));
 
 	// A key the acceptance surface names is a seed even when it lives outside the four

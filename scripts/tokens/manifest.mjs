@@ -88,6 +88,83 @@ export const ADDITIONAL_KEYS = {
  *   already emits: 14px SemiBold is `.winui-BodyStrongTextBlockStyle` and 28px SemiBold is
  *   `.winui-TitleTextBlockStyle`, to the pixel and the weight.
  */
+/**
+ * Keys Button reads — the third seed set, and the first written as its own tranche.
+ *
+ * What this list leaves out, so a gap reads as a decision rather than an oversight.
+ * The Button dictionary carries forty-eight resources; these are the ones not here:
+ *
+ * - **The ten pre-Fluent `*ThemeBrush` resources.** They are the `ButtonBackgroundThemeBrush`,
+ *   `ButtonBorderThemeBrush`, `ButtonDisabledBackgroundThemeBrush`,
+ *   `ButtonDisabledBorderThemeBrush`, `ButtonDisabledForegroundThemeBrush`,
+ *   `ButtonForegroundThemeBrush`, `ButtonPointerOverBackgroundThemeBrush`,
+ *   `ButtonPointerOverForegroundThemeBrush`, `ButtonPressedBackgroundThemeBrush`,
+ *   `ButtonPressedForegroundThemeBrush` family. The current template references none of
+ *   them and their Default values are literal colours from a palette this library does
+ *   not use.
+ * - **The three `*ButtonStyle` resources.** A `Style` is a control template, and this
+ *   project writes its own.
+ */
+export const BUTTON_KEYS = {
+	ButtonPadding: 'Button, the padding inside its border',
+	ButtonBorderThemeThickness: 'Button, the border width',
+
+	ButtonBackground: 'Button background, at rest',
+	ButtonBackgroundPointerOver: 'Button background, pointer over',
+	ButtonBackgroundPressed: 'Button background, pressed',
+	ButtonBackgroundDisabled: 'Button background, disabled',
+	ButtonForeground: 'Button foreground, at rest',
+	ButtonForegroundPointerOver: 'Button foreground, pointer over',
+	ButtonForegroundPressed: 'Button foreground, pressed',
+	ButtonForegroundDisabled: 'Button foreground, disabled',
+	ButtonBorderBrush: 'Button border, at rest',
+	ButtonBorderBrushPointerOver: 'Button border, pointer over',
+	ButtonBorderBrushPressed: 'Button border, pressed',
+	ButtonBorderBrushDisabled: 'Button border, disabled',
+
+	AccentButtonBackground: 'Accent button background, at rest',
+	AccentButtonBackgroundPointerOver: 'Accent button background, pointer over',
+	AccentButtonBackgroundPressed: 'Accent button background, pressed',
+	AccentButtonBackgroundDisabled: 'Accent button background, disabled',
+	AccentButtonForeground: 'Accent button foreground, at rest',
+	AccentButtonForegroundPointerOver: 'Accent button foreground, pointer over',
+	AccentButtonForegroundPressed: 'Accent button foreground, pressed',
+	AccentButtonForegroundDisabled: 'Accent button foreground, disabled',
+	AccentButtonBorderBrush: 'Accent button border, at rest',
+	AccentButtonBorderBrushPointerOver: 'Accent button border, pointer over',
+	AccentButtonBorderBrushPressed: 'Accent button border, pressed',
+	AccentButtonBorderBrushDisabled: 'Accent button border, disabled',
+
+	SubtleButtonBackground: 'Subtle button background, at rest',
+	SubtleButtonBackgroundPointerOver: 'Subtle button background, pointer over',
+	SubtleButtonBackgroundPressed: 'Subtle button background, pressed',
+	SubtleButtonBackgroundDisabled: 'Subtle button background, disabled',
+	SubtleButtonForeground: 'Subtle button foreground, at rest',
+	SubtleButtonForegroundPointerOver: 'Subtle button foreground, pointer over',
+	SubtleButtonForegroundPressed: 'Subtle button foreground, pressed',
+	SubtleButtonForegroundDisabled: 'Subtle button foreground, disabled',
+	SubtleButtonBorderBrush: 'Subtle button border, at rest',
+	SubtleButtonBorderBrushPointerOver: 'Subtle button border, pointer over',
+	SubtleButtonBorderBrushPressed: 'Subtle button border, pressed',
+	SubtleButtonBorderBrushDisabled: 'Subtle button border, disabled',
+
+	// The ten `*ThemeBrush` keys the Button dictionary defines and the three styles
+	// reference nowhere. Seeded only so the EXCLUDED list below can name them — the
+	// generator stops if an EXCLUDED key is not selected.
+	ButtonBackgroundThemeBrush: 'Pre-Fluent Button *ThemeBrush family, listed for EXCLUDED',
+	ButtonBorderThemeBrush: 'Pre-Fluent Button *ThemeBrush family, listed for EXCLUDED',
+	ButtonDisabledBackgroundThemeBrush: 'Pre-Fluent Button *ThemeBrush family, listed for EXCLUDED',
+	ButtonDisabledBorderThemeBrush: 'Pre-Fluent Button *ThemeBrush family, listed for EXCLUDED',
+	ButtonDisabledForegroundThemeBrush: 'Pre-Fluent Button *ThemeBrush family, listed for EXCLUDED',
+	ButtonForegroundThemeBrush: 'Pre-Fluent Button *ThemeBrush family, listed for EXCLUDED',
+	ButtonPointerOverBackgroundThemeBrush:
+		'Pre-Fluent Button *ThemeBrush family, listed for EXCLUDED',
+	ButtonPointerOverForegroundThemeBrush:
+		'Pre-Fluent Button *ThemeBrush family, listed for EXCLUDED',
+	ButtonPressedBackgroundThemeBrush: 'Pre-Fluent Button *ThemeBrush family, listed for EXCLUDED',
+	ButtonPressedForegroundThemeBrush: 'Pre-Fluent Button *ThemeBrush family, listed for EXCLUDED'
+};
+
 export const SHELL_KEYS = {
 	// NavigationView — the pane, the content area, and the metrics that size them.
 	NavigationViewDefaultPaneBackground: 'NavigationView pane, the surface behind the items',
@@ -277,7 +354,33 @@ export const EXCLUDED = {
 
 	// Engine switches the XAML framework reads. Nothing about them is styling.
 	UseSystemFocusVisuals: 'XAML engine flag, not a style value',
-	ThemeShadowIsUsingDropShadows: 'XAML engine flag, not a style value'
+	ThemeShadowIsUsingDropShadows: 'XAML engine flag, not a style value',
+
+	// The pre-Fluent Button `*ThemeBrush` family, defined in Button_themeresources.xaml
+	// and referenced nowhere in any of the three styles at :154, :235 or :297. Their
+	// `Default` values are literal colours from the UWP palette — `#FFFFFFFF`, `#FF000000`,
+	// `#21FFFFFF` — this library does not use, and emitting them would add a stylesheet
+	// full of values nobody reads.
+	ButtonBackgroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by any of the three Button styles',
+	ButtonBorderThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by any of the three Button styles',
+	ButtonDisabledBackgroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by any of the three Button styles',
+	ButtonDisabledBorderThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by any of the three Button styles',
+	ButtonDisabledForegroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by any of the three Button styles',
+	ButtonForegroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by any of the three Button styles',
+	ButtonPointerOverBackgroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by any of the three Button styles',
+	ButtonPointerOverForegroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by any of the three Button styles',
+	ButtonPressedBackgroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by any of the three Button styles',
+	ButtonPressedForegroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by any of the three Button styles'
 };
 
 /**
@@ -337,7 +440,9 @@ export const DOUBLE_LENGTHS = {
 	TitleBarLeftPaddingWidth: 'the inset the window controls reserve',
 	TitleBarPaneToggleButtonWidth: 'the title bar pane toggle button',
 	TitleBarRightPaddingWidth: 'the inset the window controls reserve',
-	TitleBarTitleMinWidth: 'the title text'
+	TitleBarTitleMinWidth: 'the title text',
+
+	ButtonBorderThemeThickness: 'the border all three Button styles share'
 };
 
 /**
@@ -459,6 +564,63 @@ export const PLATFORM_BRUSHES = {
 		themes: ['HighContrast']
 	},
 	SystemControlBackgroundTransparentRevealBorderBrush: {
+		to: 'SystemColorButtonTextColor',
+		themes: ['HighContrast']
+	},
+
+	// The Button tranche's HighContrast dictionary references ten more of the family. Each
+	// is resolved by ADR 0008's rule and by nothing else: across the 34 witnesses in
+	// `Materials/Reveal/RevealBrush_themeresources.xaml`'s HighContrast dictionary the tone
+	// word does not matter and the role word decides — `Background…` is
+	// `SystemColorButtonFaceColor`, `Highlight…` is `SystemColorHighlightColor`,
+	// `HighlightAlt…` is `SystemColorHighlightTextColor`, `Foreground…` is
+	// `SystemColorButtonTextColor`, and `Disabled…` is `SystemColorGrayTextColor` from the
+	// 32-of-32 measurement the ADR records.
+	//
+	// Four of these ten were first mapped by reading the name as a whole rather than by the
+	// role word, and the result was checked by resolving every Button background/foreground
+	// pair through the table: `Button` and `SubtleButton` came out with `PointerOver` and
+	// `Pressed` painting `SystemColorHighlightTextColor` on `SystemColorHighlightTextColor`,
+	// so the label vanished on hover in high contrast. The rule produces an inversion in
+	// every one of the twelve pairs. This is what ADR 0008 means by a wrong colour becoming
+	// a silent one, and resolving the pairs is the check that makes it loud.
+	SystemControlHighlightAccentBrush: {
+		to: 'SystemColorHighlightColor',
+		themes: ['HighContrast']
+	},
+	SystemControlForegroundAccentBrush: {
+		to: 'SystemColorButtonTextColor',
+		themes: ['HighContrast']
+	},
+	SystemControlBackgroundBaseMediumLowBrush: {
+		to: 'SystemColorButtonFaceColor',
+		themes: ['HighContrast']
+	},
+	SystemControlHighlightAltAccentBrush: {
+		to: 'SystemColorHighlightTextColor',
+		themes: ['HighContrast']
+	},
+	SystemControlBackgroundChromeWhiteBrush: {
+		to: 'SystemColorButtonFaceColor',
+		themes: ['HighContrast']
+	},
+	SystemControlHighlightBaseHighBrush: {
+		to: 'SystemColorHighlightColor',
+		themes: ['HighContrast']
+	},
+	SystemControlHighlightBaseMediumLowBrush: {
+		to: 'SystemColorHighlightColor',
+		themes: ['HighContrast']
+	},
+	SystemControlHighlightTransparentBrush: {
+		to: 'SystemColorHighlightColor',
+		themes: ['HighContrast']
+	},
+	SystemControlDisabledTransparentBrush: {
+		to: 'SystemColorGrayTextColor',
+		themes: ['HighContrast']
+	},
+	SystemControlForegroundTransparentBrush: {
 		to: 'SystemColorButtonTextColor',
 		themes: ['HighContrast']
 	}
