@@ -538,6 +538,135 @@ export const RADIOBUTTON_KEYS = {
 		'Pre-Fluent RadioButton *ThemeBrush family, listed for EXCLUDED'
 };
 
+/**
+ * Keys ToggleSwitch reads — the seventh seed set.
+ *
+ * The track is two stacked 40x20 rectangles, `OuterBorder` for off and `SwitchKnobBounds`
+ * for on, and the knob is two more, `SwitchKnobOff` and `SwitchKnobOn`. Each pair is one
+ * element per toggle state rather than one element repainted, for the same reason
+ * RadioButton's ring is two: `ToggleStates` and `CommonStates` are orthogonal groups and
+ * cannot both drive one property. Which is why every brush below is named `…Off` or `…On`
+ * and then by pointer state, rather than the other way round.
+ *
+ * `ToggleSwitchOnStrokeThickness` is the one themed `x:Double` in the set: 0 in Light and
+ * Dark and 1 under HighContrast, because the on track is a solid accent fill that needs no
+ * edge until the palette is two colours.
+ *
+ * What this leaves out is only the twenty-three pre-Fluent `ToggleSwitch*ThemeBrush`
+ * resources — the `Curtain`, `Thumb`, `Track` and `OuterBorder` families, which are the
+ * pre-Fluent names for the same four parts. The current template references none of them.
+ * Same family and same reason as Button's ten, TextBox's seventeen, CheckBox's fourteen and
+ * RadioButton's fifteen.
+ *
+ * The header is in scope here where it was not for TextBox, and the difference is where the
+ * resource lives rather than a change of mind: `ToggleSwitchHeaderForeground` and
+ * `…Disabled` are defined in this dictionary, while `TextControlHeaderForeground` is in the
+ * XAML framework dictionary inside Windows and has no value to read in the pin.
+ */
+export const TOGGLESWITCH_KEYS = {
+	// The track's two stroke widths, the header's margin, the two content gutters, and the
+	// width the whole control reserves.
+	ToggleSwitchOnStrokeThickness: 'ToggleSwitch on track, its stroke width',
+	ToggleSwitchOuterBorderStrokeThickness: 'ToggleSwitch off track, its stroke width',
+	ToggleSwitchTopHeaderMargin: 'ToggleSwitch header, the gap below it',
+	ToggleSwitchPreContentMargin: 'ToggleSwitch, the gutter above the track row',
+	ToggleSwitchPostContentMargin: 'ToggleSwitch, the gutter below the track row',
+	ToggleSwitchThemeMinWidth: 'ToggleSwitch, the width the control reserves',
+
+	// The header and the on/off content.
+	ToggleSwitchHeaderForeground: 'ToggleSwitch header text',
+	ToggleSwitchHeaderForegroundDisabled: 'ToggleSwitch header text, disabled',
+	ToggleSwitchContentForeground: 'ToggleSwitch on/off content text',
+	ToggleSwitchContentForegroundDisabled: 'ToggleSwitch on/off content text, disabled',
+
+	// The knob's stroke, which only the on knob draws.
+	ToggleSwitchKnobStrokeOn: 'ToggleSwitch knob stroke, on',
+
+	ToggleSwitchContainerBackground: 'ToggleSwitch container background, at rest',
+	ToggleSwitchContainerBackgroundPointerOver: 'ToggleSwitch container background, pointer over',
+	ToggleSwitchContainerBackgroundPressed: 'ToggleSwitch container background, pressed',
+	ToggleSwitchContainerBackgroundDisabled: 'ToggleSwitch container background, disabled',
+
+	ToggleSwitchFillOff: 'ToggleSwitch track fill, off, at rest',
+	ToggleSwitchFillOffPointerOver: 'ToggleSwitch track fill, off, pointer over',
+	ToggleSwitchFillOffPressed: 'ToggleSwitch track fill, off, pressed',
+	ToggleSwitchFillOffDisabled: 'ToggleSwitch track fill, off, disabled',
+
+	ToggleSwitchStrokeOff: 'ToggleSwitch track stroke, off, at rest',
+	ToggleSwitchStrokeOffPointerOver: 'ToggleSwitch track stroke, off, pointer over',
+	ToggleSwitchStrokeOffPressed: 'ToggleSwitch track stroke, off, pressed',
+	ToggleSwitchStrokeOffDisabled: 'ToggleSwitch track stroke, off, disabled',
+
+	ToggleSwitchFillOn: 'ToggleSwitch track fill, on, at rest',
+	ToggleSwitchFillOnPointerOver: 'ToggleSwitch track fill, on, pointer over',
+	ToggleSwitchFillOnPressed: 'ToggleSwitch track fill, on, pressed',
+	ToggleSwitchFillOnDisabled: 'ToggleSwitch track fill, on, disabled',
+
+	ToggleSwitchStrokeOn: 'ToggleSwitch track stroke, on, at rest',
+	ToggleSwitchStrokeOnPointerOver: 'ToggleSwitch track stroke, on, pointer over',
+	ToggleSwitchStrokeOnPressed: 'ToggleSwitch track stroke, on, pressed',
+	ToggleSwitchStrokeOnDisabled: 'ToggleSwitch track stroke, on, disabled',
+
+	ToggleSwitchKnobFillOff: 'ToggleSwitch knob fill, off, at rest',
+	ToggleSwitchKnobFillOffPointerOver: 'ToggleSwitch knob fill, off, pointer over',
+	ToggleSwitchKnobFillOffPressed: 'ToggleSwitch knob fill, off, pressed',
+	ToggleSwitchKnobFillOffDisabled: 'ToggleSwitch knob fill, off, disabled',
+
+	ToggleSwitchKnobFillOn: 'ToggleSwitch knob fill, on, at rest',
+	ToggleSwitchKnobFillOnPointerOver: 'ToggleSwitch knob fill, on, pointer over',
+	ToggleSwitchKnobFillOnPressed: 'ToggleSwitch knob fill, on, pressed',
+	ToggleSwitchKnobFillOnDisabled: 'ToggleSwitch knob fill, on, disabled',
+
+	// Seeded only so the EXCLUDED list below can name them — the generator stops if an
+	// EXCLUDED key is not selected.
+	ToggleSwitchCurtainBackgroundThemeBrush:
+		'Pre-Fluent ToggleSwitch *ThemeBrush family, listed for EXCLUDED',
+	ToggleSwitchCurtainDisabledBackgroundThemeBrush:
+		'Pre-Fluent ToggleSwitch *ThemeBrush family, listed for EXCLUDED',
+	ToggleSwitchCurtainPointerOverBackgroundThemeBrush:
+		'Pre-Fluent ToggleSwitch *ThemeBrush family, listed for EXCLUDED',
+	ToggleSwitchCurtainPressedBackgroundThemeBrush:
+		'Pre-Fluent ToggleSwitch *ThemeBrush family, listed for EXCLUDED',
+	ToggleSwitchDisabledForegroundThemeBrush:
+		'Pre-Fluent ToggleSwitch *ThemeBrush family, listed for EXCLUDED',
+	ToggleSwitchForegroundThemeBrush:
+		'Pre-Fluent ToggleSwitch *ThemeBrush family, listed for EXCLUDED',
+	ToggleSwitchHeaderDisabledForegroundThemeBrush:
+		'Pre-Fluent ToggleSwitch *ThemeBrush family, listed for EXCLUDED',
+	ToggleSwitchHeaderForegroundThemeBrush:
+		'Pre-Fluent ToggleSwitch *ThemeBrush family, listed for EXCLUDED',
+	ToggleSwitchOuterBorderBorderThemeBrush:
+		'Pre-Fluent ToggleSwitch *ThemeBrush family, listed for EXCLUDED',
+	ToggleSwitchOuterBorderDisabledBorderThemeBrush:
+		'Pre-Fluent ToggleSwitch *ThemeBrush family, listed for EXCLUDED',
+	ToggleSwitchThumbBackgroundThemeBrush:
+		'Pre-Fluent ToggleSwitch *ThemeBrush family, listed for EXCLUDED',
+	ToggleSwitchThumbBorderThemeBrush:
+		'Pre-Fluent ToggleSwitch *ThemeBrush family, listed for EXCLUDED',
+	ToggleSwitchThumbDisabledBackgroundThemeBrush:
+		'Pre-Fluent ToggleSwitch *ThemeBrush family, listed for EXCLUDED',
+	ToggleSwitchThumbDisabledBorderThemeBrush:
+		'Pre-Fluent ToggleSwitch *ThemeBrush family, listed for EXCLUDED',
+	ToggleSwitchThumbPointerOverBackgroundThemeBrush:
+		'Pre-Fluent ToggleSwitch *ThemeBrush family, listed for EXCLUDED',
+	ToggleSwitchThumbPointerOverBorderThemeBrush:
+		'Pre-Fluent ToggleSwitch *ThemeBrush family, listed for EXCLUDED',
+	ToggleSwitchThumbPressedBackgroundThemeBrush:
+		'Pre-Fluent ToggleSwitch *ThemeBrush family, listed for EXCLUDED',
+	ToggleSwitchThumbPressedForegroundThemeBrush:
+		'Pre-Fluent ToggleSwitch *ThemeBrush family, listed for EXCLUDED',
+	ToggleSwitchTrackBackgroundThemeBrush:
+		'Pre-Fluent ToggleSwitch *ThemeBrush family, listed for EXCLUDED',
+	ToggleSwitchTrackBorderThemeBrush:
+		'Pre-Fluent ToggleSwitch *ThemeBrush family, listed for EXCLUDED',
+	ToggleSwitchTrackDisabledBackgroundThemeBrush:
+		'Pre-Fluent ToggleSwitch *ThemeBrush family, listed for EXCLUDED',
+	ToggleSwitchTrackPointerOverBackgroundThemeBrush:
+		'Pre-Fluent ToggleSwitch *ThemeBrush family, listed for EXCLUDED',
+	ToggleSwitchTrackPressedBackgroundThemeBrush:
+		'Pre-Fluent ToggleSwitch *ThemeBrush family, listed for EXCLUDED'
+};
+
 export const SHELL_KEYS = {
 	// NavigationView — the pane, the content area, and the metrics that size them.
 	NavigationViewDefaultPaneBackground: 'NavigationView pane, the surface behind the items',
@@ -898,7 +1027,57 @@ export const EXCLUDED = {
 	RadioButtonPressedBorderThemeBrush:
 		'Pre-Fluent *ThemeBrush family; not referenced by the current RadioButton template',
 	RadioButtonPressedForegroundThemeBrush:
-		'Pre-Fluent *ThemeBrush family; not referenced by the current RadioButton template'
+		'Pre-Fluent *ThemeBrush family; not referenced by the current RadioButton template',
+
+	// The pre-Fluent ToggleSwitch `*ThemeBrush` family — the `Curtain`, `Thumb`, `Track` and
+	// `OuterBorder` names for the same four parts the modern brushes paint. Defined in
+	// ToggleSwitch_themeresources.xaml and referenced nowhere in the template at :198.
+	ToggleSwitchCurtainBackgroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current ToggleSwitch template',
+	ToggleSwitchCurtainDisabledBackgroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current ToggleSwitch template',
+	ToggleSwitchCurtainPointerOverBackgroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current ToggleSwitch template',
+	ToggleSwitchCurtainPressedBackgroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current ToggleSwitch template',
+	ToggleSwitchDisabledForegroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current ToggleSwitch template',
+	ToggleSwitchForegroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current ToggleSwitch template',
+	ToggleSwitchHeaderDisabledForegroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current ToggleSwitch template',
+	ToggleSwitchHeaderForegroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current ToggleSwitch template',
+	ToggleSwitchOuterBorderBorderThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current ToggleSwitch template',
+	ToggleSwitchOuterBorderDisabledBorderThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current ToggleSwitch template',
+	ToggleSwitchThumbBackgroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current ToggleSwitch template',
+	ToggleSwitchThumbBorderThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current ToggleSwitch template',
+	ToggleSwitchThumbDisabledBackgroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current ToggleSwitch template',
+	ToggleSwitchThumbDisabledBorderThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current ToggleSwitch template',
+	ToggleSwitchThumbPointerOverBackgroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current ToggleSwitch template',
+	ToggleSwitchThumbPointerOverBorderThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current ToggleSwitch template',
+	ToggleSwitchThumbPressedBackgroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current ToggleSwitch template',
+	ToggleSwitchThumbPressedForegroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current ToggleSwitch template',
+	ToggleSwitchTrackBackgroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current ToggleSwitch template',
+	ToggleSwitchTrackBorderThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current ToggleSwitch template',
+	ToggleSwitchTrackDisabledBackgroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current ToggleSwitch template',
+	ToggleSwitchTrackPointerOverBackgroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current ToggleSwitch template',
+	ToggleSwitchTrackPressedBackgroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current ToggleSwitch template'
 };
 
 /**
@@ -971,7 +1150,13 @@ export const DOUBLE_LENGTHS = {
 	RadioButtonBorderThemeThickness: "the stroke around a RadioButton's ring",
 	RadioButtonCheckGlyphSize: 'the dot inside a checked RadioButton',
 	RadioButtonCheckGlyphPointerOverSize: 'the dot inside a RadioButton under the pointer',
-	RadioButtonCheckGlyphPressedOverSize: 'the dot inside a RadioButton while pressed'
+	RadioButtonCheckGlyphPressedOverSize: 'the dot inside a RadioButton while pressed',
+
+	ToggleSwitchOnStrokeThickness: "the stroke around a ToggleSwitch's on track",
+	ToggleSwitchOuterBorderStrokeThickness: "the stroke around a ToggleSwitch's off track",
+	ToggleSwitchPreContentMargin: 'the gutter above a ToggleSwitch track row',
+	ToggleSwitchPostContentMargin: 'the gutter below a ToggleSwitch track row',
+	ToggleSwitchThemeMinWidth: 'the width a ToggleSwitch reserves'
 };
 
 /**
