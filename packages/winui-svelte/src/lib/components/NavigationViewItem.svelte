@@ -259,6 +259,7 @@
 	}
 
 	.expand-chevron {
+		position: relative;
 		display: flex;
 		align-items: center;
 		justify-content: center;
@@ -295,6 +296,43 @@
 
 	.item[data-expanded='true'] .expand-chevron::before {
 		rotate: 180deg;
+	}
+
+	/* The focus visual; see Button.svelte for the shape.
+
+	   No `FocusVisualMargin` is set on `NavigationViewItem` anywhere in
+	   `controls/dev/NavigationView/`, so the band is drawn inside the item's own bounds.
+	   `.expand-chevron` is this library's own tab stop and has no upstream counterpart,
+	   so it takes the same default. */
+	.item:focus-visible::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		border-radius: inherit;
+		box-shadow:
+			inset 0 0 0 var(--winui-FocusVisualPrimaryThickness)
+				var(--winui-SystemControlFocusVisualPrimaryBrush),
+			inset 0 0 0
+				calc(var(--winui-FocusVisualPrimaryThickness) + var(--winui-FocusVisualSecondaryThickness))
+				var(--winui-SystemControlFocusVisualSecondaryBrush);
+		pointer-events: none;
+	}
+
+	/* `::before` is the chevron glyph above; the focus visual sits on `::after` so the two
+	   pseudo-elements do not collide. The band stays at the framework-default `FocusVisualMargin`
+	   of `0` and inherits the chevron's own corner radius. */
+	.expand-chevron:focus-visible::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		border-radius: inherit;
+		box-shadow:
+			inset 0 0 0 var(--winui-FocusVisualPrimaryThickness)
+				var(--winui-SystemControlFocusVisualPrimaryBrush),
+			inset 0 0 0
+				calc(var(--winui-FocusVisualPrimaryThickness) + var(--winui-FocusVisualSecondaryThickness))
+				var(--winui-SystemControlFocusVisualSecondaryBrush);
+		pointer-events: none;
 	}
 
 	.children {

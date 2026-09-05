@@ -126,14 +126,13 @@
 
 <style>
 	.root {
+		position: relative;
 		display: inline-flex;
 		flex-direction: column;
 		/* `MinWidth` is `ToggleSwitchThemeMinWidth`; the body row is `HorizontalAlignment="Left"`
 		   inside it, which is why the root is a column and the body is not stretched. */
 		min-width: var(--winui-ToggleSwitchThemeMinWidth);
-		/* WD-008: no system focus visual is drawn here; see docs/divergences.md.
-
-		   `line-height: normal` overrides the type ramp class on this element, for the reason
+		/* `line-height: normal` overrides the type ramp class on this element, for the reason
 		   CheckBox.svelte records: the ramp class stands in for the family and the size only,
 		   and upstream's ContentPresenter carries no TextBlock style. */
 		line-height: normal;
@@ -172,6 +171,26 @@
 		padding: 0;
 		border: 0;
 		opacity: 0;
+		pointer-events: none;
+	}
+
+	/* The focus visual; see Button.svelte for the shape. */
+	.root:has(input:focus-visible)::before {
+		content: '';
+		position: absolute;
+		/* c1-allow: ToggleSwitch_themeresources.xaml:200, `FocusVisualMargin="-7,-3,-7,-3"` —
+		   XAML writes left,top,right,bottom and CSS `inset` writes top,right,bottom,left,
+		   which is why the pair is reversed here */
+		inset: -3px -7px;
+		/* c1-allow: the same 3px vertical offset Button, CheckBox and RadioButton carry,
+		   so the band stays concentric with the control's own corner */
+		border-radius: calc(var(--winui-ControlCornerRadius) + 3px);
+		box-shadow:
+			inset 0 0 0 var(--winui-FocusVisualPrimaryThickness)
+				var(--winui-SystemControlFocusVisualPrimaryBrush),
+			inset 0 0 0
+				calc(var(--winui-FocusVisualPrimaryThickness) + var(--winui-FocusVisualSecondaryThickness))
+				var(--winui-SystemControlFocusVisualSecondaryBrush);
 		pointer-events: none;
 	}
 

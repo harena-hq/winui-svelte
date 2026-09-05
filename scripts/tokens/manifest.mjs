@@ -301,8 +301,13 @@ export const TEXTBOX_KEYS = {
  *   same reason as Button's ten and TextBox's seventeen. The current template references
  *   none of them.
  *
- * `CheckBoxFocusVisualMargin` is seeded for EXCLUDED for a third reason again: the system
- * focus visual it insets is not drawn by any control here. WD-008.
+ * `CheckBoxFocusVisualMargin` is the one key in this set that changed sides. It was seeded
+ * for `EXCLUDED` while no control in this library drew a focus visual, because the inset it
+ * carries had nothing to inset. The component draws one now, so the key is emitted and read:
+ * `CheckBox_themeresources.xaml:275` gives `-7,-3,-7,-3`, and the generator turns XAML's
+ * left,top,right,bottom into CSS's top,right,bottom,left, which is exactly what `inset`
+ * wants. The other three controls' margins are `Setter` values with no key, so those are
+ * `c1-allow` citations in the components rather than tokens here.
  */
 export const CHECKBOX_KEYS = {
 	// The box, the glyph inside it, and the row they sit in.
@@ -404,7 +409,7 @@ export const CHECKBOX_KEYS = {
 	CheckBoxCheckGlyphForegroundUncheckedPressed: 'Unchecked glyph, listed for EXCLUDED',
 	CheckBoxCheckGlyphForegroundUncheckedDisabled: 'Unchecked glyph, listed for EXCLUDED',
 
-	CheckBoxFocusVisualMargin: 'System focus visual inset, listed for EXCLUDED',
+	CheckBoxFocusVisualMargin: 'CheckBox focus visual, how far outside the control it sits',
 
 	CheckBoxBackgroundThemeBrush: 'Pre-Fluent CheckBox *ThemeBrush family, listed for EXCLUDED',
 	CheckBoxBorderThemeBrush: 'Pre-Fluent CheckBox *ThemeBrush family, listed for EXCLUDED',
@@ -959,9 +964,6 @@ export const EXCLUDED = {
 	CheckBoxCheckGlyphForegroundUncheckedDisabled:
 		'Unchecked CheckBox draws no glyph; the animated original hides it by state',
 
-	// The inset of the system focus visual, which no control in this library draws. WD-008.
-	CheckBoxFocusVisualMargin: 'System focus visual inset; WD-008 records that none is drawn',
-
 	// The pre-Fluent CheckBox `*ThemeBrush` family, defined in CheckBox_themeresources.xaml
 	// and referenced nowhere in the template at :297. Same family and same reason as
 	// Button's ten and TextBox's seventeen.
@@ -1236,6 +1238,21 @@ export const SYSTEM_COLORS = {
  */
 export const PLATFORM_FONTS = {
 	SymbolThemeFontFamily: "'Segoe Fluent Icons'"
+};
+
+/**
+ * Two sizes Windows supplies that no dictionary defines.
+ *
+ * `FocusVisualPrimaryThickness` and `FocusVisualSecondaryThickness` are property defaults
+ * on `Control` rather than theme resources, so there is no record to read them from — not
+ * in the control pin and not in the framework dictionary, which is the same reason
+ * `SymbolThemeFontFamily` is written out above. Every `Setter` in the pinned source that
+ * overrides the pair sets 2 and 1, and a Button on the reference guest measures a 2px
+ * outer stroke over a 1px inner one. Theme-independent, so `:root` only.
+ */
+export const PLATFORM_METRICS = {
+	FocusVisualPrimaryThickness: '2px',
+	FocusVisualSecondaryThickness: '1px'
 };
 
 /**

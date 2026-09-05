@@ -8,6 +8,7 @@ import {
 	CHECKBOX_KEYS,
 	EXCLUDED,
 	PLATFORM_FONTS,
+	PLATFORM_METRICS,
 	RADIOBUTTON_KEYS,
 	SOURCE_FILES,
 	DOUBLE_LENGTHS,
@@ -1002,6 +1003,10 @@ function stylesheet(doc, framework, selection, extraEmitted) {
 		// for the same reason: a family that changed with the theme would be a different
 		// decision than the one ADR 0003 made.
 		...Object.entries(PLATFORM_FONTS).flatMap(([key, value]) => declaration(key, value, 1)),
+		// Same shape as `PLATFORM_FONTS` and for the same reason: `FocusVisualPrimaryThickness`
+		// and `FocusVisualSecondaryThickness` are `Control` property defaults rather than
+		// theme resources, so the value has nowhere to be read from — see manifest.mjs.
+		...Object.entries(PLATFORM_METRICS).flatMap(([key, value]) => declaration(key, value, 1)),
 		'',
 		...forThemes([LIGHT, null], 1)
 	];
