@@ -125,6 +125,7 @@
 
 <style>
 	.root {
+		position: relative;
 		display: flex;
 		align-items: stretch;
 		/* c1-allow: TextBox_themeresources.xaml:193 binds MinWidth to
@@ -141,41 +142,73 @@
 		/* Both `TextControlBorderBrush` and `TextControlBorderBrushFocused` are gradients
 		   (aliases onto `TextControlElevationBorderBrush` and `…FocusedBrush`). A gradient
 		   named as a `border-color` is invalid CSS and silently dropped — the same reason
-		   Button.svelte carries its own transparent border. The two-layer background form
-		   SearchBox already uses carries the gradient under a transparent border, with the
-		   fill clipped to `padding-box` and the gradient to `border-box`.
-		   `BackgroundSizing="InnerBorderEdge"` upstream sets that clip. */
+		   Button.svelte carries its own transparent border. The gradient is painted by
+		   `.root::after` so it sits on the ring alone — a two-layer background clipped to
+		   `border-box` paints across the whole element rather than across the ring. The
+		   fill on the element clips to `padding-box` and `BackgroundSizing="InnerBorderEdge"`
+		   upstream sets that clip. */
 		border-color: transparent;
 		border-width: var(--winui-TextControlBorderThemeThickness);
 		border-radius: var(--winui-ControlCornerRadius);
-		background:
-			linear-gradient(var(--winui-TextControlBackground), var(--winui-TextControlBackground))
-				padding-box,
-			var(--winui-TextControlBorderBrush) border-box;
+		background: var(--winui-TextControlBackground) padding-box;
 		color: var(--winui-TextControlForeground);
 	}
 
+	/* The border brush is a gradient, and a gradient cannot be a `border-color`. It used to be
+	   a second background layer clipped to `border-box`, which paints across the whole element
+	   rather than across the ring. This paints it on the ring alone.
+
+	   `inset` is the negative border width because an absolutely positioned child is placed
+	   against its parent's padding box; backing it out by exactly the border width makes the
+	   ring's box the parent's border box, so `border-radius: inherit` puts the two curves on
+	   top of each other with no correction.
+
+	   The mask is two layers, the inner one clipped to the content box, composited so the
+	   content box is punched out. `-webkit-mask-composite: xor` is the same operation under
+	   the prefixed property, which is what Safari reads. */
+	.root::after {
+		content: '';
+		position: absolute;
+		inset: calc(-1 * var(--winui-TextControlBorderThemeThickness));
+		border-radius: inherit;
+		padding: var(--winui-TextControlBorderThemeThickness);
+		-webkit-mask:
+			linear-gradient(#000 0 0) content-box,
+			linear-gradient(#000 0 0);
+		-webkit-mask-composite: xor;
+		mask:
+			linear-gradient(#000 0 0) content-box,
+			linear-gradient(#000 0 0);
+		mask-composite: exclude;
+		pointer-events: none;
+		background: var(--winui-TextControlBorderBrush);
+	}
+
 	.root:hover {
-		background:
-			linear-gradient(
-					var(--winui-TextControlBackgroundPointerOver),
-					var(--winui-TextControlBackgroundPointerOver)
-				)
-				padding-box,
-			var(--winui-TextControlBorderBrushPointerOver) border-box;
+		background: var(--winui-TextControlBackgroundPointerOver) padding-box;
 		color: var(--winui-TextControlForegroundPointerOver);
+	}
+	.root:hover::after {
+		background: var(--winui-TextControlBorderBrushPointerOver);
 	}
 
 	.root:focus-within {
 		border-width: var(--winui-TextControlBorderThemeThicknessFocused);
-		background:
-			linear-gradient(
-					var(--winui-TextControlBackgroundFocused),
-					var(--winui-TextControlBackgroundFocused)
-				)
-				padding-box,
-			var(--winui-TextControlBorderBrushFocused) border-box;
+		background: var(--winui-TextControlBackgroundFocused) padding-box;
 		color: var(--winui-TextControlForegroundFocused);
+	}
+	/* The four `inset` values mirror `TextControlBorderThemeThicknessFocused` — `1px 1px 2px
+	   1px` — negated, and they are written out because `calc()` cannot negate a multi-value
+	   shorthand. `inset: calc(-1 * var(…))` against that token is invalid, so the declaration
+	   is dropped and the ring falls back to its static position: measured at
+	   `5px 566px 35px 10px`, which is nowhere, and the focused border vanished entirely. The
+	   resting rule above can use `calc()` because `TextControlBorderThemeThickness` is the
+	   uniform `1px`; the day it is not, it breaks the same way and silently, because `inset`
+	   is not a property C1 checks. */
+	.root:focus-within::after {
+		inset: -1px -1px -2px -1px;
+		padding: var(--winui-TextControlBorderThemeThicknessFocused);
+		background: var(--winui-TextControlBorderBrushFocused);
 	}
 
 	.root textarea,
@@ -220,15 +253,12 @@
 	   focus styling. `data-disabled` is on the root rather than `:disabled` because
 	   `:disabled` matches a form control and the root is a `<div>`. */
 	.root[data-disabled] {
-		background:
-			linear-gradient(
-					var(--winui-TextControlBackgroundDisabled),
-					var(--winui-TextControlBackgroundDisabled)
-				)
-				padding-box,
-			var(--winui-TextControlBorderBrushDisabled) border-box;
+		background: var(--winui-TextControlBackgroundDisabled) padding-box;
 		color: var(--winui-TextControlForegroundDisabled);
 		cursor: default;
+	}
+	.root[data-disabled]::after {
+		background: var(--winui-TextControlBorderBrushDisabled);
 	}
 
 	.root[data-disabled] textarea::placeholder,

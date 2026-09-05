@@ -549,6 +549,25 @@ Automated, and a unit that fails one cannot be sealed.
   whose correctness depends on focus order, pointer sequence or event timing is reviewed by
   running it, not by reading it.
 
+  **A first engine matrix exists as review evidence, not as a gate.** Firefox and WebKit are
+  installed beside Chromium on the development host, and the gradient-border unit was verified
+  by rendering the real components in all three and reading the computed geometry and the
+  border pixels out of each. That is enough to answer "does this CSS technique hold", which
+  was the question, and it is not enough to be a gate: the host has none of the Windows fonts,
+  so its pixels cannot be compared against a tracked baseline, and only Chromium can be driven
+  where the fonts are. Promoting it means either baselines per engine on a Windows runner, or
+  assertions about geometry and computed style rather than pictures. Neither is decided.
+
+  **A second gap sits in the suite itself: `--update-snapshots` does not rewrite a baseline
+  whose difference falls under Playwright's default per-pixel threshold.** The gradient-border
+  fix moved a button's face by four levels — the exact defect a user had spotted by eye on
+  Windows — and the suite passed, wrote nothing, and left the tracked baseline a picture of
+  the defective render. Deleting the file first is what forces a write. So a change small
+  enough to be tolerated is also a change the baselines will never record, and a regression
+  back to it would pass. The threshold has not been tightened here because doing so makes
+  every baseline sensitive to antialiasing noise across a re-pin; it is written down so the
+  next person to trust a green suite about a small colour shift knows not to.
+
 - **C5 — divergences are declared.** Every intentional departure from WinUI behaviour carries
   a `WD-NNN` id in a code comment resolving to an entry in `docs/divergences.md`, and every
   entry is cited by at least one site. Neither direction may dangle.
