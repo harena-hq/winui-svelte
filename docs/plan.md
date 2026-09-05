@@ -499,10 +499,23 @@ group sizes, which no longer line up one-to-one with a version.
 4.  **The rest of input** — ComboBox, Slider, NumberBox, PasswordBox, AutoSuggestBox. The last
     of these also retires D20: the title bar's search box becomes the published control.
 
-    Slider ships horizontal first. `Orientation="Vertical"` and the three `TickBar`s are a
-    second unit rather than a divergence — nothing is being declined, they are simply not
-    built yet, and the Gallery's own Slider page uses both, so the acceptance surface wants
-    them before this version closes.
+    **What this version still owes, once its five controls exist.** Each is a later unit and
+    none is a divergence: nothing here is being declined, it is simply not built yet, and
+    every one of them is on the Gallery page the acceptance gate will compare against.
+
+    | control        | not yet built                                                              |
+    | -------------- | -------------------------------------------------------------------------- |
+    | Slider         | `Orientation="Vertical"`, and the three `TickBar`s                         |
+    | ComboBox       | `IsEditable="True"` and the `EditableModeStates` group                     |
+    | NumberBox      | `SpinButtonPlacementMode="Compact"`, `AcceptsExpression`, `ValidationMode` |
+    | AutoSuggestBox | non-text suggestions, `LightDismissOverlayMode`                            |
+    | all four       | the touch and game-controller padding variants                             |
+
+    Two of the deferrals carry a note. AutoSuggestBox renders its own suggestion rows from
+    the `ComboBoxItem*` families because this library has no ListView; the Collections
+    tranche replaces them, and the component says so at the site. And `AcceptsExpression`
+    is the one that is a behaviour rather than a shape — if it is ever declined rather than
+    postponed, it becomes a `WD-` entry, not a line in this table.
 
     **The measurement this version owed has been made, and it found a bigger hole than the
     one it was sent to close.** The plan here was to read seven values off the reference
