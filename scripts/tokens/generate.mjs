@@ -10,6 +10,7 @@ import {
 	PLATFORM_FONTS,
 	PLATFORM_METRICS,
 	RADIOBUTTON_KEYS,
+	SLIDER_KEYS,
 	SOURCE_FILES,
 	DOUBLE_LENGTHS,
 	GLYPHS,
@@ -252,7 +253,7 @@ function scalar(record) {
 	switch (record.type) {
 		case 'x:Double':
 			// A length unit is not right for every double — an opacity, a ratio and a line
-			// count are all spelled the same way — so `*FontSize` is the only suffix taken
+			// count are spelled the same way — so `*FontSize` is the only suffix taken
 			// on trust and every other length is named in `DOUBLE_LENGTHS`. The next
 			// double to appear gets read rather than assumed.
 			if (!record.key.endsWith('FontSize') && !(record.key in DOUBLE_LENGTHS))
@@ -275,6 +276,19 @@ function scalar(record) {
 				four: ([left, top, right, bottom]) => [top, right, bottom, left],
 				two: ([horizontal, vertical]) => [vertical, horizontal]
 			});
+
+		// A `FontWeight` resource carries a named weight — `Normal`, `SemiBold` — that the
+		// type-ramp converter also reads. The ramp produces font-weight rules directly from
+		// these names; here the value lands on a stand-alone token the same way an
+		// `x:Double` length does.
+		case 'FontWeight':
+			if (!FONT_WEIGHTS.has(value))
+				fail(
+					`${where}: FontWeight \`${value}\` is not one of ` +
+						`${[...FONT_WEIGHTS.keys()].map((n) => `\`${n}\``).join(', ')}; ` +
+						'add a mapping rather than mapping it silently'
+				);
+			return FONT_WEIGHTS.get(value);
 
 		case 'x:String':
 			if (record.key.endsWith('Duration')) return duration(value, where);
@@ -710,7 +724,8 @@ function select(resources, framework) {
 		['TEXTBOX_KEYS', TEXTBOX_KEYS],
 		['CHECKBOX_KEYS', CHECKBOX_KEYS],
 		['RADIOBUTTON_KEYS', RADIOBUTTON_KEYS],
-		['TOGGLESWITCH_KEYS', TOGGLESWITCH_KEYS]
+		['TOGGLESWITCH_KEYS', TOGGLESWITCH_KEYS],
+		['SLIDER_KEYS', SLIDER_KEYS]
 	];
 	for (let i = 0; i < SEED_SETS.length; i++)
 		for (let j = i + 1; j < SEED_SETS.length; j++) {
