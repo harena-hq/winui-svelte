@@ -23,6 +23,7 @@ import {
 	TEXTBOX_KEYS,
 	TOGGLESWITCH_KEYS,
 	PASSWORDBOX_KEYS,
+	NUMBERBOX_KEYS,
 	TYPE_RAMP
 } from './manifest.mjs';
 
@@ -768,7 +769,8 @@ function select(resources, framework) {
 		['TOGGLESWITCH_KEYS', TOGGLESWITCH_KEYS],
 		['SLIDER_KEYS', SLIDER_KEYS],
 		['COMBOBOX_KEYS', COMBOBOX_KEYS],
-		['AUTOSUGGESTBOX_KEYS', AUTOSUGGESTBOX_KEYS]
+		['AUTOSUGGESTBOX_KEYS', AUTOSUGGESTBOX_KEYS],
+		['NUMBERBOX_KEYS', NUMBERBOX_KEYS]
 	];
 	for (let i = 0; i < SEED_SETS.length; i++)
 		for (let j = i + 1; j < SEED_SETS.length; j++) {
