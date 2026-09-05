@@ -5,6 +5,7 @@ import {
 	ACCENT_COLORS,
 	ADDITIONAL_KEYS,
 	BUTTON_KEYS,
+	CHECKBOX_KEYS,
 	EXCLUDED,
 	PLATFORM_FONTS,
 	SOURCE_FILES,
@@ -680,37 +681,32 @@ function references(record) {
  */
 function select(resources) {
 	const files = new Set(SOURCE_FILES);
-	// Three seed maps: the Design pages name theirs as page content, the shell reads its
-	// own in component CSS, and Button reads its own in component CSS. Each stays
-	// deletable with the thing that needs it, and they merge here because the closure
-	// does not care which surface asked.
-	for (const key of Object.keys(SHELL_KEYS))
-		if (key in ADDITIONAL_KEYS)
-			fail(`\`${key}\` is seeded by both ADDITIONAL_KEYS and SHELL_KEYS; it belongs to one`);
-	for (const key of Object.keys(BUTTON_KEYS))
-		if (key in ADDITIONAL_KEYS)
-			fail(`\`${key}\` is seeded by both ADDITIONAL_KEYS and BUTTON_KEYS; it belongs to one`);
-	for (const key of Object.keys(BUTTON_KEYS))
-		if (key in SHELL_KEYS)
-			fail(`\`${key}\` is seeded by both SHELL_KEYS and BUTTON_KEYS; it belongs to one`);
-	for (const key of Object.keys(TEXTBOX_KEYS))
-		if (key in ADDITIONAL_KEYS)
-			fail(`\`${key}\` is seeded by both ADDITIONAL_KEYS and TEXTBOX_KEYS; it belongs to one`);
-	for (const key of Object.keys(TEXTBOX_KEYS))
-		if (key in SHELL_KEYS)
-			fail(`\`${key}\` is seeded by both SHELL_KEYS and TEXTBOX_KEYS; it belongs to one`);
-	for (const key of Object.keys(TEXTBOX_KEYS))
-		if (key in BUTTON_KEYS)
-			fail(`\`${key}\` is seeded by both BUTTON_KEYS and TEXTBOX_KEYS; it belongs to one`);
-	const seedNames = { ...ADDITIONAL_KEYS, ...SHELL_KEYS, ...BUTTON_KEYS, ...TEXTBOX_KEYS };
-	const seedMap = (key) =>
-		key in ADDITIONAL_KEYS
-			? 'ADDITIONAL_KEYS'
-			: key in SHELL_KEYS
-				? 'SHELL_KEYS'
-				: key in BUTTON_KEYS
-					? 'BUTTON_KEYS'
-					: 'TEXTBOX_KEYS';
+	// One seed map per surface that reads its own keys: the Design pages name theirs as
+	// page content, and the shell and each control tranche read theirs in component CSS.
+	// Each stays deletable with the thing that needs it, and they merge here because the
+	// closure does not care which surface asked.
+	//
+	// The pairwise check was written out by hand for the first four and would have been
+	// ten hand-written pairs at five; a tranche per version makes that the wrong shape, so
+	// the sets are named once here and the pairs derived. Order matters only for
+	// `seedMap`'s answer, which is the first set that claims a key.
+	const SEED_SETS = [
+		['ADDITIONAL_KEYS', ADDITIONAL_KEYS],
+		['SHELL_KEYS', SHELL_KEYS],
+		['BUTTON_KEYS', BUTTON_KEYS],
+		['TEXTBOX_KEYS', TEXTBOX_KEYS],
+		['CHECKBOX_KEYS', CHECKBOX_KEYS]
+	];
+	for (let i = 0; i < SEED_SETS.length; i++)
+		for (let j = i + 1; j < SEED_SETS.length; j++) {
+			const [firstName, first] = SEED_SETS[i];
+			const [secondName, second] = SEED_SETS[j];
+			for (const key of Object.keys(second))
+				if (key in first)
+					fail(`\`${key}\` is seeded by both ${firstName} and ${secondName}; it belongs to one`);
+		}
+	const seedNames = Object.assign({}, ...SEED_SETS.map(([, set]) => set));
+	const seedMap = (key) => SEED_SETS.find(([, set]) => key in set)?.[0] ?? 'no seed set';
 	const seeds = new Set(Object.keys(seedNames));
 
 	// A key the acceptance surface names is a seed even when it lives outside the four

@@ -55,9 +55,23 @@ Binding and observing are different needs and a consumer should not have to bind
 snippet prop under the mapped name — `PaneFooter` → `paneFooter`.
 
 **Every component takes the escape hatch, on its root element:** `...rest` spread (so `id`,
-`aria-*`, `data-*` and DOM handlers all work), and a bindable `ref` to that element. Restyling
-beyond that is the token cascade — set `--winui-*` on an ancestor — which is ADR 0002 and needs
-no per-component surface.
+`aria-*`, `data-*` and DOM handlers all work). Restyling beyond that is the token cascade — set
+`--winui-*` on an ancestor — which is ADR 0002 and needs no per-component surface.
+
+**`ref` points at the interactive element, which is the root only when the root is the
+control.** Button's root is its `<button>` and the two coincide; TextBox's root is a wrapper
+whose `<input>` is the control, and its `ref` is the input. The rest props stay on the root
+either way, because that is where a `data-*` hook, an `id` and a pointer handler have to land
+to reach the whole control — a hidden or inner element would receive `onmouseenter` for a
+region the consumer cannot see. Written down after the fact: TextBox shipped this way in v3's
+third unit without the rule being stated, so the rule follows the code rather than the code
+following the rule.
+
+**An HTML attribute from the reserved set that belongs on an inner element is declared as a
+prop rather than left to the rest spread.** `name`, `value`, `required` and `form` on a
+CheckBox belong on its `<input>`, and the rest props do not go there. This is the second half
+of why the exception set is closed: reserving those names keeps them available to be routed,
+instead of a consumer's `name` landing silently on a `<label>`.
 
 **`class` and `style` are destructured out of the rest and merged, never spread.** Left in, they
 do not merge — they replace, and silently. Measured on Svelte 5.57.0: a component whose root is

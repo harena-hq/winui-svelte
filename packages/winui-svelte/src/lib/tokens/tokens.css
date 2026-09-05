@@ -68,6 +68,122 @@
 	--winui-ButtonBorderBrushPressed: var(--winui-ControlStrokeColorDefaultBrush);
 	--winui-ButtonBorderBrushDisabled: var(--winui-ControlStrokeColorDefaultBrush);
 	--winui-ButtonPadding: 5px 11px 6px 11px;
+	--winui-CheckBoxForegroundUnchecked: var(--winui-TextFillColorPrimaryBrush);
+	--winui-CheckBoxForegroundUncheckedPointerOver: var(--winui-TextFillColorPrimaryBrush);
+	--winui-CheckBoxForegroundUncheckedPressed: var(--winui-TextFillColorPrimaryBrush);
+	--winui-CheckBoxForegroundUncheckedDisabled: var(--winui-TextFillColorDisabledBrush);
+	--winui-CheckBoxForegroundChecked: var(--winui-TextFillColorPrimaryBrush);
+	--winui-CheckBoxForegroundCheckedPointerOver: var(--winui-TextFillColorPrimaryBrush);
+	--winui-CheckBoxForegroundCheckedPressed: var(--winui-TextFillColorPrimaryBrush);
+	--winui-CheckBoxForegroundCheckedDisabled: var(--winui-TextFillColorDisabledBrush);
+	--winui-CheckBoxForegroundIndeterminate: var(--winui-TextFillColorPrimaryBrush);
+	--winui-CheckBoxForegroundIndeterminatePointerOver: var(--winui-TextFillColorPrimaryBrush);
+	--winui-CheckBoxForegroundIndeterminatePressed: var(--winui-TextFillColorPrimaryBrush);
+	--winui-CheckBoxForegroundIndeterminateDisabled: var(--winui-TextFillColorDisabledBrush);
+	--winui-CheckBoxBackgroundUnchecked: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-CheckBoxBackgroundUncheckedPointerOver: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-CheckBoxBackgroundUncheckedPressed: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-CheckBoxBackgroundUncheckedDisabled: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-CheckBoxBackgroundChecked: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-CheckBoxBackgroundCheckedPointerOver: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-CheckBoxBackgroundCheckedPressed: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-CheckBoxBackgroundCheckedDisabled: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-CheckBoxBackgroundIndeterminate: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-CheckBoxBackgroundIndeterminatePointerOver: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-CheckBoxBackgroundIndeterminatePressed: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-CheckBoxBackgroundIndeterminateDisabled: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-CheckBoxBorderBrushUnchecked: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-CheckBoxBorderBrushUncheckedPointerOver: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-CheckBoxBorderBrushUncheckedPressed: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-CheckBoxBorderBrushUncheckedDisabled: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-CheckBoxBorderBrushChecked: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-CheckBoxBorderBrushCheckedPointerOver: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-CheckBoxBorderBrushCheckedPressed: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-CheckBoxBorderBrushCheckedDisabled: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-CheckBoxBorderBrushIndeterminate: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-CheckBoxBorderBrushIndeterminatePointerOver: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-CheckBoxBorderBrushIndeterminatePressed: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-CheckBoxBorderBrushIndeterminateDisabled: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-CheckBoxCheckBackgroundStrokeUnchecked: var(--winui-ControlStrongStrokeColorDefaultBrush);
+	--winui-CheckBoxCheckBackgroundStrokeUncheckedPointerOver: var(
+		--winui-ControlStrongStrokeColorDefaultBrush
+	);
+	--winui-CheckBoxCheckBackgroundStrokeUncheckedPressed: var(
+		--winui-ControlStrongStrokeColorDisabledBrush
+	);
+	--winui-CheckBoxCheckBackgroundStrokeUncheckedDisabled: var(
+		--winui-ControlStrongStrokeColorDisabledBrush
+	);
+	--winui-CheckBoxCheckBackgroundStrokeChecked: var(--winui-AccentFillColorDefaultBrush);
+	--winui-CheckBoxCheckBackgroundStrokeCheckedPointerOver: var(
+		--winui-AccentFillColorSecondaryBrush
+	);
+	--winui-CheckBoxCheckBackgroundStrokeCheckedPressed: var(--winui-AccentFillColorTertiaryBrush);
+	--winui-CheckBoxCheckBackgroundStrokeCheckedDisabled: var(
+		--winui-ControlStrongStrokeColorDisabledBrush
+	);
+	--winui-CheckBoxCheckBackgroundStrokeIndeterminate: var(--winui-AccentFillColorDefaultBrush);
+	--winui-CheckBoxCheckBackgroundStrokeIndeterminatePointerOver: var(
+		--winui-AccentFillColorSecondaryBrush
+	);
+	--winui-CheckBoxCheckBackgroundStrokeIndeterminatePressed: var(
+		--winui-AccentFillColorTertiaryBrush
+	);
+	--winui-CheckBoxCheckBackgroundStrokeIndeterminateDisabled: var(
+		--winui-ControlStrongStrokeColorDisabledBrush
+	);
+	--winui-CheckBoxCheckBackgroundFillUnchecked: var(--winui-ControlAltFillColorSecondaryBrush);
+	--winui-CheckBoxCheckBackgroundFillUncheckedPointerOver: var(
+		--winui-ControlAltFillColorTertiaryBrush
+	);
+	--winui-CheckBoxCheckBackgroundFillUncheckedPressed: var(
+		--winui-ControlAltFillColorQuarternaryBrush
+	);
+	--winui-CheckBoxCheckBackgroundFillUncheckedDisabled: var(
+		--winui-ControlAltFillColorDisabledBrush
+	);
+	--winui-CheckBoxCheckBackgroundFillChecked: var(--winui-AccentFillColorDefaultBrush);
+	--winui-CheckBoxCheckBackgroundFillCheckedPointerOver: var(--winui-AccentFillColorSecondaryBrush);
+	--winui-CheckBoxCheckBackgroundFillCheckedPressed: var(--winui-AccentFillColorTertiaryBrush);
+	--winui-CheckBoxCheckBackgroundFillCheckedDisabled: var(--winui-AccentFillColorDisabledBrush);
+	--winui-CheckBoxCheckBackgroundFillIndeterminate: var(--winui-AccentFillColorDefaultBrush);
+	--winui-CheckBoxCheckBackgroundFillIndeterminatePointerOver: var(
+		--winui-AccentFillColorSecondaryBrush
+	);
+	--winui-CheckBoxCheckBackgroundFillIndeterminatePressed: var(
+		--winui-AccentFillColorTertiaryBrush
+	);
+	--winui-CheckBoxCheckBackgroundFillIndeterminateDisabled: var(
+		--winui-AccentFillColorDisabledBrush
+	);
+	--winui-CheckBoxCheckGlyphForegroundChecked: var(--winui-TextOnAccentFillColorPrimaryBrush);
+	--winui-CheckBoxCheckGlyphForegroundCheckedPointerOver: var(
+		--winui-TextOnAccentFillColorPrimaryBrush
+	);
+	--winui-CheckBoxCheckGlyphForegroundCheckedPressed: var(
+		--winui-TextOnAccentFillColorSecondaryBrush
+	);
+	--winui-CheckBoxCheckGlyphForegroundCheckedDisabled: var(
+		--winui-TextOnAccentFillColorDisabledBrush
+	);
+	--winui-CheckBoxCheckGlyphForegroundIndeterminate: var(--winui-TextOnAccentFillColorPrimaryBrush);
+	--winui-CheckBoxCheckGlyphForegroundIndeterminatePointerOver: var(
+		--winui-TextOnAccentFillColorPrimaryBrush
+	);
+	--winui-CheckBoxCheckGlyphForegroundIndeterminatePressed: var(
+		--winui-TextOnAccentFillColorSecondaryBrush
+	);
+	--winui-CheckBoxCheckGlyphForegroundIndeterminateDisabled: var(
+		--winui-TextOnAccentFillColorDisabledBrush
+	);
+	--winui-CheckBoxBorderThickness: 1px;
+	--winui-CheckBoxSize: 20px;
+	--winui-CheckBoxGlyphSize: 12px;
+	--winui-CheckBoxHeight: 32px;
+	--winui-CheckBoxMinWidth: 120px;
+	--winui-CheckBoxPadding: 5px 0px 0px 8px;
+	--winui-CheckBoxCheckedGlyph: '\00e73e';
+	--winui-CheckBoxIndeterminateGlyph: '\00e9ae';
 	--winui-SystemControlTransparentColor: #00000000;
 	--winui-SystemControlTransparentBrush: transparent;
 	--winui-SystemControlHighlightListAccentVeryHighBrush: color-mix(
@@ -539,6 +655,114 @@
 	--winui-ButtonBorderBrushPointerOver: var(--winui-ControlElevationBorderBrush);
 	--winui-ButtonBorderBrushPressed: var(--winui-ControlStrokeColorDefaultBrush);
 	--winui-ButtonBorderBrushDisabled: var(--winui-ControlStrokeColorDefaultBrush);
+	--winui-CheckBoxForegroundUnchecked: var(--winui-TextFillColorPrimaryBrush);
+	--winui-CheckBoxForegroundUncheckedPointerOver: var(--winui-TextFillColorPrimaryBrush);
+	--winui-CheckBoxForegroundUncheckedPressed: var(--winui-TextFillColorPrimaryBrush);
+	--winui-CheckBoxForegroundUncheckedDisabled: var(--winui-TextFillColorDisabledBrush);
+	--winui-CheckBoxForegroundChecked: var(--winui-TextFillColorPrimaryBrush);
+	--winui-CheckBoxForegroundCheckedPointerOver: var(--winui-TextFillColorPrimaryBrush);
+	--winui-CheckBoxForegroundCheckedPressed: var(--winui-TextFillColorPrimaryBrush);
+	--winui-CheckBoxForegroundCheckedDisabled: var(--winui-TextFillColorDisabledBrush);
+	--winui-CheckBoxForegroundIndeterminate: var(--winui-TextFillColorPrimaryBrush);
+	--winui-CheckBoxForegroundIndeterminatePointerOver: var(--winui-TextFillColorPrimaryBrush);
+	--winui-CheckBoxForegroundIndeterminatePressed: var(--winui-TextFillColorPrimaryBrush);
+	--winui-CheckBoxForegroundIndeterminateDisabled: var(--winui-TextFillColorDisabledBrush);
+	--winui-CheckBoxBackgroundUnchecked: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-CheckBoxBackgroundUncheckedPointerOver: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-CheckBoxBackgroundUncheckedPressed: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-CheckBoxBackgroundUncheckedDisabled: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-CheckBoxBackgroundChecked: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-CheckBoxBackgroundCheckedPointerOver: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-CheckBoxBackgroundCheckedPressed: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-CheckBoxBackgroundCheckedDisabled: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-CheckBoxBackgroundIndeterminate: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-CheckBoxBackgroundIndeterminatePointerOver: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-CheckBoxBackgroundIndeterminatePressed: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-CheckBoxBackgroundIndeterminateDisabled: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-CheckBoxBorderBrushUnchecked: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-CheckBoxBorderBrushUncheckedPointerOver: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-CheckBoxBorderBrushUncheckedPressed: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-CheckBoxBorderBrushUncheckedDisabled: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-CheckBoxBorderBrushChecked: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-CheckBoxBorderBrushCheckedPointerOver: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-CheckBoxBorderBrushCheckedPressed: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-CheckBoxBorderBrushCheckedDisabled: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-CheckBoxBorderBrushIndeterminate: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-CheckBoxBorderBrushIndeterminatePointerOver: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-CheckBoxBorderBrushIndeterminatePressed: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-CheckBoxBorderBrushIndeterminateDisabled: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-CheckBoxCheckBackgroundStrokeUnchecked: var(--winui-ControlStrongStrokeColorDefaultBrush);
+	--winui-CheckBoxCheckBackgroundStrokeUncheckedPointerOver: var(
+		--winui-ControlStrongStrokeColorDefaultBrush
+	);
+	--winui-CheckBoxCheckBackgroundStrokeUncheckedPressed: var(
+		--winui-ControlStrongStrokeColorDisabledBrush
+	);
+	--winui-CheckBoxCheckBackgroundStrokeUncheckedDisabled: var(
+		--winui-ControlStrongStrokeColorDisabledBrush
+	);
+	--winui-CheckBoxCheckBackgroundStrokeChecked: var(--winui-AccentFillColorDefaultBrush);
+	--winui-CheckBoxCheckBackgroundStrokeCheckedPointerOver: var(
+		--winui-AccentFillColorSecondaryBrush
+	);
+	--winui-CheckBoxCheckBackgroundStrokeCheckedPressed: var(--winui-AccentFillColorTertiaryBrush);
+	--winui-CheckBoxCheckBackgroundStrokeCheckedDisabled: var(
+		--winui-ControlStrongStrokeColorDisabledBrush
+	);
+	--winui-CheckBoxCheckBackgroundStrokeIndeterminate: var(--winui-AccentFillColorDefaultBrush);
+	--winui-CheckBoxCheckBackgroundStrokeIndeterminatePointerOver: var(
+		--winui-AccentFillColorSecondaryBrush
+	);
+	--winui-CheckBoxCheckBackgroundStrokeIndeterminatePressed: var(
+		--winui-AccentFillColorTertiaryBrush
+	);
+	--winui-CheckBoxCheckBackgroundStrokeIndeterminateDisabled: var(
+		--winui-ControlStrongStrokeColorDisabledBrush
+	);
+	--winui-CheckBoxCheckBackgroundFillUnchecked: var(--winui-ControlAltFillColorSecondaryBrush);
+	--winui-CheckBoxCheckBackgroundFillUncheckedPointerOver: var(
+		--winui-ControlAltFillColorTertiaryBrush
+	);
+	--winui-CheckBoxCheckBackgroundFillUncheckedPressed: var(
+		--winui-ControlAltFillColorQuarternaryBrush
+	);
+	--winui-CheckBoxCheckBackgroundFillUncheckedDisabled: var(
+		--winui-ControlAltFillColorDisabledBrush
+	);
+	--winui-CheckBoxCheckBackgroundFillChecked: var(--winui-AccentFillColorDefaultBrush);
+	--winui-CheckBoxCheckBackgroundFillCheckedPointerOver: var(--winui-AccentFillColorSecondaryBrush);
+	--winui-CheckBoxCheckBackgroundFillCheckedPressed: var(--winui-AccentFillColorTertiaryBrush);
+	--winui-CheckBoxCheckBackgroundFillCheckedDisabled: var(--winui-AccentFillColorDisabledBrush);
+	--winui-CheckBoxCheckBackgroundFillIndeterminate: var(--winui-AccentFillColorDefaultBrush);
+	--winui-CheckBoxCheckBackgroundFillIndeterminatePointerOver: var(
+		--winui-AccentFillColorSecondaryBrush
+	);
+	--winui-CheckBoxCheckBackgroundFillIndeterminatePressed: var(
+		--winui-AccentFillColorTertiaryBrush
+	);
+	--winui-CheckBoxCheckBackgroundFillIndeterminateDisabled: var(
+		--winui-AccentFillColorDisabledBrush
+	);
+	--winui-CheckBoxCheckGlyphForegroundChecked: var(--winui-TextOnAccentFillColorPrimaryBrush);
+	--winui-CheckBoxCheckGlyphForegroundCheckedPointerOver: var(
+		--winui-TextOnAccentFillColorPrimaryBrush
+	);
+	--winui-CheckBoxCheckGlyphForegroundCheckedPressed: var(
+		--winui-TextOnAccentFillColorSecondaryBrush
+	);
+	--winui-CheckBoxCheckGlyphForegroundCheckedDisabled: var(
+		--winui-TextOnAccentFillColorDisabledBrush
+	);
+	--winui-CheckBoxCheckGlyphForegroundIndeterminate: var(--winui-TextOnAccentFillColorPrimaryBrush);
+	--winui-CheckBoxCheckGlyphForegroundIndeterminatePointerOver: var(
+		--winui-TextOnAccentFillColorPrimaryBrush
+	);
+	--winui-CheckBoxCheckGlyphForegroundIndeterminatePressed: var(
+		--winui-TextOnAccentFillColorSecondaryBrush
+	);
+	--winui-CheckBoxCheckGlyphForegroundIndeterminateDisabled: var(
+		--winui-TextOnAccentFillColorDisabledBrush
+	);
 	--winui-SystemControlTransparentColor: #00000000;
 	--winui-SystemControlTransparentBrush: transparent;
 	--winui-SystemControlHighlightListAccentVeryHighBrush: color-mix(
@@ -945,6 +1169,124 @@
 		--winui-ButtonBorderBrushPointerOver: var(--winui-ControlElevationBorderBrush);
 		--winui-ButtonBorderBrushPressed: var(--winui-ControlStrokeColorDefaultBrush);
 		--winui-ButtonBorderBrushDisabled: var(--winui-ControlStrokeColorDefaultBrush);
+		--winui-CheckBoxForegroundUnchecked: var(--winui-TextFillColorPrimaryBrush);
+		--winui-CheckBoxForegroundUncheckedPointerOver: var(--winui-TextFillColorPrimaryBrush);
+		--winui-CheckBoxForegroundUncheckedPressed: var(--winui-TextFillColorPrimaryBrush);
+		--winui-CheckBoxForegroundUncheckedDisabled: var(--winui-TextFillColorDisabledBrush);
+		--winui-CheckBoxForegroundChecked: var(--winui-TextFillColorPrimaryBrush);
+		--winui-CheckBoxForegroundCheckedPointerOver: var(--winui-TextFillColorPrimaryBrush);
+		--winui-CheckBoxForegroundCheckedPressed: var(--winui-TextFillColorPrimaryBrush);
+		--winui-CheckBoxForegroundCheckedDisabled: var(--winui-TextFillColorDisabledBrush);
+		--winui-CheckBoxForegroundIndeterminate: var(--winui-TextFillColorPrimaryBrush);
+		--winui-CheckBoxForegroundIndeterminatePointerOver: var(--winui-TextFillColorPrimaryBrush);
+		--winui-CheckBoxForegroundIndeterminatePressed: var(--winui-TextFillColorPrimaryBrush);
+		--winui-CheckBoxForegroundIndeterminateDisabled: var(--winui-TextFillColorDisabledBrush);
+		--winui-CheckBoxBackgroundUnchecked: var(--winui-SubtleFillColorTransparentBrush);
+		--winui-CheckBoxBackgroundUncheckedPointerOver: var(--winui-SubtleFillColorTransparentBrush);
+		--winui-CheckBoxBackgroundUncheckedPressed: var(--winui-SubtleFillColorTransparentBrush);
+		--winui-CheckBoxBackgroundUncheckedDisabled: var(--winui-SubtleFillColorTransparentBrush);
+		--winui-CheckBoxBackgroundChecked: var(--winui-SubtleFillColorTransparentBrush);
+		--winui-CheckBoxBackgroundCheckedPointerOver: var(--winui-SubtleFillColorTransparentBrush);
+		--winui-CheckBoxBackgroundCheckedPressed: var(--winui-SubtleFillColorTransparentBrush);
+		--winui-CheckBoxBackgroundCheckedDisabled: var(--winui-SubtleFillColorTransparentBrush);
+		--winui-CheckBoxBackgroundIndeterminate: var(--winui-SubtleFillColorTransparentBrush);
+		--winui-CheckBoxBackgroundIndeterminatePointerOver: var(
+			--winui-SubtleFillColorTransparentBrush
+		);
+		--winui-CheckBoxBackgroundIndeterminatePressed: var(--winui-SubtleFillColorTransparentBrush);
+		--winui-CheckBoxBackgroundIndeterminateDisabled: var(--winui-SubtleFillColorTransparentBrush);
+		--winui-CheckBoxBorderBrushUnchecked: var(--winui-SubtleFillColorTransparentBrush);
+		--winui-CheckBoxBorderBrushUncheckedPointerOver: var(--winui-SubtleFillColorTransparentBrush);
+		--winui-CheckBoxBorderBrushUncheckedPressed: var(--winui-SubtleFillColorTransparentBrush);
+		--winui-CheckBoxBorderBrushUncheckedDisabled: var(--winui-SubtleFillColorTransparentBrush);
+		--winui-CheckBoxBorderBrushChecked: var(--winui-SubtleFillColorTransparentBrush);
+		--winui-CheckBoxBorderBrushCheckedPointerOver: var(--winui-SubtleFillColorTransparentBrush);
+		--winui-CheckBoxBorderBrushCheckedPressed: var(--winui-SubtleFillColorTransparentBrush);
+		--winui-CheckBoxBorderBrushCheckedDisabled: var(--winui-SubtleFillColorTransparentBrush);
+		--winui-CheckBoxBorderBrushIndeterminate: var(--winui-SubtleFillColorTransparentBrush);
+		--winui-CheckBoxBorderBrushIndeterminatePointerOver: var(
+			--winui-SubtleFillColorTransparentBrush
+		);
+		--winui-CheckBoxBorderBrushIndeterminatePressed: var(--winui-SubtleFillColorTransparentBrush);
+		--winui-CheckBoxBorderBrushIndeterminateDisabled: var(--winui-SubtleFillColorTransparentBrush);
+		--winui-CheckBoxCheckBackgroundStrokeUnchecked: var(
+			--winui-ControlStrongStrokeColorDefaultBrush
+		);
+		--winui-CheckBoxCheckBackgroundStrokeUncheckedPointerOver: var(
+			--winui-ControlStrongStrokeColorDefaultBrush
+		);
+		--winui-CheckBoxCheckBackgroundStrokeUncheckedPressed: var(
+			--winui-ControlStrongStrokeColorDisabledBrush
+		);
+		--winui-CheckBoxCheckBackgroundStrokeUncheckedDisabled: var(
+			--winui-ControlStrongStrokeColorDisabledBrush
+		);
+		--winui-CheckBoxCheckBackgroundStrokeChecked: var(--winui-AccentFillColorDefaultBrush);
+		--winui-CheckBoxCheckBackgroundStrokeCheckedPointerOver: var(
+			--winui-AccentFillColorSecondaryBrush
+		);
+		--winui-CheckBoxCheckBackgroundStrokeCheckedPressed: var(--winui-AccentFillColorTertiaryBrush);
+		--winui-CheckBoxCheckBackgroundStrokeCheckedDisabled: var(
+			--winui-ControlStrongStrokeColorDisabledBrush
+		);
+		--winui-CheckBoxCheckBackgroundStrokeIndeterminate: var(--winui-AccentFillColorDefaultBrush);
+		--winui-CheckBoxCheckBackgroundStrokeIndeterminatePointerOver: var(
+			--winui-AccentFillColorSecondaryBrush
+		);
+		--winui-CheckBoxCheckBackgroundStrokeIndeterminatePressed: var(
+			--winui-AccentFillColorTertiaryBrush
+		);
+		--winui-CheckBoxCheckBackgroundStrokeIndeterminateDisabled: var(
+			--winui-ControlStrongStrokeColorDisabledBrush
+		);
+		--winui-CheckBoxCheckBackgroundFillUnchecked: var(--winui-ControlAltFillColorSecondaryBrush);
+		--winui-CheckBoxCheckBackgroundFillUncheckedPointerOver: var(
+			--winui-ControlAltFillColorTertiaryBrush
+		);
+		--winui-CheckBoxCheckBackgroundFillUncheckedPressed: var(
+			--winui-ControlAltFillColorQuarternaryBrush
+		);
+		--winui-CheckBoxCheckBackgroundFillUncheckedDisabled: var(
+			--winui-ControlAltFillColorDisabledBrush
+		);
+		--winui-CheckBoxCheckBackgroundFillChecked: var(--winui-AccentFillColorDefaultBrush);
+		--winui-CheckBoxCheckBackgroundFillCheckedPointerOver: var(
+			--winui-AccentFillColorSecondaryBrush
+		);
+		--winui-CheckBoxCheckBackgroundFillCheckedPressed: var(--winui-AccentFillColorTertiaryBrush);
+		--winui-CheckBoxCheckBackgroundFillCheckedDisabled: var(--winui-AccentFillColorDisabledBrush);
+		--winui-CheckBoxCheckBackgroundFillIndeterminate: var(--winui-AccentFillColorDefaultBrush);
+		--winui-CheckBoxCheckBackgroundFillIndeterminatePointerOver: var(
+			--winui-AccentFillColorSecondaryBrush
+		);
+		--winui-CheckBoxCheckBackgroundFillIndeterminatePressed: var(
+			--winui-AccentFillColorTertiaryBrush
+		);
+		--winui-CheckBoxCheckBackgroundFillIndeterminateDisabled: var(
+			--winui-AccentFillColorDisabledBrush
+		);
+		--winui-CheckBoxCheckGlyphForegroundChecked: var(--winui-TextOnAccentFillColorPrimaryBrush);
+		--winui-CheckBoxCheckGlyphForegroundCheckedPointerOver: var(
+			--winui-TextOnAccentFillColorPrimaryBrush
+		);
+		--winui-CheckBoxCheckGlyphForegroundCheckedPressed: var(
+			--winui-TextOnAccentFillColorSecondaryBrush
+		);
+		--winui-CheckBoxCheckGlyphForegroundCheckedDisabled: var(
+			--winui-TextOnAccentFillColorDisabledBrush
+		);
+		--winui-CheckBoxCheckGlyphForegroundIndeterminate: var(
+			--winui-TextOnAccentFillColorPrimaryBrush
+		);
+		--winui-CheckBoxCheckGlyphForegroundIndeterminatePointerOver: var(
+			--winui-TextOnAccentFillColorPrimaryBrush
+		);
+		--winui-CheckBoxCheckGlyphForegroundIndeterminatePressed: var(
+			--winui-TextOnAccentFillColorSecondaryBrush
+		);
+		--winui-CheckBoxCheckGlyphForegroundIndeterminateDisabled: var(
+			--winui-TextOnAccentFillColorDisabledBrush
+		);
 		--winui-SystemControlTransparentColor: #00000000;
 		--winui-SystemControlTransparentBrush: transparent;
 		--winui-SystemControlHighlightListAccentVeryHighBrush: color-mix(
@@ -1363,6 +1705,108 @@
 	--winui-ButtonBorderBrushPressed: var(--winui-SystemColorHighlightTextColorBrush);
 	--winui-ButtonBorderBrushDisabled: var(--winui-SystemColorGrayTextColor);
 	--winui-ButtonBorderThemeThickness: 1px;
+	--winui-CheckBoxForegroundUnchecked: var(--winui-SystemColorButtonTextColorBrush);
+	--winui-CheckBoxForegroundUncheckedPointerOver: var(--winui-SystemColorButtonTextColorBrush);
+	--winui-CheckBoxForegroundUncheckedPressed: var(--winui-SystemColorButtonTextColorBrush);
+	--winui-CheckBoxForegroundUncheckedDisabled: var(--winui-SystemColorGrayTextColorBrush);
+	--winui-CheckBoxForegroundChecked: var(--winui-SystemColorButtonTextColorBrush);
+	--winui-CheckBoxForegroundCheckedPointerOver: var(--winui-SystemColorButtonTextColorBrush);
+	--winui-CheckBoxForegroundCheckedPressed: var(--winui-SystemColorButtonTextColorBrush);
+	--winui-CheckBoxForegroundCheckedDisabled: var(--winui-SystemColorGrayTextColorBrush);
+	--winui-CheckBoxForegroundIndeterminate: var(--winui-SystemColorWindowTextColorBrush);
+	--winui-CheckBoxForegroundIndeterminatePointerOver: var(--winui-SystemColorWindowTextColorBrush);
+	--winui-CheckBoxForegroundIndeterminatePressed: var(--winui-SystemColorWindowTextColorBrush);
+	--winui-CheckBoxForegroundIndeterminateDisabled: var(--winui-SystemColorGrayTextColorBrush);
+	--winui-CheckBoxBackgroundUnchecked: var(--winui-SystemColorWindowColorBrush);
+	--winui-CheckBoxBackgroundUncheckedPointerOver: var(--winui-SystemColorWindowColorBrush);
+	--winui-CheckBoxBackgroundUncheckedPressed: var(--winui-SystemColorWindowColorBrush);
+	--winui-CheckBoxBackgroundUncheckedDisabled: var(--winui-SystemColorWindowColorBrush);
+	--winui-CheckBoxBackgroundChecked: var(--winui-SystemColorWindowColorBrush);
+	--winui-CheckBoxBackgroundCheckedPointerOver: var(--winui-SystemColorWindowColorBrush);
+	--winui-CheckBoxBackgroundCheckedPressed: var(--winui-SystemColorWindowColorBrush);
+	--winui-CheckBoxBackgroundCheckedDisabled: var(--winui-SystemColorWindowColorBrush);
+	--winui-CheckBoxBackgroundIndeterminate: var(--winui-SystemColorWindowColorBrush);
+	--winui-CheckBoxBackgroundIndeterminatePointerOver: var(--winui-SystemColorWindowColorBrush);
+	--winui-CheckBoxBackgroundIndeterminatePressed: var(--winui-SystemColorWindowColorBrush);
+	--winui-CheckBoxBackgroundIndeterminateDisabled: var(--winui-SystemColorWindowColorBrush);
+	--winui-CheckBoxBorderBrushUnchecked: var(--winui-SystemColorWindowColorBrush);
+	--winui-CheckBoxBorderBrushUncheckedPointerOver: var(--winui-SystemColorWindowColorBrush);
+	--winui-CheckBoxBorderBrushUncheckedPressed: var(--winui-SystemColorWindowColorBrush);
+	--winui-CheckBoxBorderBrushUncheckedDisabled: var(--winui-SystemColorWindowColorBrush);
+	--winui-CheckBoxBorderBrushChecked: var(--winui-SystemColorWindowColorBrush);
+	--winui-CheckBoxBorderBrushCheckedPointerOver: var(--winui-SystemColorWindowColorBrush);
+	--winui-CheckBoxBorderBrushCheckedPressed: var(--winui-SystemColorWindowColorBrush);
+	--winui-CheckBoxBorderBrushCheckedDisabled: var(--winui-SystemColorWindowColorBrush);
+	--winui-CheckBoxBorderBrushIndeterminate: var(--winui-SystemColorWindowColorBrush);
+	--winui-CheckBoxBorderBrushIndeterminatePointerOver: var(--winui-SystemColorWindowColorBrush);
+	--winui-CheckBoxBorderBrushIndeterminatePressed: var(--winui-SystemColorWindowColorBrush);
+	--winui-CheckBoxBorderBrushIndeterminateDisabled: var(--winui-SystemColorWindowColorBrush);
+	--winui-CheckBoxCheckBackgroundStrokeUnchecked: var(--winui-SystemColorButtonTextColorBrush);
+	--winui-CheckBoxCheckBackgroundStrokeUncheckedPointerOver: var(
+		--winui-SystemColorHighlightColorBrush
+	);
+	--winui-CheckBoxCheckBackgroundStrokeUncheckedPressed: var(
+		--winui-SystemColorHighlightColorBrush
+	);
+	--winui-CheckBoxCheckBackgroundStrokeUncheckedDisabled: var(
+		--winui-SystemColorGrayTextColorBrush
+	);
+	--winui-CheckBoxCheckBackgroundStrokeChecked: var(--winui-SystemColorHighlightColorBrush);
+	--winui-CheckBoxCheckBackgroundStrokeCheckedPointerOver: var(
+		--winui-SystemColorButtonTextColorBrush
+	);
+	--winui-CheckBoxCheckBackgroundStrokeCheckedPressed: var(--winui-SystemColorButtonFaceColorBrush);
+	--winui-CheckBoxCheckBackgroundStrokeCheckedDisabled: var(--winui-SystemColorGrayTextColorBrush);
+	--winui-CheckBoxCheckBackgroundStrokeIndeterminate: var(--winui-SystemColorHighlightColorBrush);
+	--winui-CheckBoxCheckBackgroundStrokeIndeterminatePointerOver: var(
+		--winui-SystemColorHighlightColorBrush
+	);
+	--winui-CheckBoxCheckBackgroundStrokeIndeterminatePressed: var(
+		--winui-SystemColorHighlightColorBrush
+	);
+	--winui-CheckBoxCheckBackgroundStrokeIndeterminateDisabled: var(
+		--winui-SystemColorGrayTextColorBrush
+	);
+	--winui-CheckBoxCheckBackgroundFillUnchecked: var(--winui-SystemColorButtonFaceColorBrush);
+	--winui-CheckBoxCheckBackgroundFillUncheckedPointerOver: var(
+		--winui-SystemColorHighlightTextColorBrush
+	);
+	--winui-CheckBoxCheckBackgroundFillUncheckedPressed: var(--winui-SystemColorHighlightColorBrush);
+	--winui-CheckBoxCheckBackgroundFillUncheckedDisabled: var(--winui-SystemColorWindowColorBrush);
+	--winui-CheckBoxCheckBackgroundFillChecked: var(--winui-SystemColorHighlightColorBrush);
+	--winui-CheckBoxCheckBackgroundFillCheckedPointerOver: var(
+		--winui-SystemColorButtonTextColorBrush
+	);
+	--winui-CheckBoxCheckBackgroundFillCheckedPressed: var(--winui-SystemColorButtonFaceColorBrush);
+	--winui-CheckBoxCheckBackgroundFillCheckedDisabled: var(--winui-SystemColorGrayTextColorBrush);
+	--winui-CheckBoxCheckBackgroundFillIndeterminate: var(--winui-SystemColorHighlightColorBrush);
+	--winui-CheckBoxCheckBackgroundFillIndeterminatePointerOver: var(
+		--winui-SystemColorHighlightTextColorBrush
+	);
+	--winui-CheckBoxCheckBackgroundFillIndeterminatePressed: var(
+		--winui-SystemColorHighlightColorBrush
+	);
+	--winui-CheckBoxCheckBackgroundFillIndeterminateDisabled: var(
+		--winui-SystemColorGrayTextColorBrush
+	);
+	--winui-CheckBoxCheckGlyphForegroundChecked: var(--winui-SystemColorHighlightTextColorBrush);
+	--winui-CheckBoxCheckGlyphForegroundCheckedPointerOver: var(
+		--winui-SystemColorButtonFaceColorBrush
+	);
+	--winui-CheckBoxCheckGlyphForegroundCheckedPressed: var(--winui-SystemColorButtonTextColorBrush);
+	--winui-CheckBoxCheckGlyphForegroundCheckedDisabled: var(--winui-SystemColorWindowColorBrush);
+	--winui-CheckBoxCheckGlyphForegroundIndeterminate: var(
+		--winui-SystemColorHighlightTextColorBrush
+	);
+	--winui-CheckBoxCheckGlyphForegroundIndeterminatePointerOver: var(
+		--winui-SystemColorHighlightColorBrush
+	);
+	--winui-CheckBoxCheckGlyphForegroundIndeterminatePressed: var(
+		--winui-SystemColorHighlightTextColorBrush
+	);
+	--winui-CheckBoxCheckGlyphForegroundIndeterminateDisabled: var(
+		--winui-SystemColorWindowColorBrush
+	);
 	--winui-SystemControlTransparentColor: #00000000;
 	--winui-SystemControlTransparentBrush: transparent;
 	--winui-SystemControlHighlightListAccentVeryHighBrush: var(--winui-SystemColorHighlightColor);
