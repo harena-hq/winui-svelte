@@ -8,6 +8,8 @@ export const VERSION = '0.0.0';
 export { default as Button } from './components/Button.svelte';
 export type { ButtonProps } from './components/Button.svelte';
 export { default as NavigationView } from './components/NavigationView.svelte';
+export { default as TextBox } from './components/TextBox.svelte';
+export type { TextBoxProps } from './components/TextBox.svelte';
 export type {
 	NavigationViewDisplayMode,
 	NavigationViewEntry,

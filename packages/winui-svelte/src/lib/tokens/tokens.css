@@ -327,6 +327,34 @@
 	--winui-TitleTextBlockFontSize: 28px;
 	--winui-TitleLargeTextBlockFontSize: 40px;
 	--winui-DisplayTextBlockFontSize: 68px;
+	--winui-TemporaryTextFillColorDisabled: #0101015c;
+	--winui-TextControlBackground: var(--winui-ControlFillColorDefaultBrush);
+	--winui-TextControlBackgroundPointerOver: var(--winui-ControlFillColorSecondaryBrush);
+	--winui-TextControlBackgroundFocused: var(--winui-ControlFillColorInputActiveBrush);
+	--winui-TextControlBackgroundDisabled: var(--winui-ControlFillColorDisabledBrush);
+	--winui-TextControlBorderBrush: var(--winui-TextControlElevationBorderBrush);
+	--winui-TextControlBorderBrushPointerOver: var(--winui-TextControlElevationBorderBrush);
+	--winui-TextControlBorderBrushFocused: var(--winui-TextControlElevationBorderFocusedBrush);
+	--winui-TextControlBorderBrushDisabled: var(--winui-ControlStrokeColorDefaultBrush);
+	--winui-TextControlForeground: var(--winui-TextFillColorPrimaryBrush);
+	--winui-TextControlForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
+	--winui-TextControlForegroundFocused: var(--winui-TextFillColorPrimaryBrush);
+	--winui-TextControlForegroundDisabled: var(--winui-TemporaryTextFillColorDisabled);
+	--winui-TextControlPlaceholderForeground: var(--winui-TextFillColorSecondaryBrush);
+	--winui-TextControlPlaceholderForegroundPointerOver: var(--winui-TextFillColorSecondaryBrush);
+	--winui-TextControlPlaceholderForegroundFocused: var(--winui-TextFillColorSecondaryBrush);
+	--winui-TextControlPlaceholderForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+	--winui-TextControlSelectionHighlightColor: var(
+		--winui-AccentFillColorSelectedTextBackgroundBrush
+	);
+	--winui-TextControlButtonBackgroundPointerOver: var(--winui-SubtleFillColorSecondaryBrush);
+	--winui-TextControlButtonBackgroundPressed: var(--winui-SubtleFillColorTertiaryBrush);
+	--winui-TextControlButtonBorderBrush: var(--winui-ControlFillColorTransparent);
+	--winui-TextControlButtonBorderBrushPointerOver: var(--winui-ControlFillColorTransparent);
+	--winui-TextControlButtonBorderBrushPressed: var(--winui-ControlFillColorTransparent);
+	--winui-TextControlButtonForeground: var(--winui-TextFillColorSecondaryBrush);
+	--winui-TextControlButtonForegroundPointerOver: var(--winui-TextFillColorSecondaryBrush);
+	--winui-TextControlButtonForegroundPressed: var(--winui-TextFillColorTertiaryBrush);
 	--winui-TextControlElevationBorderBrush: linear-gradient(
 		to top,
 		var(--winui-ControlStrongStrokeColorDefault) 1px,
@@ -337,6 +365,8 @@
 		var(--winui-SystemAccentColorDark1) 2px,
 		var(--winui-ControlStrokeColorDefault) 2px
 	);
+	--winui-TextBoxInnerButtonMargin: 4px 4px 4px 0px;
+	--winui-TextBoxIconFontSize: 12px;
 	--winui-AcrylicBackgroundFillColorDefaultBrush: #f9f9f9;
 	--winui-AcrylicInAppFillColorDefaultBrush: #f9f9f9;
 	--winui-AcrylicBackgroundFillColorBaseBrush: #eeeeee;
@@ -755,6 +785,34 @@
 	--winui-TextOnAccentFillColorDefault: #ffffff;
 	--winui-ControlAAStrokeColorDefault: #ffffff8b;
 	--winui-TextOnAccentFillColorDefaultBrush: var(--winui-TextOnAccentFillColorDefault);
+	--winui-TemporaryTextFillColorDisabled: #fefefe5d;
+	--winui-TextControlBackground: var(--winui-ControlFillColorDefaultBrush);
+	--winui-TextControlBackgroundPointerOver: var(--winui-ControlFillColorSecondaryBrush);
+	--winui-TextControlBackgroundFocused: var(--winui-ControlFillColorInputActiveBrush);
+	--winui-TextControlBackgroundDisabled: var(--winui-ControlFillColorDisabledBrush);
+	--winui-TextControlBorderBrush: var(--winui-TextControlElevationBorderBrush);
+	--winui-TextControlBorderBrushPointerOver: var(--winui-TextControlElevationBorderBrush);
+	--winui-TextControlBorderBrushFocused: var(--winui-TextControlElevationBorderFocusedBrush);
+	--winui-TextControlBorderBrushDisabled: var(--winui-ControlStrokeColorDefaultBrush);
+	--winui-TextControlForeground: var(--winui-TextFillColorPrimaryBrush);
+	--winui-TextControlForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
+	--winui-TextControlForegroundFocused: var(--winui-TextFillColorPrimaryBrush);
+	--winui-TextControlForegroundDisabled: var(--winui-TemporaryTextFillColorDisabled);
+	--winui-TextControlPlaceholderForeground: var(--winui-TextFillColorSecondaryBrush);
+	--winui-TextControlPlaceholderForegroundPointerOver: var(--winui-TextFillColorSecondaryBrush);
+	--winui-TextControlPlaceholderForegroundFocused: var(--winui-TextFillColorSecondaryBrush);
+	--winui-TextControlPlaceholderForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+	--winui-TextControlSelectionHighlightColor: var(
+		--winui-AccentFillColorSelectedTextBackgroundBrush
+	);
+	--winui-TextControlButtonBackgroundPointerOver: var(--winui-SubtleFillColorSecondaryBrush);
+	--winui-TextControlButtonBackgroundPressed: var(--winui-SubtleFillColorTertiaryBrush);
+	--winui-TextControlButtonBorderBrush: var(--winui-ControlFillColorTransparent);
+	--winui-TextControlButtonBorderBrushPointerOver: var(--winui-ControlFillColorTransparent);
+	--winui-TextControlButtonBorderBrushPressed: var(--winui-ControlFillColorTransparent);
+	--winui-TextControlButtonForeground: var(--winui-TextFillColorSecondaryBrush);
+	--winui-TextControlButtonForegroundPointerOver: var(--winui-TextFillColorSecondaryBrush);
+	--winui-TextControlButtonForegroundPressed: var(--winui-TextFillColorTertiaryBrush);
 	--winui-TextControlElevationBorderBrush: linear-gradient(
 		to top,
 		var(--winui-ControlStrongStrokeColorDefault) 1px,
@@ -1141,6 +1199,34 @@
 		--winui-TextOnAccentFillColorDefault: #ffffff;
 		--winui-ControlAAStrokeColorDefault: #ffffff8b;
 		--winui-TextOnAccentFillColorDefaultBrush: var(--winui-TextOnAccentFillColorDefault);
+		--winui-TemporaryTextFillColorDisabled: #fefefe5d;
+		--winui-TextControlBackground: var(--winui-ControlFillColorDefaultBrush);
+		--winui-TextControlBackgroundPointerOver: var(--winui-ControlFillColorSecondaryBrush);
+		--winui-TextControlBackgroundFocused: var(--winui-ControlFillColorInputActiveBrush);
+		--winui-TextControlBackgroundDisabled: var(--winui-ControlFillColorDisabledBrush);
+		--winui-TextControlBorderBrush: var(--winui-TextControlElevationBorderBrush);
+		--winui-TextControlBorderBrushPointerOver: var(--winui-TextControlElevationBorderBrush);
+		--winui-TextControlBorderBrushFocused: var(--winui-TextControlElevationBorderFocusedBrush);
+		--winui-TextControlBorderBrushDisabled: var(--winui-ControlStrokeColorDefaultBrush);
+		--winui-TextControlForeground: var(--winui-TextFillColorPrimaryBrush);
+		--winui-TextControlForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
+		--winui-TextControlForegroundFocused: var(--winui-TextFillColorPrimaryBrush);
+		--winui-TextControlForegroundDisabled: var(--winui-TemporaryTextFillColorDisabled);
+		--winui-TextControlPlaceholderForeground: var(--winui-TextFillColorSecondaryBrush);
+		--winui-TextControlPlaceholderForegroundPointerOver: var(--winui-TextFillColorSecondaryBrush);
+		--winui-TextControlPlaceholderForegroundFocused: var(--winui-TextFillColorSecondaryBrush);
+		--winui-TextControlPlaceholderForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+		--winui-TextControlSelectionHighlightColor: var(
+			--winui-AccentFillColorSelectedTextBackgroundBrush
+		);
+		--winui-TextControlButtonBackgroundPointerOver: var(--winui-SubtleFillColorSecondaryBrush);
+		--winui-TextControlButtonBackgroundPressed: var(--winui-SubtleFillColorTertiaryBrush);
+		--winui-TextControlButtonBorderBrush: var(--winui-ControlFillColorTransparent);
+		--winui-TextControlButtonBorderBrushPointerOver: var(--winui-ControlFillColorTransparent);
+		--winui-TextControlButtonBorderBrushPressed: var(--winui-ControlFillColorTransparent);
+		--winui-TextControlButtonForeground: var(--winui-TextFillColorSecondaryBrush);
+		--winui-TextControlButtonForegroundPointerOver: var(--winui-TextFillColorSecondaryBrush);
+		--winui-TextControlButtonForegroundPressed: var(--winui-TextFillColorTertiaryBrush);
 		--winui-TextControlElevationBorderBrush: linear-gradient(
 			to top,
 			var(--winui-ControlStrongStrokeColorDefault) 1px,
@@ -1477,6 +1563,13 @@
 	--winui-TextOnAccentFillColorDefault: #ffffff;
 	--winui-ControlAAStrokeColorDefault: #ffffff8b;
 	--winui-TextOnAccentFillColorDefaultBrush: var(--winui-SystemColorWindowTextColor);
+	--winui-TemporaryTextFillColorDisabled: #0101015c;
+	--winui-TextControlBackgroundFocused: var(--winui-SystemColorButtonFaceColor);
+	--winui-TextControlBorderBrush: var(--winui-SystemColorButtonTextColor);
+	--winui-TextControlBorderBrushPointerOver: var(--winui-SystemColorHighlightColor);
+	--winui-TextControlButtonForeground: var(--winui-SystemColorButtonTextColor);
+	--winui-TextControlForegroundFocused: var(--winui-SystemColorButtonTextColor);
+	--winui-TextControlPlaceholderForegroundFocused: var(--winui-SystemColorButtonTextColor);
 	--winui-TextControlElevationBorderBrush: linear-gradient(
 		to top,
 		var(--winui-ControlAAStrokeColorDefault) 1px,

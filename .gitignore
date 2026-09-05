@@ -5,6 +5,7 @@
 # never part of any history.
 # Claude Code / oh-my-claudecode:
 .omc/
+.claude/
 # Codex / oh-my-codex:
 .omx/
 
