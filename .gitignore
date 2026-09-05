@@ -16,6 +16,15 @@
 node_modules/
 .svelte-kit/
 
+# pnpm's package store, when it lands in the tree instead of the home cache. The author
+# lane runs under a sandbox whose $HOME is not the machine's, so `pnpm install` inside it
+# cannot reach `~/.local/share/pnpm/store` and falls back to a store beside the lockfile.
+# It is 144 MB of content-addressed blobs, and it is not merely untracked-and-harmless:
+# `prettier --check .` walks it and `pnpm lint` goes red for everyone afterwards, on a
+# path nobody edited. Ignored here and in `.prettierignore`, which is the layer that
+# actually stops the walk.
+.pnpm-store/
+
 # Pinned upstream checkouts (scripts/tokens/fetch.mjs, scripts/gallery/fetch.mjs).
 # Materialised on demand, never tracked: they are sparse clones of someone else's
 # repositories, and each record file under `data/` carries the commit it was read at.
