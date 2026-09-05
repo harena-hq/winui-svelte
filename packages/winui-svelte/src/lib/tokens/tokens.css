@@ -495,6 +495,8 @@
 	--winui-TextOnAccentFillColorDefault: #ffffff;
 	--winui-ControlAAStrokeColorDefault: #00000072;
 	--winui-TextOnAccentFillColorDefaultBrush: var(--winui-TextOnAccentFillColorDefault);
+	--winui-PasswordBoxTopHeaderMargin: 0px 0px 8px 0px;
+	--winui-PasswordBoxIconFontSize: 12px;
 	--winui-RadioButtonBorderThemeThickness: 1px;
 	--winui-RadioButtonForeground: var(--winui-TextFillColorPrimaryBrush);
 	--winui-RadioButtonForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
@@ -776,6 +778,7 @@
 	--winui-TitleBarTitleMinWidth: 0px;
 	--winui-TitleBarIconMargin: 0px 16px 0px 0px;
 	--winui-TitleBarTitleMargin: 0px 8px 0px 0px;
+	--winui-HelperButtonThemePadding: 0px -2px 0px 0px;
 	--winui-SystemAltMediumColor: #ffffff99;
 	--winui-SystemAltMediumLowColor: #ffffff66;
 	--winui-SystemBaseHighColor: #000000ff;
@@ -817,6 +820,7 @@
 	);
 	--winui-TextControlHeaderForeground: var(--winui-SystemControlForegroundBaseHighBrush);
 	--winui-TextControlHeaderForegroundDisabled: var(--winui-SystemControlDisabledBaseMediumLowBrush);
+	--winui-TextControlButtonBackground: var(--winui-SystemControlTransparentBrush);
 }
 
 :root[data-theme='dark'] {
@@ -1466,6 +1470,7 @@
 	--winui-TitleBarPaneToggleButtonForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
 	--winui-TitleBarPaneToggleButtonForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
 	--winui-TitleBarPaneToggleButtonForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+	--winui-HelperButtonThemePadding: 0px -2px 0px 0px;
 	--winui-SystemAltMediumColor: #00000099;
 	--winui-SystemAltMediumLowColor: #00000066;
 	--winui-SystemBaseHighColor: #ffffffff;
@@ -1507,6 +1512,7 @@
 	);
 	--winui-TextControlHeaderForeground: var(--winui-SystemControlForegroundBaseHighBrush);
 	--winui-TextControlHeaderForegroundDisabled: var(--winui-SystemControlDisabledBaseMediumLowBrush);
+	--winui-TextControlButtonBackground: var(--winui-SystemControlTransparentBrush);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -2185,6 +2191,7 @@
 		--winui-TitleBarPaneToggleButtonForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
 		--winui-TitleBarPaneToggleButtonForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
 		--winui-TitleBarPaneToggleButtonForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+		--winui-HelperButtonThemePadding: 0px -2px 0px 0px;
 		--winui-SystemAltMediumColor: #00000099;
 		--winui-SystemAltMediumLowColor: #00000066;
 		--winui-SystemBaseHighColor: #ffffffff;
@@ -2230,6 +2237,7 @@
 		--winui-TextControlHeaderForegroundDisabled: var(
 			--winui-SystemControlDisabledBaseMediumLowBrush
 		);
+		--winui-TextControlButtonBackground: var(--winui-SystemControlTransparentBrush);
 	}
 }
 
@@ -2854,6 +2862,8 @@
 	);
 	--winui-TextControlHeaderForeground: var(--winui-SystemControlForegroundBaseHighBrush);
 	--winui-TextControlHeaderForegroundDisabled: var(--winui-SystemControlDisabledBaseMediumLowBrush);
+	--winui-TextControlButtonBackground: var(--winui-SystemControlTransparentBrush);
+	--winui-HelperButtonThemePadding: 0px -2px 0px 0px;
 }
 
 /* In forced-colors mode the browser fills the same eight from the actual Windows */

@@ -273,6 +273,37 @@ export const TEXTBOX_KEYS = {
 };
 
 /**
+ * Keys PasswordBox reads — the tenth seed set, and the second in the Text family.
+ *
+ * PasswordBox is almost all of TextBox: the same four `TextControl*` background, border
+ * and foreground families in the same four states, the same `BorderElement`, the same
+ * header and description presenters. Three of the four keys below are unique to it:
+ * `PasswordBoxTopHeaderMargin` and `PasswordBoxIconFontSize` are defined in the
+ * PasswordBox dictionary and `TextBoxTopHeaderMargin` and `TextBoxIconFontSize` are
+ * separate names with separate values; the fourth is the framework-dictionary key the
+ * reveal button reads at rest, which the original paints as transparent.
+ *
+ * `PasswordBoxLeftHeaderMargin`, `PasswordBoxLeftHeaderMaxWidth` and
+ * `PasswordBoxRevealButtonStyle` are defined in the PasswordBox dictionary and the
+ * template references none of them — `PasswordBoxLeftHeaderMargin` and
+ * `PasswordBoxLeftHeaderMaxWidth` are the inset and width of a header laid out left of
+ * the box, and the gallery's pages do not use that placement. The reveal button's own
+ * style is a `Style` resource, and this project writes its own templates rather than
+ * reading XAML styles — the same reason every other `*Style` resource is dropped.
+ *
+ * `TextControl*` and `TextBoxInnerButtonMargin` are seeded by `TEXTBOX_KEYS` already
+ * and the generator's disjointness check is what stops a key from being seeded twice;
+ * a duplicate name here would fail the run rather than silently overwrite, which is the
+ * reason the four lines below are narrower than the resources the dictionary defines.
+ */
+export const PASSWORDBOX_KEYS = {
+	PasswordBoxTopHeaderMargin: 'PasswordBox header, the gap between it and the box',
+	PasswordBoxIconFontSize: 'PasswordBox reveal button, the glyph inside it',
+	TextControlButtonBackground: 'PasswordBox reveal button background, at rest',
+	HelperButtonThemePadding: 'PasswordBox reveal button, its padding'
+};
+
+/**
  * Keys CheckBox reads — the fifth seed set.
  *
  * The dictionary is a product: six painted properties across three checked states and

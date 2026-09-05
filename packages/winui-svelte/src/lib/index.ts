@@ -12,6 +12,8 @@ export type { CheckBoxProps } from './components/CheckBox.svelte';
 export { default as ComboBox } from './components/ComboBox.svelte';
 export type { ComboBoxItemData, ComboBoxProps } from './components/ComboBox.svelte';
 export { default as NavigationView } from './components/NavigationView.svelte';
+export { default as PasswordBox } from './components/PasswordBox.svelte';
+export type { PasswordBoxProps } from './components/PasswordBox.svelte';
 export { default as RadioButton } from './components/RadioButton.svelte';
 export type { RadioButtonProps } from './components/RadioButton.svelte';
 export { default as Slider } from './components/Slider.svelte';
