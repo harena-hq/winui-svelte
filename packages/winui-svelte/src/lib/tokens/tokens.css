@@ -33,6 +33,61 @@
 
 	--winui-AutoSuggestBoxInnerButtonMargin: 3px 1px;
 	--winui-AutoSuggestBoxRightButtonMargin: 4px;
+	--winui-ComboBoxItemForeground: var(--winui-TextFillColorPrimaryBrush);
+	--winui-ComboBoxItemForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
+	--winui-ComboBoxItemForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
+	--winui-ComboBoxItemForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+	--winui-ComboBoxItemForegroundSelected: var(--winui-TextFillColorPrimaryBrush);
+	--winui-ComboBoxItemForegroundSelectedPressed: var(--winui-TextFillColorSecondaryBrush);
+	--winui-ComboBoxItemForegroundSelectedPointerOver: var(--winui-TextFillColorPrimaryBrush);
+	--winui-ComboBoxItemForegroundSelectedDisabled: var(--winui-TextFillColorDisabledBrush);
+	--winui-ComboBoxItemBackground: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-ComboBoxItemBackgroundPressed: var(--winui-SubtleFillColorTertiaryBrush);
+	--winui-ComboBoxItemBackgroundPointerOver: var(--winui-SubtleFillColorSecondaryBrush);
+	--winui-ComboBoxItemBackgroundDisabled: var(--winui-SubtleFillColorDisabledBrush);
+	--winui-ComboBoxItemBackgroundSelected: var(--winui-SubtleFillColorSecondaryBrush);
+	--winui-ComboBoxItemBackgroundSelectedPressed: var(--winui-SubtleFillColorSecondaryBrush);
+	--winui-ComboBoxItemBackgroundSelectedPointerOver: var(--winui-SubtleFillColorTertiaryBrush);
+	--winui-ComboBoxItemBackgroundSelectedDisabled: var(--winui-SubtleFillColorSecondaryBrush);
+	--winui-ComboBoxBackground: var(--winui-ControlFillColorDefaultBrush);
+	--winui-ComboBoxBackgroundPointerOver: var(--winui-ControlFillColorSecondaryBrush);
+	--winui-ComboBoxBackgroundPressed: var(--winui-ControlFillColorTertiaryBrush);
+	--winui-ComboBoxBackgroundDisabled: var(--winui-ControlFillColorDisabledBrush);
+	--winui-ComboBoxForeground: var(--winui-TextFillColorPrimaryBrush);
+	--winui-ComboBoxForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
+	--winui-ComboBoxForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
+	--winui-ComboBoxForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+	--winui-ComboBoxHeaderForeground: var(--winui-TextFillColorPrimaryBrush);
+	--winui-ComboBoxHeaderForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+	--winui-ComboBoxPlaceHolderForeground: var(--winui-TextFillColorSecondaryBrush);
+	--winui-ComboBoxPlaceHolderForegroundFocusedPressed: var(--winui-TextFillColorSecondaryBrush);
+	--winui-ComboBoxBorderBrush: var(--winui-ControlElevationBorderBrush);
+	--winui-ComboBoxBorderBrushPointerOver: var(--winui-ControlElevationBorderBrush);
+	--winui-ComboBoxBorderBrushPressed: var(--winui-ControlStrokeColorDefaultBrush);
+	--winui-ComboBoxBorderBrushDisabled: var(--winui-ControlStrokeColorDefaultBrush);
+	--winui-ComboBoxDropDownGlyphForeground: var(--winui-TextFillColorSecondaryBrush);
+	--winui-ComboBoxDropDownGlyphForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+	--winui-ComboBoxDropDownForeground: var(--winui-TextFillColorPrimaryBrush);
+	--winui-ComboBoxDropDownBackground: var(--winui-AcrylicInAppFillColorDefaultBrush);
+	--winui-ComboBoxDropDownBorderBrush: var(--winui-SurfaceStrokeColorFlyoutBrush);
+	--winui-ComboBoxItemPillFillBrush: var(--winui-AccentFillColorDefaultBrush);
+	--winui-ComboBoxDropdownBorderPadding: 0px;
+	--winui-ComboBoxThemeMinWidth: 64px;
+	--winui-ComboBoxPopupThemeMinWidth: 80px;
+	--winui-ComboBoxItemPillHeight: 16px;
+	--winui-ComboBoxItemPillWidth: 3px;
+	--winui-ComboBoxItemPillMinScale: 0.625;
+	--winui-ComboBoxMinHeight: 32px;
+	--winui-ComboBoxBorderThemeThickness: 1px;
+	--winui-ComboBoxDropdownBorderThickness: 1px;
+	--winui-ComboBoxItemThemePadding: 5px 11px 7px 11px;
+	--winui-ComboBoxDropdownContentMargin: 4px 0px;
+	--winui-ComboBoxTopHeaderMargin: 0px 0px 8px 0px;
+	--winui-ComboBoxPadding: 5px 0px 7px 12px;
+	--winui-ComboBoxItemCornerRadius: 3px;
+	--winui-ComboBoxItemPillCornerRadius: 1.5px;
+	--winui-ComboBoxHeaderThemeFontWeight: 400;
+	--winui-ComboBoxPlaceholderTextThemeFontWeight: 350;
 	--winui-AccentButtonBackground: var(--winui-AccentFillColorDefaultBrush);
 	--winui-AccentButtonBackgroundPointerOver: var(--winui-AccentFillColorSecondaryBrush);
 	--winui-AccentButtonBackgroundPressed: var(--winui-AccentFillColorTertiaryBrush);
@@ -721,13 +776,41 @@
 	--winui-TitleBarTitleMinWidth: 0px;
 	--winui-TitleBarIconMargin: 0px 16px 0px 0px;
 	--winui-TitleBarTitleMargin: 0px 8px 0px 0px;
+	--winui-SystemAltMediumColor: #ffffff99;
+	--winui-SystemAltMediumLowColor: #ffffff66;
 	--winui-SystemBaseHighColor: #000000ff;
+	--winui-SystemBaseLowColor: #00000033;
 	--winui-SystemBaseMediumColor: #00000099;
 	--winui-SystemBaseMediumLowColor: #00000066;
 	--winui-SystemChromeDisabledHighColor: #ccccccff;
+	--winui-SystemChromeHighColor: #ccccccff;
+	--winui-SystemChromeMediumLowColor: #f2f2f2ff;
+	--winui-SystemListMediumColor: #00000033;
+	--winui-SystemControlBackgroundAltMediumLowBrush: var(--winui-SystemAltMediumLowColor);
+	--winui-SystemControlBackgroundChromeMediumLowBrush: var(--winui-SystemChromeMediumLowColor);
+	--winui-SystemControlBackgroundListMediumBrush: var(--winui-SystemListMediumColor);
+	--winui-SystemControlDisabledBaseLowBrush: var(--winui-SystemBaseLowColor);
 	--winui-SystemControlDisabledBaseMediumLowBrush: var(--winui-SystemBaseMediumLowColor);
 	--winui-SystemControlDisabledChromeDisabledHighBrush: var(--winui-SystemChromeDisabledHighColor);
 	--winui-SystemControlForegroundBaseHighBrush: var(--winui-SystemBaseHighColor);
+	--winui-SystemControlForegroundChromeHighBrush: var(--winui-SystemChromeHighColor);
+	--winui-SystemControlHighlightBaseMediumBrush: var(--winui-SystemBaseMediumColor);
+	--winui-SystemControlHighlightListAccentHighBrush: color-mix(
+		in srgb,
+		var(--winui-SystemAccentColor) 70%,
+		transparent
+	);
+	--winui-SystemControlHighlightListAccentLowBrush: color-mix(
+		in srgb,
+		var(--winui-SystemAccentColor) 40%,
+		transparent
+	);
+	--winui-SystemControlHighlightListAccentMediumBrush: color-mix(
+		in srgb,
+		var(--winui-SystemAccentColor) 60%,
+		transparent
+	);
+	--winui-SystemControlPageBackgroundAltMediumBrush: var(--winui-SystemAltMediumColor);
 	--winui-SystemControlPageTextBaseMediumBrush: var(--winui-SystemBaseMediumColor);
 	--winui-SystemControlDescriptionTextForegroundBrush: var(
 		--winui-SystemControlPageTextBaseMediumBrush
@@ -748,6 +831,45 @@
 	--winui-SystemColorHighlightTextColor: #212d3b;
 	--winui-SystemColorHotlightColor: #70ebde;
 
+	--winui-ComboBoxItemForeground: var(--winui-TextFillColorPrimaryBrush);
+	--winui-ComboBoxItemForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
+	--winui-ComboBoxItemForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
+	--winui-ComboBoxItemForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+	--winui-ComboBoxItemForegroundSelected: var(--winui-TextFillColorPrimaryBrush);
+	--winui-ComboBoxItemForegroundSelectedPressed: var(--winui-TextFillColorSecondaryBrush);
+	--winui-ComboBoxItemForegroundSelectedPointerOver: var(--winui-TextFillColorPrimaryBrush);
+	--winui-ComboBoxItemForegroundSelectedDisabled: var(--winui-TextFillColorDisabledBrush);
+	--winui-ComboBoxItemBackground: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-ComboBoxItemBackgroundPressed: var(--winui-SubtleFillColorTertiaryBrush);
+	--winui-ComboBoxItemBackgroundPointerOver: var(--winui-SubtleFillColorSecondaryBrush);
+	--winui-ComboBoxItemBackgroundDisabled: var(--winui-SubtleFillColorDisabledBrush);
+	--winui-ComboBoxItemBackgroundSelected: var(--winui-SubtleFillColorSecondaryBrush);
+	--winui-ComboBoxItemBackgroundSelectedPressed: var(--winui-SubtleFillColorSecondaryBrush);
+	--winui-ComboBoxItemBackgroundSelectedPointerOver: var(--winui-SubtleFillColorTertiaryBrush);
+	--winui-ComboBoxItemBackgroundSelectedDisabled: var(--winui-SubtleFillColorSecondaryBrush);
+	--winui-ComboBoxBackground: var(--winui-ControlFillColorDefaultBrush);
+	--winui-ComboBoxBackgroundPointerOver: var(--winui-ControlFillColorSecondaryBrush);
+	--winui-ComboBoxBackgroundPressed: var(--winui-ControlFillColorTertiaryBrush);
+	--winui-ComboBoxBackgroundDisabled: var(--winui-ControlFillColorDisabledBrush);
+	--winui-ComboBoxForeground: var(--winui-TextFillColorPrimaryBrush);
+	--winui-ComboBoxForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
+	--winui-ComboBoxForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
+	--winui-ComboBoxForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+	--winui-ComboBoxHeaderForeground: var(--winui-TextFillColorPrimaryBrush);
+	--winui-ComboBoxHeaderForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+	--winui-ComboBoxPlaceHolderForeground: var(--winui-TextFillColorSecondaryBrush);
+	--winui-ComboBoxPlaceHolderForegroundFocusedPressed: var(--winui-TextFillColorSecondaryBrush);
+	--winui-ComboBoxBorderBrush: var(--winui-ControlElevationBorderBrush);
+	--winui-ComboBoxBorderBrushPointerOver: var(--winui-ControlElevationBorderBrush);
+	--winui-ComboBoxBorderBrushPressed: var(--winui-ControlStrokeColorDefaultBrush);
+	--winui-ComboBoxBorderBrushDisabled: var(--winui-ControlStrokeColorDefaultBrush);
+	--winui-ComboBoxDropDownGlyphForeground: var(--winui-TextFillColorSecondaryBrush);
+	--winui-ComboBoxDropDownGlyphForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+	--winui-ComboBoxDropDownForeground: var(--winui-TextFillColorPrimaryBrush);
+	--winui-ComboBoxDropDownBackground: var(--winui-AcrylicInAppFillColorDefaultBrush);
+	--winui-ComboBoxDropDownBorderBrush: var(--winui-SurfaceStrokeColorFlyoutBrush);
+	--winui-ComboBoxItemPillFillBrush: var(--winui-AccentFillColorDefaultBrush);
+	--winui-ComboBoxDropdownBorderPadding: 0px;
 	--winui-AccentButtonBackground: var(--winui-AccentFillColorDefaultBrush);
 	--winui-AccentButtonBackgroundPointerOver: var(--winui-AccentFillColorSecondaryBrush);
 	--winui-AccentButtonBackgroundPressed: var(--winui-AccentFillColorTertiaryBrush);
@@ -1344,13 +1466,41 @@
 	--winui-TitleBarPaneToggleButtonForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
 	--winui-TitleBarPaneToggleButtonForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
 	--winui-TitleBarPaneToggleButtonForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+	--winui-SystemAltMediumColor: #00000099;
+	--winui-SystemAltMediumLowColor: #00000066;
 	--winui-SystemBaseHighColor: #ffffffff;
+	--winui-SystemBaseLowColor: #ffffff33;
 	--winui-SystemBaseMediumColor: #ffffff99;
 	--winui-SystemBaseMediumLowColor: #ffffff66;
 	--winui-SystemChromeDisabledHighColor: #333333ff;
+	--winui-SystemChromeHighColor: #767676ff;
+	--winui-SystemChromeMediumLowColor: #2b2b2bff;
+	--winui-SystemListMediumColor: #ffffff33;
+	--winui-SystemControlBackgroundAltMediumLowBrush: var(--winui-SystemAltMediumLowColor);
+	--winui-SystemControlBackgroundChromeMediumLowBrush: var(--winui-SystemChromeMediumLowColor);
+	--winui-SystemControlBackgroundListMediumBrush: var(--winui-SystemListMediumColor);
+	--winui-SystemControlDisabledBaseLowBrush: var(--winui-SystemBaseLowColor);
 	--winui-SystemControlDisabledBaseMediumLowBrush: var(--winui-SystemBaseMediumLowColor);
 	--winui-SystemControlDisabledChromeDisabledHighBrush: var(--winui-SystemChromeDisabledHighColor);
 	--winui-SystemControlForegroundBaseHighBrush: var(--winui-SystemBaseHighColor);
+	--winui-SystemControlForegroundChromeHighBrush: var(--winui-SystemChromeHighColor);
+	--winui-SystemControlHighlightBaseMediumBrush: var(--winui-SystemBaseMediumColor);
+	--winui-SystemControlHighlightListAccentHighBrush: color-mix(
+		in srgb,
+		var(--winui-SystemAccentColor) 90%,
+		transparent
+	);
+	--winui-SystemControlHighlightListAccentLowBrush: color-mix(
+		in srgb,
+		var(--winui-SystemAccentColor) 60%,
+		transparent
+	);
+	--winui-SystemControlHighlightListAccentMediumBrush: color-mix(
+		in srgb,
+		var(--winui-SystemAccentColor) 80%,
+		transparent
+	);
+	--winui-SystemControlPageBackgroundAltMediumBrush: var(--winui-SystemAltMediumColor);
 	--winui-SystemControlPageTextBaseMediumBrush: var(--winui-SystemBaseMediumColor);
 	--winui-SystemControlDescriptionTextForegroundBrush: var(
 		--winui-SystemControlPageTextBaseMediumBrush
@@ -1372,6 +1522,45 @@
 		--winui-SystemColorHighlightTextColor: #212d3b;
 		--winui-SystemColorHotlightColor: #70ebde;
 
+		--winui-ComboBoxItemForeground: var(--winui-TextFillColorPrimaryBrush);
+		--winui-ComboBoxItemForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
+		--winui-ComboBoxItemForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
+		--winui-ComboBoxItemForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+		--winui-ComboBoxItemForegroundSelected: var(--winui-TextFillColorPrimaryBrush);
+		--winui-ComboBoxItemForegroundSelectedPressed: var(--winui-TextFillColorSecondaryBrush);
+		--winui-ComboBoxItemForegroundSelectedPointerOver: var(--winui-TextFillColorPrimaryBrush);
+		--winui-ComboBoxItemForegroundSelectedDisabled: var(--winui-TextFillColorDisabledBrush);
+		--winui-ComboBoxItemBackground: var(--winui-SubtleFillColorTransparentBrush);
+		--winui-ComboBoxItemBackgroundPressed: var(--winui-SubtleFillColorTertiaryBrush);
+		--winui-ComboBoxItemBackgroundPointerOver: var(--winui-SubtleFillColorSecondaryBrush);
+		--winui-ComboBoxItemBackgroundDisabled: var(--winui-SubtleFillColorDisabledBrush);
+		--winui-ComboBoxItemBackgroundSelected: var(--winui-SubtleFillColorSecondaryBrush);
+		--winui-ComboBoxItemBackgroundSelectedPressed: var(--winui-SubtleFillColorSecondaryBrush);
+		--winui-ComboBoxItemBackgroundSelectedPointerOver: var(--winui-SubtleFillColorTertiaryBrush);
+		--winui-ComboBoxItemBackgroundSelectedDisabled: var(--winui-SubtleFillColorSecondaryBrush);
+		--winui-ComboBoxBackground: var(--winui-ControlFillColorDefaultBrush);
+		--winui-ComboBoxBackgroundPointerOver: var(--winui-ControlFillColorSecondaryBrush);
+		--winui-ComboBoxBackgroundPressed: var(--winui-ControlFillColorTertiaryBrush);
+		--winui-ComboBoxBackgroundDisabled: var(--winui-ControlFillColorDisabledBrush);
+		--winui-ComboBoxForeground: var(--winui-TextFillColorPrimaryBrush);
+		--winui-ComboBoxForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
+		--winui-ComboBoxForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
+		--winui-ComboBoxForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+		--winui-ComboBoxHeaderForeground: var(--winui-TextFillColorPrimaryBrush);
+		--winui-ComboBoxHeaderForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+		--winui-ComboBoxPlaceHolderForeground: var(--winui-TextFillColorSecondaryBrush);
+		--winui-ComboBoxPlaceHolderForegroundFocusedPressed: var(--winui-TextFillColorSecondaryBrush);
+		--winui-ComboBoxBorderBrush: var(--winui-ControlElevationBorderBrush);
+		--winui-ComboBoxBorderBrushPointerOver: var(--winui-ControlElevationBorderBrush);
+		--winui-ComboBoxBorderBrushPressed: var(--winui-ControlStrokeColorDefaultBrush);
+		--winui-ComboBoxBorderBrushDisabled: var(--winui-ControlStrokeColorDefaultBrush);
+		--winui-ComboBoxDropDownGlyphForeground: var(--winui-TextFillColorSecondaryBrush);
+		--winui-ComboBoxDropDownGlyphForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+		--winui-ComboBoxDropDownForeground: var(--winui-TextFillColorPrimaryBrush);
+		--winui-ComboBoxDropDownBackground: var(--winui-AcrylicInAppFillColorDefaultBrush);
+		--winui-ComboBoxDropDownBorderBrush: var(--winui-SurfaceStrokeColorFlyoutBrush);
+		--winui-ComboBoxItemPillFillBrush: var(--winui-AccentFillColorDefaultBrush);
+		--winui-ComboBoxDropdownBorderPadding: 0px;
 		--winui-AccentButtonBackground: var(--winui-AccentFillColorDefaultBrush);
 		--winui-AccentButtonBackgroundPointerOver: var(--winui-AccentFillColorSecondaryBrush);
 		--winui-AccentButtonBackgroundPressed: var(--winui-AccentFillColorTertiaryBrush);
@@ -1996,15 +2185,43 @@
 		--winui-TitleBarPaneToggleButtonForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
 		--winui-TitleBarPaneToggleButtonForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
 		--winui-TitleBarPaneToggleButtonForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+		--winui-SystemAltMediumColor: #00000099;
+		--winui-SystemAltMediumLowColor: #00000066;
 		--winui-SystemBaseHighColor: #ffffffff;
+		--winui-SystemBaseLowColor: #ffffff33;
 		--winui-SystemBaseMediumColor: #ffffff99;
 		--winui-SystemBaseMediumLowColor: #ffffff66;
 		--winui-SystemChromeDisabledHighColor: #333333ff;
+		--winui-SystemChromeHighColor: #767676ff;
+		--winui-SystemChromeMediumLowColor: #2b2b2bff;
+		--winui-SystemListMediumColor: #ffffff33;
+		--winui-SystemControlBackgroundAltMediumLowBrush: var(--winui-SystemAltMediumLowColor);
+		--winui-SystemControlBackgroundChromeMediumLowBrush: var(--winui-SystemChromeMediumLowColor);
+		--winui-SystemControlBackgroundListMediumBrush: var(--winui-SystemListMediumColor);
+		--winui-SystemControlDisabledBaseLowBrush: var(--winui-SystemBaseLowColor);
 		--winui-SystemControlDisabledBaseMediumLowBrush: var(--winui-SystemBaseMediumLowColor);
 		--winui-SystemControlDisabledChromeDisabledHighBrush: var(
 			--winui-SystemChromeDisabledHighColor
 		);
 		--winui-SystemControlForegroundBaseHighBrush: var(--winui-SystemBaseHighColor);
+		--winui-SystemControlForegroundChromeHighBrush: var(--winui-SystemChromeHighColor);
+		--winui-SystemControlHighlightBaseMediumBrush: var(--winui-SystemBaseMediumColor);
+		--winui-SystemControlHighlightListAccentHighBrush: color-mix(
+			in srgb,
+			var(--winui-SystemAccentColor) 90%,
+			transparent
+		);
+		--winui-SystemControlHighlightListAccentLowBrush: color-mix(
+			in srgb,
+			var(--winui-SystemAccentColor) 60%,
+			transparent
+		);
+		--winui-SystemControlHighlightListAccentMediumBrush: color-mix(
+			in srgb,
+			var(--winui-SystemAccentColor) 80%,
+			transparent
+		);
+		--winui-SystemControlPageBackgroundAltMediumBrush: var(--winui-SystemAltMediumColor);
 		--winui-SystemControlPageTextBaseMediumBrush: var(--winui-SystemBaseMediumColor);
 		--winui-SystemControlDescriptionTextForegroundBrush: var(
 			--winui-SystemControlPageTextBaseMediumBrush
@@ -2028,6 +2245,55 @@
 	--winui-SystemColorHighlightTextColor: #212d3b;
 	--winui-SystemColorHotlightColor: #70ebde;
 
+	--winui-ComboBoxItemForeground: var(--winui-SystemControlForegroundBaseHighBrush);
+	--winui-ComboBoxItemForegroundPressed: var(--winui-SystemColorHighlightTextColor);
+	--winui-ComboBoxItemForegroundPointerOver: var(--winui-SystemColorHighlightTextColor);
+	--winui-ComboBoxItemForegroundDisabled: var(--winui-SystemControlDisabledBaseMediumLowBrush);
+	--winui-ComboBoxItemForegroundSelected: var(--winui-SystemColorHighlightTextColor);
+	--winui-ComboBoxItemForegroundSelectedPressed: var(--winui-SystemColorHighlightTextColor);
+	--winui-ComboBoxItemForegroundSelectedPointerOver: var(--winui-SystemColorHighlightTextColor);
+	--winui-ComboBoxItemForegroundSelectedDisabled: var(
+		--winui-SystemControlDisabledBaseMediumLowBrush
+	);
+	--winui-ComboBoxItemBackground: var(--winui-SystemControlTransparentBrush);
+	--winui-ComboBoxItemBackgroundPressed: var(--winui-SystemColorHighlightColor);
+	--winui-ComboBoxItemBackgroundPointerOver: var(--winui-SystemColorHighlightColor);
+	--winui-ComboBoxItemBackgroundDisabled: var(--winui-SystemControlTransparentBrush);
+	--winui-ComboBoxItemBackgroundSelected: var(--winui-SystemControlHighlightListAccentLowBrush);
+	--winui-ComboBoxItemBackgroundSelectedPressed: var(
+		--winui-SystemControlHighlightListAccentHighBrush
+	);
+	--winui-ComboBoxItemBackgroundSelectedPointerOver: var(
+		--winui-SystemControlHighlightListAccentMediumBrush
+	);
+	--winui-ComboBoxItemBackgroundSelectedDisabled: var(--winui-SystemControlTransparentBrush);
+	--winui-ComboBoxBackground: var(--winui-SystemControlBackgroundAltMediumLowBrush);
+	--winui-ComboBoxBackgroundPointerOver: var(--winui-SystemControlPageBackgroundAltMediumBrush);
+	--winui-ComboBoxBackgroundPressed: var(--winui-SystemControlBackgroundListMediumBrush);
+	--winui-ComboBoxBackgroundDisabled: var(--winui-SystemColorButtonFaceColor);
+	--winui-ComboBoxForeground: var(--winui-SystemControlForegroundBaseHighBrush);
+	--winui-ComboBoxForegroundPointerOver: var(--winui-SystemControlForegroundBaseHighBrush);
+	--winui-ComboBoxForegroundPressed: var(--winui-SystemControlForegroundBaseHighBrush);
+	--winui-ComboBoxForegroundDisabled: var(--winui-SystemControlDisabledBaseMediumLowBrush);
+	--winui-ComboBoxHeaderForeground: var(--winui-SystemControlForegroundBaseHighBrush);
+	--winui-ComboBoxHeaderForegroundDisabled: var(--winui-SystemControlDisabledBaseMediumLowBrush);
+	--winui-ComboBoxPlaceHolderForeground: var(--winui-SystemControlPageTextBaseMediumBrush);
+	--winui-ComboBoxPlaceHolderForegroundFocusedPressed: var(
+		--winui-SystemControlPageTextBaseMediumBrush
+	);
+	--winui-ComboBoxBorderBrush: var(--winui-SystemColorButtonTextColor);
+	--winui-ComboBoxBorderBrushPointerOver: var(--winui-SystemColorHighlightColor);
+	--winui-ComboBoxBorderBrushPressed: var(--winui-SystemControlHighlightBaseMediumBrush);
+	--winui-ComboBoxBorderBrushDisabled: var(--winui-SystemControlDisabledBaseLowBrush);
+	--winui-ComboBoxDropDownGlyphForeground: var(--winui-SystemColorButtonTextColor);
+	--winui-ComboBoxDropDownGlyphForegroundDisabled: var(
+		--winui-SystemControlDisabledBaseMediumLowBrush
+	);
+	--winui-ComboBoxDropDownForeground: var(--winui-SystemControlForegroundBaseHighBrush);
+	--winui-ComboBoxDropDownBackground: var(--winui-SystemControlBackgroundChromeMediumLowBrush);
+	--winui-ComboBoxDropDownBorderBrush: var(--winui-SystemControlForegroundChromeHighBrush);
+	--winui-ComboBoxItemPillFillBrush: var(--winui-SystemControlHighlightListAccentLowBrush);
+	--winui-ComboBoxDropdownBorderPadding: 0px;
 	--winui-AccentButtonBackground: var(--winui-SystemColorHighlightColor);
 	--winui-AccentButtonBackgroundPointerOver: var(--winui-SystemColorButtonTextColor);
 	--winui-AccentButtonBackgroundPressed: var(--winui-SystemColorButtonFaceColor);
@@ -2559,13 +2825,29 @@
 	--winui-TitleBarPaneToggleButtonForegroundDisabled: var(
 		--winui-SystemControlDisabledBaseMediumLowBrush
 	);
+	--winui-SystemAltMediumColor: #00000099;
+	--winui-SystemAltMediumLowColor: #00000066;
 	--winui-SystemBaseHighColor: #ffffffff;
+	--winui-SystemBaseLowColor: #ffffff33;
 	--winui-SystemBaseMediumColor: #ffffff99;
 	--winui-SystemBaseMediumLowColor: #ffffff66;
 	--winui-SystemChromeDisabledHighColor: #333333ff;
+	--winui-SystemChromeHighColor: #767676ff;
+	--winui-SystemChromeMediumLowColor: #2b2b2bff;
+	--winui-SystemListMediumColor: #ffffff33;
+	--winui-SystemControlBackgroundAltMediumLowBrush: var(--winui-SystemColorButtonFaceColor);
+	--winui-SystemControlBackgroundChromeMediumLowBrush: var(--winui-SystemColorButtonFaceColor);
+	--winui-SystemControlBackgroundListMediumBrush: var(--winui-SystemColorButtonFaceColor);
+	--winui-SystemControlDisabledBaseLowBrush: var(--winui-SystemColorGrayTextColor);
 	--winui-SystemControlDisabledBaseMediumLowBrush: var(--winui-SystemColorGrayTextColor);
 	--winui-SystemControlDisabledChromeDisabledHighBrush: var(--winui-SystemColorGrayTextColor);
 	--winui-SystemControlForegroundBaseHighBrush: var(--winui-SystemColorButtonTextColor);
+	--winui-SystemControlForegroundChromeHighBrush: var(--winui-SystemColorButtonTextColor);
+	--winui-SystemControlHighlightBaseMediumBrush: var(--winui-SystemColorHighlightColor);
+	--winui-SystemControlHighlightListAccentHighBrush: var(--winui-SystemColorHighlightColor);
+	--winui-SystemControlHighlightListAccentLowBrush: var(--winui-SystemColorHighlightColor);
+	--winui-SystemControlHighlightListAccentMediumBrush: var(--winui-SystemColorHighlightColor);
+	--winui-SystemControlPageBackgroundAltMediumBrush: var(--winui-SystemColorWindowColor);
 	--winui-SystemControlPageTextBaseMediumBrush: var(--winui-SystemColorWindowTextColor);
 	--winui-SystemControlDescriptionTextForegroundBrush: var(
 		--winui-SystemControlPageTextBaseMediumBrush

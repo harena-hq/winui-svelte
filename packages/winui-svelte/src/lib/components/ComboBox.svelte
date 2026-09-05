@@ -1,0 +1,571 @@
+<script lang="ts" module>
+	import type { Snippet } from 'svelte';
+
+	export interface ComboBoxItemData {
+		/** SelectedValue. Also the key the list is rendered by. */
+		value: string;
+		/** The item's content, when it is text. */
+		label: string;
+		/** IsEnabled on the item, inverted — ADR 0009. */
+		disabled?: boolean;
+	}
+
+	export interface ComboBoxProps {
+		/** ItemsSource, narrowed to the text items this unit renders. */
+		items?: ComboBoxItemData[];
+		/** SelectedValue. */
+		value?: string;
+		onValueChange?: (value: string) => void;
+		/** IsDropDownOpen. */
+		open?: boolean;
+		onOpenChange?: (open: boolean) => void;
+		/** PlaceholderText. */
+		placeholder?: string;
+		/** IsEnabled, inverted to HTML's attribute — ADR 0009. */
+		disabled?: boolean;
+		/** Header. A string or a snippet. */
+		header?: Snippet | string;
+		/** Description. A string or a snippet. */
+		description?: Snippet | string;
+		/** Name and IsRequired, for a form. */
+		name?: string;
+		required?: boolean;
+		class?: string;
+		style?: string;
+		/**
+		 * The trigger `<button>`, not the root — ADR 0009's `ref` points at the interactive
+		 * element. The root is the outer `<div>` the header and description sit on.
+		 */
+		ref?: HTMLButtonElement | null;
+		[key: string]: unknown;
+	}
+
+	// Two WinUI members are deliberately absent, and a plain comment says so rather than
+	// a `/** */` one: a doc comment here would attach itself to `disabled` below and a
+	// consumer hovering that prop would be told about one of them.
+	//
+	// `IsEditable="True"` and the `EditableModeStates` group. The editable variant is a
+	// separate unit; this control renders the non-editable one only.
+	//
+	// Items are text-only in this unit. A non-text `ComboBoxItem` template is its own
+	// arrangement of brushes and metrics; the `items` prop above is the text-only narrowing.
+</script>
+
+<script lang="ts">
+	import { Select } from 'bits-ui';
+
+	let {
+		items = [],
+		value = $bindable(''),
+		onValueChange,
+		open = $bindable(false),
+		onOpenChange,
+		placeholder,
+		disabled = false,
+		header,
+		description,
+		name,
+		required = false,
+		class: className,
+		style,
+		ref = $bindable(null),
+		...rest
+	}: ComboBoxProps = $props();
+
+	// `bits-ui`'s Select uses a `value` typed as `string | undefined` upstream and the
+	// component contract here narrows it to `string`. A consumer clearing the selection
+	// passes `''`; the empty string is the only falsy value the trigger shows as "nothing
+	// selected".
+</script>
+
+<div
+	class={['root', 'winui-BodyTextBlockStyle', className]}
+	{style}
+	data-disabled={disabled || undefined}
+	{...rest}
+>
+	{#if header !== undefined}
+		<span class="header">
+			{#if typeof header === 'string'}{header}{:else}{@render header()}{/if}
+		</span>
+	{/if}
+	<Select.Root
+		type="single"
+		bind:value={
+			() => value,
+			(next) => {
+				value = next;
+				onValueChange?.(next);
+			}
+		}
+		bind:open={
+			() => open,
+			(next) => {
+				open = next;
+				onOpenChange?.(next);
+			}
+		}
+		{items}
+		{disabled}
+		{required}
+		{name}
+	>
+		<Select.Trigger>
+			<!-- Every element the primitive would render is rendered here instead, through its
+			     `child` snippet — the escape ADR 0004 names first. bits-ui hands back the props
+			     it needs on the trigger (including the `aria-expanded`, `aria-controls` and the
+			     `data-state` it writes) and this component supplies the element and the class.
+			     Written the other way, with `class="…"` passed to the primitive, the class reaches
+			     the DOM without this component's scope hash, every rule for it has to be hoisted
+			     out of the selector, and `.trigger` then matches every element in the application
+			     that shares that very ordinary name. -->
+			{#snippet child({ props })}
+				<button {...props} bind:this={ref} class="trigger">
+					<Select.Value>
+						{#snippet child({ props, selection })}
+							<span {...props} class="value">
+								{#if selection.type === 'single' && selection.selected}
+									{selection.selected.label}
+								{:else}
+									<span class="placeholder">{placeholder ?? ''}</span>
+								{/if}
+							</span>
+						{/snippet}
+					</Select.Value>
+					<!-- WD-006: the chevron is an `AnimatedIcon` whose `FallbackIconSource` at
+					     ComboBox_themeresources.xaml:585 is a `FontIconSource` in
+					     `SymbolThemeFontFamily` at `FontSize="12"` with `Glyph="&#xE70D;"`. Render
+					     the fallback, no transition; see docs/divergences.md. -->
+					<span class="chevron" aria-hidden="true"></span>
+				</button>
+			{/snippet}
+		</Select.Trigger>
+		<Select.Portal>
+			<Select.Content>
+				{#snippet child({ props, wrapperProps })}
+					<!-- `wrapperProps` is the outer wrapper Floating UI positions; pass it through
+					     first, untouched. The popup's own border, background and corner live on
+					     `props` and reach the `<div>` this control writes. -->
+					<div {...wrapperProps}>
+						<div {...props} class="popup">
+							<Select.Viewport>
+								{#snippet child({ props })}
+									<div {...props} class="list">
+										{#each items as item (item.value)}
+											<Select.Item
+												value={item.value}
+												label={item.label}
+												disabled={item.disabled ?? false}
+											>
+												{#snippet child({ props })}
+													<!-- The `data-selected` and `data-highlighted` bits-ui writes
+													     are the conditions the CSS keys off; the snippet only
+													     adds the element and the class. -->
+													<div {...props} class="item">
+														<span class="pill" aria-hidden="true"></span>
+														<span class="item-content">{item.label}</span>
+													</div>
+												{/snippet}
+											</Select.Item>
+										{/each}
+									</div>
+								{/snippet}
+							</Select.Viewport>
+						</div>
+					</div>
+				{/snippet}
+			</Select.Content>
+		</Select.Portal>
+	</Select.Root>
+	{#if description !== undefined}
+		<span class="description">
+			{#if typeof description === 'string'}{description}{:else}{@render description()}{/if}
+		</span>
+	{/if}
+</div>
+
+<style>
+	.root {
+		display: inline-flex;
+		flex-direction: column;
+		position: relative;
+	}
+
+	/* Row 0 of `DefaultComboBoxStyle` at ComboBox_themeresources.xaml:569: the
+	   `HeaderContentPresenter` carries `Margin="{ThemeResource ComboBoxTopHeaderMargin}"`
+	   and `Foreground="{ThemeResource ComboBoxHeaderForeground}"` and
+	   `FontWeight="{ThemeResource ComboBoxHeaderThemeFontWeight}"`. `LineHeight="20"` and
+	   `TextWrapping="Wrap"` map to `line-height: 20px` and `white-space: normal`; the
+	   wrapper itself is line-height-normal and inherits, so the rule sets the constant
+	   explicitly. */
+	.header {
+		margin: var(--winui-ComboBoxTopHeaderMargin);
+		color: var(--winui-ComboBoxHeaderForeground);
+		font-weight: var(--winui-ComboBoxHeaderThemeFontWeight);
+		/* c1-allow: ComboBox_themeresources.xaml:569, `LineHeight="20"` on the
+		   `HeaderContentPresenter` */
+		line-height: 20px;
+		white-space: normal;
+	}
+
+	/* Row 1 of `DefaultComboBoxStyle` at ComboBox_themeresources.xaml:571: the
+	   `Background` Border carries `MinWidth="{ThemeResource ComboBoxThemeMinWidth}"`,
+	   `CornerRadius="{TemplateBinding CornerRadius}"` (the control's own
+	   `ControlCornerRadius`), `BorderThickness="{TemplateBinding BorderThickness}"`
+	   (`ComboBoxBorderThemeThickness`), `Background` and `BorderBrush` template-bound
+	   to the four `ComboBoxBackground*` and `ComboBoxBorderBrush*` brushes. The
+	   `ComboBoxMinHeight` and `ComboBoxPadding` template settings reach the same box.
+
+	   The `Control.IsTemplateFocusTarget="True"` puts the focus visual on the box. The
+	   trigger's own `:focus-visible` rule below reads as the focus visual.
+
+	   `font-family: inherit` is what lets the `<button>` paint text in the same family the
+	   root's `winui-BodyTextBlockStyle` brings in; a `<button>`'s default is the user
+	   agent's. */
+	.trigger {
+		display: inline-flex;
+		align-items: center;
+		min-width: var(--winui-ComboBoxThemeMinWidth);
+		min-height: var(--winui-ComboBoxMinHeight);
+		padding: var(--winui-ComboBoxPadding);
+		border-style: solid;
+		border-width: var(--winui-ComboBoxBorderThemeThickness);
+		border-radius: var(--winui-ControlCornerRadius);
+		font-family: inherit;
+		font-size: inherit;
+		text-align: left;
+		cursor: pointer;
+		color: inherit;
+		background: var(--winui-ComboBoxBackground);
+		border-color: var(--winui-ComboBoxBorderBrush);
+	}
+
+	/* The visible text inside the trigger. `ComboBoxForeground` is the colour of the
+	   selected label; the placeholder uses a separate brush and a separate weight — see
+	   TextBox's equivalent. The `PlaceholderTextBlock` upstream lives inside the
+	   `ContentPresenter` at :577 and is bound through the `PlaceholderForeground`
+	   property's alias onto `ComboBoxPlaceHolderForeground`. */
+	.value {
+		flex: 1 1 auto;
+		min-width: 0;
+		color: var(--winui-ComboBoxForeground);
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	/* The placeholder, visible only when the trigger has no selection. Its colour and
+	   weight both come from their own resources — `PlaceholderForeground` and
+	   `PlaceholderTextThemeFontWeight` — neither of which is the rest `Foreground`. The
+	   focused-pressed state of the placeholder carries its own brush, but the trigger
+	   reads it through a `Binding` rather than through a `VisualState` selector, so
+	   picking the right focus selector requires the focus visual on the trigger below.
+	   Reproducing the two brushes here is the closest equivalent the scoped CSS has. */
+	.placeholder {
+		color: var(--winui-ComboBoxPlaceHolderForeground);
+		font-weight: var(--winui-ComboBoxPlaceholderTextThemeFontWeight);
+	}
+
+	/* The chevron: 12 by 12, right-aligned, the column 38 px wide the upstream grid
+	   reserves. The glyph is the fallback WinUI itself draws — `&#xE70D;` in
+	   `SymbolThemeFontFamily` at `FontSize="12"` per the `FontIconSource` at
+	   ComboBox_themeresources.xaml:585. The escape is six digits and lowercase so a
+	   future `content` concatenation cannot end at a stray space, the same shape
+	   `TextBox.svelte`'s delete button carries. */
+	.chevron {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		flex: none;
+		/* c1-allow: ComboBox_themeresources.xaml:582, `Margin="0,0,14,0"` on the chevron */
+		margin-right: 14px;
+		/* c1-allow: ComboBox_themeresources.xaml:582, `Width="12"` and `Height="12"` on
+		   the `AnimatedIcon` */
+		width: 12px;
+		height: 12px;
+		font-family: var(--winui-SymbolThemeFontFamily);
+		/* c1-allow: ComboBox_themeresources.xaml:585, `FontSize="12"` on the
+		   `FontIconSource` inside `AnimatedIcon.FallbackIconSource` */
+		font-size: 12px;
+		line-height: normal;
+		color: var(--winui-ComboBoxDropDownGlyphForeground);
+	}
+
+	.chevron::before {
+		/* c1-allow: ComboBox_themeresources.xaml:585, `Glyph="&#xE70D;"` on the
+		   `FontIconSource` inside `AnimatedIcon.FallbackIconSource` — the glyph the
+		   original draws under WD-006 */
+		content: '\00e70d';
+	}
+
+	/* The popup: the `PopupBorder` Border at :590 carries `Background`, `BorderBrush`,
+	   `BorderThickness`, `Padding` and `CornerRadius` from the popup's own resources.
+	   The `Margin="0,-0.5,0,-1"` upstream is a half-pixel nudge for XAML's popup
+	   placement and is not reproduced here: bits-ui positions the content with Floating UI
+	   and a negative fractional margin against a different positioner is noise, not
+	   fidelity. `OverlayCornerRadius` is the popup's own corner — distinct from the
+	   trigger's `ControlCornerRadius`.
+
+	   `min-width` is the one thing the popup takes from outside its own resources. The
+	   `ScrollViewer` at :591 binds `MinWidth` to `TemplateSettings.DropDownContentMinWidth`,
+	   which WinUI computes as the ComboBox's own width — so upstream's dropdown is never
+	   narrower than the control it drops from. bits-ui publishes the trigger's measured
+	   width on the content as `--bits-floating-anchor-width`, and `max()` against
+	   `ComboBoxPopupThemeMinWidth` keeps the 80 the source states as the floor for a
+	   control narrower than that. Without this the popup shrinks to its longest item and
+	   the control looks nothing like the original. */
+	.popup {
+		min-width: max(var(--bits-floating-anchor-width), var(--winui-ComboBoxPopupThemeMinWidth));
+		background: var(--winui-ComboBoxDropDownBackground);
+		border-style: solid;
+		border-width: var(--winui-ComboBoxDropdownBorderThickness);
+		border-color: var(--winui-ComboBoxDropDownBorderBrush);
+		padding: var(--winui-ComboBoxDropdownBorderPadding);
+		border-radius: var(--winui-OverlayCornerRadius);
+		color: var(--winui-ComboBoxDropDownForeground);
+	}
+
+	/* The list: the `ScrollViewer` at :591 carries `Foreground` for the items, and the
+	   `ItemsPresenter` carries `Margin="{ThemeResource ComboBoxDropdownContentMargin}"`
+	   at :592 — the gap between the popup's border and the items. */
+	.list {
+		display: flex;
+		flex-direction: column;
+		margin: var(--winui-ComboBoxDropdownContentMargin);
+		min-width: 0;
+	}
+
+	/* The item: the `LayoutRoot` Grid at :614 carries `Margin="5,2,5,2"`,
+	   `CornerRadius="{TemplateBinding CornerRadius}"` (which the
+	   `DefaultComboBoxItemStyle` sets to `ComboBoxItemCornerRadius`), and `Padding` and
+	   `Background`/`BorderBrush` template-bound to the eight `ComboBoxItem*` brushes.
+	   The `Control.IsTemplateFocusTarget="True"` puts the focus visual on the item. The
+	   `Margin="5,2,5,2"` is on the `LayoutRoot` upstream; here it is on the item div,
+	   which is the visual equivalent for a flex-column list. */
+	.item {
+		position: relative;
+		display: flex;
+		align-items: center;
+		/* c1-allow: ComboBox_themeresources.xaml:614, the item's `LayoutRoot` carries
+		   `Margin="5,2,5,2"` — XAML writes left,top,right,bottom and CSS writes
+		   top,right,bottom,left. It is what insets each row from the popup's edge and
+		   gives the selected row's rounded highlight its floating look. */
+		margin: 2px 5px;
+		padding: var(--winui-ComboBoxItemThemePadding);
+		border-radius: var(--winui-ComboBoxItemCornerRadius);
+		background: var(--winui-ComboBoxItemBackground);
+		color: var(--winui-ComboBoxItemForeground);
+		cursor: pointer;
+	}
+
+	/* No border on an item, and no `ComboBoxItemBorderBrush` anywhere in this component.
+	   `DefaultComboBoxItemStyle` at ComboBox_themeresources.xaml:600 sets `Foreground`,
+	   `Background`, `Padding` and `CornerRadius` and no `BorderThickness`, so the item's
+	   border is the framework default of zero — and the nine `ComboBoxItemBorderBrush*`
+	   keys the dictionary defines are read by nothing, the same shape as the pre-Fluent
+	   `*ThemeBrush` families. A zero-width border with a colour on it is a declaration that
+	   looks like a decision and is not one. */
+
+	/* The selection indicator: the `Pill` Rectangle at :572 carries
+	   `Width="{StaticResource ComboBoxItemPillWidth}"`,
+	   `Height="{StaticResource ComboBoxItemPillHeight}"`,
+	   `RadiusX="{StaticResource ComboBoxItemPillCornerRadius}"`,
+	   `Fill="{ThemeResource ComboBoxItemPillFillBrush}"`, `Margin="1,0,0,0"`, and is
+	   invisible at rest (`Opacity="0"`). The four `Selected*` states set `Opacity` to 1,
+	   and `SelectedPressed` scales by `ComboBoxItemPillMinScale` (0.625). The scale has
+	   no `transition` — the upstream animation runs over
+	   `ComboBoxItemScaleAnimationDuration`, which this unit does not seed. The scale
+	   token is emitted as `px` and read back through `calc(... / 1px)` so the cascade
+	   stays editable without extending the generator's type system; see
+	   `scripts/tokens/manifest.mjs`'s `DOUBLE_LENGTHS` for the comment. */
+	.pill {
+		position: absolute;
+		left: 0;
+		top: 50%;
+		translate: 0 -50%;
+		width: var(--winui-ComboBoxItemPillWidth);
+		height: var(--winui-ComboBoxItemPillHeight);
+		border-radius: var(--winui-ComboBoxItemPillCornerRadius);
+		background: var(--winui-ComboBoxItemPillFillBrush);
+		opacity: 0;
+	}
+
+	/* The visible label inside the item. `margin-left` reserves space for the pill so a
+	   selected item's text aligns with a non-selected one's; the pill is three pixels
+	   wide plus the `Margin="1,0,0,0"` upstream adds on its right. */
+	.item-content {
+		flex: 1 1 auto;
+		min-width: 0;
+		margin-left: 4px;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	/* The focus visual; see Button.svelte for the shape. `ComboBox`'s style sets no
+	   `FocusVisualMargin`, so the band takes the framework default of `0` —
+	   `inset: 0` and `border-radius: inherit`, the same shape `NavigationViewItem.svelte`
+	   uses. */
+	.trigger:focus-visible {
+		outline: none;
+	}
+
+	.root:has(.trigger:focus-visible)::before {
+		content: '';
+		position: absolute;
+		/* `top` and `bottom` mirror the trigger's own offset from the root — the header
+		   adds the `ComboBoxTopHeaderMargin` on top, and the focus band has to clear it. */
+		top: var(--winui-ComboBoxTopHeaderMargin);
+		bottom: 0;
+		left: 0;
+		right: 0;
+		border-radius: inherit;
+		box-shadow:
+			inset 0 0 0 var(--winui-FocusVisualPrimaryThickness)
+				var(--winui-SystemControlFocusVisualPrimaryBrush),
+			inset 0 0 0
+				calc(var(--winui-FocusVisualPrimaryThickness) + var(--winui-FocusVisualSecondaryThickness))
+				var(--winui-SystemControlFocusVisualSecondaryBrush);
+		pointer-events: none;
+	}
+
+	/* The focus visual for the popup items — the `FocusVisualMargin="-3"` upstream at
+	   :609 puts the band three pixels outside the item's border box. */
+	.item:focus-visible {
+		outline: none;
+	}
+
+	.list:has(.item:focus-visible)::before {
+		content: '';
+		position: absolute;
+		/* c1-allow: ComboBox_themeresources.xaml:609, `FocusVisualMargin="-3"` */
+		inset: -3px;
+		/* c1-allow: the same 3px vertical offset Button, CheckBox, RadioButton and
+		   ToggleSwitch carry, so the band stays concentric with the item's own corner */
+		border-radius: calc(var(--winui-ComboBoxItemCornerRadius) + 3px);
+		box-shadow:
+			inset 0 0 0 var(--winui-FocusVisualPrimaryThickness)
+				var(--winui-SystemControlFocusVisualPrimaryBrush),
+			inset 0 0 0
+				calc(var(--winui-FocusVisualPrimaryThickness) + var(--winui-FocusVisualSecondaryThickness))
+				var(--winui-SystemControlFocusVisualSecondaryBrush);
+		pointer-events: none;
+	}
+
+	/* ----- Trigger: PointerOver ----- */
+	.trigger:hover {
+		background: var(--winui-ComboBoxBackgroundPointerOver);
+		border-color: var(--winui-ComboBoxBorderBrushPointerOver);
+	}
+
+	.trigger:hover .value {
+		color: var(--winui-ComboBoxForegroundPointerOver);
+	}
+
+	.trigger:hover .placeholder {
+		color: var(--winui-ComboBoxPlaceHolderForeground);
+	}
+
+	.trigger:hover .chevron {
+		color: var(--winui-ComboBoxDropDownGlyphForeground);
+	}
+
+	/* ----- Trigger: Pressed ----- */
+	.trigger:active {
+		background: var(--winui-ComboBoxBackgroundPressed);
+		border-color: var(--winui-ComboBoxBorderBrushPressed);
+	}
+
+	.trigger:active .value {
+		color: var(--winui-ComboBoxForegroundPressed);
+	}
+
+	/* ----- Items: PointerOver (`data-highlighted` is bits-ui's hover/active key) ----- */
+	.item[data-highlighted] {
+		background: var(--winui-ComboBoxItemBackgroundPointerOver);
+		color: var(--winui-ComboBoxItemForegroundPointerOver);
+	}
+
+	/* ----- Items: Pressed ----- */
+	.item:active {
+		background: var(--winui-ComboBoxItemBackgroundPressed);
+		color: var(--winui-ComboBoxItemForegroundPressed);
+	}
+
+	/* ----- Items: Selected ----- */
+	.item[data-selected] {
+		background: var(--winui-ComboBoxItemBackgroundSelected);
+		color: var(--winui-ComboBoxItemForegroundSelected);
+	}
+
+	.item[data-selected] .pill {
+		opacity: 1;
+	}
+
+	/* ----- Items: Selected + PointerOver ----- */
+	.item[data-selected][data-highlighted] {
+		background: var(--winui-ComboBoxItemBackgroundSelectedPointerOver);
+		color: var(--winui-ComboBoxItemForegroundSelectedPointerOver);
+	}
+
+	/* ----- Items: Selected + Pressed ----- */
+	.item[data-selected]:active {
+		background: var(--winui-ComboBoxItemBackgroundSelectedPressed);
+		color: var(--winui-ComboBoxItemForegroundSelectedPressed);
+	}
+
+	.item[data-selected]:active .pill {
+		/* The upstream `SelectedPressed` state animates `ScaleY` to
+		   `ComboBoxItemPillMinScale` (0.625) over `ComboBoxItemScaleAnimationDuration`;
+		   the animation is out of scope and the scale is applied instantly. The token is
+		   emitted as `px` and read back through `calc(... / 1px)`. */
+		scale: var(--winui-ComboBoxItemPillMinScale);
+	}
+
+	/* ----- Items: Disabled ----- */
+	.item[data-disabled] {
+		background: var(--winui-ComboBoxItemBackgroundDisabled);
+		color: var(--winui-ComboBoxItemForegroundDisabled);
+		cursor: default;
+	}
+
+	/* ----- Items: Selected + Disabled ----- */
+	.item[data-selected][data-disabled] {
+		background: var(--winui-ComboBoxItemBackgroundSelectedDisabled);
+		color: var(--winui-ComboBoxItemForegroundSelectedDisabled);
+	}
+
+	/* ----- Trigger: Disabled — written last so the four disabled brushes win over `:hover`
+	   and `:active`. A disabled trigger must not light up under the pointer or while being
+	   pressed. `data-disabled` is on the root rather than `:disabled` because the root is
+	   a `<div>` and the trigger is a `<button>`. */
+	.root[data-disabled] .trigger {
+		background: var(--winui-ComboBoxBackgroundDisabled);
+		border-color: var(--winui-ComboBoxBorderBrushDisabled);
+		cursor: default;
+	}
+
+	.root[data-disabled] .trigger .value {
+		color: var(--winui-ComboBoxForegroundDisabled);
+	}
+
+	.root[data-disabled] .trigger .placeholder {
+		color: var(--winui-ComboBoxPlaceHolderForeground);
+	}
+
+	.root[data-disabled] .trigger .chevron {
+		color: var(--winui-ComboBoxDropDownGlyphForegroundDisabled);
+	}
+
+	.root[data-disabled] .header {
+		color: var(--winui-ComboBoxHeaderForegroundDisabled);
+	}
+
+	/* No `.root[data-disabled] .description` rule: the description's colour is the same in
+	   every state, including disabled — upstream's `DescriptionPresenter` template never
+	   overrides it. */
+	.description {
+		color: var(--winui-SystemControlDescriptionTextForegroundBrush);
+		white-space: normal;
+	}
+</style>

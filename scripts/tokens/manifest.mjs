@@ -824,6 +824,212 @@ export const SLIDER_KEYS = {
 		'Pre-Fluent Slider *ThemeBrush family, listed for EXCLUDED'
 };
 
+/**
+ * Keys ComboBox reads — the ninth seed set.
+ *
+ * The non-editable template is the `DefaultComboBoxStyle` at
+ * ComboBox_themeresources.xaml:359, which paints a three-row, two-column grid: a
+ * `HeaderContentPresenter` row, a `Background` row carrying the closed state, and a
+ * `DescriptionPresenter` row. The closed state's `BorderBrush` and `Background` are
+ * wired through `TemplateBinding`, so the four `ComboBoxBackground*` and four
+ * `ComboBoxBorderBrush*` brushes paint the box itself. The `DropDownGlyph` is an
+ * `AnimatedIcon` whose `FallbackIconSource` at :585 is a `FontIconSource` with
+ * `Glyph="&#xE70D;"`, and WD-006 accepts the static fallback. The `Pill` selector
+ * indicator is a 3x16 `Rectangle` filled with `ComboBoxItemPillFillBrush` and scaled
+ * by `ComboBoxItemPillMinScale` in the `SelectedPressed` state — the four
+ * `Selected*` states are the only ones that set the pill's opacity to 1.
+ *
+ * What this list leaves out, so a gap reads as a decision rather than an oversight.
+ * The ComboBox dictionary carries many more resources; these are the ones not here:
+ *
+ * - **`IsEditable="True"` and the `EditableModeStates` group.** The four `ComboBox*Editable*`
+ *   brushes (`ComboBoxEditableDropDownGlyphForeground`, `ComboBoxDropDownBackgroundPointerOver`,
+ *   `ComboBoxDropDownBackgroundPointerPressed`, `ComboBoxFocusedDropDownBackgroundPointerOver`,
+ *   `ComboBoxFocusedDropDownBackgroundPointerPressed`), `ComboBoxEditableTextPadding`, and the
+ *   `EditableText` `TextBox` at :580. Editable mode is a separate unit.
+ * - **The touch and game-controller padding variants** — `ComboBoxItemThemeTouchPadding` and
+ *   `ComboBoxItemThemeGameControllerPadding`. The two non-mouse input modes are not built.
+ * - **`ComboBoxArrowThemeFontSize`** — the chevron's animated source font size; irrelevant
+ *   under WD-006, which renders the fallback glyph instead.
+ * - **The `ComboBoxHiglightBorderCornerRadius`, `ComboBoxBackgroundBorderThicknessFocused`,
+ *   and `ComboBoxPopupBorderThemeThickness`** — the highlight border, its stroke, and the
+ *   popup's own border. The control never paints `HighlightBackground` or that border in this
+ *   unit.
+ * - **`ComboBoxPopupThemeTouchMinWidth`** — the popup's minimum width in touch input mode.
+ * - **`ComboBoxItemScaleAnimationDuration`** — the duration the `SelectedPressed` state's
+ *   pill scale runs over. The pill scales without a transition here, for the same reason
+ *   Slider's inner accent does (see the Slider tranche).
+ * - **The thirty-five pre-Fluent `ComboBox*ThemeBrush` resources.** They are the
+ *   `ComboBoxArrow*ThemeBrush`, `ComboBoxBackgroundThemeBrush`, `ComboBoxBorderThemeBrush`,
+ *   `ComboBoxDisabled*ThemeBrush`, `ComboBoxFocused*ThemeBrush`, `ComboBoxForegroundThemeBrush`,
+ *   `ComboBoxHeaderForegroundThemeBrush`, `ComboBoxItem*ThemeBrush`, `ComboBoxPlaceholderTextForegroundThemeBrush`,
+ *   `ComboBoxPointerOver*ThemeBrush`, `ComboBoxPopup*ThemeBrush`, `ComboBoxPressed*ThemeBrush`,
+ *   `ComboBoxSelected*ThemeBrush` families. The current template references none of them
+ *   and their `Default` values are literal colours from a palette this library does not use.
+ *   Same family and same reason as Button's ten, TextBox's seventeen, CheckBox's fourteen,
+ *   RadioButton's fifteen, ToggleSwitch's twenty-three and Slider's twenty-two.
+ */
+export const COMBOBOX_KEYS = {
+	// The box and its header — the three layout keys the trigger and header reach, the two
+	// font-weight resources, and the four metrics that size the box, the popup and the
+	// selection pill.
+	ComboBoxMinHeight: 'ComboBox, the box minimum height',
+	ComboBoxThemeMinWidth: 'ComboBox, the box minimum width',
+	ComboBoxPadding: 'ComboBox, the padding inside its border',
+	ComboBoxTopHeaderMargin: 'ComboBox header, the gap below it',
+	ComboBoxHeaderThemeFontWeight: 'ComboBox header, its weight',
+	ComboBoxPlaceholderTextThemeFontWeight: 'ComboBox placeholder, its weight',
+	ComboBoxBorderThemeThickness: 'ComboBox, the border width',
+
+	// The four `Background` brushes — rest, hover, pressed and disabled — that the
+	// `Background` Border's `TemplateBinding Background` resolves through the four
+	// `PointerOver`/`Pressed`/`Disabled` states.
+	ComboBoxBackground: 'ComboBox background, at rest',
+	ComboBoxBackgroundPointerOver: 'ComboBox background, pointer over',
+	ComboBoxBackgroundPressed: 'ComboBox background, pressed',
+	ComboBoxBackgroundDisabled: 'ComboBox background, disabled',
+
+	// The four `BorderBrush` brushes. `ComboBoxBorderBrush` and `…PointerOver` both alias
+	// `ControlElevationBorderBrush`, a gradient in the token layer — the same shape
+	// TextBox's border and Slider's thumb ring carry, and the same reason a CSS
+	// `border-color` cannot hold it (see those components for the technique).
+	ComboBoxBorderBrush: 'ComboBox border, at rest',
+	ComboBoxBorderBrushPointerOver: 'ComboBox border, pointer over',
+	ComboBoxBorderBrushPressed: 'ComboBox border, pressed',
+	ComboBoxBorderBrushDisabled: 'ComboBox border, disabled',
+
+	// The four `Foreground` brushes — the `ContentPresenter`'s colour, holding the
+	// selected item's text.
+	ComboBoxForeground: 'ComboBox foreground, at rest',
+	ComboBoxForegroundPointerOver: 'ComboBox foreground, pointer over',
+	ComboBoxForegroundPressed: 'ComboBox foreground, pressed',
+	ComboBoxForegroundDisabled: 'ComboBox foreground, disabled',
+
+	// The header in both states, and the placeholder in the two states this control
+	// paints (the focus state is its own column). `ComboBoxPlaceHolderForegroundFocusedPressed`
+	// is the placeholder colour the `FocusedPressed` state drives; the trigger reaches it
+	// when it has focus and is pressed.
+	ComboBoxHeaderForeground: 'ComboBox header text, at rest',
+	ComboBoxHeaderForegroundDisabled: 'ComboBox header text, disabled',
+	ComboBoxPlaceHolderForeground: 'ComboBox placeholder text, at rest',
+	ComboBoxPlaceHolderForegroundFocusedPressed: 'ComboBox placeholder text, focused and pressed',
+
+	// The chevron in both states.
+	ComboBoxDropDownGlyphForeground: 'ComboBox chevron, at rest',
+	ComboBoxDropDownGlyphForegroundDisabled: 'ComboBox chevron, disabled',
+
+	// The popup and its list: the popup's `Background`, `BorderBrush`, four layout keys, the
+	// list's `Foreground`, and the two layout keys the list's `ScrollViewer` and items reach.
+	ComboBoxDropDownBackground: 'ComboBox popup, the background inside its border',
+	ComboBoxDropDownBorderBrush: 'ComboBox popup, its border',
+	ComboBoxDropdownBorderThickness: 'ComboBox popup, its border width',
+	ComboBoxDropdownBorderPadding: 'ComboBox popup, the padding inside its border',
+	ComboBoxDropdownContentMargin: 'ComboBox popup, the gap between its border and its list',
+	ComboBoxPopupThemeMinWidth: 'ComboBox popup, the floor its width never goes below',
+	ComboBoxDropDownForeground: 'ComboBox popup, the list text colour',
+
+	// The item: its corner radius, its padding, and its eight brushes across the four
+	// `CommonStates` (Normal, PointerOver, Pressed, Disabled) the modern item template
+	// reaches.
+	ComboBoxItemCornerRadius: 'ComboBox item, its corner radius',
+	ComboBoxItemThemePadding: 'ComboBox item, the padding around its text',
+	ComboBoxItemBackground: 'ComboBox item background, at rest',
+	ComboBoxItemBackgroundPointerOver: 'ComboBox item background, pointer over',
+	ComboBoxItemBackgroundPressed: 'ComboBox item background, pressed',
+	ComboBoxItemBackgroundDisabled: 'ComboBox item background, disabled',
+	ComboBoxItemForeground: 'ComboBox item text, at rest',
+	ComboBoxItemForegroundPointerOver: 'ComboBox item text, pointer over',
+	ComboBoxItemForegroundPressed: 'ComboBox item text, pressed',
+	ComboBoxItemForegroundDisabled: 'ComboBox item text, disabled',
+
+	// The item's `Selected*` variants — the four `Selected*` states override the fill, the
+	// foreground, and the pill's opacity. The four missing siblings
+	// (`ComboBoxItem*SelectedUnfocused`) sit between `Selected` and `SelectedPointerOver`
+	// in the upstream `CommonStates` and are reachable only via a tab navigation that takes
+	// focus off the popup without a pointer over it — out of scope for this unit.
+	ComboBoxItemBackgroundSelected: 'ComboBox item background, selected',
+	ComboBoxItemBackgroundSelectedPointerOver: 'ComboBox item background, selected pointer over',
+	ComboBoxItemBackgroundSelectedPressed: 'ComboBox item background, selected pressed',
+	ComboBoxItemBackgroundSelectedDisabled: 'ComboBox item background, selected disabled',
+	ComboBoxItemForegroundSelected: 'ComboBox item text, selected',
+	ComboBoxItemForegroundSelectedPointerOver:
+		'ComboBox item, the selected foreground with the pointer over it',
+	ComboBoxItemForegroundSelectedPressed: 'ComboBox item, the selected foreground while pressed',
+	ComboBoxItemForegroundSelectedDisabled: 'ComboBox item text, selected disabled',
+
+	// The selection pill: its brush, its two sizes, its corner radius, and the scale the
+	// `SelectedPressed` state animates to (here, applies instantly — see Slider's note on
+	// the same decision).
+	ComboBoxItemPillFillBrush: 'ComboBox item, the selection pill fill',
+	ComboBoxItemPillWidth: 'ComboBox item, the selection pill width',
+	ComboBoxItemPillHeight: 'ComboBox item, the selection pill height',
+	ComboBoxItemPillCornerRadius: 'ComboBox item, the selection pill corner radius',
+	ComboBoxItemPillMinScale: 'ComboBox item, the selection pill pressed scale',
+
+	// Seeded only so the EXCLUDED list below can name them — the generator stops if an
+	// EXCLUDED key is not selected. The thirty-five pre-Fluent `*ThemeBrush` resources;
+	// the reason is the same as Button's ten, TextBox's seventeen, CheckBox's fourteen,
+	// RadioButton's fifteen, ToggleSwitch's twenty-three and Slider's twenty-two.
+	ComboBoxArrowDisabledForegroundThemeBrush:
+		'Pre-Fluent ComboBox *ThemeBrush family, listed for EXCLUDED',
+	ComboBoxArrowForegroundThemeBrush: 'Pre-Fluent ComboBox *ThemeBrush family, listed for EXCLUDED',
+	ComboBoxArrowPressedForegroundThemeBrush:
+		'Pre-Fluent ComboBox *ThemeBrush family, listed for EXCLUDED',
+	ComboBoxBackgroundThemeBrush: 'Pre-Fluent ComboBox *ThemeBrush family, listed for EXCLUDED',
+	ComboBoxBorderThemeBrush: 'Pre-Fluent ComboBox *ThemeBrush family, listed for EXCLUDED',
+	ComboBoxDisabledBackgroundThemeBrush:
+		'Pre-Fluent ComboBox *ThemeBrush family, listed for EXCLUDED',
+	ComboBoxDisabledBorderThemeBrush: 'Pre-Fluent ComboBox *ThemeBrush family, listed for EXCLUDED',
+	ComboBoxDisabledForegroundThemeBrush:
+		'Pre-Fluent ComboBox *ThemeBrush family, listed for EXCLUDED',
+	ComboBoxFocusedBackgroundThemeBrush:
+		'Pre-Fluent ComboBox *ThemeBrush family, listed for EXCLUDED',
+	ComboBoxFocusedBorderThemeBrush: 'Pre-Fluent ComboBox *ThemeBrush family, listed for EXCLUDED',
+	ComboBoxFocusedForegroundThemeBrush:
+		'Pre-Fluent ComboBox *ThemeBrush family, listed for EXCLUDED',
+	ComboBoxForegroundThemeBrush: 'Pre-Fluent ComboBox *ThemeBrush family, listed for EXCLUDED',
+	ComboBoxHeaderForegroundThemeBrush: 'Pre-Fluent ComboBox *ThemeBrush family, listed for EXCLUDED',
+	ComboBoxItemDisabledForegroundThemeBrush:
+		'Pre-Fluent ComboBox *ThemeBrush family, listed for EXCLUDED',
+	ComboBoxItemPointerOverBackgroundThemeBrush:
+		'Pre-Fluent ComboBox *ThemeBrush family, listed for EXCLUDED',
+	ComboBoxItemPointerOverForegroundThemeBrush:
+		'Pre-Fluent ComboBox *ThemeBrush family, listed for EXCLUDED',
+	ComboBoxItemPressedBackgroundThemeBrush:
+		'Pre-Fluent ComboBox *ThemeBrush family, listed for EXCLUDED',
+	ComboBoxItemPressedForegroundThemeBrush:
+		'Pre-Fluent ComboBox *ThemeBrush family, listed for EXCLUDED',
+	ComboBoxItemSelectedBackgroundThemeBrush:
+		'Pre-Fluent ComboBox *ThemeBrush family, listed for EXCLUDED',
+	ComboBoxItemSelectedDisabledBackgroundThemeBrush:
+		'Pre-Fluent ComboBox *ThemeBrush family, listed for EXCLUDED',
+	ComboBoxItemSelectedDisabledForegroundThemeBrush:
+		'Pre-Fluent ComboBox *ThemeBrush family, listed for EXCLUDED',
+	ComboBoxItemSelectedForegroundThemeBrush:
+		'Pre-Fluent ComboBox *ThemeBrush family, listed for EXCLUDED',
+	ComboBoxItemSelectedPointerOverBackgroundThemeBrush:
+		'Pre-Fluent ComboBox *ThemeBrush family, listed for EXCLUDED',
+	ComboBoxPlaceholderTextForegroundThemeBrush:
+		'Pre-Fluent ComboBox *ThemeBrush family, listed for EXCLUDED',
+	ComboBoxPointerOverBackgroundThemeBrush:
+		'Pre-Fluent ComboBox *ThemeBrush family, listed for EXCLUDED',
+	ComboBoxPointerOverBorderThemeBrush:
+		'Pre-Fluent ComboBox *ThemeBrush family, listed for EXCLUDED',
+	ComboBoxPopupBackgroundThemeBrush: 'Pre-Fluent ComboBox *ThemeBrush family, listed for EXCLUDED',
+	ComboBoxPopupBorderThemeBrush: 'Pre-Fluent ComboBox *ThemeBrush family, listed for EXCLUDED',
+	ComboBoxPopupForegroundThemeBrush: 'Pre-Fluent ComboBox *ThemeBrush family, listed for EXCLUDED',
+	ComboBoxPressedBackgroundThemeBrush:
+		'Pre-Fluent ComboBox *ThemeBrush family, listed for EXCLUDED',
+	ComboBoxPressedBorderThemeBrush: 'Pre-Fluent ComboBox *ThemeBrush family, listed for EXCLUDED',
+	ComboBoxPressedForegroundThemeBrush:
+		'Pre-Fluent ComboBox *ThemeBrush family, listed for EXCLUDED',
+	ComboBoxPressedHighlightThemeBrush: 'Pre-Fluent ComboBox *ThemeBrush family, listed for EXCLUDED',
+	ComboBoxSelectedBackgroundThemeBrush:
+		'Pre-Fluent ComboBox *ThemeBrush family, listed for EXCLUDED',
+	ComboBoxSelectedPointerOverBackgroundThemeBrush:
+		'Pre-Fluent ComboBox *ThemeBrush family, listed for EXCLUDED'
+};
+
 export const SHELL_KEYS = {
 	// NavigationView — the pane, the content area, and the metrics that size them.
 	NavigationViewDefaultPaneBackground: 'NavigationView pane, the surface behind the items',
@@ -1280,7 +1486,83 @@ export const EXCLUDED = {
 	SliderTrackPointerOverBackgroundThemeBrush:
 		'Pre-Fluent *ThemeBrush family; not referenced by the current Slider template',
 	SliderTrackPressedBackgroundThemeBrush:
-		'Pre-Fluent *ThemeBrush family; not referenced by the current Slider template'
+		'Pre-Fluent *ThemeBrush family; not referenced by the current Slider template',
+
+	// The pre-Fluent ComboBox `*ThemeBrush` family — the `Arrow`, `Background`, `Border`,
+	// `Disabled`, `Focused`, `Foreground`, `HeaderForeground`, `Item*`, `PlaceholderText`,
+	// `PointerOver`, `Popup`, `Pressed` and `Selected` names for the same parts the modern
+	// brushes paint. Defined in ComboBox_themeresources.xaml and referenced nowhere in the
+	// template at :359.
+	ComboBoxArrowDisabledForegroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current ComboBox template',
+	ComboBoxArrowForegroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current ComboBox template',
+	ComboBoxArrowPressedForegroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current ComboBox template',
+	ComboBoxBackgroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current ComboBox template',
+	ComboBoxBorderThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current ComboBox template',
+	ComboBoxDisabledBackgroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current ComboBox template',
+	ComboBoxDisabledBorderThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current ComboBox template',
+	ComboBoxDisabledForegroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current ComboBox template',
+	ComboBoxFocusedBackgroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current ComboBox template',
+	ComboBoxFocusedBorderThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current ComboBox template',
+	ComboBoxFocusedForegroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current ComboBox template',
+	ComboBoxForegroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current ComboBox template',
+	ComboBoxHeaderForegroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current ComboBox template',
+	ComboBoxItemDisabledForegroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current ComboBox template',
+	ComboBoxItemPointerOverBackgroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current ComboBox template',
+	ComboBoxItemPointerOverForegroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current ComboBox template',
+	ComboBoxItemPressedBackgroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current ComboBox template',
+	ComboBoxItemPressedForegroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current ComboBox template',
+	ComboBoxItemSelectedBackgroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current ComboBox template',
+	ComboBoxItemSelectedDisabledBackgroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current ComboBox template',
+	ComboBoxItemSelectedDisabledForegroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current ComboBox template',
+	ComboBoxItemSelectedForegroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current ComboBox template',
+	ComboBoxItemSelectedPointerOverBackgroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current ComboBox template',
+	ComboBoxPlaceholderTextForegroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current ComboBox template',
+	ComboBoxPointerOverBackgroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current ComboBox template',
+	ComboBoxPointerOverBorderThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current ComboBox template',
+	ComboBoxPopupBackgroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current ComboBox template',
+	ComboBoxPopupBorderThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current ComboBox template',
+	ComboBoxPopupForegroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current ComboBox template',
+	ComboBoxPressedBackgroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current ComboBox template',
+	ComboBoxPressedBorderThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current ComboBox template',
+	ComboBoxPressedForegroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current ComboBox template',
+	ComboBoxPressedHighlightThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current ComboBox template',
+	ComboBoxSelectedBackgroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current ComboBox template',
+	ComboBoxSelectedPointerOverBackgroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current ComboBox template'
 };
 
 /**
@@ -1366,7 +1648,27 @@ export const DOUBLE_LENGTHS = {
 	SliderHorizontalThumbWidth: 'a Slider thumb box',
 	SliderHorizontalThumbHeight: 'a Slider thumb box',
 	SliderInnerThumbWidth: 'the accent circle inside a Slider thumb',
-	SliderInnerThumbHeight: 'the accent circle inside a Slider thumb'
+	SliderInnerThumbHeight: 'the accent circle inside a Slider thumb',
+
+	ComboBoxItemPillWidth: 'the selection pill width inside a ComboBox item',
+	ComboBoxItemPillHeight: 'the selection pill height inside a ComboBox item',
+	ComboBoxThemeMinWidth: 'the minimum width the ComboBox reserves',
+	ComboBoxPopupThemeMinWidth: 'the floor the dropdown width never goes below',
+	ComboBoxMinHeight: 'the minimum height the ComboBox reserves'
+};
+
+/**
+ * `x:Double` keys that are ratios rather than lengths, emitted unitless.
+ *
+ * The generator's `x:Double` arm says a length unit is not right for every double — an
+ * opacity, a ratio and a line count are spelled the same way — and stops on a double it
+ * cannot place. This is where a ratio is placed. Emitting one as `px` and dividing the unit
+ * back out at the point of use (`calc(var(--x) / 1px)`) reaches the same number and leaves
+ * every reader of the stylesheet a puzzle to solve, so the unit is not put on in the first
+ * place.
+ */
+export const DOUBLE_RATIOS = {
+	ComboBoxItemPillMinScale: "the selection pill's pressed scale, 0.625"
 };
 
 /**
