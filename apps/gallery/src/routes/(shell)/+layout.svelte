@@ -2,8 +2,7 @@
 	import { afterNavigate, goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import { resolve } from '$app/paths';
-	import { NavigationView, TitleBar } from 'winui-svelte';
-	import SearchBox from '$lib/SearchBox.svelte';
+	import { AutoSuggestBox, NavigationView, TitleBar } from 'winui-svelte';
 	import { QUERY_GLYPH, ancestorsOf, isContainer, menu, titleBar } from '$lib/shell';
 
 	let { children } = $props();
@@ -78,7 +77,15 @@
 		onPaneToggleRequested={() => (paneOpen = !paneOpen)}
 	>
 		{#snippet content()}
-			<SearchBox placeholder={titleBar.placeholderText} glyph={QUERY_GLYPH} />
+			<!-- The ceiling goes on a wrapper this file owns rather than on the control's
+			     `class` prop: Svelte does not put this component's scope hash on a class
+			     string handed to another component, so `.search` on the control would be a
+			     rule that matches nothing — `pnpm check` says so, and the box would have
+			     looked right anyway, because its own `TextControlThemeMinWidth` is the width
+			     the original renders. -->
+			<div class="search">
+				<AutoSuggestBox placeholder={titleBar.placeholderText} queryIcon={QUERY_GLYPH} />
+			</div>
 		{/snippet}
 	</TitleBar>
 
@@ -95,6 +102,17 @@
 </div>
 
 <style>
+	/* `MainWindow.xaml` gives the search box `MaxWidth="580"` and stretches it across the
+	   title bar's `*` column. The minimum and the height are the control's own, from
+	   `TextControlThemeMinWidth` and `TextControlThemeMinHeight`; only the ceiling is the
+	   window's, so only the ceiling is written here. */
+	.search {
+		display: flex;
+		flex: 1 1 auto;
+		/* c1-allow: MainWindow.xaml, the Gallery's own AutoSuggestBox carries MaxWidth="580" */
+		max-width: 580px;
+	}
+
 	.frame {
 		flex: 1 1 auto;
 		min-height: 0;
