@@ -38,9 +38,9 @@
 		title="WinUI Gallery"
 		iconGlyph="E790"
 		backButtonVisible
-		paneToggleVisible
-		onback={back('row 1')}
-		onpanetoggle={paneToggle('row 1')}
+		paneToggleButtonVisible
+		onBackRequested={back('row 1')}
+		onPaneToggleRequested={paneToggle('row 1')}
 	>
 		{#snippet content()}
 			<input type="search" placeholder="Search" />
@@ -55,9 +55,9 @@
 		iconGlyph="E790"
 		backButtonVisible
 		backButtonEnabled={false}
-		paneToggleVisible
-		onback={back('row 2')}
-		onpanetoggle={paneToggle('row 2')}
+		paneToggleButtonVisible
+		onBackRequested={back('row 2')}
+		onPaneToggleRequested={paneToggle('row 2')}
 	>
 		{#snippet content()}
 			<input type="search" placeholder="Search" />

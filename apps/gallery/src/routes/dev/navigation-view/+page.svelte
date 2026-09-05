@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { SvelteSet } from 'svelte/reactivity';
 	import { NavigationView, type NavigationViewEntry } from 'winui-svelte';
 
 	/*
@@ -57,7 +56,7 @@
 
 	// Seeded before the control mounts, which is the point: a page reached at a child's URL
 	// has to render with that child's parent already open.
-	const seeded = new SvelteSet(['design']);
+	let seeded = $state(['design']);
 </script>
 
 <svelte:head><title>NavigationView — harness</title></svelte:head>
@@ -70,14 +69,19 @@
 
 <h2 class="winui-SubtitleTextBlockStyle">auto — resolved from the control's width</h2>
 <div class="frame">
-	<NavigationView {items} {selected} onselect={select('auto')}>
+	<NavigationView {items} {selected} onItemInvoked={select('auto')}>
 		<p class="winui-BodyTextBlockStyle">Content sits beside the pane.</p>
 	</NavigationView>
 </div>
 
 <h2 class="winui-SubtitleTextBlockStyle">compact — pinned, pane closed</h2>
 <div class="frame">
-	<NavigationView {items} {selected} onselect={select('compact')} displayMode="compact" />
+	<NavigationView
+		{items}
+		{selected}
+		onItemInvoked={select('compact')}
+		paneDisplayMode="leftCompact"
+	/>
 </div>
 
 <h2 class="winui-SubtitleTextBlockStyle">minimal — pinned, pane open over the content</h2>
@@ -85,8 +89,8 @@
 	<NavigationView
 		{items}
 		{selected}
-		onselect={select('minimal')}
-		displayMode="minimal"
+		onItemInvoked={select('minimal')}
+		paneDisplayMode="leftMinimal"
 		bind:paneOpen={minimalPaneOpen}
 	>
 		<p class="winui-BodyTextBlockStyle">The pane is drawn over this.</p>
@@ -98,17 +102,17 @@
 	The settings row is absent because <code>settingsVisible</code> is false.
 </p>
 <div class="frame">
-	<NavigationView {items} {selected} onselect={select('hidden')} settingsVisible={false}>
+	<NavigationView {items} {selected} onItemInvoked={select('hidden')} settingsVisible={false}>
 		<p class="winui-BodyTextBlockStyle">The pane carries no settings row.</p>
 	</NavigationView>
 </div>
 
 <h2 class="winui-SubtitleTextBlockStyle">seeded expansion</h2>
 <p class="winui-BodyTextBlockStyle">
-	The frame starts with <code>design</code> already open because the page seeded the set.
+	The frame starts with <code>design</code> already open because the page seeded the array.
 </p>
 <div class="frame">
-	<NavigationView {items} {selected} onselect={select('seeded')} expanded={seeded}>
+	<NavigationView {items} {selected} onItemInvoked={select('seeded')} bind:expandedItems={seeded}>
 		<p class="winui-BodyTextBlockStyle">Content sits beside the pane.</p>
 	</NavigationView>
 </div>

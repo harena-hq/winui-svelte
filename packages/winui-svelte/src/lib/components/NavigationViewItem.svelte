@@ -1,5 +1,4 @@
 <script lang="ts">
-	import type { SvelteSet } from 'svelte/reactivity';
 	import type { NavigationViewItemData } from './NavigationView.svelte';
 	import Self from './NavigationViewItem.svelte';
 
@@ -8,13 +7,14 @@
 		/** 1 for a top-level item. Drives both `aria-level` and the left indentation. */
 		level: number;
 		selected: string | null;
-		expanded: SvelteSet<string>;
-		onselect?: (id: string) => void;
+		expandedItems: string[];
+		setExpanded: (id: string, open: boolean) => void;
+		onItemInvoked?: (id: string) => void;
 	}
 
-	let { item, level, selected, expanded, onselect }: Props = $props();
+	let { item, level, selected, expandedItems, setExpanded, onItemInvoked }: Props = $props();
 
-	const open = $derived(expanded.has(item.id));
+	const open = $derived(expandedItems.includes(item.id));
 	const hasChildren = $derived((item.children?.length ?? 0) > 0);
 	const isSelected = $derived(selected === item.id);
 
@@ -28,10 +28,9 @@
 		// The invoke is still reported. Whether the id is somewhere to go is the caller's
 		// question, and in the Gallery a row with children is not.
 		if (hasChildren) {
-			if (open) expanded.delete(item.id);
-			else expanded.add(item.id);
+			setExpanded(item.id, !open);
 		}
-		onselect?.(item.id);
+		onItemInvoked?.(item.id);
 	}
 
 	function onkeydown(event: KeyboardEvent) {
@@ -46,8 +45,7 @@
 		// Without this the row's own handler also runs, and collapsing would immediately
 		// re-expand.
 		event.stopPropagation();
-		if (open) expanded.delete(item.id);
-		else expanded.add(item.id);
+		setExpanded(item.id, !open);
 	}
 </script>
 
@@ -84,7 +82,14 @@
 	{#if hasChildren && open}
 		<ul role="group" class="children">
 			{#each item.children ?? [] as child (child.id)}
-				<Self item={child} level={level + 1} {selected} {expanded} {onselect} />
+				<Self
+					item={child}
+					level={level + 1}
+					{selected}
+					{expandedItems}
+					{setExpanded}
+					{onItemInvoked}
+				/>
 			{/each}
 		</ul>
 	{/if}

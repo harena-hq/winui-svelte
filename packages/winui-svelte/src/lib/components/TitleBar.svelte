@@ -1,34 +1,51 @@
-<script lang="ts">
+<script lang="ts" module>
 	import type { Snippet } from 'svelte';
 
-	interface Props {
-		/** The window title, rendered left of the content slot. */
+	export interface TitleBarProps {
+		/** Title — the window title, rendered left of the content slot. */
 		title?: string;
-		/** A Segoe Fluent Icons code point as uppercase hex, e.g. `'E790'`. */
+		/**
+		 * No direct WinUI member; narrows `IconSource` to a Segoe Fluent Icons code point
+		 * as uppercase hex, e.g. `'E790'`.
+		 */
 		iconGlyph?: string | null;
-		/** Shown only when true; the app decides whether there is anywhere to go back to. */
+		/** IsBackButtonVisible — shown only when true; the app decides whether there is anywhere to go back to. */
 		backButtonVisible?: boolean;
+		/** IsBackButtonEnabled. */
 		backButtonEnabled?: boolean;
-		onback?: () => void;
-		paneToggleVisible?: boolean;
-		onpanetoggle?: () => void;
-		/** The wide middle slot. The Gallery puts a search box here. */
+		/** BackRequested — fires when the back button is pressed and enabled. */
+		onBackRequested?: () => void;
+		/** IsPaneToggleButtonVisible — an app whose NavigationView carries its own toggle hides this one. */
+		paneToggleButtonVisible?: boolean;
+		/** PaneToggleRequested — fires when the pane toggle is pressed. */
+		onPaneToggleRequested?: () => void;
+		/** Content — the wide middle slot. The Gallery puts a search box here. */
 		content?: Snippet;
-		/** The narrow slot at the right end, before the window's own controls would be. */
+		/** RightHeader — the narrow slot at the right end, before the window's own controls would be. */
 		rightHeader?: Snippet;
+		class?: string;
+		style?: string;
+		ref?: HTMLElement | null;
+		[key: string]: unknown;
 	}
+</script>
 
+<script lang="ts">
 	let {
 		title,
 		iconGlyph,
 		backButtonVisible = false,
 		backButtonEnabled = true,
-		onback,
-		paneToggleVisible = false,
-		onpanetoggle,
+		onBackRequested,
+		paneToggleButtonVisible = false,
+		onPaneToggleRequested,
 		content,
-		rightHeader
-	}: Props = $props();
+		rightHeader,
+		class: className,
+		style,
+		ref = $bindable(null),
+		...rest
+	}: TitleBarProps = $props();
 
 	// WD-005: WinUI hides the title when the content stops fitting; we do not. See
 	// docs/divergences.md.
@@ -43,15 +60,15 @@
 
 	function handleBack() {
 		if (!backButtonEnabled) return;
-		onback?.();
+		onBackRequested?.();
 	}
 
 	function handlePaneToggle() {
-		onpanetoggle?.();
+		onPaneToggleRequested?.();
 	}
 </script>
 
-<div class="root" data-height={height}>
+<div bind:this={ref} class={['root', className]} {style} data-height={height} {...rest}>
 	<div class="left-padding"></div>
 
 	{#if backButtonVisible}
@@ -64,7 +81,7 @@
 		></button>
 	{/if}
 
-	{#if paneToggleVisible}
+	{#if paneToggleButtonVisible}
 		<button
 			type="button"
 			class="pane-toggle-button title-button"
