@@ -196,6 +196,61 @@ rather than parking it at a keyframe, so both indicators render untransformed at
 edge and the wider covers the narrower. It is deterministic — two independent runs against
 the same baseline agree — and the page says so at the site.
 
+### ProgressRing — v5 unit 5
+
+ProgressRing is the case the sweep was written for and the case it cannot reach. Its
+template is one `<AnimatedVisualPlayer/>`; there is no visual tree to derive from. The
+drawing lives in two generated Lottie compositions under `AnimatedVisuals/`, so **the
+generated C++ is the dictionary** for this control.
+
+| second half says                                                                                                                                        | state                                                                                                |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| `ProgressRing.cpp:327` picks `Active`, `DeterminateActive` or `Inactive` from `IsActive` and `IsIndeterminate`                                          | built, same three states                                                                             |
+| `:420`'s `CoerceValue` clamps a value outside `[Minimum, Maximum]` onto the nearer bound                                                                | built                                                                                                |
+| `ProgressRingDeterminate.cpp:269-278` maps progress to the arc's `TrimEnd` through six keyframes — piecewise linear, and **not** the identity           | built; see below                                                                                     |
+| `:155` scales the arc's container to `(0, 0)` and `:161` steps it to `(1, 1)` at progress `0.00833`, so a value under 0.833% of the range draws nothing | built; see below                                                                                     |
+| `:305`'s `UpdateLottieProgress` plays the composition from the old value to the new when the value rises, and snaps when it falls                       | deferred to the Motion tranche: CSS cannot express a duration proportional to the distance travelled |
+| `ProgressRingTemplateSettings`' `EllipseDiameter`, `EllipseOffset` and `MaxSideLength`, which `ProgressRing.idl:9` marks as WUXC back-compat            | not built; the current template binds none of them                                                   |
+
+Against the Gallery's own page there is **no gap**: an indeterminate ring with an
+`IsActive` toggle and a background picker, and a determinate ring driven by a NumberBox.
+
+**The two compositions disagree with each other, and the disagreement is real.** The
+indeterminate ring is radius 7 and stroke 1.5 under a scale of 5 in an 80-unit viewport;
+the determinate ring is radius 8 and stroke 1.5 under a scale of 1.77 in a 32-unit one.
+Normalised to 32 that is radius 14 / stroke 3 against radius 14.16 / stroke 2.655 — close
+enough to look like rounding, far enough to measure. On the reference guest at 60px the two
+draw a 6px and a 5px stroke. They were generated separately from separate source art, and
+each state was given its own numbers rather than one set being picked as correct.
+
+**`pathLength="1"` collapses the upstream two-shape trick into one element.** A Lottie trim
+cannot move both ends at once, so the indeterminate composition crossfades two shapes
+through the opacity animations at `:138` and `:152`. Setting `pathLength="1"` on an SVG
+circle makes `stroke-dasharray` and `stroke-dashoffset` read in the same units as
+`TrimStart` and `TrimEnd`, so the pair transcribes literally onto one `<circle>` with no
+circumference arithmetic anywhere.
+
+**Why 900 degrees and not 720.** At the end of the cycle the arc is a zero-length round cap
+at path position 0.5 with the container rotated 900 degrees, which is 180. At the start it
+is a cap at position 0 with no rotation. Half a turn of rotation and half a turn of path
+position cancel, so the repeat is seamless. The number is load-bearing, not decorative.
+
+**The find worth keeping is that the determinate arc's length is not the value's fraction
+of the range, and a review that only checks the endpoints will not see it.** The six
+`TrimEnd` keyframes track the value to 0.75, then fall behind — 0.98333 maps to 0.96667 —
+and close the ring at 0.991667. Every eased segment uses control points `(0.167, 0.167)`
+and `(0.833, 0.833)`; both lie on `y = x`, so each segment is exactly linear and the whole
+mapping is piecewise linear. Measured on the reference guest at 60px against a two-point
+model calibrated on Values 50 and 75, Value 90 predicts 835 accent pixels under the
+keyframe mapping and 845 under the identity; the original draws 835.
+
+The same composition also gates visibility. Below progress 0.00833 the arc's container is
+scaled to zero, so **Value 0 draws nothing** — where a naive `stroke-dasharray: 0 1` with
+the round line cap the arc needs paints a dot at twelve o'clock. The original leaves no ink
+at Value 0 and draws a 6x5 cap at Value 1. Both halves passed every gate and every snapshot
+before they were found, because a baseline written from the same wrong render agrees with
+itself.
+
 ## What this file does not cover
 
 The sweep reads what a control _draws_. It does not enumerate automation peers, keyboard
