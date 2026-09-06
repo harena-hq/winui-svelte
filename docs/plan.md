@@ -561,6 +561,38 @@ group sizes, which no longer line up one-to-one with a version.
     popup re-breaks both, and ComboBox already carries the second. They are sealed before
     the next tranche starts. The other four are single lines in single components.
 
+    **All six are closed.** The four single-component fixes are `d2363bb`, `bd4f202`,
+    `7bfc14b` and `e57b3af`; the two mechanisms are `c7b2e0f` and `8021c8d`. Two of the
+    four were not the one-liners this paragraph predicted. The caret was not moved by the
+    `type` change at all — Chromium resets a password field's selection at the end of the
+    task that dispatched the pointer event, so a restore has to wait a frame and `tick()`
+    is early by one task. And the clear button's missing fill was caused by a note in the
+    token manifest: the key it needed was listed as a deliberate omission because "the
+    button paints no fill at rest", which is true of one of its four states and made the
+    absence read as settled. What each mechanism leaves behind is a rule the next control
+    reads rather than rediscovers:
+
+    - **Focus modality.** `:focus-visible` is the right selector for an element the user
+      agent focuses itself, and every component here that has one was measured and is
+      correct. It is wrong for an element a primitive focuses with a script, which the
+      browser cannot distinguish from a keyboard focus. `internal/focus-visual.ts` is the
+      attachment that makes the distinction, and its doc comment carries the test for when
+      to adopt it. It is this library's first attachment.
+    - **A portalled element carries the type ramp itself.** CSS inheritance follows the
+      DOM, and a portal moves the element out of the root that holds the ramp class.
+      Upstream has no equivalent break — the popup is inside the control's template, so
+      the font reaches it by property inheritance. Both popups now carry
+      `winui-BodyTextBlockStyle`. Every surface in v6 is a portal, and so is every flyout
+      and menu after it.
+
+    No gate is proposed for either. The first is a behaviour no static reader can see and
+    no still image can photograph. The second could in principle be checked — every
+    component that portals must put a ramp class on the portalled element — but the check
+    needs to identify _which_ element the portal wraps, which is a parse of the template
+    rather than a grep, and a gate that gets that wrong either passes what it should catch
+    or blocks a correct component. It is recorded here instead, which is where the reader
+    who is about to write the next popup will be.
+
     **What this says about the Done-when.** It read "each control compares clean against the
     original on the reference guest", and the comparison it authorises is a screenshot of a
     page that nobody is touching. Four of the six are invisible in a still image — they are a
