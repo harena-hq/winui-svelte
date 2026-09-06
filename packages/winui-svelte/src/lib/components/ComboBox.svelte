@@ -145,9 +145,16 @@
 				{#snippet child({ props, wrapperProps })}
 					<!-- `wrapperProps` is the outer wrapper Floating UI positions; pass it through
 					     first, untouched. The popup's own border, background and corner live on
-					     `props` and reach the `<div>` this control writes. -->
+					     `props` and reach the `<div>` this control writes.
+
+					     The popup carries the type ramp class again because it is not inside
+					     the root: the portal moves it to `<body>`, and CSS inheritance follows
+					     the DOM. Upstream has no such break — the popup is part of the
+					     ComboBox's template, so `FontFamily` and `FontSize` reach it by
+					     property inheritance from `DefaultComboBoxStyle`. Without the class
+					     here the rows render in the document's own font. -->
 					<div {...wrapperProps}>
-						<div {...props} class="popup">
+						<div {...props} class={['popup', 'winui-BodyTextBlockStyle']}>
 							<Select.Viewport>
 								{#snippet child({ props })}
 									<div {...props} class="list">
