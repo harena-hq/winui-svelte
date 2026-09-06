@@ -261,3 +261,36 @@ candidate set by querying for a role or data attribute, which cannot match a clo
 nested inside a tab trigger. So the button is reachable by Tab and not by arrow keys, and that
 is a property of the standard roving-tabindex pattern rather than of any one library.
 Recorded here once the control is built and the behaviour is observed rather than predicted._
+
+---
+
+### WD-012 — a portalled surface casts no drop shadow
+
+- **Control**: `ToolTip`. Every portalled surface in the Surfaces tranche joins this entry as
+  it lands, because they share one mechanism and one reason.
+- **WinUI does**: give the popup a `ThemeShadow`, cast onto whatever is under it. Measured on
+  the reference guest at 100% scaling: under an open Flyout the pixels below its bottom border
+  start at 213 against a 249 background and ramp back to the background over about 16px; under
+  a ToolTip the same ramp starts near `#CC` and closes in about eight. The shadow is not in
+  any of the presenters' templates — `FlyoutPresenter_themeresources.xaml:41` draws one
+  `Border` with a background, a border and a corner radius and nothing else — because it is
+  cast by the popup host, not by the presenter.
+- **We do**: draw no shadow at all. The surfaces are portalled, positioned and clipped exactly
+  as the original's are, and the pixels below their bottom edge are the page's own.
+- **Why accepted**: `ThemeShadow` is a Composition effect with a scene-graph receiver list —
+  it darkens the elements registered to receive it, by an amount that depends on the
+  z-distance between caster and receiver, which XAML computes from the element tree. There is
+  no resource in any pinned dictionary that states a blur radius, an offset or a colour, so a
+  `box-shadow` here would be three numbers chosen by eye against a screenshot. That is the
+  class of invention this registry exists to keep out of the code, and it is the same argument
+  WD-006 makes about re-authoring a Lottie composition from memory. The shadow arrives with
+  the tranche that can measure it against something rather than guess it.
+- **Would reconsider if**: the ramp is characterised well enough to state as a formula — a
+  measured profile at two or more z-distances, on both themes, which is a measurement pass
+  rather than a judgement — or upstream publishes the depths as resources.
+
+**This entry exists because a citation was pointing at the wrong one.** `ToolTip.svelte`
+recorded the missing shadow against WD-006, which is about animated icons and names neither
+ToolTip nor shadows. Gate C5 could not see it: it checks that a cited id has an entry and that
+an entry is cited, and both were true. Reading the entry a citation points at is the part no
+gate does.
