@@ -15,6 +15,21 @@
 		/** ToolTipService.Placement, plus `PlacementMode.Mouse` as the default — see the
 		 *  comment on the placement logic for the measurement that chose it. */
 		placement?: 'mouse' | 'top' | 'bottom' | 'left' | 'right';
+		/** No WinUI member: the gap between the tooltip and what it is anchored to, in pixels.
+		 *  20 is the gap measured on the reference guest, twice — see the comment on the
+		 *  placement logic. */
+		offset?: number;
+		/**
+		 * No WinUI member: whether hovering the trigger opens the tooltip.
+		 *
+		 * `ToolTipService.ToolTip` — the attached property nearly every WinUI tooltip
+		 * arrives through — opens on hover, so this defaults to `true`. A control that
+		 * builds its own tooltip instead does not: WinUI's Slider raises the thumb's value
+		 * tooltip while the thumb is held and nothing hovers it open. Setting this `false`
+		 * withholds the primitive's own pointer and focus handlers from the trigger, which
+		 * leaves `open` the only thing that opens it.
+		 */
+		openOnHover?: boolean;
 		/** IsOpen. */
 		open?: boolean;
 		/** No WinUI member: ADR 0009 pairs every `$bindable` prop with its own change callback. */
@@ -75,6 +90,8 @@
 	let {
 		content,
 		placement = 'mouse',
+		offset = 20,
+		openOnHover = true,
 		open = $bindable(false),
 		onOpenChange,
 		disabled = false,
@@ -86,11 +103,12 @@
 	}: ToolTipProps = $props();
 
 	// Pointer tracking for the pointer-anchored default. The anchor is a virtual element whose
-	// rect sits at the pointer — `side="top"`, `align="center"`, and `sideOffset={20}`
-	// reproduces the reference-guest measurement of a hover-opened tooltip's 20px gap between
-	// the pointer and the bottom of the tooltip. `updatePositionStrategy` is `"always"` so
-	// Floating UI calls `getBoundingClientRect()` on every animation frame; the function reads
-	// the reactive `pointer` so the tooltip follows the pointer for as long as it is open.
+	// rect sits at the pointer — `side="top"`, `align="center"`, and `sideOffset={offset}`
+	// defaults to 20, reproducing the reference-guest measurement of a hover-opened tooltip's
+	// 20px gap between the pointer and the bottom of the tooltip. `updatePositionStrategy` is
+	// `"always"` so Floating UI calls `getBoundingClientRect()` on every animation frame; the
+	// function reads the reactive `pointer` so the tooltip follows the pointer for as long as
+	// it is open.
 	const pointer = $state({ x: 0, y: 0 });
 
 	const pointerAnchor: Measurable = {
@@ -99,15 +117,13 @@
 		}
 	};
 
-	// Placement logic. `mouse` is the WinUI fifth `PlacementMode` value — the measured
-	// behaviour — and is the default. The other four names anchor to the trigger element
-	// rather than to the pointer, the mode needed for Slider's thumb tooltip.
+	// Placement logic. `mouse` is the WinUI fifth `PlacementMode` value — the measured behaviour —
+	// and is the default. The other four names anchor to the trigger element rather than to the
+	// pointer, the mode Slider's thumb tooltip uses. The 20px gap was measured on the reference guest
+	// between a pointer and the bottom of a hover-opened tooltip, and independently between the
+	// bottom of an element-anchored Slider tooltip and the top of the thumb's visible circle.
 	const side = $derived(placement === 'mouse' ? 'top' : placement);
-	// 20 is the gap measured on the reference guest between the pointer and the bottom of a
-	// hover-opened tooltip. An element-anchored one takes no gap: what WinUI puts between a
-	// tooltip and its placement target has not been measured, and the four named placements
-	// are here for Slider's thumb tooltip rather than for the Gallery's page.
-	const sideOffset = $derived(placement === 'mouse' ? 20 : 0);
+	const sideOffset = $derived(offset);
 	// The anchor is always passed explicitly, and the named placements pass the trigger
 	// element itself. Leaving it null and letting the primitive fall back to its own
 	// record of the trigger loses the race when the tooltip is open before the trigger
@@ -128,10 +144,34 @@
 		}
 	}
 
+	// The handlers the primitive uses to open and close the tooltip by itself. With
+	// `openOnHover` false they are withheld from the trigger, and `open` is then the only
+	// thing that opens it. Withholding them is what `openOnHover` means: `disabled` is
+	// `IsEnabled` and says the tooltip does not exist, which is a different claim.
+	const SELF_OPENING_HANDLERS = [
+		'onpointerdown',
+		'onpointerup',
+		'onpointerenter',
+		'onpointermove',
+		'onpointerleave',
+		'onfocus',
+		'onblur'
+	] as const;
+
 	// `...rest` is not merged in here. ADR 0009 sends it to the element the component
 	// owns, and that is the popup: the trigger belongs to the call site, which can put
 	// its own attributes on it directly.
 	function triggerProps(bitProps: Record<string, unknown>): Record<string, unknown> {
+		if (!openOnHover) {
+			// Spread and delete rather than rebuild by `Object.entries`. The primitive's
+			// props carry a Svelte attachment under a **symbol** key — it is what registers
+			// the trigger node, and therefore what the popup anchors to — and
+			// `Object.entries` does not return symbols. Measured: rebuilt that way the
+			// tooltip opened at the position Floating UI computes with no reference.
+			const kept = { ...bitProps };
+			for (const key of SELF_OPENING_HANDLERS) delete kept[key];
+			return kept;
+		}
 		return {
 			...bitProps,
 			onpointermove: (event: PointerEvent) => onPointerMove(bitProps, event)

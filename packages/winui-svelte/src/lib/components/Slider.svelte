@@ -15,6 +15,8 @@
 		step?: number;
 		/** IsEnabled, inverted to HTML's attribute — ADR 0009. */
 		disabled?: boolean;
+		/** IsThumbToolTipEnabled. */
+		thumbToolTipEnabled?: boolean;
 		/** Header. A string or a snippet; nothing is rendered when it is not given. */
 		header?: Snippet | string;
 		class?: string;
@@ -41,6 +43,7 @@
 <script lang="ts">
 	import { Slider } from 'bits-ui';
 	import { focusVisual } from '../internal/focus-visual';
+	import ToolTip from './ToolTip.svelte';
 
 	let {
 		value = $bindable(0),
@@ -49,12 +52,48 @@
 		max = 100,
 		step = 1,
 		disabled = false,
+		thumbToolTipEnabled = true,
 		header,
 		class: className,
 		style,
 		ref = $bindable(null),
 		...rest
 	}: SliderProps = $props();
+
+	let thumbToolTipOpen = $state(false);
+
+	$effect(() => {
+		if (!thumbToolTipEnabled) {
+			thumbToolTipOpen = false;
+			return;
+		}
+
+		const closeThumbToolTip = () => {
+			thumbToolTipOpen = false;
+		};
+		document.addEventListener('pointerup', closeThumbToolTip);
+		document.addEventListener('pointercancel', closeThumbToolTip);
+
+		return () => {
+			document.removeEventListener('pointerup', closeThumbToolTip);
+			document.removeEventListener('pointercancel', closeThumbToolTip);
+		};
+	});
+
+	// Keyboard is out of scope for this unit: whether the original raises this tooltip when
+	// the value is changed with the arrow keys was not measured, so only the thumb being
+	// held opens it.
+	//
+	// The tooltip is given `openOnHover={false}`, so the props it hands back carry none of
+	// the primitive's own opening handlers and there is nothing of its to call here. The
+	// thumb's own `onpointerdown` is the primitive's and still has to run: it is what
+	// starts the drag.
+	function onThumbPointerDown(thumbProps: Record<string, unknown>) {
+		return (event: PointerEvent) => {
+			(thumbProps.onpointerdown as ((event: PointerEvent) => void) | undefined)?.(event);
+			if (event.button === 0 && !disabled) thumbToolTipOpen = true;
+		};
+	}
 </script>
 
 <div
@@ -101,9 +140,37 @@
 				{#each thumbItems as thumb (thumb.index)}
 					<Slider.Thumb index={thumb.index}>
 						{#snippet child({ props })}
-							<span {...props} bind:this={ref} class="thumb" {@attach focusVisual}>
-								<span class="inner"></span>
-							</span>
+							{#if thumbToolTipEnabled}
+								<!-- The tooltip anchors to the thumb's 18px layout box
+								     (`SliderHorizontalThumbWidth`), while `.thumb::before` grows the
+								     visible circle by 2px on every side from the `Margin="-2"` already
+								     cited above: 20px above the circle is 20px + 2px = 22px above the
+								     element. -->
+								<ToolTip
+									content={String(value)}
+									placement="top"
+									offset={22}
+									openOnHover={false}
+									bind:open={thumbToolTipOpen}
+								>
+									{#snippet children(toolTipProps)}
+										<span
+											{...toolTipProps}
+											{...props}
+											bind:this={ref}
+											class="thumb"
+											onpointerdown={onThumbPointerDown(props)}
+											{@attach focusVisual}
+										>
+											<span class="inner"></span>
+										</span>
+									{/snippet}
+								</ToolTip>
+							{:else}
+								<span {...props} bind:this={ref} class="thumb" {@attach focusVisual}>
+									<span class="inner"></span>
+								</span>
+							{/if}
 						{/snippet}
 					</Slider.Thumb>
 				{/each}
