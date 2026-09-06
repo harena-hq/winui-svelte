@@ -4,10 +4,10 @@
 
 	/*
 	 * The component's own harness, not part of the Gallery reproduction: `/dev/` is where
-	 * each control gets a page to be photographed on, and nothing links to it. The seven
+	 * each control gets a page to be photographed on, and nothing links to it. The eight
 	 * rows below exercise the surface the unit names: empty, with a value, spin buttons
-	 * inline, spin buttons inline and disabled, a range with a value, a header and a
-	 * description, and disabled.
+	 * inline, spin buttons inline and disabled, a range with a value, a range sitting on
+	 * each of its two bounds, a header and a description, and disabled.
 	 */
 
 	let empty: NumberBoxProps['value'] = $state(null);
@@ -15,6 +15,8 @@
 	let spinButtons: NumberBoxProps['value'] = $state(0);
 	let spinButtonsDisabled: NumberBoxProps['value'] = $state(0);
 	let withRange: NumberBoxProps['value'] = $state(50);
+	let atMaximum: NumberBoxProps['value'] = $state(10);
+	let atMinimum: NumberBoxProps['value'] = $state(0);
 	let withHeaderDescription: NumberBoxProps['value'] = $state(3);
 	let withHeaderDescriptionDisabled: NumberBoxProps['value'] = $state(7);
 	let disabled: NumberBoxProps['value'] = $state(99);
@@ -24,9 +26,9 @@
 
 <h1 class="winui-TitleTextBlockStyle">NumberBox</h1>
 <p class="winui-BodyTextBlockStyle">
-	Seven rows, in the order the unit names them: empty with a placeholder, with a value, with spin
-	buttons inline, with spin buttons inline and disabled, a range with a value, a header and a
-	description, and disabled.
+	Eight rows, in the order the unit names them: empty with a placeholder, with a value, with spin
+	buttons inline, with spin buttons inline and disabled, a range with a value, a range sitting on
+	each of its two bounds, a header and a description, and disabled.
 </p>
 
 <h2 class="winui-SubtitleTextBlockStyle">empty</h2>
@@ -52,6 +54,14 @@
 <h2 class="winui-SubtitleTextBlockStyle">a range</h2>
 <div class="row">
 	<NumberBox bind:value={withRange} min={0} max={100} />
+</div>
+
+<h2 class="winui-SubtitleTextBlockStyle">a range, on each bound</h2>
+<div class="row">
+	<!-- The top row sits on its maximum and the bottom on its minimum, so the spin button
+	     that can no longer move is photographed in its disabled colours. -->
+	<NumberBox bind:value={atMaximum} min={0} max={10} spinButtonPlacementMode="inline" />
+	<NumberBox bind:value={atMinimum} min={0} max={10} spinButtonPlacementMode="inline" />
 </div>
 
 <h2 class="winui-SubtitleTextBlockStyle">a header and a description</h2>
