@@ -1828,7 +1828,11 @@ export const DOUBLE_LENGTHS = {
 	// InfoBadge's dot is its whole box; content states never exceed this height.
 	InfoBadgeMinHeight: 'the dot an InfoBadge shrinks to',
 	InfoBadgeMinWidth: 'the dot an InfoBadge shrinks to',
-	InfoBadgeMaxHeight: 'the height an InfoBadge never exceeds'
+	InfoBadgeMaxHeight: 'the height an InfoBadge never exceeds',
+
+	// ProgressBar's two x:Double lengths.
+	ProgressBarMinHeight: 'the bar a ProgressBar draws',
+	ProgressBarTrackHeight: 'the unfilled track inside it'
 };
 
 /**
@@ -2186,6 +2190,46 @@ export const INFOBADGE_KEYS = {
 	// The template's non-FontIcon display state selects this margin.
 	IconInfoBadgeIconMargin: 'InfoBadge Icon inset',
 	ValueInfoBadgeTextMargin: 'InfoBadge value text inset'
+};
+
+/**
+ * Keys ProgressBar reads — the fifteenth seed set, immediately after InfoBadge.
+ *
+ * The current ProgressBar template reads these ten resources: its foreground, track and
+ * border paints; the paused and error colors; the border thickness; and the three bar
+ * dimensions plus the track radius. The two `...ForegroundColor` names are colors rather
+ * than brushes because the upstream storyboards animate the SolidColorBrush color.
+ *
+ * Six other names begin with `ProgressBar`, but they are deliberately left out because
+ * they are in `controls/dev/CommonStyles/Deprecated_themeresources.xaml`, not this
+ * control's dictionary, and the current template references none of them:
+ *
+ * - `ProgressBarBackgroundThemeBrush`, `ProgressBarBorderThemeBrush`,
+ *   `ProgressBarForegroundThemeBrush` and `ProgressBarIndeterminateForegroundThemeBrush`
+ *   at :11–:14 are the pre-Fluent `*ThemeBrush` family, the same obsolete family other
+ *   controls list in their own preambles.
+ * - `ProgressBarThemeMinHeight` at :10 is the pre-Fluent 4px metric replaced by the
+ *   current 3px `ProgressBarMinHeight`; choosing it would make the bar a third too tall.
+ * - `ProgressBarIndicatorPauseOpacity` at :9 (0.6, and 1 under HighContrast) is the
+ *   pre-Fluent opacity metric replaced by the current color swap.
+ *
+ * `ProgressBarTemplateSettings` also carries `EllipseAnimationEndPosition`,
+ * `EllipseAnimationWellPosition`, `EllipseDiameter` and `EllipseOffset` at
+ * `ProgressBar.idl:18-21`. The current template never binds them, and
+ * `ProgressBar.cpp:248` marks them as template-setting properties from WUXC for backwards
+ * compatibility, so there is nothing for them to paint here.
+ */
+export const PROGRESSBAR_KEYS = {
+	ProgressBarForeground: 'ProgressBar determinate and indeterminate fill',
+	ProgressBarBackground: 'ProgressBar unfilled track',
+	ProgressBarBorderBrush: 'ProgressBar border',
+	ProgressBarBorderThemeThickness: 'ProgressBar border width',
+	ProgressBarPausedForegroundColor: 'ProgressBar paused fill',
+	ProgressBarErrorForegroundColor: 'ProgressBar error fill',
+	ProgressBarMinHeight: 'ProgressBar bar height',
+	ProgressBarTrackHeight: 'ProgressBar unfilled track height',
+	ProgressBarCornerRadius: 'ProgressBar bar corner radius',
+	ProgressBarTrackCornerRadius: 'ProgressBar track corner radius'
 };
 
 /**

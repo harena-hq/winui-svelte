@@ -20,6 +20,8 @@ export { default as NumberBox } from './components/NumberBox.svelte';
 export type { NumberBoxProps } from './components/NumberBox.svelte';
 export { default as PasswordBox } from './components/PasswordBox.svelte';
 export type { PasswordBoxProps } from './components/PasswordBox.svelte';
+export { default as ProgressBar } from './components/ProgressBar.svelte';
+export type { ProgressBarProps } from './components/ProgressBar.svelte';
 export { default as RadioButton } from './components/RadioButton.svelte';
 export type { RadioButtonProps } from './components/RadioButton.svelte';
 export { default as Slider } from './components/Slider.svelte';

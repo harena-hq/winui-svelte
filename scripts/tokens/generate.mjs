@@ -26,6 +26,7 @@ import {
 	NUMBERBOX_KEYS,
 	TOOLTIP_KEYS,
 	INFOBADGE_KEYS,
+	PROGRESSBAR_KEYS,
 	TYPE_RAMP
 } from './manifest.mjs';
 
@@ -774,7 +775,8 @@ function select(resources, framework) {
 		['AUTOSUGGESTBOX_KEYS', AUTOSUGGESTBOX_KEYS],
 		['NUMBERBOX_KEYS', NUMBERBOX_KEYS],
 		['TOOLTIP_KEYS', TOOLTIP_KEYS],
-		['INFOBADGE_KEYS', INFOBADGE_KEYS]
+		['INFOBADGE_KEYS', INFOBADGE_KEYS],
+		['PROGRESSBAR_KEYS', PROGRESSBAR_KEYS]
 	];
 	for (let i = 0; i < SEED_SETS.length; i++)
 		for (let j = i + 1; j < SEED_SETS.length; j++) {
