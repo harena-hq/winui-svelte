@@ -319,10 +319,6 @@ export const PASSWORDBOX_KEYS = {
  * - **`AutoSuggestBoxTextBoxStyle`** — a `Style` resource, not a value. This project writes
  *   its own templates rather than reading XAML styles — the same reason every other
  *   `*Style` resource is dropped.
- * - **`AutoSuggestBoxDeleteButtonMargin`** — `0,4`, the inset of the delete button's fill.
- *   The button this control renders paints no fill at rest — `TextControlButtonBackground`
- *   aliases `SystemControlTransparentBrush` — so the margin has nothing to act on.
- *
  * The last four keys are framework-dictionary names — `generic.xaml` defines them in all
  * three themes — and this is the third control to read through that pin after ComboBox and
  * PasswordBox. `AutoSuggestListMaxHeight` is an `x:Double` that is a length, so it needs a
@@ -343,7 +339,7 @@ export const PASSWORDBOX_KEYS = {
  * other set holds.
  */
 export const AUTOSUGGESTBOX_KEYS = {
-	// The two layout keys the header and the delete button reach, plus the four metrics the
+	// The two layout keys the header and the delete button reach, plus the five metrics the
 	// inner buttons read directly. `AutoSuggestBoxInnerButtonMargin` and
 	// `AutoSuggestBoxRightButtonMargin` are seeded by `SHELL_KEYS` already; the
 	// disjointness check is what stops a key from being seeded twice, and the same
@@ -353,6 +349,7 @@ export const AUTOSUGGESTBOX_KEYS = {
 	AutoSuggestBoxIconFontSize: 'AutoSuggestBox buttons, the glyph inside them',
 	AutoSuggestBoxQueryButtonPadding: 'AutoSuggestBox query button, its padding',
 	AutoSuggestBoxLeftButtonMargin: 'AutoSuggestBox delete button, the spacer column left of it',
+	AutoSuggestBoxDeleteButtonMargin: 'AutoSuggestBox delete button, the inset of its fill',
 
 	// The popup's two brushes — background and border — in each of the three themes the
 	// dictionary defines. `AutoSuggestBoxSuggestionsListBackground` aliases

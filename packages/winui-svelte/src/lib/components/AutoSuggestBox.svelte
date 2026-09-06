@@ -418,7 +418,10 @@
 	   whose `Margin` is `AutoSuggestBoxDeleteButtonMargin` (`0,4`) and whose
 	   `Background` aliases `TextControlButtonBackground`, which the dictionary resolves
 	   to transparent — so the button paints no fill at rest, the same shape TextBox's
-	   delete button and PasswordBox's reveal button carry.
+	   delete button and PasswordBox's reveal button carry. At rest is not the whole
+	   story: `PointerOver` and `Pressed` in the same template put a real brush on that
+	   grid, and it is the grid — inset by the margin, not the button's own box — that
+	   the fill is painted on. `.delete::before` below is that grid.
 
 	   `AutoSuggestBoxLeftButtonMargin` (`3`) is the spacer column between the input and
 	   the delete button. It is read as a left margin so the button sits where the grid
@@ -442,12 +445,32 @@
 		margin-left: var(--winui-AutoSuggestBoxLeftButtonMargin);
 	}
 
+	/* `ButtonLayoutGrid` at AutoSuggestBox_themeresources.xaml:54 — the element the two
+	   state brushes are animated onto. Its `Margin` is `AutoSuggestBoxDeleteButtonMargin`
+	   and its `CornerRadius` is `ControlCornerRadius`, so the fill is inset from the
+	   button's box rather than filling it. TextBox.svelte:355 is the same shape against
+	   `TextBoxInnerButtonMargin`. */
+	.delete::before {
+		content: '';
+		position: absolute;
+		inset: var(--winui-AutoSuggestBoxDeleteButtonMargin);
+		border-radius: var(--winui-ControlCornerRadius);
+	}
+
 	/* The glyph: `&#xE894;` from `DeleteButtonStyle` at
 	   `AutoSuggestBox_themeresources.xaml:91` — the Cancel glyph from Segoe Fluent Icons,
 	   at `AutoSuggestBoxIconFontSize` (12). */
 	.delete::after {
 		content: '\00e894';
 		position: relative;
+	}
+
+	.delete:hover::before {
+		background: var(--winui-TextControlButtonBackgroundPointerOver);
+	}
+
+	.delete:active::before {
+		background: var(--winui-TextControlButtonBackgroundPressed);
 	}
 
 	.delete:hover {
