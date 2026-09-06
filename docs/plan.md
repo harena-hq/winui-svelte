@@ -764,6 +764,16 @@ group sizes, which no longer line up one-to-one with a version.
     layer is the one shared file that cannot take two writers, so a unit that adds token
     keys takes them in this tree before its lane is dispatched.
 
+    **One debt this version found and did not pay.** The generated type-ramp classes carry a
+    `line-height` for each of the ten steps, taken from Microsoft's published type ramp;
+    none of the ten `Style` records in `TextBlock_themeresources.xaml` sets `LineHeight`, so a
+    WinUI TextBlock draws the font's own spacing instead. Measured at one step: a
+    `BaseTextBlockStyle` message in the Gallery's flyout is 19 tall where the class gives 20.
+    Three controls have now had to write `line-height: normal` to match the original. Fixing
+    the ramp moves every baseline in the project, so it is a unit of its own and it needs the
+    other nine steps measured first — the Gallery's Typography design page is where they are
+    all on screen at once.
+
     Done-when: v5's per-control seal loop applies to all six controls — source and Gallery
     sweep recorded before sealing, three-theme Windows baselines, direct comparison with the
     original at the same state and dimensions, and the control driven through open, close,
