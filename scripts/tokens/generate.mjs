@@ -31,6 +31,7 @@ import {
 	INFOBAR_KEYS,
 	EXPANDER_KEYS,
 	FLYOUT_KEYS,
+	MENUFLYOUT_KEYS,
 	DEFINED_BY,
 	TYPE_RAMP
 } from './manifest.mjs';
@@ -795,7 +796,8 @@ function select(resources, framework) {
 		['PROGRESSRING_KEYS', PROGRESSRING_KEYS],
 		['INFOBAR_KEYS', INFOBAR_KEYS],
 		['EXPANDER_KEYS', EXPANDER_KEYS],
-		['FLYOUT_KEYS', FLYOUT_KEYS]
+		['FLYOUT_KEYS', FLYOUT_KEYS],
+		['MENUFLYOUT_KEYS', MENUFLYOUT_KEYS]
 	];
 	for (let i = 0; i < SEED_SETS.length; i++)
 		for (let j = i + 1; j < SEED_SETS.length; j++) {
