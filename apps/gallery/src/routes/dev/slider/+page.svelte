@@ -3,9 +3,10 @@
 
 	/*
 	 * The component's own harness, not part of the Gallery reproduction: `/dev/` is where
-	 * each control gets a page to be photographed on, and nothing links to it. The five
+	 * each control gets a page to be photographed on, and nothing links to it. The six
 	 * rows below exercise the surface the unit names — at rest, mid-range, with a header
-	 * and a custom range matching the Gallery's own sample, stepped, and disabled.
+	 * and a custom range matching the Gallery's own sample, stepped, disabled, and with
+	 * the thumb tooltip disabled.
 	 */
 
 	let atRest = $state(0);
@@ -18,8 +19,8 @@
 
 <h1 class="winui-TitleTextBlockStyle">Slider</h1>
 <p class="winui-BodyTextBlockStyle">
-	Five rows, in the order the unit names them: at rest, mid-range, with a header and a custom
-	min/max like the Gallery's own example, stepped, and disabled.
+	Six rows, in the order the unit names them: at rest, mid-range, with a header and a custom min/max
+	like the Gallery's own example, stepped, disabled, and the thumb tooltip disabled.
 </p>
 
 <h2 class="winui-SubtitleTextBlockStyle">at rest</h2>
@@ -45,6 +46,11 @@
 <h2 class="winui-SubtitleTextBlockStyle">disabled</h2>
 <div class="row">
 	<Slider disabled />
+</div>
+
+<h2 class="winui-SubtitleTextBlockStyle">the thumb tooltip disabled</h2>
+<div class="row">
+	<Slider thumbToolTipEnabled={false} />
 </div>
 
 <style>
