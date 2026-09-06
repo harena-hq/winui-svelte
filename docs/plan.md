@@ -714,6 +714,64 @@ group sizes, which no longer line up one-to-one with a version.
     automated into one; what it needs is a place in the per-unit loop, which it does not have.
 
 6.  **Surfaces** — Expander, ContentDialog, Flyout, MenuFlyout, TeachingTip, Popup.
+
+    Goal: **the application can reveal contextual content without leaving the current task.**
+
+    The controls are built in dependency order rather than Gallery order:
+
+    0. **Packed-package consumer smoke.** Pack the library and install that tarball into a
+       project outside the workspace, with Svelte and every peer supplied by the consumer.
+       This closes the gap already recorded under C6 before six more public prop surfaces are
+       fixed by use.
+    1. **Expander.** An in-flow disclosure control, not a portal. It is built on bits-ui's
+       `Collapsible`, which supplies the open state, the trigger's `aria-expanded` contract
+       and a presence layer that keeps the content mounted for the duration of its exit
+       transition.
+    2. **Popup.** The lowest-level portalled surface: explicit open state, offsets, and
+       optional light dismiss. It establishes the positioning and portal-font evidence used
+       by the remaining surface controls.
+    3. **Flyout.** An anchored popup built on bits-ui `Popover`, including programmatic hide
+       and focus return.
+    4. **MenuFlyout.** A menu surface built on bits-ui `DropdownMenu`; its unit includes the
+       Gallery's item, toggle, radio, separator, icon, accelerator, split-item and cascading
+       submenu examples rather than treating the first example as the whole control.
+    5. **ContentDialog.** A modal surface built on bits-ui `Dialog`, with primary, secondary
+       and close results and both Gallery default-button paths.
+    6. **TeachingTip.** An anchored or untargeted teaching surface built on bits-ui `Popover`,
+       after Popup and Flyout have established placement and light-dismiss behaviour. Its
+       unit includes action, close, icon, hero content and tail placement.
+
+    No new overlay framework is introduced for the tranche. The chosen bits-ui primitives
+    already own focus, dismissal, keyboard and portal lifetimes; a local abstraction is due
+    only if the completed controls expose repeated project-specific code that can be named
+    without erasing their different contracts. Every portalled visual root carries its own
+    type ramp because CSS inheritance follows the DOM after the portal moves it under
+    `body`. Expander is explicitly outside that rule.
+
+    **The driving step gets its number here.** v5 closed by observing that two of its four
+    defects were invisible to every gate and were found only by a person using the control,
+    and that the loop had nowhere to put that. From this version the per-unit loop is seven
+    steps, not six, and the fifth is _drive the control_ — open it, close it, resize it,
+    tab to it, watch it animate — before the unit is sealed. It cannot be a gate; a step
+    with a number is the only other thing it can be.
+
+    **Units are built in parallel worktrees, one per in-flight unit.** Measured on this
+    host, `git worktree add` costs 0.04s and a full `pnpm install` in the new tree 3.7s and
+    156 MB, so isolation is close to free — which means the author lane can write into its
+    own tree while this one keeps measuring, specifying and reviewing. What that buys is a
+    pipeline, not a fan-out: the reference measurement, the visual suite and the review are
+    single-resource and stay sequential no matter how many lanes run. The generated token
+    layer is the one shared file that cannot take two writers, so a unit that adds token
+    keys takes them in this tree before its lane is dispatched.
+
+    Done-when: v5's per-control seal loop applies to all six controls — source and Gallery
+    sweep recorded before sealing, three-theme Windows baselines, direct comparison with the
+    original at the same state and dimensions, and the control driven through open, close,
+    resize, keyboard and dismissal paths that apply to it. The packed consumer builds and
+    mounts an exported component without workspace links or package-owned peer resolution.
+    The full build, check, lint, conformance and Windows visual suite are green at tranche
+    close.
+
 7.  **Commands and menus** — DropDownButton, SplitButton, ToggleButton, CommandBar, MenuBar,
     AppBar\*.
 8.  **Navigation** — BreadcrumbBar, Pivot, SelectorBar, TabView. NavigationView was v2.
