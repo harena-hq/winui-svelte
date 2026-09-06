@@ -455,6 +455,33 @@ normal flow has. Every row carries `MenuFlyoutItemMargin`'s 2px top and bottom, 
 every individual number in it correct. Only the total was wrong, and only against the original.
 The presenter is a column flex container for that reason.
 
+### MenuFlyout — v6 unit 4b
+
+The icon and the accelerator label are both cells of the item template that unit 4a already
+drew, and both are governed by `CheckPlaceholderStates` at
+`MenuFlyout_themeresources.xaml:342` — a group whose states the control enters **for every row
+at once**. Measured: in the Gallery's icons example, `Rename` and `Select` carry no icon and
+their text starts at exactly the same x as `Share`'s. A row without an icon in a menu that has
+icons still reserves the column, which is why the reproduction keys the gutter off the whole
+`items` array rather than off the row.
+
+`IconRoot` and `TextBlock` sit in the _same_ Grid column and overlap: the `Viewbox` is
+left-aligned at the column origin and the TextBlock is pushed right by a margin. That is why
+`MenuFlyoutItemPlaceholderThemeThickness` and `…DoublePlaceholderThemeThickness` are `Margin`
+values rather than column widths, and it is reproduced with a positioned wrapper so both
+margins still measure from one edge.
+
+**The accelerator row is a pixel taller than a plain one, and the Gallery hides it.** The label
+is `CaptionTextBlockStyle` with `Margin="24,4,0,0"` — 16 of line box plus 4 of top margin is
+20, against the item text's 19 — so a row carrying one is 29 tall and pitches at 33. The
+original cannot be used to confirm that directly: `MenuFlyoutPage.xaml`'s `Example5` sets
+`FontFamily="Segoe UI"` on the whole `ControlExample`, and every row in that menu measures 33
+whether it carries a label or not. The icons example, which sets no font, measures 169 tall for
+five 32-pitch rows and one separator — and the reproduction measures 169 too.
+
+The toggle template's own label carries `Margin="24,0,0,0"` at `:493`, 4px different from the
+item template's at `:392`. Both are in the source; neither is a resource.
+
 ## What this file does not cover
 
 The sweep reads what a control _draws_. It does not enumerate automation peers, keyboard
