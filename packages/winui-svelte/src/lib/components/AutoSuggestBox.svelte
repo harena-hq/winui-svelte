@@ -230,9 +230,16 @@
 					<!-- `wrapperProps` is the outer wrapper Floating UI positions; pass it
 					     through first, untouched. The popup's own border, background and
 					     corner live on `props` and reach the `<div>` this control writes.
-					     The same shape ComboBox uses; see ComboBox.svelte:144. -->
+					     The same shape ComboBox uses; see ComboBox.svelte:144 — including the
+					     type ramp class on the popup, which a portalled element has to carry
+					     itself because CSS inheritance follows the DOM and the portal moves
+					     it out of the root. -->
 					<div {...wrapperProps}>
-						<div {...props} class="popup" style={`${props.style ?? ''};min-width:${boxWidth}px`}>
+						<div
+							{...props}
+							class={['popup', 'winui-BodyTextBlockStyle']}
+							style={`${props.style ?? ''};min-width:${boxWidth}px`}
+						>
 							<Combobox.Viewport>
 								{#snippet child({ props })}
 									<div {...props} class="list">
