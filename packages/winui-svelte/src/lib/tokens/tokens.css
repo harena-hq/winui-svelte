@@ -28,6 +28,7 @@
 	--winui-SystemAccentColorLight2: #4cc2ff;
 	--winui-SystemAccentColorLight3: #99ebff;
 	--winui-SymbolThemeFontFamily: 'Segoe Fluent Icons';
+	--winui-ContentControlThemeFontFamily: 'Segoe UI Variable Text', 'Segoe UI', sans-serif;
 	--winui-FocusVisualPrimaryThickness: 2px;
 	--winui-FocusVisualSecondaryThickness: 1px;
 
@@ -678,6 +679,13 @@
 	--winui-ToggleSwitchPreContentMargin: 10px;
 	--winui-ToggleSwitchPostContentMargin: 10px;
 	--winui-ToggleSwitchThemeMinWidth: 154px;
+	--winui-ToolTipContentThemeFontSize: 12px;
+	--winui-ToolTipBorderThemeThickness: 1px;
+	--winui-ToolTipBorderBrush: var(--winui-SurfaceStrokeColorFlyoutBrush);
+	--winui-ToolTipForegroundBrush: var(--winui-TextFillColorPrimaryBrush);
+	--winui-ToolTipBackgroundBrush: var(--winui-AcrylicInAppFillColorDefaultBrush);
+	--winui-ToolTipBorderPadding: 6px 9px 8px 9px;
+	--winui-ToolTipMaxWidth: 320px;
 	--winui-SystemControlTransientBorderBrush: color-mix(in srgb, #000000 14%, transparent);
 	--winui-AcrylicBackgroundFillColorDefaultBrush: #f9f9f9;
 	--winui-AcrylicInAppFillColorDefaultBrush: #f9f9f9;
@@ -1451,6 +1459,11 @@
 	--winui-ToggleSwitchKnobFillOnPressed: var(--winui-TextOnAccentFillColorPrimaryBrush);
 	--winui-ToggleSwitchKnobFillOnDisabled: var(--winui-TextOnAccentFillColorDisabledBrush);
 	--winui-ToggleSwitchKnobStrokeOn: var(--winui-CircleElevationBorderBrush);
+	--winui-ToolTipContentThemeFontSize: 12px;
+	--winui-ToolTipBorderThemeThickness: 1px;
+	--winui-ToolTipBorderBrush: var(--winui-SurfaceStrokeColorFlyoutBrush);
+	--winui-ToolTipForegroundBrush: var(--winui-TextFillColorPrimaryBrush);
+	--winui-ToolTipBackgroundBrush: var(--winui-AcrylicInAppFillColorDefaultBrush);
 	--winui-SystemControlTransientBorderBrush: color-mix(in srgb, #000000 36%, transparent);
 	--winui-AcrylicBackgroundFillColorDefaultBrush: #2c2c2c;
 	--winui-AcrylicInAppFillColorDefaultBrush: #2c2c2c;
@@ -2196,6 +2209,11 @@
 		--winui-ToggleSwitchKnobFillOnPressed: var(--winui-TextOnAccentFillColorPrimaryBrush);
 		--winui-ToggleSwitchKnobFillOnDisabled: var(--winui-TextOnAccentFillColorDisabledBrush);
 		--winui-ToggleSwitchKnobStrokeOn: var(--winui-CircleElevationBorderBrush);
+		--winui-ToolTipContentThemeFontSize: 12px;
+		--winui-ToolTipBorderThemeThickness: 1px;
+		--winui-ToolTipBorderBrush: var(--winui-SurfaceStrokeColorFlyoutBrush);
+		--winui-ToolTipForegroundBrush: var(--winui-TextFillColorPrimaryBrush);
+		--winui-ToolTipBackgroundBrush: var(--winui-AcrylicInAppFillColorDefaultBrush);
 		--winui-SystemControlTransientBorderBrush: color-mix(in srgb, #000000 36%, transparent);
 		--winui-AcrylicBackgroundFillColorDefaultBrush: #2c2c2c;
 		--winui-AcrylicInAppFillColorDefaultBrush: #2c2c2c;
@@ -2862,6 +2880,11 @@
 	--winui-ToggleSwitchKnobFillOnPressed: var(--winui-SystemColorButtonTextColorBrush);
 	--winui-ToggleSwitchKnobFillOnDisabled: var(--winui-SystemColorGrayTextColorBrush);
 	--winui-ToggleSwitchKnobStrokeOn: var(--winui-SystemControlTransparentBrush);
+	--winui-ToolTipContentThemeFontSize: 12px;
+	--winui-ToolTipBorderThemeThickness: 1px;
+	--winui-ToolTipBorderBrush: var(--winui-SystemColorWindowTextColorBrush);
+	--winui-ToolTipForegroundBrush: var(--winui-SystemColorWindowTextColorBrush);
+	--winui-ToolTipBackgroundBrush: var(--winui-SystemColorWindowColorBrush);
 	--winui-SystemControlTransientBorderBrush: var(--winui-SystemColorWindowTextColor);
 	--winui-AcrylicBackgroundFillColorDefaultBrush: var(--winui-SystemColorWindowColor);
 	--winui-AcrylicInAppFillColorDefaultBrush: var(--winui-SystemColorWindowColor);
