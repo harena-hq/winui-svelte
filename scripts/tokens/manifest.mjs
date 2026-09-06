@@ -2536,7 +2536,30 @@ export const MENUFLYOUT_KEYS = {
 	MenuFlyoutSubItemBackgroundPressed: 'a toggle item while pressed',
 	MenuFlyoutSubItemForegroundPressed: "a toggle item's text while pressed",
 	MenuFlyoutSubItemForegroundDisabled: "a disabled toggle item's text",
-	MenuFlyoutSubItemChevron: "a toggle item's checkmark"
+	MenuFlyoutSubItemChevron: "a toggle item's checkmark",
+
+	// The accelerator label. Two parallel families, because `MenuFlyoutItem` and
+	// `ToggleMenuFlyoutItem` each name their own — identical in value, and the templates
+	// read them separately rather than sharing one.
+	MenuFlyoutItemKeyboardAcceleratorTextForeground: "an item's accelerator label",
+	MenuFlyoutItemKeyboardAcceleratorTextForegroundPointerOver:
+		"an item's accelerator label under the pointer",
+	MenuFlyoutItemKeyboardAcceleratorTextForegroundPressed:
+		"an item's accelerator label while pressed",
+	MenuFlyoutItemKeyboardAcceleratorTextForegroundDisabled: "a disabled item's accelerator label",
+	ToggleMenuFlyoutItemKeyboardAcceleratorTextForeground: "a toggle item's accelerator label",
+	ToggleMenuFlyoutItemKeyboardAcceleratorTextForegroundPointerOver:
+		"a toggle item's accelerator label under the pointer",
+	ToggleMenuFlyoutItemKeyboardAcceleratorTextForegroundPressed:
+		"a toggle item's accelerator label while pressed",
+	ToggleMenuFlyoutItemKeyboardAcceleratorTextForegroundDisabled:
+		"a disabled toggle item's accelerator label",
+
+	// The gutter a menu holding both a check column and an icon column reserves. 044a left
+	// it out because a menu with no icons cannot reach the state; the icon unit is what
+	// reaches it.
+	MenuFlyoutItemDoublePlaceholderThemeThickness:
+		'the gutter an item reserves for a check and an icon together'
 };
 
 /**
