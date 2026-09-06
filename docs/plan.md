@@ -517,19 +517,58 @@ group sizes, which no longer line up one-to-one with a version.
     none is a divergence: nothing here is being declined, it is simply not built yet, and
     every one of them is on the Gallery page the acceptance gate will compare against.
 
-    | control        | not yet built                                                              |
-    | -------------- | -------------------------------------------------------------------------- |
-    | Slider         | `Orientation="Vertical"`, and the three `TickBar`s                         |
-    | ComboBox       | `IsEditable="True"` and the `EditableModeStates` group                     |
-    | NumberBox      | `SpinButtonPlacementMode="Compact"`, `AcceptsExpression`, `ValidationMode` |
-    | AutoSuggestBox | non-text suggestions, `LightDismissOverlayMode`                            |
-    | all four       | the touch and game-controller padding variants                             |
+    | control        | not yet built                                                               |
+    | -------------- | --------------------------------------------------------------------------- |
+    | Slider         | `Orientation="Vertical"`, the three `TickBar`s, and `IsThumbToolTipEnabled` |
+    | ComboBox       | `IsEditable="True"` and the `EditableModeStates` group                      |
+    | NumberBox      | `SpinButtonPlacementMode="Compact"`, `AcceptsExpression`, `ValidationMode`  |
+    | AutoSuggestBox | non-text suggestions, `LightDismissOverlayMode`                             |
+    | all four       | the touch and game-controller padding variants                              |
 
-    Two of the deferrals carry a note. AutoSuggestBox renders its own suggestion rows from
+    Three of the deferrals carry a note. AutoSuggestBox renders its own suggestion rows from
     the `ComboBoxItem*` families because this library has no ListView; the Collections
     tranche replaces them, and the component says so at the site. And `AcceptsExpression`
     is the one that is a behaviour rather than a shape — if it is ever declined rather than
     postponed, it becomes a `WD-` entry, not a line in this table.
+
+    `IsThumbToolTipEnabled` was added to this table after the version closed, and how it was
+    missed is the point. Every other row came from reading the control's template; this one
+    is not in the template. WinUI's Slider builds the thumb's value tooltip in the control's
+    own code, so a reader who derives the surface from `Slider_themeresources.xaml` — which
+    is what the unit did, and what every unit before it did — cannot see it. The default is
+    `True`, so it is not an opt-in a user has to find: dragging the original's thumb shows
+    the value and dragging ours shows nothing. **A control's surface is its template plus
+    its code-behind, and this project has only ever read the first half.** The same hole is
+    open on every control sealed so far.
+
+    **What closing it did not catch.** A manual pass over the five controls, driving them
+    with a mouse and a keyboard rather than photographing them, found six defects the whole
+    battery had been green on. Each was then reproduced by measurement, so none of these is
+    a report of an impression:
+
+    | control        | defect                                                                                  | measured                                                                                                                                                   |
+    | -------------- | --------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    | Slider         | the focus visual appears on a mouse drag; WinUI draws it for `FocusState.Keyboard` only | `:focus-visible` is `true` on the thumb after a drag — the primitive focuses it programmatically and the browser grants focus-visible to a `role="slider"` |
+    | Slider         | a second ring is drawn around the round thumb                                           | `.thumb` has no `outline: none`, so the UA ring shows: `outline: auto 1px`. Every other component sets it                                                  |
+    | PasswordBox    | revealing moves the caret and does not put it back                                      | changing an `<input>`'s `type` resets `selectionStart`/`End`                                                                                               |
+    | AutoSuggestBox | no left padding inside the box                                                          | `.input` sets `padding: var(--winui-TextControlThemePadding)` and then `padding: 0` five lines later in the same rule; only the second reaches the browser |
+    | AutoSuggestBox | the suggestion list is in the wrong font, much too large                                | the popup is portalled to `<body>` and neither `.popup` nor `.item` sets a font, so it inherits nothing: `Times New Roman 16px` against the ramp's 14px    |
+    | AutoSuggestBox | the clear button has no hover fill                                                      | `.delete` changes only its foreground; TextBox's delete button and this control's own query button both paint the fill on `::before`                       |
+
+    **Two of the six are not this version's to fix, and doing them first is cheaper than
+    interleaving them.** Focus modality and the font a portalled popup inherits are
+    mechanisms, not component bugs: every later control that takes a focus visual or opens a
+    popup re-breaks both, and ComboBox already carries the second. They are sealed before
+    the next tranche starts. The other four are single lines in single components.
+
+    **What this says about the Done-when.** It read "each control compares clean against the
+    original on the reference guest", and the comparison it authorises is a screenshot of a
+    page that nobody is touching. Four of the six are invisible in a still image — they are a
+    caret, a hover, a focus ring after a drag, and a popup that is only open while a key is
+    held. The fifth and sixth are visible but were photographed wrong on the first exposure,
+    which is the failure mode already named against C4. A visual-fidelity bar that is checked
+    only by snapshots is a bar on the resting state. Nothing here proposes a gate for it: the
+    honest version is that the controls need driving, and a person did it.
 
     **The measurement this version owed has been made, and it found a bigger hole than the
     one it was sent to close.** The plan here was to read seven values off the reference
