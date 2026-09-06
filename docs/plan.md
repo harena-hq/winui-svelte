@@ -541,6 +541,15 @@ group sizes, which no longer line up one-to-one with a version.
     its code-behind, and this project has only ever read the first half.** The same hole is
     open on every control sealed so far.
 
+    **It has since been swept, and the sweep is `docs/surface.md`.** That file carries what
+    the second half of each sealed control adds, the finding that seven of the twelve have
+    no implementation in the pin at all — they are `Windows.UI.Xaml` controls WinUI 3 only
+    restyles, so their Gallery sample page is the only enumeration of their surface — and,
+    the part that matters going forward, the four steps that sweep a control **before** it
+    is sealed rather than after. Two defects came out of it and are fixed; the rest are
+    recorded there, including the ones that belong to controls the table below does not
+    reach — v2's NavigationView and TitleBar, and v3's five.
+
     **What closing it did not catch.** A manual pass over the five controls, driving them
     with a mouse and a keyboard rather than photographing them, found six defects the whole
     battery had been green on. Each was then reproduced by measurement, so none of these is
