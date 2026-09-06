@@ -165,7 +165,7 @@ worth closing. "Would be hard" is not a reason — the reason is always a specif
 ### WD-006 — an animated icon renders as the static glyph WinUI falls back to
 
 - **Control**: `NavigationView`'s settings item, `TitleBar`'s back and pane-toggle buttons,
-  and `CheckBox`'s check glyph.
+  `CheckBox`'s check glyph, and `Expander`'s chevron.
 - **WinUI does**: give each of them an `AnimatedIcon` with a `FallbackIconSource` — the
   settings item in `CreateAndHookEventsToSettings`, `NavigationView.cpp:1319`; the two title
   bar buttons in their styles, `TitleBar_themeresources.xaml:160` and `:230`. The buttons'
@@ -177,7 +177,15 @@ worth closing. "Would be hard" is not a reason — the reason is always a specif
   animators, and its `Markers()` map at `:730` names six segments between `Normal`,
   `PointerOver` and `Pressed`.
 - **We do**: render each `FallbackIconSource`'s glyph — `Symbol::Setting` as E713, the two
-  title bar glyphs, and CheckBox's E73E and E9AE — with no transition between pointer states.
+  title bar glyphs, CheckBox's E73E and E9AE, and Expander's E70D and E70E — with no
+  transition between pointer states.
+
+  **The glyph is not always the same shape as the animation's frame, and Expander is where
+  that was first measured.** Its chevron is `AnimatedChevronUpDownSmallVisualSource`, which
+  morphs between the two directions rather than swapping glyphs; at 12px on the reference
+  guest the original's resting ink is 8x4 pixels and the fallback glyph's is 9x5. Both are
+  centred in the same 32px button, so the difference is the glyph's own outline against the
+  composition's, not a placement error.
 
   **Where the fallback's own visibility differs from the animated original's, the original
   wins.** CheckBox is the case that forced the distinction. Its `CheckGlyph` is an
@@ -264,6 +272,54 @@ Recorded here once the control is built and the behaviour is observed rather tha
 
 ---
 
+### WD-010 — changing ExpandDirection while expanded redraws both corners
+
+- **Control**: `Expander`.
+- **WinUI does**: leave the header's corner radius filtered for the direction it was
+  expanded in. `Expander.cpp:129`'s `OnExpandDirectionPropertyChanged` calls
+  `UpdateExpandDirection` and nothing else, so the `ExpandDirectionStates` group moves and the
+  `ExpandStates` group — which is where the header's `CornerRadius` filter lives, at
+  `Expander.xaml:62` and `:33` — keeps the state it was already in. Driven on the reference
+  guest at the Gallery's own example: a Down-expanded Expander switched to Up drew the content
+  rounded on top and square below, and the header rounded on top and square below too, so the
+  seam between them had a notch on one side. A collapse and re-expand corrected it.
+- **We do**: derive both corner radii from the current direction and open state together, so
+  the two agree at every moment and the seam is always square on both sides.
+- **Why accepted**: the divergence is that we do not reproduce a defect. Reproducing it would
+  mean holding a copy of the direction as of the last open/close and rendering from the stale
+  copy — inventing state to be wrong with, in a control that has none. It is recorded rather
+  than left silent because a later reader comparing against a mis-driven original would
+  otherwise "fix" the component to match the notch.
+- **Would reconsider if**: upstream makes the stale filter deliberate — a `ThemeResource` or a
+  state that names it — rather than a missing call.
+
+---
+
+### WD-011 — collapsing upward removes the content 33ms earlier than upstream hides it
+
+- **Control**: `Expander`.
+- **WinUI does**: hide the content at a different moment in each direction. `CollapseUp`, the
+  state a downward Expander enters when it closes, sets `Visibility="Collapsed"` at
+  `Expander.xaml:82`, 167ms in, exactly as its slide finishes. `CollapseDown`, the state an
+  upward Expander enters, sets it at `:53`, 200ms in — 33ms after its own slide, which runs
+  for the same 167ms, has ended.
+- **We do**: remove the content when its transition finishes, in both directions. bits-ui's
+  presence layer keeps the node mounted until `getAnimations()` resolves and unmounts it then,
+  so the upward case loses the extra 33ms of a fully translated, fully clipped panel.
+- **Why accepted**: what the 33ms delays is the moment the control's box shrinks back to the
+  header, and it delays it by two frames at 60Hz with nothing drawn in the gap. Holding it
+  would mean either a second timer racing the primitive's own unmount, or a dummy transition
+  declared only to be waited on — both of which put a mechanism in the component to reproduce
+  what reads as an unrounded number in one of four visual states.
+- **Would reconsider if**: the two values are found to differ on purpose — the symmetry of
+  every other value in this template says they do not — or a later surface control needs a
+  general way to hold a primitive's content past its own animation, in which case this becomes
+  its first user rather than its only one.
+
+---
+
+---
+
 ### WD-012 — a portalled surface casts no drop shadow
 
 - **Control**: `ToolTip`. Every portalled surface in the Surfaces tranche joins this entry as
@@ -272,7 +328,7 @@ Recorded here once the control is built and the behaviour is observed rather tha
   the reference guest at 100% scaling: under an open Flyout the pixels below its bottom border
   start at 213 against a 249 background and ramp back to the background over about 16px; under
   a ToolTip the same ramp starts near `#CC` and closes in about eight. The shadow is not in
-  any of the presenters' templates — `FlyoutPresenter_themeresources.xaml:41` draws one
+  any of the presenters' templates — `FlyoutPresenter_themeresources.xaml:43` draws one
   `Border` with a background, a border and a corner radius and nothing else — because it is
   cast by the popup host, not by the presenter.
 - **We do**: draw no shadow at all. The surfaces are portalled, positioned and clipped exactly
