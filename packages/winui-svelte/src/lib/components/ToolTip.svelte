@@ -224,10 +224,10 @@
 				     of the ToolTip's template, so `FontFamily` and `FontSize` reach it by
 				     property inheritance from `DefaultToolTipStyle`. -->
 				{#snippet child({ props, wrapperProps })}
-					<!-- WD-006: the popup is measured to cast a drop shadow onto what is
+					<!-- WD-012: the popup is measured to cast a drop shadow onto what is
 					     under it — the rows below its bottom edge darken from `#CC` back
 					     up to the page over about eight pixels. That is `ThemeShadow`,
-					     which is v14's and is not built in this unit. The lack of a
+					     which no pinned dictionary states a depth for. The lack of a
 					     `box-shadow` here is the deliberate absence, not an oversight. -->
 					<div {...wrapperProps}>
 						<div {...props} class={['popup', className]} {style} {...rest}>
