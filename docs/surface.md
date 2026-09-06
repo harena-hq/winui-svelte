@@ -417,6 +417,44 @@ been changed in the ramp — but it is also the third control in a row to need
 `line-height: normal` to match the original, after `InfoBar` and `Expander`, and three is
 enough to stop calling it a coincidence.
 
+### MenuFlyout — v6 unit 4a
+
+`MenuFlyout_themeresources.xaml` is 1050 lines and the four styles this unit reproduces —
+`DefaultMenuFlyoutPresenterStyle` at `:270`, `DefaultMenuFlyoutItemStyle` at `:298`,
+`DefaultToggleMenuFlyoutItemStyle` at `:398` and the `MenuFlyoutSeparator` style at `:727` —
+are about a fifth of it. The rest is the sub-item, split-item and accelerator vocabulary that
+unit 4b reads, plus three families no unit will: the `*Reveal*` sets, the pre-Fluent
+`*ThemeBrush` set at `:51-58`, and `MenuFlyoutLightDismissOverlayBackground`.
+
+**The item padding's names are the wrong way round, and only the ruler says so.**
+`MenuFlyoutItemThemePadding` is `11,8,11,9` and `MenuFlyoutItemThemePaddingNarrow` is
+`11,4,11,5`, and it is the _narrow_ one a desktop menu draws: the template's
+`PaddingSizeStates` comment says narrow padding applies "when flyout was invoked with pen,
+mouse or keyboard" and the wide one to "all other cases including touch". Measured on the
+guest, an item box is 28 tall — 4 + 19 + 5 — inside a 32px row, and the Gallery's three-item
+card with one separator is 105. The wide form would give 36 and 129. WD-013 records that no
+input the web offers distinguishes the two cases the way WinUI's does.
+
+**Two things paint the card and neither is the presenter's own brush.**
+`MenuFlyoutPresenterBackground` resolves to `DesktopAcrylicTransparentBrush`, `#00000000` in
+all three themes. What shows is the presenter's `SystemBackdrop`,
+`AcrylicBackgroundFillColorDefaultBackdrop`, which `AcrylicBrush_themeresources.xaml:54`
+defines as a bare `<DesktopAcrylicBackdrop />` — an element with no value to convert. Its flat
+equivalent, `AcrylicBackgroundFillColorDefaultBrush`, is `#f9f9f9`, which is the measured fill
+to the byte. WD-002 gained the paragraph.
+
+**The gutter is stated twice and the two agree.** `MenuFlyoutItemPlaceholderThemeThickness` is
+`28,0,0,0`, the left margin a plain item takes when the menu also holds a check; the toggle
+template's own check column is a `FontIcon` at `FontSize="12"` with `Margin="0,0,16,0"`, and
+12 + 16 is 28. Measured, every row's text starts at the same x whether it carries a check or
+not — 44 from the card's border in the original and 44 in the reproduction.
+
+**Margin collapsing is what the sweep would not have caught.** XAML's stack has none; CSS's
+normal flow has. Every row carries `MenuFlyoutItemMargin`'s 2px top and bottom, and adjacent
+2s collapse to one — so the first reproduction was 101 tall against the original's 105, with
+every individual number in it correct. Only the total was wrong, and only against the original.
+The presenter is a column flex container for that reason.
+
 ## What this file does not cover
 
 The sweep reads what a control _draws_. It does not enumerate automation peers, keyboard

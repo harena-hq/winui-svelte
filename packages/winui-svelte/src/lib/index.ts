@@ -21,6 +21,14 @@ export { default as InfoBadge } from './components/InfoBadge.svelte';
 export type { InfoBadgeProps } from './components/InfoBadge.svelte';
 export { default as InfoBar } from './components/InfoBar.svelte';
 export type { InfoBarProps } from './components/InfoBar.svelte';
+export { default as MenuFlyout } from './components/MenuFlyout.svelte';
+export type {
+	MenuFlyoutEntry,
+	MenuFlyoutItemData,
+	MenuFlyoutProps,
+	MenuFlyoutSeparatorData,
+	ToggleMenuFlyoutItemData
+} from './components/MenuFlyout.svelte';
 export { default as NavigationView } from './components/NavigationView.svelte';
 export { default as NumberBox } from './components/NumberBox.svelte';
 export type { NumberBoxProps } from './components/NumberBox.svelte';
