@@ -31,6 +31,8 @@
 </script>
 
 <script lang="ts">
+	import ToolTip from './ToolTip.svelte';
+
 	let {
 		title,
 		iconGlyph,
@@ -66,28 +68,62 @@
 	function handlePaneToggle() {
 		onPaneToggleRequested?.();
 	}
+
+	// The tooltip's trigger props carry the primitive's own `onclick` — it is what
+	// dismisses the tooltip when its trigger is pressed — and a button with a handler of
+	// its own has to run both. This composes them in the script rather than inline in the
+	// markup, and that is not a style choice: `svelte-package` ships the component's
+	// source, so a type annotation inside a markup expression is a parse error in the
+	// consumer's build while this package's own `check` and `build` stay green.
+	function withTriggerClick(props: Record<string, unknown>, handler: () => void) {
+		return (event: MouseEvent) => {
+			(props.onclick as ((event: MouseEvent) => void) | undefined)?.(event);
+			handler();
+		};
+	}
 </script>
 
 <div bind:this={ref} class={['root', className]} {style} data-height={height} {...rest}>
 	<div class="left-padding"></div>
 
+	<!-- Both tooltips are attached in `TitleBar.cpp` rather than in the template — the
+	     code-behind half of a control's surface, which `docs/surface.md` records.
+	     `LoadBackButton` at :881 reads `NavigationBackButtonToolTip` (en-us "Back") and
+	     `LoadPaneToggleButton` at :906 reads the button's own automation name (en-us
+	     "Toggle Navigation"), which is why that string is also this button's `aria-label`.
+
+	     `{...props}` comes first and `onclick` is composed rather than replaced. The
+	     snippet's props carry the primitive's own handlers, `onclick` among them — it is
+	     what dismisses the tooltip when its trigger is pressed — so a spread that lands
+	     after this component's handler silently replaces it and the button stops working,
+	     and one that lands before it silently drops the dismissal. Measured both ways. -->
 	{#if backButtonVisible}
-		<button
-			type="button"
-			class="back-button title-button"
-			aria-label="Back"
-			disabled={!backButtonEnabled}
-			onclick={handleBack}
-		></button>
+		<ToolTip content="Back">
+			{#snippet children(props)}
+				<button
+					{...props}
+					type="button"
+					class="back-button title-button"
+					aria-label="Back"
+					disabled={!backButtonEnabled}
+					onclick={withTriggerClick(props, handleBack)}
+				></button>
+			{/snippet}
+		</ToolTip>
 	{/if}
 
 	{#if paneToggleButtonVisible}
-		<button
-			type="button"
-			class="pane-toggle-button title-button"
-			aria-label="Navigation"
-			onclick={handlePaneToggle}
-		></button>
+		<ToolTip content="Toggle Navigation">
+			{#snippet children(props)}
+				<button
+					{...props}
+					type="button"
+					class="pane-toggle-button title-button"
+					aria-label="Toggle Navigation"
+					onclick={withTriggerClick(props, handlePaneToggle)}
+				></button>
+			{/snippet}
+		</ToolTip>
 	{/if}
 
 	<div class="left-header-padding"></div>
