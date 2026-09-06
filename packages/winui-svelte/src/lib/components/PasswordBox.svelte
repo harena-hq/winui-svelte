@@ -81,11 +81,34 @@
 	// as the button is held and hidden again on release. The element in the source is a
 	// `ToggleButton`, and the next reader will expect latching. `pointerdown` reveals,
 	// `pointerup`, `pointerleave` and `blur` hide.
+	//
+	// The caret is carried across the change by hand, and the frame it is put back on is
+	// the whole of the fix. Upstream reveals by changing what one text field draws, so
+	// nothing there moves the caret; here the reveal is a change of the `<input>`'s
+	// `type`, and Chromium resets a password field's selection to offset 0 at the end of
+	// the task that dispatched the pointer event — after `click`, and so after both the
+	// handler and anything it queues as a microtask. Measured against a plain
+	// `<input>` + `<button>` with no framework in the page: restoring synchronously and
+	// restoring in a microtask both end at 0, and restoring in a `requestAnimationFrame`
+	// ends where the user left it. The frame callback also lands after Svelte has
+	// flushed the new `type` to the DOM, which is the other thing the restore has to
+	// wait for.
+	function setRevealing(next: boolean) {
+		const input = ref;
+		const start = input?.selectionStart ?? null;
+		const end = input?.selectionEnd ?? null;
+		const direction = input?.selectionDirection ?? 'none';
+		revealing = next;
+		if (input && start !== null && end !== null) {
+			requestAnimationFrame(() => input.setSelectionRange(start, end, direction));
+		}
+	}
+
 	function reveal() {
-		revealing = true;
+		setRevealing(true);
 	}
 	function hide() {
-		revealing = false;
+		setRevealing(false);
 	}
 </script>
 
