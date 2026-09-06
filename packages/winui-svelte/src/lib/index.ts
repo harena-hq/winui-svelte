@@ -28,6 +28,8 @@ export { default as ProgressBar } from './components/ProgressBar.svelte';
 export type { ProgressBarProps } from './components/ProgressBar.svelte';
 export { default as ProgressRing } from './components/ProgressRing.svelte';
 export type { ProgressRingProps } from './components/ProgressRing.svelte';
+export { default as Popup } from './components/Popup.svelte';
+export type { PopupProps } from './components/Popup.svelte';
 export { default as RadioButton } from './components/RadioButton.svelte';
 export type { RadioButtonProps } from './components/RadioButton.svelte';
 export { default as Slider } from './components/Slider.svelte';

@@ -345,6 +345,41 @@ alignment, which is the only reason this component exposes a `Control` member as
 and the measurement that made it necessary is that the default is **Center**, not the left
 alignment a reader assumes.
 
+### Popup — v6 unit 2
+
+**There is nothing to sweep, and saying so is the entry.** `controls/dev/` has no `Popup`
+directory: `Popup` is a `Windows.UI.Xaml.Controls.Primitives` control that WinUI 3 neither
+reimplements nor restyles, so there is no `.cpp`, no template and no dictionary of its own —
+the first control in this project with none of the three. `docs/surface.md`'s procedure names
+the no-`.cpp` case; this is the case where the procedure returns nothing at all, which is a
+result rather than a gap.
+
+What that means for the reproduction is that **the control draws nothing.** The box in the
+Gallery's screenshot belongs to the sample, not to the Popup: `PopupPage.xaml:26-31` declares
+a `Grid` inside it with `MinWidth="240"`, `Padding="16"`, an acrylic background, a 1px
+`SurfaceStrokeColorDefaultBrush` border and `OverlayCornerRadius`. So the unit emits no colour,
+no border and no padding, and the harness page owns the chrome.
+
+**The whole contract is one line of arithmetic, and it was measured rather than derived.** With
+the Gallery's defaults — `HorizontalOffset="200"`, `VerticalOffset="0"` — the declaring
+element's border box starts at x 370 and the popup's at x 570, with both tops at y 280. The
+popup is drawn at its own layout position translated by the two offsets. There is no
+anchoring to a trigger, no preferred side, no flip when it would overflow and no collision
+padding; a large enough offset pushes it off the window and WinUI lets it go.
+
+That is why this unit does not use the floating content layer that the rest of the tranche
+does. `Popover.Content` hands placement to Floating-UI, which would then have to be argued out
+of flipping, shifting and offsetting. `Popover.ContentStatic` is the same layer stack with the
+floating one removed, and it is what a `Popup` actually is: a portal, an escape layer, a
+dismissible layer and a focus scope, positioned by whoever mounted it.
+
+**One property of the dismissible layer is worth carrying into the rest of the tranche.** Open
+surfaces form a stack, and `interactOutsideBehavior: 'ignore'` — which is what a Popup with
+`IsLightDismissEnabled` false compiles to — does not merely decline to close its own layer, it
+blocks every layer beneath it. Six open popups with a non-dismissable one on top survive both
+an outside click and Escape. The harness page declares its light-dismiss pair in the order
+that makes both halves reachable, and says so.
+
 ## What this file does not cover
 
 The sweep reads what a control _draws_. It does not enumerate automation peers, keyboard
