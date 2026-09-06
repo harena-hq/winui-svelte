@@ -114,15 +114,23 @@
 		const el = panel;
 		if (!el) return;
 		const measure = () => {
-			// `[data-measuring]` forces the row layout at each child's natural width regardless
-			// of `vertical`, so what is measured never depends on what the measurement decides.
-			// Reading a layout property forces the reflow synchronously; the attribute is gone
-			// again before this function returns, so nothing is ever painted in this state.
+			// Measure the row regardless of which orientation is currently rendered, so what is
+			// measured never depends on what the measurement decides. The orientation attribute
+			// is set for the duration rather than the row's rules being duplicated under
+			// `[data-measuring]`: duplicated declarations are what a CSS minifier is free to
+			// deduplicate away, and one did — leaving the column's margins and its
+			// `align-self: stretch` in force during the measurement, which made every child
+			// taller than the row would make it and pinned the panel vertical for good.
+			// Reading a layout property forces the reflow synchronously; both attributes are
+			// back before this function returns, so nothing is ever painted in this state.
+			const previous = el.dataset.orientation;
+			el.dataset.orientation = 'horizontal';
 			el.dataset.measuring = '';
 			const items = [...el.children].filter((c) => c.getBoundingClientRect().width > 0);
 			const overflows = el.scrollWidth > el.clientWidth;
 			const tallest = Math.max(0, ...items.map((c) => c.getBoundingClientRect().height));
 			delete el.dataset.measuring;
+			el.dataset.orientation = previous;
 			vertical = items.length === 1 || overflows || tallest + 14 > MIN_HEIGHT;
 		};
 		measure();
@@ -413,34 +421,13 @@
 		margin: var(--panel-item-margin);
 	}
 
-	/* The measuring mode is deliberately independent of the mode it decides. It measures
-	   one row of each child's natural width, then disappears before the browser can paint. */
-	.panel[data-measuring] {
-		flex-direction: row;
-		flex-wrap: nowrap;
-	}
-
+	/* The measuring mode stops the children shrinking, and nothing else: a row that does not
+	   fit then overflows, where `scrollWidth` can see it. The row's direction and its margins
+	   come from `[data-orientation='horizontal']`, which `measure()` sets for the duration —
+	   see the comment there for why this rule does not restate them. */
 	.panel[data-measuring] > * {
 		width: max-content;
 		flex: 0 0 auto;
-		margin: var(--panel-item-margin);
-		margin-left: 0;
-	}
-
-	.panel[data-measuring] > .title {
-		--panel-item-margin: var(--winui-InfoBarTitleHorizontalOrientationMargin);
-	}
-
-	.panel[data-measuring] > .message {
-		--panel-item-margin: var(--winui-InfoBarMessageHorizontalOrientationMargin);
-	}
-
-	.panel[data-measuring] > .action {
-		--panel-item-margin: var(--winui-InfoBarActionHorizontalOrientationMargin);
-	}
-
-	.panel[data-measuring] > * + * {
-		margin: var(--panel-item-margin);
 	}
 
 	.content-area {
