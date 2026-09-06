@@ -635,6 +635,53 @@ group sizes, which no longer line up one-to-one with a version.
     since its four values are now three read and one measured.
 
 5.  **Status and feedback** — InfoBar, InfoBadge, ProgressBar, ProgressRing, ToolTip.
+
+    Goal: **the application can tell the user what is happening.**
+
+    Swept before the first line was written, which is what `docs/surface.md` is for. Four of
+    the five have a full implementation in the pin; **ToolTip has only theme resources** —
+    it is a `Windows.UI.Xaml` control, so its 78-line dictionary and the Gallery's page are
+    the whole of what can be read. What the sweep changed about this version's shape:
+
+    - **ProgressRing has no template to derive from.** Its `ControlTemplate` is one
+      `AnimatedVisualPlayer` and nothing else: both the determinate and the indeterminate
+      ring are Lottie compositions, shipped as generated C++ under
+      `ProgressRing/AnimatedVisuals/`. That is not a wall — the two files are 425 and 448
+      lines and the geometry reads straight off them: an ellipse of radius 8 scaled 1.77
+      and centred in a 32×32 box, `StrokeThickness` 1.5, round caps, and `TrimEnd` bound to
+      progress, which is what an SVG `stroke-dasharray` does. The indeterminate cycle is
+      2.0s (`c_durationTicks` 20,000,000), rotating 0→450°→900° while `TrimEnd` runs 0→0.5
+      and then `TrimStart` follows it. The unit reads the keyframes; it does not approximate
+      them by eye.
+    - **InfoBadge's corner radius is computed**, not a resource: the pill's radius comes from
+      `InfoBadgeTemplateSettings` in the control's code. Its Gallery page also demonstrates
+      sixteen named styles — four severities plus a default, in dot, icon and value modes.
+    - **InfoBar's severity picks a visual state, and the state carries the visuals.** The
+      four glyphs and the eight severity brushes are in the template; `UpdateSeverity` only
+      chooses between them. The code does own the icon-visibility states, the close button's
+      tooltip, and whether there is banner content.
+    - **ProgressBar's eight `CommonStates` are entered from code**, from `IsIndeterminate`,
+      `ShowPaused` and `ShowError` in combination.
+
+    Units:
+
+    1. **ToolTip.** First, because three sealed controls already owe one — the Slider's
+       thumb value, a NavigationViewItem's content while the pane is closed-compact, and the
+       TitleBar's two buttons — and because it is a portalled surface, so it is the first
+       control to be built with `docs/surface.md`'s portal rule in hand rather than against
+       it.
+    2. **The three tooltips those controls owe**, paid with the control from unit 1. This
+       retires three rows from the deferral tables and is the reason ToolTip goes first.
+    3. **InfoBadge.**
+    4. **ProgressBar.**
+    5. **ProgressRing.**
+    6. **InfoBar.**
+
+    Done-when: v3's, applied to five more controls — each snapshotted in three themes, each
+    compared against the original on the reference guest, each prop following D21 with its
+    TSDoc naming the WinUI member — **plus** the sweep in `docs/surface.md` run and recorded
+    per control before it is sealed, rather than after the version closes.
+
 6.  **Surfaces** — Expander, ContentDialog, Flyout, MenuFlyout, TeachingTip, Popup.
 7.  **Commands and menus** — DropDownButton, SplitButton, ToggleButton, CommandBar, MenuBar,
     AppBar\*.
