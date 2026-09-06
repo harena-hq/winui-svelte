@@ -160,6 +160,42 @@ and comparing it with the original's — 4 above and 4 below, against ours at 3 
 resource that looks like it only sets a size can be setting a position**, and the way to
 tell is to measure the box rather than the badge.
 
+### ProgressBar — v5 unit 4
+
+`ProgressBar.cpp` is 270 lines, and the template's `CommonStates` group declares eight
+states with **no XAML trigger of any kind**. Every one of them is entered from code.
+
+| second half says                                                                                                                                                         | state                                                                                                                                                 |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ProgressBar.cpp:87`'s `UpdateStates` picks one of six resting states from `IsIndeterminate`, `ShowError` and `ShowPaused`, with `ShowError` winning over `ShowPaused`   | built, in that precedence                                                                                                                             |
+| `:186-198` sizes the determinate indicator: `maxIndicatorWidth * (Value - Minimum) / (Maximum - Minimum)`, and 0 when the range is empty                                 | built as a percentage width, which resolves against the same content box                                                                              |
+| `:172-183` sizes the two indeterminate rectangles at 40% and 60% of the bar, and `:226-232` computes every storyboard position as a multiple of those two widths         | built — see below; it needs no width measurement at all                                                                                               |
+| `:181` widens the second rectangle to 100% when the bar is paused or in error while indeterminate, so both states rest as one full-width bar rather than as motion       | built                                                                                                                                                 |
+| `Normal`, `Updating` and `UpdatingError` are declared and are never resting states — the last two are entered and left inside one call to `SetProgressBarIndicatorWidth` | not built, and a comment at the site says why three template states are unaccounted for                                                               |
+| the `RepositionThemeAnimation` at `ProgressBar.xaml:22` and the `FadeInThemeAnimation` at `:42-44`                                                                       | deferred to the Motion tranche: both are platform theme animations whose curves are nowhere in the template, so reproducing them means inventing them |
+
+Against the Gallery's own page there is **no gap**. It demonstrates two examples — an
+indeterminate bar with the three progress states, and a determinate bar driven by a
+NumberBox — and both are reachable.
+
+**The find worth keeping is that the indeterminate animation needs no measured pixel.**
+The two rectangles are 40% and 60% of the bar, and the C++ writes each storyboard position
+as a multiple of the rectangle it moves: the comments beside them read "Position at -100%",
+"300%", "-150%" and "166%". Those are percentages of each rectangle's own width, which is
+exactly what a CSS `translateX` percentage resolves against — so the whole animation is two
+`@keyframes` blocks with no `ResizeObserver`, no measured width and no JavaScript. The
+`KeySpline="0.4, 0.0, 0.6, 1.0"` is a `cubic-bezier` with the same four numbers, and the
+two `KeyTime`s divide into the 2-second cycle as 75% and 37.5%. A control whose animation
+looked like the part that would have to be approximated turned out to be the part that
+transcribes exactly.
+
+**One thing the capture does that a reader will otherwise mistake for a defect.** The
+harness page's plain indeterminate bar photographs as a still 60%-wide bar. Playwright's
+`toHaveScreenshot` disables animations by default, and it _cancels_ an infinite animation
+rather than parking it at a keyframe, so both indicators render untransformed at the left
+edge and the wider covers the narrower. It is deterministic — two independent runs against
+the same baseline agree — and the page says so at the site.
+
 ## What this file does not cover
 
 The sweep reads what a control _draws_. It does not enumerate automation peers, keyboard

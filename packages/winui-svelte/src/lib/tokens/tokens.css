@@ -789,6 +789,16 @@
 	--winui-NavigationViewItemExpandedGlyph: '\00e70d';
 	--winui-NumberBoxSpinButtonBorderThickness: 1px 1px 1px 0px;
 	--winui-NumberBoxMinWidth: 120px;
+	--winui-ProgressBarBorderThemeThickness: 0px;
+	--winui-ProgressBarForeground: var(--winui-AccentFillColorDefaultBrush);
+	--winui-ProgressBarBackground: var(--winui-ControlStrongStrokeColorDefault);
+	--winui-ProgressBarBorderBrush: var(--winui-ControlStrokeColorDefaultBrush);
+	--winui-ProgressBarPausedForegroundColor: var(--winui-SystemFillColorCaution);
+	--winui-ProgressBarErrorForegroundColor: var(--winui-SystemFillColorCritical);
+	--winui-ProgressBarMinHeight: 3px;
+	--winui-ProgressBarTrackHeight: 1px;
+	--winui-ProgressBarCornerRadius: 1.5px;
+	--winui-ProgressBarTrackCornerRadius: 0.5px;
 	--winui-TitleBarForegroundBrush: var(--winui-TextFillColorPrimaryBrush);
 	--winui-TitleBarBackButtonBackground: var(--winui-SubtleFillColorTransparentBrush);
 	--winui-TitleBarBackButtonBackgroundPointerOver: var(--winui-SubtleFillColorSecondaryBrush);
@@ -1538,6 +1548,12 @@
 	--winui-NavigationViewButtonForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
 	--winui-NavigationViewButtonForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
 	--winui-NavigationViewButtonForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+	--winui-ProgressBarBorderThemeThickness: 0px;
+	--winui-ProgressBarForeground: var(--winui-AccentFillColorDefaultBrush);
+	--winui-ProgressBarBackground: var(--winui-ControlStrongStrokeColorDefault);
+	--winui-ProgressBarBorderBrush: var(--winui-ControlStrokeColorDefaultBrush);
+	--winui-ProgressBarPausedForegroundColor: var(--winui-SystemFillColorCaution);
+	--winui-ProgressBarErrorForegroundColor: var(--winui-SystemFillColorCritical);
 	--winui-TitleBarForegroundBrush: var(--winui-TextFillColorPrimaryBrush);
 	--winui-TitleBarBackButtonBackground: var(--winui-SubtleFillColorTransparentBrush);
 	--winui-TitleBarBackButtonBackgroundPointerOver: var(--winui-SubtleFillColorSecondaryBrush);
@@ -2300,6 +2316,12 @@
 		--winui-NavigationViewButtonForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
 		--winui-NavigationViewButtonForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
 		--winui-NavigationViewButtonForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+		--winui-ProgressBarBorderThemeThickness: 0px;
+		--winui-ProgressBarForeground: var(--winui-AccentFillColorDefaultBrush);
+		--winui-ProgressBarBackground: var(--winui-ControlStrongStrokeColorDefault);
+		--winui-ProgressBarBorderBrush: var(--winui-ControlStrokeColorDefaultBrush);
+		--winui-ProgressBarPausedForegroundColor: var(--winui-SystemFillColorCaution);
+		--winui-ProgressBarErrorForegroundColor: var(--winui-SystemFillColorCritical);
 		--winui-TitleBarForegroundBrush: var(--winui-TextFillColorPrimaryBrush);
 		--winui-TitleBarBackButtonBackground: var(--winui-SubtleFillColorTransparentBrush);
 		--winui-TitleBarBackButtonBackgroundPointerOver: var(--winui-SubtleFillColorSecondaryBrush);
@@ -2983,6 +3005,12 @@
 	--winui-NavigationViewButtonForegroundDisabled: var(
 		--winui-SystemControlDisabledBaseMediumLowBrush
 	);
+	--winui-ProgressBarBorderThemeThickness: 1px;
+	--winui-ProgressBarForeground: var(--winui-SystemColorHighlightColor);
+	--winui-ProgressBarBackground: var(--winui-SystemColorWindowColor);
+	--winui-ProgressBarBorderBrush: var(--winui-SystemColorWindowTextColor);
+	--winui-ProgressBarPausedForegroundColor: var(--winui-SystemColorWindowTextColor);
+	--winui-ProgressBarErrorForegroundColor: var(--winui-SystemColorHotlightColor);
 	--winui-TitleBarForegroundBrush: var(--winui-SystemControlForegroundBaseHighBrush);
 	--winui-TitleBarBackButtonBackground: var(--winui-SystemColorButtonFaceColor);
 	--winui-TitleBarBackButtonBackgroundPointerOver: var(--winui-SystemColorHighlightColor);
