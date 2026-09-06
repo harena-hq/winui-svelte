@@ -89,6 +89,34 @@
 
 	let boxWidth = $state(0);
 	let boxEl = $state<HTMLDivElement | null>(null);
+	// The popup's `data-side` is read from the DOM rather than recomputed, so this
+	// library's idea of which way it opened never disagrees with bits-ui's. bits-ui
+	// rewrites the attribute in place when the popup flips — on scroll or resize,
+	// without remounting — so the observer reports every change and reads the value it
+	// starts with immediately, because an observer does not. When the popup is closed
+	// the element is gone and the mirrored side is `null`, which is what the root's
+	// `data-popup-side` attribute binds to so it is absent, not empty.
+	//
+	// ComboBox does the same thing upstream (`ComboBox/ComboBoxHelper.cpp:93`) but
+	// guards it with `if (comboBox.IsEditable())`, and this library does not build the
+	// editable ComboBox. The asymmetry is upstream's, not a missed port.
+	let popupEl = $state<HTMLDivElement | null>(null);
+	let popupSide = $state<'top' | 'bottom' | null>(null);
+	$effect(() => {
+		const el = popupEl;
+		if (!el) {
+			popupSide = null;
+			return;
+		}
+		const sync = () => {
+			const side = el.getAttribute('data-side');
+			popupSide = side === 'top' || side === 'bottom' ? side : null;
+		};
+		sync();
+		const observer = new MutationObserver(sync);
+		observer.observe(el, { attributes: true, attributeFilter: ['data-side'] });
+		return () => observer.disconnect();
+	});
 
 	// bits-ui centres the content on its anchor, and for a Combobox the anchor is the
 	// `<input>`, not the control. `align="start"` puts the popup's left edge on the input's;
@@ -130,6 +158,7 @@
 	class={['root', 'winui-BodyTextBlockStyle', className]}
 	{style}
 	data-disabled={disabled || undefined}
+	data-popup-side={popupSide ?? undefined}
 	{...rest}
 >
 	{#if header !== undefined}
@@ -237,6 +266,7 @@
 					<div {...wrapperProps}>
 						<div
 							{...props}
+							bind:this={popupEl}
 							class={['popup', 'winui-BodyTextBlockStyle']}
 							style={`${props.style ?? ''};min-width:${boxWidth}px`}
 						>
@@ -692,4 +722,31 @@
 	/* No `.root[data-disabled] .description` rule: the description's colour is the same
 	   in every state, including disabled — `AutoSuggestBox_themeresources.xaml` never
 	   overrides it. */
+
+	/* While the suggestion list is open, the edge where the box and the list meet is
+	   drawn square on both sides. Upstream's helper (`AutoSuggestBoxHelper.cpp:103`)
+	   picks the filter by the popup's actual placement: opening downward zeroes the
+	   popup's top corners and the box's bottom corners, and opening upward zeroes the
+	   popup's bottom corners and the box's top corners — the two edges that face each
+	   other. Long-hand corner properties rather than `border-radius` so the untouched
+	   two corners are not restated; written after the rules above so they win without
+	   `!important`. The popup's `data-side` is bits-ui's; the box's `data-popup-side`
+	   is mirrored from it because the popup is portalled and no selector on the box
+	   can reach it. See AutoSuggestBoxHelper.cpp:110-118 for the filter table. */
+	.root[data-popup-side='bottom'] .box {
+		border-bottom-left-radius: 0;
+		border-bottom-right-radius: 0;
+	}
+	.root[data-popup-side='top'] .box {
+		border-top-left-radius: 0;
+		border-top-right-radius: 0;
+	}
+	.popup[data-side='bottom'] {
+		border-top-left-radius: 0;
+		border-top-right-radius: 0;
+	}
+	.popup[data-side='top'] {
+		border-bottom-left-radius: 0;
+		border-bottom-right-radius: 0;
+	}
 </style>
