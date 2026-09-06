@@ -524,11 +524,34 @@
 	--winui-MenuFlyoutSubItemForegroundPressed: var(--winui-TextFillColorPrimaryBrush);
 	--winui-MenuFlyoutSubItemForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
 	--winui-MenuFlyoutSubItemChevron: var(--winui-TextFillColorSecondaryBrush);
+	--winui-MenuFlyoutItemKeyboardAcceleratorTextForeground: var(--winui-TextFillColorSecondaryBrush);
+	--winui-MenuFlyoutItemKeyboardAcceleratorTextForegroundPointerOver: var(
+		--winui-TextFillColorSecondaryBrush
+	);
+	--winui-MenuFlyoutItemKeyboardAcceleratorTextForegroundPressed: var(
+		--winui-TextFillColorSecondaryBrush
+	);
+	--winui-MenuFlyoutItemKeyboardAcceleratorTextForegroundDisabled: var(
+		--winui-TextFillColorDisabledBrush
+	);
 	--winui-MenuFlyoutPresenterBackground: var(--winui-DesktopAcrylicTransparentBrush);
 	--winui-MenuFlyoutPresenterBorderBrush: var(--winui-SurfaceStrokeColorFlyoutBrush);
+	--winui-ToggleMenuFlyoutItemKeyboardAcceleratorTextForeground: var(
+		--winui-TextFillColorSecondaryBrush
+	);
+	--winui-ToggleMenuFlyoutItemKeyboardAcceleratorTextForegroundPointerOver: var(
+		--winui-TextFillColorSecondaryBrush
+	);
+	--winui-ToggleMenuFlyoutItemKeyboardAcceleratorTextForegroundPressed: var(
+		--winui-TextFillColorSecondaryBrush
+	);
+	--winui-ToggleMenuFlyoutItemKeyboardAcceleratorTextForegroundDisabled: var(
+		--winui-TextFillColorDisabledBrush
+	);
 	--winui-MenuFlyoutPresenterBorderThemeThickness: 1px;
 	--winui-MenuFlyoutItemBorderThickness: 0px;
 	--winui-MenuFlyoutItemPlaceholderThemeThickness: 0px 0px 0px 28px;
+	--winui-MenuFlyoutItemDoublePlaceholderThemeThickness: 0px 0px 0px 56px;
 	--winui-MenuFlyoutSeparatorHeight: 1px;
 	--winui-MenuFlyoutPresenterThemePadding: 2px 0px 2px 0px;
 	--winui-MenuFlyoutThemeMinHeight: 32px;
@@ -1463,11 +1486,34 @@
 	--winui-MenuFlyoutSubItemForegroundPressed: var(--winui-TextFillColorPrimaryBrush);
 	--winui-MenuFlyoutSubItemForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
 	--winui-MenuFlyoutSubItemChevron: var(--winui-TextFillColorSecondaryBrush);
+	--winui-MenuFlyoutItemKeyboardAcceleratorTextForeground: var(--winui-TextFillColorSecondaryBrush);
+	--winui-MenuFlyoutItemKeyboardAcceleratorTextForegroundPointerOver: var(
+		--winui-TextFillColorSecondaryBrush
+	);
+	--winui-MenuFlyoutItemKeyboardAcceleratorTextForegroundPressed: var(
+		--winui-TextFillColorSecondaryBrush
+	);
+	--winui-MenuFlyoutItemKeyboardAcceleratorTextForegroundDisabled: var(
+		--winui-TextFillColorDisabledBrush
+	);
+	--winui-ToggleMenuFlyoutItemKeyboardAcceleratorTextForeground: var(
+		--winui-TextFillColorSecondaryBrush
+	);
+	--winui-ToggleMenuFlyoutItemKeyboardAcceleratorTextForegroundPointerOver: var(
+		--winui-TextFillColorSecondaryBrush
+	);
+	--winui-ToggleMenuFlyoutItemKeyboardAcceleratorTextForegroundPressed: var(
+		--winui-TextFillColorSecondaryBrush
+	);
+	--winui-ToggleMenuFlyoutItemKeyboardAcceleratorTextForegroundDisabled: var(
+		--winui-TextFillColorDisabledBrush
+	);
 	--winui-MenuFlyoutPresenterBackground: var(--winui-DesktopAcrylicTransparentBrush);
 	--winui-MenuFlyoutPresenterBorderBrush: var(--winui-SurfaceStrokeColorFlyoutBrush);
 	--winui-MenuFlyoutPresenterBorderThemeThickness: 1px;
 	--winui-MenuFlyoutItemBorderThickness: 0px;
 	--winui-MenuFlyoutItemPlaceholderThemeThickness: 0px 0px 0px 28px;
+	--winui-MenuFlyoutItemDoublePlaceholderThemeThickness: 0px 0px 0px 56px;
 	--winui-RadioButtonBorderThemeThickness: 1px;
 	--winui-RadioButtonForeground: var(--winui-TextFillColorPrimaryBrush);
 	--winui-RadioButtonForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
@@ -2294,11 +2340,36 @@
 		--winui-MenuFlyoutSubItemForegroundPressed: var(--winui-TextFillColorPrimaryBrush);
 		--winui-MenuFlyoutSubItemForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
 		--winui-MenuFlyoutSubItemChevron: var(--winui-TextFillColorSecondaryBrush);
+		--winui-MenuFlyoutItemKeyboardAcceleratorTextForeground: var(
+			--winui-TextFillColorSecondaryBrush
+		);
+		--winui-MenuFlyoutItemKeyboardAcceleratorTextForegroundPointerOver: var(
+			--winui-TextFillColorSecondaryBrush
+		);
+		--winui-MenuFlyoutItemKeyboardAcceleratorTextForegroundPressed: var(
+			--winui-TextFillColorSecondaryBrush
+		);
+		--winui-MenuFlyoutItemKeyboardAcceleratorTextForegroundDisabled: var(
+			--winui-TextFillColorDisabledBrush
+		);
+		--winui-ToggleMenuFlyoutItemKeyboardAcceleratorTextForeground: var(
+			--winui-TextFillColorSecondaryBrush
+		);
+		--winui-ToggleMenuFlyoutItemKeyboardAcceleratorTextForegroundPointerOver: var(
+			--winui-TextFillColorSecondaryBrush
+		);
+		--winui-ToggleMenuFlyoutItemKeyboardAcceleratorTextForegroundPressed: var(
+			--winui-TextFillColorSecondaryBrush
+		);
+		--winui-ToggleMenuFlyoutItemKeyboardAcceleratorTextForegroundDisabled: var(
+			--winui-TextFillColorDisabledBrush
+		);
 		--winui-MenuFlyoutPresenterBackground: var(--winui-DesktopAcrylicTransparentBrush);
 		--winui-MenuFlyoutPresenterBorderBrush: var(--winui-SurfaceStrokeColorFlyoutBrush);
 		--winui-MenuFlyoutPresenterBorderThemeThickness: 1px;
 		--winui-MenuFlyoutItemBorderThickness: 0px;
 		--winui-MenuFlyoutItemPlaceholderThemeThickness: 0px 0px 0px 28px;
+		--winui-MenuFlyoutItemDoublePlaceholderThemeThickness: 0px 0px 0px 56px;
 		--winui-RadioButtonBorderThemeThickness: 1px;
 		--winui-RadioButtonForeground: var(--winui-TextFillColorPrimaryBrush);
 		--winui-RadioButtonForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
@@ -3085,11 +3156,36 @@
 	--winui-MenuFlyoutSubItemForegroundPressed: var(--winui-SystemColorHighlightTextColorBrush);
 	--winui-MenuFlyoutSubItemForegroundDisabled: var(--winui-SystemColorGrayTextColorBrush);
 	--winui-MenuFlyoutSubItemChevron: var(--winui-SystemColorButtonTextColorBrush);
+	--winui-MenuFlyoutItemKeyboardAcceleratorTextForeground: var(
+		--winui-SystemColorWindowTextColorBrush
+	);
+	--winui-MenuFlyoutItemKeyboardAcceleratorTextForegroundPointerOver: var(
+		--winui-SystemColorHighlightTextColorBrush
+	);
+	--winui-MenuFlyoutItemKeyboardAcceleratorTextForegroundPressed: var(
+		--winui-SystemColorHighlightTextColorBrush
+	);
+	--winui-MenuFlyoutItemKeyboardAcceleratorTextForegroundDisabled: var(
+		--winui-SystemColorGrayTextColorBrush
+	);
+	--winui-ToggleMenuFlyoutItemKeyboardAcceleratorTextForeground: var(
+		--winui-SystemColorWindowTextColorBrush
+	);
+	--winui-ToggleMenuFlyoutItemKeyboardAcceleratorTextForegroundPointerOver: var(
+		--winui-SystemColorHighlightTextColorBrush
+	);
+	--winui-ToggleMenuFlyoutItemKeyboardAcceleratorTextForegroundPressed: var(
+		--winui-SystemColorHighlightTextColorBrush
+	);
+	--winui-ToggleMenuFlyoutItemKeyboardAcceleratorTextForegroundDisabled: var(
+		--winui-SystemColorGrayTextColorBrush
+	);
 	--winui-MenuFlyoutPresenterBackground: var(--winui-SystemColorWindowColorBrush);
 	--winui-MenuFlyoutPresenterBorderBrush: var(--winui-SystemColorWindowTextColorBrush);
 	--winui-MenuFlyoutPresenterBorderThemeThickness: 2px;
 	--winui-MenuFlyoutItemBorderThickness: 0px;
 	--winui-MenuFlyoutItemPlaceholderThemeThickness: 0px 0px 0px 28px;
+	--winui-MenuFlyoutItemDoublePlaceholderThemeThickness: 0px 0px 0px 56px;
 	--winui-RadioButtonBorderThemeThickness: 1px;
 	--winui-RadioButtonForeground: var(--winui-SystemColorButtonTextColorBrush);
 	--winui-RadioButtonForegroundPointerOver: var(--winui-SystemColorButtonTextColorBrush);
