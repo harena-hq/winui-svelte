@@ -1,0 +1,22 @@
+{
+	"name": "winui-svelte-consumer-smoke",
+	"version": "0.0.0",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"build": "vite build",
+		"build:ssr": "vite build --ssr src/ssr.js --outDir dist-ssr"
+	},
+	"dependencies": {
+		"@internationalized/date": "3.12.3",
+		"@zag-js/number-input": "1.43.3",
+		"@zag-js/svelte": "1.43.3",
+		"bits-ui": "2.19.0",
+		"svelte": "5.57.0",
+		"winui-svelte": "file:./winui-svelte.tgz"
+	},
+	"devDependencies": {
+		"@sveltejs/vite-plugin-svelte": "7.3.0",
+		"vite": "8.2.2"
+	}
+}
