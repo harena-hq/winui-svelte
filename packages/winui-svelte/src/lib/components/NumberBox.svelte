@@ -550,14 +550,27 @@
 		background: var(--winui-RepeatButtonBorderBrushPressed);
 	}
 
-	.root[data-disabled] .spin-up,
-	.root[data-disabled] .spin-down {
+	/* A spin button is disabled for two reasons and the template names neither. The first
+	   is the control being disabled. The second is the value reaching the bound the button
+	   moves towards: `NumberBox.cpp`'s `UpdateSpinButtonEnabled` at :680 enters
+	   `UpSpinButtonDisabled` when the value is not below `Maximum` and
+	   `DownSpinButtonDisabled` when it is not above `Minimum`, and those states —
+	   `NumberBox.xaml:42-59` — set `IsEnabled="False"` on the button, which is what sends
+	   the `RepeatButton` to its own `Disabled` visuals. The condition lives in the code;
+	   the template only says what the state does.
+
+	   Both reasons put `disabled` on the `<button>` here: the first through the prop, the
+	   second through the machine, which stops the trigger at the bound on its own. So one
+	   selector covers both, and it is written after `:hover` and `:active` so a disabled
+	   button does not light up under the pointer. */
+	.spin-up:disabled,
+	.spin-down:disabled {
 		background: var(--winui-RepeatButtonBackgroundDisabled);
 		color: var(--winui-RepeatButtonForegroundDisabled);
 		cursor: default;
 	}
-	.root[data-disabled] .spin-up::before,
-	.root[data-disabled] .spin-down::before {
+	.spin-up:disabled::before,
+	.spin-down:disabled::before {
 		background: var(--winui-RepeatButtonBorderBrushDisabled);
 	}
 </style>
