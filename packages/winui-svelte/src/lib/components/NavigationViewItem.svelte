@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { NavigationViewItemData } from './NavigationView.svelte';
 	import Self from './NavigationViewItem.svelte';
+	import ToolTip from './ToolTip.svelte';
 
 	interface Props {
 		item: NavigationViewItemData;
@@ -10,9 +11,12 @@
 		expandedItems: string[];
 		setExpanded: (id: string, open: boolean) => void;
 		onItemInvoked?: (id: string) => void;
+		/** `ShouldEnableToolTip`: the left pane is the closed-compact icons-only rail. */
+		collapsed: boolean;
 	}
 
-	let { item, level, selected, expandedItems, setExpanded, onItemInvoked }: Props = $props();
+	let { item, level, selected, expandedItems, setExpanded, onItemInvoked, collapsed }: Props =
+		$props();
 
 	const open = $derived(expandedItems.includes(item.id));
 	const hasChildren = $derived((item.children?.length ?? 0) > 0);
@@ -47,37 +51,83 @@
 		event.stopPropagation();
 		setExpanded(item.id, !open);
 	}
+
+	// The row renders with no tooltip when the pane is expanded, and then there are no
+	// trigger props to spread or compose. One frozen empty object rather than a fresh `{}`
+	// per render, which would make the spread a new value every time.
+	const EMPTY_TRIGGER_PROPS: Record<string, unknown> = Object.freeze({});
+
+	function withTriggerClick(props: Record<string, unknown>) {
+		return (event: MouseEvent) => {
+			(props.onclick as ((event: MouseEvent) => void) | undefined)?.(event);
+			activate();
+		};
+	}
+
+	function withTriggerKeydown(props: Record<string, unknown>) {
+		return (event: KeyboardEvent) => {
+			(props.onkeydown as ((event: KeyboardEvent) => void) | undefined)?.(event);
+			onkeydown(event);
+		};
+	}
 </script>
 
 <li role="none">
-	<div
-		role="treeitem"
-		class="item"
-		aria-selected={isSelected}
-		aria-expanded={hasChildren ? open : undefined}
-		aria-level={level}
-		tabindex="0"
-		data-selected={isSelected}
-		data-expanded={hasChildren ? open : undefined}
-		onclick={activate}
-		{onkeydown}
-	>
-		<span class="selection-indicator"></span>
-		<span class="icon-column" data-icon={item.glyph ? true : undefined}>
-			{#if item.glyph}
-				<span class="icon">{String.fromCodePoint(parseInt(item.glyph, 16))}</span>
+	<!-- The row is written once and rendered through a snippet, because the collapsed pane
+	     wraps it in a `ToolTip` and the expanded pane must have no wrapper and no extra
+	     element at all. `props` is the tooltip's trigger props in the first case and the
+	     frozen empty object in the second, which is why every use of it tolerates being
+	     absent. The parameter takes its type from its default value rather than from an
+	     annotation, and that is not a flourish: `svelte-package` ships this file's source,
+	     a type annotation in markup is a parse error in every consumer's build while this
+	     package's own `check` stays green, and without either one `check` fails on an
+	     implicit `any`. A default is plain JavaScript and types it. -->
+	{#snippet row(props = EMPTY_TRIGGER_PROPS)}
+		<div
+			{...props}
+			role="treeitem"
+			class="item"
+			aria-selected={isSelected}
+			aria-expanded={hasChildren ? open : undefined}
+			aria-level={level}
+			tabindex="0"
+			data-selected={isSelected}
+			data-expanded={hasChildren ? open : undefined}
+			onclick={withTriggerClick(props)}
+			onkeydown={withTriggerKeydown(props)}
+		>
+			<span class="selection-indicator"></span>
+			<span class="icon-column" data-icon={item.glyph ? true : undefined}>
+				{#if item.glyph}
+					<span class="icon">{String.fromCodePoint(parseInt(item.glyph, 16))}</span>
+				{/if}
+			</span>
+			<span class="content-presenter">{item.content}</span>
+			{#if hasChildren}
+				<button
+					type="button"
+					class="expand-chevron"
+					aria-label={open ? 'Collapse' : 'Expand'}
+					onclick={toggle}
+				></button>
 			{/if}
-		</span>
-		<span class="content-presenter">{item.content}</span>
-		{#if hasChildren}
-			<button
-				type="button"
-				class="expand-chevron"
-				aria-label={open ? 'Collapse' : 'Expand'}
-				onclick={toggle}
-			></button>
-		{/if}
-	</div>
+		</div>
+	{/snippet}
+
+	<!-- `ShouldEnableToolTip` at NavigationViewItem.cpp:743 is `IsOnLeftNav() && m_isClosedCompact`:
+	     the tooltip exists only while the pane is the icons-only rail, because an expanded pane
+	     already shows the label. `UpdateNavigationViewItemToolTip` at :283 sets its content to
+	     the item's own. Neither is in the template — the code-behind half of a control's
+	     surface, which docs/surface.md records. -->
+	{#if collapsed}
+		<ToolTip content={item.content}>
+			{#snippet children(props)}
+				{@render row(props)}
+			{/snippet}
+		</ToolTip>
+	{:else}
+		{@render row()}
+	{/if}
 
 	{#if hasChildren && open}
 		<ul role="group" class="children">
@@ -89,6 +139,7 @@
 					{expandedItems}
 					{setExpanded}
 					{onItemInvoked}
+					{collapsed}
 				/>
 			{/each}
 		</ul>

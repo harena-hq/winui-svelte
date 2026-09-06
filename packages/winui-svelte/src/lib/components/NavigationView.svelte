@@ -291,6 +291,7 @@
 									{expandedItems}
 									{setExpanded}
 									{onItemInvoked}
+									{collapsed}
 								/>
 							{/if}
 						{/each}
@@ -318,6 +319,7 @@
 								{expandedItems}
 								{setExpanded}
 								{onItemInvoked}
+								{collapsed}
 							/>
 						</ul>
 					</div>
