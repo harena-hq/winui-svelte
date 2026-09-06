@@ -13,6 +13,7 @@
 		"lint": "prettier --check . && eslint .",
 		"format": "prettier --write .",
 		"conform": "node scripts/conformance/run.mjs",
+		"smoke": "node scripts/smoke/run.mjs",
 		"tokens:fetch": "node scripts/tokens/fetch.mjs",
 		"tokens:extract": "node scripts/tokens/extract.mjs",
 		"tokens:build": "node scripts/tokens/generate.mjs",
@@ -21,7 +22,7 @@
 		"framework:fetch": "node scripts/framework/fetch.mjs",
 		"framework:extract": "node scripts/framework/extract.mjs",
 		"test": "playwright test",
-		"verify": "pnpm build && pnpm check && pnpm lint && pnpm conform && pnpm test"
+		"verify": "pnpm build && pnpm check && pnpm lint && pnpm conform && pnpm smoke && pnpm test"
 	},
 	"devDependencies": {
 		"@eslint/js": "^10.0.1",
