@@ -380,6 +380,43 @@ blocks every layer beneath it. Six open popups with a non-dismissable one on top
 an outside click and Escape. The harness page declares its light-dismiss pair in the order
 that makes both halves reachable, and says so.
 
+### Flyout — v6 unit 3
+
+Like Popup, a framework control WinUI 3 only restyles: no `.cpp` in the pin, so the dictionary
+and the measurement are the whole record. Unlike Popup, the dictionary is the control.
+`FlyoutPresenter_themeresources.xaml`'s `DefaultFlyoutPresenterStyle` at `:22` sets every
+visual property, and the template at `:43` is one `Border` with a background, a border, a
+corner radius and `BackgroundSizing="InnerBorderEdge"` around a `ScrollViewer` whose
+`ContentPresenter` takes the padding as its `Margin`. Nothing is computed anywhere.
+
+Placement, measured against the Gallery's only example and then against the reproduction:
+the flyout is centred on its trigger (centres 414.5 against 414 upstream; 268.66 against
+268.97 here), sits above it, and leaves a 4px gap that no pinned resource states.
+
+**Collision avoidance is on for every placement, and that was decided by driving it.**
+`FlyoutPlacementMode` is a _preferred_ placement upstream and the popup hosting a flyout keeps
+itself inside the window; with avoidance off, the Gallery's own example — a 355px flyout
+centred on a trigger near the left edge — rendered at x = -109, a hundred pixels outside the
+viewport. The consequence is that `auto` and `top` resolve alike here, which is not a
+collapse: upstream `Auto` asks the framework to choose and for a button flyout it chooses Top.
+
+**The find worth keeping is not about Flyout at all.** The Gallery's sample styles its message
+`Style="{ThemeResource BaseTextBlockStyle}"`, and reproducing that with the generated ramp
+class made the flyout a pixel too tall. Upstream's `BaseTextBlockStyle` —
+`TextBlock_themeresources.xaml:10-18`, and the framework dictionary's copy at
+`generic.xaml:11133` for its siblings — sets FontFamily, FontSize, FontWeight, TextTrimming,
+TextWrapping, LineStackingStrategy and TextLineBounds, and **no LineHeight**. None of the ten
+ramp styles sets one. The line heights in the generated ramp classes come from the published
+type ramp, which `scripts/tokens/manifest.mjs` is explicit about — "the two columns the XAML
+does not carry" — but a design document is not what the shipped styles do, and a WinUI
+TextBlock with no `LineHeight` draws the font's own spacing.
+
+Measured: the Gallery's Base-styled flyout message is 19 tall and its flyout 97; the ramp's
+20px makes them 20 and 98. That is one step of ten, measured once, which is why nothing has
+been changed in the ramp — but it is also the third control in a row to need
+`line-height: normal` to match the original, after `InfoBar` and `Expander`, and three is
+enough to stop calling it a coincidence.
+
 ## What this file does not cover
 
 The sweep reads what a control _draws_. It does not enumerate automation peers, keyboard
