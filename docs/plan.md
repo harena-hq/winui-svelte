@@ -634,7 +634,7 @@ group sizes, which no longer line up one-to-one with a version.
     pipeline**, and the five controls follow; WD-008 closes here rather than eventually,
     since its four values are now three read and one measured.
 
-5.  **Status and feedback** — InfoBar, InfoBadge, ProgressBar, ProgressRing, ToolTip.
+5.  **Status and feedback** — InfoBar, InfoBadge, ProgressBar, ProgressRing, ToolTip. — **done**
 
     Goal: **the application can tell the user what is happening.**
 
@@ -682,6 +682,37 @@ group sizes, which no longer line up one-to-one with a version.
     TSDoc naming the WinUI member — **plus** the sweep in `docs/surface.md` run and recorded
     per control before it is sealed, rather than after the version closes.
 
+    **Closed.** All five controls exist and are exported; twenty-one baseline sets pass on the
+    reference guest and the nine gates are green. The sweep ran per unit before sealing, as the
+    Done-when required, and `docs/surface.md` carries an entry for each.
+
+    What the version cost that its goal did not predict: ProgressRing turned out to have no
+    template at all, so its two generated Lottie compositions had to be read as the dictionary,
+    and they disagree with each other on geometry in a way that is real rather than rounding.
+    InfoBar needed the library's second `ResizeObserver`, because `InfoBarPanel` switches all
+    three of its children between a row and a column together and no CSS expresses that: the
+    switch is on the content's width, which `flex-wrap`, container queries and the flex-basis
+    albatross all fail to see.
+
+    **The finding that matters more than any control here is about the seal gate.** Four
+    defects in this version passed all nine gates and every snapshot, and none of them could
+    have done otherwise:
+
+    | defect                                                                      | found by                                        |
+    | --------------------------------------------------------------------------- | ----------------------------------------------- |
+    | ProgressRing drew a round cap at `Value` 0 where the original draws nothing | measuring the original's ink at the same values |
+    | ProgressRing's determinate arc used `value / max`, not the keyframe curve   | the same measurement, at `Value` 90             |
+    | InfoBadge's digits sat a pixel high                                         | the user, looking at the live page              |
+    | InfoBar's panel went vertical and never came back                           | the user, resizing the live page                |
+
+    A baseline written from a wrong render agrees with itself, so a snapshot suite can only
+    catch a change, never an error. The first two were caught because measuring the original
+    is already in the Done-when. The last two were not, and they share a shape: **both are
+    invisible until someone drives the control.** v4 closed with the same sentence — "the
+    controls need driving, and a person did it" — and nothing was added to the seal procedure
+    then. It has now cost two more. Adding a driving step is not a gate and cannot be
+    automated into one; what it needs is a place in the per-unit loop, which it does not have.
+
 6.  **Surfaces** — Expander, ContentDialog, Flyout, MenuFlyout, TeachingTip, Popup.
 7.  **Commands and menus** — DropDownButton, SplitButton, ToggleButton, CommandBar, MenuBar,
     AppBar\*.
@@ -701,11 +732,23 @@ group sizes, which no longer line up one-to-one with a version.
     Backdrops, transitions, easing, connected animation. WD-006 closes here.
 15. **Media / Windowing / System / Shell** (18) — see open question O2.
 
-**A release becomes possible from v3 onward**, and one thing has to be built before it is:
-C6 as implemented reads the shipped `dist` for preprocessor and Tailwind markers, which proves
-the package needs no build tooling but not that a consumer can mount what it exports. The
-smoke app the gate description promises does not exist. Building it is the first unit of
-whichever version cuts a release, not a prerequisite for writing controls.
+**A release becomes possible from v3 onward, and is deliberately taken after `Final`.** The
+capability and the decision are different questions: a release is technically possible now, and
+the bar chosen for it is the acceptance gate below rather than any version number. Locked after
+weighing the alternative of cutting at v14, which would ship before the Motion tranche's
+deferrals close.
+
+One thing has to be built before a release, and it is not scheduled with it. C6 as implemented
+reads the shipped `dist` for preprocessor and Tailwind markers, which proves the package needs
+no build tooling but not that a consumer can mount what it exports. The smoke app the gate
+description promises does not exist, and the Gallery is not it: the Gallery does consume
+`dist`, but through a pnpm workspace symlink, so the `peerDependencies` are satisfied by the
+library's own `devDependencies` and have never once been supplied by a consumer, and the
+compiler treats the package as first-party source rather than as a dependency. **Build it now
+rather than at the release**, as its own unit: waiting means the whole prop surface — as
+unchangeable once shipped as ADR 0006's token names, and ADR 0009 says so — is locked in one
+step with no consumer having exercised it. The smoke app is that consumer, and it can exist
+from any version onward.
 
 ### Final — the acceptance gate
 

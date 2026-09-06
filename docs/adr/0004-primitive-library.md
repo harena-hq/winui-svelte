@@ -63,10 +63,18 @@ component's structure.
 
 ## Status
 
-Permanent for the standard primitives. Revisit only if bits-ui's abstraction fights DOM
-structure across many controls rather than one — that is a different finding from the one this
+Permanent for the standard primitives. Revisit only if **the second escape** — dropping to
+`@floating-ui/dom`, `focus-trap`, `tabbable` and `aria-hidden` directly, in place of bits-ui —
+is needed across many controls rather than one. That is a different finding from the one this
 ADR weighed, and would deserve a fresh comparison against Ark UI, which remains the credible
 runner-up.
+
+The trigger names the second escape because the first one is not a symptom. Every component
+built on bits-ui uses its `child` snippet, and reading that as "the abstraction fights the DOM"
+inverts the decision above, which chose `child` as the normal path. Measured at v5's close:
+five components import bits-ui and all five use `child` — fifteen sites — while the second
+escape has been needed **zero** times. Ark's `asChild` would be used just as universally, since
+what drives it is Fluent's specificity about element structure, not the library.
 
 ## Alternatives rejected
 
