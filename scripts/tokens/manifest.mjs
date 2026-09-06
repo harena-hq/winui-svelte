@@ -1845,7 +1845,10 @@ export const DOUBLE_LENGTHS = {
 
 	InfoBarMinHeight: 'the minimum height an InfoBar reserves',
 	InfoBarCloseButtonSize: 'the InfoBar close button box',
-	InfoBarCloseButtonGlyphSize: 'the InfoBar close button glyph'
+	InfoBarCloseButtonGlyphSize: 'the InfoBar close button glyph',
+
+	MenuFlyoutThemeMinHeight: 'the floor under a menu surface',
+	MenuFlyoutSeparatorHeight: 'the rule between two groups of menu items'
 };
 
 /**
@@ -2463,6 +2466,77 @@ export const EXPANDER_KEYS = {
 	ExpanderContentDownBorderThickness: 'the content border expanding downward',
 	ExpanderContentUpBorderThickness: 'the content border expanding upward',
 	FlyoutThemeMinWidth: "the floor under the Expander's own width, `Expander.xaml:20`"
+};
+
+/**
+ * Keys the menu surface and its three plainest items read — the twentieth seed set, and the
+ * fourth of the Surfaces tranche. `MenuFlyout_themeresources.xaml` is 1050 lines and most of
+ * it is for a later unit or for no unit at all.
+ *
+ * Four of its families are deliberately absent. The `*Reveal*` sets are Reveal material,
+ * which nothing here can express; the `*ThemeBrush` set at `:51-58` is pre-Fluent and writes
+ * `#FF212121` by hand; `MenuFlyoutLightDismissOverlayBackground` is the overlay a menu does
+ * not draw on desktop; and the sub-item, keyboard-accelerator, split-item and chevron
+ * families belong to unit 044b, whose controls are the ones that read them.
+ *
+ * `MenuFlyoutSystemBackdrop` is absent for a different reason: it resolves to
+ * `AcrylicBackgroundFillColorDefaultBackdrop`, which `AcrylicBrush_themeresources.xaml:54`
+ * defines as a bare `<DesktopAcrylicBackdrop />` — an element with no value to convert. It
+ * is what actually paints the card, because `MenuFlyoutPresenterBackground` resolves to
+ * `DesktopAcrylicTransparentBrush`, `#00000000` in all three themes. The surface therefore
+ * paints `AcrylicBackgroundFillColorDefaultBrush`, which the layer already emits, and
+ * composites the presenter's own brush over it: `#f9f9f9` is the measured fill to the byte,
+ * and the consumer keeps the override point the presenter's key is.
+ *
+ * `MenuFlyoutItemThemePadding` `11,8,11,9` is absent and `…Narrow` `11,4,11,5` is present,
+ * which is the opposite of what the names suggest. The template's own comment settles it —
+ * narrow padding is what a flyout invoked with pen, mouse or keyboard draws, and the wide
+ * form is for touch — and the ruler agrees: 4 + 19 + 5 is the 28-tall item box measured on
+ * the guest. A control with no pointer-device state reads one of the two, and this is it.
+ * WD-013.
+ *
+ * `MenuFlyoutItemDoublePlaceholderThemeThickness` `56,0,0,0` is the gutter for a menu with
+ * both a check column and an icon column. 044a has no icons, so 044a does not read it.
+ */
+export const MENUFLYOUT_KEYS = {
+	// The surface. Its corner radius is `OverlayCornerRadius` and its floor width is
+	// `FlyoutThemeMinWidth`, both of which the layer already emits.
+	MenuFlyoutPresenterBackground: 'the menu surface, over the backdrop it does not paint',
+	MenuFlyoutPresenterBorderBrush: 'the menu border',
+	MenuFlyoutPresenterBorderThemeThickness: 'the menu border width',
+	MenuFlyoutPresenterThemePadding: 'the inset between the border and the first item',
+	MenuFlyoutThemeMinHeight: 'the floor under the menu surface',
+
+	// An item. `MenuFlyoutItemBackgroundBrush` is the border brush despite its name, which
+	// is upstream's spelling and not a transcription slip.
+	MenuFlyoutItemBackground: 'an item at rest',
+	MenuFlyoutItemBackgroundPointerOver: 'an item under the pointer',
+	MenuFlyoutItemBackgroundPressed: 'an item while pressed',
+	MenuFlyoutItemBackgroundDisabled: 'a disabled item',
+	MenuFlyoutItemBackgroundBrush: "an item's border",
+	MenuFlyoutItemForeground: "an item's text",
+	MenuFlyoutItemForegroundPointerOver: "an item's text under the pointer",
+	MenuFlyoutItemForegroundPressed: "an item's text while pressed",
+	MenuFlyoutItemForegroundDisabled: "a disabled item's text",
+	MenuFlyoutItemBorderThickness: "an item's border width",
+	MenuFlyoutItemMargin: 'the gap between an item box and the surface edge',
+	MenuFlyoutItemThemePaddingNarrow: "the inset around an item's text",
+	MenuFlyoutItemPlaceholderThemeThickness: 'the gutter an item reserves for a check',
+
+	// The separator. Its padding is negative on both sides, which is how a rule 4px wider
+	// than the item boxes reaches the surface's inner edge.
+	MenuFlyoutSeparatorBackground: 'the rule between two groups of items',
+	MenuFlyoutSeparatorHeight: 'the rule',
+	MenuFlyoutSeparatorThemePadding: 'the gap above and below the rule, and its overhang',
+
+	// A toggle item. Its pointer-over, pressed and disabled states read the *sub-item*
+	// brushes rather than the item ones, and its check glyph takes the sub-item chevron's
+	// colour. That is `DefaultToggleMenuFlyoutItemStyle` as written, not a mis-reading.
+	MenuFlyoutSubItemBackgroundPointerOver: 'a toggle item under the pointer',
+	MenuFlyoutSubItemBackgroundPressed: 'a toggle item while pressed',
+	MenuFlyoutSubItemForegroundPressed: "a toggle item's text while pressed",
+	MenuFlyoutSubItemForegroundDisabled: "a disabled toggle item's text",
+	MenuFlyoutSubItemChevron: "a toggle item's checkmark"
 };
 
 /**

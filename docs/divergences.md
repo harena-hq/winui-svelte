@@ -80,6 +80,17 @@ worth closing. "Would be hard" is not a reason — the reason is always a specif
 - **Would reconsider if**: the Styles tranche builds an acrylic component, at which point
   the token becomes that component's fallback and this entry is deleted rather than amended.
 
+`MenuFlyout` reaches the same place by a longer route, and joins this entry rather than opening
+its own. `MenuFlyoutPresenterBackground` is `DesktopAcrylicTransparentBrush`, `#00000000` in all
+three themes: the presenter paints nothing, and what a menu card actually shows is its
+`SystemBackdrop`, `AcrylicBackgroundFillColorDefaultBackdrop` — a bare `<DesktopAcrylicBackdrop
+/>` element at `AcrylicBrush_themeresources.xaml:54` with no value a stylesheet could carry. The
+surface therefore paints `AcrylicBackgroundFillColorDefaultBrush`, one of this entry's four keys,
+and composites the presenter's own brush over it, which keeps the consumer's override point. On
+the reference guest the original's card measures a flat 249 down its middle and the brush emits
+`#f9f9f9`, so the visible result agrees to the byte; over a different backdrop it would not, for
+exactly the reason above.
+
 ---
 
 ### WD-003 — the two Mica Background tiles on the Color page render without a fill
@@ -350,3 +361,29 @@ recorded the missing shadow against WD-006, which is about animated icons and na
 ToolTip nor shadows. Gate C5 could not see it: it checks that a cited id has an entry and that
 an entry is cited, and both were true. Reading the entry a citation points at is the part no
 gate does.
+
+---
+
+### WD-013 — a menu item's padding never widens for touch
+
+- **Control**: `MenuFlyout`, and every item in it.
+- **WinUI does**: switch a menu item's padding on the input device that opened the flyout.
+  `MenuFlyout_themeresources.xaml` carries two: `MenuFlyoutItemThemePadding` `11,8,11,9` and
+  `MenuFlyoutItemThemePaddingNarrow` `11,4,11,5`. The template's `PaddingSizeStates` group
+  picks between them, and the comment above it states the rule — "Narrow padding is only
+  applied when flyout was invoked with pen, mouse or keyboard. Default padding is applied for
+  all other cases including touch." A menu opened by touch is 8px taller per item.
+- **We do**: draw the narrow padding always. Measured on the reference guest with a mouse, an
+  item box is 28 tall — 4 + 19 + 5 — inside a 32px row, and the card that holds three of them
+  and one separator is 105 tall. That is the form this control reproduces, and
+  `MenuFlyoutItemThemePadding` is not seeded, because a control that cannot reach the state is
+  not a control that reads the token.
+- **Why accepted**: the state has no input to switch on. A `PointerEvent`'s `pointerType` says
+  how the _current_ event arrived, not how the flyout was opened, and it is absent entirely
+  when the menu is opened from the keyboard or programmatically — so the branch would be
+  guessing on the majority of opens. `@media (pointer: coarse)` asks a different question, of
+  the device rather than the gesture: it would widen every item on a touchscreen laptop whose
+  user is holding a mouse, which is the case WinUI's rule is written to get right.
+- **Would reconsider if**: the trigger's own opening event is threaded into the surface, which
+  makes `pointerType === 'touch'` answerable for pointer-opened menus and leaves only the
+  keyboard case — where narrow is the correct answer anyway.
