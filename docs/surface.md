@@ -68,19 +68,19 @@ read all of it.
 
 Per control, what the second half adds beyond the template this library already read.
 
-| control            | second half says                                                                                                                                                        | state                                                                           |
-| ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
-| AutoSuggestBox     | `AutoSuggestBoxHelper.cpp:104` squares the interior corners while the list is open — the box's bottom corners and the popup's top corners, swapped when it opens upward | fixed in `5d3f84a`                                                              |
-| NumberBox          | `NumberBox.cpp:680` disables the up button at `Maximum` and the down button at `Minimum`, which is what drives the template's `UpSpinButtonEnabledStates`               | fixed in `19e89b6`                                                              |
-| ComboBox           | `ComboBoxHelper.cpp:93` does the same corner squaring as AutoSuggestBox — but only `if (comboBox.IsEditable())`, and this library does not build the editable ComboBox  | nothing owed until `IsEditable` is built                                        |
-| NavigationViewItem | `NavigationViewItem.cpp:743` shows a tooltip carrying the item's content, and only when the left pane is closed-compact                                                 | deferred                                                                        |
-| TitleBar           | `TitleBar.cpp:881` and `:906` attach tooltips to the back and pane-toggle buttons                                                                                       | deferred                                                                        |
-| TitleBar           | `TitleBar.cpp:210-251` dims every part to `TitleBarDeactivatedForegroundBrush` / `TitleBarDeactivatedOpacity` when the window is not the active one                     | divergence candidate — a browser tab has no window activation to read           |
-| TitleBar           | `TitleBar.cpp:174-186` collapses the title and subtitle when the content no longer fits, and re-expands past the width it collapsed at                                  | deferred                                                                        |
-| TitleBar           | `TitleBar.cpp`'s `UpdateHeight` picks compact or expanded height from which slots are filled                                                                            | already built — the one code-behind rule this project had read before the sweep |
-| NavigationView     | pane, header, back-button, settings and auto-suggest visibility states, all decided in code                                                                             | already built as display modes                                                  |
-| Slider             | `IsThumbToolTipEnabled` — the value in a tooltip while the thumb is dragged                                                                                             | deferred; **not in the pin**, the API reference is the source                   |
-| the other six      | no implementation in the pin                                                                                                                                            | see the Gallery column below                                                    |
+| control            | second half says                                                                                                                                                        | state                                                                             |
+| ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| AutoSuggestBox     | `AutoSuggestBoxHelper.cpp:104` squares the interior corners while the list is open — the box's bottom corners and the popup's top corners, swapped when it opens upward | fixed in `5d3f84a`                                                                |
+| NumberBox          | `NumberBox.cpp:680` disables the up button at `Maximum` and the down button at `Minimum`, which is what drives the template's `UpSpinButtonEnabledStates`               | fixed in `19e89b6`                                                                |
+| ComboBox           | `ComboBoxHelper.cpp:93` does the same corner squaring as AutoSuggestBox — but only `if (comboBox.IsEditable())`, and this library does not build the editable ComboBox  | nothing owed until `IsEditable` is built                                          |
+| NavigationViewItem | `NavigationViewItem.cpp:743` shows a tooltip carrying the item's content, and only when the left pane is closed-compact                                                 | closed in `b43e677`                                                               |
+| TitleBar           | `TitleBar.cpp:881` and `:906` attach tooltips to the back and pane-toggle buttons                                                                                       | closed in `0ad515f`                                                               |
+| TitleBar           | `TitleBar.cpp:210-251` dims every part to `TitleBarDeactivatedForegroundBrush` / `TitleBarDeactivatedOpacity` when the window is not the active one                     | divergence candidate — a browser tab has no window activation to read             |
+| TitleBar           | `TitleBar.cpp:174-186` collapses the title and subtitle when the content no longer fits, and re-expands past the width it collapsed at                                  | deferred                                                                          |
+| TitleBar           | `TitleBar.cpp`'s `UpdateHeight` picks compact or expanded height from which slots are filled                                                                            | already built — the one code-behind rule this project had read before the sweep   |
+| NavigationView     | pane, header, back-button, settings and auto-suggest visibility states, all decided in code                                                                             | already built as display modes                                                    |
+| Slider             | `IsThumbToolTipEnabled` — the value in a tooltip while the thumb is dragged                                                                                             | closed in `1c20909`; **not in the pin** — measured on the reference guest instead |
+| the other six      | no implementation in the pin                                                                                                                                            | see the Gallery column below                                                      |
 
 And what the Gallery's own pages demonstrate that this library cannot do yet:
 
@@ -104,6 +104,15 @@ on `SuggestionsContainer` — against a different positioner, which is why the c
 declines to reproduce that margin. The overlap is small, it is now hidden by the squared
 corners, and correcting it would mean measuring the join against the original on the
 reference guest. It is written down here rather than guessed at.
+
+**The three tooltip rows are closed, and closing them paid for the sweep.** v5's second
+unit built each one on the `ToolTip` from its first, and the three together bought two
+props that unit had left open: `offset`, because the gap above the Slider's thumb measured
+20 — the same 20 already measured between a pointer-anchored tooltip and the pointer — and
+`openOnHover`, because WinUI's Slider raises its thumb tooltip itself rather than through
+`ToolTipService`, so hover must not open it. Neither number nor behaviour is in any
+dictionary. They came from pressing the original's thumb and photographing what happened,
+which is what this file exists to make routine.
 
 ## What this file does not cover
 
