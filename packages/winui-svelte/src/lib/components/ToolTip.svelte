@@ -21,7 +21,16 @@
 		onOpenChange?: (open: boolean) => void;
 		/** IsEnabled, inverted to HTML's attribute — ADR 0009. */
 		disabled?: boolean;
-		/** The element the tooltip is attached to. Receives the props it must spread. */
+		/**
+		 * The element the tooltip is attached to. Receives the props it must spread.
+		 *
+		 * Spread them **first**, before the element's own attributes: they carry the
+		 * primitive's event handlers, and a trigger that sets one of the same names
+		 * after the spread replaces it rather than adding to it. Where the trigger has
+		 * its own handler for an event the props also carry — `onclick` is the one that
+		 * bites, since it is what dismisses the tooltip when the trigger is pressed —
+		 * call the one from these props as well. `TitleBar.svelte` does both.
+		 */
 		children: Snippet<[Record<string, unknown>]>;
 		class?: string;
 		style?: string;
