@@ -65,7 +65,14 @@
 	.root {
 		box-sizing: border-box;
 		display: inline-flex;
-		align-items: center;
+		/* `safe`, because the content is taller than the badge and the two layout engines
+		   resolve that differently. `ValueInfoBadgeTextMargin` is `4,0,4,2`, so the value's
+		   margin box is 17px against a 16px badge: XAML puts an overflowing centred child at
+		   the start edge, and the 2px bottom margin then has no room to act in, while
+		   unqualified CSS centring splits the overflow evenly and lifts the digits half a
+		   pixel. Measured on the reference guest, the original's digits sit 4 above and 4
+		   below; `safe center` reproduces that, and it is a no-op wherever nothing overflows. */
+		align-items: safe center;
 		justify-content: center;
 		min-width: var(--winui-InfoBadgeMinWidth);
 		min-height: var(--winui-InfoBadgeMinHeight);
