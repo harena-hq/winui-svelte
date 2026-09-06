@@ -389,7 +389,6 @@
 		min-width: 0;
 		border: 0;
 		background: transparent;
-		padding: 0;
 		font: inherit;
 		color: inherit;
 		outline: none;
