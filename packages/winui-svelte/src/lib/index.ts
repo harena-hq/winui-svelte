@@ -15,6 +15,8 @@ export { default as ComboBox } from './components/ComboBox.svelte';
 export type { ComboBoxItemData, ComboBoxProps } from './components/ComboBox.svelte';
 export { default as InfoBadge } from './components/InfoBadge.svelte';
 export type { InfoBadgeProps } from './components/InfoBadge.svelte';
+export { default as InfoBar } from './components/InfoBar.svelte';
+export type { InfoBarProps } from './components/InfoBar.svelte';
 export { default as NavigationView } from './components/NavigationView.svelte';
 export { default as NumberBox } from './components/NumberBox.svelte';
 export type { NumberBoxProps } from './components/NumberBox.svelte';

@@ -696,6 +696,50 @@
 	--winui-IconInfoBadgeFontIconMargin: 0px 4px 2px 4px;
 	--winui-ValueInfoBadgeTextMargin: 0px 4px 2px 4px;
 	--winui-IconInfoBadgeIconMargin: 4px;
+	--winui-InfoBarErrorSeverityBackgroundBrush: var(--winui-SystemFillColorCriticalBackgroundBrush);
+	--winui-InfoBarWarningSeverityBackgroundBrush: var(--winui-SystemFillColorCautionBackgroundBrush);
+	--winui-InfoBarSuccessSeverityBackgroundBrush: var(--winui-SystemFillColorSuccessBackgroundBrush);
+	--winui-InfoBarInformationalSeverityBackgroundBrush: var(
+		--winui-SystemFillColorAttentionBackgroundBrush
+	);
+	--winui-InfoBarErrorSeverityIconBackground: var(--winui-SystemFillColorCriticalBrush);
+	--winui-InfoBarWarningSeverityIconBackground: var(--winui-SystemFillColorCautionBrush);
+	--winui-InfoBarSuccessSeverityIconBackground: var(--winui-SystemFillColorSuccessBrush);
+	--winui-InfoBarInformationalSeverityIconBackground: var(--winui-SystemFillColorAttentionBrush);
+	--winui-InfoBarErrorSeverityIconForeground: var(--winui-TextFillColorInverseBrush);
+	--winui-InfoBarWarningSeverityIconForeground: var(--winui-TextFillColorInverseBrush);
+	--winui-InfoBarSuccessSeverityIconForeground: var(--winui-TextFillColorInverseBrush);
+	--winui-InfoBarInformationalSeverityIconForeground: var(--winui-TextFillColorInverseBrush);
+	--winui-InfoBarTitleForeground: var(--winui-TextFillColorPrimaryBrush);
+	--winui-InfoBarMessageForeground: var(--winui-TextFillColorPrimaryBrush);
+	--winui-InfoBarHyperlinkButtonForeground: var(--winui-AccentTextFillColorPrimaryBrush);
+	--winui-InfoBarBorderBrush: var(--winui-CardStrokeColorDefaultBrush);
+	--winui-InfoBarBorderThickness: 1px;
+	--winui-InfoBarTitleFontSize: 14px;
+	--winui-InfoBarTitleFontWeight: 600;
+	--winui-InfoBarMessageFontSize: 14px;
+	--winui-InfoBarMessageFontWeight: 400;
+	--winui-InfoBarMinHeight: 48px;
+	--winui-InfoBarCloseButtonSize: 38px;
+	--winui-InfoBarCloseButtonGlyphSize: 16px;
+	--winui-InfoBarHyperlinkButtonMargin: 0px 0px 0px -12px;
+	--winui-InfoBarIconBackgroundGlyph: '\00f136';
+	--winui-InfoBarInformationalIconGlyph: '\00f13f';
+	--winui-InfoBarErrorIconGlyph: '\00f13d';
+	--winui-InfoBarWarningIconGlyph: '\00f13c';
+	--winui-InfoBarSuccessIconGlyph: '\00f13e';
+	--winui-InfoBarContentRootPadding: 0px 0px 0px 16px;
+	--winui-InfoBarIconMargin: 16px 14px 16px 0px;
+	--winui-InfoBarIconFontSize: 16px;
+	--winui-InfoBarPanelMargin: 0px 16px 0px 0px;
+	--winui-InfoBarPanelHorizontalOrientationPadding: 0px;
+	--winui-InfoBarPanelVerticalOrientationPadding: 14px 0px 18px 0px;
+	--winui-InfoBarTitleHorizontalOrientationMargin: 14px 0px 0px 0px;
+	--winui-InfoBarTitleVerticalOrientationMargin: 14px 0px 0px 0px;
+	--winui-InfoBarMessageHorizontalOrientationMargin: 14px 0px 0px 12px;
+	--winui-InfoBarMessageVerticalOrientationMargin: 4px 0px 0px 0px;
+	--winui-InfoBarActionHorizontalOrientationMargin: 8px 0px 0px 16px;
+	--winui-InfoBarActionVerticalOrientationMargin: 12px 0px 0px 0px;
 	--winui-SystemControlTransientBorderBrush: color-mix(in srgb, #000000 14%, transparent);
 	--winui-AcrylicBackgroundFillColorDefaultBrush: #f9f9f9;
 	--winui-AcrylicInAppFillColorDefaultBrush: #f9f9f9;
@@ -1496,6 +1540,25 @@
 	--winui-IconInfoBadgeFontIconMargin: 0px 4px 2px 4px;
 	--winui-ValueInfoBadgeTextMargin: 0px 4px 2px 4px;
 	--winui-IconInfoBadgeIconMargin: 4px;
+	--winui-InfoBarErrorSeverityBackgroundBrush: var(--winui-SystemFillColorCriticalBackgroundBrush);
+	--winui-InfoBarWarningSeverityBackgroundBrush: var(--winui-SystemFillColorCautionBackgroundBrush);
+	--winui-InfoBarSuccessSeverityBackgroundBrush: var(--winui-SystemFillColorSuccessBackgroundBrush);
+	--winui-InfoBarInformationalSeverityBackgroundBrush: var(
+		--winui-SystemFillColorAttentionBackgroundBrush
+	);
+	--winui-InfoBarErrorSeverityIconBackground: var(--winui-SystemFillColorCriticalBrush);
+	--winui-InfoBarWarningSeverityIconBackground: var(--winui-SystemFillColorCautionBrush);
+	--winui-InfoBarSuccessSeverityIconBackground: var(--winui-SystemFillColorSuccessBrush);
+	--winui-InfoBarInformationalSeverityIconBackground: var(--winui-SystemFillColorAttentionBrush);
+	--winui-InfoBarErrorSeverityIconForeground: var(--winui-TextFillColorInverseBrush);
+	--winui-InfoBarWarningSeverityIconForeground: var(--winui-TextFillColorInverseBrush);
+	--winui-InfoBarSuccessSeverityIconForeground: var(--winui-TextFillColorInverseBrush);
+	--winui-InfoBarInformationalSeverityIconForeground: var(--winui-TextFillColorInverseBrush);
+	--winui-InfoBarTitleForeground: var(--winui-TextFillColorPrimaryBrush);
+	--winui-InfoBarMessageForeground: var(--winui-TextFillColorPrimaryBrush);
+	--winui-InfoBarHyperlinkButtonForeground: var(--winui-AccentTextFillColorPrimaryBrush);
+	--winui-InfoBarBorderBrush: var(--winui-CardStrokeColorDefaultBrush);
+	--winui-InfoBarBorderThickness: 1px;
 	--winui-SystemControlTransientBorderBrush: color-mix(in srgb, #000000 36%, transparent);
 	--winui-AcrylicBackgroundFillColorDefaultBrush: #2c2c2c;
 	--winui-AcrylicInAppFillColorDefaultBrush: #2c2c2c;
@@ -2264,6 +2327,31 @@
 		--winui-IconInfoBadgeFontIconMargin: 0px 4px 2px 4px;
 		--winui-ValueInfoBadgeTextMargin: 0px 4px 2px 4px;
 		--winui-IconInfoBadgeIconMargin: 4px;
+		--winui-InfoBarErrorSeverityBackgroundBrush: var(
+			--winui-SystemFillColorCriticalBackgroundBrush
+		);
+		--winui-InfoBarWarningSeverityBackgroundBrush: var(
+			--winui-SystemFillColorCautionBackgroundBrush
+		);
+		--winui-InfoBarSuccessSeverityBackgroundBrush: var(
+			--winui-SystemFillColorSuccessBackgroundBrush
+		);
+		--winui-InfoBarInformationalSeverityBackgroundBrush: var(
+			--winui-SystemFillColorAttentionBackgroundBrush
+		);
+		--winui-InfoBarErrorSeverityIconBackground: var(--winui-SystemFillColorCriticalBrush);
+		--winui-InfoBarWarningSeverityIconBackground: var(--winui-SystemFillColorCautionBrush);
+		--winui-InfoBarSuccessSeverityIconBackground: var(--winui-SystemFillColorSuccessBrush);
+		--winui-InfoBarInformationalSeverityIconBackground: var(--winui-SystemFillColorAttentionBrush);
+		--winui-InfoBarErrorSeverityIconForeground: var(--winui-TextFillColorInverseBrush);
+		--winui-InfoBarWarningSeverityIconForeground: var(--winui-TextFillColorInverseBrush);
+		--winui-InfoBarSuccessSeverityIconForeground: var(--winui-TextFillColorInverseBrush);
+		--winui-InfoBarInformationalSeverityIconForeground: var(--winui-TextFillColorInverseBrush);
+		--winui-InfoBarTitleForeground: var(--winui-TextFillColorPrimaryBrush);
+		--winui-InfoBarMessageForeground: var(--winui-TextFillColorPrimaryBrush);
+		--winui-InfoBarHyperlinkButtonForeground: var(--winui-AccentTextFillColorPrimaryBrush);
+		--winui-InfoBarBorderBrush: var(--winui-CardStrokeColorDefaultBrush);
+		--winui-InfoBarBorderThickness: 1px;
 		--winui-SystemControlTransientBorderBrush: color-mix(in srgb, #000000 36%, transparent);
 		--winui-AcrylicBackgroundFillColorDefaultBrush: #2c2c2c;
 		--winui-AcrylicInAppFillColorDefaultBrush: #2c2c2c;
@@ -2953,6 +3041,25 @@
 	--winui-IconInfoBadgeFontIconMargin: 0px 4px 2px 4px;
 	--winui-ValueInfoBadgeTextMargin: 0px 4px 2px 4px;
 	--winui-IconInfoBadgeIconMargin: 4px;
+	--winui-InfoBarErrorSeverityBackgroundBrush: var(--winui-SystemColorWindowColorBrush);
+	--winui-InfoBarWarningSeverityBackgroundBrush: var(--winui-SystemColorWindowColorBrush);
+	--winui-InfoBarSuccessSeverityBackgroundBrush: var(--winui-SystemColorWindowColorBrush);
+	--winui-InfoBarInformationalSeverityBackgroundBrush: var(--winui-SystemColorWindowColorBrush);
+	--winui-InfoBarErrorSeverityIconBackground: var(--winui-SystemColorHighlightColorBrush);
+	--winui-InfoBarWarningSeverityIconBackground: var(--winui-SystemColorHighlightColorBrush);
+	--winui-InfoBarSuccessSeverityIconBackground: var(--winui-SystemColorHighlightColorBrush);
+	--winui-InfoBarInformationalSeverityIconBackground: var(--winui-SystemColorHighlightColorBrush);
+	--winui-InfoBarErrorSeverityIconForeground: var(--winui-SystemColorHighlightTextColorBrush);
+	--winui-InfoBarWarningSeverityIconForeground: var(--winui-SystemColorHighlightTextColorBrush);
+	--winui-InfoBarSuccessSeverityIconForeground: var(--winui-SystemColorHighlightTextColorBrush);
+	--winui-InfoBarInformationalSeverityIconForeground: var(
+		--winui-SystemColorHighlightTextColorBrush
+	);
+	--winui-InfoBarTitleForeground: var(--winui-SystemColorWindowTextColorBrush);
+	--winui-InfoBarMessageForeground: var(--winui-SystemColorWindowTextColorBrush);
+	--winui-InfoBarHyperlinkButtonForeground: var(--winui-SystemColorHotlightColorBrush);
+	--winui-InfoBarBorderBrush: var(--winui-SystemControlTransientBorderBrush);
+	--winui-InfoBarBorderThickness: 2px;
 	--winui-SystemControlTransientBorderBrush: var(--winui-SystemColorWindowTextColor);
 	--winui-AcrylicBackgroundFillColorDefaultBrush: var(--winui-SystemColorWindowColor);
 	--winui-AcrylicInAppFillColorDefaultBrush: var(--winui-SystemColorWindowColor);
