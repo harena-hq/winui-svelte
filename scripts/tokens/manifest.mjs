@@ -1786,6 +1786,11 @@ export const DOUBLE_LENGTHS = {
 	TitleBarRightPaddingWidth: 'the inset the window controls reserve',
 	TitleBarTitleMinWidth: 'the title text',
 
+	ExpanderMinHeight: 'the Expander header row',
+	ExpanderChevronButtonSize: "the Expander chevron button's box",
+	ExpanderChevronGlyphSize: "the Expander chevron's glyph",
+	FlyoutThemeMinWidth: 'the floor under a flyout-sized surface',
+
 	ButtonBorderThemeThickness: 'the border all three Button styles share',
 
 	CheckBoxSize: 'the box a CheckBox draws its glyph in',
@@ -1869,7 +1874,9 @@ export const GLYPHS = {
 	InfoBarInformationalIconGlyph: 'the InfoBar informational icon',
 	InfoBarErrorIconGlyph: 'the InfoBar error icon',
 	InfoBarWarningIconGlyph: 'the InfoBar warning icon',
-	InfoBarSuccessIconGlyph: 'the InfoBar success icon'
+	InfoBarSuccessIconGlyph: 'the InfoBar success icon',
+	ExpanderChevronUpGlyph: "the Expander chevron's up form",
+	ExpanderChevronDownGlyph: "the Expander chevron's down form"
 };
 
 /**
@@ -2330,6 +2337,104 @@ export const INFOBAR_KEYS = {
 	InfoBarMessageVerticalOrientationMargin: 'InfoBar message vertical margin',
 	InfoBarActionHorizontalOrientationMargin: 'InfoBar action horizontal margin',
 	InfoBarActionVerticalOrientationMargin: 'InfoBar action vertical margin'
+};
+
+/**
+ * Keys Expander reads — the eighteenth seed set, and the first of the Surfaces tranche.
+ *
+ * The dictionary is unusually regular: twenty-two themed resources in three parallel
+ * families — nine for the header ToggleButton, nine for the chevron button inside it, and
+ * two for the content border — plus two themed thicknesses, then twelve theme-independent
+ * records. All twenty-two are seeded, including the six the reproduction resolves to the
+ * same value as another state, because this set records the dictionary's surface rather
+ * than this implementation's reads. Measured on the reference guest, only the chevron's
+ * background changes under the pointer: the header's own fill is one brush in every state,
+ * and `ExpanderHeaderBackground` has no `PointerOver` or `Pressed` sibling to change to.
+ *
+ * Two of the twelve theme-independent records are deliberately absent.
+ * `ExpanderHeaderHorizontalContentAlignment` and `ExpanderHeaderVerticalContentAlignment`
+ * are `HorizontalAlignment` and `VerticalAlignment` records, and the generator emits
+ * neither type — the same reason `Symbol` and `Style` records never reach the layer. Their
+ * values (Stretch and Center) are layout decisions the component states in CSS.
+ *
+ * `FlyoutThemeMinWidth` is not in this dictionary at all. The Expander's own style binds
+ * its `MinWidth` to it (`Expander.xaml:20`), and it is defined once in the framework
+ * dictionary at `generic.xaml:56` as 96 in all three themes. It is seeded here because
+ * this is the control that reads it; the first surface control to need it would otherwise
+ * find a hole.
+ */
+/**
+ * Keys more than one pinned dictionary defines, and the file each one's definition is read
+ * from. Every record of that key in any other file is dropped before selection.
+ *
+ * This exists because `Deprecated_themeresources.xaml` and its `_any` sibling carry a
+ * pre-Fluent vocabulary that reuses four of the current Expander's names, and the two
+ * deprecated files also duplicate each other — twenty-one key/theme pairs are defined in
+ * both. Without a rule the generator stops on `defined twice`, which is the right default:
+ * keeping whichever record sorted first would answer a precedence question silently.
+ *
+ * The rule is not "prefer the newer file". It is a measurement. Three of the four agree on
+ * their value anyway — 48, `16`, `16,0,0,0` — so only `ExpanderHeaderBackground` decides
+ * anything, and the deprecated files give it `Transparent` while the Expander's own
+ * dictionary aliases it onto `CardBackgroundFillColorDefaultBrush`. On the reference guest
+ * the Gallery's Expander header measures `#FBFBFB`, which is that alias in the light theme
+ * and is not transparent over the `#F3F3F3` behind it. The control's own dictionary is what
+ * WinUI paints from, so it is what this layer emits from.
+ *
+ * A row whose file defines no record of the key stops the run. That is the failure mode
+ * worth guarding: a re-pin that moves a definition would otherwise leave a row silently
+ * selecting nothing and the duplicate returning.
+ */
+export const DEFINED_BY = {
+	ExpanderHeaderBackground: 'controls/dev/Expander/Expander_themeresources.xaml',
+	ExpanderMinHeight: 'controls/dev/Expander/Expander_themeresources.xaml',
+	ExpanderHeaderPadding: 'controls/dev/Expander/Expander_themeresources.xaml',
+	ExpanderContentPadding: 'controls/dev/Expander/Expander_themeresources.xaml'
+};
+
+export const EXPANDER_KEYS = {
+	// The header ToggleButton. Foreground has three states and border brush three; the
+	// background has one, which is why there is no `ExpanderHeaderBackgroundPointerOver`.
+	ExpanderHeaderBackground: 'the header fill',
+	ExpanderHeaderForeground: 'the header text',
+	ExpanderHeaderForegroundPointerOver: 'the header text under the pointer',
+	ExpanderHeaderForegroundPressed: 'the header text while pressed',
+	ExpanderHeaderBorderBrush: 'the header border',
+	ExpanderHeaderBorderPointerOverBrush: 'the header border under the pointer',
+	ExpanderHeaderBorderPressedBrush: 'the header border while pressed',
+	ExpanderHeaderDisabledForeground: 'the header text when disabled',
+	ExpanderHeaderDisabledBorderBrush: 'the header border when disabled',
+	ExpanderHeaderBorderThickness: 'the header border width',
+
+	// The chevron button. This is the one part that reacts to the pointer.
+	ExpanderChevronBackground: 'the chevron button fill',
+	ExpanderChevronPointerOverBackground: 'the chevron button fill under the pointer',
+	ExpanderChevronPressedBackground: 'the chevron button fill while pressed',
+	ExpanderChevronForeground: 'the chevron glyph',
+	ExpanderChevronPointerOverForeground: 'the chevron glyph under the pointer',
+	ExpanderChevronPressedForeground: 'the chevron glyph while pressed',
+	ExpanderChevronBorderBrush: 'the chevron button border',
+	ExpanderChevronBorderPointerOverBrush: 'the chevron button border under the pointer',
+	ExpanderChevronBorderPressedBrush: 'the chevron button border while pressed',
+	ExpanderChevronBorderThickness: 'the chevron button border width',
+
+	// The content border.
+	ExpanderContentBackground: 'the content fill',
+	ExpanderContentBorderBrush: 'the content border',
+
+	// The theme-independent records. The two border thicknesses are the direction switch:
+	// expanding downward the content has no top border, expanding upward no bottom one.
+	ExpanderMinHeight: 'the header row, and the floor under the content',
+	ExpanderHeaderPadding: 'the inset before the header content',
+	ExpanderChevronMargin: 'the gap around the chevron button',
+	ExpanderChevronUpGlyph: 'the chevron pointing up',
+	ExpanderChevronDownGlyph: 'the chevron pointing down',
+	ExpanderChevronButtonSize: 'the chevron button box',
+	ExpanderChevronGlyphSize: 'the chevron glyph',
+	ExpanderContentPadding: 'the inset around the content',
+	ExpanderContentDownBorderThickness: 'the content border expanding downward',
+	ExpanderContentUpBorderThickness: 'the content border expanding upward',
+	FlyoutThemeMinWidth: "the floor under the Expander's own width, `Expander.xaml:20`"
 };
 
 /**

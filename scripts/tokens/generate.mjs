@@ -29,6 +29,8 @@ import {
 	PROGRESSBAR_KEYS,
 	PROGRESSRING_KEYS,
 	INFOBAR_KEYS,
+	EXPANDER_KEYS,
+	DEFINED_BY,
 	TYPE_RAMP
 } from './manifest.mjs';
 
@@ -742,7 +744,17 @@ function select(resources, framework) {
 	// covers every missing theme of all twenty; `SliderContainerBackground` had no `Default`
 	// and the whole `TextControl*` family had no `HighContrast`. See ADR 0010 and O-merge1.
 	const definitionsOf = (key) => {
-		const own = resources.filter((record) => record.key === key);
+		// `DEFINED_BY` settles the keys more than one dictionary defines, before anything
+		// else looks at them. Filtering here rather than at each of the three call sites is
+		// deliberate: the closure reaches records the seed pass never names, and a rule that
+		// held for named keys only would let a duplicate back in through the walk.
+		const chosen = DEFINED_BY[key];
+		const kept = chosen
+			? resources.filter((record) => record.key !== key || record.file === chosen)
+			: resources;
+		if (chosen && !kept.some((record) => record.key === key))
+			fail(`DEFINED_BY reads \`${key}\` from ${chosen}, which defines no record of it`);
+		const own = kept.filter((record) => record.key === key);
 		if (own.length === 0) return framework.filter((record) => record.key === key);
 		const themes = new Set(own.map((record) => record.theme));
 		// Only a themed scope is filled. A key the pin defines outside any theme dictionary
@@ -780,7 +792,8 @@ function select(resources, framework) {
 		['INFOBADGE_KEYS', INFOBADGE_KEYS],
 		['PROGRESSBAR_KEYS', PROGRESSBAR_KEYS],
 		['PROGRESSRING_KEYS', PROGRESSRING_KEYS],
-		['INFOBAR_KEYS', INFOBAR_KEYS]
+		['INFOBAR_KEYS', INFOBAR_KEYS],
+		['EXPANDER_KEYS', EXPANDER_KEYS]
 	];
 	for (let i = 0; i < SEED_SETS.length; i++)
 		for (let j = i + 1; j < SEED_SETS.length; j++) {
