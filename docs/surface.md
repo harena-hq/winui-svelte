@@ -303,6 +303,48 @@ tall. The check that settles it is the vertical bar's content height: 14 top pad
 - 4 + two message lines + 18 bottom padding. The original measures 93px on the reference
   guest, and so does this.
 
+### Expander — v6 unit 1
+
+`controls/dev/Expander/` carries a `.cpp`, and it is short: `Expander.cpp` is 185 lines and
+does four things. It hands the header ToggleButton's automation peer the Expander's own
+events source so a screen reader hears "expanded" rather than "on"; it applies a composition
+inset clip to `ExpanderContentClip`; it measures the content and writes the height into
+`TemplateSettings` for the storyboards to read; and it maps `IsExpanded` and `ExpandDirection`
+onto four visual states. None of the four is a drawing decision the template does not also
+state, which is why this control transcribes cleanly.
+
+**The one place the code-behind and the template disagree is a defect, and it is visible.**
+`OnExpandDirectionPropertyChanged` at `Expander.cpp:129` calls `UpdateExpandDirection` and
+never `UpdateExpandState`, so changing `ExpandDirection` on an already-expanded Expander moves
+the `ExpandDirectionStates` group and leaves `ExpandStates` where it was. The header's corner
+radius is filtered by the `ExpandStates` group — `ExpandDown` at `Expander.xaml:62` takes the
+top two corners, `ExpandUp` at `:33` the bottom two — so the header keeps the filter for the
+direction it is no longer expanding in. Driven on the reference guest: a Down-expanded
+Expander switched to Up drew its content rounded on top and square below, and its header
+rounded on top and square below as well, leaving a notch at the seam; one collapse/expand
+cycle corrected it. `WD-010` records that this reproduction draws the corrected state.
+
+**Two visual-state groups, and only one of them is about expansion.** `ExpandStates` holds
+four states rather than two, because collapsing is a different animation from expanding and
+each direction has its own pair. They are named for the direction the _content travels_, not
+for `ExpandDirection`, which is why `UpdateExpandState` sends a collapsing downward Expander
+to `CollapseUp`. Reading those four names as if they were `ExpandDirection` values inverts
+the whole control.
+
+**The header is one button, not two.** The chevron looks like a separate control and is a
+`Border` with an `AnimatedIcon` in it, inside the header's own template. Measured on the
+guest: the keyboard focus band surrounds the whole header, and the pointer changes only the
+chevron's fill — the header's own background has no `PointerOver` or `Pressed` resource to
+change to, which is unusual enough to be worth stating, because every other button-shaped
+control in this library has three.
+
+**What the Gallery page asks for.** `ExpanderPage.xaml` has two `ControlExample`s: a text
+header and content with an `ExpandDirection` selector, and a second with `Width="500"`,
+`Padding="0"` and `HorizontalContentAlignment="Left"`. The second exists to vary the content
+alignment, which is the only reason this component exposes a `Control` member as a prop —
+and the measurement that made it necessary is that the default is **Center**, not the left
+alignment a reader assumes.
+
 ## What this file does not cover
 
 The sweep reads what a control _draws_. It does not enumerate automation peers, keyboard
