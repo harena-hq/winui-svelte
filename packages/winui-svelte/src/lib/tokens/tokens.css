@@ -799,6 +799,8 @@
 	--winui-ProgressBarTrackHeight: 1px;
 	--winui-ProgressBarCornerRadius: 1.5px;
 	--winui-ProgressBarTrackCornerRadius: 0.5px;
+	--winui-ProgressRingForegroundThemeBrush: var(--winui-AccentFillColorDefaultBrush);
+	--winui-ProgressRingBackgroundThemeBrush: var(--winui-ControlFillColorTransparentBrush);
 	--winui-TitleBarForegroundBrush: var(--winui-TextFillColorPrimaryBrush);
 	--winui-TitleBarBackButtonBackground: var(--winui-SubtleFillColorTransparentBrush);
 	--winui-TitleBarBackButtonBackgroundPointerOver: var(--winui-SubtleFillColorSecondaryBrush);
@@ -1554,6 +1556,8 @@
 	--winui-ProgressBarBorderBrush: var(--winui-ControlStrokeColorDefaultBrush);
 	--winui-ProgressBarPausedForegroundColor: var(--winui-SystemFillColorCaution);
 	--winui-ProgressBarErrorForegroundColor: var(--winui-SystemFillColorCritical);
+	--winui-ProgressRingForegroundThemeBrush: var(--winui-AccentFillColorDefaultBrush);
+	--winui-ProgressRingBackgroundThemeBrush: var(--winui-ControlFillColorTransparentBrush);
 	--winui-TitleBarForegroundBrush: var(--winui-TextFillColorPrimaryBrush);
 	--winui-TitleBarBackButtonBackground: var(--winui-SubtleFillColorTransparentBrush);
 	--winui-TitleBarBackButtonBackgroundPointerOver: var(--winui-SubtleFillColorSecondaryBrush);
@@ -2322,6 +2326,8 @@
 		--winui-ProgressBarBorderBrush: var(--winui-ControlStrokeColorDefaultBrush);
 		--winui-ProgressBarPausedForegroundColor: var(--winui-SystemFillColorCaution);
 		--winui-ProgressBarErrorForegroundColor: var(--winui-SystemFillColorCritical);
+		--winui-ProgressRingForegroundThemeBrush: var(--winui-AccentFillColorDefaultBrush);
+		--winui-ProgressRingBackgroundThemeBrush: var(--winui-ControlFillColorTransparentBrush);
 		--winui-TitleBarForegroundBrush: var(--winui-TextFillColorPrimaryBrush);
 		--winui-TitleBarBackButtonBackground: var(--winui-SubtleFillColorTransparentBrush);
 		--winui-TitleBarBackButtonBackgroundPointerOver: var(--winui-SubtleFillColorSecondaryBrush);
@@ -3011,6 +3017,8 @@
 	--winui-ProgressBarBorderBrush: var(--winui-SystemColorWindowTextColor);
 	--winui-ProgressBarPausedForegroundColor: var(--winui-SystemColorWindowTextColor);
 	--winui-ProgressBarErrorForegroundColor: var(--winui-SystemColorHotlightColor);
+	--winui-ProgressRingForegroundThemeBrush: var(--winui-SystemColorHighlightColor);
+	--winui-ProgressRingBackgroundThemeBrush: var(--winui-SystemColorButtonFaceColor);
 	--winui-TitleBarForegroundBrush: var(--winui-SystemControlForegroundBaseHighBrush);
 	--winui-TitleBarBackButtonBackground: var(--winui-SystemColorButtonFaceColor);
 	--winui-TitleBarBackButtonBackgroundPointerOver: var(--winui-SystemColorHighlightColor);

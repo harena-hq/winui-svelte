@@ -2233,6 +2233,35 @@ export const PROGRESSBAR_KEYS = {
 };
 
 /**
+ * Keys ProgressRing reads — the sixteenth seed set, immediately after ProgressBar.
+ *
+ * The control's template reads these two brushes: the foreground for the arc and the
+ * background for the track. The track is transparent in Light and Default and visible in
+ * HighContrast because that is what the dictionary says; the track element remains in the
+ * component in every theme.
+ *
+ * The dictionary has a third resource, `ProgressRingStrokeThickness`, set to `4` at
+ * `ProgressRing_themeresources.xaml:17` and again at `.upstream/windows-app-sdk/generic.xaml:35861`.
+ * No template in either pinned source references it, the same defined-but-unreferenced shape
+ * as `InfoBadgeIconHeight` and `InfoBadgeIconWidth`. It does not describe the geometry the
+ * control actually draws either: the determinate stroke is `2.655` and the indeterminate
+ * stroke is `3` in a 32-unit box.
+ *
+ * The ring's geometry is not in a dictionary. It is in the two generated Lottie compositions
+ * under `AnimatedVisuals/`, so this seed set is two brushes and nothing else. A reader looking
+ * for the radius or stroke should continue to `ProgressRing.svelte`; neither key is an
+ * `x:Double`, so there is no `DOUBLE_LENGTHS` row.
+ *
+ * `ProgressRingTemplateSettings` carries `EllipseDiameter`, `EllipseOffset` and
+ * `MaxSideLength` at `ProgressRing.idl:8-12`, but the current template never binds them. The
+ * idl marks them "TemplateSetting properties from WUXC for backwards compatibility".
+ */
+export const PROGRESSRING_KEYS = {
+	ProgressRingForegroundThemeBrush: 'ProgressRing foreground arc',
+	ProgressRingBackgroundThemeBrush: 'ProgressRing background track'
+};
+
+/**
  * The Windows accent ramp: the stock accent `#0078D4` and the six steps WinUI
  * derives from it, measured on the same guest through
  * `Windows.UI.ViewManagement.UISettings.GetColorValue`.
