@@ -251,6 +251,58 @@ at Value 0 and draws a 6x5 cap at Value 1. Both halves passed every gate and eve
 before they were found, because a baseline written from the same wrong render agrees with
 itself.
 
+### InfoBar — v5 unit 6
+
+`InfoBar.cpp` is 307 lines and decides almost nothing about how the control looks. All six of
+its `GoToState` sites pick a visual state, and the **state carries the visuals**, declared in
+the template.
+
+| second half says                                                                                                                                         | state                                                                                                                                          |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| `:223` `UpdateSeverity` maps `Severity` onto one of four states, and each sets the root background, the icon's disc colour, its glyph and its foreground | built as `data-severity`, all four                                                                                                             |
+| `:261` `UpdateIconVisibility` picks `StandardIconVisible`, `UserIconVisible` or `NoIconVisible` from `IsIconVisible` and whether an `IconSource` is set  | built as `data-icon-state`                                                                                                                     |
+| `:266` `UpdateCloseButton` and `:175` `UpdateVisibility`                                                                                                 | built as `closable` and `open`                                                                                                                 |
+| `:282` `UpdateContentPosition` moves the content presenter from grid row 1 to row 0 when there is no title, no message and no action button              | built as `data-content-position`                                                                                                               |
+| `:56-59` gives the close button a tooltip built in code, not in the template                                                                             | built, composing this library's own `ToolTip`                                                                                                  |
+| `:276` `UpdateForeground` copies a locally-set `Foreground` onto Title and Message                                                                       | not built: a consumer's `style` or `class` colour already cascades to both, and inventing a `foreground` prop is what ADR 0002 exists to avoid |
+| `Closing` is cancellable                                                                                                                                 | not built; it is behaviour, and its only visual output is the collapsed state `open` already produces                                          |
+
+Against the Gallery's own page there is **no gap**. Its three `ControlExample`s are a severity
+picker, a Short/Long message crossed with None/Button/Hyperlink action buttons, and an
+icon/close-button pair of checkboxes — every one of which this component can reach.
+
+**The find worth keeping is `InfoBarPanel`, and it is the one part of this control that is not
+a transcription.** It is a custom measure/arrange panel holding Title, Message and the action
+button, and it lays all three out **either as one row or as one column, together**, with
+different margins per orientation. `InfoBarPanel.cpp:69` goes vertical if any of three things
+holds: only one child has a non-zero desired size, the children in a row would be wider than
+the space available, or the tallest child in a row would exceed the parent's `MinHeight`.
+
+No CSS expresses that. `flex-wrap` wraps per item, so a message that fits beside the title but
+not beside the action button gives a two-line row where the original gives three stacked rows;
+container queries and the `calc((THRESHOLD - 100%) * 999)` flex-basis trick both switch on the
+**container's** width, and this switch is on the **content's** — the Gallery's Short and Long
+samples sit in containers of identical width. So the panel measures, and the library's second
+`ResizeObserver` is here.
+
+**The trap is the one `NavigationView.svelte:225` already documents, in its sharper form.**
+There the observer writes a value nothing in the effect reads back. Here the value _is_ the
+layout being measured: measure the row, flip to the column, and the row is gone, so the next
+measurement says it fits and the panel oscillates forever. The fix is that the measurement
+must not depend on the orientation it produces — a `[data-measuring]` attribute overrides the
+orientation to a row of natural widths, the answer is read inside one synchronous block, and
+the attribute is removed before the browser can paint. **A measurement whose subject its own
+result changes is not a slow measurement; it is a loop.**
+
+**One thing the transcription nearly got wrong, and the arithmetic that caught it.** The
+Title and Message TextBlocks at `InfoBar.xaml:113-114` set `FontSize` and `FontWeight` and no
+`Style`, so neither takes the Body ramp's 20px line height — they take the platform default,
+which measures 18px here. Applying the ramp class would have made every vertical bar 3px too
+tall. The check that settles it is the vertical bar's content height: 14 top padding + title
+
+- 4 + two message lines + 18 bottom padding. The original measures 93px on the reference
+  guest, and so does this.
+
 ## What this file does not cover
 
 The sweep reads what a control _draws_. It does not enumerate automation peers, keyboard

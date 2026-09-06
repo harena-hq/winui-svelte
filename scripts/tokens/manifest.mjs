@@ -1832,7 +1832,11 @@ export const DOUBLE_LENGTHS = {
 
 	// ProgressBar's two x:Double lengths.
 	ProgressBarMinHeight: 'the bar a ProgressBar draws',
-	ProgressBarTrackHeight: 'the unfilled track inside it'
+	ProgressBarTrackHeight: 'the unfilled track inside it',
+
+	InfoBarMinHeight: 'the minimum height an InfoBar reserves',
+	InfoBarCloseButtonSize: 'the InfoBar close button box',
+	InfoBarCloseButtonGlyphSize: 'the InfoBar close button glyph'
 };
 
 /**
@@ -1860,7 +1864,12 @@ export const DOUBLE_RATIOS = {
 export const GLYPHS = {
 	NavigationViewItemExpandedGlyph: "an expandable item's chevron",
 	CheckBoxCheckedGlyph: "a checked CheckBox's checkmark",
-	CheckBoxIndeterminateGlyph: "an indeterminate CheckBox's dash"
+	CheckBoxIndeterminateGlyph: "an indeterminate CheckBox's dash",
+	InfoBarIconBackgroundGlyph: 'the InfoBar severity icon disc',
+	InfoBarInformationalIconGlyph: 'the InfoBar informational icon',
+	InfoBarErrorIconGlyph: 'the InfoBar error icon',
+	InfoBarWarningIconGlyph: 'the InfoBar warning icon',
+	InfoBarSuccessIconGlyph: 'the InfoBar success icon'
 };
 
 /**
@@ -2259,6 +2268,68 @@ export const PROGRESSBAR_KEYS = {
 export const PROGRESSRING_KEYS = {
 	ProgressRingForegroundThemeBrush: 'ProgressRing foreground arc',
 	ProgressRingBackgroundThemeBrush: 'ProgressRing background track'
+};
+
+/**
+ * Keys InfoBar reads — the seventeenth seed set, immediately after ProgressRing.
+ *
+ * `InfoBarCloseButtonSymbol` (`InfoBar_themeresources.xaml:87`) and
+ * `InfoBarCloseButtonStyle` (`InfoBar_themeresources.xaml:88`) are deliberately absent: the
+ * first is a `Symbol` and the second a `Style`, and the generator emits neither type. The
+ * close button's glyph is Cancel, `E711`, which the component writes directly.
+ * `InfoBarHyperlinkButtonMargin` is included even though this unit renders no
+ * `HyperlinkButton`, because the token layer's job is the dictionary, not this component's
+ * current use of it.
+ */
+export const INFOBAR_KEYS = {
+	InfoBarErrorSeverityBackgroundBrush: 'InfoBar error severity background',
+	InfoBarInformationalSeverityBackgroundBrush: 'InfoBar informational severity background',
+	InfoBarWarningSeverityBackgroundBrush: 'InfoBar warning severity background',
+	InfoBarSuccessSeverityBackgroundBrush: 'InfoBar success severity background',
+
+	InfoBarErrorSeverityIconBackground: 'InfoBar error icon background',
+	InfoBarInformationalSeverityIconBackground: 'InfoBar informational icon background',
+	InfoBarWarningSeverityIconBackground: 'InfoBar warning icon background',
+	InfoBarSuccessSeverityIconBackground: 'InfoBar success icon background',
+
+	InfoBarErrorSeverityIconForeground: 'InfoBar error icon foreground',
+	InfoBarInformationalSeverityIconForeground: 'InfoBar informational icon foreground',
+	InfoBarWarningSeverityIconForeground: 'InfoBar warning icon foreground',
+	InfoBarSuccessSeverityIconForeground: 'InfoBar success icon foreground',
+
+	InfoBarTitleForeground: 'InfoBar title text',
+	InfoBarMessageForeground: 'InfoBar message text',
+	InfoBarHyperlinkButtonForeground: 'InfoBar HyperlinkButton text',
+	InfoBarBorderBrush: 'InfoBar border',
+	InfoBarBorderThickness: 'InfoBar border width',
+
+	InfoBarTitleFontSize: 'InfoBar title text size',
+	InfoBarTitleFontWeight: 'InfoBar title text weight',
+	InfoBarMessageFontSize: 'InfoBar message text size',
+	InfoBarMessageFontWeight: 'InfoBar message text weight',
+	InfoBarMinHeight: 'InfoBar minimum height',
+	InfoBarCloseButtonSize: 'InfoBar close button size',
+	InfoBarCloseButtonGlyphSize: 'InfoBar close button glyph size',
+
+	InfoBarHyperlinkButtonMargin: 'InfoBar HyperlinkButton margin',
+	InfoBarIconBackgroundGlyph: 'InfoBar icon background glyph',
+	InfoBarInformationalIconGlyph: 'InfoBar informational icon glyph',
+	InfoBarErrorIconGlyph: 'InfoBar error icon glyph',
+	InfoBarWarningIconGlyph: 'InfoBar warning icon glyph',
+	InfoBarSuccessIconGlyph: 'InfoBar success icon glyph',
+
+	InfoBarContentRootPadding: 'InfoBar content root padding',
+	InfoBarIconMargin: 'InfoBar icon margin',
+	InfoBarIconFontSize: 'InfoBar icon size',
+	InfoBarPanelMargin: 'InfoBar panel margin',
+	InfoBarPanelHorizontalOrientationPadding: 'InfoBar horizontal panel padding',
+	InfoBarPanelVerticalOrientationPadding: 'InfoBar vertical panel padding',
+	InfoBarTitleHorizontalOrientationMargin: 'InfoBar title horizontal margin',
+	InfoBarTitleVerticalOrientationMargin: 'InfoBar title vertical margin',
+	InfoBarMessageHorizontalOrientationMargin: 'InfoBar message horizontal margin',
+	InfoBarMessageVerticalOrientationMargin: 'InfoBar message vertical margin',
+	InfoBarActionHorizontalOrientationMargin: 'InfoBar action horizontal margin',
+	InfoBarActionVerticalOrientationMargin: 'InfoBar action vertical margin'
 };
 
 /**
