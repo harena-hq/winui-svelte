@@ -505,6 +505,10 @@
 	--winui-TextOnAccentFillColorDefault: #ffffff;
 	--winui-ControlAAStrokeColorDefault: #00000072;
 	--winui-TextOnAccentFillColorDefaultBrush: var(--winui-TextOnAccentFillColorDefault);
+	--winui-FlyoutPresenterBackground: var(--winui-AcrylicInAppFillColorDefaultBrush);
+	--winui-FlyoutBorderThemeBrush: var(--winui-SurfaceStrokeColorFlyoutBrush);
+	--winui-FlyoutBorderThemeThickness: 1px;
+	--winui-FlyoutContentPadding: 15px 16px 17px 16px;
 	--winui-PasswordBoxTopHeaderMargin: 0px 0px 8px 0px;
 	--winui-PasswordBoxIconFontSize: 12px;
 	--winui-RadioButtonBorderThemeThickness: 1px;
@@ -909,6 +913,9 @@
 	--winui-TitleBarIconMargin: 0px 16px 0px 0px;
 	--winui-TitleBarTitleMargin: 0px 8px 0px 0px;
 	--winui-AutoSuggestListMaxHeight: 374px;
+	--winui-FlyoutThemeMaxHeight: 758px;
+	--winui-FlyoutThemeMaxWidth: 456px;
+	--winui-FlyoutThemeMinHeight: 40px;
 	--winui-FlyoutThemeMinWidth: 96px;
 	--winui-TextControlThemeMinWidth: 64px;
 	--winui-AutoSuggestListBorderThemeThickness: 1px;
@@ -1411,6 +1418,9 @@
 	--winui-TextOnAccentFillColorDefault: #ffffff;
 	--winui-ControlAAStrokeColorDefault: #ffffff8b;
 	--winui-TextOnAccentFillColorDefaultBrush: var(--winui-TextOnAccentFillColorDefault);
+	--winui-FlyoutPresenterBackground: var(--winui-AcrylicInAppFillColorDefaultBrush);
+	--winui-FlyoutBorderThemeBrush: var(--winui-SurfaceStrokeColorFlyoutBrush);
+	--winui-FlyoutBorderThemeThickness: 1px;
 	--winui-RadioButtonBorderThemeThickness: 1px;
 	--winui-RadioButtonForeground: var(--winui-TextFillColorPrimaryBrush);
 	--winui-RadioButtonForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
@@ -1694,6 +1704,9 @@
 	--winui-TitleBarPaneToggleButtonForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
 	--winui-TitleBarPaneToggleButtonForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
 	--winui-AutoSuggestListMaxHeight: 374px;
+	--winui-FlyoutThemeMaxHeight: 758px;
+	--winui-FlyoutThemeMaxWidth: 456px;
+	--winui-FlyoutThemeMinHeight: 40px;
 	--winui-FlyoutThemeMinWidth: 96px;
 	--winui-TextControlThemeMinWidth: 64px;
 	--winui-AutoSuggestListBorderThemeThickness: 1px;
@@ -2215,6 +2228,9 @@
 		--winui-TextOnAccentFillColorDefault: #ffffff;
 		--winui-ControlAAStrokeColorDefault: #ffffff8b;
 		--winui-TextOnAccentFillColorDefaultBrush: var(--winui-TextOnAccentFillColorDefault);
+		--winui-FlyoutPresenterBackground: var(--winui-AcrylicInAppFillColorDefaultBrush);
+		--winui-FlyoutBorderThemeBrush: var(--winui-SurfaceStrokeColorFlyoutBrush);
+		--winui-FlyoutBorderThemeThickness: 1px;
 		--winui-RadioButtonBorderThemeThickness: 1px;
 		--winui-RadioButtonForeground: var(--winui-TextFillColorPrimaryBrush);
 		--winui-RadioButtonForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
@@ -2514,6 +2530,9 @@
 		--winui-TitleBarPaneToggleButtonForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
 		--winui-TitleBarPaneToggleButtonForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
 		--winui-AutoSuggestListMaxHeight: 374px;
+		--winui-FlyoutThemeMaxHeight: 758px;
+		--winui-FlyoutThemeMaxWidth: 456px;
+		--winui-FlyoutThemeMinHeight: 40px;
 		--winui-FlyoutThemeMinWidth: 96px;
 		--winui-TextControlThemeMinWidth: 64px;
 		--winui-AutoSuggestListBorderThemeThickness: 1px;
@@ -2979,6 +2998,9 @@
 	--winui-TextOnAccentFillColorDefault: #ffffff;
 	--winui-ControlAAStrokeColorDefault: #ffffff8b;
 	--winui-TextOnAccentFillColorDefaultBrush: var(--winui-SystemColorWindowTextColor);
+	--winui-FlyoutPresenterBackground: var(--winui-SystemColorWindowColorBrush);
+	--winui-FlyoutBorderThemeBrush: var(--winui-SystemColorWindowTextColorBrush);
+	--winui-FlyoutBorderThemeThickness: 2px;
 	--winui-RadioButtonBorderThemeThickness: 1px;
 	--winui-RadioButtonForeground: var(--winui-SystemColorButtonTextColorBrush);
 	--winui-RadioButtonForegroundPointerOver: var(--winui-SystemColorButtonTextColorBrush);
@@ -3309,6 +3331,9 @@
 		--winui-SystemControlHighlightAltChromeWhiteBrush
 	);
 	--winui-AutoSuggestListMaxHeight: 374px;
+	--winui-FlyoutThemeMaxHeight: 758px;
+	--winui-FlyoutThemeMaxWidth: 456px;
+	--winui-FlyoutThemeMinHeight: 40px;
 	--winui-FlyoutThemeMinWidth: 96px;
 	--winui-TextControlThemeMinWidth: 64px;
 	--winui-AutoSuggestListBorderThemeThickness: 1px;

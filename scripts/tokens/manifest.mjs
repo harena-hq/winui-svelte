@@ -1786,6 +1786,10 @@ export const DOUBLE_LENGTHS = {
 	TitleBarRightPaddingWidth: 'the inset the window controls reserve',
 	TitleBarTitleMinWidth: 'the title text',
 
+	FlyoutThemeMaxWidth: 'the widest a flyout-sized surface gets',
+	FlyoutThemeMinHeight: 'the floor under a flyout-sized surface',
+	FlyoutThemeMaxHeight: 'the tallest a flyout-sized surface gets before it scrolls',
+
 	ExpanderMinHeight: 'the Expander header row',
 	ExpanderChevronButtonSize: "the Expander chevron button's box",
 	ExpanderChevronGlyphSize: "the Expander chevron's glyph",
@@ -2390,6 +2394,30 @@ export const DEFINED_BY = {
 	ExpanderMinHeight: 'controls/dev/Expander/Expander_themeresources.xaml',
 	ExpanderHeaderPadding: 'controls/dev/Expander/Expander_themeresources.xaml',
 	ExpanderContentPadding: 'controls/dev/Expander/Expander_themeresources.xaml'
+};
+
+/**
+ * Keys Flyout reads — the nineteenth seed set, and the second of the Surfaces tranche.
+ *
+ * `FlyoutPresenter_themeresources.xaml` is unusually complete: `DefaultFlyoutPresenterStyle`
+ * at `:22` is the whole visual, and its template at `:43` is one `Border` with a background,
+ * a border, a corner radius and `BackgroundSizing="InnerBorderEdge"` around a `ScrollViewer`.
+ * Every value it sets is here except the two the layer already emits — `OverlayCornerRadius`
+ * from the corner-radius dictionary, and `FlyoutThemeMinWidth`, which the Expander's set
+ * brought in from the framework dictionary because `Expander.xaml:19` reads it too.
+ *
+ * `FlyoutThemeTouchMinWidth` is defined beside the other four sizes and is deliberately
+ * absent: no style in the pinned source references it, and this selection records what a
+ * control reads rather than what its neighbourhood defines.
+ */
+export const FLYOUT_KEYS = {
+	FlyoutPresenterBackground: 'the flyout surface',
+	FlyoutBorderThemeBrush: 'the flyout border',
+	FlyoutBorderThemeThickness: 'the flyout border width — 1, and 2 under high contrast',
+	FlyoutContentPadding: 'the inset around the flyout content',
+	FlyoutThemeMaxWidth: 'the width a flyout never exceeds',
+	FlyoutThemeMinHeight: 'the floor under a flyout',
+	FlyoutThemeMaxHeight: 'the height a flyout never exceeds, past which it scrolls'
 };
 
 export const EXPANDER_KEYS = {
