@@ -178,6 +178,10 @@
 	   positions it absolutely; the rules below only paint it. `display: grid; place-items:
 	   center` keeps the inner accent circle centred. `cursor: pointer` is what tells the
 	   pointer it can drag the value. */
+	/* `outline: none` for the reason every other component here sets it: the focus visual
+	   is drawn by this component, on `.container::before` below, and the user agent's own
+	   ring is a second one. On the thumb it is not merely redundant — the thumb is round
+	   and the ring is drawn around its box, so the two are different shapes. */
 	.thumb {
 		width: var(--winui-SliderHorizontalThumbWidth);
 		height: var(--winui-SliderHorizontalThumbHeight);
@@ -185,6 +189,7 @@
 		display: grid;
 		place-items: center;
 		cursor: pointer;
+		outline: none;
 	}
 
 	/* `SliderThumbStyle` at Slider_themeresources.xaml:192: the visible circle is a
