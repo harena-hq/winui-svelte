@@ -24,6 +24,31 @@
 		{ id: 'disabled-toggle', text: 'Disabled toggle item', toggle: true, disabled: true }
 	];
 
+	const iconItems: MenuFlyoutEntry[] = [
+		{ id: 'share', text: 'Share', glyph: 'E72D' },
+		{ id: 'copy', text: 'Copy', glyph: 'E8C8' },
+		{ id: 'delete', text: 'Delete', glyph: 'E74D' },
+		{ separator: true },
+		{ id: 'rename', text: 'Rename' },
+		{ id: 'select', text: 'Select' }
+	];
+
+	const iconAndAcceleratorItems: MenuFlyoutEntry[] = [
+		{ id: 'share', text: 'Share', glyph: 'E72D', keyboardAcceleratorTextOverride: 'Ctrl+S' },
+		{ id: 'copy', text: 'Copy', glyph: 'E8C8', keyboardAcceleratorTextOverride: 'Ctrl+C' },
+		{ id: 'delete', text: 'Delete', glyph: 'E74D', keyboardAcceleratorTextOverride: 'Delete' },
+		{ separator: true },
+		{ id: 'rename', text: 'Rename' },
+		{ id: 'select', text: 'Select' },
+		{
+			id: 'toggle',
+			text: 'Toggle',
+			toggle: true,
+			glyph: 'E72D',
+			keyboardAcceleratorTextOverride: 'Ctrl+T'
+		}
+	];
+
 	const placementItems = [{ id: 'item', text: 'Menu item' }];
 	const placements = [
 		'top',
@@ -74,6 +99,24 @@
 	<MenuFlyout open items={disabledItems}>
 		{#snippet children(props)}
 			<Button {...props}>Actions</Button>
+		{/snippet}
+	</MenuFlyout>
+</div>
+
+<h2 class="winui-SubtitleTextBlockStyle">icons</h2>
+<div class="row clear-above indent">
+	<MenuFlyout open items={iconItems}>
+		{#snippet children(props)}
+			<Button {...props}>Edit Options</Button>
+		{/snippet}
+	</MenuFlyout>
+</div>
+
+<h2 class="winui-SubtitleTextBlockStyle">icons and accelerators</h2>
+<div class="row clear-above indent">
+	<MenuFlyout open items={iconAndAcceleratorItems}>
+		{#snippet children(props)}
+			<Button {...props}>Edit Options with accelerators</Button>
 		{/snippet}
 	</MenuFlyout>
 </div>

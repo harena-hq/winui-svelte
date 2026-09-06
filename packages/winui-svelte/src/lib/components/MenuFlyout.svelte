@@ -10,6 +10,13 @@
 		text: string;
 		/** IsEnabled, inverted — ADR 0009. */
 		disabled?: boolean;
+		/**
+		 * `Icon`, narrowed to a `FontIcon`: a Segoe Fluent Icons code point as uppercase hex,
+		 * e.g. `'E72D'`. `NavigationViewItemData.glyph` spells the same thing the same way.
+		 */
+		glyph?: string;
+		/** KeyboardAcceleratorTextOverride: the label drawn at the right of the row. */
+		keyboardAcceleratorTextOverride?: string;
 	}
 
 	/**
@@ -22,6 +29,13 @@
 		text: string;
 		toggle: true;
 		disabled?: boolean;
+		/**
+		 * `Icon`, narrowed to a `FontIcon`: a Segoe Fluent Icons code point as uppercase hex,
+		 * e.g. `'E72D'`. `NavigationViewItemData.glyph` spells the same thing the same way.
+		 */
+		glyph?: string;
+		/** KeyboardAcceleratorTextOverride: the label drawn at the right of the row. */
+		keyboardAcceleratorTextOverride?: string;
 	}
 
 	/** A `MenuFlyoutSeparator`. It has no state and no identity, so it has no other field. */
@@ -117,6 +131,7 @@
 
 	const position = $derived(placements[placement]);
 	const hasCheckColumn = $derived(items.some((entry) => 'toggle' in entry));
+	const hasIconColumn = $derived(items.some((entry) => 'glyph' in entry && Boolean(entry.glyph)));
 </script>
 
 <DropdownMenu.Root
@@ -143,6 +158,7 @@
 						class={['presenter', 'winui-BodyTextBlockStyle', className]}
 						{style}
 						data-gutter={hasCheckColumn ? '' : undefined}
+						data-icons={hasIconColumn ? '' : undefined}
 						{...rest}
 					>
 						{#each items as entry, index (index)}
@@ -171,7 +187,19 @@
 									{#snippet child({ props })}
 										<div {...props} class="item toggle">
 											<span class="check" aria-hidden="true"></span>
-											<span class="text">{entry.text}</span>
+											<span class="body">
+												{#if entry.glyph}
+													<span class="icon" aria-hidden="true">
+														{String.fromCodePoint(parseInt(entry.glyph, 16))}
+													</span>
+												{/if}
+												<span class="text">{entry.text}</span>
+											</span>
+											{#if entry.keyboardAcceleratorTextOverride}
+												<span class="accelerator winui-CaptionTextBlockStyle">
+													{entry.keyboardAcceleratorTextOverride}
+												</span>
+											{/if}
 										</div>
 									{/snippet}
 								</DropdownMenu.CheckboxItem>
@@ -181,7 +209,21 @@
 									onSelect={() => onItemInvoked?.(entry.id)}
 								>
 									{#snippet child({ props })}
-										<div {...props} class="item"><span class="text">{entry.text}</span></div>
+										<div {...props} class="item">
+											<span class="body">
+												{#if entry.glyph}
+													<span class="icon" aria-hidden="true">
+														{String.fromCodePoint(parseInt(entry.glyph, 16))}
+													</span>
+												{/if}
+												<span class="text">{entry.text}</span>
+											</span>
+											{#if entry.keyboardAcceleratorTextOverride}
+												<span class="accelerator winui-CaptionTextBlockStyle">
+													{entry.keyboardAcceleratorTextOverride}
+												</span>
+											{/if}
+										</div>
 									{/snippet}
 								</DropdownMenu.Item>
 							{/if}
@@ -321,8 +363,85 @@
 		min-width: 0;
 	}
 
-	.presenter[data-gutter] .item:not(.toggle) .text {
+	.body {
+		position: relative;
+		flex: 1;
+		min-width: 0;
+	}
+
+	.icon {
+		position: absolute;
+		left: 0;
+		top: 50%;
+		/* the Viewbox at MenuFlyout_themeresources.xaml:388 — `Width="16" Height="16"`,
+		   `VerticalAlignment="Center"`. `translateY` is what centres an absolutely
+		   positioned box on a line whose height is the font's. */
+		width: 16px;
+		height: 16px;
+		transform: translateY(-50%);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		/* c1-allow: MenuFlyout_themeresources.xaml:389, the `ContentPresenter` holds the sample's
+		   bare `<FontIcon>`, whose default FontSize is 20, scaled by the 16px Viewbox to 16. */
+		font-size: 16px;
+		font-family: var(--winui-SymbolThemeFontFamily);
+		color: inherit;
+	}
+
+	/* CheckPlaceholder / IconPlaceholder: one column, so the text clears 28. */
+	.presenter[data-gutter]:not([data-icons]) .item:not(.toggle) .text,
+	.presenter[data-icons]:not([data-gutter]) .item .text,
+	.presenter[data-icons][data-gutter] .item.toggle .text {
 		margin: var(--winui-MenuFlyoutItemPlaceholderThemeThickness);
+	}
+
+	/* CheckAndIconPlaceholder: a plain row clears both columns. */
+	.presenter[data-icons][data-gutter] .item:not(.toggle) .text {
+		margin: var(--winui-MenuFlyoutItemDoublePlaceholderThemeThickness);
+	}
+
+	/* `IconRoot.Margin` in the same state: the icon clears the check column only. */
+	.presenter[data-icons][data-gutter] .item:not(.toggle) .icon {
+		margin: var(--winui-MenuFlyoutItemPlaceholderThemeThickness);
+	}
+
+	.accelerator {
+		flex: none;
+		text-align: right;
+		/* MenuFlyout_themeresources.xaml:392, `Margin="24,4,0,0"` on the item template. */
+		margin: 4px 0 0 24px;
+		color: var(--winui-MenuFlyoutItemKeyboardAcceleratorTextForeground);
+	}
+
+	.item.toggle .accelerator {
+		/* :493, `Margin="24,0,0,0"` — the toggle template's own, 4px different. */
+		margin: 0 0 0 24px;
+		color: var(--winui-ToggleMenuFlyoutItemKeyboardAcceleratorTextForeground);
+	}
+
+	.item[data-highlighted]:not([data-disabled]) .accelerator {
+		color: var(--winui-MenuFlyoutItemKeyboardAcceleratorTextForegroundPointerOver);
+	}
+
+	.item:active:not([data-disabled]) .accelerator {
+		color: var(--winui-MenuFlyoutItemKeyboardAcceleratorTextForegroundPressed);
+	}
+
+	.item[data-disabled] .accelerator {
+		color: var(--winui-MenuFlyoutItemKeyboardAcceleratorTextForegroundDisabled);
+	}
+
+	.item.toggle[data-highlighted]:not([data-disabled]) .accelerator {
+		color: var(--winui-ToggleMenuFlyoutItemKeyboardAcceleratorTextForegroundPointerOver);
+	}
+
+	.item.toggle:active:not([data-disabled]) .accelerator {
+		color: var(--winui-ToggleMenuFlyoutItemKeyboardAcceleratorTextForegroundPressed);
+	}
+
+	.item.toggle[data-disabled] .accelerator {
+		color: var(--winui-ToggleMenuFlyoutItemKeyboardAcceleratorTextForegroundDisabled);
 	}
 
 	.separator {
