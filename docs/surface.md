@@ -114,6 +114,52 @@ props that unit had left open: `offset`, because the gap above the Slider's thum
 dictionary. They came from pressing the original's thumb and photographing what happened,
 which is what this file exists to make routine.
 
+## Swept before sealing
+
+The section above is the retrospective sweep of the twelve controls that already existed.
+Everything below is the procedure being run in its intended order — **before** a control is
+sealed — one entry per control, added by the unit that sealed it.
+
+### ToolTip — v5 unit 1
+
+There is no `controls/dev/ToolTip/` at all — step 1's stronger answer. ToolTip is a
+`Windows.UI.Xaml` control that WinUI 3 only restyles, so its resources sit in
+`controls/dev/CommonStyles/ToolTip_themeresources.xaml`, 77 lines, with the other restyled
+controls' dictionaries; there is no implementation anywhere in the pin, and steps 2 and 3
+of the procedure do not apply. The Gallery's page and Microsoft's
+published reference are the whole of the second half. What that left open —
+`PlacementRect`, and a `VerticalOffset` whose effect on the guest did not reduce to a
+simple delta — is deferred in `plan.md` rather than guessed at.
+
+### InfoBadge — v5 unit 3
+
+`InfoBadge.cpp` is 103 lines and **all four of its behaviours are outside the template**.
+The control is small enough that the grep in step 2 was a whole reading.
+
+| second half says                                                                                                                                                                                                                            | state                                                                                                                            |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| `InfoBadge.cpp:59` chooses the display kind — `Value >= 0` is the value badge, else an `IconSource` is the icon badge, else the dot. The template's four `DisplayKindStates` have no XAML trigger at all; the order is entirely in the code | built, in the same order                                                                                                         |
+| `InfoBadge.cpp:90` computes the pill radius as `ActualHeight / 2` and hands it to the template through `InfoBadgeTemplateSettings`. **There is no corner-radius resource for this control**                                                 | built — CSS clamps a radius to half the shorter side, so half of `InfoBadgeMaxHeight` reproduces every height the badge can take |
+| `InfoBadge.cpp:29`'s `MeasureOverride` returns `{ height, height }` for a badge measured narrower than it is tall, which is what makes a one-digit value badge a circle                                                                     | built as a `min-width` in the two content states                                                                                 |
+| `InfoBadge.cpp:48` throws `hresult_out_of_bounds` when `Value` is set below -1                                                                                                                                                              | not reproduced; every value below 0 is the dot state, and a comment at the site says why                                         |
+
+And against the Gallery's own page:
+
+| the page's example                                                              | ours                                                                                                                                                                                                                                                                                                                                     |
+| ------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `NavigationViewItem.InfoBadge` — a badge carried in an item's own slot          | not built; the slot belongs to NavigationViewItem, not here                                                                                                                                                                                                                                                                              |
+| `Style="{StaticResource <Severity><Kind>InfoBadgeStyle}"`, fifteen named styles | one `variant` prop. The Dot/Value/Icon third of each name carries no styling — the display kind is already decided by `Value` and `IconSource` — so six backgrounds cover all sixteen. The five `…Icon…` styles additionally bake in a default glyph; a consumer passes the code point instead, and the component's TSDoc lists all five |
+
+**What the sweep did not catch, and measurement did.** The two icon styles that use a
+`FontIconSource` also set `Padding="0,4,0,2"`, and the spec for this unit read that padding
+as sizing — it shrinks the `Viewbox`, so setting the glyph's `font-size` directly makes it
+redundant. It is not redundant. The inset is _asymmetric_, and 4 above with 2 below is not
+the same as centring: dropping it drew every severity's glyph one pixel high, which the
+whole battery was green on. It was found by reading the icon's box off the reference guest
+and comparing it with the original's — 4 above and 4 below, against ours at 3 and 5. **A
+resource that looks like it only sets a size can be setting a position**, and the way to
+tell is to measure the box rather than the badge.
+
 ## What this file does not cover
 
 The sweep reads what a control _draws_. It does not enumerate automation peers, keyboard
