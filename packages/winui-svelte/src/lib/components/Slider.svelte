@@ -40,6 +40,7 @@
 
 <script lang="ts">
 	import { Slider } from 'bits-ui';
+	import { focusVisual } from '../internal/focus-visual';
 
 	let {
 		value = $bindable(0),
@@ -100,7 +101,7 @@
 				{#each thumbItems as thumb (thumb.index)}
 					<Slider.Thumb index={thumb.index}>
 						{#snippet child({ props })}
-							<span {...props} bind:this={ref} class="thumb">
+							<span {...props} bind:this={ref} class="thumb" {@attach focusVisual}>
 								<span class="inner"></span>
 							</span>
 						{/snippet}
@@ -257,8 +258,19 @@
 
 	/* The focus visual, the shape Button.svelte records. The tab stop is the thumb, so
 	   the selector reaches through to it; `DefaultSliderStyle` at :184 sets
-	   `FocusVisualMargin="-7,0,-7,0"`, which is `inset: 0 -7px`. */
-	.container:has(.thumb:focus-visible)::before {
+	   `FocusVisualMargin="-7,0,-7,0"`, which is `inset: 0 -7px`.
+
+	   The selector is keyed on an attribute the attachment sets rather than on
+	   `:focus-visible`, which is what every other component here uses. A `<span>` is not
+	   mouse-focusable, so pressing the thumb focuses nothing; the primitive then calls
+	   `.focus()` on it from a script, and Chromium grants `:focus-visible` to that.
+	   Measured: after a mouse drag the thumb still matches `:focus-visible`, so the band
+	   lit up around the track where the original shows nothing — WinUI draws it for
+	   `FocusState.Keyboard` only. The attachment tracks the modality at the document and
+	   sets the attribute when and only when it is keyboard, which is the distinction
+	   `:focus-visible` already makes for an element the user agent focuses itself. This
+	   one is not that element. */
+	.container:has(.thumb[data-focus-visual])::before {
 		content: '';
 		position: absolute;
 		/* c1-allow: Slider_themeresources.xaml:184, `FocusVisualMargin="-7,0,-7,0"` — XAML
