@@ -59,6 +59,9 @@
 		flex-direction: column;
 		gap: 24px;
 		margin-bottom: 24px;
-		width: 1000px;
+		/* Capped, not fixed: the snapshot viewport is 1280 wide so this is 1000 there and the
+		   baselines are stable, while a narrower window shrinks it and the panel's orientation
+		   switch can be seen by resizing. */
+		width: min(1000px, 100%);
 	}
 </style>
