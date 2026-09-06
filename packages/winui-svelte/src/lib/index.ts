@@ -26,6 +26,8 @@ export { default as TextBox } from './components/TextBox.svelte';
 export type { TextBoxProps } from './components/TextBox.svelte';
 export { default as ToggleSwitch } from './components/ToggleSwitch.svelte';
 export type { ToggleSwitchProps } from './components/ToggleSwitch.svelte';
+export { default as ToolTip } from './components/ToolTip.svelte';
+export type { ToolTipProps } from './components/ToolTip.svelte';
 export type {
 	NavigationViewDisplayMode,
 	NavigationViewEntry,

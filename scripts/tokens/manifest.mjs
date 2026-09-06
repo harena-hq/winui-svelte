@@ -1821,7 +1821,9 @@ export const DOUBLE_LENGTHS = {
 	AutoSuggestListMaxHeight: 'the height the AutoSuggestBox suggestion list never exceeds',
 	AutoSuggestBoxLeftButtonMargin: 'the spacer column left of the AutoSuggestBox delete button',
 	TextControlThemeMinWidth: 'the minimum width an editable text box reserves',
-	NumberBoxMinWidth: 'the width the NumberBox reserves when spin buttons are inline'
+	NumberBoxMinWidth: 'the width the NumberBox reserves when spin buttons are inline',
+
+	ToolTipMaxWidth: 'the width a ToolTip content never exceeds'
 };
 
 /**
@@ -1894,16 +1896,30 @@ export const SYSTEM_COLORS = {
  * than in the per-control `*_themeresources.xaml` files the extractor walks, so there is
  * nothing to extract and the value is written here.
  *
- * The value is ADR 0003's decision, not a new one: reference the family by name and embed
- * nothing. `tests/visual/fonts.spec.ts` fails if it stops resolving where the baselines are
- * taken, which is the only place the reference can be checked.
+ * `ContentControlThemeFontFamily` is the second one. `DefaultToolTipStyle` at
+ * ToolTip_themeresources.xaml:48 binds `FontFamily` to it directly — and the tooltips are
+ * the only place in the acceptance surface that does, because every other control reads
+ * the family through one of the `*TextBlockStyle` records in the type ramp rather than
+ * through a `Setter` on the control's own template. Nothing in either pin defines it: the
+ * XAML framework dictionary that ships with WinUI is the source, the same pin that
+ * supplies `SymbolThemeFontFamily`, and the value has to be written here for the same
+ * reason.
  *
- * One entry, because one is what the acceptance surface needs. WinUI's text-family resource
- * is not here for the same reason the rest of the per-control vocabulary is not: emitting a
- * name nothing reads makes the layer harder to audit and easier to trust wrongly.
+ * The two stack values are kept in step: the `Text` row here is the same stack
+ * `scripts/tokens/generate.mjs:590` builds for the type ramp's Text face, and ADR 0003
+ * fixes both — a future change to one is a change to the other.
+ *
+ * The values are ADR 0003's decision, not a new one: reference the family by name and embed
+ * nothing. `tests/visual/fonts.spec.ts` fails if they stop resolving where the baselines
+ * are taken, which is the only place the reference can be checked.
+ *
+ * Two entries, because two is what the acceptance surface needs. WinUI's text-family
+ * resource is not here for the same reason the rest of the per-control vocabulary is not:
+ * emitting a name nothing reads makes the layer harder to audit and easier to trust wrongly.
  */
 export const PLATFORM_FONTS = {
-	SymbolThemeFontFamily: "'Segoe Fluent Icons'"
+	SymbolThemeFontFamily: "'Segoe Fluent Icons'",
+	ContentControlThemeFontFamily: "'Segoe UI Variable Text', 'Segoe UI', sans-serif"
 };
 
 /**
@@ -2073,6 +2089,67 @@ export const PLATFORM_BRUSHES = {
 		to: 'SystemColorHighlightColor',
 		themes: ['HighContrast']
 	}
+};
+
+/**
+ * Keys ToolTip reads — the thirteenth seed set, after NumberBox.
+ *
+ * `DefaultToolTipStyle` is a `Setter`-only template at ToolTip_themeresources.xaml:42 —
+ * the dictionary defines twelve `ToolTip*` resources and the style reads seven of them,
+ * the two down-level aliases and the three UWP-era `*ThemeBrush` names being the five
+ * left out. `ToolTipContentThemeFontSize` is the one themed `x:Double` (12 in all three
+ * themes); `ToolTipBorderThemeThickness` is the one themed `Thickness` (1 in all three);
+ * `ToolTipBorderPadding` and `ToolTipMaxWidth` are theme-independent (`Thickness` 9,6,9,8
+ * and `x:Double` 320). The three brushes — `ToolTipForegroundBrush`,
+ * `ToolTipBackgroundBrush`, `ToolTipBorderBrush` — are themed and aliased onto
+ * `TextFillColorPrimaryBrush`, `AcrylicInAppFillColorDefaultBrush` and
+ * `SurfaceStrokeColorFlyoutBrush` in the Default and Light dictionaries, with all three
+ * resolving to system colour keys under HighContrast. `ControlCornerRadius` is the one
+ * resource the template reads that is already emitted.
+ *
+ * What this list leaves out, so a gap reads as a decision rather than an oversight. The
+ * ToolTip dictionary carries twelve resources; these are the five not here:
+ *
+ * - **`ToolTipForeground` and `ToolTipBackground`.** Down-level aliases of the
+ *   `…Brush` pair the template actually reads. The legacy alias names are not referenced
+ *   in the current template, the same shape as the pre-Fluent `*ThemeBrush` families
+ *   called out by every other control's preamble. They are not seeded here because nothing
+ *   in this component reads them; if a later ToolTip tranche takes the dictionary whole,
+ *   they arrive with it.
+ * - **`ToolTipForegroundThemeBrush`, `ToolTipBackgroundThemeBrush` and
+ *   `ToolTipBorderThemeBrush`.** The UWP-era `*ThemeBrush` names, with hardcoded
+ *   `<Color>` values — `#FF666666`, `#FFFFFFFF`, `#FF808080` — from a palette this
+ *   library does not use, and the current template references none of them. Same family
+ *   and same reason as the pre-Fluent brushes Button, TextBox, CheckBox, RadioButton,
+ *   ToggleSwitch, Slider and ComboBox each list in their own preamble.
+ *
+ * `ToolTipBorderThemePadding` is a fourth name a reader will expect to find discussed
+ * here and it is not this dictionary's: it lives in `Deprecated_themeresources.xaml` at
+ * `8,5,8,7`, which is the pre-Fluent padding `ToolTipBorderPadding` replaced. It is out
+ * of this set because it is out of this file.
+ *
+ * `ContentControlThemeFontFamily` is not seeded here because it is a `FontFamily` rather
+ * than a colour or length, and the per-theme font is reached through `PLATFORM_FONTS`
+ * below. `ControlCornerRadius` is not seeded here because it is already emitted through
+ * the corner-radii source file. `ToolTipMaxWidth` is an `x:Double` that is a length, so
+ * it needs a `DOUBLE_LENGTHS` row; the generator stops and names it otherwise.
+ */
+export const TOOLTIP_KEYS = {
+	// The three themed brushes the template binds onto Foreground, Background and
+	// BorderBrush.
+	ToolTipForegroundBrush: 'ToolTip text',
+	ToolTipBackgroundBrush: 'ToolTip background',
+	ToolTipBorderBrush: 'ToolTip border',
+
+	// The themed border thickness (1 in all three themes) and the themed font size
+	// (12 in all three themes).
+	ToolTipBorderThemeThickness: 'ToolTip border width',
+	ToolTipContentThemeFontSize: 'ToolTip text size',
+
+	// The theme-independent padding (9,6,9,8) and the theme-independent max width
+	// (320). `ToolTipMaxWidth` is the `DOUBLE_LENGTHS` row.
+	ToolTipBorderPadding: 'ToolTip padding inside its border',
+	ToolTipMaxWidth: 'ToolTip, the width its content never exceeds'
 };
 
 /**
