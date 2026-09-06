@@ -13,6 +13,8 @@ export { default as CheckBox } from './components/CheckBox.svelte';
 export type { CheckBoxProps } from './components/CheckBox.svelte';
 export { default as ComboBox } from './components/ComboBox.svelte';
 export type { ComboBoxItemData, ComboBoxProps } from './components/ComboBox.svelte';
+export { default as InfoBadge } from './components/InfoBadge.svelte';
+export type { InfoBadgeProps } from './components/InfoBadge.svelte';
 export { default as NavigationView } from './components/NavigationView.svelte';
 export { default as NumberBox } from './components/NumberBox.svelte';
 export type { NumberBoxProps } from './components/NumberBox.svelte';

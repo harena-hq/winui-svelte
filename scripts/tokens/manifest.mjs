@@ -1823,7 +1823,12 @@ export const DOUBLE_LENGTHS = {
 	TextControlThemeMinWidth: 'the minimum width an editable text box reserves',
 	NumberBoxMinWidth: 'the width the NumberBox reserves when spin buttons are inline',
 
-	ToolTipMaxWidth: 'the width a ToolTip content never exceeds'
+	ToolTipMaxWidth: 'the width a ToolTip content never exceeds',
+
+	// InfoBadge's dot is its whole box; content states never exceed this height.
+	InfoBadgeMinHeight: 'the dot an InfoBadge shrinks to',
+	InfoBadgeMinWidth: 'the dot an InfoBadge shrinks to',
+	InfoBadgeMaxHeight: 'the height an InfoBadge never exceeds'
 };
 
 /**
@@ -2150,6 +2155,37 @@ export const TOOLTIP_KEYS = {
 	// (320). `ToolTipMaxWidth` is the `DOUBLE_LENGTHS` row.
 	ToolTipBorderPadding: 'ToolTip padding inside its border',
 	ToolTipMaxWidth: 'ToolTip, the width its content never exceeds'
+};
+
+/**
+ * Keys InfoBadge reads — the fourteenth seed set, immediately after ToolTip.
+ *
+ * Its dictionary contains twelve resources, ten of which the default template reads:
+ * foreground and background paint the root; the minimum and maximum dimensions constrain
+ * its box; the value font size, padding, and three margins place its possible content.
+ * `IconInfoBadgeIconMargin` remains here even though this component renders its narrowed
+ * glyph source through the FontIcon-shaped path: it is one of the two margins the
+ * template's display-kind states select, so this set records the dictionary surface rather
+ * than only this implementation's reads.
+ *
+ * The two omitted resources are `InfoBadgeIconHeight` and `InfoBadgeIconWidth`. All three
+ * dictionaries define them (height 8 in Default and 9 in Light/HighContrast; width 12),
+ * but neither pin's template references either. They are unused upstream resources, not a
+ * missing extraction: padding-and-margin arithmetic determines the drawn glyph box, which
+ * is 8 in Light rather than the height resource's 9.
+ */
+export const INFOBADGE_KEYS = {
+	InfoBadgeForeground: 'InfoBadge content',
+	InfoBadgeBackground: 'InfoBadge fill',
+	InfoBadgeMinHeight: 'InfoBadge dot height',
+	InfoBadgeMinWidth: 'InfoBadge dot width',
+	InfoBadgeMaxHeight: 'InfoBadge maximum height',
+	InfoBadgeValueFontSize: 'InfoBadge value text size',
+	InfoBadgePadding: 'InfoBadge root inset',
+	IconInfoBadgeFontIconMargin: 'InfoBadge FontIcon inset',
+	// The template's non-FontIcon display state selects this margin.
+	IconInfoBadgeIconMargin: 'InfoBadge Icon inset',
+	ValueInfoBadgeTextMargin: 'InfoBadge value text inset'
 };
 
 /**
