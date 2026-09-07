@@ -205,7 +205,17 @@
 		border-width: var(--winui-ContentDialogBorderWidth);
 		border-color: var(--winui-ContentDialogBorderBrush);
 		border-radius: var(--winui-OverlayCornerRadius);
-		background: var(--winui-ContentDialogBackground);
+		/* WD-012: WinUI's dialog host casts this card's shadow onto the smoke layer. No pinned
+		   resource states its recipe, so this portalled surface deliberately draws no
+		   `box-shadow`; see docs/divergences.md.
+
+		   `padding-box` is `BackgroundSizing="InnerBorderEdge"` on `BackgroundElement`
+		   (ContentDialog_themeresources.xaml:223). It matters here rather than being a
+		   formality: `ContentDialogBorderBrush` resolves to `SurfaceStrokeColorDefaultBrush`,
+		   which is 40% alpha, so a fill clipped to the border box composites the ring against
+		   the card instead of against the smoke behind it. Every other `InnerBorderEdge` site
+		   in this library writes `padding-box`; this one did not. */
+		background: var(--winui-ContentDialogBackground) padding-box;
 		color: var(--winui-ContentDialogForeground);
 		/* The card is `tabindex="-1"`, so nothing but the open handler above ever focuses it and
 		   it is not in the tab order. The browser still paints its own ring there, and WinUI's
