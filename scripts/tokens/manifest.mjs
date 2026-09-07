@@ -269,6 +269,47 @@ export const DROPDOWNBUTTON_KEYS = {
 	DropDownButtonForegroundSecondaryPressed: 'DropDownButton chevron foreground, pressed'
 };
 
+export const SPLITBUTTON_KEYS = {
+	SplitButtonBackground: 'SplitButton background, at rest',
+	SplitButtonBackgroundPointerOver: 'SplitButton background, pointer over',
+	SplitButtonBackgroundPressed: 'SplitButton background, pressed',
+	SplitButtonBackgroundDisabled: 'SplitButton background, disabled',
+	SplitButtonBackgroundChecked: 'SplitButton background, checked',
+	SplitButtonBackgroundCheckedPointerOver: 'SplitButton background, checked and pointer over',
+	SplitButtonBackgroundCheckedPressed: 'SplitButton background, checked and pressed',
+	SplitButtonBackgroundCheckedDisabled:
+		'SplitButton background, checked and disabled, listed for EXCLUDED',
+	SplitButtonForeground: 'SplitButton foreground, at rest',
+	SplitButtonForegroundPointerOver: 'SplitButton foreground, pointer over',
+	SplitButtonForegroundPressed: 'SplitButton foreground, pressed',
+	SplitButtonForegroundDisabled: 'SplitButton foreground, disabled',
+	SplitButtonForegroundChecked: 'SplitButton foreground, checked',
+	SplitButtonForegroundCheckedPointerOver: 'SplitButton foreground, checked and pointer over',
+	SplitButtonForegroundCheckedPressed: 'SplitButton foreground, checked and pressed',
+	SplitButtonForegroundCheckedDisabled:
+		'SplitButton foreground, checked and disabled, listed for EXCLUDED',
+	SplitButtonForegroundSecondary: 'SplitButton secondary foreground, at rest',
+	SplitButtonForegroundSecondaryPressed: 'SplitButton secondary foreground, pressed',
+	SplitButtonBorderBrush: 'SplitButton border, at rest',
+	SplitButtonBorderBrushPointerOver: 'SplitButton border, pointer over',
+	SplitButtonBorderBrushPressed: 'SplitButton border, pressed',
+	SplitButtonBorderBrushDisabled: 'SplitButton border, disabled',
+	SplitButtonBorderBrushDivider: 'SplitButton divider',
+	SplitButtonBorderBrushChecked: 'SplitButton border, checked',
+	SplitButtonBorderBrushCheckedPointerOver:
+		'SplitButton border, checked and pointer over, listed for EXCLUDED',
+	SplitButtonBorderBrushCheckedPressed: 'SplitButton border, checked and pressed',
+	SplitButtonBorderBrushCheckedDisabled:
+		'SplitButton border, checked and disabled, listed for EXCLUDED',
+	SplitButtonBorderBrushCheckedDivider: 'SplitButton divider, checked',
+	SplitButtonInAppBarUnfocusedPointerOver:
+		'SplitButton CommandBar pointer over, listed for EXCLUDED',
+	SplitButtonBorderThemeThickness: 'SplitButton border width',
+	SplitButtonPrimaryButtonSize: 'SplitButton primary column minimum width',
+	SplitButtonSecondaryButtonSize: 'SplitButton chevron column width',
+	SplitButtonPadding: 'SplitButton primary padding'
+};
+
 export const REPEATBUTTON_KEYS = {
 	// Defined in RepeatButton_themeresources.xaml, and selected only so EXCLUDED can
 	// record why it is not emitted: the style takes ButtonBorderThemeThickness instead.
@@ -1482,6 +1523,20 @@ export const SHELL_KEYS = {
  * the structure that tells the two apart.
  */
 export const EXCLUDED = {
+	// These five SplitButton resources are defined but the default template never reads them.
+	// Disabled wins before checked in SplitButton.cpp:133, and its checked hover states retain
+	// `SplitButtonBorderBrushChecked`; the CommandBar brush is referenced nowhere in the pin.
+	SplitButtonBackgroundCheckedDisabled:
+		'Disabled wins before checked; the template has no CheckedDisabled state',
+	SplitButtonForegroundCheckedDisabled:
+		'Disabled wins before checked; the template has no CheckedDisabled state',
+	SplitButtonBorderBrushCheckedDisabled:
+		'Disabled wins before checked; the template has no CheckedDisabled state',
+	SplitButtonBorderBrushCheckedPointerOver:
+		'Checked hover states retain SplitButtonBorderBrushChecked',
+	SplitButtonInAppBarUnfocusedPointerOver:
+		'Referenced nowhere in the pinned checkout, including SplitButtonCommandBarStyle',
+
 	// Value converters a XAML template binds through. They are code, not values, and
 	// CSS has nowhere to put them — a border radius is filtered by the property it
 	// lands on rather than by a converter instance.
@@ -1999,6 +2054,8 @@ export const TYPE_RAMP = {
  * these gets the inputs rather than the answer.
  */
 export const DOUBLE_LENGTHS = {
+	SplitButtonPrimaryButtonSize: "the floor under the primary half's column",
+	SplitButtonSecondaryButtonSize: "the chevron half's column",
 	NavigationBackButtonHeight: 'the back button box',
 	NavigationBackButtonWidth: 'the back button box',
 	AutoSuggestBoxRightButtonMargin: 'the spacer column right of the query button',

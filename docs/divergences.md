@@ -176,7 +176,8 @@ exactly the reason above.
 ### WD-006 — an animated icon renders as the static glyph WinUI falls back to
 
 - **Control**: `NavigationView`'s settings item, `TitleBar`'s back and pane-toggle buttons,
-  `CheckBox`'s check glyph, `Expander`'s chevron, and `DropDownButton`'s chevron.
+  `CheckBox`'s check glyph, `Expander`'s chevron, and `DropDownButton`'s and `SplitButton`'s
+  chevrons.
 - **WinUI does**: give each of them an `AnimatedIcon` with a `FallbackIconSource` — the
   settings item in `CreateAndHookEventsToSettings`, `NavigationView.cpp:1319`; the two title
   bar buttons in their styles, `TitleBar_themeresources.xaml:160` and `:230`. The buttons'
@@ -189,7 +190,7 @@ exactly the reason above.
   `PointerOver` and `Pressed`.
 - **We do**: render each `FallbackIconSource`'s glyph — `Symbol::Setting` as E713, the two
   title bar glyphs, CheckBox's E73E and E9AE, Expander's E70D and E70E, and
-  DropDownButton's E96E — with no transition between pointer states.
+  DropDownButton's and SplitButton's E96E — with no transition between pointer states.
 
   **The glyph is not always the same shape as the animation's frame, and Expander is where
   that was first measured.** Its chevron is `AnimatedChevronUpDownSmallVisualSource`, which
@@ -514,3 +515,24 @@ gate does.
   control lands whose reproduction turns on a wrapped paragraph of four or more lines, where the
   drift reaches a pixel and a half and a local `line-height` on that one element becomes worth its
   cost.
+
+---
+
+### WD-019 — a split button is two tab stops, and its keyboard press does not span
+
+- **Control**: `SplitButton` and `ToggleSplitButton`.
+- **WinUI does**: put `IsTabStop="True"` on the control and `IsTabStop="False"` on both inner
+  buttons (`SplitButton.xaml:15`, `:227`, `:228`), so the whole control is one tab stop; Space,
+  Enter and GamepadA invoke the primary half (`SplitButton.cpp:334`–`:349`), Alt+Down (`:350`)
+  and F4 (`:362`) open the flyout. While a key is held, `SecondaryButtonSpan`
+  (`SplitButton.xaml:211`) moves the secondary button to column 0 with `ColumnSpan="3"` so it
+  covers the control.
+- **We do**: render two real `<button>` elements, which is two tab stops, each activated by Space
+  and Enter in its own right; no Alt+Down and no F4; and no span, because it is visible only while
+  a key is physically held and `TouchPressed` — which we do implement, and which fires in the
+  same breath — is what paints that moment.
+- **Why accepted**: HTML's two native buttons provide the two independently operable halves and
+  their browser keyboard behavior without inventing a composite focus model solely for a
+  momentary hit-testing overlay.
+- **Would reconsider if**: a web primitive supplies one tab stop with two native-action regions
+  and the same keyboard routing without replacing the controls' ordinary semantics.

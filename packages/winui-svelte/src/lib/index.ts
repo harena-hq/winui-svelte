@@ -55,6 +55,8 @@ export { default as RepeatButton } from './components/RepeatButton.svelte';
 export type { RepeatButtonProps } from './components/RepeatButton.svelte';
 export { default as Slider } from './components/Slider.svelte';
 export type { SliderProps } from './components/Slider.svelte';
+export { default as SplitButton } from './components/SplitButton.svelte';
+export type { SplitButtonProps } from './components/SplitButton.svelte';
 export { default as TeachingTip } from './components/TeachingTip.svelte';
 export type {
 	TeachingTipHeroContentPlacementMode,
@@ -66,6 +68,8 @@ export { default as TextBox } from './components/TextBox.svelte';
 export type { TextBoxProps } from './components/TextBox.svelte';
 export { default as ToggleButton } from './components/ToggleButton.svelte';
 export type { ToggleButtonProps } from './components/ToggleButton.svelte';
+export { default as ToggleSplitButton } from './components/ToggleSplitButton.svelte';
+export type { ToggleSplitButtonProps } from './components/ToggleSplitButton.svelte';
 export { default as ToggleSwitch } from './components/ToggleSwitch.svelte';
 export type { ToggleSwitchProps } from './components/ToggleSwitch.svelte';
 export { default as ToolTip } from './components/ToolTip.svelte';
