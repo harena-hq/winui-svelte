@@ -188,6 +188,88 @@ export const BUTTON_KEYS = {
  *   them and their `Default` values are literal colours from a palette this library
  *   does not use. This is the same family and the same reason as Button's ten.
  */
+export const TOGGLEBUTTON_KEYS = {
+	ToggleButtonBorderThemeThickness: 'ToggleButton, the border width',
+	ToggleButtonCheckedStateBackgroundSizing: 'ToggleButton background sizing, checked',
+	ToggleButtonBackground: 'ToggleButton background, at rest',
+	ToggleButtonBackgroundPointerOver: 'ToggleButton background, pointer over',
+	ToggleButtonBackgroundPressed: 'ToggleButton background, pressed',
+	ToggleButtonBackgroundDisabled: 'ToggleButton background, disabled',
+	ToggleButtonBackgroundChecked: 'ToggleButton background, checked',
+	ToggleButtonBackgroundCheckedPointerOver: 'ToggleButton background, checked and pointer over',
+	ToggleButtonBackgroundCheckedPressed: 'ToggleButton background, checked and pressed',
+	ToggleButtonBackgroundCheckedDisabled: 'ToggleButton background, checked and disabled',
+	ToggleButtonBackgroundIndeterminate: 'ToggleButton background, indeterminate',
+	ToggleButtonBackgroundIndeterminatePointerOver:
+		'ToggleButton background, indeterminate and pointer over',
+	ToggleButtonBackgroundIndeterminatePressed: 'ToggleButton background, indeterminate and pressed',
+	ToggleButtonBackgroundIndeterminateDisabled:
+		'ToggleButton background, indeterminate and disabled',
+	ToggleButtonForeground: 'ToggleButton foreground, at rest',
+	ToggleButtonForegroundPointerOver: 'ToggleButton foreground, pointer over',
+	ToggleButtonForegroundPressed: 'ToggleButton foreground, pressed',
+	ToggleButtonForegroundDisabled: 'ToggleButton foreground, disabled',
+	ToggleButtonForegroundChecked: 'ToggleButton foreground, checked',
+	ToggleButtonForegroundCheckedPointerOver: 'ToggleButton foreground, checked and pointer over',
+	ToggleButtonForegroundCheckedPressed: 'ToggleButton foreground, checked and pressed',
+	ToggleButtonForegroundCheckedDisabled: 'ToggleButton foreground, checked and disabled',
+	ToggleButtonForegroundIndeterminate: 'ToggleButton foreground, indeterminate',
+	ToggleButtonForegroundIndeterminatePointerOver:
+		'ToggleButton foreground, indeterminate and pointer over',
+	ToggleButtonForegroundIndeterminatePressed: 'ToggleButton foreground, indeterminate and pressed',
+	ToggleButtonForegroundIndeterminateDisabled:
+		'ToggleButton foreground, indeterminate and disabled',
+	ToggleButtonBorderBrush: 'ToggleButton border, at rest',
+	ToggleButtonBorderBrushPointerOver: 'ToggleButton border, pointer over',
+	ToggleButtonBorderBrushPressed: 'ToggleButton border, pressed',
+	ToggleButtonBorderBrushDisabled: 'ToggleButton border, disabled',
+	ToggleButtonBorderBrushChecked: 'ToggleButton border, checked',
+	ToggleButtonBorderBrushCheckedPointerOver: 'ToggleButton border, checked and pointer over',
+	ToggleButtonBorderBrushCheckedPressed: 'ToggleButton border, checked and pressed',
+	ToggleButtonBorderBrushCheckedDisabled: 'ToggleButton border, checked and disabled',
+	ToggleButtonBorderBrushIndeterminate: 'ToggleButton border, indeterminate',
+	ToggleButtonBorderBrushIndeterminatePointerOver:
+		'ToggleButton border, indeterminate and pointer over',
+	ToggleButtonBorderBrushIndeterminatePressed: 'ToggleButton border, indeterminate and pressed',
+	ToggleButtonBorderBrushIndeterminateDisabled: 'ToggleButton border, indeterminate and disabled',
+	// The pre-Fluent family is selected only so EXCLUDED can record its deliberate omission.
+	ToggleButtonBackgroundThemeBrush:
+		'Pre-Fluent ToggleButton *ThemeBrush family, listed for EXCLUDED',
+	ToggleButtonBorderThemeBrush: 'Pre-Fluent ToggleButton *ThemeBrush family, listed for EXCLUDED',
+	ToggleButtonCheckedBackgroundThemeBrush:
+		'Pre-Fluent ToggleButton *ThemeBrush family, listed for EXCLUDED',
+	ToggleButtonCheckedBorderThemeBrush:
+		'Pre-Fluent ToggleButton *ThemeBrush family, listed for EXCLUDED',
+	ToggleButtonCheckedDisabledBackgroundThemeBrush:
+		'Pre-Fluent ToggleButton *ThemeBrush family, listed for EXCLUDED',
+	ToggleButtonCheckedDisabledForegroundThemeBrush:
+		'Pre-Fluent ToggleButton *ThemeBrush family, listed for EXCLUDED',
+	ToggleButtonCheckedForegroundThemeBrush:
+		'Pre-Fluent ToggleButton *ThemeBrush family, listed for EXCLUDED',
+	ToggleButtonCheckedPointerOverBackgroundThemeBrush:
+		'Pre-Fluent ToggleButton *ThemeBrush family, listed for EXCLUDED',
+	ToggleButtonCheckedPointerOverBorderThemeBrush:
+		'Pre-Fluent ToggleButton *ThemeBrush family, listed for EXCLUDED',
+	ToggleButtonCheckedPressedBackgroundThemeBrush:
+		'Pre-Fluent ToggleButton *ThemeBrush family, listed for EXCLUDED',
+	ToggleButtonCheckedPressedBorderThemeBrush:
+		'Pre-Fluent ToggleButton *ThemeBrush family, listed for EXCLUDED',
+	ToggleButtonCheckedPressedForegroundThemeBrush:
+		'Pre-Fluent ToggleButton *ThemeBrush family, listed for EXCLUDED',
+	ToggleButtonDisabledBorderThemeBrush:
+		'Pre-Fluent ToggleButton *ThemeBrush family, listed for EXCLUDED',
+	ToggleButtonDisabledForegroundThemeBrush:
+		'Pre-Fluent ToggleButton *ThemeBrush family, listed for EXCLUDED',
+	ToggleButtonForegroundThemeBrush:
+		'Pre-Fluent ToggleButton *ThemeBrush family, listed for EXCLUDED',
+	ToggleButtonPointerOverBackgroundThemeBrush:
+		'Pre-Fluent ToggleButton *ThemeBrush family, listed for EXCLUDED',
+	ToggleButtonPressedBackgroundThemeBrush:
+		'Pre-Fluent ToggleButton *ThemeBrush family, listed for EXCLUDED',
+	ToggleButtonPressedForegroundThemeBrush:
+		'Pre-Fluent ToggleButton *ThemeBrush family, listed for EXCLUDED'
+};
+
 export const TEXTBOX_KEYS = {
 	// The two layout keys the delete button needs.
 	TextBoxInnerButtonMargin: 'TextBox delete button, the inset of its fill',
@@ -1409,6 +1491,55 @@ export const EXCLUDED = {
 	ButtonPressedForegroundThemeBrush:
 		'Pre-Fluent *ThemeBrush family; not referenced by any of the three Button styles',
 
+	// A `BackgroundSizing` enum rather than a colour or a length, so there is no CSS value
+	// it could take. It is `OuterBorderEdge` in all three themes — ToggleButton_themeresources.xaml
+	// :6, :64 and :122 — and the Checked, CheckedPointerOver and CheckedPressed states are the
+	// three that apply it, at :256, :272 and :288. The component spells that as
+	// `background-clip: border-box` on those three states and `padding-box` everywhere else,
+	// CheckedDisabled included, because that state does not set it.
+	ToggleButtonCheckedStateBackgroundSizing:
+		'XAML BackgroundSizing enum; the component applies the clipping directly in CSS',
+
+	// The pre-Fluent ToggleButton `*ThemeBrush` family, defined in
+	// ToggleButton_themeresources.xaml and referenced nowhere in the current template,
+	// which paints from the `ToggleButton{Background,Foreground,BorderBrush}*` names
+	// instead. Eighteen keys, the same shape as Button's ten above.
+	ToggleButtonBackgroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current ToggleButton template',
+	ToggleButtonBorderThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current ToggleButton template',
+	ToggleButtonCheckedBackgroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current ToggleButton template',
+	ToggleButtonCheckedBorderThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current ToggleButton template',
+	ToggleButtonCheckedDisabledBackgroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current ToggleButton template',
+	ToggleButtonCheckedDisabledForegroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current ToggleButton template',
+	ToggleButtonCheckedForegroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current ToggleButton template',
+	ToggleButtonCheckedPointerOverBackgroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current ToggleButton template',
+	ToggleButtonCheckedPointerOverBorderThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current ToggleButton template',
+	ToggleButtonCheckedPressedBackgroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current ToggleButton template',
+	ToggleButtonCheckedPressedBorderThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current ToggleButton template',
+	ToggleButtonCheckedPressedForegroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current ToggleButton template',
+	ToggleButtonDisabledBorderThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current ToggleButton template',
+	ToggleButtonDisabledForegroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current ToggleButton template',
+	ToggleButtonForegroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current ToggleButton template',
+	ToggleButtonPointerOverBackgroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current ToggleButton template',
+	ToggleButtonPressedBackgroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current ToggleButton template',
+	ToggleButtonPressedForegroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current ToggleButton template',
 	// The pre-Fluent TextBox `*ThemeBrush` family, defined in TextBox_themeresources.xaml
 	// and referenced nowhere in the current TextBox template. Their `Default` values are
 	// literal colours from the UWP palette this library does not use, and emitting them
