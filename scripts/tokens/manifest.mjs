@@ -1729,7 +1729,12 @@ export const EXCLUDED = {
 	// this library draws; a GridLength describes one of the tracks a XAML Grid divides itself
 	// into, and the CSS analogue is a value in `grid-template-columns` or `gap` rather than a
 	// custom property. The 8 it carries is written into the component with this line cited.
-	ContentDialogButtonSpacing: 'GridLength; a Grid track width, stated in the component gap'
+	ContentDialogButtonSpacing: 'GridLength; a Grid track width, stated in the component gap',
+	// The two tracks the tail grid is built from. Same reason as the line above: a GridLength
+	// is a Grid track width, not a box this library draws, so the 8 and the 10 are written
+	// into the component with these lines cited rather than emitted as custom properties.
+	TeachingTipTailShortSideLength: 'GridLength; the tail track, stated in the component',
+	TeachingTipTailMargin: 'GridLength; the track beside the tail, stated in the component'
 };
 
 /**
@@ -1860,7 +1865,15 @@ export const DOUBLE_LENGTHS = {
 	ContentDialogMinWidth: 'the width a dialog never goes under',
 	ContentDialogMaxWidth: 'the width a dialog never exceeds',
 	ContentDialogMinHeight: 'the height a dialog never goes under',
-	ContentDialogMaxHeight: 'the height a dialog never exceeds'
+	ContentDialogMaxHeight: 'the height a dialog never exceeds',
+
+	TeachingTipMinWidth: 'the width a tip never goes under',
+	TeachingTipMaxWidth: 'the width a tip never exceeds',
+	TeachingTipMinHeight: 'the height a tip never goes under',
+	TeachingTipMaxHeight: 'the height a tip never exceeds',
+	TeachingTipBorderThickness: "the tail's stroke width",
+	TeachingTipAlternateCloseButtonSize: 'the tip header close button box',
+	TeachingTipAlternateCloseButtonGlyphSize: 'the tip header close button glyph'
 };
 
 /**
@@ -2628,6 +2641,65 @@ export const CONTENTDIALOG_KEYS = {
 	ContentDialogTitleMargin: 'the gap under the title',
 	ContentDialogPadding: 'the inset around the content, and around the commands',
 	ContentDialogSeparatorThickness: 'the rule above the command area'
+};
+
+/**
+ * `controls/dev/TeachingTip/TeachingTip_themeresources.xaml`, the records the control
+ * draws with.
+ *
+ * The dictionary carries fifty-one keys; these thirty-six are the ones the template
+ * reads. Left out on purpose, and recorded in `docs/surface.md` rather than here:
+ * `TeachingTipContentBorderThicknessTop`/`Bottom`/`Left`/`Right`, four placement-specific
+ * border thicknesses nothing ever assigns — the Style sets `...Untargeted` once and no code
+ * or visual state replaces it — and `TeachingTipTopHighlightBrush`/`Height`/
+ * `OffsetForBorder`, whose `TopHighlightLeft` and `TopHighlightRight` parts are gone from
+ * the template.
+ *
+ * `TeachingTipTailShortSideLength` and `TeachingTipTailMargin` are seeded and then excluded:
+ * both are `GridLength`, the width of one of the tracks the tail grid divides itself into,
+ * and the 8 and 10 they carry are written into the component with their lines cited.
+ */
+export const TEACHINGTIP_KEYS = {
+	TeachingTipBackgroundBrush: 'the card, and the tail that is cut out of it',
+	TeachingTipTransientBackground: 'the card when the tip is light-dismissable',
+	TeachingTipForegroundBrush: 'the card text',
+	TeachingTipBorderBrush: "the card border, and the tail's two slanted edges",
+	TeachingTipTitleForegroundBrush: 'the title',
+	TeachingTipSubtitleForegroundBrush: 'the subtitle',
+
+	TeachingTipBorderThickness: "the tail's stroke width",
+	TeachingTipContentBorderThicknessUntargeted: "the card's border, on all four sides",
+	TeachingTipContentMargin: 'the inset around everything but the hero',
+	TeachingTipIconPresenterMarginWithIcon: 'the gap after the icon',
+	TeachingTipTitleStackPanelMarginWithHeaderCloseButton:
+		'the column the header close button takes out of the title',
+	TeachingTipMainContentPresentMargin: 'the gap above the content',
+	TeachingTipButtonPanelMargin: 'the gap above a lone command button',
+	TeachingTipLeftButtonMargin: 'the gap above and right of the action button',
+	TeachingTipRightButtonMargin: 'the gap above and left of the close button',
+
+	TeachingTipMinWidth: 'the width a tip never goes under',
+	TeachingTipMaxWidth: 'the width a tip never exceeds, tail tracks included',
+	TeachingTipMinHeight: 'the height a tip never goes under',
+	TeachingTipMaxHeight: 'the height a tip never exceeds, past which it scrolls',
+	TeachingTipTailShortSideLength: 'how far the tail stands off the card',
+	TeachingTipTailMargin: 'the track between the tail and the card corner',
+
+	TeachingTipAlternateCloseButtonSize: 'the header close button box',
+	TeachingTipAlternateCloseButtonGlyphSize: 'the header close button glyph',
+	TeachingTipAlternateCloseButtonBorderThickness: 'the header close button border width',
+	TeachingTipAlternateCloseButtonBackground: 'the header close button at rest',
+	TeachingTipAlternateCloseButtonBackgroundPointerOver: 'the header close button, hovered',
+	TeachingTipAlternateCloseButtonBackgroundPressed: 'the header close button, pressed',
+	TeachingTipAlternateCloseButtonBackgroundDisabled: 'the header close button, disabled',
+	TeachingTipAlternateCloseButtonForeground: 'the header close glyph at rest',
+	TeachingTipAlternateCloseButtonForegroundPointerOver: 'the header close glyph, hovered',
+	TeachingTipAlternateCloseButtonForegroundPressed: 'the header close glyph, pressed',
+	TeachingTipAlternateCloseButtonForegroundDisabled: 'the header close glyph, disabled',
+	TeachingTipAlternateCloseButtonBorderBrush: 'the header close button border at rest',
+	TeachingTipAlternateCloseButtonBorderBrushPointerOver: 'the header close button border, hovered',
+	TeachingTipAlternateCloseButtonBorderBrushPressed: 'the header close button border, pressed',
+	TeachingTipAlternateCloseButtonBorderBrushDisabled: 'the header close button border, disabled'
 };
 
 /**
