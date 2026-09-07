@@ -713,7 +713,7 @@ group sizes, which no longer line up one-to-one with a version.
     then. It has now cost two more. Adding a driving step is not a gate and cannot be
     automated into one; what it needs is a place in the per-unit loop, which it does not have.
 
-6.  **Surfaces** — Expander, ContentDialog, Flyout, MenuFlyout, TeachingTip, Popup.
+6.  **Surfaces** — Expander, ContentDialog, Flyout, MenuFlyout, TeachingTip, Popup. — **done**
 
     Goal: **the application can reveal contextual content without leaving the current task.**
 
@@ -769,10 +769,12 @@ group sizes, which no longer line up one-to-one with a version.
     none of the ten `Style` records in `TextBlock_themeresources.xaml` sets `LineHeight`, so a
     WinUI TextBlock draws the font's own spacing instead. Measured at one step: a
     `BaseTextBlockStyle` message in the Gallery's flyout is 19 tall where the class gives 20.
-    Three controls have now had to write `line-height: normal` to match the original. Fixing
-    the ramp moves every baseline in the project, so it is a unit of its own and it needs the
-    other nine steps measured first — the Gallery's Typography design page is where they are
-    all on screen at once.
+    **Nine sites have now had to write `line-height: normal` to match the original** — InfoBar,
+    Expander, Flyout, MenuFlyout, ContentDialog's title and content, and TeachingTip's title,
+    subtitle and content slot. The count is no longer a note beside the unit; it is the
+    argument for it. Fixing the ramp moves every baseline in the project, so it is a unit of
+    its own and it needs the other nine steps measured first — the Gallery's Typography design
+    page is where they are all on screen at once.
 
     Done-when: v5's per-control seal loop applies to all six controls — source and Gallery
     sweep recorded before sealing, three-theme Windows baselines, direct comparison with the
@@ -781,6 +783,50 @@ group sizes, which no longer line up one-to-one with a version.
     mounts an exported component without workspace links or package-owned peer resolution.
     The full build, check, lint, conformance and Windows visual suite are green at tranche
     close.
+
+    **Closed.** All six controls exist and are exported. Twenty-three components are
+    snapshotted in three themes, all twenty-seven tests of the Windows suite are green on the
+    reference guest, the nine gates pass, and the packed-package consumer smoke builds and
+    renders outside the workspace.
+
+    **The list above says six controls and the branch sealed eleven control units.** MenuFlyout is one
+    line here and was sealed as five: the measurement pass that followed the sweep showed its
+    item vocabulary is four separate controls, each with its own template and its own intent
+    line, so the icon-and-accelerator columns, the radio row, the sub item and the split item
+    are units rather than examples. TeachingTip is one line and was sealed as two. Neither
+    is a scope change — the sealed units together cover every Gallery example these lines
+    name — and both are the same finding: **a Gallery page is a poor estimator of a control's
+    unit count, and the measurement pass is what corrects it.** The correction only arrives
+    after the sweep, which is an argument for sweeping before committing to a plan of units
+    rather than for writing a longer list here.
+
+    **What the version cost that its goal did not predict.** Three of the six controls turned
+    out to hold a fact in XAML that CSS cannot express in one box, and each needed a shape
+    rather than a value: MenuFlyout's split item measures in one layer and paints in another
+    and is reproduced as two; ContentDialog's command row is laid out in the dialog's width
+    and does not set it, which `contain: inline-size` reaches and WD-014 records the residue
+    of; and TeachingTip's tail is a hole in the card rather than an ornament under it, which
+    is an SVG `polyline` clipped by its own viewport and not a `polygon`. None of the three is
+    visible in the dictionary. All three were found by decomposing a measured box and finding
+    the template's arithmetic gave a different number.
+
+    **Four divergences opened here and none of them is a declined behaviour.** WD-013 is the
+    touch padding variants. WD-014, WD-015, WD-016 and WD-017 are each a case where the
+    _shipped_ control does not do what its own pinned template says — a command row that does
+    not measure, a dialog that focuses itself rather than its default button, a minimum width
+    that is declared and ignored, and a content margin that is declared and ignored. The rule
+    the version settled on is that **the render is the specification and the dictionary is
+    the explanation**, because a reproduction faithful to the dictionary would be visibly
+    wrong beside the control it copies. Every one was found by measuring the original, and
+    none by a gate.
+
+    **The seal gate learned one thing.** `--update-snapshots` over the whole suite wrote a
+    light render into a dark baseline and nothing failed; the suite then agreed with the
+    corrupted image on every later run. `tests/visual/themes.ts` now proves the theme was
+    applied before it photographs anything, and the standing rule is to name the spec being
+    added rather than update the suite. This is the third time this project has recorded that
+    a baseline written from a wrong render agrees with itself, and the first time the gate
+    was changed rather than the practice.
 
 7.  **Commands and menus** — DropDownButton, SplitButton, ToggleButton, CommandBar, MenuBar,
     AppBar\*.
