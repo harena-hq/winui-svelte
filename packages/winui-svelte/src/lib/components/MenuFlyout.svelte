@@ -443,6 +443,9 @@
 <style>
 	/* WD-002: WinUI paints a `DesktopAcrylicBackdrop`, which cannot be represented in CSS;
 	   this flat backdrop equivalent is recorded in docs/divergences.md. */
+	/* WD-012: WinUI's popup host casts this presenter's ThemeShadow. No pinned resource states
+	   its recipe, so this portalled surface deliberately draws no `box-shadow`; see
+	   docs/divergences.md. */
 	.presenter {
 		box-sizing: border-box;
 		/* A column flex container, because XAML's stack has no margin collapsing and CSS's
@@ -480,6 +483,9 @@
 		flex: none;
 		align-items: center;
 		margin: var(--winui-MenuFlyoutItemMargin);
+		/* WD-013: the narrow padding is the only one this row takes. Upstream swaps in
+		   `MenuFlyoutItemThemePadding` for a touch-opened menu, and nothing here can tell that
+		   a menu was opened by touch; see docs/divergences.md. */
 		padding: var(--winui-MenuFlyoutItemThemePaddingNarrow);
 		border-radius: var(--winui-ControlCornerRadius);
 		border: var(--winui-MenuFlyoutItemBorderThickness) solid

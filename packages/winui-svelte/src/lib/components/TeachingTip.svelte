@@ -308,7 +308,15 @@
 
 	/* TeachingTip.xaml:312 — ContentRootGrid, the box that carries the border, the fill and the
 	   corner radius. position:relative contains the absolutely positioned Popover.Arrow, and the
-	   card must not clip the tail. */
+	   card must not clip the tail.
+
+	   No `padding-box` on the fill, unlike every other surface in this library: `:312` declares
+	   no `BackgroundSizing`, so the default `OuterBorderEdge` is what upstream draws and CSS's
+	   default `border-box` is already it.
+
+	   WD-012: WinUI's popup host casts this card's ThemeShadow. No pinned resource states its
+	   recipe, so this portalled surface deliberately draws no `box-shadow`; see
+	   docs/divergences.md. */
 	.card {
 		position: relative;
 		box-sizing: border-box;
@@ -399,8 +407,8 @@
 
 	/* The card carries `winui-BodyTextBlockStyle`, whose generated `line-height` is 20px, and
 	   nothing upstream sets a line height on `MainContentPresenter` (TeachingTip.xaml:335) — a
-	   TextBlock there uses the font's own spacing, which the reference measures at 19. This is
-	   the ninth site in the project to need the keyword over the ramp class. */
+	   TextBlock there uses the font's own spacing, which the reference measures at 19. Without
+	   this the card is 311 tall against the original's 310. */
 	.main {
 		line-height: normal;
 	}
@@ -527,12 +535,12 @@
 		color: var(--winui-TeachingTipAlternateCloseButtonForegroundPressed);
 	}
 
-	/* TeachingTip_themeresources.xaml:101 — disabled close-button resources. */
-	.close:disabled .close-fill {
-		background: var(--winui-TeachingTipAlternateCloseButtonBackgroundDisabled);
-		border-color: var(--winui-TeachingTipAlternateCloseButtonBorderBrushDisabled);
-		color: var(--winui-TeachingTipAlternateCloseButtonForegroundDisabled);
-	}
+	/* No `:disabled` rule. `AlternateCloseButtonStyle` defines a Disabled state
+	   (TeachingTip_themeresources.xaml:101) and `AlternateCloseButton` (TeachingTip.xaml:350)
+	   binds nothing to `IsEnabled`, so the state is unreachable upstream and there is no prop
+	   here that would reach it either. Its three `...Disabled` tokens are emitted and unread,
+	   which is a dictionary record rather than a hole. A rule no markup can enter is the defect
+	   this project has already paid for twice. */
 
 	/* TeachingTip.xaml:353 and the measured tail geometry: the span is 20px wide and its visible
 	   8px height is the outside portion of the 20x10 triangle. */
