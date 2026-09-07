@@ -2312,6 +2312,7 @@ export const TYPE_RAMP = {
  * these gets the inputs rather than the answer.
  */
 export const DOUBLE_LENGTHS = {
+	MenuBarHeight: 'the MenuBar row height',
 	AppBarThemeMinHeight: 'AppBar content minimum height',
 	AppBarThemeCompactHeight: 'AppBar compact content height',
 	AppBarButtonContentHeight: 'AppBarButton icon height',
@@ -3317,6 +3318,29 @@ export const TEACHINGTIP_KEYS = {
 	TeachingTipAlternateCloseButtonBorderBrushPointerOver: 'the header close button border, hovered',
 	TeachingTipAlternateCloseButtonBorderBrushPressed: 'the header close button border, pressed',
 	TeachingTipAlternateCloseButtonBorderBrushDisabled: 'the header close button border, disabled'
+};
+
+/**
+ * Keys MenuBar and MenuBarItem read. The control dictionary defines exactly these fourteen
+ * resources: eleven themed colours/thicknesses and three theme-independent layout metrics.
+ * Every key is live in the two templates; notably, the item border thickness is zero in the
+ * light and dark dictionaries but two in HighContrast, where the four border brushes paint.
+ */
+export const MENUBAR_KEYS = {
+	MenuBarBackground: 'MenuBar background',
+	MenuBarItemForeground: 'MenuBarItem foreground',
+	MenuBarItemBackground: 'MenuBarItem background, at rest',
+	MenuBarItemBackgroundPointerOver: 'MenuBarItem background, pointer over',
+	MenuBarItemBackgroundPressed: 'MenuBarItem background, pressed',
+	MenuBarItemBackgroundSelected: 'MenuBarItem background, selected',
+	MenuBarItemBorderThickness: 'MenuBarItem border width',
+	MenuBarItemBorderBrush: 'MenuBarItem border, at rest',
+	MenuBarItemBorderBrushPointerOver: 'MenuBarItem border, pointer over',
+	MenuBarItemBorderBrushPressed: 'MenuBarItem border, pressed',
+	MenuBarItemBorderBrushSelected: 'MenuBarItem border, selected',
+	MenuBarHeight: 'MenuBar minimum height',
+	MenuBarItemButtonPadding: 'MenuBarItem content padding',
+	MenuBarItemMargin: 'MenuBarItem outer margin'
 };
 
 /**
