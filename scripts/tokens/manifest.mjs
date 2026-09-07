@@ -270,6 +270,22 @@ export const TOGGLEBUTTON_KEYS = {
 		'Pre-Fluent ToggleButton *ThemeBrush family, listed for EXCLUDED'
 };
 
+export const HYPERLINKBUTTON_KEYS = {
+	HyperlinkButtonBorderThemeThickness: 'HyperlinkButton, the border width',
+	HyperlinkButtonBackground: 'HyperlinkButton background, at rest',
+	HyperlinkButtonBackgroundPointerOver: 'HyperlinkButton background, pointer over',
+	HyperlinkButtonBackgroundPressed: 'HyperlinkButton background, pressed',
+	HyperlinkButtonBackgroundDisabled: 'HyperlinkButton background, disabled',
+	HyperlinkButtonForeground: 'HyperlinkButton foreground, at rest',
+	HyperlinkButtonForegroundPointerOver: 'HyperlinkButton foreground, pointer over',
+	HyperlinkButtonForegroundPressed: 'HyperlinkButton foreground, pressed',
+	HyperlinkButtonForegroundDisabled: 'HyperlinkButton foreground, disabled',
+	HyperlinkButtonBorderBrush: 'HyperlinkButton border, at rest',
+	HyperlinkButtonBorderBrushPointerOver: 'HyperlinkButton border, pointer over',
+	HyperlinkButtonBorderBrushPressed: 'HyperlinkButton border, pressed',
+	HyperlinkButtonBorderBrushDisabled: 'HyperlinkButton border, disabled'
+};
+
 export const TEXTBOX_KEYS = {
 	// The two layout keys the delete button needs.
 	TextBoxInnerButtonMargin: 'TextBox delete button, the inset of its fill',

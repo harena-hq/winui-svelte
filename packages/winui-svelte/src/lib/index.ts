@@ -17,6 +17,8 @@ export { default as ComboBox } from './components/ComboBox.svelte';
 export type { ComboBoxItemData, ComboBoxProps } from './components/ComboBox.svelte';
 export { default as Expander } from './components/Expander.svelte';
 export type { ExpanderProps } from './components/Expander.svelte';
+export { default as HyperlinkButton } from './components/HyperlinkButton.svelte';
+export type { HyperlinkButtonProps } from './components/HyperlinkButton.svelte';
 export { default as Flyout } from './components/Flyout.svelte';
 export type { FlyoutPlacement, FlyoutProps } from './components/Flyout.svelte';
 export { default as InfoBadge } from './components/InfoBadge.svelte';
