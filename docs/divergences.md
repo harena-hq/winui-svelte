@@ -333,8 +333,10 @@ Recorded here once the control is built and the behaviour is observed rather tha
 
 ### WD-012 — a portalled surface casts no drop shadow
 
-- **Control**: `ToolTip`. Every portalled surface in the Surfaces tranche joins this entry as
-  it lands, because they share one mechanism and one reason.
+- **Control**: `ToolTip`, and every portalled surface that paints a card of its own — `Flyout`,
+  `MenuFlyout`, `ContentDialog` and `TeachingTip` all cite this entry, because they share one
+  mechanism and one reason. `Popup` does not: it positions a surface the consumer supplies and
+  paints nothing, so there is no card of its own to cast a shadow from.
 - **WinUI does**: give the popup a `ThemeShadow`, cast onto whatever is under it. Measured on
   the reference guest at 100% scaling: under an open Flyout the pixels below its bottom border
   start at 213 against a 249 background and ramp back to the background over about 16px; under

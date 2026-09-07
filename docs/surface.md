@@ -413,9 +413,9 @@ TextBlock with no `LineHeight` draws the font's own spacing.
 
 Measured: the Gallery's Base-styled flyout message is 19 tall and its flyout 97; the ramp's
 20px makes them 20 and 98. That is one step of ten, measured once, which is why nothing has
-been changed in the ramp — but it is also the third control in a row to need
-`line-height: normal` to match the original, after `InfoBar` and `Expander`, and three is
-enough to stop calling it a coincidence.
+been changed in the ramp — but it is also the third control to need `line-height: normal` to
+match the original, after `InfoBar` and `Expander`, and three is enough to stop calling it a
+coincidence.
 
 ### MenuFlyout — v6 unit 4a
 
@@ -595,9 +595,9 @@ the white area are one box.
 `FontFamily="{StaticResource ContentControlThemeFontFamily}"` on the `Title` ContentControl
 directly. `SubtitleTextBlockStyle` is also 20 and SemiBold, and is not the same thing: it names
 the Display family where this names the Text family, and its line box is 28 where the original's
-title measures 27. That is the fifth and sixth place a control has needed `line-height: normal`
-over the ramp class — the title and the content both — and the count is now the argument for the
-type-ramp unit `docs/plan.md` carries rather than a note beside it.
+title measures 27. Both the title and the content need `line-height: normal` over the ramp
+class, which by this unit is what every control in the tranche that draws text has needed —
+an argument for the type-ramp unit `docs/plan.md` carries rather than a note beside it.
 
 **The command row's five columns are rewired per combination, not hidden.** `CommandSpace`
 (`:248`) declares `*`, a spacer, `*`, a spacer, `*`, and `ButtonsVisibilityStates` (`:144`)
@@ -666,11 +666,12 @@ measured, the icon's ink centre and the title-plus-subtitle block's centre are b
 a top-aligned icon would be nine pixels out. Its 20x20 box is `SymbolIcon`'s own default
 FontSize; no TeachingTip resource states it, which is this unit's one `c1-allow`.
 
-Every line box on all three examples measures 19 where the generated `winui-BodyTextBlockStyle`
-The title and the subtitle both need `line-height: normal` over the ramp class, which every
-control in this tranche has needed somewhere. The running total this file used to carry was
-being incremented rather than derived and had drifted; what is checkable, and what the
-type-ramp unit actually rests on, is that no control has yet been reproduced without it.
+Every line box on all three examples measures 19 where the generated
+`winui-BodyTextBlockStyle` imposes 20, so the title and the subtitle both need
+`line-height: normal` over the ramp class. Five of this tranche's six controls have needed the
+override somewhere; Popup is the exception, and it draws no text at all. The running total
+this file used to carry is gone: it was incremented rather than derived and had drifted below
+the real number.
 
 ### TeachingTip — v6 unit 046b
 

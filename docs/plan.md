@@ -812,11 +812,14 @@ group sizes, which no longer line up one-to-one with a version.
     visible in the dictionary. All three were found by decomposing a measured box and finding
     the template's arithmetic gave a different number.
 
-    **Four divergences opened here and none of them is a declined behaviour.** WD-013 is the
-    touch padding variants. WD-014, WD-015, WD-016 and WD-017 are each a case where the
-    _shipped_ control does not do what its own pinned template says — a command row that does
-    not measure, a dialog that focuses itself rather than its default button, a minimum width
-    that is declared and ignored, and a content margin that is declared and ignored. The rule
+    **Eight divergences opened here, WD-010 through WD-017, and two of them are a kind this
+    project had not met before.** Six are the usual sorts: WD-010, WD-011 and WD-013 are
+    behaviours declined because the platform cannot express them, WD-012 is the drop shadow,
+    and WD-014 and WD-015 are facts CSS cannot hold in one box — a command row laid out in a
+    width it does not set, and a focus ring the browser grants to a scripted focus. **WD-016
+    and WD-017 are the new kind**: a minimum width and a content margin that the control's own
+    pinned template declares and the shipped control ignores. Neither is a behaviour being
+    declined; in both the render and the dictionary disagree and the render wins. The rule
     the version settled on is that **the render is the specification and the dictionary is
     the explanation**, because a reproduction faithful to the dictionary would be visibly
     wrong beside the control it copies. Every one was found by measuring the original, and
