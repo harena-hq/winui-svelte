@@ -823,6 +823,9 @@
 	--winui-ToolTipBackgroundBrush: var(--winui-AcrylicInAppFillColorDefaultBrush);
 	--winui-ToolTipBorderPadding: 6px 9px 8px 9px;
 	--winui-ToolTipMaxWidth: 320px;
+	--winui-DropDownButtonForegroundSecondary: var(--winui-TextFillColorSecondaryBrush);
+	--winui-DropDownButtonForegroundSecondaryPointerOver: var(--winui-TextFillColorTertiaryBrush);
+	--winui-DropDownButtonForegroundSecondaryPressed: var(--winui-TextFillColorTertiaryBrush);
 	--winui-ExpanderHeaderBackground: var(--winui-CardBackgroundFillColorDefaultBrush);
 	--winui-ExpanderHeaderForeground: var(--winui-TextFillColorPrimaryBrush);
 	--winui-ExpanderHeaderForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
@@ -1884,6 +1887,9 @@
 	--winui-ToolTipBorderBrush: var(--winui-SurfaceStrokeColorFlyoutBrush);
 	--winui-ToolTipForegroundBrush: var(--winui-TextFillColorPrimaryBrush);
 	--winui-ToolTipBackgroundBrush: var(--winui-AcrylicInAppFillColorDefaultBrush);
+	--winui-DropDownButtonForegroundSecondary: var(--winui-TextFillColorSecondaryBrush);
+	--winui-DropDownButtonForegroundSecondaryPointerOver: var(--winui-TextFillColorTertiaryBrush);
+	--winui-DropDownButtonForegroundSecondaryPressed: var(--winui-TextFillColorTertiaryBrush);
 	--winui-ExpanderHeaderBackground: var(--winui-CardBackgroundFillColorDefaultBrush);
 	--winui-ExpanderHeaderForeground: var(--winui-TextFillColorPrimaryBrush);
 	--winui-ExpanderHeaderForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
@@ -2877,6 +2883,9 @@
 		--winui-ToolTipBorderBrush: var(--winui-SurfaceStrokeColorFlyoutBrush);
 		--winui-ToolTipForegroundBrush: var(--winui-TextFillColorPrimaryBrush);
 		--winui-ToolTipBackgroundBrush: var(--winui-AcrylicInAppFillColorDefaultBrush);
+		--winui-DropDownButtonForegroundSecondary: var(--winui-TextFillColorSecondaryBrush);
+		--winui-DropDownButtonForegroundSecondaryPointerOver: var(--winui-TextFillColorTertiaryBrush);
+		--winui-DropDownButtonForegroundSecondaryPressed: var(--winui-TextFillColorTertiaryBrush);
 		--winui-ExpanderHeaderBackground: var(--winui-CardBackgroundFillColorDefaultBrush);
 		--winui-ExpanderHeaderForeground: var(--winui-TextFillColorPrimaryBrush);
 		--winui-ExpanderHeaderForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
@@ -3801,6 +3810,9 @@
 	--winui-ToolTipBorderBrush: var(--winui-SystemColorWindowTextColorBrush);
 	--winui-ToolTipForegroundBrush: var(--winui-SystemColorWindowTextColorBrush);
 	--winui-ToolTipBackgroundBrush: var(--winui-SystemColorWindowColorBrush);
+	--winui-DropDownButtonForegroundSecondary: var(--winui-SystemColorButtonTextColorBrush);
+	--winui-DropDownButtonForegroundSecondaryPointerOver: var(--winui-SystemColorHighlightColorBrush);
+	--winui-DropDownButtonForegroundSecondaryPressed: var(--winui-SystemColorHighlightColorBrush);
 	--winui-ExpanderHeaderBackground: var(--winui-SystemColorButtonFaceColorBrush);
 	--winui-ExpanderHeaderForeground: var(--winui-SystemColorButtonTextColorBrush);
 	--winui-ExpanderHeaderForegroundPointerOver: var(--winui-SystemColorHighlightColorBrush);

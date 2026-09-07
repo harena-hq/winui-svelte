@@ -176,7 +176,7 @@ exactly the reason above.
 ### WD-006 — an animated icon renders as the static glyph WinUI falls back to
 
 - **Control**: `NavigationView`'s settings item, `TitleBar`'s back and pane-toggle buttons,
-  `CheckBox`'s check glyph, and `Expander`'s chevron.
+  `CheckBox`'s check glyph, `Expander`'s chevron, and `DropDownButton`'s chevron.
 - **WinUI does**: give each of them an `AnimatedIcon` with a `FallbackIconSource` — the
   settings item in `CreateAndHookEventsToSettings`, `NavigationView.cpp:1319`; the two title
   bar buttons in their styles, `TitleBar_themeresources.xaml:160` and `:230`. The buttons'
@@ -188,8 +188,8 @@ exactly the reason above.
   animators, and its `Markers()` map at `:730` names six segments between `Normal`,
   `PointerOver` and `Pressed`.
 - **We do**: render each `FallbackIconSource`'s glyph — `Symbol::Setting` as E713, the two
-  title bar glyphs, CheckBox's E73E and E9AE, and Expander's E70D and E70E — with no
-  transition between pointer states.
+  title bar glyphs, CheckBox's E73E and E9AE, Expander's E70D and E70E, and
+  DropDownButton's E96E — with no transition between pointer states.
 
   **The glyph is not always the same shape as the animation's frame, and Expander is where
   that was first measured.** Its chevron is `AnimatedChevronUpDownSmallVisualSource`, which

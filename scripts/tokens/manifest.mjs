@@ -263,6 +263,12 @@ export const HYPERLINKBUTTON_KEYS = {
 	HyperlinkButtonBorderBrushDisabled: 'HyperlinkButton border, disabled'
 };
 
+export const DROPDOWNBUTTON_KEYS = {
+	DropDownButtonForegroundSecondary: 'DropDownButton chevron foreground, at rest',
+	DropDownButtonForegroundSecondaryPointerOver: 'DropDownButton chevron foreground, pointer over',
+	DropDownButtonForegroundSecondaryPressed: 'DropDownButton chevron foreground, pressed'
+};
+
 export const REPEATBUTTON_KEYS = {
 	// Defined in RepeatButton_themeresources.xaml, and selected only so EXCLUDED can
 	// record why it is not emitted: the style takes ButtonBorderThemeThickness instead.
