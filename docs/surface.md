@@ -667,8 +667,10 @@ a top-aligned icon would be nine pixels out. Its 20x20 box is `SymbolIcon`'s own
 FontSize; no TeachingTip resource states it, which is this unit's one `c1-allow`.
 
 Every line box on all three examples measures 19 where the generated `winui-BodyTextBlockStyle`
-imposes 20. That is the seventh and eighth site to need `line-height: normal` over the ramp
-class, after InfoBar, Expander, Flyout, MenuFlyout and both of ContentDialog's.
+The title and the subtitle both need `line-height: normal` over the ramp class, which every
+control in this tranche has needed somewhere. The running total this file used to carry was
+being incremented rather than derived and had drifted; what is checkable, and what the
+type-ramp unit actually rests on, is that no control has yet been reproduced without it.
 
 ### TeachingTip — v6 unit 046b
 
@@ -709,10 +711,10 @@ the command row supplies a close button, and the titles' 28px right margin goes 
 `FooterCloseButton` state resets that margin to `0,0,0,0`. Both were confirmed on the second
 Gallery example, which has two commands and no X.
 
-The content slot is the ninth site to need `line-height: normal` over the generated ramp class.
+The content slot needs `line-height: normal` too, which makes three in this control alone.
 Nothing upstream sets a line height on `MainContentPresenter` (`:335`); a `TextBlock` there
-uses the font's own spacing, which measures 19 where the ramp class imposes 20. The count is
-now nine and the type-ramp unit `docs/plan.md` carries has not moved.
+uses the font's own spacing, which measures 19 where the ramp class imposes 20. The card came
+out 311 tall against the original's 310 until it did.
 
 An untargeted tip is anchored to the window, which is `position: fixed` here — a zero-height
 element spanning the viewport's bottom edge, handed to the primitive as its anchor so that one
