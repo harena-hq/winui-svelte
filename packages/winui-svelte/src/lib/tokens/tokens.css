@@ -545,6 +545,7 @@
 	--winui-MenuFlyoutItemKeyboardAcceleratorTextForegroundDisabled: var(
 		--winui-TextFillColorDisabledBrush
 	);
+	--winui-SplitMenuFlyoutItemButtonDividerBrush: var(--winui-DividerStrokeColorDefaultBrush);
 	--winui-MenuFlyoutPresenterBackground: var(--winui-DesktopAcrylicTransparentBrush);
 	--winui-MenuFlyoutPresenterBorderBrush: var(--winui-SurfaceStrokeColorFlyoutBrush);
 	--winui-ToggleMenuFlyoutItemKeyboardAcceleratorTextForeground: var(
@@ -571,6 +572,8 @@
 	--winui-MenuFlyoutSeparatorThemePadding: 1px -4px 1px -4px;
 	--winui-MenuFlyoutItemMargin: 2px 4px 2px 4px;
 	--winui-MenuFlyoutItemThemePaddingNarrow: 4px 11px 5px 11px;
+	--winui-SplitMenuFlyoutItemSeparatorHeight: 18px;
+	--winui-SplitMenuFlyoutItemChevronButtonWidth: 38px;
 	--winui-PasswordBoxTopHeaderMargin: 0px 0px 8px 0px;
 	--winui-PasswordBoxIconFontSize: 12px;
 	--winui-RadioButtonBorderThemeThickness: 1px;
@@ -1532,6 +1535,7 @@
 	--winui-ToggleMenuFlyoutItemKeyboardAcceleratorTextForegroundDisabled: var(
 		--winui-TextFillColorDisabledBrush
 	);
+	--winui-SplitMenuFlyoutItemButtonDividerBrush: var(--winui-DividerStrokeColorDefaultBrush);
 	--winui-MenuFlyoutPresenterBackground: var(--winui-DesktopAcrylicTransparentBrush);
 	--winui-MenuFlyoutPresenterBorderBrush: var(--winui-SurfaceStrokeColorFlyoutBrush);
 	--winui-MenuFlyoutPresenterBorderThemeThickness: 1px;
@@ -2400,6 +2404,7 @@
 		--winui-ToggleMenuFlyoutItemKeyboardAcceleratorTextForegroundDisabled: var(
 			--winui-TextFillColorDisabledBrush
 		);
+		--winui-SplitMenuFlyoutItemButtonDividerBrush: var(--winui-DividerStrokeColorDefaultBrush);
 		--winui-MenuFlyoutPresenterBackground: var(--winui-DesktopAcrylicTransparentBrush);
 		--winui-MenuFlyoutPresenterBorderBrush: var(--winui-SurfaceStrokeColorFlyoutBrush);
 		--winui-MenuFlyoutPresenterBorderThemeThickness: 1px;
@@ -3228,6 +3233,7 @@
 	--winui-ToggleMenuFlyoutItemKeyboardAcceleratorTextForegroundDisabled: var(
 		--winui-SystemColorGrayTextColorBrush
 	);
+	--winui-SplitMenuFlyoutItemButtonDividerBrush: var(--winui-SystemColorWindowTextColorBrush);
 	--winui-MenuFlyoutPresenterBackground: var(--winui-SystemColorWindowColorBrush);
 	--winui-MenuFlyoutPresenterBorderBrush: var(--winui-SystemColorWindowTextColorBrush);
 	--winui-MenuFlyoutPresenterBorderThemeThickness: 2px;
