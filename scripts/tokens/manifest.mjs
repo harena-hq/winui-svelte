@@ -310,6 +310,181 @@ export const SPLITBUTTON_KEYS = {
 	SplitButtonPadding: 'SplitButton primary padding'
 };
 
+/**
+ * Keys AppBarButton reads. The three dimensions from CommandBar and Reveal are here because
+ * this is the first library template to consume them: the two AppBarTheme keys are defined by
+ * CommandBar, while AppBarButtonContentHeight has its sole control-pin definition in Reveal.
+ * Border brushes, the no-op submenu chevron brush, the visibility enum, and Reveal-only compact
+ * and touch values are selected only to record their deliberate omission in EXCLUDED.
+ */
+export const APPBARBUTTON_KEYS = {
+	AppBarButtonBackground: 'AppBarButton background, at rest',
+	AppBarButtonBackgroundPointerOver: 'AppBarButton background, pointer over',
+	AppBarButtonBackgroundPressed: 'AppBarButton background, pressed',
+	AppBarButtonBackgroundDisabled: 'AppBarButton background, disabled',
+	AppBarButtonForeground: 'AppBarButton foreground, at rest',
+	AppBarButtonForegroundPointerOver: 'AppBarButton foreground, pointer over',
+	AppBarButtonForegroundPressed: 'AppBarButton foreground, pressed',
+	AppBarButtonForegroundDisabled: 'AppBarButton foreground, disabled',
+	AppBarButtonBorderBrush: 'AppBarButton border, at rest, listed for EXCLUDED',
+	AppBarButtonBorderBrushPointerOver: 'AppBarButton border, pointer over, listed for EXCLUDED',
+	AppBarButtonBorderBrushPressed: 'AppBarButton border, pressed, listed for EXCLUDED',
+	AppBarButtonBorderBrushDisabled: 'AppBarButton border, disabled, listed for EXCLUDED',
+	AppBarButtonKeyboardAcceleratorTextForeground: 'AppBarButton accelerator foreground, at rest',
+	AppBarButtonKeyboardAcceleratorTextForegroundPointerOver:
+		'AppBarButton accelerator foreground, pointer over',
+	AppBarButtonKeyboardAcceleratorTextForegroundPressed:
+		'AppBarButton accelerator foreground, pressed',
+	AppBarButtonKeyboardAcceleratorTextForegroundDisabled:
+		'AppBarButton accelerator foreground, disabled',
+	AppBarButtonBackgroundSubMenuOpened: 'AppBarButton background, submenu opened',
+	AppBarButtonForegroundSubMenuOpened: 'AppBarButton foreground, submenu opened',
+	AppBarButtonKeyboardAcceleratorTextForegroundSubMenuOpened:
+		'AppBarButton accelerator foreground, submenu opened',
+	AppBarButtonBorderBrushSubMenuOpened: 'AppBarButton border, submenu opened, listed for EXCLUDED',
+	AppBarButtonSubItemChevronForeground: 'AppBarButton submenu chevron foreground, at rest',
+	AppBarButtonSubItemChevronForegroundPointerOver:
+		'AppBarButton submenu chevron foreground, pointer over',
+	AppBarButtonSubItemChevronForegroundPressed: 'AppBarButton submenu chevron foreground, pressed',
+	AppBarButtonSubItemChevronForegroundSubMenuOpened:
+		'AppBarButton submenu chevron foreground, submenu opened, listed for EXCLUDED',
+	AppBarButtonSubItemChevronForegroundDisabled: 'AppBarButton submenu chevron foreground, disabled',
+	AppBarButtonHasFlyoutChevronVisibility:
+		'AppBarButton flyout chevron visibility, listed for EXCLUDED',
+	AppBarButtonFlyoutGlyph: 'AppBarButton flyout glyph',
+	AppBarButtonOverflowFlyoutGlyph: 'AppBarButton overflow flyout glyph',
+	AppBarButtonLabelFontSize: 'AppBarButton label font size',
+	AppBarButtonSubItemChevronFontSize: 'AppBarButton submenu chevron font size',
+	AppBarButtonSecondarySubItemChevronFontSize: 'AppBarButton overflow chevron font size',
+	AppBarButtonSubItemChevronMargin: 'AppBarButton submenu chevron margin',
+	AppBarButtonSubItemChevronLabelOnRightMargin: 'AppBarButton right-label chevron margin',
+	AppBarButtonSecondarySubItemChevronMargin: 'AppBarButton overflow chevron margin',
+	AppBarButtonContentViewboxMargin: 'AppBarButton right-label icon margin',
+	AppBarButtonContentViewboxCompactMargin: 'AppBarButton compact icon margin, listed for EXCLUDED',
+	AppBarButtonContentViewboxCollapsedMargin: 'AppBarButton collapsed-label icon margin',
+	AppBarButtonOverflowTextTouchMargin:
+		'AppBarButton overflow touch label padding, listed for EXCLUDED',
+	AppBarButtonOverflowTextLabelPadding: 'AppBarButton overflow label padding',
+	AppBarButtonTextLabelMargin: 'AppBarButton label margin',
+	AppBarButtonTextLabelOnRightMargin: 'AppBarButton right-label margin',
+	AppBarButtonInnerBorderMargin: 'AppBarButton inner border margin',
+	AppBarButtonInnerBorderCompactMargin: 'AppBarButton compact inner border margin',
+	AppBarButtonInnerBorderOverflowMargin: 'AppBarButton overflow inner border margin',
+	AppBarThemeMinHeight: 'AppBar content minimum height',
+	AppBarThemeCompactHeight: 'AppBar compact content height',
+	AppBarButtonContentHeight: 'AppBarButton icon height',
+	ControlContentThemeFontSize: "the overflow row's label size, listed for EXCLUDED"
+};
+
+/**
+ * Keys AppBarToggleButton reads. The twelve legacy SolidColorBrush names ending in ThemeBrush
+ * are not seeded: no template in the three pinned dictionaries references them. Touch-only
+ * overflow metrics are seeded solely so EXCLUDED can record WD-020.
+ */
+export const APPBARTOGGLEBUTTON_KEYS = {
+	AppBarToggleButtonBackground: 'AppBarToggleButton background, at rest',
+	AppBarToggleButtonBackgroundPointerOver: 'AppBarToggleButton background, pointer over',
+	AppBarToggleButtonBackgroundPressed: 'AppBarToggleButton background, pressed',
+	AppBarToggleButtonBackgroundDisabled: 'AppBarToggleButton background, disabled',
+	AppBarToggleButtonBackgroundChecked: 'AppBarToggleButton background, checked',
+	AppBarToggleButtonBackgroundCheckedPointerOver:
+		'AppBarToggleButton background, checked and pointer over',
+	AppBarToggleButtonBackgroundCheckedPressed: 'AppBarToggleButton background, checked and pressed',
+	AppBarToggleButtonBackgroundCheckedDisabled:
+		'AppBarToggleButton background, checked and disabled',
+	AppBarToggleButtonBackgroundHighLightOverlay:
+		'AppBarToggleButton highlight overlay, listed for EXCLUDED',
+	AppBarToggleButtonBackgroundHighLightOverlayPointerOver:
+		'AppBarToggleButton highlight overlay, pointer over',
+	AppBarToggleButtonBackgroundHighLightOverlayPressed:
+		'AppBarToggleButton highlight overlay, pressed',
+	AppBarToggleButtonBackgroundHighLightOverlayCheckedPointerOver:
+		'AppBarToggleButton highlight overlay, checked and pointer over',
+	AppBarToggleButtonBackgroundHighLightOverlayCheckedPressed:
+		'AppBarToggleButton highlight overlay, checked and pressed',
+	AppBarToggleButtonForeground: 'AppBarToggleButton foreground, at rest',
+	AppBarToggleButtonForegroundPointerOver: 'AppBarToggleButton foreground, pointer over',
+	AppBarToggleButtonForegroundPressed: 'AppBarToggleButton foreground, pressed',
+	AppBarToggleButtonForegroundDisabled: 'AppBarToggleButton foreground, disabled',
+	AppBarToggleButtonForegroundChecked: 'AppBarToggleButton foreground, checked',
+	AppBarToggleButtonForegroundCheckedPointerOver:
+		'AppBarToggleButton foreground, checked and pointer over',
+	AppBarToggleButtonForegroundCheckedPressed: 'AppBarToggleButton foreground, checked and pressed',
+	AppBarToggleButtonForegroundCheckedDisabled:
+		'AppBarToggleButton foreground, checked and disabled',
+	AppBarToggleButtonBorderBrush: 'AppBarToggleButton border, at rest',
+	AppBarToggleButtonBorderBrushPointerOver: 'AppBarToggleButton border, pointer over',
+	AppBarToggleButtonBorderBrushPressed: 'AppBarToggleButton border, pressed',
+	AppBarToggleButtonBorderBrushDisabled: 'AppBarToggleButton border, disabled',
+	AppBarToggleButtonBorderBrushChecked: 'AppBarToggleButton border, checked',
+	AppBarToggleButtonBorderBrushCheckedPointerOver:
+		'AppBarToggleButton border, checked and pointer over',
+	AppBarToggleButtonBorderBrushCheckedPressed: 'AppBarToggleButton border, checked and pressed',
+	AppBarToggleButtonBorderBrushCheckedDisabled: 'AppBarToggleButton border, checked and disabled',
+	AppBarToggleButtonCheckGlyphForeground: 'AppBarToggleButton check glyph foreground, at rest',
+	AppBarToggleButtonCheckGlyphForegroundPointerOver:
+		'AppBarToggleButton check glyph foreground, pointer over',
+	AppBarToggleButtonCheckGlyphForegroundPressed:
+		'AppBarToggleButton check glyph foreground, pressed',
+	AppBarToggleButtonCheckGlyphForegroundDisabled:
+		'AppBarToggleButton check glyph foreground, disabled, listed for EXCLUDED',
+	AppBarToggleButtonCheckGlyphForegroundChecked:
+		'AppBarToggleButton check glyph foreground, checked, listed for EXCLUDED',
+	AppBarToggleButtonCheckGlyphForegroundCheckedPointerOver:
+		'AppBarToggleButton check glyph foreground, checked and pointer over, listed for EXCLUDED',
+	AppBarToggleButtonCheckGlyphForegroundCheckedPressed:
+		'AppBarToggleButton check glyph foreground, checked and pressed, listed for EXCLUDED',
+	AppBarToggleButtonCheckGlyphForegroundCheckedDisabled:
+		'AppBarToggleButton check glyph foreground, checked and disabled, listed for EXCLUDED',
+	AppBarToggleButtonOverflowLabelForegroundPointerOver:
+		'AppBarToggleButton overflow label foreground, pointer over',
+	AppBarToggleButtonOverflowLabelForegroundPressed:
+		'AppBarToggleButton overflow label foreground, pressed',
+	AppBarToggleButtonOverflowLabelForegroundDisabled:
+		'AppBarToggleButton overflow label foreground, disabled',
+	AppBarToggleButtonOverflowLabelForegroundCheckedPointerOver:
+		'AppBarToggleButton overflow label foreground, checked and pointer over',
+	AppBarToggleButtonOverflowLabelForegroundCheckedPressed:
+		'AppBarToggleButton overflow label foreground, checked and pressed',
+	AppBarToggleButtonOverflowLabelForegroundCheckedDisabled:
+		'AppBarToggleButton overflow label foreground, checked and disabled',
+	AppBarToggleButtonKeyboardAcceleratorTextForeground:
+		'AppBarToggleButton accelerator foreground, at rest',
+	AppBarToggleButtonKeyboardAcceleratorTextForegroundPointerOver:
+		'AppBarToggleButton accelerator foreground, pointer over',
+	AppBarToggleButtonKeyboardAcceleratorTextForegroundPressed:
+		'AppBarToggleButton accelerator foreground, pressed',
+	AppBarToggleButtonKeyboardAcceleratorTextForegroundDisabled:
+		'AppBarToggleButton accelerator foreground, disabled',
+	AppBarToggleButtonKeyboardAcceleratorTextForegroundChecked:
+		'AppBarToggleButton accelerator foreground, checked',
+	AppBarToggleButtonKeyboardAcceleratorTextForegroundCheckedPointerOver:
+		'AppBarToggleButton accelerator foreground, checked and pointer over',
+	AppBarToggleButtonKeyboardAcceleratorTextForegroundCheckedPressed:
+		'AppBarToggleButton accelerator foreground, checked and pressed',
+	AppBarToggleButtonKeyboardAcceleratorTextForegroundCheckedDisabled:
+		'AppBarToggleButton accelerator foreground, checked and disabled',
+	AppBarToggleButtonBorderThemeThickness: 'AppBarToggleButton border width',
+	AppBarToggleButtonOverflowTextTouchMargin:
+		'AppBarToggleButton overflow touch label padding, listed for EXCLUDED',
+	AppBarToggleButtonOverflowCheckTouchMargin:
+		'AppBarToggleButton overflow touch check margin, listed for EXCLUDED',
+	AppBarToggleButtonOverflowCheckMargin: 'AppBarToggleButton overflow check margin',
+	AppBarToggleButtonTextLabelMargin: 'AppBarToggleButton label margin',
+	AppBarToggleButtonTextLabelOnRightMargin: 'AppBarToggleButton right-label margin',
+	AppBarToggleButtonOverflowTextLabelPadding: 'AppBarToggleButton overflow label padding'
+};
+
+/** Keys AppBarSeparator reads; its template is one rectangle in three view states. */
+export const APPBARSEPARATOR_KEYS = {
+	AppBarSeparatorForeground: 'AppBarSeparator foreground',
+	AppBarSeparatorMargin: 'AppBarSeparator margin',
+	AppBarOverflowSeparatorMargin: 'AppBarSeparator overflow margin',
+	AppBarSeparatorWidth: 'AppBarSeparator width',
+	AppBarOverflowSeparatorHeight: 'AppBarSeparator overflow height',
+	AppBarSeparatorCornerRadius: 'AppBarSeparator corner radius'
+};
+
 export const REPEATBUTTON_KEYS = {
 	// Defined in RepeatButton_themeresources.xaml, and selected only so EXCLUDED can
 	// record why it is not emitted: the style takes ButtonBorderThemeThickness instead.
@@ -1523,6 +1698,48 @@ export const SHELL_KEYS = {
  * the structure that tells the two apart.
  */
 export const EXCLUDED = {
+	// AppBarButton has no BorderThickness setter and no AppBarButtonBorderThemeThickness
+	// resource, so its inner border has the control default thickness of zero in every state.
+	AppBarButtonBorderBrush: 'No AppBarButton border thickness exists; the border paints nothing',
+	AppBarButtonBorderBrushPointerOver:
+		'No AppBarButton border thickness exists; the border paints nothing',
+	AppBarButtonBorderBrushPressed:
+		'No AppBarButton border thickness exists; the border paints nothing',
+	AppBarButtonBorderBrushDisabled:
+		'No AppBarButton border thickness exists; the border paints nothing',
+	AppBarButtonBorderBrushSubMenuOpened:
+		'No AppBarButton border thickness exists; the border paints nothing',
+	// AppBarButton_themeresources.xaml:318 paints the chevron in the same state that :319 hides it.
+	AppBarButtonSubItemChevronForegroundSubMenuOpened:
+		'Submenu-opened state hides the chevron it would paint',
+	// The non-Reveal Compact state changes the inner border rather than this viewbox margin.
+	AppBarButtonContentViewboxCompactMargin: 'Referenced only by Reveal templates',
+	AppBarButtonHasFlyoutChevronVisibility:
+		'Visibility enum has no scalar conversion; the flyout state renders the chevron',
+	// Both overflow labels bind their FontSize to this key (AppBarButton_themeresources.xaml:373,
+	// AppBarToggleButton_themeresources.xaml:488). The value is 14, which is Body's size, and the
+	// root already carries `winui-BodyTextBlockStyle` — so emitting a second name for one number
+	// would give the two somewhere to drift apart.
+	ControlContentThemeFontSize:
+		'14, which the root already takes from the Body ramp class it carries',
+	AppBarButtonOverflowTextTouchMargin:
+		'WD-020: touch and game-controller overflow padding is not reproduced',
+	AppBarToggleButtonOverflowTextTouchMargin:
+		'WD-020: touch and game-controller overflow padding is not reproduced',
+	AppBarToggleButtonOverflowCheckTouchMargin:
+		'WD-020: touch and game-controller overflow check margin is not reproduced',
+	// No template setter reads the unsuffixed overlay; its state-specific variants are emitted.
+	AppBarToggleButtonBackgroundHighLightOverlay:
+		'No template setter reads the unsuffixed highlight overlay',
+	// These five glyph brushes belong only to Reveal templates; the non-Reveal states use
+	// overflow-label or AppBarToggleButtonForeground brushes instead.
+	AppBarToggleButtonCheckGlyphForegroundDisabled:
+		'Referenced only by Reveal templates; Disabled uses OverflowLabelForegroundDisabled',
+	AppBarToggleButtonCheckGlyphForegroundChecked: 'Referenced only by Reveal templates',
+	AppBarToggleButtonCheckGlyphForegroundCheckedPointerOver: 'Referenced only by Reveal templates',
+	AppBarToggleButtonCheckGlyphForegroundCheckedPressed: 'Referenced only by Reveal templates',
+	AppBarToggleButtonCheckGlyphForegroundCheckedDisabled: 'Referenced only by Reveal templates',
+
 	// These five SplitButton resources are defined but the default template never reads them.
 	// Disabled wins before checked in SplitButton.cpp:133, and its checked hover states retain
 	// `SplitButtonBorderBrushChecked`; the CommandBar brush is referenced nowhere in the pin.
@@ -2054,6 +2271,12 @@ export const TYPE_RAMP = {
  * these gets the inputs rather than the answer.
  */
 export const DOUBLE_LENGTHS = {
+	AppBarThemeMinHeight: 'AppBar content minimum height',
+	AppBarThemeCompactHeight: 'AppBar compact content height',
+	AppBarButtonContentHeight: 'AppBarButton icon height',
+	AppBarSeparatorWidth: 'AppBarSeparator rule width',
+	AppBarOverflowSeparatorHeight: 'AppBarSeparator overflow rule height',
+	AppBarSeparatorCornerRadius: 'AppBarSeparator rule corner radius',
 	SplitButtonPrimaryButtonSize: "the floor under the primary half's column",
 	SplitButtonSecondaryButtonSize: "the chevron half's column",
 	NavigationBackButtonHeight: 'the back button box',
@@ -2185,6 +2408,8 @@ export const DOUBLE_RATIOS = {
  * value the generator should stop on rather than escape.
  */
 export const GLYPHS = {
+	AppBarButtonFlyoutGlyph: 'AppBarButton flyout chevron',
+	AppBarButtonOverflowFlyoutGlyph: 'AppBarButton overflow flyout chevron',
 	NavigationViewItemExpandedGlyph: "an expandable item's chevron",
 	CheckBoxCheckedGlyph: "a checked CheckBox's checkmark",
 	CheckBoxIndeterminateGlyph: "an indeterminate CheckBox's dash",
@@ -2747,6 +2972,8 @@ export const INFOBAR_KEYS = {
  * selecting nothing and the duplicate returning.
  */
 export const DEFINED_BY = {
+	AppBarThemeMinHeight: 'controls/dev/CommonStyles/CommandBar_themeresources.xaml',
+	AppBarThemeCompactHeight: 'controls/dev/CommonStyles/CommandBar_themeresources.xaml',
 	ExpanderHeaderBackground: 'controls/dev/Expander/Expander_themeresources.xaml',
 	ExpanderMinHeight: 'controls/dev/Expander/Expander_themeresources.xaml',
 	ExpanderHeaderPadding: 'controls/dev/Expander/Expander_themeresources.xaml',

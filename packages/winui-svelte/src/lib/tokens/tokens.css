@@ -100,6 +100,153 @@
 	--winui-ComboBoxItemPillCornerRadius: 1.5px;
 	--winui-ComboBoxHeaderThemeFontWeight: 400;
 	--winui-ComboBoxPlaceholderTextThemeFontWeight: 350;
+	--winui-AppBarButtonBackground: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-AppBarButtonBackgroundPointerOver: var(--winui-SubtleFillColorSecondaryBrush);
+	--winui-AppBarButtonBackgroundPressed: var(--winui-SubtleFillColorTertiaryBrush);
+	--winui-AppBarButtonBackgroundDisabled: var(--winui-SubtleFillColorDisabledBrush);
+	--winui-AppBarButtonForeground: var(--winui-TextFillColorPrimaryBrush);
+	--winui-AppBarButtonForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
+	--winui-AppBarButtonForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
+	--winui-AppBarButtonForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+	--winui-AppBarButtonKeyboardAcceleratorTextForeground: var(--winui-TextFillColorSecondaryBrush);
+	--winui-AppBarButtonKeyboardAcceleratorTextForegroundPointerOver: var(
+		--winui-TextFillColorSecondaryBrush
+	);
+	--winui-AppBarButtonKeyboardAcceleratorTextForegroundPressed: var(
+		--winui-TextFillColorTertiaryBrush
+	);
+	--winui-AppBarButtonKeyboardAcceleratorTextForegroundDisabled: var(
+		--winui-TextFillColorDisabledBrush
+	);
+	--winui-AppBarButtonBackgroundSubMenuOpened: var(--winui-SubtleFillColorSecondaryBrush);
+	--winui-AppBarButtonForegroundSubMenuOpened: var(--winui-TextFillColorPrimaryBrush);
+	--winui-AppBarButtonKeyboardAcceleratorTextForegroundSubMenuOpened: var(
+		--winui-TextFillColorSecondaryBrush
+	);
+	--winui-AppBarButtonSubItemChevronForeground: var(--winui-TextFillColorSecondaryBrush);
+	--winui-AppBarButtonSubItemChevronForegroundPointerOver: var(--winui-TextFillColorSecondaryBrush);
+	--winui-AppBarButtonSubItemChevronForegroundPressed: var(--winui-TextFillColorTertiaryBrush);
+	--winui-AppBarButtonSubItemChevronForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+	--winui-AppBarButtonFlyoutGlyph: '\00e974';
+	--winui-AppBarButtonOverflowFlyoutGlyph: '\00e974';
+	--winui-AppBarButtonLabelFontSize: 12px;
+	--winui-AppBarButtonSubItemChevronFontSize: 8px;
+	--winui-AppBarButtonSecondarySubItemChevronFontSize: 12px;
+	--winui-AppBarButtonSubItemChevronMargin: 20px 12px 0px -23px;
+	--winui-AppBarButtonSubItemChevronLabelOnRightMargin: 20px 12px 0px -7px;
+	--winui-AppBarButtonSecondarySubItemChevronMargin: 0px 16px 0px 0px;
+	--winui-AppBarButtonContentViewboxMargin: 16px 0px 10px 12px;
+	--winui-AppBarButtonContentViewboxCollapsedMargin: 16px 0px 2px 0px;
+	--winui-AppBarButtonOverflowTextLabelPadding: 5px 0px 8px 0px;
+	--winui-AppBarButtonTextLabelMargin: 0px 2px 8px 2px;
+	--winui-AppBarButtonTextLabelOnRightMargin: 16px 12px 10px 8px;
+	--winui-AppBarButtonInnerBorderMargin: 6px 2px 6px 2px;
+	--winui-AppBarButtonInnerBorderCompactMargin: 6px 2px 22px 2px;
+	--winui-AppBarButtonInnerBorderOverflowMargin: 0px 4px 0px 4px;
+	--winui-AppBarSeparatorForeground: var(--winui-DividerStrokeColorDefaultBrush);
+	--winui-AppBarSeparatorMargin: 8px 2px 8px 2px;
+	--winui-AppBarOverflowSeparatorMargin: 4px 0px 4px 0px;
+	--winui-AppBarSeparatorWidth: 1px;
+	--winui-AppBarOverflowSeparatorHeight: 1px;
+	--winui-AppBarSeparatorCornerRadius: 0.5px;
+	--winui-AppBarToggleButtonBackground: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-AppBarToggleButtonBackgroundPointerOver: var(--winui-SubtleFillColorSecondaryBrush);
+	--winui-AppBarToggleButtonBackgroundPressed: var(--winui-SubtleFillColorTertiaryBrush);
+	--winui-AppBarToggleButtonBackgroundDisabled: var(--winui-SubtleFillColorDisabledBrush);
+	--winui-AppBarToggleButtonBackgroundChecked: var(--winui-AccentFillColorDefaultBrush);
+	--winui-AppBarToggleButtonBackgroundCheckedPointerOver: var(
+		--winui-AccentFillColorSecondaryBrush
+	);
+	--winui-AppBarToggleButtonBackgroundCheckedPressed: var(--winui-AccentFillColorTertiaryBrush);
+	--winui-AppBarToggleButtonBackgroundCheckedDisabled: var(--winui-AccentFillColorDisabledBrush);
+	--winui-AppBarToggleButtonBackgroundHighLightOverlayPointerOver: var(
+		--winui-SubtleFillColorSecondaryBrush
+	);
+	--winui-AppBarToggleButtonBackgroundHighLightOverlayPressed: var(
+		--winui-SubtleFillColorTertiaryBrush
+	);
+	--winui-AppBarToggleButtonBackgroundHighLightOverlayCheckedPointerOver: var(
+		--winui-SubtleFillColorSecondaryBrush
+	);
+	--winui-AppBarToggleButtonBackgroundHighLightOverlayCheckedPressed: var(
+		--winui-SubtleFillColorTertiaryBrush
+	);
+	--winui-AppBarToggleButtonForeground: var(--winui-TextFillColorPrimaryBrush);
+	--winui-AppBarToggleButtonForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
+	--winui-AppBarToggleButtonForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
+	--winui-AppBarToggleButtonForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+	--winui-AppBarToggleButtonForegroundChecked: var(--winui-TextOnAccentFillColorPrimaryBrush);
+	--winui-AppBarToggleButtonForegroundCheckedPointerOver: var(
+		--winui-TextOnAccentFillColorPrimaryBrush
+	);
+	--winui-AppBarToggleButtonForegroundCheckedPressed: var(
+		--winui-TextOnAccentFillColorSecondaryBrush
+	);
+	--winui-AppBarToggleButtonForegroundCheckedDisabled: var(--winui-TextOnAccentFillColorDisabled);
+	--winui-AppBarToggleButtonBorderBrush: var(--winui-ControlFillColorTransparentBrush);
+	--winui-AppBarToggleButtonBorderBrushPointerOver: var(--winui-ControlFillColorTransparentBrush);
+	--winui-AppBarToggleButtonBorderBrushPressed: var(--winui-ControlFillColorTransparentBrush);
+	--winui-AppBarToggleButtonBorderBrushDisabled: var(--winui-ControlFillColorTransparentBrush);
+	--winui-AppBarToggleButtonBorderBrushChecked: var(--winui-AccentControlElevationBorderBrush);
+	--winui-AppBarToggleButtonBorderBrushCheckedPointerOver: var(
+		--winui-AccentControlElevationBorderBrush
+	);
+	--winui-AppBarToggleButtonBorderBrushCheckedPressed: var(
+		--winui-ControlFillColorTransparentBrush
+	);
+	--winui-AppBarToggleButtonBorderBrushCheckedDisabled: var(
+		--winui-ControlFillColorTransparentBrush
+	);
+	--winui-AppBarToggleButtonCheckGlyphForeground: var(--winui-TextFillColorPrimaryBrush);
+	--winui-AppBarToggleButtonCheckGlyphForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
+	--winui-AppBarToggleButtonCheckGlyphForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
+	--winui-AppBarToggleButtonOverflowLabelForegroundPointerOver: var(
+		--winui-TextFillColorPrimaryBrush
+	);
+	--winui-AppBarToggleButtonOverflowLabelForegroundPressed: var(
+		--winui-TextFillColorSecondaryBrush
+	);
+	--winui-AppBarToggleButtonOverflowLabelForegroundDisabled: var(
+		--winui-TextFillColorDisabledBrush
+	);
+	--winui-AppBarToggleButtonOverflowLabelForegroundCheckedPointerOver: var(
+		--winui-TextFillColorPrimaryBrush
+	);
+	--winui-AppBarToggleButtonOverflowLabelForegroundCheckedPressed: var(
+		--winui-TextFillColorSecondaryBrush
+	);
+	--winui-AppBarToggleButtonOverflowLabelForegroundCheckedDisabled: var(
+		--winui-TextFillColorDisabledBrush
+	);
+	--winui-AppBarToggleButtonKeyboardAcceleratorTextForeground: var(
+		--winui-TextFillColorSecondaryBrush
+	);
+	--winui-AppBarToggleButtonKeyboardAcceleratorTextForegroundPointerOver: var(
+		--winui-TextFillColorSecondaryBrush
+	);
+	--winui-AppBarToggleButtonKeyboardAcceleratorTextForegroundPressed: var(
+		--winui-TextFillColorTertiaryBrush
+	);
+	--winui-AppBarToggleButtonKeyboardAcceleratorTextForegroundDisabled: var(
+		--winui-TextFillColorDisabledBrush
+	);
+	--winui-AppBarToggleButtonKeyboardAcceleratorTextForegroundChecked: var(
+		--winui-TextFillColorSecondaryBrush
+	);
+	--winui-AppBarToggleButtonKeyboardAcceleratorTextForegroundCheckedPointerOver: var(
+		--winui-TextFillColorSecondaryBrush
+	);
+	--winui-AppBarToggleButtonKeyboardAcceleratorTextForegroundCheckedPressed: var(
+		--winui-TextFillColorTertiaryBrush
+	);
+	--winui-AppBarToggleButtonKeyboardAcceleratorTextForegroundCheckedDisabled: var(
+		--winui-TextFillColorDisabledBrush
+	);
+	--winui-AppBarToggleButtonBorderThemeThickness: 1px;
+	--winui-AppBarToggleButtonOverflowCheckMargin: 4px 12px 4px 12px;
+	--winui-AppBarToggleButtonTextLabelMargin: 0px 2px 8px 2px;
+	--winui-AppBarToggleButtonTextLabelOnRightMargin: 16px 12px 10px 8px;
+	--winui-AppBarToggleButtonOverflowTextLabelPadding: 5px 0px 8px 0px;
 	--winui-AccentButtonBackground: var(--winui-AccentFillColorDefaultBrush);
 	--winui-AccentButtonBackgroundPointerOver: var(--winui-AccentFillColorSecondaryBrush);
 	--winui-AccentButtonBackgroundPressed: var(--winui-AccentFillColorTertiaryBrush);
@@ -255,6 +402,8 @@
 	--winui-CheckBoxFocusVisualMargin: -3px -7px -3px -7px;
 	--winui-CheckBoxCheckedGlyph: '\00e73e';
 	--winui-CheckBoxIndeterminateGlyph: '\00e9ae';
+	--winui-AppBarThemeMinHeight: 64px;
+	--winui-AppBarThemeCompactHeight: 48px;
 	--winui-SystemControlTransparentColor: #00000000;
 	--winui-SystemControlTransparentBrush: transparent;
 	--winui-SystemControlHighlightListAccentVeryHighBrush: color-mix(
@@ -920,6 +1069,7 @@
 	--winui-AccentAcrylicBackgroundFillColorBaseBrush: var(--winui-SystemAccentColorLight3);
 	--winui-DesktopAcrylicTransparentBrush: #00000000;
 	--winui-SystemControlTransparentRevealBackgroundBrush: transparent;
+	--winui-AppBarButtonContentHeight: 16px;
 	--winui-NavigationViewBackButtonBackground: var(--winui-SubtleFillColorTransparentBrush);
 	--winui-NavigationBackButtonWidth: 40px;
 	--winui-NavigationBackButtonHeight: 36px;
@@ -1163,6 +1313,7 @@
 	--winui-SystemControlDisabledChromeDisabledLowBrush: var(--winui-SystemChromeDisabledLowColor);
 	--winui-SystemControlForegroundBaseHighBrush: var(--winui-SystemBaseHighColor);
 	--winui-SystemControlForegroundChromeHighBrush: var(--winui-SystemChromeHighColor);
+	--winui-SystemControlHighlightAltBaseMediumBrush: var(--winui-SystemBaseMediumColor);
 	--winui-SystemControlHighlightAltChromeWhiteBrush: var(--winui-SystemChromeWhiteColor);
 	--winui-SystemControlHighlightAltTransparentBrush: transparent;
 	--winui-SystemControlHighlightBaseMediumBrush: var(--winui-SystemBaseMediumColor);
@@ -1249,6 +1400,135 @@
 	--winui-ComboBoxDropDownBorderBrush: var(--winui-SurfaceStrokeColorFlyoutBrush);
 	--winui-ComboBoxItemPillFillBrush: var(--winui-AccentFillColorDefaultBrush);
 	--winui-ComboBoxDropdownBorderPadding: 0px;
+	--winui-AppBarButtonBackground: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-AppBarButtonBackgroundPointerOver: var(--winui-SubtleFillColorSecondaryBrush);
+	--winui-AppBarButtonBackgroundPressed: var(--winui-SubtleFillColorTertiaryBrush);
+	--winui-AppBarButtonBackgroundDisabled: var(--winui-SubtleFillColorDisabledBrush);
+	--winui-AppBarButtonForeground: var(--winui-TextFillColorPrimaryBrush);
+	--winui-AppBarButtonForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
+	--winui-AppBarButtonForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
+	--winui-AppBarButtonForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+	--winui-AppBarButtonKeyboardAcceleratorTextForeground: var(--winui-TextFillColorSecondaryBrush);
+	--winui-AppBarButtonKeyboardAcceleratorTextForegroundPointerOver: var(
+		--winui-TextFillColorSecondaryBrush
+	);
+	--winui-AppBarButtonKeyboardAcceleratorTextForegroundPressed: var(
+		--winui-TextFillColorTertiaryBrush
+	);
+	--winui-AppBarButtonKeyboardAcceleratorTextForegroundDisabled: var(
+		--winui-TextFillColorDisabledBrush
+	);
+	--winui-AppBarButtonBackgroundSubMenuOpened: var(--winui-SubtleFillColorSecondaryBrush);
+	--winui-AppBarButtonForegroundSubMenuOpened: var(--winui-TextFillColorPrimaryBrush);
+	--winui-AppBarButtonKeyboardAcceleratorTextForegroundSubMenuOpened: var(
+		--winui-TextFillColorSecondaryBrush
+	);
+	--winui-AppBarButtonSubItemChevronForeground: var(--winui-TextFillColorSecondaryBrush);
+	--winui-AppBarButtonSubItemChevronForegroundPointerOver: var(--winui-TextFillColorSecondaryBrush);
+	--winui-AppBarButtonSubItemChevronForegroundPressed: var(--winui-TextFillColorTertiaryBrush);
+	--winui-AppBarButtonSubItemChevronForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+	--winui-AppBarButtonFlyoutGlyph: '\00e974';
+	--winui-AppBarButtonOverflowFlyoutGlyph: '\00e974';
+	--winui-AppBarButtonLabelFontSize: 12px;
+	--winui-AppBarButtonSubItemChevronFontSize: 8px;
+	--winui-AppBarButtonSecondarySubItemChevronFontSize: 12px;
+	--winui-AppBarButtonSubItemChevronMargin: 20px 12px 0px -23px;
+	--winui-AppBarButtonSubItemChevronLabelOnRightMargin: 20px 12px 0px -7px;
+	--winui-AppBarButtonSecondarySubItemChevronMargin: 0px 16px 0px 0px;
+	--winui-AppBarSeparatorForeground: var(--winui-DividerStrokeColorDefaultBrush);
+	--winui-AppBarToggleButtonBackground: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-AppBarToggleButtonBackgroundPointerOver: var(--winui-SubtleFillColorSecondaryBrush);
+	--winui-AppBarToggleButtonBackgroundPressed: var(--winui-SubtleFillColorTertiaryBrush);
+	--winui-AppBarToggleButtonBackgroundDisabled: var(--winui-SubtleFillColorDisabledBrush);
+	--winui-AppBarToggleButtonBackgroundChecked: var(--winui-AccentFillColorDefaultBrush);
+	--winui-AppBarToggleButtonBackgroundCheckedPointerOver: var(
+		--winui-AccentFillColorSecondaryBrush
+	);
+	--winui-AppBarToggleButtonBackgroundCheckedPressed: var(--winui-AccentFillColorTertiaryBrush);
+	--winui-AppBarToggleButtonBackgroundCheckedDisabled: var(--winui-AccentFillColorDisabledBrush);
+	--winui-AppBarToggleButtonBackgroundHighLightOverlayPointerOver: var(
+		--winui-SubtleFillColorSecondaryBrush
+	);
+	--winui-AppBarToggleButtonBackgroundHighLightOverlayPressed: var(
+		--winui-SubtleFillColorTertiaryBrush
+	);
+	--winui-AppBarToggleButtonBackgroundHighLightOverlayCheckedPointerOver: var(
+		--winui-SubtleFillColorSecondaryBrush
+	);
+	--winui-AppBarToggleButtonBackgroundHighLightOverlayCheckedPressed: var(
+		--winui-SubtleFillColorTertiaryBrush
+	);
+	--winui-AppBarToggleButtonForeground: var(--winui-TextFillColorPrimaryBrush);
+	--winui-AppBarToggleButtonForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
+	--winui-AppBarToggleButtonForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
+	--winui-AppBarToggleButtonForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+	--winui-AppBarToggleButtonForegroundChecked: var(--winui-TextOnAccentFillColorPrimaryBrush);
+	--winui-AppBarToggleButtonForegroundCheckedPointerOver: var(
+		--winui-TextOnAccentFillColorPrimaryBrush
+	);
+	--winui-AppBarToggleButtonForegroundCheckedPressed: var(
+		--winui-TextOnAccentFillColorSecondaryBrush
+	);
+	--winui-AppBarToggleButtonForegroundCheckedDisabled: var(--winui-TextOnAccentFillColorDisabled);
+	--winui-AppBarToggleButtonBorderBrush: var(--winui-ControlFillColorTransparentBrush);
+	--winui-AppBarToggleButtonBorderBrushPointerOver: var(--winui-ControlFillColorTransparentBrush);
+	--winui-AppBarToggleButtonBorderBrushPressed: var(--winui-ControlFillColorTransparentBrush);
+	--winui-AppBarToggleButtonBorderBrushDisabled: var(--winui-ControlFillColorTransparentBrush);
+	--winui-AppBarToggleButtonBorderBrushChecked: var(--winui-AccentControlElevationBorderBrush);
+	--winui-AppBarToggleButtonBorderBrushCheckedPointerOver: var(
+		--winui-AccentControlElevationBorderBrush
+	);
+	--winui-AppBarToggleButtonBorderBrushCheckedPressed: var(
+		--winui-ControlFillColorTransparentBrush
+	);
+	--winui-AppBarToggleButtonBorderBrushCheckedDisabled: var(
+		--winui-ControlFillColorTransparentBrush
+	);
+	--winui-AppBarToggleButtonCheckGlyphForeground: var(--winui-TextFillColorPrimaryBrush);
+	--winui-AppBarToggleButtonCheckGlyphForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
+	--winui-AppBarToggleButtonCheckGlyphForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
+	--winui-AppBarToggleButtonOverflowLabelForegroundPointerOver: var(
+		--winui-TextFillColorPrimaryBrush
+	);
+	--winui-AppBarToggleButtonOverflowLabelForegroundPressed: var(
+		--winui-TextFillColorSecondaryBrush
+	);
+	--winui-AppBarToggleButtonOverflowLabelForegroundDisabled: var(
+		--winui-TextFillColorDisabledBrush
+	);
+	--winui-AppBarToggleButtonOverflowLabelForegroundCheckedPointerOver: var(
+		--winui-TextFillColorPrimaryBrush
+	);
+	--winui-AppBarToggleButtonOverflowLabelForegroundCheckedPressed: var(
+		--winui-TextFillColorSecondaryBrush
+	);
+	--winui-AppBarToggleButtonOverflowLabelForegroundCheckedDisabled: var(
+		--winui-TextFillColorDisabledBrush
+	);
+	--winui-AppBarToggleButtonKeyboardAcceleratorTextForeground: var(
+		--winui-TextFillColorSecondaryBrush
+	);
+	--winui-AppBarToggleButtonKeyboardAcceleratorTextForegroundPointerOver: var(
+		--winui-TextFillColorSecondaryBrush
+	);
+	--winui-AppBarToggleButtonKeyboardAcceleratorTextForegroundPressed: var(
+		--winui-TextFillColorTertiaryBrush
+	);
+	--winui-AppBarToggleButtonKeyboardAcceleratorTextForegroundDisabled: var(
+		--winui-TextFillColorDisabledBrush
+	);
+	--winui-AppBarToggleButtonKeyboardAcceleratorTextForegroundChecked: var(
+		--winui-TextFillColorSecondaryBrush
+	);
+	--winui-AppBarToggleButtonKeyboardAcceleratorTextForegroundCheckedPointerOver: var(
+		--winui-TextFillColorSecondaryBrush
+	);
+	--winui-AppBarToggleButtonKeyboardAcceleratorTextForegroundCheckedPressed: var(
+		--winui-TextFillColorTertiaryBrush
+	);
+	--winui-AppBarToggleButtonKeyboardAcceleratorTextForegroundCheckedDisabled: var(
+		--winui-TextFillColorDisabledBrush
+	);
 	--winui-AccentButtonBackground: var(--winui-AccentFillColorDefaultBrush);
 	--winui-AccentButtonBackgroundPointerOver: var(--winui-AccentFillColorSecondaryBrush);
 	--winui-AccentButtonBackgroundPressed: var(--winui-AccentFillColorTertiaryBrush);
@@ -2147,6 +2427,7 @@
 	--winui-SystemControlDisabledChromeDisabledLowBrush: var(--winui-SystemChromeDisabledLowColor);
 	--winui-SystemControlForegroundBaseHighBrush: var(--winui-SystemBaseHighColor);
 	--winui-SystemControlForegroundChromeHighBrush: var(--winui-SystemChromeHighColor);
+	--winui-SystemControlHighlightAltBaseMediumBrush: var(--winui-SystemBaseMediumColor);
 	--winui-SystemControlHighlightAltChromeWhiteBrush: var(--winui-SystemChromeWhiteColor);
 	--winui-SystemControlHighlightAltTransparentBrush: transparent;
 	--winui-SystemControlHighlightBaseMediumBrush: var(--winui-SystemBaseMediumColor);
@@ -2236,6 +2517,139 @@
 		--winui-ComboBoxDropDownBorderBrush: var(--winui-SurfaceStrokeColorFlyoutBrush);
 		--winui-ComboBoxItemPillFillBrush: var(--winui-AccentFillColorDefaultBrush);
 		--winui-ComboBoxDropdownBorderPadding: 0px;
+		--winui-AppBarButtonBackground: var(--winui-SubtleFillColorTransparentBrush);
+		--winui-AppBarButtonBackgroundPointerOver: var(--winui-SubtleFillColorSecondaryBrush);
+		--winui-AppBarButtonBackgroundPressed: var(--winui-SubtleFillColorTertiaryBrush);
+		--winui-AppBarButtonBackgroundDisabled: var(--winui-SubtleFillColorDisabledBrush);
+		--winui-AppBarButtonForeground: var(--winui-TextFillColorPrimaryBrush);
+		--winui-AppBarButtonForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
+		--winui-AppBarButtonForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
+		--winui-AppBarButtonForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+		--winui-AppBarButtonKeyboardAcceleratorTextForeground: var(--winui-TextFillColorSecondaryBrush);
+		--winui-AppBarButtonKeyboardAcceleratorTextForegroundPointerOver: var(
+			--winui-TextFillColorSecondaryBrush
+		);
+		--winui-AppBarButtonKeyboardAcceleratorTextForegroundPressed: var(
+			--winui-TextFillColorTertiaryBrush
+		);
+		--winui-AppBarButtonKeyboardAcceleratorTextForegroundDisabled: var(
+			--winui-TextFillColorDisabledBrush
+		);
+		--winui-AppBarButtonBackgroundSubMenuOpened: var(--winui-SubtleFillColorSecondaryBrush);
+		--winui-AppBarButtonForegroundSubMenuOpened: var(--winui-TextFillColorPrimaryBrush);
+		--winui-AppBarButtonKeyboardAcceleratorTextForegroundSubMenuOpened: var(
+			--winui-TextFillColorSecondaryBrush
+		);
+		--winui-AppBarButtonSubItemChevronForeground: var(--winui-TextFillColorSecondaryBrush);
+		--winui-AppBarButtonSubItemChevronForegroundPointerOver: var(
+			--winui-TextFillColorSecondaryBrush
+		);
+		--winui-AppBarButtonSubItemChevronForegroundPressed: var(--winui-TextFillColorTertiaryBrush);
+		--winui-AppBarButtonSubItemChevronForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+		--winui-AppBarButtonFlyoutGlyph: '\00e974';
+		--winui-AppBarButtonOverflowFlyoutGlyph: '\00e974';
+		--winui-AppBarButtonLabelFontSize: 12px;
+		--winui-AppBarButtonSubItemChevronFontSize: 8px;
+		--winui-AppBarButtonSecondarySubItemChevronFontSize: 12px;
+		--winui-AppBarButtonSubItemChevronMargin: 20px 12px 0px -23px;
+		--winui-AppBarButtonSubItemChevronLabelOnRightMargin: 20px 12px 0px -7px;
+		--winui-AppBarButtonSecondarySubItemChevronMargin: 0px 16px 0px 0px;
+		--winui-AppBarSeparatorForeground: var(--winui-DividerStrokeColorDefaultBrush);
+		--winui-AppBarToggleButtonBackground: var(--winui-SubtleFillColorTransparentBrush);
+		--winui-AppBarToggleButtonBackgroundPointerOver: var(--winui-SubtleFillColorSecondaryBrush);
+		--winui-AppBarToggleButtonBackgroundPressed: var(--winui-SubtleFillColorTertiaryBrush);
+		--winui-AppBarToggleButtonBackgroundDisabled: var(--winui-SubtleFillColorDisabledBrush);
+		--winui-AppBarToggleButtonBackgroundChecked: var(--winui-AccentFillColorDefaultBrush);
+		--winui-AppBarToggleButtonBackgroundCheckedPointerOver: var(
+			--winui-AccentFillColorSecondaryBrush
+		);
+		--winui-AppBarToggleButtonBackgroundCheckedPressed: var(--winui-AccentFillColorTertiaryBrush);
+		--winui-AppBarToggleButtonBackgroundCheckedDisabled: var(--winui-AccentFillColorDisabledBrush);
+		--winui-AppBarToggleButtonBackgroundHighLightOverlayPointerOver: var(
+			--winui-SubtleFillColorSecondaryBrush
+		);
+		--winui-AppBarToggleButtonBackgroundHighLightOverlayPressed: var(
+			--winui-SubtleFillColorTertiaryBrush
+		);
+		--winui-AppBarToggleButtonBackgroundHighLightOverlayCheckedPointerOver: var(
+			--winui-SubtleFillColorSecondaryBrush
+		);
+		--winui-AppBarToggleButtonBackgroundHighLightOverlayCheckedPressed: var(
+			--winui-SubtleFillColorTertiaryBrush
+		);
+		--winui-AppBarToggleButtonForeground: var(--winui-TextFillColorPrimaryBrush);
+		--winui-AppBarToggleButtonForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
+		--winui-AppBarToggleButtonForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
+		--winui-AppBarToggleButtonForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+		--winui-AppBarToggleButtonForegroundChecked: var(--winui-TextOnAccentFillColorPrimaryBrush);
+		--winui-AppBarToggleButtonForegroundCheckedPointerOver: var(
+			--winui-TextOnAccentFillColorPrimaryBrush
+		);
+		--winui-AppBarToggleButtonForegroundCheckedPressed: var(
+			--winui-TextOnAccentFillColorSecondaryBrush
+		);
+		--winui-AppBarToggleButtonForegroundCheckedDisabled: var(--winui-TextOnAccentFillColorDisabled);
+		--winui-AppBarToggleButtonBorderBrush: var(--winui-ControlFillColorTransparentBrush);
+		--winui-AppBarToggleButtonBorderBrushPointerOver: var(--winui-ControlFillColorTransparentBrush);
+		--winui-AppBarToggleButtonBorderBrushPressed: var(--winui-ControlFillColorTransparentBrush);
+		--winui-AppBarToggleButtonBorderBrushDisabled: var(--winui-ControlFillColorTransparentBrush);
+		--winui-AppBarToggleButtonBorderBrushChecked: var(--winui-AccentControlElevationBorderBrush);
+		--winui-AppBarToggleButtonBorderBrushCheckedPointerOver: var(
+			--winui-AccentControlElevationBorderBrush
+		);
+		--winui-AppBarToggleButtonBorderBrushCheckedPressed: var(
+			--winui-ControlFillColorTransparentBrush
+		);
+		--winui-AppBarToggleButtonBorderBrushCheckedDisabled: var(
+			--winui-ControlFillColorTransparentBrush
+		);
+		--winui-AppBarToggleButtonCheckGlyphForeground: var(--winui-TextFillColorPrimaryBrush);
+		--winui-AppBarToggleButtonCheckGlyphForegroundPointerOver: var(
+			--winui-TextFillColorPrimaryBrush
+		);
+		--winui-AppBarToggleButtonCheckGlyphForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
+		--winui-AppBarToggleButtonOverflowLabelForegroundPointerOver: var(
+			--winui-TextFillColorPrimaryBrush
+		);
+		--winui-AppBarToggleButtonOverflowLabelForegroundPressed: var(
+			--winui-TextFillColorSecondaryBrush
+		);
+		--winui-AppBarToggleButtonOverflowLabelForegroundDisabled: var(
+			--winui-TextFillColorDisabledBrush
+		);
+		--winui-AppBarToggleButtonOverflowLabelForegroundCheckedPointerOver: var(
+			--winui-TextFillColorPrimaryBrush
+		);
+		--winui-AppBarToggleButtonOverflowLabelForegroundCheckedPressed: var(
+			--winui-TextFillColorSecondaryBrush
+		);
+		--winui-AppBarToggleButtonOverflowLabelForegroundCheckedDisabled: var(
+			--winui-TextFillColorDisabledBrush
+		);
+		--winui-AppBarToggleButtonKeyboardAcceleratorTextForeground: var(
+			--winui-TextFillColorSecondaryBrush
+		);
+		--winui-AppBarToggleButtonKeyboardAcceleratorTextForegroundPointerOver: var(
+			--winui-TextFillColorSecondaryBrush
+		);
+		--winui-AppBarToggleButtonKeyboardAcceleratorTextForegroundPressed: var(
+			--winui-TextFillColorTertiaryBrush
+		);
+		--winui-AppBarToggleButtonKeyboardAcceleratorTextForegroundDisabled: var(
+			--winui-TextFillColorDisabledBrush
+		);
+		--winui-AppBarToggleButtonKeyboardAcceleratorTextForegroundChecked: var(
+			--winui-TextFillColorSecondaryBrush
+		);
+		--winui-AppBarToggleButtonKeyboardAcceleratorTextForegroundCheckedPointerOver: var(
+			--winui-TextFillColorSecondaryBrush
+		);
+		--winui-AppBarToggleButtonKeyboardAcceleratorTextForegroundCheckedPressed: var(
+			--winui-TextFillColorTertiaryBrush
+		);
+		--winui-AppBarToggleButtonKeyboardAcceleratorTextForegroundCheckedDisabled: var(
+			--winui-TextFillColorDisabledBrush
+		);
 		--winui-AccentButtonBackground: var(--winui-AccentFillColorDefaultBrush);
 		--winui-AccentButtonBackgroundPointerOver: var(--winui-AccentFillColorSecondaryBrush);
 		--winui-AccentButtonBackgroundPressed: var(--winui-AccentFillColorTertiaryBrush);
@@ -3184,6 +3598,7 @@
 		--winui-SystemControlDisabledChromeDisabledLowBrush: var(--winui-SystemChromeDisabledLowColor);
 		--winui-SystemControlForegroundBaseHighBrush: var(--winui-SystemBaseHighColor);
 		--winui-SystemControlForegroundChromeHighBrush: var(--winui-SystemChromeHighColor);
+		--winui-SystemControlHighlightAltBaseMediumBrush: var(--winui-SystemBaseMediumColor);
 		--winui-SystemControlHighlightAltChromeWhiteBrush: var(--winui-SystemChromeWhiteColor);
 		--winui-SystemControlHighlightAltTransparentBrush: transparent;
 		--winui-SystemControlHighlightBaseMediumBrush: var(--winui-SystemBaseMediumColor);
@@ -3285,6 +3700,141 @@
 	--winui-ComboBoxDropDownBorderBrush: var(--winui-SystemControlForegroundChromeHighBrush);
 	--winui-ComboBoxItemPillFillBrush: var(--winui-SystemControlHighlightListAccentLowBrush);
 	--winui-ComboBoxDropdownBorderPadding: 0px;
+	--winui-AppBarButtonBackground: var(--winui-SystemControlTransparentBrush);
+	--winui-AppBarButtonBackgroundPointerOver: var(--winui-SystemColorHighlightColor);
+	--winui-AppBarButtonBackgroundPressed: var(--winui-SystemColorHighlightColor);
+	--winui-AppBarButtonBackgroundDisabled: var(--winui-SystemControlTransparentBrush);
+	--winui-AppBarButtonForeground: var(--winui-SystemControlForegroundBaseHighBrush);
+	--winui-AppBarButtonForegroundPointerOver: var(--winui-SystemColorHighlightTextColor);
+	--winui-AppBarButtonForegroundPressed: var(--winui-SystemColorHighlightTextColor);
+	--winui-AppBarButtonForegroundDisabled: var(--winui-SystemControlDisabledBaseMediumLowBrush);
+	--winui-AppBarButtonKeyboardAcceleratorTextForeground: var(--winui-SystemColorButtonTextColor);
+	--winui-AppBarButtonKeyboardAcceleratorTextForegroundPointerOver: var(
+		--winui-SystemControlHighlightAltBaseMediumBrush
+	);
+	--winui-AppBarButtonKeyboardAcceleratorTextForegroundPressed: var(
+		--winui-SystemControlHighlightAltBaseMediumBrush
+	);
+	--winui-AppBarButtonKeyboardAcceleratorTextForegroundDisabled: var(
+		--winui-SystemControlDisabledBaseMediumLowBrush
+	);
+	--winui-AppBarButtonBackgroundSubMenuOpened: var(
+		--winui-SystemControlHighlightListAccentLowBrush
+	);
+	--winui-AppBarButtonForegroundSubMenuOpened: var(--winui-SystemColorHighlightTextColor);
+	--winui-AppBarButtonKeyboardAcceleratorTextForegroundSubMenuOpened: var(
+		--winui-SystemControlHighlightAltBaseMediumBrush
+	);
+	--winui-AppBarButtonSubItemChevronForeground: var(--winui-SystemColorButtonTextColor);
+	--winui-AppBarButtonSubItemChevronForegroundPointerOver: var(
+		--winui-SystemColorHighlightTextColor
+	);
+	--winui-AppBarButtonSubItemChevronForegroundPressed: var(--winui-SystemColorHighlightTextColor);
+	--winui-AppBarButtonSubItemChevronForegroundDisabled: var(
+		--winui-SystemControlDisabledBaseMediumLowBrush
+	);
+	--winui-AppBarButtonFlyoutGlyph: '\00e974';
+	--winui-AppBarButtonOverflowFlyoutGlyph: '\00e974';
+	--winui-AppBarButtonLabelFontSize: 12px;
+	--winui-AppBarButtonSubItemChevronFontSize: 8px;
+	--winui-AppBarButtonSecondarySubItemChevronFontSize: 12px;
+	--winui-AppBarButtonSubItemChevronMargin: 20px 12px 0px -23px;
+	--winui-AppBarButtonSubItemChevronLabelOnRightMargin: 20px 12px 0px -7px;
+	--winui-AppBarButtonSecondarySubItemChevronMargin: 0px 16px 0px 0px;
+	--winui-AppBarSeparatorForeground: var(--winui-SystemColorButtonTextColor);
+	--winui-AppBarToggleButtonBackground: var(--winui-SystemColorButtonFaceColorBrush);
+	--winui-AppBarToggleButtonBackgroundPointerOver: var(--winui-SystemColorHighlightColorBrush);
+	--winui-AppBarToggleButtonBackgroundPressed: var(--winui-SystemColorHighlightColorBrush);
+	--winui-AppBarToggleButtonBackgroundDisabled: var(--winui-SystemColorWindowColorBrush);
+	--winui-AppBarToggleButtonBackgroundChecked: var(--winui-SystemColorHighlightColorBrush);
+	--winui-AppBarToggleButtonBackgroundCheckedPointerOver: var(
+		--winui-SystemColorHighlightTextColorBrush
+	);
+	--winui-AppBarToggleButtonBackgroundCheckedPressed: var(
+		--winui-SystemColorHighlightTextColorBrush
+	);
+	--winui-AppBarToggleButtonBackgroundCheckedDisabled: var(--winui-SystemColorGrayTextColorBrush);
+	--winui-AppBarToggleButtonBackgroundHighLightOverlayPointerOver: var(
+		--winui-SystemColorHighlightColor
+	);
+	--winui-AppBarToggleButtonBackgroundHighLightOverlayPressed: var(
+		--winui-SystemColorHighlightColor
+	);
+	--winui-AppBarToggleButtonBackgroundHighLightOverlayCheckedPointerOver: var(
+		--winui-SystemColorHighlightColor
+	);
+	--winui-AppBarToggleButtonBackgroundHighLightOverlayCheckedPressed: var(
+		--winui-SystemColorHighlightColor
+	);
+	--winui-AppBarToggleButtonForeground: var(--winui-SystemColorButtonTextColorBrush);
+	--winui-AppBarToggleButtonForegroundPointerOver: var(--winui-SystemColorHighlightTextColorBrush);
+	--winui-AppBarToggleButtonForegroundPressed: var(--winui-SystemColorHighlightTextColorBrush);
+	--winui-AppBarToggleButtonForegroundDisabled: var(--winui-SystemColorGrayTextColorBrush);
+	--winui-AppBarToggleButtonForegroundChecked: var(--winui-SystemColorHighlightTextColorBrush);
+	--winui-AppBarToggleButtonForegroundCheckedPointerOver: var(
+		--winui-SystemColorHighlightColorBrush
+	);
+	--winui-AppBarToggleButtonForegroundCheckedPressed: var(--winui-SystemColorHighlightColorBrush);
+	--winui-AppBarToggleButtonForegroundCheckedDisabled: var(--winui-SystemColorWindowColorBrush);
+	--winui-AppBarToggleButtonBorderBrush: var(--winui-SystemColorButtonTextColorBrush);
+	--winui-AppBarToggleButtonBorderBrushPointerOver: var(--winui-SystemColorButtonTextColorBrush);
+	--winui-AppBarToggleButtonBorderBrushPressed: var(--winui-SystemColorButtonTextColorBrush);
+	--winui-AppBarToggleButtonBorderBrushDisabled: var(--winui-SystemColorGrayTextColorBrush);
+	--winui-AppBarToggleButtonBorderBrushChecked: var(--winui-SystemColorHighlightColorBrush);
+	--winui-AppBarToggleButtonBorderBrushCheckedPointerOver: var(
+		--winui-SystemColorHighlightColorBrush
+	);
+	--winui-AppBarToggleButtonBorderBrushCheckedPressed: var(--winui-SystemColorHighlightColorBrush);
+	--winui-AppBarToggleButtonBorderBrushCheckedDisabled: var(--winui-SystemColorGrayTextColorBrush);
+	--winui-AppBarToggleButtonCheckGlyphForeground: var(--winui-SystemColorButtonTextColorBrush);
+	--winui-AppBarToggleButtonCheckGlyphForegroundPointerOver: var(
+		--winui-SystemColorHighlightTextColorBrush
+	);
+	--winui-AppBarToggleButtonCheckGlyphForegroundPressed: var(
+		--winui-SystemColorHighlightTextColorBrush
+	);
+	--winui-AppBarToggleButtonOverflowLabelForegroundPointerOver: var(
+		--winui-SystemColorHighlightTextColor
+	);
+	--winui-AppBarToggleButtonOverflowLabelForegroundPressed: var(
+		--winui-SystemColorHighlightTextColor
+	);
+	--winui-AppBarToggleButtonOverflowLabelForegroundDisabled: var(
+		--winui-SystemControlDisabledBaseMediumLowBrush
+	);
+	--winui-AppBarToggleButtonOverflowLabelForegroundCheckedPointerOver: var(
+		--winui-SystemColorHighlightTextColor
+	);
+	--winui-AppBarToggleButtonOverflowLabelForegroundCheckedPressed: var(
+		--winui-SystemColorHighlightTextColor
+	);
+	--winui-AppBarToggleButtonOverflowLabelForegroundCheckedDisabled: var(
+		--winui-SystemControlDisabledBaseMediumLowBrush
+	);
+	--winui-AppBarToggleButtonKeyboardAcceleratorTextForeground: var(
+		--winui-SystemColorButtonTextColor
+	);
+	--winui-AppBarToggleButtonKeyboardAcceleratorTextForegroundPointerOver: var(
+		--winui-SystemControlHighlightAltBaseMediumBrush
+	);
+	--winui-AppBarToggleButtonKeyboardAcceleratorTextForegroundPressed: var(
+		--winui-SystemControlHighlightAltBaseMediumBrush
+	);
+	--winui-AppBarToggleButtonKeyboardAcceleratorTextForegroundDisabled: var(
+		--winui-SystemControlDisabledBaseMediumLowBrush
+	);
+	--winui-AppBarToggleButtonKeyboardAcceleratorTextForegroundChecked: var(
+		--winui-SystemColorButtonTextColor
+	);
+	--winui-AppBarToggleButtonKeyboardAcceleratorTextForegroundCheckedPointerOver: var(
+		--winui-SystemControlHighlightAltBaseMediumBrush
+	);
+	--winui-AppBarToggleButtonKeyboardAcceleratorTextForegroundCheckedPressed: var(
+		--winui-SystemControlHighlightAltBaseMediumBrush
+	);
+	--winui-AppBarToggleButtonKeyboardAcceleratorTextForegroundCheckedDisabled: var(
+		--winui-SystemControlDisabledBaseMediumLowBrush
+	);
 	--winui-AccentButtonBackground: var(--winui-SystemColorHighlightColor);
 	--winui-AccentButtonBackgroundPointerOver: var(--winui-SystemColorButtonTextColor);
 	--winui-AccentButtonBackgroundPressed: var(--winui-SystemColorButtonFaceColor);
@@ -4120,6 +4670,7 @@
 	--winui-SystemControlDisabledChromeDisabledLowBrush: var(--winui-SystemColorGrayTextColor);
 	--winui-SystemControlForegroundBaseHighBrush: var(--winui-SystemColorButtonTextColor);
 	--winui-SystemControlForegroundChromeHighBrush: var(--winui-SystemColorButtonTextColor);
+	--winui-SystemControlHighlightAltBaseMediumBrush: var(--winui-SystemColorHighlightTextColor);
 	--winui-SystemControlHighlightAltChromeWhiteBrush: var(--winui-SystemColorHighlightTextColor);
 	--winui-SystemControlHighlightAltTransparentBrush: var(--winui-SystemColorHighlightTextColor);
 	--winui-SystemControlHighlightBaseMediumBrush: var(--winui-SystemColorHighlightColor);
