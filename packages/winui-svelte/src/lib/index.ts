@@ -51,6 +51,7 @@ export { default as Slider } from './components/Slider.svelte';
 export type { SliderProps } from './components/Slider.svelte';
 export { default as TeachingTip } from './components/TeachingTip.svelte';
 export type {
+	TeachingTipHeroContentPlacementMode,
 	TeachingTipPlacementMode,
 	TeachingTipProps,
 	TeachingTipTailVisibility

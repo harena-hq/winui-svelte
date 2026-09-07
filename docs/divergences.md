@@ -459,3 +459,18 @@ gate does.
   control being copied.
 - **What a consumer sees**: a tip can be narrower than 320px even though WinUI's documentation
   implies a floor. A consumer who needs that floor can set `min-width` through `style` or `class`.
+
+### WD-017 — TeachingTip leaves its content slot directly under the subtitle
+
+- **Control**: `TeachingTip`.
+- **What upstream does**: the `Content` state in `ContentStates` (`TeachingTip.xaml:64`) sets
+  `MainContentPresenter.Margin` to `TeachingTipMainContentPresentMargin`, whose value is
+  `0,12,0,0` in `TeachingTip_themeresources.xaml:78`, putting 12px above content.
+- **We do**: put no margin above the content slot.
+- **Why accepted**: the shipped control on the reference machine does not apply that state. The
+  Gallery's hero example measures 16px between the subtitle and description, exactly the
+  Gallery TextBlock's own `Margin="0,16,0,0"`; with the upstream state live, the gap would be
+  28px and the card would be 322px tall instead of its measured 310px.
+- **What a consumer sees**: content sits directly under the subtitle. A consumer who wants the
+  documented gap puts it on their own content, which is where the reference Gallery's 16px comes
+  from.
