@@ -442,3 +442,20 @@ gate does.
 - **Would reconsider if**: the open transition can be attributed to a keyboard interaction, which
   makes focusing the default button correct rather than merely faithful — at that point the ring
   is what WinUI would draw too.
+
+### WD-016 — TeachingTip does not honour its minimum width
+
+- **Control**: `TeachingTip`.
+- **WinUI does**: declare `TeachingTipMinWidth` as 320 in
+  `TeachingTip_themeresources.xaml:73`, then set it as `MinWidth` on the outer and tail-occlusion
+  grids at `TeachingTip.xaml:282` and `:297`. With the two 8px tail tracks, that would floor the
+  card at 304px.
+- **We do**: set no minimum width. The card is sized by its content and capped at 320px, which is
+  `TeachingTipMaxWidth` minus the two 8px tail tracks.
+- **Why accepted**: the shipped control on the reference machine does not honour the declared
+  floor. Two independent Gallery examples measured 224px and 248px, both below it, while
+  `TeachingTipMaxWidth` on the same two elements is honoured — the hero example measures exactly
+  336px minus two 8px tracks. Reproducing the dictionary would make every tip wider than the
+  control being copied.
+- **What a consumer sees**: a tip can be narrower than 320px even though WinUI's documentation
+  implies a floor. A consumer who needs that floor can set `min-width` through `style` or `class`.

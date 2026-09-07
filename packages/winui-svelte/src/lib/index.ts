@@ -49,6 +49,12 @@ export { default as RadioButton } from './components/RadioButton.svelte';
 export type { RadioButtonProps } from './components/RadioButton.svelte';
 export { default as Slider } from './components/Slider.svelte';
 export type { SliderProps } from './components/Slider.svelte';
+export { default as TeachingTip } from './components/TeachingTip.svelte';
+export type {
+	TeachingTipPlacementMode,
+	TeachingTipProps,
+	TeachingTipTailVisibility
+} from './components/TeachingTip.svelte';
 export { default as TextBox } from './components/TextBox.svelte';
 export type { TextBoxProps } from './components/TextBox.svelte';
 export { default as ToggleSwitch } from './components/ToggleSwitch.svelte';

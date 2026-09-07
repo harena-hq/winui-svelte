@@ -613,6 +613,63 @@ inside `grid-template-columns` or `gap` rather than a custom property. It is see
 manifest so the completeness check counts it and then excluded from emission, which makes its
 absence from `tokens.css` a recorded decision rather than a hole.
 
+### TeachingTip — v6 unit 046a
+
+`TeachingTip_themeresources.xaml` carries fifty-one records and seven of them are dead.
+`TeachingTipContentBorderThicknessTop`, `Bottom`, `Left` and `Right` describe a card whose
+border is open on the side the tail leaves from; nothing assigns any of them. The Style sets
+`BorderThickness` to `...Untargeted` once (`TeachingTip.xaml:8`), no visual state replaces it,
+and `TeachingTip.cpp` never touches it. `TeachingTipTopHighlightBrush`, `...Height` and
+`...OffsetForBorder` are the same story one step further on: the `TopHighlightLeft` and
+`TopHighlightRight` parts they would paint are gone from the template and survive only as
+names in `TeachingTip.h:298`.
+
+The template is a **5x5 grid whose outer ring is the tail's** — `8 | 10 | * | 10 | 8` on both
+axes (`:282`), with the card at rows and columns 1 through 3 and the tail placed into one of
+the four 8px tracks by `PlacementStates`. Two consequences the reproduction inherits. The
+distance between the card and the thing it points at is that 8px track and nothing else, which
+is what the reference measures. And `TeachingTipMaxWidth` 336 is on the outer grid, so the
+widest card it can produce is 320 — which is exactly what the Gallery's hero example measures,
+and is why the reproduction's cap is `MaxWidth − 2 × TailShortSideLength` rather than
+`MaxWidth`.
+
+**`TeachingTipMinWidth` is not honoured by the shipped control** and the reproduction does not
+apply it either; WD-016 carries the decision. It is declared 320 and set as `MinWidth` on the
+same two grids the maximum is set on, so the narrowest card the template can produce is 304.
+Two independent Gallery examples measure 224 and 248. No mechanism was found — the code never
+touches a width and the `perf2026` variant of the dictionary differs only in
+Storyboard-versus-Setter form — so this is recorded as a disagreement between the pin and the
+build rather than explained.
+
+**The tail is not an ornament under the card; it is a hole in it.** `TailPolygon` (`:353`)
+fills with the card's `Background` and strokes with its `BorderBrush`, and it is painted after
+`ContentRootGrid`, so where it meets the card it paints out the card's own border for the
+sixteen pixels it crosses. Three details only measurement gives. Its base is **not** stroked,
+so nothing draws a line across the join — a `polyline`, which fills as though closed and
+strokes only the segments it is given, is the CSS-side primitive for that and a `polygon` is
+not. Nothing of it is painted inside the card: the two slanted strokes begin at the top of the
+card's border row and not one pixel higher, which is what `TailOcclusionGrid` is named for.
+And the split is three pixels inside the card and seven outside, where the template's own
+arithmetic — a 10-tall polygon bottom-aligned in an 8px track with a −1 top margin — argues
+for two and eight. The reproduction clips an `svg` viewport to the outer seven and pulls it
+one pixel back over the border, which lands the measured rows exactly.
+
+The header close button belongs to `NonHeroContentRootGrid` (`:319`) rather than to the card,
+so it sits against the top-right corner of whatever is below the hero and not of the card
+itself. Its `AlternateCloseButtonStyle` (`TeachingTip_themeresources.xaml:101`) puts a
+`Padding` of 4 on a transparent outer `Border` and the fill, border and radius on the
+`ContentPresenter` inside it: a 40x40 hit target with a 32x32 painted box, which is visible the
+moment it is hovered and invisible at rest.
+
+The icon is centred against the _pair_ of text lines rather than aligned to the first —
+measured, the icon's ink centre and the title-plus-subtitle block's centre are both 257.5, and
+a top-aligned icon would be nine pixels out. Its 20x20 box is `SymbolIcon`'s own default
+FontSize; no TeachingTip resource states it, which is this unit's one `c1-allow`.
+
+Every line box on all three examples measures 19 where the generated `winui-BodyTextBlockStyle`
+imposes 20. That is the seventh and eighth site to need `line-height: normal` over the ramp
+class, after InfoBar, Expander, Flyout, MenuFlyout and both of ContentDialog's.
+
 ## What this file does not cover
 
 The sweep reads what a control _draws_. It does not enumerate automation peers, keyboard
