@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { AppBarButton, CommandBar } from 'winui-svelte';
+	import { AppBarButton, AppBarToggleButton, CommandBar } from 'winui-svelte';
 </script>
 
 <svelte:head><title>CommandBar — harness</title></svelte:head>
@@ -15,6 +15,20 @@
 
 {#snippet overflowCommands()}
 	<AppBarButton glyph="E8FB" label="Accept" />
+{/snippet}
+
+{#snippet openOverflowCommands()}
+	<AppBarButton label="Accept" />
+	<AppBarButton label="Decline" />
+	<AppBarButton label="Save" />
+	<AppBarButton label="Settings" />
+{/snippet}
+
+{#snippet openOverflowCommandsWithIconsAndToggle()}
+	<AppBarButton glyph="E8FB" label="Accept" />
+	<AppBarButton glyph="E711" label="Decline" />
+	<AppBarToggleButton glyph="E896" label="Keep offline" checked />
+	<AppBarButton glyph="E713" label="Settings" />
 {/snippet}
 
 <h2 class="winui-SubtitleTextBlockStyle">compact</h2>
@@ -83,12 +97,43 @@
 	</div>
 </div>
 
+<h2 class="winui-SubtitleTextBlockStyle">open</h2>
+<div class="row overflow-row">
+	<div class="bar-fixed">
+		<CommandBar open
+			>{@render commands()}{#snippet secondaryCommands()}{@render openOverflowCommands()}{/snippet}</CommandBar
+		>
+	</div>
+</div>
+
+<h2 class="winui-SubtitleTextBlockStyle">open, with icons and a toggle</h2>
+<div class="row overflow-row">
+	<div class="bar-fixed">
+		<CommandBar open
+			>{@render commands()}{#snippet secondaryCommands()}{@render openOverflowCommandsWithIconsAndToggle()}{/snippet}</CommandBar
+		>
+	</div>
+</div>
+
+<h2 class="winui-SubtitleTextBlockStyle">open and sticky</h2>
+<div class="row overflow-row">
+	<div class="bar-fixed">
+		<CommandBar open sticky
+			>{@render commands()}{#snippet secondaryCommands()}{@render openOverflowCommands()}{/snippet}</CommandBar
+		>
+	</div>
+</div>
+
 <style>
 	.row {
 		display: flex;
 		flex-wrap: wrap;
 		gap: 12px;
 		margin-bottom: 24px;
+	}
+	/* The overflow menu is portalled and out of flow; 260px clears its tallest 198px surface. */
+	.overflow-row {
+		margin-bottom: 260px;
 	}
 	/* Harness furniture: a fixed width gives right-aligned commands room to align against the ellipsis. */
 	.bar-fixed {
