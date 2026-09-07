@@ -781,12 +781,16 @@ group sizes, which no longer line up one-to-one with a version.
     `BaseTextBlockStyle` message in the Gallery's flyout is 19 tall where the class gives 20.
     **Five of this tranche's six controls have had to write `line-height: normal` over the ramp
     class somewhere**, and TeachingTip needed it three times — its title, its subtitle and its
-    content slot. Popup is the exception and draws no text at all. The running total this plan
-    used to carry is deliberately gone: it was incremented rather than derived and had drifted
-    below the real number. What the unit rests on is not a count but that every control here
-    that draws text has needed the override. Fixing the ramp moves every baseline in the project, so it is a unit of
-    its own and it needs the other nine steps measured first — the Gallery's Typography design
-    page is where they are all on screen at once.
+    content slot. Popup is the exception, and not because it escapes the debt: it carries
+    `winui-BodyTextBlockStyle` on its root like every other portalled surface here, so it
+    imposes the ramp's line height on whatever a consumer puts inside it. It needed no override
+    only because it draws no text of its own to have measured against the original. The running
+    total this plan used to carry is deliberately gone: it was incremented rather than derived
+    and had drifted below the real number. What the unit rests on is not a count but that every
+    control here with text of its own has needed the override. Fixing the ramp moves every
+    baseline in the project, so it is a unit of its own and it needs the other nine steps
+    measured first — the Gallery's Typography design page is where they are all on screen at
+    once.
 
     Done-when: v5's per-control seal loop applies to all six controls — source and Gallery
     sweep recorded before sealing, three-theme Windows baselines, direct comparison with the
@@ -801,8 +805,9 @@ group sizes, which no longer line up one-to-one with a version.
     reference guest, the nine gates pass, and the packed-package consumer smoke builds and
     renders outside the workspace.
 
-    **The list above says six controls and the branch sealed eleven control units.** MenuFlyout is one
-    line here and was sealed as five: the measurement pass that followed the sweep showed its
+    **The list above says six controls and the branch sealed eleven control units.**
+    MenuFlyout is one line here and was sealed as five: the measurement pass that followed
+    the sweep showed its
     item vocabulary is four separate controls, each with its own template and its own intent
     line, so the icon-and-accelerator columns, the radio row, the sub item and the split item
     are units rather than examples. TeachingTip is one line and was sealed as two. Neither
@@ -823,15 +828,15 @@ group sizes, which no longer line up one-to-one with a version.
     the template's arithmetic gave a different number.
 
     **Eight divergences opened here, WD-010 through WD-017, and two of them are a kind this
-    project had not met before.** Six are the usual sorts: WD-010, WD-011 and WD-013 are
-    six different mechanisms and not a bucket: WD-010 declines to reproduce an upstream defect
-    rather than invent state to be wrong with, WD-011 is a primitive's own presence timing,
-    WD-012 is a Composition effect with no pinned recipe, WD-013 is an input distinction the
-    platform cannot make, WD-014 is a measurement and a layout CSS cannot put on one box, and
-    WD-015 is a focus ring the browser grants to a scripted focus. **WD-016
-    and WD-017 are the new kind**: a minimum width and a content margin that the control's own
-    pinned template declares and the shipped control ignores. Neither is a behaviour being
-    declined; in both the render and the dictionary disagree and the render wins. The rule
+    project had not met before.** The other six are six different mechanisms rather than a
+    bucket: WD-010 declines to reproduce an upstream defect rather than invent state to be
+    wrong with, WD-011 is a primitive's own presence timing, WD-012 is a Composition effect
+    with no pinned recipe, WD-013 is an input distinction the platform cannot make, WD-014 is
+    a measurement and a layout CSS cannot put on one box, and WD-015 is a focus ring the
+    browser grants to a scripted focus. **WD-016 and WD-017 are the new kind**: a minimum
+    width and a content margin that the control's own pinned template declares and the shipped
+    control ignores. Neither is a behaviour being declined; in both the render and the
+    dictionary disagree and the render wins. The rule
     the version settled on is that **the render is the specification and the dictionary is
     the explanation**, because a reproduction faithful to the dictionary would be visibly
     wrong beside the control it copies. Every one was found by measuring the original, and

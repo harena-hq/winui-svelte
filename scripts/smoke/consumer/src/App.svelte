@@ -12,12 +12,13 @@
 		TeachingTip
 	} from 'winui-svelte';
 
-	// Every control this library exports a surface for is instantiated here, not only the ones
-	// that need no snippet. The step this script exists for is stated in `docs/plan.md` as
-	// closing the gap "before six more public prop surfaces are fixed by use", and a prop
-	// surface is fixed by use at a usage site: prop names, snippet names and which members are
-	// required are what a consumer discovers, and importing a component without mounting it
-	// discovers none of them.
+	// Every control the Surfaces tranche added is instantiated here, alongside the four this
+	// script already mounted — ten of the library's twenty-three exports, not all of them; the
+	// rest are earlier tranches' and are not what this step was widened for. The step this
+	// script exists for is stated in `docs/plan.md` as closing the gap "before six more public
+	// prop surfaces are fixed by use", and a prop surface is fixed by use at a usage site:
+	// prop names, snippet names and which members are required are what a consumer discovers,
+	// and importing a component without mounting it discovers none of them.
 	//
 	// It is not about whether the templates compile. `index.ts` re-exports every component
 	// statically, so the bundler transforms all 23 modules to work out the entry's exports and
