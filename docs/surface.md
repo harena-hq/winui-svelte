@@ -45,9 +45,20 @@ them: one `ControlExample` per feature, each with the properties it sets.
 
 Do this **before** sealing a control, from now on. It costs minutes.
 
-1. `ls .upstream/microsoft-ui-xaml/controls/dev/<Control>/` — if there is no `.cpp`, the
-   pin has no second half for this control and steps 2 and 3 do not apply. Say so in the
-   unit rather than leaving the absence unexplained.
+1. `find .upstream/microsoft-ui-xaml/controls/dev -name '<Control>.cpp'` — if it finds
+   nothing, the pin has no second half for this control and steps 2 and 3 do not apply.
+   Say so in the unit rather than leaving the absence unexplained.
+
+   **Search for the file, not for a directory of that name.** This step used to read
+   `ls controls/dev/<Control>/`, and a control that lives in a sibling's directory has no
+   directory of its own, so the lookup returned nothing and the step reported a control
+   with a second half as having none. Three of the Gallery's controls are in exactly that
+   position and all three are still ahead of this project — `ToggleSplitButton` under
+   `SplitButton/`, `BreadcrumbBar` under `Breadcrumb/`, `ItemsRepeater` under `Repeater/` —
+   and the failure is silent, because a wrong "no second half" verdict reads in the unit
+   exactly like a right one. `MenuBarItem` under `MenuBar/` only escapes it by being
+   swept alongside the control it is named after.
+
 2. Grep the implementation for the ways code changes what is drawn:
    `GoToState` (a visual state the template defines but the code decides),
    `Visibility(`, `CornerRadius(`, `Opacity(`, `Foreground(`, `Background(`,
