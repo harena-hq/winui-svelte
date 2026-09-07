@@ -331,30 +331,28 @@ Recorded here once the control is built and the behaviour is observed rather tha
 
 ### WD-012 — a portalled surface casts no drop shadow
 
-- **Control**: `ToolTip`, and every portalled surface that paints a card of its own — `Flyout`,
-  `MenuFlyout`, `ContentDialog` and `TeachingTip` all cite this entry, because they share one
-  mechanism and one reason. `Popup` does not: it positions a surface the consumer supplies and
-  paints nothing, so there is no card of its own to cast a shadow from.
+- **Control**: `ToolTip` and `ContentDialog` only. `Flyout`, `MenuFlyout` and `TeachingTip`
+  left this entry when their popup-depth shadow was measured and fitted. `Popup` does not:
+  it positions a surface the consumer supplies and paints nothing, so there is no card of its
+  own to cast a shadow from.
 - **WinUI does**: give the popup a `ThemeShadow`, cast onto whatever is under it. Measured on
-  the reference guest at 100% scaling: under an open Flyout the pixels below its bottom border
-  start at 213 against a 249 background and ramp back to the background over about 16px; under
-  a ToolTip the same ramp starts near `#CC` and closes in about eight. The shadow is not in
-  any of the presenters' templates — `FlyoutPresenter_themeresources.xaml:43` draws one
-  `Border` with a background, a border and a corner radius and nothing else — because it is
-  cast by the popup host, not by the presenter.
-- **We do**: draw no shadow at all. The surfaces are portalled, positioned and clipped exactly
-  as the original's are, and the pixels below their bottom edge are the page's own.
-- **Why accepted**: `ThemeShadow` is a Composition effect with a scene-graph receiver list —
-  it darkens the elements registered to receive it, by an amount that depends on the
-  z-distance between caster and receiver, which XAML computes from the element tree. There is
-  no resource in any pinned dictionary that states a blur radius, an offset or a colour, so a
-  `box-shadow` here would be three numbers chosen by eye against a screenshot. That is the
-  class of invention this registry exists to keep out of the code, and it is the same argument
-  WD-006 makes about re-authoring a Lottie composition from memory. The shadow arrives with
-  the tranche that can measure it against something rather than guess it.
-- **Would reconsider if**: the ramp is characterised well enough to state as a formula — a
-  measured profile at two or more z-distances, on both themes, which is a measurement pass
-  rather than a judgement — or upstream publishes the depths as resources.
+  the reference guest at 100% scaling: under a ToolTip the ramp starts near `#CC` and closes in
+  about eight pixels; under an open ContentDialog it starts at 139 against the smoke layer's
+  170 and has not closed forty pixels out. A popup's is nineteen, which is the depth this
+  library now reproduces — these two are the ones either side of it. The shadow is in none of
+  the presenters' templates — `FlyoutPresenter_themeresources.xaml:43` draws one `Border` with
+  a background, a border and a corner radius and nothing else — because it is cast by the
+  popup host rather than by the presenter.
+- **We do**: draw no shadow on these two surfaces. They are portalled, positioned and clipped
+  exactly as the original's are, and the pixels below their bottom edge are the page's own.
+- **Why accepted**: `ThemeShadow` uses the popup host's depth to cast a plain drop shadow here;
+  `Common_themeresources.xaml:48` sets `ThemeShadowIsUsingDropShadows` to `True`, so CSS
+  `box-shadow` is the matching primitive. No resource in any pinned dictionary states these
+  profiles. The popup-depth profile is now reproduced by a measured `box-shadow`; these two
+  surfaces sit at depths whose profiles have not been fitted — ToolTip's closes in about eight
+  pixels, while ContentDialog's runs past forty, against nineteen for a popup.
+- **Would reconsider if**: the same measurement pass is applied to the ToolTip and ContentDialog
+  depths, on both themes, and their profiles are fitted.
 
 **This entry exists because a citation was pointing at the wrong one.** `ToolTip.svelte`
 recorded the missing shadow against WD-006, which is about animated icons and names neither

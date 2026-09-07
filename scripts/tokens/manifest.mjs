@@ -1995,6 +1995,33 @@ export const PLATFORM_METRICS = {
 };
 
 /**
+ * The drop shadow WinUI's popup host casts at popup depth. No pinned dictionary states this
+ * recipe: it was measured on the reference guest and fitted against the browser's own blur.
+ * `Common_themeresources.xaml:48` sets `ThemeShadowIsUsingDropShadows` to `True`, so the
+ * right primitive is CSS `box-shadow`, not an approximation of a different composition effect.
+ *
+ * `PopupShadow` is not a WinUI resource name because there is no resource to name it after.
+ * This is the same situation as `PLATFORM_METRICS` and its `FocusVisualPrimaryThickness`:
+ * the value has nowhere to be read from, so the manifest records the platform-supplied value.
+ * Unlike `PLATFORM_METRICS` and `ACCENT_COLORS`, this family is per theme: the measured dark
+ * shadow is 1.78x the light one, and reusing the light value was visibly wrong.
+ *
+ * `highContrast` is `none` by decision, not by measurement. Dark was measured by changing the
+ * Gallery's own App theme setting and putting it back; high contrast is a *Windows* theme, and
+ * the reference machine's Windows theme is one of the four parameters that must stay stock, so
+ * there is no way to read it without spending the thing being measured against. ADR 0005 makes
+ * high contrast a remapping onto eight system colours, and a black drop shadow has no system
+ * colour to be remapped from.
+ */
+export const PLATFORM_SHADOWS = {
+	PopupShadow: {
+		light: '0 3px 2px rgba(0, 0, 0, 0.035), 0 10px 8px rgba(0, 0, 0, 0.09)',
+		dark: '0 3px 2px rgba(0, 0, 0, 0.062), 0 10px 8px rgba(0, 0, 0, 0.16)',
+		highContrast: 'none'
+	}
+};
+
+/**
  * The UWP-era brushes Windows supplies and no dictionary here defines, each with the
  * system colour it resolves to and the themes that mapping is warranted for. ADR 0008.
  *
