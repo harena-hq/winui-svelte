@@ -1,0 +1,128 @@
+<script lang="ts">
+	/* This page is the TeachingTip component's harness, not part of the Gallery reproduction.
+	   TeachingTips are portalled and out of flow, so each open sample reserves room for its own
+	   surface; upward tips get space above their row and downward tips get space below it. */
+	import { Button, TeachingTip } from 'winui-svelte';
+</script>
+
+<svelte:head><title>TeachingTip — harness</title></svelte:head>
+
+<h1 class="winui-TitleTextBlockStyle">TeachingTip</h1>
+<p class="description winui-BodyTextBlockStyle">
+	The Gallery example, text-only tips, side placements, and a tip without its tail.
+</p>
+
+<h2 class="winui-SubtitleTextBlockStyle">the Gallery example</h2>
+<div class="row open-above indent">
+	<TeachingTip open glyph="E72C" title="This is the title" subtitle="And this is the subtitle">
+		{#snippet children(props)}
+			<Button {...props}>Show TeachingTip</Button>
+		{/snippet}
+	</TeachingTip>
+</div>
+
+<h2 class="winui-SubtitleTextBlockStyle">without an icon</h2>
+<div class="row open-above indent">
+	<TeachingTip open title="This is the title" subtitle="And this is the subtitle">
+		{#snippet children(props)}
+			<Button {...props}>Show TeachingTip</Button>
+		{/snippet}
+	</TeachingTip>
+</div>
+
+<h2 class="winui-SubtitleTextBlockStyle">title only and subtitle only</h2>
+<div class="row open-above indent separated">
+	<TeachingTip open title="This is the title">
+		{#snippet children(props)}
+			<Button {...props}>Title only</Button>
+		{/snippet}
+	</TeachingTip>
+	<TeachingTip open subtitle="And this is the subtitle">
+		{#snippet children(props)}
+			<Button {...props}>Subtitle only</Button>
+		{/snippet}
+	</TeachingTip>
+</div>
+
+<h2 class="winui-SubtitleTextBlockStyle">the four sides</h2>
+<div class="row sides-row">
+	<TeachingTip open preferredPlacement="top" title="Above" subtitle="Top placement">
+		{#snippet children(props)}
+			<Button {...props}>top</Button>
+		{/snippet}
+	</TeachingTip>
+	<TeachingTip open preferredPlacement="bottom" title="Below" subtitle="Bottom placement">
+		{#snippet children(props)}
+			<Button {...props}>bottom</Button>
+		{/snippet}
+	</TeachingTip>
+	<TeachingTip open preferredPlacement="left" title="Left" subtitle="Left placement">
+		{#snippet children(props)}
+			<Button {...props}>left</Button>
+		{/snippet}
+	</TeachingTip>
+	<TeachingTip open preferredPlacement="right" title="Right" subtitle="Right placement">
+		{#snippet children(props)}
+			<Button {...props}>right</Button>
+		{/snippet}
+	</TeachingTip>
+</div>
+
+<h2 class="winui-SubtitleTextBlockStyle">no tail</h2>
+<div class="row open-above indent">
+	<TeachingTip
+		open
+		tailVisibility="collapsed"
+		title="This is the title"
+		subtitle="And this is the subtitle"
+	>
+		{#snippet children(props)}
+			<Button {...props}>Show TeachingTip</Button>
+		{/snippet}
+	</TeachingTip>
+</div>
+
+<style>
+	/* Rows are ordinary Gallery harness layout; their backgrounds follow the application page token. */
+	.row {
+		display: flex;
+		flex-direction: row;
+		align-items: flex-start;
+		gap: 24px;
+		background: var(--winui-ApplicationPageBackgroundThemeBrush);
+	}
+
+	/* 160px reserves at least 120px above every upward-opening portalled tip. */
+	.open-above {
+		margin-top: 160px;
+	}
+
+	/* A card is up to 224px wide and centred on its trigger, so a trigger nearer the viewport's
+	   left edge than half of that is moved by collision avoidance and its tail no longer sits
+	   under the card's centre. 100px puts every trigger centre past the halfway mark. */
+	.indent {
+		padding-left: 100px;
+	}
+
+	/* The vertical padding is the room the upward and downward tips need — a card is at most
+	   64px tall plus its 8px offset — and the horizontal padding is the room the left and right
+	   ones need. Between them they keep all four surfaces inside the viewport, so collision
+	   avoidance never moves one off its preferred side. The padding does the work a margin
+	   would, so this row needs none. */
+	.sides-row {
+		align-items: center;
+		justify-content: space-between;
+		padding: 140px 200px;
+	}
+
+	/* The two content-sized tips need independent horizontal room so their portalled cards do not
+	   touch. */
+	.separated {
+		gap: 240px;
+	}
+
+	/* Keep the page description's spacing local to this harness; no bare element selector is used. */
+	.description {
+		margin: 0;
+	}
+</style>
