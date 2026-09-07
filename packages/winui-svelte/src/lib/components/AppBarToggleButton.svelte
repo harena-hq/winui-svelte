@@ -49,14 +49,16 @@
 </script>
 
 <script lang="ts">
+	import { getCommandBarState } from '../internal/command-bar';
+
 	let {
 		label,
 		icon,
 		glyph,
-		labelPosition = 'bottom',
-		compact = false,
-		inOverflow = false,
-		overflowWithMenuIcons = false,
+		labelPosition,
+		compact,
+		inOverflow,
+		overflowWithMenuIcons,
 		checked = $bindable(false),
 		onCheckedChange,
 		indeterminate = $bindable(false),
@@ -71,6 +73,14 @@
 		...rest
 	}: AppBarToggleButtonProps = $props();
 
+	const bar = getCommandBarState();
+	const effectiveLabelPosition = $derived(labelPosition ?? bar?.().labelPosition ?? 'bottom');
+	const isCompact = $derived(compact ?? bar?.().compact ?? false);
+	const isInOverflow = $derived(inOverflow ?? bar?.().inOverflow ?? false);
+	const hasOverflowWithMenuIcons = $derived(
+		overflowWithMenuIcons ?? bar?.().overflowWithMenuIcons ?? false
+	);
+
 	// The word `Indeterminate` does not occur anywhere in
 	// AppBarToggleButton_themeresources.xaml, so the template has no indeterminate state.
 	// An indeterminate control therefore draws as unchecked: `data-checked` is "false" when
@@ -81,15 +91,15 @@
 	// and the precedence below is the library's, chosen because the overflow states set everything
 	// the bar states set and Compact is a property of a bar whose labels are underneath.
 	const dataViewState = $derived(
-		inOverflow && overflowWithMenuIcons
+		isInOverflow && hasOverflowWithMenuIcons
 			? 'overflow-with-menu-icons'
-			: inOverflow
+			: isInOverflow
 				? 'overflow'
-				: labelPosition === 'collapsed'
+				: effectiveLabelPosition === 'collapsed'
 					? 'label-collapsed'
-					: labelPosition === 'right'
+					: effectiveLabelPosition === 'right'
 						? 'label-on-right'
-						: compact
+						: isCompact
 							? 'compact'
 							: 'full-size'
 	);

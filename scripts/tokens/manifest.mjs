@@ -485,6 +485,45 @@ export const APPBARSEPARATOR_KEYS = {
 	AppBarSeparatorCornerRadius: 'AppBarSeparator corner radius'
 };
 
+/**
+ * Keys CommandBar reads. This tranche seeds the closed bar and the next unit's open bar,
+ * because seed sets claim keys rather than individual component states. `AppBarThemeMinHeight`
+ * and `AppBarThemeCompactHeight` are already claimed by APPBARBUTTON_KEYS. The two AppBarExpand
+ * metrics come from the framework dictionary, while CommandBarMoreButtonMargin's only definition
+ * in the extracted record is RevealBrush_themeresources.xaml:562; neither needs DEFINED_BY.
+ */
+export const COMMANDBAR_KEYS = {
+	CommandBarOverflowMinWidth: 'CommandBar overflow minimum width',
+	CommandBarOverflowTouchMinWidth: 'CommandBar overflow touch minimum width',
+	CommandBarOverflowMaxWidth: 'CommandBar overflow maximum width',
+	CommandBarOverflowMaxHeight: 'CommandBar overflow maximum height',
+	CommandBarBackground: 'CommandBar background, closed',
+	CommandBarBackgroundOpen: 'CommandBar background, open',
+	CommandBarBorderBrushOpen: 'CommandBar border, open',
+	CommandBarBorderThicknessOpen: 'CommandBar border thickness, open',
+	CommandBarForeground: 'CommandBar foreground',
+	CommandBarHighContrastBorder: 'CommandBar high contrast border',
+	CommandBarEllipsisIconForegroundDisabled: 'CommandBar disabled ellipsis foreground',
+	CommandBarOverflowPresenterBackground: 'CommandBar overflow presenter background',
+	CommandBarOverflowPresenterBorderBrush: 'CommandBar overflow presenter border',
+	CommandBarLightDismissOverlayBackground: 'CommandBar light-dismiss overlay background',
+	CommandBarOverflowPresenterBorderThickness: 'CommandBar overflow presenter border thickness',
+	CommandBarOverflowPresenterBorderDownThickness:
+		'CommandBar downward overflow presenter border thickness',
+	CommandBarOverflowPresenterBorderUpThickness:
+		'CommandBar upward overflow presenter border thickness',
+	CommandBarOverflowPresenterBorderPadding: 'CommandBar overflow presenter border padding',
+	CommandBarOverflowPresenterBorderDownPadding:
+		'CommandBar downward overflow presenter border padding',
+	CommandBarOverflowPresenterBorderUpPadding: 'CommandBar upward overflow presenter border padding',
+	AppBarEllipsisButtonInnerBorderMargin: 'CommandBar ellipsis button inner border margin',
+	AppBarMoreButtonColumnMinWidth: 'CommandBar more-button column minimum width',
+	CommandBarOverflowPresenterMargin: 'CommandBar overflow presenter margin',
+	AppBarExpandButtonThemeWidth: 'CommandBar ellipsis button width',
+	AppBarExpandButtonCircleDiameter: 'CommandBar ellipsis glyph layout height',
+	CommandBarMoreButtonMargin: 'CommandBar more-button padding, listed for EXCLUDED'
+};
+
 export const REPEATBUTTON_KEYS = {
 	// Defined in RepeatButton_themeresources.xaml, and selected only so EXCLUDED can
 	// record why it is not emitted: the style takes ButtonBorderThemeThickness instead.
@@ -1716,6 +1755,8 @@ export const EXCLUDED = {
 	AppBarButtonContentViewboxCompactMargin: 'Referenced only by Reveal templates',
 	AppBarButtonHasFlyoutChevronVisibility:
 		'Visibility enum has no scalar conversion; the flyout state renders the chevron',
+	CommandBarMoreButtonMargin:
+		'EllipsisButton\'s ContentPresenter writes Padding="0" literally at :1021 rather than template-binding the Button padding, so nothing reads this value; its only definition in the extracted record is RevealBrush_themeresources.xaml:562',
 	// Both overflow labels bind their FontSize to this key (AppBarButton_themeresources.xaml:373,
 	// AppBarToggleButton_themeresources.xaml:488). The value is 14, which is Body's size, and the
 	// root already carries `winui-BodyTextBlockStyle` — so emitting a second name for one number
@@ -2277,6 +2318,13 @@ export const DOUBLE_LENGTHS = {
 	AppBarSeparatorWidth: 'AppBarSeparator rule width',
 	AppBarOverflowSeparatorHeight: 'AppBarSeparator overflow rule height',
 	AppBarSeparatorCornerRadius: 'AppBarSeparator rule corner radius',
+	CommandBarOverflowMinWidth: 'CommandBar overflow minimum width',
+	CommandBarOverflowTouchMinWidth: 'CommandBar overflow touch minimum width',
+	CommandBarOverflowMaxWidth: 'CommandBar overflow maximum width',
+	CommandBarOverflowMaxHeight: 'CommandBar overflow maximum height',
+	AppBarMoreButtonColumnMinWidth: 'CommandBar more-button column minimum width',
+	AppBarExpandButtonThemeWidth: 'CommandBar ellipsis button width',
+	AppBarExpandButtonCircleDiameter: 'CommandBar ellipsis glyph layout height',
 	SplitButtonPrimaryButtonSize: "the floor under the primary half's column",
 	SplitButtonSecondaryButtonSize: "the chevron half's column",
 	NavigationBackButtonHeight: 'the back button box',

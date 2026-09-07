@@ -402,8 +402,33 @@
 	--winui-CheckBoxFocusVisualMargin: -3px -7px -3px -7px;
 	--winui-CheckBoxCheckedGlyph: '\00e73e';
 	--winui-CheckBoxIndeterminateGlyph: '\00e9ae';
+	--winui-CommandBarOverflowMinWidth: 160px;
+	--winui-CommandBarOverflowTouchMinWidth: 240px;
+	--winui-CommandBarOverflowMaxWidth: 480px;
+	--winui-CommandBarOverflowMaxHeight: 198px;
+	--winui-CommandBarBackground: var(--winui-ControlFillColorTransparentBrush);
+	--winui-CommandBarBackgroundOpen: var(--winui-AcrylicInAppFillColorDefaultBrush);
+	--winui-CommandBarBorderBrushOpen: var(--winui-CardStrokeColorDefaultSolidBrush);
+	--winui-CommandBarBorderThicknessOpen: 1px;
+	--winui-CommandBarForeground: var(--winui-TextFillColorPrimaryBrush);
+	--winui-CommandBarHighContrastBorder: var(--winui-ControlFillColorTransparentBrush);
+	--winui-CommandBarEllipsisIconForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+	--winui-CommandBarOverflowPresenterBackground: var(--winui-AcrylicInAppFillColorDefaultBrush);
+	--winui-CommandBarOverflowPresenterBorderBrush: var(--winui-SystemControlTransientBorderBrush);
+	--winui-CommandBarLightDismissOverlayBackground: var(
+		--winui-SystemControlPageBackgroundMediumAltMediumBrush
+	);
+	--winui-CommandBarOverflowPresenterBorderThickness: 1px;
+	--winui-CommandBarOverflowPresenterBorderDownThickness: 0px 0px 1px 0px;
+	--winui-CommandBarOverflowPresenterBorderUpThickness: 1px 0px 0px 0px;
+	--winui-CommandBarOverflowPresenterBorderPadding: 0px;
+	--winui-CommandBarOverflowPresenterBorderDownPadding: 0px;
+	--winui-CommandBarOverflowPresenterBorderUpPadding: 0px;
 	--winui-AppBarThemeMinHeight: 64px;
 	--winui-AppBarThemeCompactHeight: 48px;
+	--winui-AppBarEllipsisButtonInnerBorderMargin: 6px 6px 6px 2px;
+	--winui-AppBarMoreButtonColumnMinWidth: 6px;
+	--winui-CommandBarOverflowPresenterMargin: 4px 0px 4px 0px;
 	--winui-SystemControlTransparentColor: #00000000;
 	--winui-SystemControlTransparentBrush: transparent;
 	--winui-SystemControlHighlightListAccentVeryHighBrush: color-mix(
@@ -1281,6 +1306,8 @@
 	--winui-TitleBarTitleMinWidth: 0px;
 	--winui-TitleBarIconMargin: 0px 16px 0px 0px;
 	--winui-TitleBarTitleMargin: 0px 8px 0px 0px;
+	--winui-AppBarExpandButtonThemeWidth: 48px;
+	--winui-AppBarExpandButtonCircleDiameter: 3px;
 	--winui-AutoSuggestListMaxHeight: 374px;
 	--winui-FlyoutThemeMaxHeight: 758px;
 	--winui-FlyoutThemeMaxWidth: 456px;
@@ -1300,11 +1327,13 @@
 	--winui-SystemChromeDisabledHighColor: #ccccccff;
 	--winui-SystemChromeDisabledLowColor: #7a7a7aff;
 	--winui-SystemChromeHighColor: #ccccccff;
+	--winui-SystemChromeMediumColor: #e6e6e6ff;
 	--winui-SystemChromeMediumLowColor: #f2f2f2ff;
 	--winui-SystemChromeWhiteColor: #ffffffff;
 	--winui-SystemListMediumColor: #00000033;
 	--winui-SystemControlBackgroundAltMediumBrush: var(--winui-SystemAltMediumColor);
 	--winui-SystemControlBackgroundAltMediumLowBrush: var(--winui-SystemAltMediumLowColor);
+	--winui-SystemControlBackgroundChromeMediumBrush: var(--winui-SystemChromeMediumColor);
 	--winui-SystemControlBackgroundChromeMediumLowBrush: var(--winui-SystemChromeMediumLowColor);
 	--winui-SystemControlBackgroundListMediumBrush: var(--winui-SystemListMediumColor);
 	--winui-SystemControlDisabledBaseLowBrush: var(--winui-SystemBaseLowColor);
@@ -1334,6 +1363,7 @@
 	);
 	--winui-SystemControlHyperlinkTextBrush: var(--winui-SystemAccentColor);
 	--winui-SystemControlPageBackgroundAltMediumBrush: var(--winui-SystemAltMediumColor);
+	--winui-SystemControlPageBackgroundMediumAltMediumBrush: var(--winui-SystemAltMediumColor);
 	--winui-SystemControlPageBackgroundTransparentBrush: transparent;
 	--winui-SystemControlPageTextBaseMediumBrush: var(--winui-SystemBaseMediumColor);
 	--winui-SystemControlDescriptionTextForegroundBrush: var(
@@ -1674,6 +1704,28 @@
 	--winui-CheckBoxCheckGlyphForegroundIndeterminateDisabled: var(
 		--winui-TextOnAccentFillColorDisabledBrush
 	);
+	--winui-CommandBarOverflowMinWidth: 160px;
+	--winui-CommandBarOverflowTouchMinWidth: 240px;
+	--winui-CommandBarOverflowMaxWidth: 480px;
+	--winui-CommandBarOverflowMaxHeight: 198px;
+	--winui-CommandBarBackground: var(--winui-ControlFillColorTransparentBrush);
+	--winui-CommandBarBackgroundOpen: var(--winui-AcrylicInAppFillColorDefaultBrush);
+	--winui-CommandBarBorderBrushOpen: var(--winui-CardStrokeColorDefaultSolidBrush);
+	--winui-CommandBarBorderThicknessOpen: 1px;
+	--winui-CommandBarForeground: var(--winui-TextFillColorPrimaryBrush);
+	--winui-CommandBarHighContrastBorder: var(--winui-ControlFillColorTransparentBrush);
+	--winui-CommandBarEllipsisIconForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+	--winui-CommandBarOverflowPresenterBackground: var(--winui-AcrylicInAppFillColorDefaultBrush);
+	--winui-CommandBarOverflowPresenterBorderBrush: var(--winui-SystemControlTransientBorderBrush);
+	--winui-CommandBarLightDismissOverlayBackground: var(
+		--winui-SystemControlPageBackgroundMediumAltMediumBrush
+	);
+	--winui-CommandBarOverflowPresenterBorderThickness: 1px;
+	--winui-CommandBarOverflowPresenterBorderDownThickness: 0px 0px 1px 0px;
+	--winui-CommandBarOverflowPresenterBorderUpThickness: 1px 0px 0px 0px;
+	--winui-CommandBarOverflowPresenterBorderPadding: 0px;
+	--winui-CommandBarOverflowPresenterBorderDownPadding: 0px;
+	--winui-CommandBarOverflowPresenterBorderUpPadding: 0px;
 	--winui-SystemControlTransparentColor: #00000000;
 	--winui-SystemControlTransparentBrush: transparent;
 	--winui-SystemControlHighlightListAccentVeryHighBrush: color-mix(
@@ -2395,6 +2447,8 @@
 	--winui-TitleBarPaneToggleButtonForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
 	--winui-TitleBarPaneToggleButtonForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
 	--winui-TitleBarPaneToggleButtonForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+	--winui-AppBarExpandButtonThemeWidth: 48px;
+	--winui-AppBarExpandButtonCircleDiameter: 3px;
 	--winui-AutoSuggestListMaxHeight: 374px;
 	--winui-FlyoutThemeMaxHeight: 758px;
 	--winui-FlyoutThemeMaxWidth: 456px;
@@ -2414,11 +2468,13 @@
 	--winui-SystemChromeDisabledHighColor: #333333ff;
 	--winui-SystemChromeDisabledLowColor: #858585ff;
 	--winui-SystemChromeHighColor: #767676ff;
+	--winui-SystemChromeMediumColor: #1f1f1fff;
 	--winui-SystemChromeMediumLowColor: #2b2b2bff;
 	--winui-SystemChromeWhiteColor: #ffffffff;
 	--winui-SystemListMediumColor: #ffffff33;
 	--winui-SystemControlBackgroundAltMediumBrush: var(--winui-SystemAltMediumColor);
 	--winui-SystemControlBackgroundAltMediumLowBrush: var(--winui-SystemAltMediumLowColor);
+	--winui-SystemControlBackgroundChromeMediumBrush: var(--winui-SystemChromeMediumColor);
 	--winui-SystemControlBackgroundChromeMediumLowBrush: var(--winui-SystemChromeMediumLowColor);
 	--winui-SystemControlBackgroundListMediumBrush: var(--winui-SystemListMediumColor);
 	--winui-SystemControlDisabledBaseLowBrush: var(--winui-SystemBaseLowColor);
@@ -2448,6 +2504,7 @@
 	);
 	--winui-SystemControlHyperlinkTextBrush: var(--winui-SystemAccentColor);
 	--winui-SystemControlPageBackgroundAltMediumBrush: var(--winui-SystemAltMediumColor);
+	--winui-SystemControlPageBackgroundMediumAltMediumBrush: var(--winui-SystemAltMediumColor);
 	--winui-SystemControlPageBackgroundTransparentBrush: transparent;
 	--winui-SystemControlPageTextBaseMediumBrush: var(--winui-SystemBaseMediumColor);
 	--winui-SystemControlDescriptionTextForegroundBrush: var(
@@ -2805,6 +2862,28 @@
 		--winui-CheckBoxCheckGlyphForegroundIndeterminateDisabled: var(
 			--winui-TextOnAccentFillColorDisabledBrush
 		);
+		--winui-CommandBarOverflowMinWidth: 160px;
+		--winui-CommandBarOverflowTouchMinWidth: 240px;
+		--winui-CommandBarOverflowMaxWidth: 480px;
+		--winui-CommandBarOverflowMaxHeight: 198px;
+		--winui-CommandBarBackground: var(--winui-ControlFillColorTransparentBrush);
+		--winui-CommandBarBackgroundOpen: var(--winui-AcrylicInAppFillColorDefaultBrush);
+		--winui-CommandBarBorderBrushOpen: var(--winui-CardStrokeColorDefaultSolidBrush);
+		--winui-CommandBarBorderThicknessOpen: 1px;
+		--winui-CommandBarForeground: var(--winui-TextFillColorPrimaryBrush);
+		--winui-CommandBarHighContrastBorder: var(--winui-ControlFillColorTransparentBrush);
+		--winui-CommandBarEllipsisIconForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+		--winui-CommandBarOverflowPresenterBackground: var(--winui-AcrylicInAppFillColorDefaultBrush);
+		--winui-CommandBarOverflowPresenterBorderBrush: var(--winui-SystemControlTransientBorderBrush);
+		--winui-CommandBarLightDismissOverlayBackground: var(
+			--winui-SystemControlPageBackgroundMediumAltMediumBrush
+		);
+		--winui-CommandBarOverflowPresenterBorderThickness: 1px;
+		--winui-CommandBarOverflowPresenterBorderDownThickness: 0px 0px 1px 0px;
+		--winui-CommandBarOverflowPresenterBorderUpThickness: 1px 0px 0px 0px;
+		--winui-CommandBarOverflowPresenterBorderPadding: 0px;
+		--winui-CommandBarOverflowPresenterBorderDownPadding: 0px;
+		--winui-CommandBarOverflowPresenterBorderUpPadding: 0px;
 		--winui-SystemControlTransparentColor: #00000000;
 		--winui-SystemControlTransparentBrush: transparent;
 		--winui-SystemControlHighlightListAccentVeryHighBrush: color-mix(
@@ -3564,6 +3643,8 @@
 		--winui-TitleBarPaneToggleButtonForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
 		--winui-TitleBarPaneToggleButtonForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
 		--winui-TitleBarPaneToggleButtonForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+		--winui-AppBarExpandButtonThemeWidth: 48px;
+		--winui-AppBarExpandButtonCircleDiameter: 3px;
 		--winui-AutoSuggestListMaxHeight: 374px;
 		--winui-FlyoutThemeMaxHeight: 758px;
 		--winui-FlyoutThemeMaxWidth: 456px;
@@ -3583,11 +3664,13 @@
 		--winui-SystemChromeDisabledHighColor: #333333ff;
 		--winui-SystemChromeDisabledLowColor: #858585ff;
 		--winui-SystemChromeHighColor: #767676ff;
+		--winui-SystemChromeMediumColor: #1f1f1fff;
 		--winui-SystemChromeMediumLowColor: #2b2b2bff;
 		--winui-SystemChromeWhiteColor: #ffffffff;
 		--winui-SystemListMediumColor: #ffffff33;
 		--winui-SystemControlBackgroundAltMediumBrush: var(--winui-SystemAltMediumColor);
 		--winui-SystemControlBackgroundAltMediumLowBrush: var(--winui-SystemAltMediumLowColor);
+		--winui-SystemControlBackgroundChromeMediumBrush: var(--winui-SystemChromeMediumColor);
 		--winui-SystemControlBackgroundChromeMediumLowBrush: var(--winui-SystemChromeMediumLowColor);
 		--winui-SystemControlBackgroundListMediumBrush: var(--winui-SystemListMediumColor);
 		--winui-SystemControlDisabledBaseLowBrush: var(--winui-SystemBaseLowColor);
@@ -3619,6 +3702,7 @@
 		);
 		--winui-SystemControlHyperlinkTextBrush: var(--winui-SystemAccentColor);
 		--winui-SystemControlPageBackgroundAltMediumBrush: var(--winui-SystemAltMediumColor);
+		--winui-SystemControlPageBackgroundMediumAltMediumBrush: var(--winui-SystemAltMediumColor);
 		--winui-SystemControlPageBackgroundTransparentBrush: transparent;
 		--winui-SystemControlPageTextBaseMediumBrush: var(--winui-SystemBaseMediumColor);
 		--winui-SystemControlDescriptionTextForegroundBrush: var(
@@ -3974,6 +4058,32 @@
 	--winui-CheckBoxCheckGlyphForegroundIndeterminateDisabled: var(
 		--winui-SystemColorWindowColorBrush
 	);
+	--winui-CommandBarBackground: var(--winui-SystemControlBackgroundChromeMediumBrush);
+	--winui-CommandBarBackgroundOpen: var(--winui-SystemControlBackgroundChromeMediumBrush);
+	--winui-CommandBarBorderBrushOpen: var(--winui-SystemControlForegroundBaseHighBrush);
+	--winui-CommandBarBorderThicknessOpen: 0px;
+	--winui-CommandBarForeground: var(--winui-SystemControlForegroundBaseHighBrush);
+	--winui-CommandBarHighContrastBorder: var(--winui-SystemColorButtonTextColor);
+	--winui-CommandBarEllipsisIconForegroundDisabled: var(
+		--winui-SystemControlDisabledBaseMediumLowBrush
+	);
+	--winui-CommandBarOverflowPresenterBackground: var(
+		--winui-SystemControlBackgroundChromeMediumLowBrush
+	);
+	--winui-CommandBarOverflowPresenterBorderBrush: var(--winui-SystemControlTransientBorderBrush);
+	--winui-CommandBarLightDismissOverlayBackground: var(
+		--winui-SystemControlPageBackgroundMediumAltMediumBrush
+	);
+	--winui-CommandBarOverflowMinWidth: 160px;
+	--winui-CommandBarOverflowTouchMinWidth: 240px;
+	--winui-CommandBarOverflowMaxWidth: 480px;
+	--winui-CommandBarOverflowMaxHeight: 198px;
+	--winui-CommandBarOverflowPresenterBorderThickness: 1px;
+	--winui-CommandBarOverflowPresenterBorderDownThickness: 0px 0px 1px 0px;
+	--winui-CommandBarOverflowPresenterBorderUpThickness: 1px 0px 0px 0px;
+	--winui-CommandBarOverflowPresenterBorderPadding: 0px;
+	--winui-CommandBarOverflowPresenterBorderDownPadding: 0px;
+	--winui-CommandBarOverflowPresenterBorderUpPadding: 0px;
 	--winui-SystemControlTransparentColor: #00000000;
 	--winui-SystemControlTransparentBrush: transparent;
 	--winui-SystemControlHighlightListAccentVeryHighBrush: var(--winui-SystemColorHighlightColor);
@@ -4657,11 +4767,13 @@
 	--winui-SystemChromeDisabledHighColor: #333333ff;
 	--winui-SystemChromeDisabledLowColor: #7a7a7aff;
 	--winui-SystemChromeHighColor: #767676ff;
+	--winui-SystemChromeMediumColor: #393939ff;
 	--winui-SystemChromeMediumLowColor: #2b2b2bff;
 	--winui-SystemChromeWhiteColor: #ffffffff;
 	--winui-SystemListMediumColor: #ffffff33;
 	--winui-SystemControlBackgroundAltMediumBrush: var(--winui-SystemColorButtonFaceColor);
 	--winui-SystemControlBackgroundAltMediumLowBrush: var(--winui-SystemColorButtonFaceColor);
+	--winui-SystemControlBackgroundChromeMediumBrush: var(--winui-SystemColorButtonFaceColor);
 	--winui-SystemControlBackgroundChromeMediumLowBrush: var(--winui-SystemColorButtonFaceColor);
 	--winui-SystemControlBackgroundListMediumBrush: var(--winui-SystemColorButtonFaceColor);
 	--winui-SystemControlDisabledBaseLowBrush: var(--winui-SystemColorGrayTextColor);
@@ -4679,6 +4791,11 @@
 	--winui-SystemControlHighlightListAccentMediumBrush: var(--winui-SystemColorHighlightColor);
 	--winui-SystemControlHyperlinkTextBrush: var(--winui-SystemColorHotlightColor);
 	--winui-SystemControlPageBackgroundAltMediumBrush: var(--winui-SystemColorWindowColor);
+	--winui-SystemControlPageBackgroundMediumAltMediumBrush: color-mix(
+		in srgb,
+		var(--winui-SystemColorWindowColor) 60%,
+		transparent
+	);
 	--winui-SystemControlPageBackgroundTransparentBrush: var(--winui-SystemColorWindowColor);
 	--winui-SystemControlPageTextBaseMediumBrush: var(--winui-SystemColorWindowTextColor);
 	--winui-SystemControlDescriptionTextForegroundBrush: var(
@@ -4712,6 +4829,8 @@
 	--winui-TextControlButtonForegroundPressed: var(
 		--winui-SystemControlHighlightAltChromeWhiteBrush
 	);
+	--winui-AppBarExpandButtonThemeWidth: 48px;
+	--winui-AppBarExpandButtonCircleDiameter: 3px;
 	--winui-AutoSuggestListMaxHeight: 374px;
 	--winui-FlyoutThemeMaxHeight: 758px;
 	--winui-FlyoutThemeMaxWidth: 456px;

@@ -17,6 +17,8 @@ export { default as Button } from './components/Button.svelte';
 export type { ButtonProps } from './components/Button.svelte';
 export { default as CheckBox } from './components/CheckBox.svelte';
 export type { CheckBoxProps } from './components/CheckBox.svelte';
+export { default as CommandBar } from './components/CommandBar.svelte';
+export type { CommandBarProps } from './components/CommandBar.svelte';
 export { default as ContentDialog } from './components/ContentDialog.svelte';
 export type { ContentDialogButton, ContentDialogProps } from './components/ContentDialog.svelte';
 export { default as ComboBox } from './components/ComboBox.svelte';

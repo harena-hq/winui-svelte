@@ -49,15 +49,17 @@
 </script>
 
 <script lang="ts">
+	import { getCommandBarState } from '../internal/command-bar';
+
 	let {
 		label,
 		icon,
 		glyph,
-		labelPosition = 'bottom',
-		compact = false,
-		inOverflow = false,
-		overflowWithToggleButtons = false,
-		overflowWithMenuIcons = false,
+		labelPosition,
+		compact,
+		inOverflow,
+		overflowWithToggleButtons,
+		overflowWithMenuIcons,
 		flyout = false,
 		subMenuOpen = false,
 		keyboardAcceleratorTextOverride,
@@ -69,23 +71,34 @@
 		...rest
 	}: AppBarButtonProps = $props();
 
+	const bar = getCommandBarState();
+	const effectiveLabelPosition = $derived(labelPosition ?? bar?.().labelPosition ?? 'bottom');
+	const isCompact = $derived(compact ?? bar?.().compact ?? false);
+	const isInOverflow = $derived(inOverflow ?? bar?.().inOverflow ?? false);
+	const hasOverflowWithToggleButtons = $derived(
+		overflowWithToggleButtons ?? bar?.().overflowWithToggleButtons ?? false
+	);
+	const hasOverflowWithMenuIcons = $derived(
+		overflowWithMenuIcons ?? bar?.().overflowWithMenuIcons ?? false
+	);
+
 	// The pin carries no code that orders these states — there is no AppBarButton.cpp in the pin —
 	// and the precedence below is the library's, chosen because the overflow states set everything
 	// the bar states set and Compact is a property of a bar whose labels are underneath.
 	const dataViewState = $derived(
-		inOverflow && overflowWithToggleButtons && overflowWithMenuIcons
+		isInOverflow && hasOverflowWithToggleButtons && hasOverflowWithMenuIcons
 			? 'overflow-with-toggle-buttons-and-menu-icons'
-			: inOverflow && overflowWithMenuIcons
+			: isInOverflow && hasOverflowWithMenuIcons
 				? 'overflow-with-menu-icons'
-				: inOverflow && overflowWithToggleButtons
+				: isInOverflow && hasOverflowWithToggleButtons
 					? 'overflow-with-toggle-buttons'
-					: inOverflow
+					: isInOverflow
 						? 'overflow'
-						: labelPosition === 'collapsed'
+						: effectiveLabelPosition === 'collapsed'
 							? 'label-collapsed'
-							: labelPosition === 'right'
+							: effectiveLabelPosition === 'right'
 								? 'label-on-right'
-								: compact
+								: isCompact
 									? 'compact'
 									: 'full-size'
 	);
@@ -121,7 +134,10 @@
 		{#if keyboardAcceleratorTextOverride}
 			<span class="accelerator winui-CaptionTextBlockStyle">{keyboardAcceleratorTextOverride}</span>
 		{/if}
-		{#if flyout}
+		<!-- CommandBar_themeresources.xaml:95: a command inside a CommandBar shows no sub-item
+		     chevron, in either appearance, because the Popup that carries the overflow rows is inside
+		     the same resource scope. -->
+		{#if flyout && !bar}
 			<span class="chevron-panel" aria-hidden="true">
 				<span class="chevron"></span>
 				<span class="overflow-chevron"></span>
