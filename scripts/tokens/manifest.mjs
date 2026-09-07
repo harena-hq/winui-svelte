@@ -1724,7 +1724,12 @@ export const EXCLUDED = {
 	ComboBoxSelectedBackgroundThemeBrush:
 		'Pre-Fluent *ThemeBrush family; not referenced by the current ComboBox template',
 	ComboBoxSelectedPointerOverBackgroundThemeBrush:
-		'Pre-Fluent *ThemeBrush family; not referenced by the current ComboBox template'
+		'Pre-Fluent *ThemeBrush family; not referenced by the current ComboBox template',
+	// A Grid column width. Every other Thickness and Double in a dictionary describes a box
+	// this library draws; a GridLength describes one of the tracks a XAML Grid divides itself
+	// into, and the CSS analogue is a value in `grid-template-columns` or `gap` rather than a
+	// custom property. The 8 it carries is written into the component with this line cited.
+	ContentDialogButtonSpacing: 'GridLength; a Grid track width, stated in the component gap'
 };
 
 /**
@@ -1850,7 +1855,12 @@ export const DOUBLE_LENGTHS = {
 	MenuFlyoutThemeMinHeight: 'the floor under a menu surface',
 	MenuFlyoutSeparatorHeight: 'the rule between two groups of menu items',
 	SplitMenuFlyoutItemSeparatorHeight: "the rule between a split item's two halves",
-	SplitMenuFlyoutItemChevronButtonWidth: "a split item's chevron half"
+	SplitMenuFlyoutItemChevronButtonWidth: "a split item's chevron half",
+
+	ContentDialogMinWidth: 'the width a dialog never goes under',
+	ContentDialogMaxWidth: 'the width a dialog never exceeds',
+	ContentDialogMinHeight: 'the height a dialog never goes under',
+	ContentDialogMaxHeight: 'the height a dialog never exceeds'
 };
 
 /**
@@ -2585,6 +2595,39 @@ export const MENUFLYOUT_KEYS = {
 	SplitMenuFlyoutItemButtonDividerBrush: 'the rule between the two halves',
 	SplitMenuFlyoutItemSeparatorHeight: 'the rule between the two halves',
 	SplitMenuFlyoutItemChevronButtonWidth: 'the chevron half'
+};
+
+/**
+ * `controls/dev/CommonStyles/ContentDialog_themeresources.xaml`, all fifteen records.
+ *
+ * No state family among them. A dialog has no pointer-over, no pressed and no disabled,
+ * because nothing in it is interactive except the three command Buttons, and those read the
+ * Button dictionary. What the fifteen describe instead is a stack of three fills: the smoke
+ * layer over the window, `ContentDialogBackground` over the whole card, and
+ * `ContentDialogTopOverlay` over the title and content area only — which is why the measured
+ * dialog is white above the separator and 243 below it out of one `Background` setter.
+ *
+ * `ContentDialogButtonSpacing` is seeded and then excluded: its XAML type is `GridLength`,
+ * which is a Grid column width and has no custom-property analogue. It is seeded anyway so
+ * that the completeness check counts it, and the 8px it carries is stated in the component's
+ * `gap` with the dictionary line cited beside it.
+ */
+export const CONTENTDIALOG_KEYS = {
+	ContentDialogForeground: 'the dialog text',
+	ContentDialogBackground: 'the dialog card, and so the command area',
+	ContentDialogSmokeFill: 'the layer that dims the window behind a dialog',
+	ContentDialogTopOverlay: 'the fill over the title and content area only',
+	ContentDialogBorderBrush: 'the dialog border',
+	ContentDialogSeparatorBorderBrush: 'the rule above the command area',
+	ContentDialogBorderWidth: 'the dialog border width — 1, and 2 under high contrast',
+	ContentDialogMinWidth: 'the width a dialog never goes under',
+	ContentDialogMaxWidth: 'the width a dialog never exceeds',
+	ContentDialogMinHeight: 'the height a dialog never goes under',
+	ContentDialogMaxHeight: 'the height a dialog never exceeds, past which it scrolls',
+	ContentDialogButtonSpacing: 'the gap between two command buttons',
+	ContentDialogTitleMargin: 'the gap under the title',
+	ContentDialogPadding: 'the inset around the content, and around the commands',
+	ContentDialogSeparatorThickness: 'the rule above the command area'
 };
 
 /**
