@@ -1738,25 +1738,53 @@ export const EXCLUDED = {
 };
 
 /**
- * The two columns of the type ramp the XAML does not carry: the optical-size face
- * and the line height for each step. The ramp's `FontSize` and `FontWeight` come
- * from the `Style` records; `FontFamily` is `XamlAutoFontFamily` in the source and
- * is replaced by an explicit per-step family here because Windows registers Segoe
- * UI Variable as three separate families rather than one with an `opsz` axis.
- * ADR 0003 is where both decisions were made.
+ * The one column of the type ramp the XAML does not carry: the optical-size face for
+ * each step. The ramp's `FontSize` and `FontWeight` come from the `Style` records;
+ * `FontFamily` is `XamlAutoFontFamily` in the source and is replaced by an explicit
+ * per-step family here because Windows registers Segoe UI Variable as three separate
+ * families rather than one with an `opsz` axis. ADR 0003 is where that was decided.
+ *
+ * Line height used to be a second column here, one number per step, taken from the
+ * published Windows type ramp. It is gone: no ramp `Style` sets `LineHeight`, so what
+ * the control draws is the font's own spacing, and the published numbers are a design
+ * specification that the shipped control does not implement. ADR 0011.
  */
 export const TYPE_RAMP = {
-	BaseTextBlockStyle: { face: 'Text', lineHeight: 20 },
-	CaptionTextBlockStyle: { face: 'Small', lineHeight: 16 },
-	BodyTextBlockStyle: { face: 'Text', lineHeight: 20 },
-	BodyStrongTextBlockStyle: { face: 'Text', lineHeight: 20 },
-	BodyLargeTextBlockStyle: { face: 'Text', lineHeight: 24 },
-	BodyLargeStrongTextBlockStyle: { face: 'Text', lineHeight: 24 },
-	SubtitleTextBlockStyle: { face: 'Display', lineHeight: 28 },
-	TitleTextBlockStyle: { face: 'Display', lineHeight: 36 },
-	TitleLargeTextBlockStyle: { face: 'Display', lineHeight: 52 },
-	DisplayTextBlockStyle: { face: 'Display', lineHeight: 92 }
+	BaseTextBlockStyle: { face: 'Text' },
+	CaptionTextBlockStyle: { face: 'Small' },
+	BodyTextBlockStyle: { face: 'Text' },
+	BodyStrongTextBlockStyle: { face: 'Text' },
+	BodyLargeTextBlockStyle: { face: 'Text' },
+	BodyLargeStrongTextBlockStyle: { face: 'Text' },
+	SubtitleTextBlockStyle: { face: 'Display' },
+	TitleTextBlockStyle: { face: 'Display' },
+	TitleLargeTextBlockStyle: { face: 'Display' },
+	DisplayTextBlockStyle: { face: 'Display' }
 };
+
+/**
+ * Why the ramp classes carry `line-height: normal` and not a number.
+ *
+ * No ramp `Style` sets `LineHeight`, so a ramp-styled `TextBlock` draws the font's own
+ * spacing: `(hhea.ascender - hhea.descender + hhea.lineGap) / head.unitsPerEm`, which for
+ * `SegUIVar.ttf` is `(2210 + 514 + 0) / 2048` = 1.330078125 — 18.62px at Body size, where the
+ * published ramp says 20. `OS/2.fsSelection` has USE_TYPO_METRICS clear, so the hhea metrics
+ * are the ones in force; `MVAR` varies only `xhgt`, so the three optical faces share them;
+ * and `segoeui.ttf`, the next family in the stack, carries the identical 2210 / -514 / 0 over
+ * 2048.
+ *
+ * That is the advance *within* one text block. Across sibling elements WinUI rounds: every
+ * `FrameworkElement` has `UseLayoutRounding` on by default, which is why the pin opts thirty-two
+ * individual elements out with `UseLayoutRounding="False"` and never opts one in. So a
+ * single-line `TextBlock` occupies a whole number of pixels, and that number is the font's
+ * spacing rounded.
+ *
+ * `normal` is that rounded number. Chromium computes it as `round(ascent_px) +
+ * round(descent_px)`, which equals `round(ascent_px + descent_px)` at all seven ramp sizes for
+ * this font — 16, 19, 24, 27, 37, 53, 90. A ratio would reproduce the within-block advance and
+ * lose the per-element rounding; `normal` does the reverse, and the reverse is what this library
+ * is made of. ADR 0011 carries the measurement and WD-018 records what is given up.
+ */
 
 /**
  * The `x:Double` keys that are lengths, and so emit `px`.

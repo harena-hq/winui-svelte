@@ -60,6 +60,7 @@ pnpm workspace. The library is publishable and imposes no build tooling on its c
 | D21 | A WinUI member becomes a Svelte prop by one stated rule, and every component takes `...rest`/`ref`   | ADR 0009                          |
 | D22 | Tranches are ordered by what an application reaches for; harness scaffolding follows the controls    | this file, "Roadmap → v3"         |
 | D23 | The XAML framework dictionary is a third pinned upstream; the control pin wins per key and theme     | ADR 0010                          |
+| D24 | The type ramp's line height is `normal`, the font's own spacing, not the published ramp's number     | ADR 0011                          |
 
 ## Verification
 
@@ -159,8 +160,10 @@ themes, generated rather than hand-written.**
   Half of each step is read from the XAML and half is not, and the split is worth stating.
   `FontSize` and `FontWeight` come from the `Style`'s own setters, resolved through `BasedOn`.
   Family and line height are in no dictionary — the source says `XamlAutoFontFamily` and sets
-  no line height at all — so they come from ADR 0003, and the generator fails if that table
-  and the source ever stop naming the same ten styles.
+  no line height at all. The family comes from ADR 0003's per-step mapping, and the generator
+  fails if that table and the source ever stop naming the same ten styles. The line height is
+  `normal`, which is the font's own spacing and is what a `TextBlock` with no `LineHeight`
+  draws — ADR 0011, and WD-018 for the one thing that spelling gives up.
 
 - High contrast is not a third set of values. It is a remapping onto eight system colors, and
   the palette colors the source carries for it are deliberate `#FF0000` tripwires — ADR 0005.

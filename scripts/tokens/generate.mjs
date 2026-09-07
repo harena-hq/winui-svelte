@@ -534,8 +534,11 @@ function flattenStyle(record, byKey) {
  * Resolves the BasedOn chain, then resolves `FontSize` and `FontWeight` from the
  * flattened setters and ignores everything else — see `IGNORED_SETTERS` for why
  * the choice not to error on them is the rule rather than a shortcut. The two
- * values the XAML does not carry — `font-family` and `line-height` — are filled
- * in from `TYPE_RAMP`.
+ * values the XAML does not carry are filled in from the manifest: `font-family`
+ * from `TYPE_RAMP`'s per-step face, and `line-height` from the platform: `normal`,
+ * one keyword for every step, because no ramp `Style` sets `LineHeight` and what a
+ * `TextBlock` draws without one is a property of the font rather than of the step.
+ * ADR 0011.
  */
 function style(record, byKey) {
 	const where = at(record);
@@ -602,7 +605,7 @@ function style(record, byKey) {
 		fontFamily: `'Segoe UI Variable ${face}', 'Segoe UI', sans-serif`,
 		fontSize: ref(fontSizeKey, record.theme, where),
 		fontWeight,
-		lineHeight: `${ramp.lineHeight}px`
+		lineHeight: 'normal'
 	};
 }
 

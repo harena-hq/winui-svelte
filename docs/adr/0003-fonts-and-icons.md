@@ -53,14 +53,24 @@ Small"` / `"Static Text"` / `"Static Display"`, not the Windows names. A stack w
 - Icons: `"Segoe Fluent Icons"` first, with a redistributable set behind it for non-Windows
   viewers. Glyphs are addressed by their WinUI codepoint.
 
-The type ramp is encoded as tokens — Caption 12/16, Body 14/20, Body Large 18/24, Subtitle
-20/28, Title 28/36, Title Large 40/52, Display 68/92 — so a fallback face inherits correct
-metrics even when it inherits the wrong shapes.
+The type ramp's sizes are encoded as tokens — Caption 12, Body 14, Body Large 18, Subtitle 20,
+Title 28, Title Large 40, Display 68 — so a fallback face inherits correct metrics even when it
+inherits the wrong shapes. **The line heights this paragraph used to pair with them — 16, 20,
+24, 28, 36, 52, 92 — are superseded by ADR 0011**, which found that no ramp `Style` sets
+`LineHeight` and that the control draws the font's own spacing instead.
 
 ## Status
 
 Permanent for the Windows-11 target. If the project ever needs to look right off Windows,
 that is a new decision and belongs in its own ADR.
+
+**Superseded in part by ADR 0011.** The line heights this ADR paired with the ramp's sizes came
+from Microsoft's published type ramp, which the pinned dictionary does not carry and the shipped
+control does not implement. The sizes stand and the families stand. What the ramp classes now
+emit is `line-height: normal` — the spacing of whichever face resolves, computed by the browser.
+That changes what this ADR's argument buys off Windows: the ramp used to impose Segoe's metrics
+on a substituted face, and now a substituted face keeps its own. Neither is the reference, and
+open question O1 is where that is tracked.
 
 ## Alternatives rejected
 
