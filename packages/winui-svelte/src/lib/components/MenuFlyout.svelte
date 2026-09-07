@@ -81,15 +81,34 @@
 		glyph?: string;
 	}
 
+	/**
+	 * A `SplitMenuFlyoutItem`: a row whose left half invokes and whose right half opens a menu.
+	 * `split` is the discriminant and `items` alone would not be — a sub item has that too.
+	 */
+	export interface SplitMenuFlyoutItemData {
+		id: string;
+		text: string;
+		split: true;
+		/** The rows the chevron half opens. */
+		items: MenuFlyoutEntry[];
+		disabled?: boolean;
+		/**
+		 * `Icon`, narrowed to a `FontIcon`: a Segoe Fluent Icons code point as uppercase hex,
+		 * e.g. `'E72D'`.
+		 */
+		glyph?: string;
+	}
+
 	export type MenuFlyoutEntry =
 		| MenuFlyoutItemData
 		| ToggleMenuFlyoutItemData
 		| MenuFlyoutSeparatorData
 		| RadioMenuFlyoutItemData
-		| MenuFlyoutSubItemData;
+		| MenuFlyoutSubItemData
+		| SplitMenuFlyoutItemData;
 
 	export interface MenuFlyoutProps {
-		/** Items, narrowed to the five row kinds this unit draws. */
+		/** Items, narrowed to the six row kinds this unit draws. */
 		items?: MenuFlyoutEntry[];
 		/**
 		 * The element that opens the menu. Receives the props it must spread.
@@ -248,6 +267,56 @@
 				<DropdownMenu.Separator>
 					{#snippet child({ props })}<div {...props} class="separator"></div>{/snippet}
 				</DropdownMenu.Separator>
+			{:else if 'split' in entry}
+				<DropdownMenu.Sub>
+					<div class="item split">
+						<div class="split-buttons">
+							<DropdownMenu.Item
+								disabled={entry.disabled}
+								onSelect={() => onItemInvoked?.(entry.id)}
+							>
+								{#snippet child({ props })}
+									<div {...props} class="split-primary" aria-label={entry.text}></div>
+								{/snippet}
+							</DropdownMenu.Item>
+							<span class="split-divider" aria-hidden="true"></span>
+							<DropdownMenu.SubTrigger disabled={entry.disabled}>
+								{#snippet child({ props })}
+									<div {...props} class="split-secondary" aria-label={entry.text}></div>
+								{/snippet}
+							</DropdownMenu.SubTrigger>
+						</div>
+						<div class="split-content">
+							<span class="body">
+								{#if entry.glyph}<span class="icon" aria-hidden="true"
+										>{String.fromCodePoint(parseInt(entry.glyph, 16))}</span
+									>{/if}
+								<span class="text">{entry.text}</span>
+							</span>
+							<span class="chevron" aria-hidden="true"></span>
+						</div>
+					</div>
+					<DropdownMenu.Portal>
+						<DropdownMenu.SubContent side="right" align="start" sideOffset={0} alignOffset={-2}>
+							{#snippet child({ props, wrapperProps })}
+								<div {...wrapperProps}>
+									<div
+										{...props}
+										class="presenter winui-BodyTextBlockStyle"
+										data-gutter={entry.items.some((row) => 'toggle' in row || 'groupName' in row)
+											? ''
+											: undefined}
+										data-icons={entry.items.some((row) => 'glyph' in row && Boolean(row.glyph))
+											? ''
+											: undefined}
+									>
+										{@render rowList(entry.items)}
+									</div>
+								</div>
+							{/snippet}
+						</DropdownMenu.SubContent>
+					</DropdownMenu.Portal>
+				</DropdownMenu.Sub>
 			{:else if 'items' in entry}
 				<DropdownMenu.Sub>
 					<DropdownMenu.SubTrigger disabled={entry.disabled}>
@@ -628,6 +697,143 @@
 
 	.item[data-disabled] .accelerator {
 		color: var(--winui-MenuFlyoutItemKeyboardAcceleratorTextForegroundDisabled);
+	}
+
+	.item.split {
+		/* Upstream's `RootGrid` (:504) stacks two grids in the one cell. `BackgroundGrid` (:598)
+		   holds the two buttons and the divider and carries no padding; `LayoutGrid` (:609) holds
+		   the icon, the text and the chevron and carries the item's `Padding`. Which one measures
+		   the row matters: `BackgroundGrid`'s columns are `*`, `Auto` (the 1px divider) and a fixed
+		   38, so it contributes almost nothing, and the row's width is the layout layer's —
+		   11 + text + 24 + 12 + 11. A single flex row cannot hold both facts at once. It would
+		   measure 11 + 1 + 38 = 50 to the right of the text where upstream measures 24 + 12 + 11 =
+		   47, and the card came out 3px wide against the original's 131. So the two layers are
+		   reproduced as two layers. */
+		display: block;
+		position: relative;
+		padding: 0;
+		background: none;
+	}
+
+	.item.split:active {
+		/* `:active` matches every ancestor of the pressed element, so the base `.item` pressed rule
+		   would paint the whole row when one half is down — and paint it through both halves, whose
+		   own background is the transparent `MenuFlyoutItemBackground`. Upstream's `RootGrid` has no
+		   `Background` and no pressed state at all: `PrimaryPressed` and `SecondaryPressed` each
+		   target one button (:533, :546). */
+		background: none;
+		color: var(--winui-MenuFlyoutItemForeground);
+	}
+
+	.split-buttons {
+		/* `BackgroundGrid`. Out of flow, because it must not measure the row. */
+		position: absolute;
+		inset: 0;
+		display: flex;
+		/* :605 and :607, `VerticalAlignment="Stretch"` on both buttons. Only the layout layer is
+		   tall enough to set the row's height, so without this each half would draw its fills as a
+		   box the height of its own empty content. */
+		align-items: stretch;
+	}
+
+	.split-content {
+		/* `LayoutGrid`. In flow, and the only layer that measures. */
+		position: relative;
+		display: flex;
+		align-items: center;
+		padding: var(--winui-MenuFlyoutItemThemePaddingNarrow);
+		/* `IsHitTestVisible="False"` on the TextBlock (:619) and the chevron (:620): this layer
+		   paints and measures, and the pointer passes through it to the buttons underneath. */
+		pointer-events: none;
+	}
+
+	.split-primary {
+		flex: 1;
+		min-width: 0;
+		border-radius: var(--winui-ControlCornerRadius);
+		background: var(--winui-MenuFlyoutItemBackground);
+	}
+
+	.split-divider {
+		flex: none;
+		align-self: center;
+		width: 1px;
+		height: var(--winui-SplitMenuFlyoutItemSeparatorHeight);
+		background: var(--winui-SplitMenuFlyoutItemButtonDividerBrush);
+	}
+
+	.split-secondary {
+		flex: none;
+		width: var(--winui-SplitMenuFlyoutItemChevronButtonWidth);
+		/* c1-allow: MenuFlyout_themeresources.xaml:607, `CornerRadius="0,4,4,0"` on
+		   `SecondaryButton` — a literal 4 upstream, not `ControlCornerRadius`, and reproduced as
+		   the literal it is. XAML writes TopLeft,TopRight,BottomRight,BottomLeft and so does CSS. */
+		border-radius: 0 4px 4px 0;
+		background: var(--winui-MenuFlyoutItemBackground);
+	}
+
+	.split-primary[data-highlighted]:not([data-disabled]) {
+		background: var(--winui-MenuFlyoutItemBackgroundPointerOver);
+	}
+
+	.split-primary:active:not([data-disabled]) {
+		background: var(--winui-MenuFlyoutItemBackgroundPressed);
+	}
+
+	.split-primary[data-disabled] {
+		background: var(--winui-MenuFlyoutItemBackgroundDisabled);
+	}
+
+	/* The text and the icon are in the layer above the button, exactly as upstream's are in a
+	   different grid from it, so each of these is the `Setter` that reaches across: :527-528,
+	   :534-535 and :560,562 target `TextBlock.Foreground` and `IconContent.Foreground` from a
+	   state named for the button. The chevron keeps its own colour throughout, so it is excluded
+	   here and painted by the four rules below. */
+	.item.split:has(.split-primary[data-highlighted]:not([data-disabled])) .body {
+		color: var(--winui-MenuFlyoutItemForegroundPointerOver);
+	}
+
+	.item.split:has(.split-primary:active:not([data-disabled])) .body {
+		color: var(--winui-MenuFlyoutItemForegroundPressed);
+	}
+
+	.item.split:has(.split-primary[data-disabled]) .body {
+		color: var(--winui-MenuFlyoutItemForegroundDisabled);
+	}
+
+	.split-secondary[data-highlighted]:not([data-disabled]) {
+		background: var(--winui-MenuFlyoutItemBackgroundPointerOver);
+	}
+
+	/* `SubMenuOpened` is declared before `SecondaryPressed` here and the pressed rules come after
+	   it, so pressing the chevron of an open submenu shows the pressed fill. A `VisualStateManager`
+	   shows the state entered last, and pressing is what happens after opening. */
+	.split-secondary[data-state='open']:not([data-disabled]) {
+		background: var(--winui-MenuFlyoutSubItemBackgroundSubMenuOpened);
+	}
+
+	.split-secondary:active:not([data-disabled]) {
+		background: var(--winui-MenuFlyoutItemBackgroundPressed);
+	}
+
+	.split-secondary[data-disabled] {
+		background: var(--winui-MenuFlyoutItemBackgroundDisabled);
+	}
+
+	.item.split:has(.split-secondary[data-highlighted]:not([data-disabled])) .chevron {
+		color: var(--winui-MenuFlyoutSubItemChevronPointerOver);
+	}
+
+	.item.split:has(.split-secondary[data-state='open']:not([data-disabled])) .chevron {
+		color: var(--winui-MenuFlyoutSubItemChevronSubMenuOpened);
+	}
+
+	.item.split:has(.split-secondary:active:not([data-disabled])) .chevron {
+		color: var(--winui-MenuFlyoutSubItemChevronPressed);
+	}
+
+	.item.split:has(.split-secondary[data-disabled]) .chevron {
+		color: var(--winui-MenuFlyoutSubItemChevronDisabled);
 	}
 
 	.item.toggle[data-highlighted]:not([data-disabled]) .accelerator {

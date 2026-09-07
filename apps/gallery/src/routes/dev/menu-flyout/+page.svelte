@@ -80,6 +80,30 @@
 		}
 	];
 
+	const splitItems: MenuFlyoutEntry[] = [
+		{
+			id: 'save',
+			text: 'Save',
+			split: true,
+			glyph: 'E74E',
+			items: [
+				{ id: 'save-docx', text: 'Save as .docx' },
+				{ id: 'save-pdf', text: 'Save as .pdf' },
+				{ id: 'save-txt', text: 'Save as .txt' }
+			]
+		},
+		{
+			id: 'share',
+			text: 'Share',
+			split: true,
+			glyph: 'E72D',
+			items: [
+				{ id: 'share-email', text: 'Share via email' },
+				{ id: 'share-link', text: 'Share via link' }
+			]
+		}
+	];
+
 	const placementItems = [{ id: 'item', text: 'Menu item' }];
 	const placements = [
 		'top',
@@ -164,6 +188,15 @@
 <h2 class="winui-SubtitleTextBlockStyle">cascading</h2>
 <div class="row clear-above indent">
 	<MenuFlyout open items={cascadingItems}>
+		{#snippet children(props)}
+			<Button {...props}>File Options</Button>
+		{/snippet}
+	</MenuFlyout>
+</div>
+
+<h2 class="winui-SubtitleTextBlockStyle">split</h2>
+<div class="row clear-above indent">
+	<MenuFlyout open items={splitItems}>
 		{#snippet children(props)}
 			<Button {...props}>File Options</Button>
 		{/snippet}
