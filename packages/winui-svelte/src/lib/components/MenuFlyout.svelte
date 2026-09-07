@@ -126,6 +126,14 @@
 		 * and the trigger's top border is row 378 — and no pinned dictionary states it.
 		 */
 		offset?: number;
+		/**
+		 * `FlyoutBase.ShowAt(placementTarget)`: the element the menu is placed against, when
+		 * that is not the trigger. `SplitButton::OpenFlyout` — `SplitButton.cpp:227` — calls
+		 * `ShowAt(*this, options)` with the whole control, while only its chevron half is the
+		 * trigger, so a menu anchored to the trigger would sit a primary-half's width to the
+		 * right of where WinUI puts it. Left unset, the trigger is the anchor.
+		 */
+		anchor?: HTMLElement | null;
 		/** IsOpen. `FlyoutBase` exposes this read-only with `ShowAt`/`Hide`; ADR 0009 maps a
 		 * control's own state to a bindable prop. */
 		open?: boolean;
@@ -165,6 +173,7 @@
 
 	let {
 		items = [],
+		anchor = null,
 		placement = 'top',
 		offset = 4,
 		open = $bindable(false),
@@ -420,7 +429,12 @@
 		{/snippet}
 	</DropdownMenu.Trigger>
 	<DropdownMenu.Portal>
-		<DropdownMenu.Content side={position.side} align={position.align} sideOffset={offset}>
+		<DropdownMenu.Content
+			side={position.side}
+			align={position.align}
+			sideOffset={offset}
+			customAnchor={anchor}
+		>
 			{#snippet child({ props, wrapperProps })}
 				<div {...wrapperProps}>
 					<div
