@@ -49,6 +49,8 @@ export { default as Popup } from './components/Popup.svelte';
 export type { PopupProps } from './components/Popup.svelte';
 export { default as RadioButton } from './components/RadioButton.svelte';
 export type { RadioButtonProps } from './components/RadioButton.svelte';
+export { default as RepeatButton } from './components/RepeatButton.svelte';
+export type { RepeatButtonProps } from './components/RepeatButton.svelte';
 export { default as Slider } from './components/Slider.svelte';
 export type { SliderProps } from './components/Slider.svelte';
 export { default as TeachingTip } from './components/TeachingTip.svelte';
