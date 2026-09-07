@@ -95,6 +95,12 @@ the IDL without a registry to maintain. A prop with no WinUI member says so inst
 Permanent for the names. The two existing components are migrated as v3's first unit; after
 that a rename is a breaking change.
 
+**Amended by ADR 0012.** The exception set above is declared closed and was reopened once, for
+`glyph`, a shorthand for an `IconElement` that is a Segoe Fluent Icons code point. Three
+components had already shipped it unrecorded when that was noticed. The naming rule is
+otherwise unchanged, and the `icon` prop ADR 0012 introduces follows this ADR rather than
+excepting itself from it.
+
 ## Alternatives rejected
 
 - **Keep the WinUI name verbatim, as ADR 0006 does for tokens.** The symmetry is false. A token
