@@ -61,6 +61,7 @@ pnpm workspace. The library is publishable and imposes no build tooling on its c
 | D22 | Tranches are ordered by what an application reaches for; harness scaffolding follows the controls    | this file, "Roadmap → v3"         |
 | D23 | The XAML framework dictionary is a third pinned upstream; the control pin wins per key and theme     | ADR 0010                          |
 | D24 | The type ramp's line height is `normal`, the font's own spacing, not the published ramp's number     | ADR 0011                          |
+| D25 | An icon is a snippet the consumer draws, with a Segoe Fluent Icons code point as its shorthand       | ADR 0012                          |
 
 ## Verification
 
@@ -863,8 +864,251 @@ group sizes, which no longer line up one-to-one with a version.
     a baseline written from a wrong render agrees with itself, and the first time the gate
     was changed rather than the practice.
 
-7.  **Commands and menus** — DropDownButton, SplitButton, ToggleButton, CommandBar, MenuBar,
-    AppBar\*.
+7.  **Commands and menus** — ToggleButton, HyperlinkButton, RepeatButton, DropDownButton,
+    SplitButton, ToggleSplitButton, AppBarButton, AppBarToggleButton, AppBarSeparator,
+    CommandBar, MenuBar.
+
+    Goal: **the application can offer a command, and gather commands into a bar.**
+
+    Eleven controls, and every one of them is a button or a container of buttons. The tranche
+    is `Button`'s surface widened in two directions — what a single button can be, and how a
+    row of them is held — which is why it is one version rather than three.
+
+    Three of the eleven were not in this entry when the roadmap was written. ToggleSplitButton
+    is `SplitButton.xaml:246`, a `Style` whose entire body is
+    `BasedOn="{StaticResource SplitButtonStyle}"`: it is the same template, and building
+    SplitButton without it would leave a control on the table for the price of a checked
+    state. HyperlinkButton and RepeatButton are the two remaining `ButtonBase` restyles in
+    `CommonStyles/`, and until this version no tranche named them at all — see the roadmap gap
+    recorded after this list.
+
+    **What the pin can and cannot say**, which is `docs/surface.md`'s step 1. Four of the
+    eleven have an implementation under `controls/dev` — DropDownButton, SplitButton,
+    ToggleSplitButton and MenuBar. The other seven are `Windows.UI.Xaml` controls WinUI 3
+    restyles, and `CommonStyles/*_themeresources.xaml` is the whole of what the pin carries
+    for them — the position seven of the twelve earlier controls are already in. For those
+    seven the Gallery's sample page is the only enumeration of the surface and the sweep's
+    steps 2 and 3 do not apply; each unit says so rather than leaving the absence
+    unexplained.
+
+    The fourth of the four was nearly missed, and the near-miss was the procedure's fault
+    rather than the reader's. Step 1 as written was `ls controls/dev/<Control>/`, and
+    ToggleSplitButton has no directory: it lives in `SplitButton/`, and its resources are in
+    `SplitButton/SplitButton_themeresources.xaml` rather than in `CommonStyles/`. A directory
+    lookup answers "no second half" for it, and a wrong verdict of that shape reads in a unit
+    exactly like a right one. Two more controls are in the same position and both are still
+    ahead of this project — `BreadcrumbBar` under `Breadcrumb/` in v8, `ItemsRepeater` under
+    `Repeater/` in v9. Step 1 now searches for the file rather than for a directory of that
+    name, and `docs/surface.md` records why.
+
+    Of the four that do have code, three say something visual and one says nothing:
+
+    - **DropDownButton is its template.** `DropDownButton.cpp` registers the flyout's opened
+      and closed events, tracks a bool, and raises an automation property. No `GoToState`, no
+      visibility, no template child, nothing drawn. The chevron and every state are XAML.
+    - **SplitButton's visual state machine is in code.** `SplitButton.xaml` declares
+      twenty-one `VisualState`s, seventeen of them on the control itself —
+      `PrimaryPointerOver`, `SecondaryPressed`, `CheckedFlyoutOpen`, `SecondaryButtonSpan`
+      among them — and `SplitButton.cpp:123-215` enters all seventeen by name while no XAML
+      trigger enters any. The code decides which half the pointer is over, whether the flyout
+      is open, and, through `m_isKeyDown`, that a keyboard press lights **both** halves where
+      a pointer press lights one. This is step 3 of the sweep in its pure form: a unit reading
+      only the template would ship a control with a dead state machine and a green baseline,
+      because the resting state is the one a screenshot photographs. The other four
+      declarations, at `:41-52`, are on the nested inner `Button` style, are entered by the
+      framework's own `ButtonBase` machinery rather than by SplitButton, and do one thing —
+      set `AnimatedIcon.State` on the chevron.
+    - **ToggleSplitButton supplies the condition SplitButton branches on.**
+      `ToggleSplitButton.cpp:60-63` implements `InternalIsChecked()`, the virtual
+      `SplitButton.cpp:149,190` tests to reach the seven `Checked*` states; `:53-58` overrides
+      `OnClickPrimary` so the primary half toggles before it clicks; `:20-27` re-runs the
+      state update on every `IsChecked` change. Unit 3 reads both files or it gets the checked
+      half of a shared template wrong.
+    - **MenuBarItem drives its own selection.** `MenuBarItem.cpp:409-423` enters `Pressed`,
+      `PointerOver` and `Selected`, where `Selected` means this item's own menu is open.
+
+    **Two chevrons in this tranche are animated icons, and WD-006 already holds the
+    decision.** DropDownButton's is an `AnimatedIcon` at `DropDownButton.xaml:93` and
+    SplitButton's at `SplitButton.xaml:230`, both `AnimatedChevronDownSmallVisualSource`, and
+    both state their own `FallbackIconSource` in the template —
+    `SymbolThemeFontFamily`, `FontSize="8"`, `Glyph="&#xE96E;"`. That is the position
+    Expander's chevron is already in, and the registry's answer is to render the fallback,
+    which is not an approximation but the icon WinUI itself paints wherever the animated
+    source cannot run. So units 2 and 3 owe **two more names on WD-006's `Control` line**
+    rather than a new entry — and they owe the measurement Expander's row made a habit of,
+    because the fallback glyph's ink is not always the animation's resting frame and this
+    chevron, at eight pixels against Expander's twelve, has never been measured.
+    AppBarButton's `SubItemChevron` is a plain `FontIcon` and needs none of this.
+
+    **The icon surface, decided once for the tranche — D25, and ADR 0012 carries it.**
+    `AppBarButton.Icon` and `AppBarToggleButton.Icon` take an `IconElement`, and the Gallery
+    spends four of AppBarButton's six examples and three of AppBarToggleButton's four on which
+    kind it is. Reading those examples rather than assuming them is what settled the decision:
+    the `FontIcon` one is `FontFamily="Candara" Glyph="&#x03A3;"` on both pages — a Greek sigma
+    in a text font, chosen to show that a `FontIcon` need not be the icon font — and both
+    `PathIcon` examples set `.Content` inside a `Viewbox` rather than `.Icon` at all. So this
+    library's existing `glyph`, a Segoe Fluent Icons code point, expresses **none** of them as
+    written, including the one a reader would assume it covered.
+
+    `icon?: Snippet` is therefore the prop, and it is ADR 0009 applied rather than excepted
+    from: an element-valued member is content, and content is a snippet. `glyph?: string`
+    stays as the recorded shorthand, because it is what the **bars** use rather than what the
+    icon pages demonstrate — CommandBar's page writes `Icon="Add"`, `Icon="Edit"`,
+    `Icon="Share"`, `Icon="Setting"`. Where both are given, `icon` wins.
+
+    Two things follow that this version owes rather than assumes. ADR 0009 declared its
+    exception set **closed**, and `glyph` is in neither that set nor the WinUI member
+    vocabulary — so three sealed components have been outside the stated rule since the first
+    of them shipped, unrecorded. ADR 0012 reopens the set once and says so. And the rule
+    reaches item-data fields, not only component props, because `MenuFlyout`'s five entry types
+    and `NavigationViewItemData` are where two of the three existing `glyph`s live: unit 7
+    gives `MenuFlyout` its `icon`, since a MenuBar menu can hold any `IconElement`, and
+    `NavigationView` and `TeachingTip` are owed theirs and are listed below rather than left
+    to be rediscovered.
+
+    The units, in dependency order:
+
+    1. **ToggleButton, HyperlinkButton, RepeatButton.** Three restyles of `Button`, each that
+       control's template with one thing changed: a checked and an indeterminate state, an
+       accent foreground with no border, and a press that repeats. **No bits-ui primitive**,
+       which the spec stage established rather than the plan: bits-ui `Toggle` carries a
+       boolean `pressed`, and WinUI's ToggleButton is three-state — four of its twelve visual
+       states are `Indeterminate*`, and `IsThreeState` is a member. HTML has the three-valued
+       spelling already, `aria-pressed="true|false|mixed"`, and `CheckBox.svelte` set the
+       precedent by taking `checked`, `indeterminate` and `threeState` over a native element
+       rather than over a two-state primitive. Button itself uses no primitive either.
+       **One spec, three commits** — they share a template ancestry and are worth specifying
+       together, but three controls are three intents, and adjacent intents stay separate commits.
+       RepeatButton's repeat is this tranche's first behaviour no screenshot can photograph; its
+       commit records how the control was driven instead.
+    2. **DropDownButton.** A `Button` with a chevron that shows a flyout. Its unit supplies
+       the flyout from this library's existing MenuFlyout and Flyout rather than inventing a
+       host: upstream's `Flyout` property takes either, and both are built.
+    3. **SplitButton and ToggleSplitButton.** One template, two controls, and the unit's real
+       work is the state machine the C++ holds rather than the two boxes. Three things in it
+       are not guessable from the template:
+
+       - **Touch and keyboard both light both halves.** `SplitButton.cpp:152` and `:186` test
+         `m_lastPointerDeviceType == Touch || m_isKeyDown`, so `TouchPressed` and
+         `CheckedTouchPressed` are entered by a touch press _and_ a key press. The mouse is
+         the one input that lights a single half.
+       - **A key press also moves which half is clicked.** `m_isKeyDown` enters
+         `SecondaryButtonSpan` (`SplitButton.cpp:121-123`), which at `SplitButton.xaml:211-216`
+         sets the secondary button's `Grid.Column` to 0 and `Grid.ColumnSpan` to 3 — it covers
+         the whole control. So while a key is held the flyout half _is_ the button. That is a
+         hit-target change, not a paint change, and no screenshot of a resting control shows it.
+       - **Gamepad A rides the keyboard path.** `SplitButton.cpp:324-332` sets `m_isKeyDown`
+         for `Space`, `Enter` and `GamepadA` alike, so a game controller is not wholly deferred
+         here the way the input-mode row below might suggest.
+
+    4. **AppBarButton, AppBarToggleButton, AppBarSeparator.** The three things a command bar
+       holds — and each of the first two has **two appearances**, which is this unit's real
+       size rather than its icon and label.
+       `CommonStyles/AppBarButton_themeresources.xaml` gives `ApplicationViewStates` four
+       states for the button as a bar command — `FullSize`, `Compact`, `LabelOnRight`,
+       `LabelCollapsed` at `:149-185` — and four more for the same button drawn as a row in an
+       overflow menu at `:195-228`, which `CommonStates` then serves with its own
+       `OverflowNormal`, `OverflowPointerOver`, `OverflowPressed` and `OverflowSubMenuOpened`
+       at `:278-310`. A `FlyoutStates` group at `:345-347` shows or hides a `SubItemChevron`,
+       the control's own submenu affordance, which is on the acceptance page at
+       `AppBarButtonPage.xaml:106`.
+
+       **The overflow appearance belongs to this unit, not to unit 6.** It is a state of the
+       button; the bar only decides where the button is. A unit 4 that sealed the bar
+       appearance alone would hand unit 6 a control it cannot put in an overflow menu, and
+       unit 6's "secondary commands as menu rows" is precisely those eight states.
+
+    5. **CommandBar, closed.** The row itself: primary commands, `ClosedDisplayMode`,
+       `DefaultLabelPosition`, `OverflowButtonVisibility`, and the bar's own metrics. Built on
+       bits-ui `Toolbar`.
+    6. **CommandBar, open.** The overflow surface: secondary commands as menu rows, `IsOpen`,
+       `IsSticky`, and the portalled presenter carrying its own ramp class per the rule v4 left
+       behind.
+
+       **The split is because of the weight, and the entry would be dishonest to name the
+       weight and not act on it** — 1031 lines of theme resources against the next control's
+       495, plus AppBarButton's eight overflow states arriving from unit 4. v6 split MenuFlyout,
+       a smaller control, across five sweep entries. One cold review of all of it is a review
+       that skims.
+
+       **The five properties come from three sources, and the entry should not have listed
+       them as one.** `ClosedDisplayMode` (`CommandBar_themeresources.xaml:86`) and
+       `OverflowButtonVisibility` (`:838`, through
+       `CommandBarTemplateSettings.EffectiveOverflowButtonVisibility`) are in the pin and not
+       on the acceptance page. `IsOpen` and `DefaultLabelPosition` are on the page
+       (`CommandBarPage.xaml:51` and `:50`) and not in CommandBar's resources —
+       `DefaultLabelPosition` appears only in CommandBarFlyout's and MediaTransportControls'.
+       `IsSticky` is in neither: it exists on the page as a code substitution at `:108-111`
+       that no option control ever sets, so it is never true there. It is read from the
+       reference or it is not read at all, and no baseline can photograph it.
+
+       **Unnamed scope, on the acceptance page.** `CommandBarPage.xaml.cs:63` and `:116` add
+       and remove secondary commands at runtime. The deferral table below declines
+       _width-driven_ overflow; commands appearing and disappearing under a button is a
+       different thing and unit 6 builds it.
+
+    7. **MenuBar and MenuBarItem.** A row of items, each opening a MenuFlyout, with the
+       hover-crossing behaviour a menu bar has and a single flyout does not — moving the
+       pointer to a sibling item while a menu is open switches menus without a click. Built on
+       bits-ui `Menubar`, which owns exactly that. This unit also gives `MenuFlyout` the `icon`
+       prop ADR 0012 defines, because a MenuBar menu can hold any `IconElement`.
+
+    **Done-when**, applied per unit: the control is snapshotted in all three themes and
+    compared against the original on the reference guest; every prop follows D21 as ADR 0012
+    amends it, with its TSDoc naming the WinUI member — or, for `glyph`, naming ADR 0012; the
+    surface sweep is done and recorded **before** the seal, including its step-1 verdict for
+    the seven controls that have no second half; and the nine gates are green.
+
+    **Five things in this tranche no screenshot can reach**, and for each the unit records how
+    the control was driven instead, because v4 established that a snapshot suite is a bar on
+    the resting state and nothing since has widened it:
+
+    - RepeatButton's repeat, which is a timer;
+    - SplitButton's key-down `SecondaryButtonSpan`, which changes the hit target rather than
+      any pixel of the resting control;
+    - SplitButton's touch press, which needs a touch pointer to reach `TouchPressed` at all;
+    - CommandBar's `IsSticky`, which the acceptance page never sets true and the pin never
+      mentions — it is read from the reference or it is not read;
+    - MenuBar's hover crossing, which exists only while a menu is open.
+
+    **What this version will not build.**
+
+    | control                          | not yet built                                                        |
+    | -------------------------------- | -------------------------------------------------------------------- |
+    | AppBarButton, AppBarToggleButton | `KeyboardAccelerator` as an input; the label draws the override text |
+    | AppBarButton, AppBarToggleButton | `InputModeStates`, which is narrower than it sounds — see below      |
+    | CommandBar                       | dynamic overflow: commands moving into the menu as the bar narrows   |
+    | CommandBar                       | `AppBarElementContainer`, which hosts a non-command element          |
+    | MenuBar                          | `KeyboardAccelerator` as an input, as AppBarButton                   |
+    | NavigationView, TeachingTip      | `icon`, ADR 0012's general form — both carry `glyph` only today      |
+
+    **The input-mode row is narrow, and an earlier draft of it was a trap.** Only AppBarButton
+    and AppBarToggleButton declare `InputModeStates`; the other nine controls have no such
+    group. And what its two states do is one thing: `TouchInputMode` and
+    `GameControllerInputMode` both set `OverflowTextLabel.Padding` to
+    `AppBarButtonOverflowTextTouchMargin`, `AppBarButton_themeresources.xaml:324-336`, and only
+    on the overflow appearance. So it is not eleven controls' padding, it is one label's, in
+    one of two appearances, under a condition the web half-expresses — `@media (pointer: coarse)`
+    is `TouchInputMode`, and a game controller driving a fine pointer is not a case a browser
+    has. Unit 4 decides it against the reference; the plan only says it is not assumed.
+
+    The draft this replaced said "all eleven — the touch and game-controller padding
+    variants", and SplitButton has `TouchPressed` and `CheckedTouchPressed` at
+    `SplitButton.xaml:90,153`, entered at `SplitButton.cpp:156,190`. Those are two of the
+    seventeen states unit 3 exists to build, they change a background rather than a padding,
+    and they have nothing to do with `InputModeStates`. A blanket row would have told unit 3's
+    author to skip them, and the baseline would have agreed.
+
+    **Every row above needs a destination, and this is where the roadmap gap bites.** This
+    entry was written as though it closed "Menus & toolbars", and it does not: four of that
+    group's ten pages are in the unscheduled list below, and CommandBarFlyout is the natural
+    home of both `KeyboardAccelerator` rows, because a command bar flyout is where an
+    accelerator is drawn at its largest. These are therefore deferrals to a version that does
+    not yet exist rather than to one that does — a weaker promise than v4's deferral table
+    made, and the honest one, because a deferral whose destination is unnamed is a decline
+    that has not admitted it. Naming the destination is what the list below is for.
+    Scheduling it is a decision for whoever plans v8.
+
 8.  **Navigation** — BreadcrumbBar, Pivot, SelectorBar, TabView. NavigationView was v2.
 9.  **Collections** — ListView, GridView, TreeView, ItemsRepeater, ItemsView, FlipView.
 10. **The sample-page frame** — `ControlExample`'s three panes, `SampleCodePresenter`, the
@@ -880,6 +1124,44 @@ group sizes, which no longer line up one-to-one with a version.
 14. **Styles** (10) and **Motion** (7) — AcrylicBrush, AnimatedIcon, ThemeShadow, System
     Backdrops, transitions, easing, connected animation. WD-006 closes here.
 15. **Media / Windowing / System / Shell** (18) — see open question O2.
+
+**Twenty-four Gallery pages are scheduled by no tranche, and planning v7 is what found
+them.** The roadmap enumerates by name where a tranche schedules controls, and by count where
+it takes a whole group at once — Styles's ten, Motion's seven, and the eighteen O2 resolves.
+Two things fall between the two habits.
+
+**Two whole groups are absent.** The words "Fundamentals" and "Accessibility" do not occur in
+this file at all. That is ten pages — the Gallery's seven Fundamentals items and its three
+Accessibility ones — with no tranche, no count and no O2 disposition. They are not controls,
+which is presumably why they were never listed; but D7 resolves what such a page _renders_, not
+who builds it or when, and the acceptance gate walks the navigation tree page by page.
+
+**And fourteen individual pages sit inside groups the roadmap does enumerate by name.**
+
+| group            | scheduled by no tranche                                          |
+| ---------------- | ---------------------------------------------------------------- |
+| Menus & toolbars | CommandBarFlyout, SwipeControl, StandardUICommand, XamlUICommand |
+| Basic input      | ColorPicker, RatingControl                                       |
+| Collections      | PullToRefresh                                                    |
+| Scrolling        | ScrollViewer                                                     |
+| Layout           | Canvas, RelativePanel, VariableSizedWrapGrid                     |
+| Text             | RichEditBox, RichTextBlock, TextBlock                            |
+
+Two of those look scheduled and are not, which is why the count was wrong the first time it was
+taken. **ColorPicker** occurs in this file exactly once, in D9's row: the plan has decided
+_how_ to build it — its own Zag machine, because bits-ui lacks the primitive — and has never
+said _when_. **TextBlock** occurs three times, all of them prose about line height in v1 and
+v6. A decision about a control reads like a plan for it, and a control used as an example reads
+like one too. Neither is.
+
+Listing them is not scheduling them, and this version does not schedule them. v7 takes
+HyperlinkButton, RepeatButton and ToggleSplitButton because they are templates it is already
+building, and it leaves CommandBarFlyout alone because that is a flyout of a bar which does not
+exist until this version closes. The two `*UICommand` entries may not be controls at all —
+they are command objects with no template — so their honest disposition is a `WD-` entry or a
+page that says so, decided when the group is reached rather than now. What the list is for is
+that this gap was found by planning one tranche carefully, three tranches later than it could
+have been, and it would be found the same way again if it were not written down.
 
 **A release becomes possible from v3 onward, and is deliberately taken after `Final`.** The
 capability and the decision are different questions: a release is technically possible now, and
