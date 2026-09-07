@@ -537,6 +537,45 @@ stayed green. The project already had a rule about type annotations in markup _e
 this is the same rule, and a snippet header is markup too. The parameter takes a default
 instead and TypeScript infers from it.
 
+### MenuFlyout — v6 unit 4e
+
+`DefaultSplitMenuFlyoutItemStyle` at `MenuFlyout_themeresources.xaml:499` is the only row in
+the dictionary that is two controls. Its template stacks **two grids in one cell**, and which
+of them measures the row is the whole of the unit. `BackgroundGrid` at `:598` holds the two
+buttons and the divider between them; its columns are `*`, an `Auto` that fits a 1px `Border`,
+and a fixed `SplitMenuFlyoutItemChevronButtonWidth` of 38, so it contributes 39 and no more.
+`LayoutGrid` at `:609` holds the icon, the text and the chevron, carries the item's `Padding`,
+and is marked `IsHitTestVisible="False"` on the parts that would otherwise take the pointer.
+The row's width is therefore the layout layer's — `11 + text + 24 + 12 + 11` — and the chevron
+is measured even though it is drawn over a button 38 wide that does not measure it.
+
+A single flex row cannot hold both of those facts. It puts `11 + 1 + 38 = 50` to the right of
+the text where upstream puts `24 + 12 + 11 = 47`, which is a card 3px too wide — 133.67 against
+the original's 131, with every individual token correct. So the two layers are reproduced as
+two layers, and every other number then falls out rather than being fitted: the divider lands
+39 from the row's right edge, the chevron's box ends 11 from it, and the card measures 130.67 x
+70 against 131 x 70. That the residue is a third of a pixel rather than zero is the same
+residue the cascading card shows (115.72 against 116) and is text metrics, not layout.
+
+Splitting the row across two layers moves the text out of the button that highlights it.
+Upstream has the same split and answers it with `Setter`s that reach across — `:527`, `:534`
+and `:560` target `TextBlock.Foreground` and `IconContent.Foreground` from states named for a
+button — so the reproduction answers it with `:has()`, as `Slider.svelte` already does for a
+thumb that colours its track. The chevron is excluded from those rules and painted by four of
+its own, because upstream never lets it take the item foreground.
+
+**`:active` matches the ancestors of the pressed element.** The row is an ordinary `div` here
+and each half is a primitive, so the base `.item` pressed rule painted the whole row — through
+both halves, whose own background is the transparent `MenuFlyoutItemBackground` — whenever one
+half went down. Upstream's `RootGrid` has no `Background` and no pressed state at all. This is
+the second leak of this exact shape in MenuFlyout: unit 4a's was a pressed fill reaching a
+disabled toggle. Both were found by driving the control, and neither would have shown in a
+baseline photographed from the same render.
+
+**The disabled split row is not in the harness**, the same way unit 4d left the disabled sub
+item out. Its four rules are read off the template's `Disabled` state at `:556` rather than off
+a picture.
+
 ## What this file does not cover
 
 The sweep reads what a control _draws_. It does not enumerate automation peers, keyboard
