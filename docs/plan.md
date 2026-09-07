@@ -724,14 +724,14 @@ group sizes, which no longer line up one-to-one with a version.
        This closes the gap already recorded under C6 before six more public prop surfaces are
        fixed by use.
 
-       **Closed, and then found to be half-closed.** The consumer app mounted four controls
-       and its SSR entry rendered `Button` alone, so none of this tranche's six templates was
-       ever parsed by a consumer's toolchain — which is the one thing the step exists to do,
-       and the only place a shipped `{#snippet name(x: Type)}` annotation can be caught, since
-       `svelte-package` strips TypeScript from `<script>` blocks and from nothing else. The
-       consumer now mounts all six. The claim in the version's Done-when was literally true
-       throughout and the step's stated purpose was not met, which is the shape of defect a
-       Done-when written as a command rather than as an outcome produces.
+       **Closed, and then widened.** The consumer app mounted four controls and its SSR entry
+       rendered `Button` alone; it now mounts all six of this tranche's. What that adds is not
+       template compilation — `index.ts` re-exports every component with a static
+       `export { default as X } from './components/X.svelte'`, so the bundler resolves and
+       transforms all 23 modules to work out the entry's exports and only then tree-shakes,
+       which means a shipped `{#snippet name(x: Type)}` annotation was already reachable by
+       this step. What it adds is the usage site: each control's prop names, snippet names and
+       required members are now exercised by a consumer rather than merely parsed.
 
     1. **Expander.** An in-flow disclosure control, not a portal. It is built on bits-ui's
        `Collapsible`, which supplies the open state, the trigger's `aria-expanded` contract
@@ -779,12 +779,12 @@ group sizes, which no longer line up one-to-one with a version.
     none of the ten `Style` records in `TextBlock_themeresources.xaml` sets `LineHeight`, so a
     WinUI TextBlock draws the font's own spacing instead. Measured at one step: a
     `BaseTextBlockStyle` message in the Gallery's flyout is 19 tall where the class gives 20.
-    **Every control in this tranche has had to write `line-height: normal` over the ramp class
-    somewhere**, and TeachingTip needed it three times — its title, its subtitle and its content
-    slot. The running total this plan used to carry is deliberately gone: it was incremented
-    rather than derived and had drifted below the real number by the time anyone checked. What
-    the unit rests on is not a count but the fact that no control has yet been reproduced
-    without the override. Fixing the ramp moves every baseline in the project, so it is a unit of
+    **Five of this tranche's six controls have had to write `line-height: normal` over the ramp
+    class somewhere**, and TeachingTip needed it three times — its title, its subtitle and its
+    content slot. Popup is the exception and draws no text at all. The running total this plan
+    used to carry is deliberately gone: it was incremented rather than derived and had drifted
+    below the real number. What the unit rests on is not a count but that every control here
+    that draws text has needed the override. Fixing the ramp moves every baseline in the project, so it is a unit of
     its own and it needs the other nine steps measured first — the Gallery's Typography design
     page is where they are all on screen at once.
 
@@ -824,9 +824,11 @@ group sizes, which no longer line up one-to-one with a version.
 
     **Eight divergences opened here, WD-010 through WD-017, and two of them are a kind this
     project had not met before.** Six are the usual sorts: WD-010, WD-011 and WD-013 are
-    behaviours declined because the platform cannot express them, WD-012 is the drop shadow,
-    and WD-014 and WD-015 are facts CSS cannot hold in one box — a command row laid out in a
-    width it does not set, and a focus ring the browser grants to a scripted focus. **WD-016
+    six different mechanisms and not a bucket: WD-010 declines to reproduce an upstream defect
+    rather than invent state to be wrong with, WD-011 is a primitive's own presence timing,
+    WD-012 is a Composition effect with no pinned recipe, WD-013 is an input distinction the
+    platform cannot make, WD-014 is a measurement and a layout CSS cannot put on one box, and
+    WD-015 is a focus ring the browser grants to a scripted focus. **WD-016
     and WD-017 are the new kind**: a minimum width and a content margin that the control's own
     pinned template declares and the shipped control ignores. Neither is a behaviour being
     declined; in both the render and the dictionary disagree and the render wins. The rule
