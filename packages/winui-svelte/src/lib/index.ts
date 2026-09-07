@@ -27,6 +27,7 @@ export type {
 	MenuFlyoutItemData,
 	MenuFlyoutProps,
 	MenuFlyoutSeparatorData,
+	RadioMenuFlyoutItemData,
 	ToggleMenuFlyoutItemData
 } from './components/MenuFlyout.svelte';
 export { default as NavigationView } from './components/NavigationView.svelte';

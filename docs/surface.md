@@ -482,6 +482,31 @@ five 32-pitch rows and one separator — and the reproduction measures 169 too.
 The toggle template's own label carries `Margin="24,0,0,0"` at `:493`, 4px different from the
 item template's at `:392`. Both are in the source; neither is a resource.
 
+### MenuFlyout — v6 unit 4c
+
+`RadioMenuFlyoutItem_themeresources.xaml` is 204 lines and defines **no brush of its own**:
+`DefaultRadioMenuFlyoutItemStyle` at `:4` reads MenuFlyout's dictionary throughout. Read side
+by side against `DefaultToggleMenuFlyoutItemStyle`, the only difference that draws anything is
+one character — `Glyph="&#xE915;"` at `:94` where the toggle has `&#xE73E;`, at the same
+`FontSize="12"` and the same `Margin="0,0,16,0"`. The padding, the margin, the corner radius,
+the three common states with their sub-item brushes, the three-column Grid, the icon Viewbox
+and the accelerator label are all the toggle row.
+
+So the class the reproduction hangs the shared rules on is not about toggling. A radio row
+carries `toggle` as well as `radio`, and the comment above those rules says what the class
+means: a row with a check cell. Naming it after the first control that needed it is what would
+have made the next control copy the rules instead of reusing them.
+
+**The group is a context provider with no box.** Upstream's `ItemsPresenter` stacks rows flat
+and `GroupName` is a property on the row, not a container. `bits-ui`'s `RadioGroup` is a real
+element, and the presenter is a column flex container, so the group would have become the flex
+item and the rows its children. `display: contents` is what keeps the rows flex items of the
+presenter — the same layout upstream has, arrived at by removing a box the primitive needs and
+the visual does not.
+
+Driven on the guest: choosing `Landscape` deselects `Portrait` and leaves the second group's
+`Medium icons` alone; the card is 169 tall, five 32-pitch rows and one separator.
+
 ## What this file does not cover
 
 The sweep reads what a control _draws_. It does not enumerate automation peers, keyboard
