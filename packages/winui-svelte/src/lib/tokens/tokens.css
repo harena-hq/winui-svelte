@@ -525,6 +525,19 @@
 	--winui-FlyoutBorderThemeBrush: var(--winui-SurfaceStrokeColorFlyoutBrush);
 	--winui-FlyoutBorderThemeThickness: 1px;
 	--winui-FlyoutContentPadding: 15px 16px 17px 16px;
+	--winui-HyperlinkButtonForeground: var(--winui-AccentTextFillColorPrimaryBrush);
+	--winui-HyperlinkButtonForegroundPointerOver: var(--winui-AccentTextFillColorSecondaryBrush);
+	--winui-HyperlinkButtonForegroundPressed: var(--winui-AccentTextFillColorTertiaryBrush);
+	--winui-HyperlinkButtonForegroundDisabled: var(--winui-AccentTextFillColorDisabledBrush);
+	--winui-HyperlinkButtonBackground: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-HyperlinkButtonBackgroundPointerOver: var(--winui-SubtleFillColorSecondaryBrush);
+	--winui-HyperlinkButtonBackgroundPressed: var(--winui-SubtleFillColorTertiaryBrush);
+	--winui-HyperlinkButtonBackgroundDisabled: var(--winui-SubtleFillColorDisabledBrush);
+	--winui-HyperlinkButtonBorderBrush: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-HyperlinkButtonBorderBrushPointerOver: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-HyperlinkButtonBorderBrushPressed: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-HyperlinkButtonBorderBrushDisabled: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-HyperlinkButtonBorderThemeThickness: 1px;
 	--winui-MenuFlyoutSeparatorBackground: var(--winui-DividerStrokeColorDefaultBrush);
 	--winui-MenuFlyoutItemBackground: var(--winui-SubtleFillColorTransparentBrush);
 	--winui-MenuFlyoutItemBackgroundPointerOver: var(--winui-SubtleFillColorSecondaryBrush);
@@ -1135,7 +1148,9 @@
 		var(--winui-SystemAccentColor) 60%,
 		transparent
 	);
+	--winui-SystemControlHyperlinkTextBrush: var(--winui-SystemAccentColor);
 	--winui-SystemControlPageBackgroundAltMediumBrush: var(--winui-SystemAltMediumColor);
+	--winui-SystemControlPageBackgroundTransparentBrush: transparent;
 	--winui-SystemControlPageTextBaseMediumBrush: var(--winui-SystemBaseMediumColor);
 	--winui-SystemControlDescriptionTextForegroundBrush: var(
 		--winui-SystemControlPageTextBaseMediumBrush
@@ -1609,6 +1624,19 @@
 	--winui-FlyoutPresenterBackground: var(--winui-AcrylicInAppFillColorDefaultBrush);
 	--winui-FlyoutBorderThemeBrush: var(--winui-SurfaceStrokeColorFlyoutBrush);
 	--winui-FlyoutBorderThemeThickness: 1px;
+	--winui-HyperlinkButtonForeground: var(--winui-AccentTextFillColorPrimaryBrush);
+	--winui-HyperlinkButtonForegroundPointerOver: var(--winui-AccentTextFillColorSecondaryBrush);
+	--winui-HyperlinkButtonForegroundPressed: var(--winui-AccentTextFillColorTertiaryBrush);
+	--winui-HyperlinkButtonForegroundDisabled: var(--winui-AccentTextFillColorDisabledBrush);
+	--winui-HyperlinkButtonBackground: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-HyperlinkButtonBackgroundPointerOver: var(--winui-SubtleFillColorSecondaryBrush);
+	--winui-HyperlinkButtonBackgroundPressed: var(--winui-SubtleFillColorTertiaryBrush);
+	--winui-HyperlinkButtonBackgroundDisabled: var(--winui-SubtleFillColorDisabledBrush);
+	--winui-HyperlinkButtonBorderBrush: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-HyperlinkButtonBorderBrushPointerOver: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-HyperlinkButtonBorderBrushPressed: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-HyperlinkButtonBorderBrushDisabled: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-HyperlinkButtonBorderThemeThickness: 1px;
 	--winui-MenuFlyoutSeparatorBackground: var(--winui-DividerStrokeColorDefaultBrush);
 	--winui-MenuFlyoutItemBackground: var(--winui-SubtleFillColorTransparentBrush);
 	--winui-MenuFlyoutItemBackgroundPointerOver: var(--winui-SubtleFillColorSecondaryBrush);
@@ -2074,7 +2102,9 @@
 		var(--winui-SystemAccentColor) 80%,
 		transparent
 	);
+	--winui-SystemControlHyperlinkTextBrush: var(--winui-SystemAccentColor);
 	--winui-SystemControlPageBackgroundAltMediumBrush: var(--winui-SystemAltMediumColor);
+	--winui-SystemControlPageBackgroundTransparentBrush: transparent;
 	--winui-SystemControlPageTextBaseMediumBrush: var(--winui-SystemBaseMediumColor);
 	--winui-SystemControlDescriptionTextForegroundBrush: var(
 		--winui-SystemControlPageTextBaseMediumBrush
@@ -2569,6 +2599,19 @@
 		--winui-FlyoutPresenterBackground: var(--winui-AcrylicInAppFillColorDefaultBrush);
 		--winui-FlyoutBorderThemeBrush: var(--winui-SurfaceStrokeColorFlyoutBrush);
 		--winui-FlyoutBorderThemeThickness: 1px;
+		--winui-HyperlinkButtonForeground: var(--winui-AccentTextFillColorPrimaryBrush);
+		--winui-HyperlinkButtonForegroundPointerOver: var(--winui-AccentTextFillColorSecondaryBrush);
+		--winui-HyperlinkButtonForegroundPressed: var(--winui-AccentTextFillColorTertiaryBrush);
+		--winui-HyperlinkButtonForegroundDisabled: var(--winui-AccentTextFillColorDisabledBrush);
+		--winui-HyperlinkButtonBackground: var(--winui-SubtleFillColorTransparentBrush);
+		--winui-HyperlinkButtonBackgroundPointerOver: var(--winui-SubtleFillColorSecondaryBrush);
+		--winui-HyperlinkButtonBackgroundPressed: var(--winui-SubtleFillColorTertiaryBrush);
+		--winui-HyperlinkButtonBackgroundDisabled: var(--winui-SubtleFillColorDisabledBrush);
+		--winui-HyperlinkButtonBorderBrush: var(--winui-SubtleFillColorTransparentBrush);
+		--winui-HyperlinkButtonBorderBrushPointerOver: var(--winui-SubtleFillColorTransparentBrush);
+		--winui-HyperlinkButtonBorderBrushPressed: var(--winui-SubtleFillColorTransparentBrush);
+		--winui-HyperlinkButtonBorderBrushDisabled: var(--winui-SubtleFillColorTransparentBrush);
+		--winui-HyperlinkButtonBorderThemeThickness: 1px;
 		--winui-MenuFlyoutSeparatorBackground: var(--winui-DividerStrokeColorDefaultBrush);
 		--winui-MenuFlyoutItemBackground: var(--winui-SubtleFillColorTransparentBrush);
 		--winui-MenuFlyoutItemBackgroundPointerOver: var(--winui-SubtleFillColorSecondaryBrush);
@@ -3066,7 +3109,9 @@
 			var(--winui-SystemAccentColor) 80%,
 			transparent
 		);
+		--winui-SystemControlHyperlinkTextBrush: var(--winui-SystemAccentColor);
 		--winui-SystemControlPageBackgroundAltMediumBrush: var(--winui-SystemAltMediumColor);
+		--winui-SystemControlPageBackgroundTransparentBrush: transparent;
 		--winui-SystemControlPageTextBaseMediumBrush: var(--winui-SystemBaseMediumColor);
 		--winui-SystemControlDescriptionTextForegroundBrush: var(
 			--winui-SystemControlPageTextBaseMediumBrush
@@ -3507,6 +3552,25 @@
 	--winui-FlyoutPresenterBackground: var(--winui-SystemColorWindowColorBrush);
 	--winui-FlyoutBorderThemeBrush: var(--winui-SystemColorWindowTextColorBrush);
 	--winui-FlyoutBorderThemeThickness: 2px;
+	--winui-HyperlinkButtonForeground: var(--winui-SystemControlHyperlinkTextBrush);
+	--winui-HyperlinkButtonForegroundPointerOver: var(--winui-SystemControlPageTextBaseMediumBrush);
+	--winui-HyperlinkButtonForegroundPressed: var(--winui-SystemColorHighlightColor);
+	--winui-HyperlinkButtonForegroundDisabled: var(--winui-SystemControlDisabledBaseMediumLowBrush);
+	--winui-HyperlinkButtonBackground: var(--winui-SystemControlPageBackgroundTransparentBrush);
+	--winui-HyperlinkButtonBackgroundPointerOver: var(
+		--winui-SystemControlPageBackgroundTransparentBrush
+	);
+	--winui-HyperlinkButtonBackgroundPressed: var(
+		--winui-SystemControlPageBackgroundTransparentBrush
+	);
+	--winui-HyperlinkButtonBackgroundDisabled: var(
+		--winui-SystemControlPageBackgroundTransparentBrush
+	);
+	--winui-HyperlinkButtonBorderBrush: var(--winui-SystemControlTransparentBrush);
+	--winui-HyperlinkButtonBorderBrushPointerOver: var(--winui-SystemControlTransparentBrush);
+	--winui-HyperlinkButtonBorderBrushPressed: var(--winui-SystemControlTransparentBrush);
+	--winui-HyperlinkButtonBorderBrushDisabled: var(--winui-SystemControlTransparentBrush);
+	--winui-HyperlinkButtonBorderThemeThickness: 1px;
 	--winui-MenuFlyoutSeparatorBackground: var(--winui-SystemColorWindowTextColorBrush);
 	--winui-MenuFlyoutItemBackground: var(--winui-SystemControlTransparentBrush);
 	--winui-MenuFlyoutItemBackgroundPointerOver: var(--winui-SystemColorHighlightColorBrush);
@@ -3941,7 +4005,9 @@
 	--winui-SystemControlHighlightListAccentHighBrush: var(--winui-SystemColorHighlightColor);
 	--winui-SystemControlHighlightListAccentLowBrush: var(--winui-SystemColorHighlightColor);
 	--winui-SystemControlHighlightListAccentMediumBrush: var(--winui-SystemColorHighlightColor);
+	--winui-SystemControlHyperlinkTextBrush: var(--winui-SystemColorHotlightColor);
 	--winui-SystemControlPageBackgroundAltMediumBrush: var(--winui-SystemColorWindowColor);
+	--winui-SystemControlPageBackgroundTransparentBrush: var(--winui-SystemColorWindowColor);
 	--winui-SystemControlPageTextBaseMediumBrush: var(--winui-SystemColorWindowTextColor);
 	--winui-SystemControlDescriptionTextForegroundBrush: var(
 		--winui-SystemControlPageTextBaseMediumBrush
