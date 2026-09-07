@@ -501,8 +501,8 @@
 		background: none;
 	}
 
-	/* TeachingTip_themeresources.xaml:95–97 and :101 — 40px box, 16px glyph, and the base
-	   alternate close button resources. */
+	/* TeachingTip_themeresources.xaml:95 and :96 — the 40px box and the 16px glyph — and :101,
+	   the `AlternateCloseButtonStyle` the three state rules below read. */
 	.close-fill {
 		box-sizing: border-box;
 		display: flex;

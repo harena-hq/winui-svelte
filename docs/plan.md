@@ -723,6 +723,16 @@ group sizes, which no longer line up one-to-one with a version.
        project outside the workspace, with Svelte and every peer supplied by the consumer.
        This closes the gap already recorded under C6 before six more public prop surfaces are
        fixed by use.
+
+       **Closed, and then found to be half-closed.** The consumer app mounted four controls
+       and its SSR entry rendered `Button` alone, so none of this tranche's six templates was
+       ever parsed by a consumer's toolchain — which is the one thing the step exists to do,
+       and the only place a shipped `{#snippet name(x: Type)}` annotation can be caught, since
+       `svelte-package` strips TypeScript from `<script>` blocks and from nothing else. The
+       consumer now mounts all six. The claim in the version's Done-when was literally true
+       throughout and the step's stated purpose was not met, which is the shape of defect a
+       Done-when written as a command rather than as an outcome produces.
+
     1. **Expander.** An in-flow disclosure control, not a portal. It is built on bits-ui's
        `Collapsible`, which supplies the open state, the trigger's `aria-expanded` contract
        and a presence layer that keeps the content mounted for the duration of its exit
