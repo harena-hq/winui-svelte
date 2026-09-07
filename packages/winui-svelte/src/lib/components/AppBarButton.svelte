@@ -49,7 +49,8 @@
 </script>
 
 <script lang="ts">
-	import { getCommandBarState } from '../internal/command-bar';
+	import { untrack } from 'svelte';
+	import { getCommandBarRegistry, getCommandBarState } from '../internal/command-bar';
 
 	let {
 		label,
@@ -72,6 +73,14 @@
 	}: AppBarButtonProps = $props();
 
 	const bar = getCommandBarState();
+	const registry = getCommandBarRegistry();
+	// `untrack` is what keeps this to one registration. Registering pushes onto the presenter's
+	// `$state` array, and a push reads that array's length — so an effect that registers depends
+	// on the very list it is joining, and every peer that registers after it tears it down and
+	// re-runs it. Measured: four commands in one menu left the presenter holding one shape.
+	$effect(() =>
+		untrack(() => registry?.(() => ({ icon: Boolean(icon ?? glyph ?? children), toggle: false })))
+	);
 	const effectiveLabelPosition = $derived(labelPosition ?? bar?.().labelPosition ?? 'bottom');
 	const isCompact = $derived(compact ?? bar?.().compact ?? false);
 	const isInOverflow = $derived(inOverflow ?? bar?.().inOverflow ?? false);

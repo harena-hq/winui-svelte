@@ -5,9 +5,8 @@
 		/** PrimaryCommands — the commands on the bar. `CommandBar`'s XAML `ContentProperty`, so
 		 *  ADR 0009 makes it `children`. */
 		children?: Snippet;
-		/** SecondaryCommands — the commands in the overflow menu. Rendered nowhere in this version:
-		 *  the surface that shows them is the next unit's. It is accepted here because
-		 *  `OverflowButtonVisibility="Auto"` is decided by whether there are any. */
+		/** SecondaryCommands — the commands in the portalled overflow menu. Their presence also
+		 *  decides `OverflowButtonVisibility="Auto"`. */
 		secondaryCommands?: Snippet;
 		/** AppBar.Content — the bar's own content, drawn to the left of the commands. */
 		content?: Snippet;
@@ -23,9 +22,14 @@
 		/** IsEnabled, inverted to the HTML attribute — ADR 0009. Drives `CommonStates`' `Disabled`
 		 *  (`CommandBar_themeresources.xaml:114`), which recolours the ellipsis alone. */
 		disabled?: boolean;
-		/** No WinUI member: the "see more" button was clicked. `IsOpen` and the surface it opens
-		 *  are the next unit's; this is the click, reported so a consumer is not stuck. */
-		onOverflowButtonClick?: (event: MouseEvent) => void;
+		/** IsOpen, under HTML's name for it — ADR 0009. */
+		open?: boolean;
+		/** No WinUI member: ADR 0009 pairs every `$bindable` prop with its own change callback. */
+		onOpenChange?: (open: boolean) => void;
+		/** IsSticky. An open sticky bar is not closed by a click outside it. No baseline can
+		 *  photograph this: the Gallery's own page sets it only from code
+		 *  (`CommandBarPage.xaml.cs:44`), and the difference is what a click elsewhere does. */
+		sticky?: boolean;
 		class?: string;
 		style?: string;
 		/** ADR 0009's `ref` points at the interactive element; a CommandBar is `IsTabStop="False"`
@@ -36,6 +40,8 @@
 </script>
 
 <script lang="ts">
+	import { Popover } from 'bits-ui';
+	import CommandBarOverflowPresenter from './CommandBarOverflowPresenter.svelte';
 	import { setCommandBarState } from '../internal/command-bar';
 
 	let {
@@ -46,7 +52,9 @@
 		defaultLabelPosition = 'bottom',
 		overflowButtonVisibility = 'auto',
 		disabled = false,
-		onOverflowButtonClick,
+		open = $bindable(false),
+		onOpenChange,
+		sticky = false,
 		class: className,
 		style,
 		ref = $bindable(null),
@@ -56,8 +64,13 @@
 	// A bar whose labels are underneath shows them only when it is open, so its closed commands
 	// are Compact; a bar whose labels are on the right or collapsed says so through labelPosition
 	// and its commands are not additionally compact.
+	//
+	// `&& !open` is the whole of what `ClosedDisplayMode` means, and the pin says so at
+	// `CommandBar_themeresources.xaml:597`: `CompactOpenDown` sets `ClipGeometryTransform.Y` to
+	// **0**, which stops the clip hiding anything — and the only thing below the 48 it was hiding
+	// is the label row. A property named for the *closed* bar describes the closed bar alone.
 	setCommandBarState(() => ({
-		compact: closedDisplayMode === 'compact' && defaultLabelPosition === 'bottom',
+		compact: closedDisplayMode === 'compact' && defaultLabelPosition === 'bottom' && !open,
 		labelPosition: defaultLabelPosition,
 		inOverflow: false,
 		overflowWithMenuIcons: false,
@@ -69,6 +82,12 @@
 			(overflowButtonVisibility === 'auto' && secondaryCommands !== undefined)
 	);
 	const secondaryCommandsOnly = $derived(children === undefined && secondaryCommands !== undefined);
+
+	function setOpen(next: boolean) {
+		if (open === next) return;
+		open = next;
+		onOpenChange?.(next);
+	}
 </script>
 
 <div
@@ -77,9 +96,17 @@
 	{style}
 	data-display-mode={closedDisplayMode}
 	data-secondary-commands-only={secondaryCommandsOnly ? 'true' : undefined}
+	data-open={open}
 	{...rest}
 >
 	<div class="content-root">
+		{#if open}
+			<!-- CommandBar_themeresources.xaml:841, `HighContrastBorder`; it is retained even though
+			     the shipped normal-theme brush is transparent, preserving the template's high-contrast part. -->
+			<div class="high-contrast-border"></div>
+			<!-- CommandBar_themeresources.xaml:842, `OpenBorder`. -->
+			<div class="open-border"></div>
+		{/if}
 		<div class="commands">
 			<div class="content">{@render content?.()}</div>
 			<div class="primary">{@render children?.()}</div>
@@ -92,7 +119,7 @@
 				class="more"
 				{disabled}
 				aria-label="See more"
-				onclick={onOverflowButtonClick}
+				onclick={() => setOpen(!open)}
 			>
 				<span class="more-fill">
 					<!-- CommandBar_themeresources.xaml:839, `Glyph="&#xE712;"` — a literal in the
@@ -102,6 +129,29 @@
 			</button>
 		{/if}
 	</div>
+	{#if secondaryCommands !== undefined}
+		<Popover.Root bind:open={() => open, (next) => setOpen(next)}>
+			<Popover.Portal>
+				<!-- CommandBar_themeresources.xaml:851 places the overflow at the bar's right edge. -->
+				<!-- OpenDown uses the primitive's normal bottom placement; its flip supplies OpenUp. -->
+				<Popover.Content
+					side="bottom"
+					align="end"
+					sideOffset={0}
+					customAnchor={ref}
+					interactOutsideBehavior={sticky ? 'ignore' : 'close'}
+				>
+					{#snippet child({ props, wrapperProps })}
+						<div {...wrapperProps}>
+							<CommandBarOverflowPresenter {...props}>
+								{@render secondaryCommands?.()}
+							</CommandBarOverflowPresenter>
+						</div>
+					{/snippet}
+				</Popover.Content>
+			</Popover.Portal>
+		</Popover.Root>
+	{/if}
 </div>
 
 <style>
@@ -124,6 +174,7 @@
 	}
 
 	.content-root {
+		position: relative;
 		display: grid;
 		/* CommandBar_themeresources.xaml:797 and :798 — `*` then `Auto` with
 		   `MinWidth="{ThemeResource AppBarMoreButtonColumnMinWidth}"`. The minimum belongs to the
@@ -133,6 +184,43 @@
 		grid-template-columns: 1fr minmax(var(--winui-AppBarMoreButtonColumnMinWidth), auto);
 		align-items: start;
 		min-height: var(--winui-AppBarThemeCompactHeight);
+	}
+
+	/* Open, the clip stops hiding anything — `:597` sets its transform to 0 — so the row grows to
+	   whatever the commands measure, which for a bar whose labels are underneath is the 64 they
+	   were being clipped to 48 from. Layout, no c1-allow. */
+	.root[data-open='true'] {
+		height: auto;
+		min-height: var(--winui-AppBarThemeCompactHeight);
+	}
+
+	/* CommandBar_themeresources.xaml:557 and :588, `ContentRoot.Background`. */
+	.root[data-open='true'] .content-root {
+		background: var(--winui-CommandBarBackgroundOpen);
+		/* CommandBar_themeresources.xaml:560 and :591, the control's CornerRadius. */
+		border-radius: var(--winui-ControlCornerRadius);
+	}
+
+	/* CommandBar_themeresources.xaml:569 and :600, `MoreButton.VerticalAlignment="Stretch"`. */
+	.root[data-open='true'] .more {
+		align-self: stretch;
+	}
+
+	.open-border,
+	.high-contrast-border {
+		position: absolute;
+		inset: 0;
+		border-radius: var(--winui-ControlCornerRadius);
+		pointer-events: none;
+	}
+
+	.open-border {
+		border: var(--winui-CommandBarBorderThicknessOpen) solid var(--winui-CommandBarBorderBrushOpen);
+	}
+
+	.high-contrast-border {
+		/* c1-allow: CommandBar_themeresources.xaml:841, `StrokeThickness="1"` */
+		border: 1px solid var(--winui-CommandBarHighContrastBorder);
 	}
 
 	.commands {
@@ -251,7 +339,7 @@
 	   takes the content out of the hit test (:619). Same reading as `HiddenClosed` below: the
 	   delta is not in the pin, so the outcome is what is reproduced — the ellipsis alone.
 	   Layout, no c1-allow. */
-	.root[data-display-mode='minimal'] .commands {
+	.root[data-display-mode='minimal']:not([data-open='true']) .commands {
 		display: none;
 	}
 
@@ -260,11 +348,11 @@
 	   there is no `CommandBar.cpp` — so what is reproduced is the outcome, nothing on screen, and
 	   the Gallery's own CommandBar page never sets the property, so no baseline compares it with
 	   the original. Layout, no c1-allow. */
-	.root[data-display-mode='hidden'] {
+	.root[data-display-mode='hidden']:not([data-open='true']) {
 		height: 0;
 	}
 
-	.root[data-display-mode='hidden'] .content-root {
+	.root[data-display-mode='hidden']:not([data-open='true']) .content-root {
 		display: none;
 	}
 
