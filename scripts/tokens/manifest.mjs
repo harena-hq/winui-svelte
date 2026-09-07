@@ -165,29 +165,6 @@ export const BUTTON_KEYS = {
 	ButtonPressedForegroundThemeBrush: 'Pre-Fluent Button *ThemeBrush family, listed for EXCLUDED'
 };
 
-/**
- * Keys TextBox reads — the fourth seed set, and the Text family's first tranche.
- *
- * What this list leaves out, so a gap reads as a decision rather than an oversight.
- * The TextBox dictionary carries forty-one resources; these are the ones not here:
- *
- * - **The header and description** — `TextBoxTopHeaderMargin`, and the four
- *   `TextControlHeaderForeground*` and `SystemControlDescriptionTextForegroundBrush`
- *   brushes. The header and description are deliberately out of scope for v1 — their
- *   resources are defined in the XAML framework dictionary inside Windows rather than
- *   in any per-control `*_themeresources.xaml`, the same hole ADR 0008 describes for
- *   the legacy brushes — and AutoSuggestBox, PasswordBox and NumberBox read through
- *   the same names, so they are measured once for the whole Text family in that
- *   tranche rather than guessed here for one control.
- * - **The seventeen pre-Fluent `TextBox*ThemeBrush` resources.** They are the
- *   `TextBoxForegroundHeaderThemeBrush`, `TextBoxPlaceholderTextThemeBrush`,
- *   `TextBoxBackgroundThemeBrush`, `TextBoxBorderThemeBrush`,
- *   `TextBoxForegroundThemeBrush`, `TextBoxDisabledBackgroundThemeBrush`,
- *   `TextBoxDisabledBorderThemeBrush`, `TextBoxDisabledForegroundThemeBrush`, and the
- *   nine `TextBoxButton*ThemeBrush` family. The current template references none of
- *   them and their `Default` values are literal colours from a palette this library
- *   does not use. This is the same family and the same reason as Button's ten.
- */
 export const TOGGLEBUTTON_KEYS = {
 	ToggleButtonBorderThemeThickness: 'ToggleButton, the border width',
 	ToggleButtonCheckedStateBackgroundSizing: 'ToggleButton background sizing, checked',
@@ -286,6 +263,65 @@ export const HYPERLINKBUTTON_KEYS = {
 	HyperlinkButtonBorderBrushDisabled: 'HyperlinkButton border, disabled'
 };
 
+export const REPEATBUTTON_KEYS = {
+	// Defined in RepeatButton_themeresources.xaml, and selected only so EXCLUDED can
+	// record why it is not emitted: the style takes ButtonBorderThemeThickness instead.
+	RepeatButtonBorderThemeThickness: 'RepeatButton border width, listed for EXCLUDED',
+	RepeatButtonBackground: 'RepeatButton background, at rest',
+	RepeatButtonBackgroundPointerOver: 'RepeatButton background, pointer over',
+	RepeatButtonBackgroundPressed: 'RepeatButton background, pressed',
+	RepeatButtonBackgroundDisabled: 'RepeatButton background, disabled',
+	RepeatButtonForeground: 'RepeatButton foreground, at rest',
+	RepeatButtonForegroundPointerOver: 'RepeatButton foreground, pointer over',
+	RepeatButtonForegroundPressed: 'RepeatButton foreground, pressed',
+	RepeatButtonForegroundDisabled: 'RepeatButton foreground, disabled',
+	RepeatButtonBorderBrush: 'RepeatButton border, at rest',
+	RepeatButtonBorderBrushPointerOver: 'RepeatButton border, pointer over',
+	RepeatButtonBorderBrushPressed: 'RepeatButton border, pressed',
+	RepeatButtonBorderBrushDisabled: 'RepeatButton border, disabled',
+	// The pre-Fluent family is selected only so EXCLUDED can record its deliberate omission.
+	RepeatButtonBorderThemeBrush: 'Pre-Fluent RepeatButton *ThemeBrush family, listed for EXCLUDED',
+	RepeatButtonDisabledBackgroundThemeBrush:
+		'Pre-Fluent RepeatButton *ThemeBrush family, listed for EXCLUDED',
+	RepeatButtonDisabledBorderThemeBrush:
+		'Pre-Fluent RepeatButton *ThemeBrush family, listed for EXCLUDED',
+	RepeatButtonDisabledForegroundThemeBrush:
+		'Pre-Fluent RepeatButton *ThemeBrush family, listed for EXCLUDED',
+	RepeatButtonForegroundThemeBrush:
+		'Pre-Fluent RepeatButton *ThemeBrush family, listed for EXCLUDED',
+	RepeatButtonPointerOverBackgroundThemeBrush:
+		'Pre-Fluent RepeatButton *ThemeBrush family, listed for EXCLUDED',
+	RepeatButtonPointerOverForegroundThemeBrush:
+		'Pre-Fluent RepeatButton *ThemeBrush family, listed for EXCLUDED',
+	RepeatButtonPressedBackgroundThemeBrush:
+		'Pre-Fluent RepeatButton *ThemeBrush family, listed for EXCLUDED',
+	RepeatButtonPressedForegroundThemeBrush:
+		'Pre-Fluent RepeatButton *ThemeBrush family, listed for EXCLUDED'
+};
+
+/**
+ * Keys TextBox reads — the fourth seed set, and the Text family's first tranche.
+ *
+ * What this list leaves out, so a gap reads as a decision rather than an oversight.
+ * The TextBox dictionary carries forty-one resources; these are the ones not here:
+ *
+ * - **The header and description** — `TextBoxTopHeaderMargin`, and the four
+ *   `TextControlHeaderForeground*` and `SystemControlDescriptionTextForegroundBrush`
+ *   brushes. The header and description are deliberately out of scope for v1 — their
+ *   resources are defined in the XAML framework dictionary inside Windows rather than
+ *   in any per-control `*_themeresources.xaml`, the same hole ADR 0008 describes for
+ *   the legacy brushes — and AutoSuggestBox, PasswordBox and NumberBox read through
+ *   the same names, so they are measured once for the whole Text family in that
+ *   tranche rather than guessed here for one control.
+ * - **The seventeen pre-Fluent `TextBox*ThemeBrush` resources.** They are the
+ *   `TextBoxForegroundHeaderThemeBrush`, `TextBoxPlaceholderTextThemeBrush`,
+ *   `TextBoxBackgroundThemeBrush`, `TextBoxBorderThemeBrush`,
+ *   `TextBoxForegroundThemeBrush`, `TextBoxDisabledBackgroundThemeBrush`,
+ *   `TextBoxDisabledBorderThemeBrush`, `TextBoxDisabledForegroundThemeBrush`, and the
+ *   nine `TextBoxButton*ThemeBrush` family. The current template references none of
+ *   them and their `Default` values are literal colours from a palette this library
+ *   does not use. This is the same family and the same reason as Button's ten.
+ */
 export const TEXTBOX_KEYS = {
 	// The two layout keys the delete button needs.
 	TextBoxInnerButtonMargin: 'TextBox delete button, the inset of its fill',
@@ -497,9 +533,8 @@ export const AUTOSUGGESTBOX_KEYS = {
  *   reason every other `*Style` resource is dropped: this project writes its own
  *   templates.
  *
- * `TextControl*` is seeded by `TEXTBOX_KEYS` already; the generator's disjointness check
- * is what stops a key from being seeded twice. `RepeatButton*` is seeded by no other set
- * and is unique to this control. `NumberBoxMinWidth` is an `x:Double` and a length, so it
+ * `TextControl*` is seeded by `TEXTBOX_KEYS` already; `RepeatButton*` belongs to the
+ * RepeatButton tranche. `NumberBoxMinWidth` is an `x:Double` and a length, so it
  * needs a `DOUBLE_LENGTHS` row; the generator stops and names it otherwise. The five
  * pre-Fluent `RepeatButton*ThemeBrush` names — `RepeatButtonBackgroundThemeBrush`,
  * `RepeatButtonBorderThemeBrush`, `RepeatButtonDisabled*ThemeBrush`,
@@ -513,23 +548,7 @@ export const NUMBERBOX_KEYS = {
 	// The two NumberBox-only keys: the box's minimum width and the spin buttons' border
 	// thickness (a four-part `Thickness` — `0,1,1,1`, no left border on a spin button).
 	NumberBoxMinWidth: 'NumberBox, the width the box reserves when spin buttons are inline',
-	NumberBoxSpinButtonBorderThickness: 'NumberBox spin button, the border the four sides paint',
-
-	// The spin button's `Background`, `Foreground` and `BorderBrush` in the four
-	// `CommonStates` the source paints. The button's own style is `BasedOn` the default
-	// `RepeatButton` style, so these are the brushes the buttons read.
-	RepeatButtonBackground: 'NumberBox spin button background, at rest',
-	RepeatButtonBackgroundPointerOver: 'NumberBox spin button background, pointer over',
-	RepeatButtonBackgroundPressed: 'NumberBox spin button background, pressed',
-	RepeatButtonBackgroundDisabled: 'NumberBox spin button background, disabled',
-	RepeatButtonForeground: 'NumberBox spin button foreground, at rest',
-	RepeatButtonForegroundPointerOver: 'NumberBox spin button foreground, pointer over',
-	RepeatButtonForegroundPressed: 'NumberBox spin button foreground, pressed',
-	RepeatButtonForegroundDisabled: 'NumberBox spin button foreground, disabled',
-	RepeatButtonBorderBrush: 'NumberBox spin button border, at rest',
-	RepeatButtonBorderBrushPointerOver: 'NumberBox spin button border, pointer over',
-	RepeatButtonBorderBrushPressed: 'NumberBox spin button border, pressed',
-	RepeatButtonBorderBrushDisabled: 'NumberBox spin button border, disabled'
+	NumberBoxSpinButtonBorderThickness: 'NumberBox spin button, the border the four sides paint'
 };
 
 /**
@@ -1556,6 +1575,35 @@ export const EXCLUDED = {
 		'Pre-Fluent *ThemeBrush family; not referenced by the current ToggleButton template',
 	ToggleButtonPressedForegroundThemeBrush:
 		'Pre-Fluent *ThemeBrush family; not referenced by the current ToggleButton template',
+	// The same family for RepeatButton, nine keys, defined in
+	// RepeatButton_themeresources.xaml and referenced by neither the RepeatButton template
+	// nor NumberBox's spin buttons, whose style is `BasedOn` it.
+	RepeatButtonBorderThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current RepeatButton template',
+	RepeatButtonDisabledBackgroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current RepeatButton template',
+	RepeatButtonDisabledBorderThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current RepeatButton template',
+	RepeatButtonDisabledForegroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current RepeatButton template',
+	RepeatButtonForegroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current RepeatButton template',
+	RepeatButtonPointerOverBackgroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current RepeatButton template',
+	RepeatButtonPointerOverForegroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current RepeatButton template',
+	RepeatButtonPressedBackgroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current RepeatButton template',
+	RepeatButtonPressedForegroundThemeBrush:
+		'Pre-Fluent *ThemeBrush family; not referenced by the current RepeatButton template',
+
+	// Defined at RepeatButton_themeresources.xaml:5, and the one key of its own the
+	// control's style declines: `BorderThickness` at :83 is set from Button's
+	// `ButtonBorderThemeThickness`, not from this. Emitting it would publish a width no
+	// RepeatButton draws.
+	RepeatButtonBorderThemeThickness:
+		'Defined but unused; RepeatButton_themeresources.xaml:83 sets BorderThickness from ButtonBorderThemeThickness',
+
 	// The pre-Fluent TextBox `*ThemeBrush` family, defined in TextBox_themeresources.xaml
 	// and referenced nowhere in the current TextBox template. Their `Default` values are
 	// literal colours from the UWP palette this library does not use, and emitting them
