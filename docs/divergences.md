@@ -329,8 +329,6 @@ Recorded here once the control is built and the behaviour is observed rather tha
 
 ---
 
----
-
 ### WD-012 — a portalled surface casts no drop shadow
 
 - **Control**: `ToolTip`, and every portalled surface that paints a card of its own — `Flyout`,
@@ -390,6 +388,8 @@ gate does.
   makes `pointerType === 'touch'` answerable for pointer-opened menus and leaves only the
   keyboard case — where narrow is the correct answer anyway.
 
+---
+
 ### WD-014 — the command row is laid out in the dialog's width, and does not set it
 
 - **Control**: `ContentDialog`.
@@ -421,6 +421,8 @@ gate does.
 - **Would reconsider if**: a dialog turns up whose buttons genuinely need more than 548px, where
   not widening stops being invisible and starts being an overflow.
 
+---
+
 ### WD-015 — an opening dialog focuses itself, not its default button
 
 - **Control**: `ContentDialog`.
@@ -445,6 +447,8 @@ gate does.
   makes focusing the default button correct rather than merely faithful — at that point the ring
   is what WinUI would draw too.
 
+---
+
 ### WD-016 — TeachingTip does not honour its minimum width
 
 - **Control**: `TeachingTip`.
@@ -459,13 +463,18 @@ gate does.
   `TeachingTipMaxWidth` on the same two elements is honoured — the hero example measures exactly
   336px minus two 8px tracks. Reproducing the dictionary would make every tip wider than the
   control being copied.
-- **What a consumer sees**: a tip can be narrower than 320px even though WinUI's documentation
-  implies a floor. A consumer who needs that floor can set `min-width` through `style` or `class`.
+- **Would reconsider if**: the shipped control starts honouring the floor. This entry is a
+  disagreement between the pin and the build, not between WinUI and this library, so the test
+  is a measurement rather than a decision: a Gallery tip measuring 304 or more on the reference
+  machine closes it. Until then a consumer who wants the documented floor sets `min-width`
+  through `style` or `class`, and sees a tip narrower than 320px if they do not.
+
+---
 
 ### WD-017 — TeachingTip leaves its content slot directly under the subtitle
 
 - **Control**: `TeachingTip`.
-- **What upstream does**: the `Content` state in `ContentStates` (`TeachingTip.xaml:64`) sets
+- **WinUI does**: the `Content` state in `ContentStates` (`TeachingTip.xaml:64`) sets
   `MainContentPresenter.Margin` to `TeachingTipMainContentPresentMargin`, whose value is
   `0,12,0,0` in `TeachingTip_themeresources.xaml:78`, putting 12px above content.
 - **We do**: put no margin above the content slot.
@@ -473,6 +482,8 @@ gate does.
   Gallery's hero example measures 16px between the subtitle and description, exactly the
   Gallery TextBlock's own `Margin="0,16,0,0"`; with the upstream state live, the gap would be
   28px and the card would be 322px tall instead of its measured 310px.
-- **What a consumer sees**: content sits directly under the subtitle. A consumer who wants the
-  documented gap puts it on their own content, which is where the reference Gallery's 16px comes
-  from.
+- **Would reconsider if**: the shipped control starts applying the state — the same measurement
+  test as WD-016, and on the same control. A Gallery hero tip measuring 322 rather than 310
+  closes it. Until then content sits directly under the subtitle, and a consumer who wants the
+  documented gap puts it on their own content, which is where the reference Gallery's own 16px
+  comes from.
