@@ -27,6 +27,7 @@ export type {
 	MenuFlyoutItemData,
 	MenuFlyoutProps,
 	MenuFlyoutSeparatorData,
+	MenuFlyoutSubItemData,
 	RadioMenuFlyoutItemData,
 	ToggleMenuFlyoutItemData
 } from './components/MenuFlyout.svelte';

@@ -507,6 +507,36 @@ the visual does not.
 Driven on the guest: choosing `Landscape` deselects `Portrait` and leaves the second group's
 `Medium icons` alone; the card is 169 tall, five 32-pitch rows and one separator.
 
+### MenuFlyout — v6 unit 4d
+
+`DefaultMenuFlyoutSubItemStyle` at `MenuFlyout_themeresources.xaml:628` differs from the item
+row in three ways and no others: a chevron in a second column, a **fourth common state**, and
+no accelerator label. The fourth state — `SubMenuOpened` at `:662`, held for as long as the
+submenu is open, with its own background, text and chevron colour — is the reason the sub-item
+brush family exists apart from the item one, and nothing else in the dictionary has it.
+
+Two placement facts were read off the ruler rather than out of a document, because no pinned
+resource states either. The submenu's left border sits exactly on the trigger _row's_ right
+edge — the row spans x 366..471 inside a card whose border is at 476, so the 5px by which the
+submenu overlaps the card is `MenuFlyoutItemMargin` plus the border rather than a gap anyone
+chose. And its top border sits 2px above the row's border box, which is that margin's top: the
+submenu aligns with the row's margin box. Reproduced: 0.28 and -2.
+
+**The submenu has to be portalled, and the reason is a rule this component set itself.**
+`.presenter` carries `overflow-x: hidden` so the separator's negative margins are clipped at
+the border — unit 4a's answer to a `Rectangle` 8px wider than its container. A `SubContent`
+rendered in place is a descendant of that presenter and gets clipped with it, so it goes
+through `DropdownMenu.Portal` to the document, which is where the original's is.
+
+**A type annotation in a `{#snippet}` header ships.** The rows had to become a recursive
+snippet to be reachable from both the root menu and every submenu, and the parameter was
+specified with a type. `svelte-package` strips TypeScript from `<script>` blocks and from
+nothing else, so `{#snippet rowList(entries: MenuFlyoutEntry[])}` reached the published source
+and was a parse error in every consumer's build — while this package's own `check` and `lint`
+stayed green. The project already had a rule about type annotations in markup _expressions_;
+this is the same rule, and a snippet header is markup too. The parameter takes a default
+instead and TypeScript infers from it.
+
 ## What this file does not cover
 
 The sweep reads what a control _draws_. It does not enumerate automation peers, keyboard

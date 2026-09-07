@@ -63,14 +63,33 @@
 		keyboardAcceleratorTextOverride?: string;
 	}
 
+	/**
+	 * A `MenuFlyoutSubItem`: a row that opens a menu of its own. `items` is the discriminant and
+	 * is required — a sub item with nothing in it is a row that cannot do the one thing it is.
+	 */
+	export interface MenuFlyoutSubItemData {
+		id: string;
+		text: string;
+		/** The rows of the menu this row opens. Sub items nest to any depth. */
+		items: MenuFlyoutEntry[];
+		/** IsEnabled, inverted — ADR 0009. */
+		disabled?: boolean;
+		/**
+		 * `Icon`, narrowed to a `FontIcon`: a Segoe Fluent Icons code point as uppercase hex,
+		 * e.g. `'E72D'`.
+		 */
+		glyph?: string;
+	}
+
 	export type MenuFlyoutEntry =
 		| MenuFlyoutItemData
 		| ToggleMenuFlyoutItemData
 		| MenuFlyoutSeparatorData
-		| RadioMenuFlyoutItemData;
+		| RadioMenuFlyoutItemData
+		| MenuFlyoutSubItemData;
 
 	export interface MenuFlyoutProps {
-		/** Items, narrowed to the four row kinds this unit draws. */
+		/** Items, narrowed to the five row kinds this unit draws. */
 		items?: MenuFlyoutEntry[];
 		/**
 		 * The element that opens the menu. Receives the props it must spread.
@@ -168,9 +187,9 @@
 		| { kind: 'entry'; entry: MenuFlyoutEntry; key: number }
 		| { kind: 'radioGroup'; groupName: string; entries: RadioMenuFlyoutItemData[]; key: number };
 
-	const blocks = $derived.by(() => {
+	function toBlocks(entries: MenuFlyoutEntry[]): MenuFlyoutBlock[] {
 		const out: MenuFlyoutBlock[] = [];
-		items.forEach((entry, key) => {
+		entries.forEach((entry, key) => {
 			if ('groupName' in entry) {
 				const last = out.at(-1);
 				if (last?.kind === 'radioGroup' && last.groupName === entry.groupName) {
@@ -183,8 +202,139 @@
 			out.push({ kind: 'entry', entry, key });
 		});
 		return out;
-	});
+	}
 </script>
+
+{#snippet rowList(entries = items)}
+	{#each toBlocks(entries) as block (block.key)}
+		{#if block.kind === 'radioGroup'}
+			<DropdownMenu.RadioGroup
+				bind:value={
+					() => selected[block.groupName] ?? '',
+					(next) => {
+						const nextSelected = { ...selected, [block.groupName]: next };
+						selected = nextSelected;
+						onSelectedChange?.(nextSelected);
+					}
+				}
+			>
+				{#snippet child({ props })}
+					<div {...props} class="radio-group">
+						{#each block.entries as entry (entry.id)}
+							<DropdownMenu.RadioItem value={entry.id} disabled={entry.disabled}>
+								{#snippet child({ props })}
+									<div {...props} class="item toggle radio">
+										<span class="check" aria-hidden="true"></span>
+										<span class="body">
+											{#if entry.glyph}<span class="icon" aria-hidden="true"
+													>{String.fromCodePoint(parseInt(entry.glyph, 16))}</span
+												>{/if}
+											<span class="text">{entry.text}</span>
+										</span>
+										{#if entry.keyboardAcceleratorTextOverride}<span
+												class="accelerator winui-CaptionTextBlockStyle"
+												>{entry.keyboardAcceleratorTextOverride}</span
+											>{/if}
+									</div>
+								{/snippet}
+							</DropdownMenu.RadioItem>
+						{/each}
+					</div>
+				{/snippet}
+			</DropdownMenu.RadioGroup>
+		{:else}
+			{@const entry = block.entry}
+			{#if 'separator' in entry}
+				<DropdownMenu.Separator>
+					{#snippet child({ props })}<div {...props} class="separator"></div>{/snippet}
+				</DropdownMenu.Separator>
+			{:else if 'items' in entry}
+				<DropdownMenu.Sub>
+					<DropdownMenu.SubTrigger disabled={entry.disabled}>
+						{#snippet child({ props })}
+							<div {...props} class="item sub">
+								<span class="body">
+									{#if entry.glyph}<span class="icon" aria-hidden="true"
+											>{String.fromCodePoint(parseInt(entry.glyph, 16))}</span
+										>{/if}
+									<span class="text">{entry.text}</span>
+								</span>
+								<span class="chevron" aria-hidden="true"></span>
+							</div>
+						{/snippet}
+					</DropdownMenu.SubTrigger>
+					<DropdownMenu.Portal>
+						<DropdownMenu.SubContent side="right" align="start" sideOffset={0} alignOffset={-2}>
+							{#snippet child({ props, wrapperProps })}
+								<div {...wrapperProps}>
+									<div
+										{...props}
+										class="presenter winui-BodyTextBlockStyle"
+										data-gutter={entry.items.some((row) => 'toggle' in row || 'groupName' in row)
+											? ''
+											: undefined}
+										data-icons={entry.items.some((row) => 'glyph' in row && Boolean(row.glyph))
+											? ''
+											: undefined}
+									>
+										{@render rowList(entry.items)}
+									</div>
+								</div>
+							{/snippet}
+						</DropdownMenu.SubContent>
+					</DropdownMenu.Portal>
+				</DropdownMenu.Sub>
+			{:else if 'toggle' in entry}
+				<DropdownMenu.CheckboxItem
+					disabled={entry.disabled}
+					bind:checked={
+						() => checked.includes(entry.id),
+						(next) => {
+							const nextChecked = next
+								? checked.includes(entry.id)
+									? checked
+									: [...checked, entry.id]
+								: checked.filter((id) => id !== entry.id);
+							checked = nextChecked;
+							onCheckedChange?.(nextChecked);
+						}
+					}
+				>
+					{#snippet child({ props })}
+						<div {...props} class="item toggle">
+							<span class="check" aria-hidden="true"></span>
+							<span class="body"
+								>{#if entry.glyph}<span class="icon" aria-hidden="true"
+										>{String.fromCodePoint(parseInt(entry.glyph, 16))}</span
+									>{/if}<span class="text">{entry.text}</span></span
+							>
+							{#if entry.keyboardAcceleratorTextOverride}<span
+									class="accelerator winui-CaptionTextBlockStyle"
+									>{entry.keyboardAcceleratorTextOverride}</span
+								>{/if}
+						</div>
+					{/snippet}
+				</DropdownMenu.CheckboxItem>
+			{:else}
+				<DropdownMenu.Item disabled={entry.disabled} onSelect={() => onItemInvoked?.(entry.id)}>
+					{#snippet child({ props })}
+						<div {...props} class="item">
+							<span class="body"
+								>{#if entry.glyph}<span class="icon" aria-hidden="true"
+										>{String.fromCodePoint(parseInt(entry.glyph, 16))}</span
+									>{/if}<span class="text">{entry.text}</span></span
+							>
+							{#if entry.keyboardAcceleratorTextOverride}<span
+									class="accelerator winui-CaptionTextBlockStyle"
+									>{entry.keyboardAcceleratorTextOverride}</span
+								>{/if}
+						</div>
+					{/snippet}
+				</DropdownMenu.Item>
+			{/if}
+		{/if}
+	{/each}
+{/snippet}
 
 <DropdownMenu.Root
 	bind:open={
@@ -213,114 +363,7 @@
 						data-icons={hasIconColumn ? '' : undefined}
 						{...rest}
 					>
-						{#each blocks as block (block.key)}
-							{#if block.kind === 'radioGroup'}
-								<DropdownMenu.RadioGroup
-									bind:value={
-										() => selected[block.groupName] ?? '',
-										(next) => {
-											const nextSelected = { ...selected, [block.groupName]: next };
-											selected = nextSelected;
-											onSelectedChange?.(nextSelected);
-										}
-									}
-								>
-									{#snippet child({ props })}
-										<div {...props} class="radio-group">
-											{#each block.entries as entry (entry.id)}
-												<DropdownMenu.RadioItem value={entry.id} disabled={entry.disabled}>
-													{#snippet child({ props })}
-														<div {...props} class="item toggle radio">
-															<span class="check" aria-hidden="true"></span>
-															<span class="body">
-																{#if entry.glyph}
-																	<span class="icon" aria-hidden="true">
-																		{String.fromCodePoint(parseInt(entry.glyph, 16))}
-																	</span>
-																{/if}
-																<span class="text">{entry.text}</span>
-															</span>
-															{#if entry.keyboardAcceleratorTextOverride}
-																<span class="accelerator winui-CaptionTextBlockStyle">
-																	{entry.keyboardAcceleratorTextOverride}
-																</span>
-															{/if}
-														</div>
-													{/snippet}
-												</DropdownMenu.RadioItem>
-											{/each}
-										</div>
-									{/snippet}
-								</DropdownMenu.RadioGroup>
-							{:else}
-								{@const entry = block.entry}
-								{#if 'separator' in entry}
-									<DropdownMenu.Separator>
-										{#snippet child({ props })}
-											<div {...props} class="separator"></div>
-										{/snippet}
-									</DropdownMenu.Separator>
-								{:else if 'toggle' in entry}
-									<DropdownMenu.CheckboxItem
-										disabled={entry.disabled}
-										bind:checked={
-											() => checked.includes(entry.id),
-											(next) => {
-												const nextChecked = next
-													? checked.includes(entry.id)
-														? checked
-														: [...checked, entry.id]
-													: checked.filter((id) => id !== entry.id);
-												checked = nextChecked;
-												onCheckedChange?.(nextChecked);
-											}
-										}
-									>
-										{#snippet child({ props })}
-											<div {...props} class="item toggle">
-												<span class="check" aria-hidden="true"></span>
-												<span class="body">
-													{#if entry.glyph}
-														<span class="icon" aria-hidden="true">
-															{String.fromCodePoint(parseInt(entry.glyph, 16))}
-														</span>
-													{/if}
-													<span class="text">{entry.text}</span>
-												</span>
-												{#if entry.keyboardAcceleratorTextOverride}
-													<span class="accelerator winui-CaptionTextBlockStyle">
-														{entry.keyboardAcceleratorTextOverride}
-													</span>
-												{/if}
-											</div>
-										{/snippet}
-									</DropdownMenu.CheckboxItem>
-								{:else}
-									<DropdownMenu.Item
-										disabled={entry.disabled}
-										onSelect={() => onItemInvoked?.(entry.id)}
-									>
-										{#snippet child({ props })}
-											<div {...props} class="item">
-												<span class="body">
-													{#if entry.glyph}
-														<span class="icon" aria-hidden="true">
-															{String.fromCodePoint(parseInt(entry.glyph, 16))}
-														</span>
-													{/if}
-													<span class="text">{entry.text}</span>
-												</span>
-												{#if entry.keyboardAcceleratorTextOverride}
-													<span class="accelerator winui-CaptionTextBlockStyle">
-														{entry.keyboardAcceleratorTextOverride}
-													</span>
-												{/if}
-											</div>
-										{/snippet}
-									</DropdownMenu.Item>
-								{/if}
-							{/if}
-						{/each}
+						{@render rowList(items)}
 					</div>
 				</div>
 			{/snippet}
@@ -422,6 +465,49 @@
 		color: var(--winui-MenuFlyoutSubItemForegroundDisabled);
 	}
 
+	.item.sub {
+		background: var(--winui-MenuFlyoutSubItemBackground);
+		border-color: var(--winui-MenuFlyoutSubItemBackgroundBrush);
+		border-width: var(--winui-MenuFlyoutSubItemBorderThickness);
+		color: var(--winui-MenuFlyoutSubItemForeground);
+	}
+
+	.item.sub[data-highlighted]:not([data-disabled]) {
+		background: var(--winui-MenuFlyoutSubItemBackgroundPointerOver);
+		color: var(--winui-MenuFlyoutSubItemForegroundPointerOver);
+	}
+
+	.item.sub[data-highlighted]:not([data-disabled]) .chevron {
+		color: var(--winui-MenuFlyoutSubItemChevronPointerOver);
+	}
+
+	.item.sub:active:not([data-disabled]) {
+		background: var(--winui-MenuFlyoutSubItemBackgroundPressed);
+		color: var(--winui-MenuFlyoutSubItemForegroundPressed);
+	}
+
+	.item.sub:active:not([data-disabled]) .chevron {
+		color: var(--winui-MenuFlyoutSubItemChevronPressed);
+	}
+
+	.item.sub[data-state='open']:not([data-disabled]) {
+		background: var(--winui-MenuFlyoutSubItemBackgroundSubMenuOpened);
+		color: var(--winui-MenuFlyoutSubItemForegroundSubMenuOpened);
+	}
+
+	.item.sub[data-state='open']:not([data-disabled]) .chevron {
+		color: var(--winui-MenuFlyoutSubItemChevronSubMenuOpened);
+	}
+
+	.item.sub[data-disabled] {
+		background: var(--winui-MenuFlyoutSubItemBackgroundDisabled);
+		color: var(--winui-MenuFlyoutSubItemForegroundDisabled);
+	}
+
+	.item.sub[data-disabled] .chevron {
+		color: var(--winui-MenuFlyoutSubItemChevronDisabled);
+	}
+
 	.check {
 		font-family: var(--winui-SymbolThemeFontFamily);
 		/* c1-allow: MenuFlyout_themeresources.xaml:488, `FontSize="12"` on `CheckGlyph`. */
@@ -432,6 +518,22 @@
 		text-align: center;
 		color: var(--winui-MenuFlyoutSubItemChevron);
 		opacity: 0;
+	}
+
+	.chevron {
+		flex: none;
+		/* MenuFlyout_themeresources.xaml:720, `Margin="{StaticResource MenuFlyoutItemChevronMargin}`
+		   — `24,0,0,-1`, which the token carries permuted into CSS order. */
+		margin: var(--winui-MenuFlyoutItemChevronMargin);
+		font-family: var(--winui-SymbolThemeFontFamily);
+		/* c1-allow: MenuFlyout_themeresources.xaml:720, `FontSize="12"` on `SubItemChevron`. */
+		font-size: 12px;
+		color: var(--winui-MenuFlyoutSubItemChevron);
+	}
+
+	.chevron::before {
+		/* c1-allow: MenuFlyout_themeresources.xaml:720, `Glyph="&#xE974;"` on `SubItemChevron`. */
+		content: '\e974';
 	}
 
 	.check::before {
