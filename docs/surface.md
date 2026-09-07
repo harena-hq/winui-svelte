@@ -779,6 +779,22 @@ second time in two units that a real visual change has been invisible to the gat
 the strongest argument yet that a green suite means _no pixel moved by more than the threshold_
 and nothing else.
 
+## An unspent measurement — the Design pages' Typography rows
+
+Measuring the ramp for ADR 0011 produced a number the Gallery has not been given. The reference
+Typography page's ramp rows clamp at a 68px minimum and grow past it for the two largest steps,
+where they measure 78 and 115 down a column clear of text. Those are satisfied by 25px of
+vertical padding around the sample.
+
+`apps/gallery/src/routes/(shell)/design/typography/+page.svelte:33` sets `padding: 12px 16px`,
+so ours is 24. The clamped rows are unaffected — `gallery-styles.css:31` gives them the same 68 —
+but Title Large comes out 77 against 78 and Display 114 against 115.
+
+Not fixed here, because 25 is an odd number for a symmetric pad and the fit cannot say whether
+the original is 12 over 13, a 12.5 pair, or 12 plus something the fit absorbed. Closing it wants
+one more look at the reference, not a guess. Recorded so the measurement is not lost with the
+unit that made it.
+
 ## What this file does not cover
 
 The sweep reads what a control _draws_. It does not enumerate automation peers, keyboard

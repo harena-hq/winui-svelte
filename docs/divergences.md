@@ -484,3 +484,33 @@ gate does.
   closes it. Until then content sits directly under the subtitle, and a consumer who wants the
   documented gap puts it on their own content, which is where the reference Gallery's own 16px
   comes from.
+
+---
+
+### WD-018 — a wrapped paragraph's later lines sit a fraction of a pixel low
+
+- **Control**: every control that draws text through a type-ramp class.
+- **WinUI does**: advance the baseline within one `TextBlock` by the font's unrounded line
+  spacing — `(hhea.ascender - hhea.descender + hhea.lineGap) / head.unitsPerEm`, which is
+  18.621px at Body size — and let each baseline land where it falls on the pixel grid. Measured on
+  the reference guest: the Typography page's own description wraps to three lines with baselines
+  19 then 18 apart, and to two lines with baselines 18 apart when the window is maximised. Only a
+  fractional advance produces both from the same font at the same size.
+- **We do**: give the ramp classes `line-height: normal`, which Chromium computes as
+  `round(ascent_px) + round(descent_px)` — an integer, 19 at Body size, identical on every line.
+  A second line is 0.379px low, a third 0.758px, and so on.
+- **Why accepted**: CSS has one `line-height` and WinUI has two behaviours. The other one is that
+  a single-line `TextBlock` occupies a whole number of pixels, because `UseLayoutRounding` is on
+  by default — the pins opt fifty-one individual elements out of it and the one that opts in
+  restates the default — and a unitless ratio, which would fix this entry, takes 0.379px off every
+  one of those boxes
+  instead. Measured on TeachingTip's card, which stacks three of them: 310.469 with `normal`
+  against the original's 310, and 309.297 with the ratio. This library is overwhelmingly
+  single-line boxes stacked inside containers whose height is the thing being compared, and
+  wrapped paragraphs are rare, so the error is put where there is less of it. ADR 0011 has the
+  measurements and the arithmetic.
+- **Would reconsider if**: CSS grows a way to say "the font's spacing, unrounded, but round the
+  element box" — `text-box-trim` and `text-box-edge` are the shape that could get there — or if a
+  control lands whose reproduction turns on a wrapped paragraph of four or more lines, where the
+  drift reaches a pixel and a half and a local `line-height` on that one element becomes worth its
+  cost.
