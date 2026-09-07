@@ -145,15 +145,6 @@
 		   connected rather than dropped. */
 		border-width: 0;
 		border-radius: var(--winui-ControlCornerRadius);
-		/* `line-height: normal` overrides the type ramp class on this element, and does so
-		   deliberately. `winui-BodyTextBlockStyle` stands in for `ContentControlThemeFontFamily`
-		   and `ControlContentThemeFontSize`, which `controls/dev` defines nowhere — the
-		   substitution `Button.svelte` records. It is a stand-in for the family and the size
-		   only: upstream's ContentPresenter carries no TextBlock style, so its line spacing is
-		   the font's own. That distinction is invisible on Button, whose label is one centred
-		   line, and visible here, where `TextWrapping="Wrap"` means the content really does
-		   take a second line. */
-		line-height: normal;
 		cursor: pointer;
 		user-select: none;
 	}

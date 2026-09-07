@@ -132,10 +132,6 @@
 		/* `MinWidth` is `ToggleSwitchThemeMinWidth`; the body row is `HorizontalAlignment="Left"`
 		   inside it, which is why the root is a column and the body is not stretched. */
 		min-width: var(--winui-ToggleSwitchThemeMinWidth);
-		/* `line-height: normal` overrides the type ramp class on this element, for the reason
-		   CheckBox.svelte records: the ramp class stands in for the family and the size only,
-		   and upstream's ContentPresenter carries no TextBlock style. */
-		line-height: normal;
 		user-select: none;
 	}
 

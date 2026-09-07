@@ -286,6 +286,11 @@
 		font: inherit;
 		color: inherit;
 		outline: none;
+		/* Kept where AutoSuggestBox's twin was deleted, and the difference is the root: that
+		   control carries `winui-BodyTextBlockStyle` and this one does not, so `font: inherit`
+		   here resolves against the consumer's page rather than against a ramp class inside the
+		   library. A WinUI TextBox draws its text at the font's own spacing whatever surrounds
+		   it, and this is what says so. ADR 0011. */
 		line-height: normal;
 	}
 

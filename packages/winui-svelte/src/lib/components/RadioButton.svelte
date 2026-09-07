@@ -135,10 +135,6 @@
 		   through the token cascade should find it connected rather than dropped. */
 		border-width: 0;
 		border-radius: var(--winui-ControlCornerRadius);
-		/* `line-height: normal` overrides the type ramp class on this element, for the reason
-		   CheckBox.svelte records: the ramp class stands in for the family and the size only,
-		   and upstream's ContentPresenter carries no TextBlock style. */
-		line-height: normal;
 		cursor: pointer;
 		user-select: none;
 	}

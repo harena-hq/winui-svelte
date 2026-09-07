@@ -161,14 +161,6 @@
 		max-width: var(--winui-FlyoutThemeMaxWidth);
 		min-height: var(--winui-FlyoutThemeMinHeight);
 		max-height: var(--winui-FlyoutThemeMaxHeight);
-		/* c1-allow: the platform default, as `Button.svelte`, `InfoBar.svelte` and
-		   `Expander.svelte` take it. The ramp class on this element supplies the family and
-		   size that `ContentControlThemeFontFamily` and `ControlContentThemeFontSize` do not
-		   define at standard density; the ramp's own 20px line height is not what the
-		   presenter's `ContentPresenter` draws, because `FlyoutPresenter_themeresources.xaml:45`
-		   gives it no `Style`. Measured on the reference guest: the Gallery's flyout is 97 tall
-		   and the ramp's 20 makes it 98. */
-		line-height: normal;
 		overflow: auto;
 	}
 </style>

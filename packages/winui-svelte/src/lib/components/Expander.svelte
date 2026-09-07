@@ -132,12 +132,6 @@
 		border-radius: var(--header-radius);
 		cursor: pointer;
 		text-align: left;
-		/* c1-allow: the platform default, as `Button.svelte` and `InfoBar.svelte` use it — the
-		   composed ramp class above supplies the family and size that
-		   `ContentControlThemeFontFamily` and `ControlContentThemeFontSize` do not define at
-		   standard density, and the ramp's own 20px line height is not what a `ContentPresenter`
-		   with no `Style` draws. Measured on the reference guest at this size: `normal` is 19. */
-		line-height: normal;
 	}
 
 	.root[data-direction='down'] .header[data-state='open'] {
@@ -268,12 +262,6 @@
 		min-height: var(--winui-ExpanderMinHeight);
 		padding: var(--winui-ExpanderContentPadding);
 		background: var(--winui-ExpanderContentBackground) padding-box;
-		/* c1-allow: the same platform default the header takes, and here it decides the box.
-		   `Expander.xaml:120`'s `ContentPresenter` carries no `Style`, so the content's line box
-		   is the font's own and not the Body ramp's 20px. The original's content border box
-		   measures 52px on the reference guest — 16 padding, 19 of text, 16 padding, 1 border —
-		   and the ramp's 20 makes it 53. */
-		line-height: normal;
 		border-style: solid;
 		border-color: var(--winui-ExpanderContentBorderBrush);
 		transform: translateY(0);
