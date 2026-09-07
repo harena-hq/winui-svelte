@@ -769,10 +769,12 @@ group sizes, which no longer line up one-to-one with a version.
     none of the ten `Style` records in `TextBlock_themeresources.xaml` sets `LineHeight`, so a
     WinUI TextBlock draws the font's own spacing instead. Measured at one step: a
     `BaseTextBlockStyle` message in the Gallery's flyout is 19 tall where the class gives 20.
-    **Nine sites have now had to write `line-height: normal` to match the original** — InfoBar,
-    Expander, Flyout, MenuFlyout, ContentDialog's title and content, and TeachingTip's title,
-    subtitle and content slot. The count is no longer a note beside the unit; it is the
-    argument for it. Fixing the ramp moves every baseline in the project, so it is a unit of
+    **Every control in this tranche has had to write `line-height: normal` over the ramp class
+    somewhere**, and TeachingTip needed it three times — its title, its subtitle and its content
+    slot. The running total this plan used to carry is deliberately gone: it was incremented
+    rather than derived and had drifted below the real number by the time anyone checked. What
+    the unit rests on is not a count but the fact that no control has yet been reproduced
+    without the override. Fixing the ramp moves every baseline in the project, so it is a unit of
     its own and it needs the other nine steps measured first — the Gallery's Typography design
     page is where they are all on screen at once.
 
