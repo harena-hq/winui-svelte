@@ -576,6 +576,43 @@ baseline photographed from the same render.
 item out. Its four rules are read off the template's `Disabled` state at `:556` rather than off
 a picture.
 
+### ContentDialog — v6 unit 045
+
+Fifteen records in `ContentDialog_themeresources.xaml` and no state family among them. A dialog
+has no pointer-over, no pressed and no disabled: nothing in it is interactive except the three
+command buttons, and those read the Button dictionary. What the fifteen describe instead is a
+stack of three fills, which is what the first measurement pass saw without being able to name.
+The smoke layer dims the window; `ContentDialogBackground` paints the card; and
+`ContentDialogTopOverlay` paints the title and content area only. That is why the original is
+white above the separator and 243 below it out of a single `Background` setter — the 243 is the
+card showing through where the overlay stops.
+
+The separator is not an element. It is `BorderThickness="{ThemeResource ContentDialogSeparatorThickness}"`,
+`0,0,0,1`, on the same Grid that carries the overlay and the padding (`:233`), so the rule and
+the white area are one box.
+
+**The title is not a type-ramp step.** `:238` sets `FontSize="20"`, `FontWeight="SemiBold"` and
+`FontFamily="{StaticResource ContentControlThemeFontFamily}"` on the `Title` ContentControl
+directly. `SubtitleTextBlockStyle` is also 20 and SemiBold, and is not the same thing: it names
+the Display family where this names the Text family, and its line box is 28 where the original's
+title measures 27. That is the fifth and sixth place a control has needed `line-height: normal`
+over the ramp class — the title and the content both — and the count is now the argument for the
+type-ramp unit `docs/plan.md` carries rather than a note beside it.
+
+**The command row's five columns are rewired per combination, not hidden.** `CommandSpace`
+(`:248`) declares `*`, a spacer, `*`, a spacer, `*`, and `ButtonsVisibilityStates` (`:144`)
+moves buttons between columns and changes the spacers' widths. Three visible buttons give three
+equal columns with two 8px gaps; two give two equal columns with one gap. One gives **two equal
+columns with the button in the right one** — a lone Close button is half the width, not full,
+because `PrimaryColumn` is still a star column with nothing in it. Reproduced as a grid whose
+column count is the visible-button count, with the one-button case placing its child in column 2.
+
+`ContentDialogButtonSpacing` is the first `GridLength` any tranche has reached. It is not a
+length: it is one of the tracks a Grid divides itself into, and the CSS analogue is a value
+inside `grid-template-columns` or `gap` rather than a custom property. It is seeded into the
+manifest so the completeness check counts it and then excluded from emission, which makes its
+absence from `tokens.css` a recorded decision rather than a hole.
+
 ## What this file does not cover
 
 The sweep reads what a control _draws_. It does not enumerate automation peers, keyboard
