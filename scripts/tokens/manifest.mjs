@@ -2018,6 +2018,22 @@ export const PLATFORM_SHADOWS = {
 		light: '0 3px 2px rgba(0, 0, 0, 0.035), 0 10px 8px rgba(0, 0, 0, 0.09)',
 		dark: '0 3px 2px rgba(0, 0, 0, 0.062), 0 10px 8px rgba(0, 0, 0, 0.16)',
 		highContrast: 'none'
+	},
+	// The dialog depth, measured and fitted the same way. Two things differ from the popup's.
+	// It darkens the pixels *above* the card by about two levels over eight, where a popup
+	// darkens none, so this recipe carries a real ambient layer. And its dark multiplier is
+	// 2.36 rather than the popup's 1.78.
+	//
+	// That multiplier was read off the first rows out and not off the whole curve, which is
+	// the opposite of the rule the popup depth followed, and deliberately. A dialog's ramp is
+	// long enough to cross onto whatever the Gallery page has underneath it, so its tail is
+	// measuring two things at once; the light fit, taken against a clean 170 backdrop, lands
+	// within 0.013 alpha end to end, while the dark tail disagrees with itself. The first rows
+	// are both the least contaminated and the ones anyone sees.
+	DialogShadow: {
+		light: '0 4px 6px rgba(0, 0, 0, 0.04), 0 24px 32px rgba(0, 0, 0, 0.18)',
+		dark: '0 4px 6px rgba(0, 0, 0, 0.094), 0 24px 32px rgba(0, 0, 0, 0.425)',
+		highContrast: 'none'
 	}
 };
 

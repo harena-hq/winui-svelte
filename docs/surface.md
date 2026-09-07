@@ -740,10 +740,20 @@ shadow is exactly what `box-shadow` is. The depths are in the pin too: `Teaching
 `TabView_themeresources.xaml:265` each state a popup depth of 16. What the pin does not state
 is the depth-to-blur recipe, and that is the only part that had to be measured.
 
-**Three depths, and this unit fits one.** A popup's ramp closes in nineteen pixels, a ToolTip's
-in about eight, and a ContentDialog's has not closed forty out. Flyout, MenuFlyout and
-TeachingTip take the fitted popup value; ToolTip and ContentDialog keep WD-012, which narrows
-to them.
+**Three depths, and two are fitted.** A popup's ramp closes in nineteen pixels, a
+ContentDialog's has not closed forty out, and a ToolTip's is about eight. Flyout, MenuFlyout
+and TeachingTip take the fitted popup value and ContentDialog its own; WD-012 narrows to
+ToolTip, and what blocks it is a capture rather than a judgement — four ways of raising a
+ToolTip by hover on the guest produced nothing, and the one prose reading that exists is a
+single theme at one significant figure.
+
+**The dialog depth's dark multiplier was read differently from the popup's, on purpose.** The
+popup's 1.78 came off the whole 19-point curve. A dialog's ramp is long enough to cross onto
+whatever the Gallery page has underneath it, so its tail measures two things at once — the
+curve suggested 2.1 and the edge suggested 2.36, and they cannot both be the shadow. The light
+fit, taken against a clean 170 backdrop, lands within 0.013 alpha end to end and settles which
+half to trust: the first rows out, which are the least contaminated and the ones anyone sees.
+At 2.36 the rendered edge alpha is 0.429 against the original's 0.429.
 
 **Dark is not light.** At the popup depth the shadow measures 0.123 alpha at the card's edge in
 light and 0.219 in dark — 1.78x — and the same ratio holds when the dark recipe is rendered
