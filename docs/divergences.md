@@ -387,3 +387,58 @@ gate does.
 - **Would reconsider if**: the trigger's own opening event is threaded into the surface, which
   makes `pointerType === 'touch'` answerable for pointer-opened menus and leaves only the
   keyboard case — where narrow is the correct answer anyway.
+
+### WD-014 — the command row is laid out in the dialog's width, and does not set it
+
+- **Control**: `ContentDialog`.
+- **WinUI does**: give `CommandSpace` five columns — star, spacer, star, spacer, star — and
+  size them the way a XAML `Grid` sizes star columns: an equal share each, but never below what
+  the child in the column needs. Measured on the reference guest at `ContentDialogMinWidth`,
+  where the three buttons have 254px between them: `Replace` / `Keep` / `Cancel` all fit their
+  84.67 share and come out **85 / 85 / 84**, and `Save` / `Don't Save` / `Cancel` come out
+  **85 / 91 / 78**, because the middle one needs 91 and the other two absorb the difference. The
+  Grid also _measures_ that way: it asks each button for its natural width and reports the sum,
+  which is what a `Border` with `MinWidth` 320 and `MaxWidth` 548 then clamps.
+- **We do**: reproduce the layout and not the measurement. `grid-template-columns: repeat(n, 1fr)`
+  is the same distribution rule — an `fr` track's floor is its content's minimum — and it
+  reproduces the fitting case exactly: **84.66 / 84.67 / 84.66** against the original's
+  85 / 85 / 84. CSS sizes an `fr` track set differently from XAML when asked for an intrinsic
+  width, though: it takes the largest contribution and multiplies by the track count, so the row
+  asked for 3 x 90.34 and grew the card to 337 against the original's 320. `contain: inline-size`
+  takes the row out of that measurement, and the card is 320 x 221 to the pixel.
+  Two things follow. A dialog is never widened by its buttons, only by its content — and in the
+  non-fitting case the slack is redistributed equally rather than by the second pass XAML makes,
+  so `Save` / `Don't Save` / `Cancel` come out **81.83 / 90.34 / 81.83** where the original is
+  85 / 91 / 78. The row's total, the gaps and the button that overflows its share are all right;
+  the two that give way are each about 3px out.
+- **Why accepted**: the two facts cannot both live on one box. The row must be measured from the
+  sum of its children's natural widths and laid out from an equal division of the width that
+  measurement produced, and a CSS box has one inline size. The alternative is the two-layer shape
+  `MenuFlyout`'s split item uses — a hidden measuring row beside the laid-out one — which is a
+  second copy of every button, kept in sync, to move two edges by three pixels.
+- **Would reconsider if**: a dialog turns up whose buttons genuinely need more than 548px, where
+  not widening stops being invisible and starts being an overflow.
+
+### WD-015 — an opening dialog focuses itself, not its default button
+
+- **Control**: `ContentDialog`.
+- **WinUI does**: move focus into the dialog when it is shown — to `DefaultButton` when one is
+  set, and to the dialog itself when `DefaultButton` is `None` — and draw a focus visual only
+  if the focus arrived from the keyboard. `FocusState` carries that distinction:
+  `FocusState.Programmatic` and `FocusState.Pointer` light nothing. Measured on the reference
+  guest, the first Gallery example is shown from a mouse click and its accent `Save` button has
+  no band around it.
+- **We do**: focus the dialog's own root in every case, through `onOpenAutoFocus`. Focus is
+  inside the trap, Tab reaches the three buttons in order, and no control is lit. The card is
+  `tabindex="-1"` and outside the tab order, so nothing but the open handler ever focuses it,
+  and its own outline is suppressed for the same reason WinUI's dialog draws none.
+- **Why accepted**: `:focus-visible` is a heuristic over the user's last interaction, and there
+  is no way to ask for focus without it. A page that loads with a dialog already open has had no
+  interaction at all, and Chromium resolves that as focus-visible — so focusing the default
+  button paints a band the original does not have, and focusing the CheckBox in the Gallery's
+  content, which is what the primitive does unaided, paints the CheckBox's. The behaviour lost is
+  Enter-activates-the-default-button from the moment the dialog opens; the behaviour kept is that
+  focus is inside the dialog, which is the part a keyboard user cannot work around.
+- **Would reconsider if**: the open transition can be attributed to a keyboard interaction, which
+  makes focusing the default button correct rather than merely faithful — at that point the ring
+  is what WinUI would draw too.
