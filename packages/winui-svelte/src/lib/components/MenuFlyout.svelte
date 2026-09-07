@@ -748,7 +748,10 @@
 		display: flex;
 		align-items: center;
 		padding: var(--winui-MenuFlyoutItemThemePaddingNarrow);
-		/* `IsHitTestVisible="False"` on the TextBlock (:619) and the chevron (:620): this layer
+		/* WD-013: the narrow padding here for the same reason as the plain row's; see
+		   docs/divergences.md.
+
+		   `IsHitTestVisible="False"` on the TextBlock (:619) and the chevron (:620): this layer
 		   paints and measures, and the pointer passes through it to the buttons underneath. */
 		pointer-events: none;
 	}

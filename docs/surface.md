@@ -413,9 +413,12 @@ TextBlock with no `LineHeight` draws the font's own spacing.
 
 Measured: the Gallery's Base-styled flyout message is 19 tall and its flyout 97; the ramp's
 20px makes them 20 and 98. That is one step of ten, measured once, which is why nothing has
-been changed in the ramp — but it is also the third control to need `line-height: normal` to
-match the original, after `InfoBar` and `Expander`, and three is enough to stop calling it a
-coincidence.
+been changed in the ramp — but it is another control needing `line-height: normal` to match
+the original after `InfoBar` and `Expander` did, and by this point the override is the rule
+rather than the exception. No ordinal is given: the running count this file used to keep was
+wrong every time it was checked, because the controls that carry a ramp class on their root
+and override it there — `Button`, `CheckBox`, `RadioButton`, `ToggleSwitch` among them — were
+never in it.
 
 ### MenuFlyout — v6 unit 4a
 
