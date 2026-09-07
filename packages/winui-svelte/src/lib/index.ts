@@ -46,6 +46,10 @@ export type {
 	SplitMenuFlyoutItemData,
 	ToggleMenuFlyoutItemData
 } from './components/MenuFlyout.svelte';
+export { default as MenuBar } from './components/MenuBar.svelte';
+export type { MenuBarProps } from './components/MenuBar.svelte';
+export { default as MenuBarItem } from './components/MenuBarItem.svelte';
+export type { MenuBarItemProps } from './components/MenuBarItem.svelte';
 export { default as NavigationView } from './components/NavigationView.svelte';
 export { default as NumberBox } from './components/NumberBox.svelte';
 export type { NumberBoxProps } from './components/NumberBox.svelte';

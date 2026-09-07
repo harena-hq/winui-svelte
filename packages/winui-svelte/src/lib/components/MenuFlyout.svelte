@@ -15,6 +15,9 @@
 		 * e.g. `'E72D'`. `NavigationViewItemData.glyph` spells the same thing the same way.
 		 */
 		glyph?: string;
+		/** Icon — the `IconElement`, drawn by the consumer. ADR 0012. Where both this and `glyph`
+		 * are given, this one wins. */
+		icon?: Snippet;
 		/** KeyboardAcceleratorTextOverride: the label drawn at the right of the row. */
 		keyboardAcceleratorTextOverride?: string;
 	}
@@ -34,6 +37,9 @@
 		 * e.g. `'E72D'`. `NavigationViewItemData.glyph` spells the same thing the same way.
 		 */
 		glyph?: string;
+		/** Icon — the `IconElement`, drawn by the consumer. ADR 0012. Where both this and `glyph`
+		 * are given, this one wins. */
+		icon?: Snippet;
 		/** KeyboardAcceleratorTextOverride: the label drawn at the right of the row. */
 		keyboardAcceleratorTextOverride?: string;
 	}
@@ -59,6 +65,9 @@
 		 * e.g. `'E72D'`.
 		 */
 		glyph?: string;
+		/** Icon — the `IconElement`, drawn by the consumer. ADR 0012. Where both this and `glyph`
+		 * are given, this one wins. */
+		icon?: Snippet;
 		/** KeyboardAcceleratorTextOverride: the label drawn at the right of the row. */
 		keyboardAcceleratorTextOverride?: string;
 	}
@@ -79,6 +88,9 @@
 		 * e.g. `'E72D'`.
 		 */
 		glyph?: string;
+		/** Icon — the `IconElement`, drawn by the consumer. ADR 0012. Where both this and `glyph`
+		 * are given, this one wins. */
+		icon?: Snippet;
 	}
 
 	/**
@@ -97,6 +109,9 @@
 		 * e.g. `'E72D'`.
 		 */
 		glyph?: string;
+		/** Icon — the `IconElement`, drawn by the consumer. ADR 0012. Where both this and `glyph`
+		 * are given, this one wins. */
+		icon?: Snippet;
 	}
 
 	export type MenuFlyoutEntry =
@@ -117,7 +132,12 @@
 		 * primitive's event handlers, and a trigger that sets one of the same names after the
 		 * spread replaces it rather than adding to it.
 		 */
-		children: Snippet<[Record<string, unknown>]>;
+		children?: Snippet<[Record<string, unknown>]>;
+		/** No WinUI member: render inside a `MenuBar`'s menu group rather than owning a trigger of
+		 * this component's own. `MenuBarItemFlyout` (`MenuBarItemFlyout.cpp`) is upstream's
+		 * `MenuFlyout` subclass for the same job. When set, `children`, `open` and `onOpenChange`
+		 * are unused — the surrounding `MenuBar` owns which menu is open. */
+		menubar?: boolean;
 		/** FlyoutBase.Placement. */
 		placement?: FlyoutPlacement;
 		/**
@@ -169,7 +189,7 @@
 </script>
 
 <script lang="ts">
-	import { DropdownMenu } from 'bits-ui';
+	import { DropdownMenu, Menubar } from 'bits-ui';
 
 	let {
 		items = [],
@@ -184,6 +204,7 @@
 		onSelectedChange,
 		onItemInvoked,
 		children,
+		menubar = false,
 		class: className,
 		style,
 		ref = $bindable(null),
@@ -209,7 +230,12 @@
 
 	const position = $derived(placements[placement]);
 	const hasCheckColumn = $derived(items.some((entry) => 'toggle' in entry || 'groupName' in entry));
-	const hasIconColumn = $derived(items.some((entry) => 'glyph' in entry && Boolean(entry.glyph)));
+	const hasIconColumn = $derived(
+		items.some(
+			(entry) =>
+				('glyph' in entry && Boolean(entry['glyph'])) || ('icon' in entry && Boolean(entry['icon']))
+		)
+	);
 
 	type MenuFlyoutBlock =
 		| { kind: 'entry'; entry: MenuFlyoutEntry; key: number }
@@ -254,8 +280,11 @@
 									<div {...props} class="item toggle radio">
 										<span class="check" aria-hidden="true"></span>
 										<span class="body">
-											{#if entry.glyph}<span class="icon" aria-hidden="true"
-													>{String.fromCodePoint(parseInt(entry.glyph, 16))}</span
+											{#if entry.icon}<span class="icon" aria-hidden="true"
+													>{@render entry['icon']()}</span
+												>
+											{:else if entry.glyph}<span class="icon" aria-hidden="true"
+													>{String.fromCodePoint(parseInt(entry['glyph'], 16))}</span
 												>{/if}
 											<span class="text">{entry.text}</span>
 										</span>
@@ -297,8 +326,11 @@
 						</div>
 						<div class="split-content">
 							<span class="body">
-								{#if entry.glyph}<span class="icon" aria-hidden="true"
-										>{String.fromCodePoint(parseInt(entry.glyph, 16))}</span
+								{#if entry.icon}<span class="icon" aria-hidden="true"
+										>{@render entry['icon']()}</span
+									>
+								{:else if entry.glyph}<span class="icon" aria-hidden="true"
+										>{String.fromCodePoint(parseInt(entry['glyph'], 16))}</span
 									>{/if}
 								<span class="text">{entry.text}</span>
 							</span>
@@ -315,7 +347,11 @@
 										data-gutter={entry.items.some((row) => 'toggle' in row || 'groupName' in row)
 											? ''
 											: undefined}
-										data-icons={entry.items.some((row) => 'glyph' in row && Boolean(row.glyph))
+										data-icons={entry.items.some(
+											(row) =>
+												('glyph' in row && Boolean(row['glyph'])) ||
+												('icon' in row && Boolean(row['icon']))
+										)
 											? ''
 											: undefined}
 									>
@@ -332,8 +368,11 @@
 						{#snippet child({ props })}
 							<div {...props} class="item sub">
 								<span class="body">
-									{#if entry.glyph}<span class="icon" aria-hidden="true"
-											>{String.fromCodePoint(parseInt(entry.glyph, 16))}</span
+									{#if entry.icon}<span class="icon" aria-hidden="true"
+											>{@render entry['icon']()}</span
+										>
+									{:else if entry.glyph}<span class="icon" aria-hidden="true"
+											>{String.fromCodePoint(parseInt(entry['glyph'], 16))}</span
 										>{/if}
 									<span class="text">{entry.text}</span>
 								</span>
@@ -351,7 +390,11 @@
 										data-gutter={entry.items.some((row) => 'toggle' in row || 'groupName' in row)
 											? ''
 											: undefined}
-										data-icons={entry.items.some((row) => 'glyph' in row && Boolean(row.glyph))
+										data-icons={entry.items.some(
+											(row) =>
+												('glyph' in row && Boolean(row['glyph'])) ||
+												('icon' in row && Boolean(row['icon']))
+										)
 											? ''
 											: undefined}
 									>
@@ -382,8 +425,11 @@
 						<div {...props} class="item toggle">
 							<span class="check" aria-hidden="true"></span>
 							<span class="body"
-								>{#if entry.glyph}<span class="icon" aria-hidden="true"
-										>{String.fromCodePoint(parseInt(entry.glyph, 16))}</span
+								>{#if entry.icon}<span class="icon" aria-hidden="true"
+										>{@render entry['icon']()}</span
+									>
+								{:else if entry.glyph}<span class="icon" aria-hidden="true"
+										>{String.fromCodePoint(parseInt(entry['glyph'], 16))}</span
 									>{/if}<span class="text">{entry.text}</span></span
 							>
 							{#if entry.keyboardAcceleratorTextOverride}<span
@@ -398,8 +444,11 @@
 					{#snippet child({ props })}
 						<div {...props} class="item">
 							<span class="body"
-								>{#if entry.glyph}<span class="icon" aria-hidden="true"
-										>{String.fromCodePoint(parseInt(entry.glyph, 16))}</span
+								>{#if entry.icon}<span class="icon" aria-hidden="true"
+										>{@render entry['icon']()}</span
+									>
+								{:else if entry.glyph}<span class="icon" aria-hidden="true"
+										>{String.fromCodePoint(parseInt(entry['glyph'], 16))}</span
 									>{/if}<span class="text">{entry.text}</span></span
 							>
 							{#if entry.keyboardAcceleratorTextOverride}<span
@@ -414,45 +463,60 @@
 	{/each}
 {/snippet}
 
-<DropdownMenu.Root
-	bind:open={
-		() => open,
-		(next) => {
-			open = next;
-			onOpenChange?.(next);
-		}
-	}
->
-	<DropdownMenu.Trigger>
-		{#snippet child({ props })}
-			{@render children(props)}
-		{/snippet}
-	</DropdownMenu.Trigger>
-	<DropdownMenu.Portal>
-		<DropdownMenu.Content
+{#snippet presenter(props = {}, wrapperProps = {})}
+	<div {...wrapperProps}>
+		<div
+			{...props}
+			bind:this={ref}
+			class={['presenter', 'winui-BodyTextBlockStyle', className]}
+			{style}
+			data-gutter={hasCheckColumn ? '' : undefined}
+			data-icons={hasIconColumn ? '' : undefined}
+			{...rest}
+		>
+			{@render rowList(items)}
+		</div>
+	</div>
+{/snippet}
+
+{#if menubar}
+	<Menubar.Portal>
+		<Menubar.Content
 			side={position.side}
 			align={position.align}
 			sideOffset={offset}
 			customAnchor={anchor}
 		>
-			{#snippet child({ props, wrapperProps })}
-				<div {...wrapperProps}>
-					<div
-						{...props}
-						bind:this={ref}
-						class={['presenter', 'winui-BodyTextBlockStyle', className]}
-						{style}
-						data-gutter={hasCheckColumn ? '' : undefined}
-						data-icons={hasIconColumn ? '' : undefined}
-						{...rest}
-					>
-						{@render rowList(items)}
-					</div>
-				</div>
+			{#snippet child({ props, wrapperProps })}{@render presenter(props, wrapperProps)}{/snippet}
+		</Menubar.Content>
+	</Menubar.Portal>
+{:else}
+	<DropdownMenu.Root
+		bind:open={
+			() => open,
+			(next) => {
+				open = next;
+				onOpenChange?.(next);
+			}
+		}
+	>
+		<DropdownMenu.Trigger>
+			{#snippet child({ props })}
+				{@render children?.(props)}
 			{/snippet}
-		</DropdownMenu.Content>
-	</DropdownMenu.Portal>
-</DropdownMenu.Root>
+		</DropdownMenu.Trigger>
+		<DropdownMenu.Portal>
+			<DropdownMenu.Content
+				side={position.side}
+				align={position.align}
+				sideOffset={offset}
+				customAnchor={anchor}
+			>
+				{#snippet child({ props, wrapperProps })}{@render presenter(props, wrapperProps)}{/snippet}
+			</DropdownMenu.Content>
+		</DropdownMenu.Portal>
+	</DropdownMenu.Root>
+{/if}
 
 <style>
 	/* WD-002: WinUI paints a `DesktopAcrylicBackdrop`, which cannot be represented in CSS;
@@ -669,6 +733,12 @@
 		font-size: 16px;
 		font-family: var(--winui-SymbolThemeFontFamily);
 		color: inherit;
+	}
+
+	.icon :global(img),
+	.icon :global(svg) {
+		max-width: 100%;
+		max-height: 100%;
 	}
 
 	/* CheckPlaceholder / IconPlaceholder: one column, so the text clears 28. */
