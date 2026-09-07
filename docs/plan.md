@@ -795,6 +795,16 @@ group sizes, which no longer line up one-to-one with a version.
     measured first — the Gallery's Typography design page is where they are all on screen at
     once.
 
+    **Paid, after v6 closed.** ADR 0011 and D24. The ten steps were measured, and the answer
+    was not the one this paragraph expected: the ramp now carries `line-height: normal` rather
+    than a corrected number, because the font's spacing is fractional and a `TextBlock`'s box is
+    not. What this paragraph got right is that the debt was real and that every baseline moved.
+    What it got wrong is the framing — the override was not five controls' problem but the
+    ramp's, and the four components that never wrote one were the evidence, not the exception.
+    Popup's entry here is sound and turned out to generalise: a control that imposes the ramp
+    on a consumer's content without drawing text of its own has nothing to measure and so
+    reports nothing.
+
     Done-when: v5's per-control seal loop applies to all six controls — source and Gallery
     sweep recorded before sealing, three-theme Windows baselines, direct comparison with the
     original at the same state and dimensions, and the control driven through open, close,

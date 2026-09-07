@@ -429,7 +429,6 @@
 		font: inherit;
 		color: inherit;
 		outline: none;
-		line-height: normal;
 	}
 
 	.input::placeholder {

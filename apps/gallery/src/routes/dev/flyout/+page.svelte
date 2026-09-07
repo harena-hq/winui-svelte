@@ -133,13 +133,5 @@
 
 	.message {
 		margin: 0;
-		/* c1-allow: upstream's `BaseTextBlockStyle` — `TextBlock_themeresources.xaml:10-18` —
-		   sets FontFamily, FontSize, FontWeight, TextTrimming, TextWrapping,
-		   LineStackingStrategy and TextLineBounds, and **no LineHeight**. The generated ramp
-		   class carries 20px from the published type ramp, which is a design document rather
-		   than what the shipped styles set, so a Base-styled TextBlock in WinUI draws the
-		   font's own spacing. Measured on the reference guest: the Gallery's flyout message is
-		   19 tall and its flyout 97, and the ramp's 20 makes them 20 and 98. */
-		line-height: normal;
 	}
 </style>

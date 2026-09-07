@@ -90,7 +90,6 @@
 		   (the Body ramp's size and weight) stands in for both, and the side-by-side
 		   against the original is what confirms the choice. `font-weight: Normal`
 		   upstream is the ramp's 400 — no override. */
-		line-height: normal;
 		text-align: center;
 		white-space: nowrap;
 		cursor: pointer;

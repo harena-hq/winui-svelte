@@ -211,6 +211,9 @@
 		font-family: var(--winui-ContentControlThemeFontFamily);
 		font-size: var(--winui-InfoBarMessageFontSize);
 		font-weight: var(--winui-InfoBarMessageFontWeight);
+		/* This root carries no ramp class, so the line box is whatever the consumer's page
+		   says unless it is stated here. A WinUI control draws its text at the font's own
+		   spacing whatever surrounds it. ADR 0011. */
 		line-height: normal;
 	}
 
@@ -347,7 +350,6 @@
 		min-width: 0;
 		white-space: normal;
 		overflow-wrap: break-word;
-		line-height: normal;
 	}
 
 	.title {

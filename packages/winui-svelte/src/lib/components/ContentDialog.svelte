@@ -262,17 +262,6 @@
 		font-size: 20px;
 		/* c1-allow: ContentDialog_themeresources.xaml:238 */
 		font-weight: 600;
-		/* The title and content use the font's own line spacing; the Body ramp only supplies the
-		   family and size because neither upstream presenter carries a TextBlock style. That keeps
-		   the measured title box at 27px rather than the ramp's 28px step. */
-		line-height: normal;
-	}
-
-	/* ContentDialog_themeresources.xaml:245 — ContentPresenter wraps content with font-native spacing. */
-	.content {
-		/* `winui-BodyTextBlockStyle` supplies family and size, but not a line-height override: the
-		   ContentPresenter has no TextBlock style. This preserves the measured 19px body line. */
-		line-height: normal;
 	}
 
 	/* ContentDialog_themeresources.xaml:248 — CommandSpace separates and pads the command row. */

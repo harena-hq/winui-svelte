@@ -495,12 +495,6 @@
 		color: var(--winui-MenuFlyoutItemForeground);
 		cursor: default;
 		user-select: none;
-		/* c1-allow: the platform default, as `Flyout.svelte`, `Expander.svelte` and
-		   `InfoBar.svelte` take it. The ramp class supplies the family and size, but its 20px
-		   line height is the published type ramp rather than what `DefaultMenuFlyoutItemStyle`
-		   draws: its TextBlock has no Style. Measured on the reference guest at 14px, the font
-		   spacing is 19px; that makes rows 28px and the card 105px. */
-		line-height: normal;
 	}
 
 	.item[data-highlighted] {

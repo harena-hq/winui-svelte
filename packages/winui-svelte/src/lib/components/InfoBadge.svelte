@@ -119,6 +119,9 @@
 		margin: var(--winui-ValueInfoBadgeTextMargin);
 		font-family: var(--winui-ContentControlThemeFontFamily);
 		font-size: var(--winui-InfoBadgeValueFontSize);
+		/* This root carries no ramp class, so the line box is whatever the consumer's page
+		   says unless it is stated here. A WinUI control draws its text at the font's own
+		   spacing whatever surrounds it. ADR 0011. */
 		line-height: normal;
 	}
 

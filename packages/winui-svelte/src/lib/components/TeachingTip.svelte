@@ -409,14 +409,6 @@
 		align-items: center;
 	}
 
-	/* The card carries `winui-BodyTextBlockStyle`, whose generated `line-height` is 20px, and
-	   nothing upstream sets a line height on `MainContentPresenter` (TeachingTip.xaml:335) — a
-	   TextBlock there uses the font's own spacing, which the reference measures at 19. Without
-	   this the card is 311 tall against the original's 310. */
-	.main {
-		line-height: normal;
-	}
-
 	.commands {
 		display: grid;
 		/* The reference's natural buttons are 110px and 104px wide. `auto auto` keeps those
@@ -481,13 +473,11 @@
 	/* TeachingTip.xaml:331 — title foreground; the type-ramp class supplies its text metrics. */
 	.title {
 		color: var(--winui-TeachingTipTitleForegroundBrush);
-		line-height: normal;
 	}
 
-	/* TeachingTip.xaml:332 — subtitle foreground and native line spacing. */
+	/* TeachingTip.xaml:332 — subtitle foreground. */
 	.subtitle {
 		color: var(--winui-TeachingTipSubtitleForegroundBrush);
-		line-height: normal;
 	}
 
 	/* TeachingTip.xaml:350 and TeachingTip_themeresources.xaml:95 — the alternate close button is
