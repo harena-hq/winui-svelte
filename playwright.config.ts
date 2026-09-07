@@ -20,6 +20,15 @@ export default defineConfig({
 	// snapshotting the same component name overwrite each other's baseline.
 	snapshotPathTemplate: '{testDir}/__screenshots__/{projectName}/{testFileName}/{arg}{ext}',
 
+	// One worker, and one only, when the browser is on the guest. Every spec drives the same
+	// Edge instance over one CDP connection, so parallel workers buy no wall clock — they open
+	// concurrent tabs in one browser. That was harmless until a spec put a modal dialog on the
+	// page: a focus trap refocuses whenever focus leaves its content, a background tab loses
+	// focus whenever another worker's tab takes it, and the two fight until the renderer stops
+	// answering. Measured: the full suite went 4 of 26 with the ContentDialog spec present and
+	// 26 of 26 without it, then 26 of 26 with it at one worker — in 36.7s against the parallel
+	// run's 42.8s, because the parallelism was never buying anything to begin with.
+	workers: CDP ? 1 : undefined,
 	fullyParallel: true,
 	forbidOnly: !!process.env.CI,
 	reporter: process.env.CI ? 'list' : 'html',
