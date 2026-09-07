@@ -670,6 +670,57 @@ Every line box on all three examples measures 19 where the generated `winui-Body
 imposes 20. That is the seventh and eighth site to need `line-height: normal` over the ramp
 class, after InfoBar, Expander, Flyout, MenuFlyout and both of ContentDialog's.
 
+### TeachingTip — v6 unit 046b
+
+Three of the tip's states are declared in the template and not honoured by the shipped
+control. Unit 046a's section carries the first, `TeachingTipMinWidth`. The other two are here,
+and both were found the same way: by decomposing a card that measured one number and finding
+the template's arithmetic gave another.
+
+**The command row's two columns behave as `Auto`, not as `*`.** The template declares two star
+columns (`TeachingTip.xaml:336`). Two star columns over the untargeted example's 222px content
+area are 111 each, which would make both buttons 107 wide. They measure 110 and 104 — their
+natural widths — and the card is 248 rather than 254, because it is sized by the _sum_ of the
+two naturals rather than by twice the larger. Reproduced with `grid-template-columns: auto
+auto`, which is the same shape in both directions: content-width when the row is tight, an
+equal share of the surplus when the card is wider, which is what two star columns would give.
+`1fr 1fr` would have been the literal translation and is wrong by six pixels.
+
+**`TeachingTipMainContentPresentMargin` is not applied.** WD-017. The hero example puts 16
+between the subtitle and the description, which is exactly the `Margin="0,16,0,0"` the Gallery
+sets on its own `TextBlock`; with the `Content` state (`:64`) live it would be 28 and the card
+would be twelve taller than the 310 it measures. The reproduction's content slot takes no
+margin, and the harness's description carries the 16 the Gallery's does.
+
+The hero band fills the card's inner box exactly — 318 x 211 inside a 320 x 310 card whose
+border is 1 — and its top corners round against that inner corner rather than the outer one:
+the image's left edge by row fits a radius-7 circle and not a radius-8 one, 7 being
+`OverlayCornerRadius` minus the border. The card cannot do that clipping with `overflow:
+hidden`, which is the obvious way and would take the tail with it, so the radius is written on
+the band.
+
+`HeroContentPlacementStates` (`:101`) moves the band between the first and last rows, which is
+`order` in a column flex container. `Auto` upstream puts the band away from the tail; only the
+tail-at-the-bottom case is on the reference machine, so the rule for the other side is read off
+the state's name rather than measured, and the component's comment says which is which.
+
+The header close button is not a fixture. `CloseButtonLocations` (`:75`) removes it whenever
+the command row supplies a close button, and the titles' 28px right margin goes with it — the
+`FooterCloseButton` state resets that margin to `0,0,0,0`. Both were confirmed on the second
+Gallery example, which has two commands and no X.
+
+The content slot is the ninth site to need `line-height: normal` over the generated ramp class.
+Nothing upstream sets a line height on `MainContentPresenter` (`:335`); a `TextBlock` there
+uses the font's own spacing, which measures 19 where the ramp class imposes 20. The count is
+now nine and the type-ramp unit `docs/plan.md` carries has not moved.
+
+An untargeted tip is anchored to the window, which is `position: fixed` here — a zero-height
+element spanning the viewport's bottom edge, handed to the primitive as its anchor so that one
+markup tree serves both modes. Its bottom sits `PlacementMargin` above the viewport edge. On
+the reference machine the same tip sits 51 above the app's client bottom where `PlacementMargin`
+of 20 plus the 8px tail track account for 28; the remaining 23 has no rule behind it that this
+sweep could find, and is not reproduced.
+
 ## What this file does not cover
 
 The sweep reads what a control _draws_. It does not enumerate automation peers, keyboard

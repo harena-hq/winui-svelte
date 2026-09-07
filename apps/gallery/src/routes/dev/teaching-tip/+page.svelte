@@ -68,6 +68,60 @@
 	</TeachingTip>
 </div>
 
+<h2 class="winui-SubtitleTextBlockStyle">the Gallery's second example</h2>
+<p class="untargeted-description winui-BodyTextBlockStyle">
+	This tip is anchored to the viewport rather than a page element, so it renders fixed at the
+	window's bottom edge.
+</p>
+<TeachingTip
+	open
+	title="This is the title"
+	subtitle="And this is the subtitle"
+	actionButtonContent="Action button"
+	closeButtonContent="Close button"
+	lightDismiss
+	placementMargin={20}
+/>
+
+<h2 class="winui-SubtitleTextBlockStyle">one button at a time</h2>
+<div class="row open-above indent separated">
+	<TeachingTip
+		open
+		title="Action button"
+		subtitle="One action command"
+		actionButtonContent="Action button"
+	>
+		{#snippet children(props)}
+			<Button {...props}>Action target</Button>
+		{/snippet}
+	</TeachingTip>
+	<TeachingTip
+		open
+		title="Close button"
+		subtitle="One close command"
+		closeButtonContent="Close button"
+	>
+		{#snippet children(props)}
+			<Button {...props}>Close target</Button>
+		{/snippet}
+	</TeachingTip>
+</div>
+
+<h2 class="winui-SubtitleTextBlockStyle">hero content</h2>
+<div class="row open-above hero-row indent">
+	<TeachingTip open title="This is the title" subtitle="And this is the subtitle">
+		{#snippet heroContent()}
+			<img class="hero-image" src="/sunset.jpg" alt="Sunset" style="display: block; width: 100%" />
+		{/snippet}
+		{#snippet content()}
+			<p class="description-line">Description can go here</p>
+		{/snippet}
+		{#snippet children(props)}
+			<Button {...props}>Show TeachingTip</Button>
+		{/snippet}
+	</TeachingTip>
+</div>
+
 <h2 class="winui-SubtitleTextBlockStyle">no tail</h2>
 <div class="row open-above indent">
 	<TeachingTip
@@ -124,5 +178,16 @@
 	/* Keep the page description's spacing local to this harness; no bare element selector is used. */
 	.description {
 		margin: 0;
+	}
+
+	/* A hero card is 310px tall where an ordinary one is 64, so its row needs its own clearance
+	   or the card lands on the row above it. */
+	.hero-row {
+		margin-top: 420px;
+	}
+
+	/* This is the Gallery TextBlock's own Margin="0,16,0,0", not TeachingTip's content gap. */
+	.description-line {
+		margin: 16px 0 0;
 	}
 </style>

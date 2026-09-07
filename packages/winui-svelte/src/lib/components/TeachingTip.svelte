@@ -19,24 +19,48 @@
 
 	export type TeachingTipTailVisibility = 'auto' | 'visible' | 'collapsed';
 
+	export type TeachingTipHeroContentPlacementMode = 'auto' | 'top' | 'bottom';
+
 	export interface TeachingTipProps {
 		/** Title. */
 		title?: string;
 		/** Subtitle. */
 		subtitle?: string;
+		/** Content. The tip's main content, below the title and subtitle. */
+		content?: Snippet;
+		/** HeroContent. A full-width band above or below everything else. */
+		heroContent?: Snippet;
+		/** HeroContentPlacement. */
+		heroContentPlacement?: TeachingTipHeroContentPlacementMode;
+		/**
+		 * ActionButtonContent. Upstream takes any object; this takes the button's text, which is
+		 * the part of it this library draws.
+		 */
+		actionButtonContent?: string;
+		/** CloseButtonContent. Text, for the same reason as `actionButtonContent`. */
+		closeButtonContent?: string;
+		/** ActionButtonClick. */
+		onActionButtonClick?: () => void;
+		/**
+		 * PlacementMargin. The inset between an untargeted tip and the viewport's edge. Upstream
+		 * reads all four sides of a Thickness; only the one the tip is placed against is visible,
+		 * so this is a single number.
+		 */
+		placementMargin?: number;
 		/**
 		 * IconSource. A Segoe Fluent Icons code point, as `MenuFlyout` takes one — upstream takes
 		 * an `IconSource`, and a glyph is the part of it this library draws.
 		 */
 		glyph?: string;
 		/**
-		 * Target. The element the tip points at. Receives the props it must spread.
+		 * Target. The element the tip points at. Receives the props it must spread. Omit it for an
+		 * untargeted tip, which is anchored to the window and has no tail.
 		 *
 		 * Spread them **first**, before the element's own attributes: they carry the primitive's
 		 * event handlers, and a trigger that sets one of the same names after the spread replaces
 		 * it rather than adding to it.
 		 */
-		children: Snippet<[Record<string, unknown>]>;
+		children?: Snippet<[Record<string, unknown>]>;
 		/** PreferredPlacement. */
 		preferredPlacement?: TeachingTipPlacementMode;
 		/** TailVisibility. */
@@ -64,18 +88,25 @@
 	// bounds. A portalled browser element cannot leave the document, so it has no choice to expose.
 	// `TemplateSettings` is read-only layout output from the XAML template, computed for the
 	// tail's highlight margins, and has no analogue here.
-	// `ActionButtonContent`, `CloseButtonContent`, `Content`, `HeroContent`,
-	// `HeroContentPlacement`, and `PlacementMargin` are not absent; they are not implemented yet
-	// and belong to the next unit.
+	// Upstream's `Closing` event carries a `Cancel` flag and a deferral; `onOpenChange` cannot
+	// express either. A consumer that must veto a close holds `open` itself.
 </script>
 
 <script lang="ts">
 	import { Popover } from 'bits-ui';
+	import Button from './Button.svelte';
 
 	let {
 		title,
 		subtitle,
 		glyph,
+		content,
+		heroContent,
+		heroContentPlacement = 'auto',
+		actionButtonContent,
+		closeButtonContent,
+		onActionButtonClick,
+		placementMargin = 0,
 		children,
 		preferredPlacement = 'auto',
 		tailVisibility = 'auto',
@@ -115,11 +146,35 @@
 	// identical and collision avoidance is enabled for every placement, as in Flyout.svelte.
 	const position = $derived(placements[preferredPlacement]);
 
+	let anchor = $state<HTMLElement | null>(null);
+
+	const targeted = $derived(children !== undefined);
+	// `Untargeted` (TeachingTip.xaml:259) collapses the tail whatever `TailVisibility` says.
+	const showTail = $derived(targeted && tailVisibility !== 'collapsed');
+	const footerCloseButton = $derived(closeButtonContent !== undefined);
+	const buttonCount = $derived(
+		[actionButtonContent, closeButtonContent].filter((text) => text !== undefined).length
+	);
+
 	function closeFromButton() {
 		onCloseButtonClick?.();
 		open = false;
 	}
+
+	function actionClick() {
+		// Upstream's ActionButtonClick raises the event and leaves IsOpen alone.
+		onActionButtonClick?.();
+	}
+
+	function closeFromFooter() {
+		onCloseButtonClick?.();
+		open = false;
+	}
 </script>
+
+{#if !targeted}
+	<div class="anchor" bind:this={anchor} aria-hidden="true"></div>
+{/if}
 
 <Popover.Root
 	bind:open={
@@ -130,23 +185,30 @@
 		}
 	}
 >
-	<Popover.Trigger>
-		{#snippet child({ props })}
-			{@render children(props)}
-		{/snippet}
-	</Popover.Trigger>
+	{#if children}
+		<Popover.Trigger>
+			{#snippet child({ props })}
+				{@render children(props)}
+			{/snippet}
+		</Popover.Trigger>
+	{/if}
 	<Popover.Portal>
-		<!-- The gap between the card and its target is TeachingTipTailShortSideLength — the outer
-		     Grid's 8px tail track (TeachingTip.xaml:282, TeachingTip_themeresources.xaml:93), and
-		     the 8px the reference measures from the card's bottom edge to the target's top edge.
-		     bits-ui offsets by `sideOffset + the arrow element's measured height`
-		     (use-floating-layer.svelte.js:89), so the 8 is asked for in whichever of the two
-		     terms is not already there: the tail is 8 tall, and a collapsed tail is no element
-		     at all. Upstream keeps the track either way — it is a Grid row, not the tail. -->
+		<!-- The gap between a targeted card and its target is TeachingTipTailShortSideLength —
+		     the outer Grid's 8px tail track (TeachingTip.xaml:282,
+		     TeachingTip_themeresources.xaml:93), and the 8px the reference measures from the
+		     card's bottom edge to the target's top edge. bits-ui offsets by
+		     `sideOffset + the arrow element's measured height` (use-floating-layer.svelte.js:89),
+		     so the 8 is asked for in whichever of the two terms is not already there: the tail is
+		     8 tall, and a collapsed tail is no element at all. Upstream keeps the track either way
+		     — it is a Grid row, not the tail. An untargeted tip is centred against a viewport-wide
+		     anchor at the bottom of the window and offset by PlacementMargin; collision avoidance
+		     is off because that anchor already is the viewport. -->
 		<Popover.Content
-			side={position.side}
-			align={position.align}
-			sideOffset={tailVisibility === 'collapsed' ? 8 : 0}
+			side={targeted ? position.side : 'top'}
+			align={targeted ? position.align : 'center'}
+			sideOffset={targeted ? (showTail ? 0 : 8) : placementMargin}
+			customAnchor={targeted ? null : anchor}
+			avoidCollisions={targeted}
 			trapFocus={false}
 			onOpenAutoFocus={(event) => event.preventDefault()}
 			interactOutsideBehavior={lightDismiss ? 'close' : 'ignore'}
@@ -159,9 +221,15 @@
 						bind:this={ref}
 						class={['card', 'winui-BodyTextBlockStyle', className]}
 						data-light-dismiss={lightDismiss ? '' : undefined}
+						data-footer-close={footerCloseButton ? '' : undefined}
 						{style}
 						{...rest}
 					>
+						{#if heroContent}
+							<div class="hero" data-placement={heroContentPlacement}>
+								{@render heroContent()}
+							</div>
+						{/if}
 						<div class="panel">
 							<div class="scroll">
 								<div class="body">
@@ -178,20 +246,40 @@
 											{#if subtitle}<div class="subtitle">{subtitle}</div>{/if}
 										</div>
 									</div>
+									{#if content}
+										<!-- WD-017: the shipped control puts no margin above the content slot. -->
+										<div class="main">{@render content()}</div>
+									{/if}
+									{#if buttonCount > 0}
+										<div class="commands" data-count={buttonCount}>
+											{#if actionButtonContent !== undefined}
+												<Button class="action" onclick={actionClick}>{actionButtonContent}</Button>
+											{/if}
+											{#if closeButtonContent !== undefined}
+												<Button class="close-button" onclick={closeFromFooter}
+													>{closeButtonContent}</Button
+												>
+											{/if}
+										</div>
+									{/if}
 								</div>
 							</div>
 							<!-- The close button is the NonHeroContentRootGrid's second child, so it stays
 							     outside the ScrollViewer and is positioned from the panel's top. -->
-							<button type="button" class="close" aria-label="Close" onclick={closeFromButton}>
-								<span class="close-fill" aria-hidden="true">{CLOSE_GLYPH}</span>
-							</button>
+							{#if !footerCloseButton}
+								<!-- CloseButtonLocations.FooterCloseButton (TeachingTip.xaml:75) leaves no
+								     header close button when the command row supplies one. -->
+								<button type="button" class="close" aria-label="Close" onclick={closeFromButton}>
+									<span class="close-fill" aria-hidden="true">{CLOSE_GLYPH}</span>
+								</button>
+							{/if}
 						</div>
-						<!-- `auto` and `visible` are identical here because this unit always renders a targeted
-						     tip; only `collapsed` removes the tail. -->
-						{#if tailVisibility !== 'collapsed'}
+						<!-- `auto` and `visible` are identical here for targeted tips; only `collapsed`
+						     removes the tail, and Untargeted removes it regardless. -->
+						{#if showTail}
 							<Popover.Arrow>
-								{#snippet child({ props: arrowProps })}
-									<span {...arrowProps} class="tail">
+								{#snippet child({ props })}
+									<span {...props} class="tail">
 										<svg viewBox="0 2 20 8" width="20" height="8" aria-hidden="true">
 											<polyline points="0,0 10,10 20,0" />
 										</svg>
@@ -207,6 +295,17 @@
 </Popover.Root>
 
 <style>
+	/* A zero-height fixed element at the viewport edge gives an untargeted Popover a measurable
+	   anchor without taking space in the Gallery's document flow. */
+	.anchor {
+		position: fixed;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		height: 0;
+		pointer-events: none;
+	}
+
 	/* TeachingTip.xaml:312 — ContentRootGrid, the box that carries the border, the fill and the
 	   corner radius. position:relative contains the absolutely positioned Popover.Arrow, and the
 	   card must not clip the tail. */
@@ -239,6 +338,36 @@
 		background: var(--winui-TeachingTipTransientBackground);
 	}
 
+	.hero {
+		flex: none;
+		/* HeroContentPlacementStates (TeachingTip.xaml:101) moves this band between the first
+		   and last content rows; `order` is the CSS equivalent of those Grid.Row values. */
+		order: 0;
+		overflow: hidden;
+		/* The radius is the card radius minus its border width, so the image meets the inner
+		   card corner rather than rounding against the outer border. */
+		border-radius: calc(
+				var(--winui-OverlayCornerRadius) - var(--winui-TeachingTipContentBorderThicknessUntargeted)
+			)
+			calc(
+				var(--winui-OverlayCornerRadius) - var(--winui-TeachingTipContentBorderThicknessUntargeted)
+			)
+			0 0;
+	}
+
+	.hero[data-placement='bottom'],
+	.card[data-side='bottom'] .hero[data-placement='auto'] {
+		/* The explicit `bottom` and inferred bottom-side `auto` cases are disjoint. */
+		order: 1;
+		border-radius: 0 0
+			calc(
+				var(--winui-OverlayCornerRadius) - var(--winui-TeachingTipContentBorderThicknessUntargeted)
+			)
+			calc(
+				var(--winui-OverlayCornerRadius) - var(--winui-TeachingTipContentBorderThicknessUntargeted)
+			);
+	}
+
 	/* TeachingTip.xaml:319 — NonHeroContentRootGrid contains the scroll view and close button. */
 	.panel {
 		position: relative;
@@ -268,6 +397,44 @@
 		align-items: center;
 	}
 
+	/* The card carries `winui-BodyTextBlockStyle`, whose generated `line-height` is 20px, and
+	   nothing upstream sets a line height on `MainContentPresenter` (TeachingTip.xaml:335) — a
+	   TextBlock there uses the font's own spacing, which the reference measures at 19. This is
+	   the ninth site in the project to need the keyword over the ramp class. */
+	.main {
+		line-height: normal;
+	}
+
+	.commands {
+		display: grid;
+		/* The reference's natural buttons are 110px and 104px wide. `auto auto` keeps those
+		   natural widths in a tight row and shares surplus like upstream's two star columns;
+		   `1fr 1fr` would make both tracks the wider button and the card six pixels too wide. */
+		grid-template-columns: auto auto;
+	}
+
+	.commands[data-count='1'] {
+		grid-template-columns: auto;
+	}
+
+	/* `Button` is a child component, so its root does not carry this component's scope class;
+	   every selector here that targets a Button must go through `:global()`. These margins carry
+	   the 12px above the row: TeachingTipLeftButtonMargin is XAML `0,12,4,0`, emitted as
+	   `12px 4px 0px 0px`, and the right token is the corresponding `12px 0px 0px 4px`. */
+	.commands > :global(.action) {
+		margin: var(--winui-TeachingTipLeftButtonMargin);
+	}
+
+	.commands > :global(.close-button) {
+		margin: var(--winui-TeachingTipRightButtonMargin);
+	}
+
+	/* The global selector reaches a Button component's root. A lone command uses the upstream
+	   TeachingTipButtonPanelMargin, including its 12px top gap, instead of a separate row margin. */
+	.commands[data-count='1'] > :global(*) {
+		margin: var(--winui-TeachingTipButtonPanelMargin);
+	}
+
 	/* TeachingTip.xaml:327 and the reference's 20x20 icon measurement. */
 	.icon {
 		flex: none;
@@ -291,6 +458,12 @@
 		flex: 1 1 auto;
 		min-width: 0;
 		margin: var(--winui-TeachingTipTitleStackPanelMarginWithHeaderCloseButton);
+	}
+
+	.card[data-footer-close] .titles {
+		/* TeachingTip_themeresources.xaml:81 sets this footer-close margin to 0,0,0,0. The
+		   generated layer does not emit the named resource, so the equivalent zero inset is used. */
+		margin: 0;
 	}
 
 	/* TeachingTip.xaml:331 — title foreground; the type-ramp class supplies its text metrics. */
