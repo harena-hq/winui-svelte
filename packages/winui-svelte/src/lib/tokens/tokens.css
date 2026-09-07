@@ -725,6 +725,45 @@
 	--winui-TextBoxTopHeaderMargin: 0px 0px 8px 0px;
 	--winui-TextBoxInnerButtonMargin: 4px 4px 4px 0px;
 	--winui-TextBoxIconFontSize: 12px;
+	--winui-ToggleButtonBorderThemeThickness: 1px;
+	--winui-ToggleButtonBackground: var(--winui-ControlFillColorDefaultBrush);
+	--winui-ToggleButtonBackgroundPointerOver: var(--winui-ControlFillColorSecondaryBrush);
+	--winui-ToggleButtonBackgroundPressed: var(--winui-ControlFillColorTertiaryBrush);
+	--winui-ToggleButtonBackgroundDisabled: var(--winui-ControlFillColorDisabledBrush);
+	--winui-ToggleButtonBackgroundChecked: var(--winui-AccentFillColorDefaultBrush);
+	--winui-ToggleButtonBackgroundCheckedPointerOver: var(--winui-AccentFillColorSecondaryBrush);
+	--winui-ToggleButtonBackgroundCheckedPressed: var(--winui-AccentFillColorTertiaryBrush);
+	--winui-ToggleButtonBackgroundCheckedDisabled: var(--winui-AccentFillColorDisabledBrush);
+	--winui-ToggleButtonBackgroundIndeterminate: var(--winui-ControlFillColorDefaultBrush);
+	--winui-ToggleButtonBackgroundIndeterminatePointerOver: var(
+		--winui-ControlFillColorSecondaryBrush
+	);
+	--winui-ToggleButtonBackgroundIndeterminatePressed: var(--winui-ControlFillColorTertiaryBrush);
+	--winui-ToggleButtonBackgroundIndeterminateDisabled: var(--winui-ControlFillColorDisabledBrush);
+	--winui-ToggleButtonForeground: var(--winui-TextFillColorPrimaryBrush);
+	--winui-ToggleButtonForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
+	--winui-ToggleButtonForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
+	--winui-ToggleButtonForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+	--winui-ToggleButtonForegroundChecked: var(--winui-TextOnAccentFillColorPrimaryBrush);
+	--winui-ToggleButtonForegroundCheckedPointerOver: var(--winui-TextOnAccentFillColorPrimaryBrush);
+	--winui-ToggleButtonForegroundCheckedPressed: var(--winui-TextOnAccentFillColorSecondaryBrush);
+	--winui-ToggleButtonForegroundCheckedDisabled: var(--winui-TextOnAccentFillColorDisabled);
+	--winui-ToggleButtonForegroundIndeterminate: var(--winui-TextFillColorPrimaryBrush);
+	--winui-ToggleButtonForegroundIndeterminatePointerOver: var(--winui-TextFillColorPrimaryBrush);
+	--winui-ToggleButtonForegroundIndeterminatePressed: var(--winui-TextFillColorSecondaryBrush);
+	--winui-ToggleButtonForegroundIndeterminateDisabled: var(--winui-TextFillColorDisabledBrush);
+	--winui-ToggleButtonBorderBrush: var(--winui-ControlElevationBorderBrush);
+	--winui-ToggleButtonBorderBrushPointerOver: var(--winui-ControlElevationBorderBrush);
+	--winui-ToggleButtonBorderBrushPressed: var(--winui-ControlStrokeColorDefaultBrush);
+	--winui-ToggleButtonBorderBrushDisabled: var(--winui-ControlStrokeColorDefaultBrush);
+	--winui-ToggleButtonBorderBrushChecked: var(--winui-AccentControlElevationBorderBrush);
+	--winui-ToggleButtonBorderBrushCheckedPointerOver: var(--winui-AccentControlElevationBorderBrush);
+	--winui-ToggleButtonBorderBrushCheckedPressed: var(--winui-ControlFillColorTransparentBrush);
+	--winui-ToggleButtonBorderBrushCheckedDisabled: var(--winui-ControlFillColorTransparentBrush);
+	--winui-ToggleButtonBorderBrushIndeterminate: var(--winui-ControlElevationBorderBrush);
+	--winui-ToggleButtonBorderBrushIndeterminatePointerOver: var(--winui-ControlElevationBorderBrush);
+	--winui-ToggleButtonBorderBrushIndeterminatePressed: var(--winui-ControlStrokeColorDefaultBrush);
+	--winui-ToggleButtonBorderBrushIndeterminateDisabled: var(--winui-ControlStrokeColorDefaultBrush);
 	--winui-ToggleSwitchOnStrokeThickness: 0px;
 	--winui-ToggleSwitchOuterBorderStrokeThickness: 1px;
 	--winui-ToggleSwitchContentForeground: var(--winui-TextFillColorPrimaryBrush);
@@ -1079,6 +1118,7 @@
 	--winui-SystemControlForegroundBaseHighBrush: var(--winui-SystemBaseHighColor);
 	--winui-SystemControlForegroundChromeHighBrush: var(--winui-SystemChromeHighColor);
 	--winui-SystemControlHighlightAltChromeWhiteBrush: var(--winui-SystemChromeWhiteColor);
+	--winui-SystemControlHighlightAltTransparentBrush: transparent;
 	--winui-SystemControlHighlightBaseMediumBrush: var(--winui-SystemBaseMediumColor);
 	--winui-SystemControlHighlightListAccentHighBrush: color-mix(
 		in srgb,
@@ -1737,6 +1777,45 @@
 		var(--winui-SystemAccentColorLight2) 2px,
 		var(--winui-ControlStrokeColorDefault) 2px
 	);
+	--winui-ToggleButtonBorderThemeThickness: 1px;
+	--winui-ToggleButtonBackground: var(--winui-ControlFillColorDefaultBrush);
+	--winui-ToggleButtonBackgroundPointerOver: var(--winui-ControlFillColorSecondaryBrush);
+	--winui-ToggleButtonBackgroundPressed: var(--winui-ControlFillColorTertiaryBrush);
+	--winui-ToggleButtonBackgroundDisabled: var(--winui-ControlFillColorDisabledBrush);
+	--winui-ToggleButtonBackgroundChecked: var(--winui-AccentFillColorDefaultBrush);
+	--winui-ToggleButtonBackgroundCheckedPointerOver: var(--winui-AccentFillColorSecondaryBrush);
+	--winui-ToggleButtonBackgroundCheckedPressed: var(--winui-AccentFillColorTertiaryBrush);
+	--winui-ToggleButtonBackgroundCheckedDisabled: var(--winui-AccentFillColorDisabledBrush);
+	--winui-ToggleButtonBackgroundIndeterminate: var(--winui-ControlFillColorDefaultBrush);
+	--winui-ToggleButtonBackgroundIndeterminatePointerOver: var(
+		--winui-ControlFillColorSecondaryBrush
+	);
+	--winui-ToggleButtonBackgroundIndeterminatePressed: var(--winui-ControlFillColorTertiaryBrush);
+	--winui-ToggleButtonBackgroundIndeterminateDisabled: var(--winui-ControlFillColorDisabledBrush);
+	--winui-ToggleButtonForeground: var(--winui-TextFillColorPrimaryBrush);
+	--winui-ToggleButtonForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
+	--winui-ToggleButtonForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
+	--winui-ToggleButtonForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+	--winui-ToggleButtonForegroundChecked: var(--winui-TextOnAccentFillColorPrimaryBrush);
+	--winui-ToggleButtonForegroundCheckedPointerOver: var(--winui-TextOnAccentFillColorPrimaryBrush);
+	--winui-ToggleButtonForegroundCheckedPressed: var(--winui-TextOnAccentFillColorSecondaryBrush);
+	--winui-ToggleButtonForegroundCheckedDisabled: var(--winui-TextOnAccentFillColorDisabled);
+	--winui-ToggleButtonForegroundIndeterminate: var(--winui-TextFillColorPrimaryBrush);
+	--winui-ToggleButtonForegroundIndeterminatePointerOver: var(--winui-TextFillColorPrimaryBrush);
+	--winui-ToggleButtonForegroundIndeterminatePressed: var(--winui-TextFillColorSecondaryBrush);
+	--winui-ToggleButtonForegroundIndeterminateDisabled: var(--winui-TextFillColorDisabledBrush);
+	--winui-ToggleButtonBorderBrush: var(--winui-ControlElevationBorderBrush);
+	--winui-ToggleButtonBorderBrushPointerOver: var(--winui-ControlElevationBorderBrush);
+	--winui-ToggleButtonBorderBrushPressed: var(--winui-ControlStrokeColorDefaultBrush);
+	--winui-ToggleButtonBorderBrushDisabled: var(--winui-ControlStrokeColorDefaultBrush);
+	--winui-ToggleButtonBorderBrushChecked: var(--winui-AccentControlElevationBorderBrush);
+	--winui-ToggleButtonBorderBrushCheckedPointerOver: var(--winui-AccentControlElevationBorderBrush);
+	--winui-ToggleButtonBorderBrushCheckedPressed: var(--winui-ControlFillColorTransparentBrush);
+	--winui-ToggleButtonBorderBrushCheckedDisabled: var(--winui-ControlFillColorTransparentBrush);
+	--winui-ToggleButtonBorderBrushIndeterminate: var(--winui-ControlElevationBorderBrush);
+	--winui-ToggleButtonBorderBrushIndeterminatePointerOver: var(--winui-ControlElevationBorderBrush);
+	--winui-ToggleButtonBorderBrushIndeterminatePressed: var(--winui-ControlStrokeColorDefaultBrush);
+	--winui-ToggleButtonBorderBrushIndeterminateDisabled: var(--winui-ControlStrokeColorDefaultBrush);
 	--winui-ToggleSwitchOnStrokeThickness: 0px;
 	--winui-ToggleSwitchOuterBorderStrokeThickness: 1px;
 	--winui-ToggleSwitchContentForeground: var(--winui-TextFillColorPrimaryBrush);
@@ -1978,6 +2057,7 @@
 	--winui-SystemControlForegroundBaseHighBrush: var(--winui-SystemBaseHighColor);
 	--winui-SystemControlForegroundChromeHighBrush: var(--winui-SystemChromeHighColor);
 	--winui-SystemControlHighlightAltChromeWhiteBrush: var(--winui-SystemChromeWhiteColor);
+	--winui-SystemControlHighlightAltTransparentBrush: transparent;
 	--winui-SystemControlHighlightBaseMediumBrush: var(--winui-SystemBaseMediumColor);
 	--winui-SystemControlHighlightListAccentHighBrush: color-mix(
 		in srgb,
@@ -2665,6 +2745,55 @@
 			var(--winui-SystemAccentColorLight2) 2px,
 			var(--winui-ControlStrokeColorDefault) 2px
 		);
+		--winui-ToggleButtonBorderThemeThickness: 1px;
+		--winui-ToggleButtonBackground: var(--winui-ControlFillColorDefaultBrush);
+		--winui-ToggleButtonBackgroundPointerOver: var(--winui-ControlFillColorSecondaryBrush);
+		--winui-ToggleButtonBackgroundPressed: var(--winui-ControlFillColorTertiaryBrush);
+		--winui-ToggleButtonBackgroundDisabled: var(--winui-ControlFillColorDisabledBrush);
+		--winui-ToggleButtonBackgroundChecked: var(--winui-AccentFillColorDefaultBrush);
+		--winui-ToggleButtonBackgroundCheckedPointerOver: var(--winui-AccentFillColorSecondaryBrush);
+		--winui-ToggleButtonBackgroundCheckedPressed: var(--winui-AccentFillColorTertiaryBrush);
+		--winui-ToggleButtonBackgroundCheckedDisabled: var(--winui-AccentFillColorDisabledBrush);
+		--winui-ToggleButtonBackgroundIndeterminate: var(--winui-ControlFillColorDefaultBrush);
+		--winui-ToggleButtonBackgroundIndeterminatePointerOver: var(
+			--winui-ControlFillColorSecondaryBrush
+		);
+		--winui-ToggleButtonBackgroundIndeterminatePressed: var(--winui-ControlFillColorTertiaryBrush);
+		--winui-ToggleButtonBackgroundIndeterminateDisabled: var(--winui-ControlFillColorDisabledBrush);
+		--winui-ToggleButtonForeground: var(--winui-TextFillColorPrimaryBrush);
+		--winui-ToggleButtonForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
+		--winui-ToggleButtonForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
+		--winui-ToggleButtonForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+		--winui-ToggleButtonForegroundChecked: var(--winui-TextOnAccentFillColorPrimaryBrush);
+		--winui-ToggleButtonForegroundCheckedPointerOver: var(
+			--winui-TextOnAccentFillColorPrimaryBrush
+		);
+		--winui-ToggleButtonForegroundCheckedPressed: var(--winui-TextOnAccentFillColorSecondaryBrush);
+		--winui-ToggleButtonForegroundCheckedDisabled: var(--winui-TextOnAccentFillColorDisabled);
+		--winui-ToggleButtonForegroundIndeterminate: var(--winui-TextFillColorPrimaryBrush);
+		--winui-ToggleButtonForegroundIndeterminatePointerOver: var(--winui-TextFillColorPrimaryBrush);
+		--winui-ToggleButtonForegroundIndeterminatePressed: var(--winui-TextFillColorSecondaryBrush);
+		--winui-ToggleButtonForegroundIndeterminateDisabled: var(--winui-TextFillColorDisabledBrush);
+		--winui-ToggleButtonBorderBrush: var(--winui-ControlElevationBorderBrush);
+		--winui-ToggleButtonBorderBrushPointerOver: var(--winui-ControlElevationBorderBrush);
+		--winui-ToggleButtonBorderBrushPressed: var(--winui-ControlStrokeColorDefaultBrush);
+		--winui-ToggleButtonBorderBrushDisabled: var(--winui-ControlStrokeColorDefaultBrush);
+		--winui-ToggleButtonBorderBrushChecked: var(--winui-AccentControlElevationBorderBrush);
+		--winui-ToggleButtonBorderBrushCheckedPointerOver: var(
+			--winui-AccentControlElevationBorderBrush
+		);
+		--winui-ToggleButtonBorderBrushCheckedPressed: var(--winui-ControlFillColorTransparentBrush);
+		--winui-ToggleButtonBorderBrushCheckedDisabled: var(--winui-ControlFillColorTransparentBrush);
+		--winui-ToggleButtonBorderBrushIndeterminate: var(--winui-ControlElevationBorderBrush);
+		--winui-ToggleButtonBorderBrushIndeterminatePointerOver: var(
+			--winui-ControlElevationBorderBrush
+		);
+		--winui-ToggleButtonBorderBrushIndeterminatePressed: var(
+			--winui-ControlStrokeColorDefaultBrush
+		);
+		--winui-ToggleButtonBorderBrushIndeterminateDisabled: var(
+			--winui-ControlStrokeColorDefaultBrush
+		);
 		--winui-ToggleSwitchOnStrokeThickness: 0px;
 		--winui-ToggleSwitchOuterBorderStrokeThickness: 1px;
 		--winui-ToggleSwitchContentForeground: var(--winui-TextFillColorPrimaryBrush);
@@ -2920,6 +3049,7 @@
 		--winui-SystemControlForegroundBaseHighBrush: var(--winui-SystemBaseHighColor);
 		--winui-SystemControlForegroundChromeHighBrush: var(--winui-SystemChromeHighColor);
 		--winui-SystemControlHighlightAltChromeWhiteBrush: var(--winui-SystemChromeWhiteColor);
+		--winui-SystemControlHighlightAltTransparentBrush: transparent;
 		--winui-SystemControlHighlightBaseMediumBrush: var(--winui-SystemBaseMediumColor);
 		--winui-SystemControlHighlightListAccentHighBrush: color-mix(
 			in srgb,
@@ -3526,6 +3656,47 @@
 		var(--winui-SystemAccentColorLight2) 2px,
 		var(--winui-ControlStrokeColorDefault) 2px
 	);
+	--winui-ToggleButtonBorderThemeThickness: 1px;
+	--winui-ToggleButtonBackground: var(--winui-SystemColorButtonFaceColor);
+	--winui-ToggleButtonBackgroundPointerOver: var(--winui-SystemColorHighlightTextColorBrush);
+	--winui-ToggleButtonBackgroundPressed: var(--winui-SystemColorHighlightTextColorBrush);
+	--winui-ToggleButtonBackgroundDisabled: var(--winui-SystemColorButtonFaceColor);
+	--winui-ToggleButtonBackgroundChecked: var(--winui-SystemColorHighlightColor);
+	--winui-ToggleButtonBackgroundCheckedPointerOver: var(--winui-SystemColorButtonTextColorBrush);
+	--winui-ToggleButtonBackgroundCheckedPressed: var(--winui-SystemColorHighlightTextColorBrush);
+	--winui-ToggleButtonBackgroundCheckedDisabled: var(--winui-SystemColorButtonFaceColor);
+	--winui-ToggleButtonBackgroundIndeterminate: var(--winui-SystemColorButtonFaceColor);
+	--winui-ToggleButtonBackgroundIndeterminatePointerOver: var(--winui-SystemColorButtonFaceColor);
+	--winui-ToggleButtonBackgroundIndeterminatePressed: var(--winui-SystemColorButtonFaceColor);
+	--winui-ToggleButtonBackgroundIndeterminateDisabled: var(--winui-SystemColorButtonFaceColor);
+	--winui-ToggleButtonForeground: var(--winui-SystemControlForegroundBaseHighBrush);
+	--winui-ToggleButtonForegroundPointerOver: var(--winui-SystemColorHighlightColor);
+	--winui-ToggleButtonForegroundPressed: var(--winui-SystemColorHighlightColor);
+	--winui-ToggleButtonForegroundDisabled: var(--winui-SystemControlDisabledBaseMediumLowBrush);
+	--winui-ToggleButtonForegroundChecked: var(--winui-SystemControlHighlightAltChromeWhiteBrush);
+	--winui-ToggleButtonForegroundCheckedPointerOver: var(--winui-SystemColorButtonFaceColorBrush);
+	--winui-ToggleButtonForegroundCheckedPressed: var(--winui-SystemColorHighlightColorBrush);
+	--winui-ToggleButtonForegroundCheckedDisabled: var(
+		--winui-SystemControlDisabledBaseMediumLowBrush
+	);
+	--winui-ToggleButtonForegroundIndeterminate: var(--winui-SystemControlForegroundBaseHighBrush);
+	--winui-ToggleButtonForegroundIndeterminatePointerOver: var(--winui-SystemColorHighlightColor);
+	--winui-ToggleButtonForegroundIndeterminatePressed: var(--winui-SystemColorHighlightColor);
+	--winui-ToggleButtonForegroundIndeterminateDisabled: var(
+		--winui-SystemControlDisabledBaseMediumLowBrush
+	);
+	--winui-ToggleButtonBorderBrush: var(--winui-SystemColorButtonTextColor);
+	--winui-ToggleButtonBorderBrushPointerOver: var(--winui-SystemColorHighlightColor);
+	--winui-ToggleButtonBorderBrushPressed: var(--winui-SystemColorHighlightTextColorBrush);
+	--winui-ToggleButtonBorderBrushDisabled: var(--winui-SystemColorGrayTextColor);
+	--winui-ToggleButtonBorderBrushChecked: var(--winui-SystemControlHighlightAltTransparentBrush);
+	--winui-ToggleButtonBorderBrushCheckedPointerOver: var(--winui-SystemColorButtonTextColorBrush);
+	--winui-ToggleButtonBorderBrushCheckedPressed: var(--winui-SystemColorHighlightTextColorBrush);
+	--winui-ToggleButtonBorderBrushCheckedDisabled: var(--winui-SystemColorGrayTextColor);
+	--winui-ToggleButtonBorderBrushIndeterminate: var(--winui-SystemColorButtonTextColor);
+	--winui-ToggleButtonBorderBrushIndeterminatePointerOver: var(--winui-SystemColorHighlightColor);
+	--winui-ToggleButtonBorderBrushIndeterminatePressed: var(--winui-SystemColorHighlightColor);
+	--winui-ToggleButtonBorderBrushIndeterminateDisabled: var(--winui-SystemColorGrayTextColor);
 	--winui-ToggleSwitchOnStrokeThickness: 1px;
 	--winui-ToggleSwitchOuterBorderStrokeThickness: 1px;
 	--winui-ToggleSwitchContentForeground: var(--winui-SystemColorWindowTextColorBrush);
@@ -3765,6 +3936,7 @@
 	--winui-SystemControlForegroundBaseHighBrush: var(--winui-SystemColorButtonTextColor);
 	--winui-SystemControlForegroundChromeHighBrush: var(--winui-SystemColorButtonTextColor);
 	--winui-SystemControlHighlightAltChromeWhiteBrush: var(--winui-SystemColorHighlightTextColor);
+	--winui-SystemControlHighlightAltTransparentBrush: var(--winui-SystemColorHighlightTextColor);
 	--winui-SystemControlHighlightBaseMediumBrush: var(--winui-SystemColorHighlightColor);
 	--winui-SystemControlHighlightListAccentHighBrush: var(--winui-SystemColorHighlightColor);
 	--winui-SystemControlHighlightListAccentLowBrush: var(--winui-SystemColorHighlightColor);

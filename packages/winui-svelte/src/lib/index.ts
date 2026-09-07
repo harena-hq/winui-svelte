@@ -58,6 +58,8 @@ export type {
 } from './components/TeachingTip.svelte';
 export { default as TextBox } from './components/TextBox.svelte';
 export type { TextBoxProps } from './components/TextBox.svelte';
+export { default as ToggleButton } from './components/ToggleButton.svelte';
+export type { ToggleButtonProps } from './components/ToggleButton.svelte';
 export { default as ToggleSwitch } from './components/ToggleSwitch.svelte';
 export type { ToggleSwitchProps } from './components/ToggleSwitch.svelte';
 export { default as ToolTip } from './components/ToolTip.svelte';

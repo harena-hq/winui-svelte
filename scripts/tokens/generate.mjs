@@ -35,6 +35,7 @@ import {
 	CONTENTDIALOG_KEYS,
 	MENUFLYOUT_KEYS,
 	TEACHINGTIP_KEYS,
+	TOGGLEBUTTON_KEYS,
 	DEFINED_BY,
 	TYPE_RAMP
 } from './manifest.mjs';
@@ -805,7 +806,8 @@ function select(resources, framework) {
 		['FLYOUT_KEYS', FLYOUT_KEYS],
 		['MENUFLYOUT_KEYS', MENUFLYOUT_KEYS],
 		['CONTENTDIALOG_KEYS', CONTENTDIALOG_KEYS],
-		['TEACHINGTIP_KEYS', TEACHINGTIP_KEYS]
+		['TEACHINGTIP_KEYS', TEACHINGTIP_KEYS],
+		['TOGGLEBUTTON_KEYS', TOGGLEBUTTON_KEYS]
 	];
 	for (let i = 0; i < SEED_SETS.length; i++)
 		for (let j = i + 1; j < SEED_SETS.length; j++) {
