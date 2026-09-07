@@ -727,6 +727,48 @@ the reference machine the same tip sits 51 above the app's client bottom where `
 of 20 plus the 8px tail track account for 28; the remaining 23 has no rule behind it that this
 sweep could find, and is not reproduced.
 
+### The shadow a portalled surface casts — unit 047
+
+WD-012 declined this and named its own reversal condition: a measured profile at two or more
+z-distances, on both themes. The condition was met, and the argument it rested on turned out to
+be wrong in its first clause. `Common_themeresources.xaml:48` sets
+`ThemeShadowIsUsingDropShadows` to **True**, so what the popup host casts here is a plain drop
+shadow rather than the composition receiver-list projection the entry described — and a drop
+shadow is exactly what `box-shadow` is. The depths are in the pin too: `TeachingTip.h:230` and
+`:231` put the tip's card at z = 32 and its tail at 0, and
+`NavigationView_themeresources.xaml:207`, `NumberBox_themeresources.xaml:33` and
+`TabView_themeresources.xaml:265` each state a popup depth of 16. What the pin does not state
+is the depth-to-blur recipe, and that is the only part that had to be measured.
+
+**Three depths, and this unit fits one.** A popup's ramp closes in nineteen pixels, a ToolTip's
+in about eight, and a ContentDialog's has not closed forty out. Flyout, MenuFlyout and
+TeachingTip take the fitted popup value; ToolTip and ContentDialog keep WD-012, which narrows
+to them.
+
+**Dark is not light.** At the popup depth the shadow measures 0.123 alpha at the card's edge in
+light and 0.219 in dark — 1.78x — and the same ratio holds when the dark recipe is rendered
+back. A single-theme measurement would have licensed reusing the light value and drawn every
+portalled surface half as dark as the original in the theme where the error is hardest to see.
+
+**It is not a Fluent shadow token.** WinUI's depths are 16 and 32 and Fluent 2 publishes
+`shadow16` and `shadow28`, so the obvious move was to cite rather than fit. Rendered and
+measured, every Fluent token darkens the pixels _above_ the card — 229 and 228 against a 243
+backdrop — because each carries a symmetric ambient ring, and the original darkens nothing
+above to the pixel. Recorded because the next reader will have the same idea.
+
+The value lives in `PLATFORM_SHADOWS` in the token manifest, beside `PLATFORM_METRICS` and for
+the same reason: it is a platform value with no resource to be read from. It is the first such
+family that is **per theme**, which the generator had no path for — the hand-supplied families
+before it were all `:root`-only.
+
+**The suite could not see any of it.** Adding a whole drop shadow to three surfaces changed no
+test: the largest pixel change is 30 levels out of 255, and `toHaveScreenshot`'s default
+threshold is 0.2 in YIQ. Twenty-seven of twenty-seven passed against baselines that show no
+shadow at all. The images had to be deleted before Playwright would write new ones. This is the
+second time in two units that a real visual change has been invisible to the gate, and it is
+the strongest argument yet that a green suite means _no pixel moved by more than the threshold_
+and nothing else.
+
 ## What this file does not cover
 
 The sweep reads what a control _draws_. It does not enumerate automation peers, keyboard

@@ -11,6 +11,7 @@ import {
 	EXCLUDED,
 	PLATFORM_FONTS,
 	PLATFORM_METRICS,
+	PLATFORM_SHADOWS,
 	RADIOBUTTON_KEYS,
 	SLIDER_KEYS,
 	SOURCE_FILES,
@@ -870,7 +871,8 @@ function select(resources, framework) {
 		...Object.keys(SYSTEM_COLORS),
 		...Object.keys(ACCENT_COLORS),
 		...Object.keys(PLATFORM_FONTS),
-		...Object.keys(PLATFORM_BRUSHES)
+		...Object.keys(PLATFORM_BRUSHES),
+		...Object.keys(PLATFORM_SHADOWS)
 	]);
 	const reached = new Set();
 	const queue = [...byKey.keys()];
@@ -1065,6 +1067,8 @@ function stylesheet(doc, framework, selection, extraEmitted) {
 		// and `FocusVisualSecondaryThickness` are `Control` property defaults rather than
 		// theme resources, so the value has nowhere to be read from — see manifest.mjs.
 		...Object.entries(PLATFORM_METRICS).flatMap(([key, value]) => declaration(key, value, 1)),
+		// Unlike the two platform families above, the measured popup shadow is per theme.
+		...Object.entries(PLATFORM_SHADOWS).flatMap(([key, value]) => declaration(key, value.light, 1)),
 		'',
 		...forThemes([LIGHT, null], 1)
 	];
@@ -1077,10 +1081,20 @@ function stylesheet(doc, framework, selection, extraEmitted) {
 		'',
 		...systemColors(depth, literal),
 		'',
-		...forThemes([DARK], depth)
+		...forThemes([DARK], depth),
+		...Object.entries(PLATFORM_SHADOWS).flatMap(([key, value]) =>
+			declaration(key, value.dark, depth)
+		)
 	];
 
-	const highContrast = [...systemColors(1, literal), '', ...forThemes([HIGH_CONTRAST], 1)];
+	const highContrast = [
+		...systemColors(1, literal),
+		'',
+		...forThemes([HIGH_CONTRAST], 1),
+		...Object.entries(PLATFORM_SHADOWS).flatMap(([key, value]) =>
+			declaration(key, value.highContrast, 1)
+		)
+	];
 
 	const forcedColors = systemColors(2, (entry) => entry.keyword);
 

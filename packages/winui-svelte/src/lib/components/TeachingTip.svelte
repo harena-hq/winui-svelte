@@ -314,9 +314,12 @@
 	   no `BackgroundSizing`, so the default `OuterBorderEdge` is what upstream draws and CSS's
 	   default `border-box` is already it.
 
-	   WD-012: WinUI's popup host casts this card's ThemeShadow. No pinned resource states its
-	   recipe, so this portalled surface deliberately draws no `box-shadow`; see
-	   docs/divergences.md. */
+	   The drop shadow WinUI's popup host casts at popup depth. No dictionary states the recipe;
+	   `PLATFORM_SHADOWS` in scripts/tokens/manifest.mjs carries the value, measured on the
+	   reference guest and fitted against the browser's own blur, and records how.
+	   `TeachingTip.h:231` puts the tail's elevation at 0 against the card's 32, so upstream's
+	   tail casts nothing of its own — and the tail is a child of this box, so it needs no rule
+	   to keep it that way. */
 	.card {
 		position: relative;
 		box-sizing: border-box;
@@ -337,6 +340,7 @@
 		border-color: var(--winui-TeachingTipBorderBrush);
 		border-radius: var(--winui-OverlayCornerRadius);
 		background: var(--winui-TeachingTipBackgroundBrush);
+		box-shadow: var(--winui-PopupShadow);
 		color: var(--winui-TeachingTipForegroundBrush);
 		outline: none;
 	}

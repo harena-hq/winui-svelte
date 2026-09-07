@@ -443,9 +443,9 @@
 <style>
 	/* WD-002: WinUI paints a `DesktopAcrylicBackdrop`, which cannot be represented in CSS;
 	   this flat backdrop equivalent is recorded in docs/divergences.md. */
-	/* WD-012: WinUI's popup host casts this presenter's ThemeShadow. No pinned resource states
-	   its recipe, so this portalled surface deliberately draws no `box-shadow`; see
-	   docs/divergences.md. */
+	/* The drop shadow WinUI's popup host casts at popup depth. No dictionary states the
+	   recipe; `PLATFORM_SHADOWS` in scripts/tokens/manifest.mjs carries the value, measured on
+	   the reference guest and fitted against the browser's own blur, and records how. */
 	.presenter {
 		box-sizing: border-box;
 		/* A column flex container, because XAML's stack has no margin collapsing and CSS's
@@ -471,6 +471,7 @@
 		border: var(--winui-MenuFlyoutPresenterBorderThemeThickness) solid
 			var(--winui-MenuFlyoutPresenterBorderBrush);
 		border-radius: var(--winui-OverlayCornerRadius);
+		box-shadow: var(--winui-PopupShadow);
 		padding: var(--winui-MenuFlyoutPresenterThemePadding);
 		min-width: var(--winui-FlyoutThemeMinWidth);
 		min-height: var(--winui-MenuFlyoutThemeMinHeight);
