@@ -2647,13 +2647,26 @@ export const CONTENTDIALOG_KEYS = {
  * `controls/dev/TeachingTip/TeachingTip_themeresources.xaml`, the records the control
  * draws with.
  *
- * The dictionary carries fifty-one keys; these thirty-six are the ones the template
- * reads. Left out on purpose, and recorded in `docs/surface.md` rather than here:
+ * The dictionary carries fifty keys and these thirty-six are the selection. The other
+ * fourteen are named here rather than left to be counted, because a reader who cannot see
+ * which keys are missing cannot tell an unselected key from an emitted one — and the two
+ * are indistinguishable until C9 fails on a `var()` for a key that was never chosen.
+ *
+ * Dead in the template, and expanded on in `docs/surface.md`:
  * `TeachingTipContentBorderThicknessTop`/`Bottom`/`Left`/`Right`, four placement-specific
  * border thicknesses nothing ever assigns — the Style sets `...Untargeted` once and no code
  * or visual state replaces it — and `TeachingTipTopHighlightBrush`/`Height`/
  * `OffsetForBorder`, whose `TopHighlightLeft` and `TopHighlightRight` parts are gone from
  * the template.
+ *
+ * Live upstream and deliberately unselected: `TeachingTipTailPolygonMarginTop`/`Bottom`/
+ * `Left`/`Right`, the -1 nudges that pull the tail back over the card's border, which this
+ * reproduction gets from the tail's own viewBox instead of from a margin; and
+ * `TeachingTipIconPresenterMarginWithoutIcon`, `TeachingTipMainContentAbsentMargin` and
+ * `TeachingTipTitleStackPanelMarginWithFooterCloseButton`, the three absent-state variants,
+ * every one of them `0,0,0,0`. A component writes `margin: 0` for those with the dictionary
+ * line cited, because a custom property whose whole content is a zero says less than the
+ * line number does.
  *
  * `TeachingTipTailShortSideLength` and `TeachingTipTailMargin` are seeded and then excluded:
  * both are `GridLength`, the width of one of the tracks the tail grid divides itself into,
