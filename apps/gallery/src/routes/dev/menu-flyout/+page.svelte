@@ -59,6 +59,27 @@
 		{ id: 'large', text: 'Large icons', groupName: 'size' }
 	];
 
+	const cascadingItems: MenuFlyoutEntry[] = [
+		{ id: 'open', text: 'Open' },
+		{
+			id: 'send-to',
+			text: 'Send to',
+			items: [
+				{ id: 'bluetooth', text: 'Bluetooth' },
+				{ id: 'desktop-shortcut', text: 'Desktop (shortcut)' },
+				{
+					id: 'compressed-file',
+					text: 'Compressed file',
+					items: [
+						{ id: 'compress-email', text: 'Compress and email' },
+						{ id: 'compress-7z', text: 'Compress to .7z' },
+						{ id: 'compress-zip', text: 'Compress to .zip' }
+					]
+				}
+			]
+		}
+	];
+
 	const placementItems = [{ id: 'item', text: 'Menu item' }];
 	const placements = [
 		'top',
@@ -136,6 +157,15 @@
 	<MenuFlyout open items={radioItems} bind:selected={selectedRadio}>
 		{#snippet children(props)}
 			<Button {...props}>Options</Button>
+		{/snippet}
+	</MenuFlyout>
+</div>
+
+<h2 class="winui-SubtitleTextBlockStyle">cascading</h2>
+<div class="row clear-above indent">
+	<MenuFlyout open items={cascadingItems}>
+		{#snippet children(props)}
+			<Button {...props}>File Options</Button>
 		{/snippet}
 	</MenuFlyout>
 </div>
