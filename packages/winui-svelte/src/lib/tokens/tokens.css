@@ -961,6 +961,58 @@
 	--winui-ProgressBarTrackCornerRadius: 0.5px;
 	--winui-ProgressRingForegroundThemeBrush: var(--winui-AccentFillColorDefaultBrush);
 	--winui-ProgressRingBackgroundThemeBrush: var(--winui-ControlFillColorTransparentBrush);
+	--winui-TeachingTipBorderBrush: var(--winui-SurfaceStrokeColorDefaultBrush);
+	--winui-TeachingTipTransientBackground: var(--winui-AcrylicInAppFillColorDefaultBrush);
+	--winui-TeachingTipForegroundBrush: var(--winui-TextFillColorPrimaryBrush);
+	--winui-TeachingTipBackgroundBrush: var(--winui-SolidBackgroundFillColorTertiaryBrush);
+	--winui-TeachingTipTitleForegroundBrush: var(--winui-TextFillColorPrimaryBrush);
+	--winui-TeachingTipSubtitleForegroundBrush: var(--winui-TextFillColorPrimaryBrush);
+	--winui-TeachingTipAlternateCloseButtonBackground: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-TeachingTipAlternateCloseButtonBackgroundPointerOver: var(
+		--winui-SubtleFillColorSecondaryBrush
+	);
+	--winui-TeachingTipAlternateCloseButtonBackgroundPressed: var(
+		--winui-SubtleFillColorTertiaryBrush
+	);
+	--winui-TeachingTipAlternateCloseButtonBackgroundDisabled: var(
+		--winui-SubtleFillColorTransparentBrush
+	);
+	--winui-TeachingTipAlternateCloseButtonForeground: var(--winui-TextFillColorPrimaryBrush);
+	--winui-TeachingTipAlternateCloseButtonForegroundPointerOver: var(
+		--winui-TextFillColorPrimaryBrush
+	);
+	--winui-TeachingTipAlternateCloseButtonForegroundPressed: var(
+		--winui-TextFillColorSecondaryBrush
+	);
+	--winui-TeachingTipAlternateCloseButtonForegroundDisabled: var(
+		--winui-TextFillColorDisabledBrush
+	);
+	--winui-TeachingTipAlternateCloseButtonBorderBrush: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-TeachingTipAlternateCloseButtonBorderBrushPointerOver: var(
+		--winui-SubtleFillColorSecondaryBrush
+	);
+	--winui-TeachingTipAlternateCloseButtonBorderBrushPressed: var(
+		--winui-SubtleFillColorTertiaryBrush
+	);
+	--winui-TeachingTipAlternateCloseButtonBorderBrushDisabled: var(
+		--winui-SubtleFillColorTransparentBrush
+	);
+	--winui-TeachingTipAlternateCloseButtonBorderThickness: 1px;
+	--winui-TeachingTipMinHeight: 40px;
+	--winui-TeachingTipMaxHeight: 520px;
+	--winui-TeachingTipMinWidth: 320px;
+	--winui-TeachingTipMaxWidth: 336px;
+	--winui-TeachingTipButtonPanelMargin: 12px 0px 0px 0px;
+	--winui-TeachingTipRightButtonMargin: 12px 0px 0px 4px;
+	--winui-TeachingTipLeftButtonMargin: 12px 4px 0px 0px;
+	--winui-TeachingTipMainContentPresentMargin: 12px 0px 0px 0px;
+	--winui-TeachingTipTitleStackPanelMarginWithHeaderCloseButton: 0px 28px 0px 0px;
+	--winui-TeachingTipIconPresenterMarginWithIcon: 0px 12px 0px 0px;
+	--winui-TeachingTipContentBorderThicknessUntargeted: 1px;
+	--winui-TeachingTipAlternateCloseButtonSize: 40px;
+	--winui-TeachingTipAlternateCloseButtonGlyphSize: 16px;
+	--winui-TeachingTipContentMargin: 12px;
+	--winui-TeachingTipBorderThickness: 1px;
 	--winui-TitleBarForegroundBrush: var(--winui-TextFillColorPrimaryBrush);
 	--winui-TitleBarBackButtonBackground: var(--winui-SubtleFillColorTransparentBrush);
 	--winui-TitleBarBackButtonBackgroundPointerOver: var(--winui-SubtleFillColorSecondaryBrush);
@@ -1837,6 +1889,43 @@
 	--winui-ProgressBarErrorForegroundColor: var(--winui-SystemFillColorCritical);
 	--winui-ProgressRingForegroundThemeBrush: var(--winui-AccentFillColorDefaultBrush);
 	--winui-ProgressRingBackgroundThemeBrush: var(--winui-ControlFillColorTransparentBrush);
+	--winui-TeachingTipBorderBrush: var(--winui-SurfaceStrokeColorDefaultBrush);
+	--winui-TeachingTipTransientBackground: var(--winui-AcrylicInAppFillColorDefaultBrush);
+	--winui-TeachingTipForegroundBrush: var(--winui-TextFillColorPrimaryBrush);
+	--winui-TeachingTipBackgroundBrush: var(--winui-SolidBackgroundFillColorTertiaryBrush);
+	--winui-TeachingTipTitleForegroundBrush: var(--winui-TextFillColorPrimaryBrush);
+	--winui-TeachingTipSubtitleForegroundBrush: var(--winui-TextFillColorPrimaryBrush);
+	--winui-TeachingTipAlternateCloseButtonBackground: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-TeachingTipAlternateCloseButtonBackgroundPointerOver: var(
+		--winui-SubtleFillColorSecondaryBrush
+	);
+	--winui-TeachingTipAlternateCloseButtonBackgroundPressed: var(
+		--winui-SubtleFillColorTertiaryBrush
+	);
+	--winui-TeachingTipAlternateCloseButtonBackgroundDisabled: var(
+		--winui-SubtleFillColorTransparentBrush
+	);
+	--winui-TeachingTipAlternateCloseButtonForeground: var(--winui-TextFillColorPrimaryBrush);
+	--winui-TeachingTipAlternateCloseButtonForegroundPointerOver: var(
+		--winui-TextFillColorPrimaryBrush
+	);
+	--winui-TeachingTipAlternateCloseButtonForegroundPressed: var(
+		--winui-TextFillColorSecondaryBrush
+	);
+	--winui-TeachingTipAlternateCloseButtonForegroundDisabled: var(
+		--winui-TextFillColorDisabledBrush
+	);
+	--winui-TeachingTipAlternateCloseButtonBorderBrush: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-TeachingTipAlternateCloseButtonBorderBrushPointerOver: var(
+		--winui-SubtleFillColorSecondaryBrush
+	);
+	--winui-TeachingTipAlternateCloseButtonBorderBrushPressed: var(
+		--winui-SubtleFillColorTertiaryBrush
+	);
+	--winui-TeachingTipAlternateCloseButtonBorderBrushDisabled: var(
+		--winui-SubtleFillColorTransparentBrush
+	);
+	--winui-TeachingTipAlternateCloseButtonBorderThickness: 1px;
 	--winui-TitleBarForegroundBrush: var(--winui-TextFillColorPrimaryBrush);
 	--winui-TitleBarBackButtonBackground: var(--winui-SubtleFillColorTransparentBrush);
 	--winui-TitleBarBackButtonBackgroundPointerOver: var(--winui-SubtleFillColorSecondaryBrush);
@@ -2734,6 +2823,45 @@
 		--winui-ProgressBarErrorForegroundColor: var(--winui-SystemFillColorCritical);
 		--winui-ProgressRingForegroundThemeBrush: var(--winui-AccentFillColorDefaultBrush);
 		--winui-ProgressRingBackgroundThemeBrush: var(--winui-ControlFillColorTransparentBrush);
+		--winui-TeachingTipBorderBrush: var(--winui-SurfaceStrokeColorDefaultBrush);
+		--winui-TeachingTipTransientBackground: var(--winui-AcrylicInAppFillColorDefaultBrush);
+		--winui-TeachingTipForegroundBrush: var(--winui-TextFillColorPrimaryBrush);
+		--winui-TeachingTipBackgroundBrush: var(--winui-SolidBackgroundFillColorTertiaryBrush);
+		--winui-TeachingTipTitleForegroundBrush: var(--winui-TextFillColorPrimaryBrush);
+		--winui-TeachingTipSubtitleForegroundBrush: var(--winui-TextFillColorPrimaryBrush);
+		--winui-TeachingTipAlternateCloseButtonBackground: var(--winui-SubtleFillColorTransparentBrush);
+		--winui-TeachingTipAlternateCloseButtonBackgroundPointerOver: var(
+			--winui-SubtleFillColorSecondaryBrush
+		);
+		--winui-TeachingTipAlternateCloseButtonBackgroundPressed: var(
+			--winui-SubtleFillColorTertiaryBrush
+		);
+		--winui-TeachingTipAlternateCloseButtonBackgroundDisabled: var(
+			--winui-SubtleFillColorTransparentBrush
+		);
+		--winui-TeachingTipAlternateCloseButtonForeground: var(--winui-TextFillColorPrimaryBrush);
+		--winui-TeachingTipAlternateCloseButtonForegroundPointerOver: var(
+			--winui-TextFillColorPrimaryBrush
+		);
+		--winui-TeachingTipAlternateCloseButtonForegroundPressed: var(
+			--winui-TextFillColorSecondaryBrush
+		);
+		--winui-TeachingTipAlternateCloseButtonForegroundDisabled: var(
+			--winui-TextFillColorDisabledBrush
+		);
+		--winui-TeachingTipAlternateCloseButtonBorderBrush: var(
+			--winui-SubtleFillColorTransparentBrush
+		);
+		--winui-TeachingTipAlternateCloseButtonBorderBrushPointerOver: var(
+			--winui-SubtleFillColorSecondaryBrush
+		);
+		--winui-TeachingTipAlternateCloseButtonBorderBrushPressed: var(
+			--winui-SubtleFillColorTertiaryBrush
+		);
+		--winui-TeachingTipAlternateCloseButtonBorderBrushDisabled: var(
+			--winui-SubtleFillColorTransparentBrush
+		);
+		--winui-TeachingTipAlternateCloseButtonBorderThickness: 1px;
 		--winui-TitleBarForegroundBrush: var(--winui-TextFillColorPrimaryBrush);
 		--winui-TitleBarBackButtonBackground: var(--winui-SubtleFillColorTransparentBrush);
 		--winui-TitleBarBackButtonBackgroundPointerOver: var(--winui-SubtleFillColorSecondaryBrush);
@@ -3550,6 +3678,43 @@
 	--winui-ProgressBarErrorForegroundColor: var(--winui-SystemColorHotlightColor);
 	--winui-ProgressRingForegroundThemeBrush: var(--winui-SystemColorHighlightColor);
 	--winui-ProgressRingBackgroundThemeBrush: var(--winui-SystemColorButtonFaceColor);
+	--winui-TeachingTipBorderBrush: var(--winui-SystemColorWindowTextColorBrush);
+	--winui-TeachingTipTransientBackground: var(--winui-AcrylicInAppFillColorDefaultBrush);
+	--winui-TeachingTipForegroundBrush: var(--winui-SystemColorWindowTextColorBrush);
+	--winui-TeachingTipBackgroundBrush: var(--winui-SystemColorWindowColorBrush);
+	--winui-TeachingTipTitleForegroundBrush: var(--winui-SystemColorWindowTextColorBrush);
+	--winui-TeachingTipSubtitleForegroundBrush: var(--winui-SystemColorWindowTextColorBrush);
+	--winui-TeachingTipAlternateCloseButtonBackground: var(--winui-SystemColorButtonFaceColorBrush);
+	--winui-TeachingTipAlternateCloseButtonBackgroundPointerOver: var(
+		--winui-SystemColorHighlightTextColorBrush
+	);
+	--winui-TeachingTipAlternateCloseButtonBackgroundPressed: var(
+		--winui-SystemColorHighlightTextColorBrush
+	);
+	--winui-TeachingTipAlternateCloseButtonBackgroundDisabled: var(
+		--winui-SystemColorButtonFaceColorBrush
+	);
+	--winui-TeachingTipAlternateCloseButtonForeground: var(--winui-SystemColorButtonTextColorBrush);
+	--winui-TeachingTipAlternateCloseButtonForegroundPointerOver: var(
+		--winui-SystemColorHighlightColorBrush
+	);
+	--winui-TeachingTipAlternateCloseButtonForegroundPressed: var(
+		--winui-SystemColorHighlightColorBrush
+	);
+	--winui-TeachingTipAlternateCloseButtonForegroundDisabled: var(
+		--winui-SystemColorGrayTextColorBrush
+	);
+	--winui-TeachingTipAlternateCloseButtonBorderBrush: var(--winui-SystemColorButtonFaceColorBrush);
+	--winui-TeachingTipAlternateCloseButtonBorderBrushPointerOver: var(
+		--winui-SystemColorHighlightColorBrush
+	);
+	--winui-TeachingTipAlternateCloseButtonBorderBrushPressed: var(
+		--winui-SystemColorHighlightTextColorBrush
+	);
+	--winui-TeachingTipAlternateCloseButtonBorderBrushDisabled: var(
+		--winui-SystemColorButtonFaceColorBrush
+	);
+	--winui-TeachingTipAlternateCloseButtonBorderThickness: 1px;
 	--winui-TitleBarForegroundBrush: var(--winui-SystemControlForegroundBaseHighBrush);
 	--winui-TitleBarBackButtonBackground: var(--winui-SystemColorButtonFaceColor);
 	--winui-TitleBarBackButtonBackgroundPointerOver: var(--winui-SystemColorHighlightColor);
