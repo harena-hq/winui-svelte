@@ -2559,7 +2559,24 @@ export const MENUFLYOUT_KEYS = {
 	// it out because a menu with no icons cannot reach the state; the icon unit is what
 	// reaches it.
 	MenuFlyoutItemDoublePlaceholderThemeThickness:
-		'the gutter an item reserves for a check and an icon together'
+		'the gutter an item reserves for a check and an icon together',
+
+	// The sub item — a row that opens a menu of its own. Five of its family were already here,
+	// because `DefaultToggleMenuFlyoutItemStyle` reads them for a row that opens nothing; these
+	// are the rest, including the fourth state no other row has.
+	MenuFlyoutSubItemBackground: 'a sub item at rest',
+	MenuFlyoutSubItemBackgroundBrush: "a sub item's border",
+	MenuFlyoutSubItemBorderThickness: "a sub item's border width",
+	MenuFlyoutSubItemBackgroundDisabled: 'a disabled sub item',
+	MenuFlyoutSubItemBackgroundSubMenuOpened: 'a sub item whose menu is open',
+	MenuFlyoutSubItemForeground: "a sub item's text",
+	MenuFlyoutSubItemForegroundPointerOver: "a sub item's text under the pointer",
+	MenuFlyoutSubItemForegroundSubMenuOpened: "a sub item's text while its menu is open",
+	MenuFlyoutSubItemChevronPointerOver: "a sub item's chevron under the pointer",
+	MenuFlyoutSubItemChevronPressed: "a sub item's chevron while pressed",
+	MenuFlyoutSubItemChevronSubMenuOpened: "a sub item's chevron while its menu is open",
+	MenuFlyoutSubItemChevronDisabled: "a disabled sub item's chevron",
+	MenuFlyoutItemChevronMargin: 'the gap around a sub item chevron'
 };
 
 /**

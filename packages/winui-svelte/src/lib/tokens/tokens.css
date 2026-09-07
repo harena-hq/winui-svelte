@@ -519,11 +519,22 @@
 	--winui-MenuFlyoutItemForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
 	--winui-MenuFlyoutItemForegroundPressed: var(--winui-TextFillColorPrimaryBrush);
 	--winui-MenuFlyoutItemForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+	--winui-MenuFlyoutSubItemBackground: var(--winui-SubtleFillColorTransparentBrush);
 	--winui-MenuFlyoutSubItemBackgroundPointerOver: var(--winui-SubtleFillColorSecondaryBrush);
 	--winui-MenuFlyoutSubItemBackgroundPressed: var(--winui-SubtleFillColorTertiaryBrush);
+	--winui-MenuFlyoutSubItemBackgroundSubMenuOpened: var(--winui-SubtleFillColorSecondaryBrush);
+	--winui-MenuFlyoutSubItemBackgroundDisabled: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-MenuFlyoutSubItemBackgroundBrush: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-MenuFlyoutSubItemForeground: var(--winui-TextFillColorPrimaryBrush);
+	--winui-MenuFlyoutSubItemForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
 	--winui-MenuFlyoutSubItemForegroundPressed: var(--winui-TextFillColorPrimaryBrush);
+	--winui-MenuFlyoutSubItemForegroundSubMenuOpened: var(--winui-TextFillColorPrimaryBrush);
 	--winui-MenuFlyoutSubItemForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
 	--winui-MenuFlyoutSubItemChevron: var(--winui-TextFillColorSecondaryBrush);
+	--winui-MenuFlyoutSubItemChevronPointerOver: var(--winui-TextFillColorSecondaryBrush);
+	--winui-MenuFlyoutSubItemChevronPressed: var(--winui-TextFillColorTertiaryBrush);
+	--winui-MenuFlyoutSubItemChevronSubMenuOpened: var(--winui-TextFillColorSecondaryBrush);
+	--winui-MenuFlyoutSubItemChevronDisabled: var(--winui-TextFillColorDisabledBrush);
 	--winui-MenuFlyoutItemKeyboardAcceleratorTextForeground: var(--winui-TextFillColorSecondaryBrush);
 	--winui-MenuFlyoutItemKeyboardAcceleratorTextForegroundPointerOver: var(
 		--winui-TextFillColorSecondaryBrush
@@ -550,11 +561,13 @@
 	);
 	--winui-MenuFlyoutPresenterBorderThemeThickness: 1px;
 	--winui-MenuFlyoutItemBorderThickness: 0px;
+	--winui-MenuFlyoutSubItemBorderThickness: 0px;
 	--winui-MenuFlyoutItemPlaceholderThemeThickness: 0px 0px 0px 28px;
 	--winui-MenuFlyoutItemDoublePlaceholderThemeThickness: 0px 0px 0px 56px;
 	--winui-MenuFlyoutSeparatorHeight: 1px;
 	--winui-MenuFlyoutPresenterThemePadding: 2px 0px 2px 0px;
 	--winui-MenuFlyoutThemeMinHeight: 32px;
+	--winui-MenuFlyoutItemChevronMargin: 0px 0px -1px 24px;
 	--winui-MenuFlyoutSeparatorThemePadding: 1px -4px 1px -4px;
 	--winui-MenuFlyoutItemMargin: 2px 4px 2px 4px;
 	--winui-MenuFlyoutItemThemePaddingNarrow: 4px 11px 5px 11px;
@@ -1481,11 +1494,22 @@
 	--winui-MenuFlyoutItemForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
 	--winui-MenuFlyoutItemForegroundPressed: var(--winui-TextFillColorPrimaryBrush);
 	--winui-MenuFlyoutItemForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+	--winui-MenuFlyoutSubItemBackground: var(--winui-SubtleFillColorTransparentBrush);
 	--winui-MenuFlyoutSubItemBackgroundPointerOver: var(--winui-SubtleFillColorSecondaryBrush);
 	--winui-MenuFlyoutSubItemBackgroundPressed: var(--winui-SubtleFillColorTertiaryBrush);
+	--winui-MenuFlyoutSubItemBackgroundSubMenuOpened: var(--winui-SubtleFillColorSecondaryBrush);
+	--winui-MenuFlyoutSubItemBackgroundDisabled: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-MenuFlyoutSubItemBackgroundBrush: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-MenuFlyoutSubItemForeground: var(--winui-TextFillColorPrimaryBrush);
+	--winui-MenuFlyoutSubItemForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
 	--winui-MenuFlyoutSubItemForegroundPressed: var(--winui-TextFillColorPrimaryBrush);
+	--winui-MenuFlyoutSubItemForegroundSubMenuOpened: var(--winui-TextFillColorPrimaryBrush);
 	--winui-MenuFlyoutSubItemForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
 	--winui-MenuFlyoutSubItemChevron: var(--winui-TextFillColorSecondaryBrush);
+	--winui-MenuFlyoutSubItemChevronPointerOver: var(--winui-TextFillColorSecondaryBrush);
+	--winui-MenuFlyoutSubItemChevronPressed: var(--winui-TextFillColorTertiaryBrush);
+	--winui-MenuFlyoutSubItemChevronSubMenuOpened: var(--winui-TextFillColorSecondaryBrush);
+	--winui-MenuFlyoutSubItemChevronDisabled: var(--winui-TextFillColorDisabledBrush);
 	--winui-MenuFlyoutItemKeyboardAcceleratorTextForeground: var(--winui-TextFillColorSecondaryBrush);
 	--winui-MenuFlyoutItemKeyboardAcceleratorTextForegroundPointerOver: var(
 		--winui-TextFillColorSecondaryBrush
@@ -1512,6 +1536,7 @@
 	--winui-MenuFlyoutPresenterBorderBrush: var(--winui-SurfaceStrokeColorFlyoutBrush);
 	--winui-MenuFlyoutPresenterBorderThemeThickness: 1px;
 	--winui-MenuFlyoutItemBorderThickness: 0px;
+	--winui-MenuFlyoutSubItemBorderThickness: 0px;
 	--winui-MenuFlyoutItemPlaceholderThemeThickness: 0px 0px 0px 28px;
 	--winui-MenuFlyoutItemDoublePlaceholderThemeThickness: 0px 0px 0px 56px;
 	--winui-RadioButtonBorderThemeThickness: 1px;
@@ -2335,11 +2360,22 @@
 		--winui-MenuFlyoutItemForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
 		--winui-MenuFlyoutItemForegroundPressed: var(--winui-TextFillColorPrimaryBrush);
 		--winui-MenuFlyoutItemForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+		--winui-MenuFlyoutSubItemBackground: var(--winui-SubtleFillColorTransparentBrush);
 		--winui-MenuFlyoutSubItemBackgroundPointerOver: var(--winui-SubtleFillColorSecondaryBrush);
 		--winui-MenuFlyoutSubItemBackgroundPressed: var(--winui-SubtleFillColorTertiaryBrush);
+		--winui-MenuFlyoutSubItemBackgroundSubMenuOpened: var(--winui-SubtleFillColorSecondaryBrush);
+		--winui-MenuFlyoutSubItemBackgroundDisabled: var(--winui-SubtleFillColorTransparentBrush);
+		--winui-MenuFlyoutSubItemBackgroundBrush: var(--winui-SubtleFillColorTransparentBrush);
+		--winui-MenuFlyoutSubItemForeground: var(--winui-TextFillColorPrimaryBrush);
+		--winui-MenuFlyoutSubItemForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
 		--winui-MenuFlyoutSubItemForegroundPressed: var(--winui-TextFillColorPrimaryBrush);
+		--winui-MenuFlyoutSubItemForegroundSubMenuOpened: var(--winui-TextFillColorPrimaryBrush);
 		--winui-MenuFlyoutSubItemForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
 		--winui-MenuFlyoutSubItemChevron: var(--winui-TextFillColorSecondaryBrush);
+		--winui-MenuFlyoutSubItemChevronPointerOver: var(--winui-TextFillColorSecondaryBrush);
+		--winui-MenuFlyoutSubItemChevronPressed: var(--winui-TextFillColorTertiaryBrush);
+		--winui-MenuFlyoutSubItemChevronSubMenuOpened: var(--winui-TextFillColorSecondaryBrush);
+		--winui-MenuFlyoutSubItemChevronDisabled: var(--winui-TextFillColorDisabledBrush);
 		--winui-MenuFlyoutItemKeyboardAcceleratorTextForeground: var(
 			--winui-TextFillColorSecondaryBrush
 		);
@@ -2368,6 +2404,7 @@
 		--winui-MenuFlyoutPresenterBorderBrush: var(--winui-SurfaceStrokeColorFlyoutBrush);
 		--winui-MenuFlyoutPresenterBorderThemeThickness: 1px;
 		--winui-MenuFlyoutItemBorderThickness: 0px;
+		--winui-MenuFlyoutSubItemBorderThickness: 0px;
 		--winui-MenuFlyoutItemPlaceholderThemeThickness: 0px 0px 0px 28px;
 		--winui-MenuFlyoutItemDoublePlaceholderThemeThickness: 0px 0px 0px 56px;
 		--winui-RadioButtonBorderThemeThickness: 1px;
@@ -3151,11 +3188,22 @@
 	--winui-MenuFlyoutItemForegroundPointerOver: var(--winui-SystemColorHighlightTextColorBrush);
 	--winui-MenuFlyoutItemForegroundPressed: var(--winui-SystemColorHighlightTextColorBrush);
 	--winui-MenuFlyoutItemForegroundDisabled: var(--winui-SystemColorGrayTextColorBrush);
+	--winui-MenuFlyoutSubItemBackground: var(--winui-SystemControlTransparentBrush);
 	--winui-MenuFlyoutSubItemBackgroundPointerOver: var(--winui-SystemColorHighlightColorBrush);
 	--winui-MenuFlyoutSubItemBackgroundPressed: var(--winui-SystemColorHighlightColorBrush);
+	--winui-MenuFlyoutSubItemBackgroundSubMenuOpened: var(--winui-SystemControlTransparentBrush);
+	--winui-MenuFlyoutSubItemBackgroundDisabled: var(--winui-SystemControlTransparentBrush);
+	--winui-MenuFlyoutSubItemBackgroundBrush: var(--winui-SystemControlTransparentBrush);
+	--winui-MenuFlyoutSubItemForeground: var(--winui-SystemColorButtonTextColorBrush);
+	--winui-MenuFlyoutSubItemForegroundPointerOver: var(--winui-SystemColorHighlightTextColorBrush);
 	--winui-MenuFlyoutSubItemForegroundPressed: var(--winui-SystemColorHighlightTextColorBrush);
+	--winui-MenuFlyoutSubItemForegroundSubMenuOpened: var(--winui-SystemColorHighlightColorBrush);
 	--winui-MenuFlyoutSubItemForegroundDisabled: var(--winui-SystemColorGrayTextColorBrush);
 	--winui-MenuFlyoutSubItemChevron: var(--winui-SystemColorButtonTextColorBrush);
+	--winui-MenuFlyoutSubItemChevronPointerOver: var(--winui-SystemColorHighlightTextColorBrush);
+	--winui-MenuFlyoutSubItemChevronPressed: var(--winui-SystemColorHighlightTextColorBrush);
+	--winui-MenuFlyoutSubItemChevronSubMenuOpened: var(--winui-SystemColorHighlightColorBrush);
+	--winui-MenuFlyoutSubItemChevronDisabled: var(--winui-SystemColorGrayTextColorBrush);
 	--winui-MenuFlyoutItemKeyboardAcceleratorTextForeground: var(
 		--winui-SystemColorWindowTextColorBrush
 	);
@@ -3184,6 +3232,7 @@
 	--winui-MenuFlyoutPresenterBorderBrush: var(--winui-SystemColorWindowTextColorBrush);
 	--winui-MenuFlyoutPresenterBorderThemeThickness: 2px;
 	--winui-MenuFlyoutItemBorderThickness: 0px;
+	--winui-MenuFlyoutSubItemBorderThickness: 0px;
 	--winui-MenuFlyoutItemPlaceholderThemeThickness: 0px 0px 0px 28px;
 	--winui-MenuFlyoutItemDoublePlaceholderThemeThickness: 0px 0px 0px 56px;
 	--winui-RadioButtonBorderThemeThickness: 1px;
