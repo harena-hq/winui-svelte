@@ -12,22 +12,27 @@
 </script>
 
 <script lang="ts">
+	import { getCommandBarState } from '../internal/command-bar';
+
 	let {
-		compact = false,
-		inOverflow = false,
+		compact,
+		inOverflow,
 		class: className,
 		style,
 		ref = $bindable(null),
 		...rest
 	}: AppBarSeparatorProps = $props();
 
-	let viewState = $derived(inOverflow ? 'overflow' : compact ? 'compact' : 'full-size');
+	const bar = getCommandBarState();
+	const isCompact = $derived(compact ?? bar?.().compact ?? false);
+	const isInOverflow = $derived(inOverflow ?? bar?.().inOverflow ?? false);
+	const viewState = $derived(isInOverflow ? 'overflow' : isCompact ? 'compact' : 'full-size');
 </script>
 
 <div
 	bind:this={ref}
 	role="separator"
-	aria-orientation={inOverflow ? 'horizontal' : 'vertical'}
+	aria-orientation={isInOverflow ? 'horizontal' : 'vertical'}
 	class={['root', className]}
 	{style}
 	data-view-state={viewState}
