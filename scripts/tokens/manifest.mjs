@@ -1848,7 +1848,9 @@ export const DOUBLE_LENGTHS = {
 	InfoBarCloseButtonGlyphSize: 'the InfoBar close button glyph',
 
 	MenuFlyoutThemeMinHeight: 'the floor under a menu surface',
-	MenuFlyoutSeparatorHeight: 'the rule between two groups of menu items'
+	MenuFlyoutSeparatorHeight: 'the rule between two groups of menu items',
+	SplitMenuFlyoutItemSeparatorHeight: "the rule between a split item's two halves",
+	SplitMenuFlyoutItemChevronButtonWidth: "a split item's chevron half"
 };
 
 /**
@@ -2576,7 +2578,13 @@ export const MENUFLYOUT_KEYS = {
 	MenuFlyoutSubItemChevronPressed: "a sub item's chevron while pressed",
 	MenuFlyoutSubItemChevronSubMenuOpened: "a sub item's chevron while its menu is open",
 	MenuFlyoutSubItemChevronDisabled: "a disabled sub item's chevron",
-	MenuFlyoutItemChevronMargin: 'the gap around a sub item chevron'
+	MenuFlyoutItemChevronMargin: 'the gap around a sub item chevron',
+
+	// The split item — one row that is two buttons. Every fill and every text colour it uses
+	// is the item row's or the sub item's; these three are the only records that exist for it.
+	SplitMenuFlyoutItemButtonDividerBrush: 'the rule between the two halves',
+	SplitMenuFlyoutItemSeparatorHeight: 'the rule between the two halves',
+	SplitMenuFlyoutItemChevronButtonWidth: 'the chevron half'
 };
 
 /**
