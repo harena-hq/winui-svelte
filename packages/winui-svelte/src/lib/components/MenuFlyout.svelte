@@ -43,11 +43,34 @@
 		separator: true;
 	}
 
+	/**
+	 * A `RadioMenuFlyoutItem`. `groupName` is the discriminant and is required: rows that share
+	 * one are mutually exclusive, and which of them is selected lives in the parent's `selected`
+	 * record rather than here.
+	 */
+	export interface RadioMenuFlyoutItemData {
+		id: string;
+		text: string;
+		/** GroupName. */
+		groupName: string;
+		disabled?: boolean;
+		/**
+		 * `Icon`, narrowed to a `FontIcon`: a Segoe Fluent Icons code point as uppercase hex,
+		 * e.g. `'E72D'`.
+		 */
+		glyph?: string;
+		/** KeyboardAcceleratorTextOverride: the label drawn at the right of the row. */
+		keyboardAcceleratorTextOverride?: string;
+	}
+
 	export type MenuFlyoutEntry =
-		MenuFlyoutItemData | ToggleMenuFlyoutItemData | MenuFlyoutSeparatorData;
+		| MenuFlyoutItemData
+		| ToggleMenuFlyoutItemData
+		| MenuFlyoutSeparatorData
+		| RadioMenuFlyoutItemData;
 
 	export interface MenuFlyoutProps {
-		/** Items, narrowed to the three row kinds this unit draws. */
+		/** Items, narrowed to the four row kinds this unit draws. */
 		items?: MenuFlyoutEntry[];
 		/**
 		 * The element that opens the menu. Receives the props it must spread.
@@ -73,6 +96,12 @@
 		/** `ToggleMenuFlyoutItem.IsChecked`, collected: the ids of the checked toggle rows. */
 		checked?: string[];
 		onCheckedChange?: (checked: string[]) => void;
+		/**
+		 * `RadioMenuFlyoutItem.IsChecked`, collected: the selected row's id for each `groupName`.
+		 * A group with no entry here has nothing selected.
+		 */
+		selected?: Record<string, string>;
+		onSelectedChange?: (selected: Record<string, string>) => void;
 		/** `MenuFlyoutItem.Click`, reported by id. */
 		onItemInvoked?: (id: string) => void;
 		class?: string;
@@ -104,6 +133,8 @@
 		onOpenChange,
 		checked = $bindable([]),
 		onCheckedChange,
+		selected = $bindable({}),
+		onSelectedChange,
 		onItemInvoked,
 		children,
 		class: className,
@@ -130,8 +161,29 @@
 	} as const;
 
 	const position = $derived(placements[placement]);
-	const hasCheckColumn = $derived(items.some((entry) => 'toggle' in entry));
+	const hasCheckColumn = $derived(items.some((entry) => 'toggle' in entry || 'groupName' in entry));
 	const hasIconColumn = $derived(items.some((entry) => 'glyph' in entry && Boolean(entry.glyph)));
+
+	type MenuFlyoutBlock =
+		| { kind: 'entry'; entry: MenuFlyoutEntry; key: number }
+		| { kind: 'radioGroup'; groupName: string; entries: RadioMenuFlyoutItemData[]; key: number };
+
+	const blocks = $derived.by(() => {
+		const out: MenuFlyoutBlock[] = [];
+		items.forEach((entry, key) => {
+			if ('groupName' in entry) {
+				const last = out.at(-1);
+				if (last?.kind === 'radioGroup' && last.groupName === entry.groupName) {
+					last.entries.push(entry);
+					return;
+				}
+				out.push({ kind: 'radioGroup', groupName: entry.groupName, entries: [entry], key });
+				return;
+			}
+			out.push({ kind: 'entry', entry, key });
+		});
+		return out;
+	});
 </script>
 
 <DropdownMenu.Root
@@ -161,71 +213,112 @@
 						data-icons={hasIconColumn ? '' : undefined}
 						{...rest}
 					>
-						{#each items as entry, index (index)}
-							{#if 'separator' in entry}
-								<DropdownMenu.Separator>
-									{#snippet child({ props })}
-										<div {...props} class="separator"></div>
-									{/snippet}
-								</DropdownMenu.Separator>
-							{:else if 'toggle' in entry}
-								<DropdownMenu.CheckboxItem
-									disabled={entry.disabled}
-									bind:checked={
-										() => checked.includes(entry.id),
+						{#each blocks as block (block.key)}
+							{#if block.kind === 'radioGroup'}
+								<DropdownMenu.RadioGroup
+									bind:value={
+										() => selected[block.groupName] ?? '',
 										(next) => {
-											const nextChecked = next
-												? checked.includes(entry.id)
-													? checked
-													: [...checked, entry.id]
-												: checked.filter((id) => id !== entry.id);
-											checked = nextChecked;
-											onCheckedChange?.(nextChecked);
+											const nextSelected = { ...selected, [block.groupName]: next };
+											selected = nextSelected;
+											onSelectedChange?.(nextSelected);
 										}
 									}
 								>
 									{#snippet child({ props })}
-										<div {...props} class="item toggle">
-											<span class="check" aria-hidden="true"></span>
-											<span class="body">
-												{#if entry.glyph}
-													<span class="icon" aria-hidden="true">
-														{String.fromCodePoint(parseInt(entry.glyph, 16))}
-													</span>
-												{/if}
-												<span class="text">{entry.text}</span>
-											</span>
-											{#if entry.keyboardAcceleratorTextOverride}
-												<span class="accelerator winui-CaptionTextBlockStyle">
-													{entry.keyboardAcceleratorTextOverride}
-												</span>
-											{/if}
+										<div {...props} class="radio-group">
+											{#each block.entries as entry (entry.id)}
+												<DropdownMenu.RadioItem value={entry.id} disabled={entry.disabled}>
+													{#snippet child({ props })}
+														<div {...props} class="item toggle radio">
+															<span class="check" aria-hidden="true"></span>
+															<span class="body">
+																{#if entry.glyph}
+																	<span class="icon" aria-hidden="true">
+																		{String.fromCodePoint(parseInt(entry.glyph, 16))}
+																	</span>
+																{/if}
+																<span class="text">{entry.text}</span>
+															</span>
+															{#if entry.keyboardAcceleratorTextOverride}
+																<span class="accelerator winui-CaptionTextBlockStyle">
+																	{entry.keyboardAcceleratorTextOverride}
+																</span>
+															{/if}
+														</div>
+													{/snippet}
+												</DropdownMenu.RadioItem>
+											{/each}
 										</div>
 									{/snippet}
-								</DropdownMenu.CheckboxItem>
+								</DropdownMenu.RadioGroup>
 							{:else}
-								<DropdownMenu.Item
-									disabled={entry.disabled}
-									onSelect={() => onItemInvoked?.(entry.id)}
-								>
-									{#snippet child({ props })}
-										<div {...props} class="item">
-											<span class="body">
-												{#if entry.glyph}
-													<span class="icon" aria-hidden="true">
-														{String.fromCodePoint(parseInt(entry.glyph, 16))}
+								{@const entry = block.entry}
+								{#if 'separator' in entry}
+									<DropdownMenu.Separator>
+										{#snippet child({ props })}
+											<div {...props} class="separator"></div>
+										{/snippet}
+									</DropdownMenu.Separator>
+								{:else if 'toggle' in entry}
+									<DropdownMenu.CheckboxItem
+										disabled={entry.disabled}
+										bind:checked={
+											() => checked.includes(entry.id),
+											(next) => {
+												const nextChecked = next
+													? checked.includes(entry.id)
+														? checked
+														: [...checked, entry.id]
+													: checked.filter((id) => id !== entry.id);
+												checked = nextChecked;
+												onCheckedChange?.(nextChecked);
+											}
+										}
+									>
+										{#snippet child({ props })}
+											<div {...props} class="item toggle">
+												<span class="check" aria-hidden="true"></span>
+												<span class="body">
+													{#if entry.glyph}
+														<span class="icon" aria-hidden="true">
+															{String.fromCodePoint(parseInt(entry.glyph, 16))}
+														</span>
+													{/if}
+													<span class="text">{entry.text}</span>
+												</span>
+												{#if entry.keyboardAcceleratorTextOverride}
+													<span class="accelerator winui-CaptionTextBlockStyle">
+														{entry.keyboardAcceleratorTextOverride}
 													</span>
 												{/if}
-												<span class="text">{entry.text}</span>
-											</span>
-											{#if entry.keyboardAcceleratorTextOverride}
-												<span class="accelerator winui-CaptionTextBlockStyle">
-													{entry.keyboardAcceleratorTextOverride}
+											</div>
+										{/snippet}
+									</DropdownMenu.CheckboxItem>
+								{:else}
+									<DropdownMenu.Item
+										disabled={entry.disabled}
+										onSelect={() => onItemInvoked?.(entry.id)}
+									>
+										{#snippet child({ props })}
+											<div {...props} class="item">
+												<span class="body">
+													{#if entry.glyph}
+														<span class="icon" aria-hidden="true">
+															{String.fromCodePoint(parseInt(entry.glyph, 16))}
+														</span>
+													{/if}
+													<span class="text">{entry.text}</span>
 												</span>
-											{/if}
-										</div>
-									{/snippet}
-								</DropdownMenu.Item>
+												{#if entry.keyboardAcceleratorTextOverride}
+													<span class="accelerator winui-CaptionTextBlockStyle">
+														{entry.keyboardAcceleratorTextOverride}
+													</span>
+												{/if}
+											</div>
+										{/snippet}
+									</DropdownMenu.Item>
+								{/if}
 							{/if}
 						{/each}
 					</div>
@@ -312,6 +405,9 @@
 		color: var(--winui-MenuFlyoutItemForegroundDisabled);
 	}
 
+	/* Every `.toggle` rule below is about a row with a check cell rather than about a toggle
+	   in particular, which is why the radio row carries the class too: upstream's
+	   `DefaultRadioMenuFlyoutItemStyle` reads the same sub-item brushes for the same states. */
 	.item.toggle[data-highlighted]:not([data-disabled]) {
 		background: var(--winui-MenuFlyoutSubItemBackgroundPointerOver);
 		color: var(--winui-MenuFlyoutItemForegroundPointerOver);
@@ -449,5 +545,18 @@
 		height: var(--winui-MenuFlyoutSeparatorHeight);
 		margin: var(--winui-MenuFlyoutSeparatorThemePadding);
 		background: var(--winui-MenuFlyoutSeparatorBackground);
+	}
+
+	.radio-group {
+		/* The presenter is a column flex container and every row is a flex item of it. The group
+		   is a context provider with no box of its own upstream — `ItemsPresenter` stacks the rows
+		   flat — so removing its box is what keeps the rows flex items of the presenter. */
+		display: contents;
+	}
+
+	.item.radio .check::before {
+		/* c1-allow: RadioMenuFlyoutItem_themeresources.xaml:94, `Glyph="&#xE915;"` on `CheckGlyph`,
+		   where `DefaultToggleMenuFlyoutItemStyle` has `&#xE73E;` and everything else agrees. */
+		content: '\e915';
 	}
 </style>

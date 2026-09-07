@@ -2,6 +2,7 @@
 	import { Button, MenuFlyout, type MenuFlyoutEntry } from 'winui-svelte';
 
 	let checked = $state(['repeat', 'shuffle']);
+	let selectedRadio = $state({ orientation: 'portrait', size: 'medium' });
 
 	const galleryItems: MenuFlyoutEntry[] = [
 		{ id: 'reset', text: 'Reset' },
@@ -47,6 +48,15 @@
 			glyph: 'E72D',
 			keyboardAcceleratorTextOverride: 'Ctrl+T'
 		}
+	];
+
+	const radioItems: MenuFlyoutEntry[] = [
+		{ id: 'landscape', text: 'Landscape', groupName: 'orientation' },
+		{ id: 'portrait', text: 'Portrait', groupName: 'orientation' },
+		{ separator: true },
+		{ id: 'small', text: 'Small icons', groupName: 'size' },
+		{ id: 'medium', text: 'Medium icons', groupName: 'size' },
+		{ id: 'large', text: 'Large icons', groupName: 'size' }
 	];
 
 	const placementItems = [{ id: 'item', text: 'Menu item' }];
@@ -117,6 +127,15 @@
 	<MenuFlyout open items={iconAndAcceleratorItems}>
 		{#snippet children(props)}
 			<Button {...props}>Edit Options with accelerators</Button>
+		{/snippet}
+	</MenuFlyout>
+</div>
+
+<h2 class="winui-SubtitleTextBlockStyle">radio</h2>
+<div class="row clear-above indent">
+	<MenuFlyout open items={radioItems} bind:selected={selectedRadio}>
+		{#snippet children(props)}
+			<Button {...props}>Options</Button>
 		{/snippet}
 	</MenuFlyout>
 </div>
