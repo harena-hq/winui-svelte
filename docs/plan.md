@@ -866,9 +866,61 @@ group sizes, which no longer line up one-to-one with a version.
 
 7.  **Commands and menus** — ToggleButton, HyperlinkButton, RepeatButton, DropDownButton,
     SplitButton, ToggleSplitButton, AppBarButton, AppBarToggleButton, AppBarSeparator,
-    CommandBar, MenuBar.
+    CommandBar, MenuBar. — **done**
 
     Goal: **the application can offer a command, and gather commands into a bar.**
+
+    **Closed.** All eleven exist and are exported; thirty-three components render under the
+    three themes in the snapshot suite, thirty-nine baseline sets pass on the reference guest,
+    the nine gates are green and the smoke consumer builds. Every unit's Done-when is the one
+    this entry states: the control snapshotted in all three themes and compared against the
+    original on the guest, every prop following D21 as ADR 0012 amends it, and the surface
+    sweep's step-1 verdict recorded before the seal — which for eight of the eleven controls
+    is _the pin carries no implementation at all_. `AppBarButton`, `AppBarToggleButton`,
+    `AppBarSeparator` and `CommandBar` join the seven this file already listed: `find
+controls/dev -name 'AppBar*'` matches three `*_themeresources.xaml` files and nothing
+    else, and there is no `CommandBar.cpp` either.
+
+    **What the version cost that its goal did not predict.** Six of the eight things that
+    changed a control were found by a browser or by the guest, and none by a gate:
+
+    - **A plain `let` a template reads is not reactive in runes mode.** SplitButton's
+      `keyDown` flipped correctly and `TouchPressed` never once appeared. Build, check, lint,
+      nine gates and a cold diff read were all green; the declaration is well-formed.
+    - **A TypeScript annotation in _markup_ does not survive packaging.** `svelte-package`
+      preprocesses script bodies and `strip-script-lang.mjs` takes the attribute off the tag;
+      neither touches a `{#snippet}` parameter's type. `pnpm check` reads `src` and passes.
+    - **A part with no explicit grid placement does not stay in the cell its template gives
+      it.** `ContentViewbox`, `OverflowTextLabel` and `OverflowCheckGlyph` carry no `Grid.Row`
+      or `Grid.Column`, which in XAML means row 0 column 0 and in CSS means the next free
+      cell. An overflow label measured 245px from its row's left edge where it belongs at 12.
+    - **`content` on a real element renders nothing.** Both AppBarButton chevrons carried
+      their glyph token on the element rather than on a pseudo-element and neither drew.
+    - **A `$effect` that writes to a parent's `$state` list depends on that list**, so a
+      registration written inside one registers and then unregisters itself as its peers
+      arrive. A four-command overflow menu left its presenter holding one shape.
+    - **The closed command bar's height is a clip**, which the reference settled and no
+      reading of the template would have: the row is 48 and the commands in it are 64.
+
+    The three baselines this version threw away and re-photographed were each thrown away
+    because the review pass read the image rather than trusting the suite that had just
+    written it — a checked overflow row painted accent blue with a tofu box where its
+    checkmark belongs, an ellipsis eight pixels below the icons beside it, and two harness
+    rows demonstrating a column while their menus were shut. Every gate and every probe row
+    was green on all three. **None of that is D5's human side-by-side**, which this version
+    did not have: it is the reviewing agent reading its own output, which catches a wrong
+    render and cannot tell a right one from the original.
+
+    **What this version leaves owed, beyond the table below.** `SplitButtonCommandBarStyle`
+    (`SplitButton_themeresources.xaml:104`), which `CommandBar_themeresources.xaml:108` and
+    `:109` rebase `SplitButton` and `ToggleSplitButton` on inside a bar, is defined and
+    unbuilt: nothing on the Gallery's CommandBar page uses a SplitButton, so it is off the
+    acceptance surface and belongs with CommandBarFlyout. `KeyboardAcceleratorTextMinWidth`
+    (`AppBarButton_themeresources.xaml:374`) is the width a CommandBar computes once for a
+    whole menu so its accelerators align down the column; that arithmetic is in code the pin
+    does not carry, and the component records the omission where the rule is. And the older
+    components' focus bands carry a `c1-allow` on `inset`, which C1's scope excludes and which
+    it therefore never reads — a sweep, noted rather than done.
 
     Eleven controls, and every one of them is a button or a container of buttons. The tranche
     is `Button`'s surface widened in two directions — what a single button can be, and how a
@@ -1076,7 +1128,7 @@ group sizes, which no longer line up one-to-one with a version.
     | control                          | not yet built                                                        |
     | -------------------------------- | -------------------------------------------------------------------- |
     | AppBarButton, AppBarToggleButton | `KeyboardAccelerator` as an input; the label draws the override text |
-    | AppBarButton, AppBarToggleButton | `InputModeStates`, which is narrower than it sounds — see below      |
+    | AppBarButton, AppBarToggleButton | `InputModeStates`, which is narrower than it sounds — **WD-020**     |
     | CommandBar                       | dynamic overflow: commands moving into the menu as the bar narrows   |
     | CommandBar                       | `AppBarElementContainer`, which hosts a non-command element          |
     | MenuBar                          | `KeyboardAccelerator` as an input, as AppBarButton                   |
@@ -1090,7 +1142,10 @@ group sizes, which no longer line up one-to-one with a version.
     on the overflow appearance. So it is not eleven controls' padding, it is one label's, in
     one of two appearances, under a condition the web half-expresses — `@media (pointer: coarse)`
     is `TouchInputMode`, and a game controller driving a fine pointer is not a case a browser
-    has. Unit 4 decides it against the reference; the plan only says it is not assumed.
+    has. Unit 4 decided it: **WD-020**, declined. The condition is the device of the last
+    input _event_, which the XAML framework keeps as one global mode; `pointer: coarse`
+    describes a device capability instead and is wrong in both directions on hybrid hardware,
+    and a game controller has no web analogue at all.
 
     The draft this replaced said "all eleven — the touch and game-controller padding
     variants", and SplitButton has `TouchPressed` and `CheckedTouchPressed` at
