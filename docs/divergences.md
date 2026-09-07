@@ -329,30 +329,29 @@ Recorded here once the control is built and the behaviour is observed rather tha
 
 ---
 
-### WD-012 — a portalled surface casts no drop shadow
+### WD-012 — a ToolTip casts no drop shadow
 
-- **Control**: `ToolTip` and `ContentDialog` only. `Flyout`, `MenuFlyout` and `TeachingTip`
-  left this entry when their popup-depth shadow was measured and fitted. `Popup` does not:
-  it positions a surface the consumer supplies and paints nothing, so there is no card of its
-  own to cast a shadow from.
-- **WinUI does**: give the popup a `ThemeShadow`, cast onto whatever is under it. Measured on
-  the reference guest at 100% scaling: under a ToolTip the ramp starts near `#CC` and closes in
-  about eight pixels; under an open ContentDialog it starts at 139 against the smoke layer's
-  170 and has not closed forty pixels out. A popup's is nineteen, which is the depth this
-  library now reproduces — these two are the ones either side of it. The shadow is in none of
+- **Control**: `ToolTip` alone. `Flyout`, `MenuFlyout` and `TeachingTip` left this entry when
+  the popup depth was measured and fitted, and `ContentDialog` left it when the dialog depth
+  was. `Popup` was never in it: it positions a surface the consumer supplies and paints
+  nothing, so there is no card of its own to cast a shadow from.
+- **WinUI does**: give the popup a `ThemeShadow`, cast onto whatever is under it. Two of its
+  three depths are now reproduced from measured profiles — nineteen pixels of ramp for a popup
+  and past forty for a dialog. A ToolTip's is the third and the shortest: read once at one
+  significant figure, it starts near `#CC` and closes in about eight. The shadow is in none of
   the presenters' templates — `FlyoutPresenter_themeresources.xaml:43` draws one `Border` with
   a background, a border and a corner radius and nothing else — because it is cast by the
   popup host rather than by the presenter.
-- **We do**: draw no shadow on these two surfaces. They are portalled, positioned and clipped
-  exactly as the original's are, and the pixels below their bottom edge are the page's own.
-- **Why accepted**: `ThemeShadow` uses the popup host's depth to cast a plain drop shadow here;
-  `Common_themeresources.xaml:48` sets `ThemeShadowIsUsingDropShadows` to `True`, so CSS
-  `box-shadow` is the matching primitive. No resource in any pinned dictionary states these
-  profiles. The popup-depth profile is now reproduced by a measured `box-shadow`; these two
-  surfaces sit at depths whose profiles have not been fitted — ToolTip's closes in about eight
-  pixels, while ContentDialog's runs past forty, against nineteen for a popup.
-- **Would reconsider if**: the same measurement pass is applied to the ToolTip and ContentDialog
-  depths, on both themes, and their profiles are fitted.
+- **We do**: draw no shadow on a ToolTip.
+- **Why accepted**: not a judgement — a capture. A ToolTip has to be raised by hovering, and
+  four ways of doing that on the reference guest produced nothing: a direct pointer move onto
+  the target, a two-step approach, bringing the window to the front first, and an eight-step
+  motion path. No ToolTip capture is stored from the unit that built the control either, and
+  the one prose reading that exists is a single theme at one significant figure, which is not
+  enough to fit against. The other two depths each needed a four-curve profile in two themes.
+- **Would reconsider if**: a ToolTip can be raised and photographed on the guest. The
+  measurement and the fit are then the same pass the other two depths went through, and this
+  entry closes.
 
 **This entry exists because a citation was pointing at the wrong one.** `ToolTip.svelte`
 recorded the missing shadow against WD-006, which is about animated icons and names neither

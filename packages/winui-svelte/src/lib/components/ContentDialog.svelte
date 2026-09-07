@@ -205,9 +205,11 @@
 		border-width: var(--winui-ContentDialogBorderWidth);
 		border-color: var(--winui-ContentDialogBorderBrush);
 		border-radius: var(--winui-OverlayCornerRadius);
-		/* WD-012: WinUI's dialog host casts this card's shadow onto the smoke layer. No pinned
-		   resource states its recipe, so this portalled surface deliberately draws no
-		   `box-shadow`; see docs/divergences.md.
+		/* The drop shadow WinUI's dialog host casts onto the smoke layer. No dictionary states
+		   the recipe; `PLATFORM_SHADOWS` in scripts/tokens/manifest.mjs carries the value,
+		   measured on the reference guest and fitted against the browser's own blur. It is a
+		   depth of its own: a dialog's ramp runs past forty pixels where a popup's closes in
+		   nineteen, and a dialog darkens the pixels above it where a popup darkens none.
 
 		   `padding-box` is `BackgroundSizing="InnerBorderEdge"` on `BackgroundElement`
 		   (ContentDialog_themeresources.xaml:223). It matters here rather than being a
@@ -216,6 +218,7 @@
 		   the card instead of against the smoke behind it. Every other `InnerBorderEdge` site
 		   in this library writes `padding-box`; this one did not. */
 		background: var(--winui-ContentDialogBackground) padding-box;
+		box-shadow: var(--winui-DialogShadow);
 		color: var(--winui-ContentDialogForeground);
 		/* The card is `tabindex="-1"`, so nothing but the open handler above ever focuses it and
 		   it is not in the tab order. The browser still paints its own ring there, and WinUI's
