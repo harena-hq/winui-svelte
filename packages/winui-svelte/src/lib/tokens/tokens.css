@@ -500,6 +500,20 @@
 	--winui-ControlFastAnimationDuration: 167ms;
 	--winui-ControlFastAnimationAfterDuration: 168ms;
 	--winui-ControlFasterAnimationDuration: 83ms;
+	--winui-ContentDialogForeground: var(--winui-TextFillColorPrimaryBrush);
+	--winui-ContentDialogBackground: var(--winui-SolidBackgroundFillColorBaseBrush);
+	--winui-ContentDialogSmokeFill: var(--winui-SmokeFillColorDefaultBrush);
+	--winui-ContentDialogTopOverlay: var(--winui-LayerFillColorAltBrush);
+	--winui-ContentDialogBorderBrush: var(--winui-SurfaceStrokeColorDefaultBrush);
+	--winui-ContentDialogSeparatorBorderBrush: var(--winui-CardStrokeColorDefaultBrush);
+	--winui-ContentDialogBorderWidth: 1px;
+	--winui-ContentDialogMinWidth: 320px;
+	--winui-ContentDialogMaxWidth: 548px;
+	--winui-ContentDialogMinHeight: 184px;
+	--winui-ContentDialogMaxHeight: 756px;
+	--winui-ContentDialogTitleMargin: 0px 0px 12px 0px;
+	--winui-ContentDialogPadding: 24px;
+	--winui-ContentDialogSeparatorThickness: 0px 0px 1px 0px;
 	--winui-ControlCornerRadius: 4px;
 	--winui-OverlayCornerRadius: 8px;
 	--winui-TextOnAccentFillColorDefault: #ffffff;
@@ -1479,6 +1493,20 @@
 		var(--winui-ControlStrokeColorOnAccentSecondary) 0.99px,
 		var(--winui-ControlStrokeColorOnAccentDefault) 3px
 	);
+	--winui-ContentDialogForeground: var(--winui-TextFillColorPrimaryBrush);
+	--winui-ContentDialogBackground: var(--winui-SolidBackgroundFillColorBaseBrush);
+	--winui-ContentDialogSmokeFill: var(--winui-SmokeFillColorDefaultBrush);
+	--winui-ContentDialogTopOverlay: var(--winui-LayerFillColorAltBrush);
+	--winui-ContentDialogBorderBrush: var(--winui-SurfaceStrokeColorDefaultBrush);
+	--winui-ContentDialogSeparatorBorderBrush: var(--winui-CardStrokeColorDefaultBrush);
+	--winui-ContentDialogBorderWidth: 1px;
+	--winui-ContentDialogMinWidth: 320px;
+	--winui-ContentDialogMaxWidth: 548px;
+	--winui-ContentDialogMinHeight: 184px;
+	--winui-ContentDialogMaxHeight: 756px;
+	--winui-ContentDialogTitleMargin: 0px 0px 12px 0px;
+	--winui-ContentDialogPadding: 24px;
+	--winui-ContentDialogSeparatorThickness: 0px 0px 1px 0px;
 	--winui-ControlCornerRadius: 4px;
 	--winui-OverlayCornerRadius: 8px;
 	--winui-TextOnAccentFillColorDefault: #ffffff;
@@ -2346,6 +2374,20 @@
 			var(--winui-ControlStrokeColorOnAccentSecondary) 0.99px,
 			var(--winui-ControlStrokeColorOnAccentDefault) 3px
 		);
+		--winui-ContentDialogForeground: var(--winui-TextFillColorPrimaryBrush);
+		--winui-ContentDialogBackground: var(--winui-SolidBackgroundFillColorBaseBrush);
+		--winui-ContentDialogSmokeFill: var(--winui-SmokeFillColorDefaultBrush);
+		--winui-ContentDialogTopOverlay: var(--winui-LayerFillColorAltBrush);
+		--winui-ContentDialogBorderBrush: var(--winui-SurfaceStrokeColorDefaultBrush);
+		--winui-ContentDialogSeparatorBorderBrush: var(--winui-CardStrokeColorDefaultBrush);
+		--winui-ContentDialogBorderWidth: 1px;
+		--winui-ContentDialogMinWidth: 320px;
+		--winui-ContentDialogMaxWidth: 548px;
+		--winui-ContentDialogMinHeight: 184px;
+		--winui-ContentDialogMaxHeight: 756px;
+		--winui-ContentDialogTitleMargin: 0px 0px 12px 0px;
+		--winui-ContentDialogPadding: 24px;
+		--winui-ContentDialogSeparatorThickness: 0px 0px 1px 0px;
 		--winui-ControlCornerRadius: 4px;
 		--winui-OverlayCornerRadius: 8px;
 		--winui-TextOnAccentFillColorDefault: #ffffff;
@@ -3175,6 +3217,24 @@
 	--winui-ControlStrokeColorForStrongFillWhenOnImage: var(--winui-SystemColorButtonTextColor);
 	--winui-ControlStrongStrokeColorDefault: var(--winui-SystemColorButtonTextColor);
 	--winui-ControlStrongStrokeColorDisabled: var(--winui-SystemColorButtonTextColor);
+	--winui-ContentDialogForeground: var(--winui-SystemColorWindowTextColorBrush);
+	--winui-ContentDialogBackground: var(--winui-SystemColorWindowColorBrush);
+	--winui-ContentDialogSmokeFill: color-mix(
+		in srgb,
+		var(--winui-SystemColorWindowColor) 80%,
+		transparent
+	);
+	--winui-ContentDialogTopOverlay: var(--winui-SystemControlTransparentBrush);
+	--winui-ContentDialogBorderBrush: var(--winui-SystemColorWindowTextColorBrush);
+	--winui-ContentDialogSeparatorBorderBrush: var(--winui-SystemColorWindowTextColorBrush);
+	--winui-ContentDialogBorderWidth: 2px;
+	--winui-ContentDialogMinWidth: 320px;
+	--winui-ContentDialogMaxWidth: 548px;
+	--winui-ContentDialogMinHeight: 184px;
+	--winui-ContentDialogMaxHeight: 756px;
+	--winui-ContentDialogTitleMargin: 0px 0px 12px 0px;
+	--winui-ContentDialogPadding: 24px;
+	--winui-ContentDialogSeparatorThickness: 0px 0px 1px 0px;
 	--winui-ControlCornerRadius: 4px;
 	--winui-OverlayCornerRadius: 8px;
 	--winui-TextOnAccentFillColorDefault: #ffffff;
