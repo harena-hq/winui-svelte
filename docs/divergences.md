@@ -536,3 +536,22 @@ gate does.
   momentary hit-testing overlay.
 - **Would reconsider if**: a web primitive supplies one tab stop with two native-action regions
   and the same keyboard routing without replacing the controls' ordinary semantics.
+
+---
+
+### WD-020 — the touch and game-controller input modes are not reproduced
+
+- **Control**: `AppBarButton` and `AppBarToggleButton`, in the overflow appearance
+  (`AppBarButton_themeresources.xaml:324`–`:335`,
+  `AppBarToggleButton_themeresources.xaml:445`–`:458`).
+- **WinUI does**: use three input-mode states. Touch and game-controller input both replace the
+  overflow label's default padding with `0,9,0,12`; the toggle row also replaces its check
+  glyph margin with `12,10,12,10`. Those changes make an overflow row eight pixels taller.
+- **We do**: always use the default overflow-label padding and, for toggle rows, the default
+  check-glyph margin.
+- **Why accepted**: WinUI chooses the state from the device of the last input event, a global
+  framework signal. A coarse-pointer media query instead describes a static capability and is
+  wrong in both directions on hybrid hardware; game-controller input has no equivalent web
+  signal.
+- **Would reconsider if**: the library gains a shared last-input-device signal for another
+  reason, or CommandBar overflow is measured against the original on a touch-only device.

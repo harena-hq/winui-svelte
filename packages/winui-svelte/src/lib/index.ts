@@ -5,6 +5,12 @@
  */
 export const VERSION = '0.0.0';
 
+export { default as AppBarButton } from './components/AppBarButton.svelte';
+export type { AppBarButtonProps } from './components/AppBarButton.svelte';
+export { default as AppBarSeparator } from './components/AppBarSeparator.svelte';
+export type { AppBarSeparatorProps } from './components/AppBarSeparator.svelte';
+export { default as AppBarToggleButton } from './components/AppBarToggleButton.svelte';
+export type { AppBarToggleButtonProps } from './components/AppBarToggleButton.svelte';
 export { default as AutoSuggestBox } from './components/AutoSuggestBox.svelte';
 export type { AutoSuggestBoxProps } from './components/AutoSuggestBox.svelte';
 export { default as Button } from './components/Button.svelte';
