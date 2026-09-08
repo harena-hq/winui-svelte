@@ -67,6 +67,8 @@ export { default as RadioButton } from './components/RadioButton.svelte';
 export type { RadioButtonProps } from './components/RadioButton.svelte';
 export { default as RepeatButton } from './components/RepeatButton.svelte';
 export type { RepeatButtonProps } from './components/RepeatButton.svelte';
+export { default as SelectorBar } from './components/SelectorBar.svelte';
+export type { SelectorBarItemData, SelectorBarProps } from './components/SelectorBar.svelte';
 export { default as Slider } from './components/Slider.svelte';
 export type { SliderProps } from './components/Slider.svelte';
 export { default as SplitButton } from './components/SplitButton.svelte';

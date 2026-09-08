@@ -1757,12 +1757,15 @@ export const EXCLUDED = {
 		'Visibility enum has no scalar conversion; the flyout state renders the chevron',
 	CommandBarMoreButtonMargin:
 		'EllipsisButton\'s ContentPresenter writes Padding="0" literally at :1021 rather than template-binding the Button padding, so nothing reads this value; its only definition in the extracted record is RevealBrush_themeresources.xaml:562',
-	// Both overflow labels bind their FontSize to this key (AppBarButton_themeresources.xaml:373,
-	// AppBarToggleButton_themeresources.xaml:488). The value is 14, which is Body's size, and the
-	// root already carries `winui-BodyTextBlockStyle` — so emitting a second name for one number
-	// would give the two somewhere to drift apart.
+	// Three templates bind a font size to this key: both overflow labels
+	// (AppBarButton_themeresources.xaml:373, AppBarToggleButton_themeresources.xaml:488) and
+	// SelectorBarItem (SelectorBar.xaml:60). The value is 14, which is Body's size, and each of
+	// those three elements carries `winui-BodyTextBlockStyle` instead — so emitting a second
+	// name for one number would give the two somewhere to drift apart. The v8 SelectorBar unit
+	// re-opened this and it is re-closed the same way: a control that names this key wears the
+	// ramp class rather than reading a duplicate token.
 	ControlContentThemeFontSize:
-		'14, which the root already takes from the Body ramp class it carries',
+		'14, which the elements that name it already take from the Body ramp class they carry',
 	AppBarButtonOverflowTextTouchMargin:
 		'WD-020: touch and game-controller overflow padding is not reproduced',
 	AppBarToggleButtonOverflowTextTouchMargin:
@@ -2312,6 +2315,9 @@ export const TYPE_RAMP = {
  * these gets the inputs rather than the answer.
  */
 export const DOUBLE_LENGTHS = {
+	SelectorBarItemSpacing: 'the SelectorBarItem icon-to-text gap',
+	SelectorBarItemPillWidth: 'the SelectorBarItem pill base width',
+	SelectorBarItemPillHeight: 'the SelectorBarItem pill height',
 	MenuBarHeight: 'the MenuBar row height',
 	AppBarThemeMinHeight: 'AppBar content minimum height',
 	AppBarThemeCompactHeight: 'AppBar compact content height',
@@ -2445,6 +2451,7 @@ export const DOUBLE_LENGTHS = {
  * place.
  */
 export const DOUBLE_RATIOS = {
+	SelectorBarItemIconScale: "the SelectorBarItem icon's 0.8 scale",
 	ComboBoxItemPillMinScale: "the selection pill's pressed scale, 0.625"
 };
 
@@ -3138,6 +3145,50 @@ export const BREADCRUMBBAR_KEYS = {
 	BreadcrumbBarEllipsisFlyoutPresenterBorderBrush: 'BreadcrumbBar ellipsis flyout border',
 	BreadcrumbBarEllipsisFlyoutPresenterBorderThemeThickness:
 		'BreadcrumbBar ellipsis flyout border width'
+};
+
+/**
+ * Keys SelectorBar reads. `SelectorBarBackground` and `SelectorBarBorderThickness` are absent
+ * because the bar template binds them from properties nothing sets (`SelectorBar.xaml:17-21`);
+ * `SelectorBarSelectedInnerThickness` is absent because it is `PART_CommonVisual`'s stroke
+ * width (`SelectorBar.xaml:216-227`), and that part draws nothing.
+ *
+ * `SelectorBarItemBorderThickness` and all five `SelectorBarItemBorderBrush*` keys are absent
+ * for the same reason one step further out: `SelectorBar.xaml:50-51` sets `BorderBrush` and
+ * `BorderThickness` on the item's Style, and the item's template binds **neither**.
+ * `PART_ContainerRoot` (`:64`) takes only `Background` and `CornerRadius`, and the single
+ * element that names a border brush is `PART_CommonVisual` (`:221`) — the part that draws
+ * nothing. A border here is not merely invisible, it is 2px of width per item that the
+ * original never spends.
+ *
+ * Every background brush below is `SystemControlTransparentBrush` in Default, Light and
+ * HighContrast (`SelectorBar_themeresources.xaml:8-24`, `:39-55`, `:70-86`), and those are
+ * kept: `PART_ContainerRoot.Background` is genuinely animated by the six combined states, so
+ * a consumer overriding one through the cascade gets the fill the states would paint.
+ */
+export const SELECTORBAR_KEYS = {
+	SelectorBarPadding: 'SelectorBar outer inset',
+	SelectorBarItemPadding: 'SelectorBarItem content inset',
+	SelectorBarItemSpacing: 'SelectorBarItem icon-to-text gap',
+	SelectorBarItemIconVisualMargin: 'SelectorBarItem icon margin',
+	SelectorBarItemIconScale: 'SelectorBarItem icon scale',
+	SelectorBarItemTextVisualMargin: 'SelectorBarItem text margin',
+	SelectorBarItemSelectionVisualMargin: 'SelectorBarItem pill margin',
+	SelectorBarItemFocusVisualMargin: 'SelectorBarItem focus band margin',
+	SelectorBarItemPillWidth: 'SelectorBarItem pill base width',
+	SelectorBarItemPillHeight: 'SelectorBarItem pill height',
+	SelectorBarItemPillFill: 'SelectorBarItem selected pill',
+	SelectorBarItemDisabledPillFill: 'SelectorBarItem disabled selected pill',
+	SelectorBarItemForeground: 'SelectorBarItem foreground, at rest',
+	SelectorBarItemForegroundPointerOver: 'SelectorBarItem foreground under the pointer',
+	SelectorBarItemForegroundSelected: 'SelectorBarItem selected foreground',
+	SelectorBarItemForegroundPressed: 'SelectorBarItem foreground while pressed',
+	SelectorBarItemForegroundDisabled: 'SelectorBarItem disabled foreground',
+	SelectorBarItemBackground: 'SelectorBarItem background, at rest',
+	SelectorBarItemBackgroundPointerOver: 'SelectorBarItem background under the pointer',
+	SelectorBarItemBackgroundSelected: 'SelectorBarItem selected background',
+	SelectorBarItemBackgroundPressed: 'SelectorBarItem background while pressed',
+	SelectorBarItemBackgroundDisabled: 'SelectorBarItem disabled background'
 };
 
 /**
