@@ -21,17 +21,23 @@
 
 	/**
 	 * The WinUI `NavigationViewDisplayMode` enum — `Minimal | Compact | Expanded` — which is
-	 * the mode the control computed, exposed upstream as the read-only `DisplayMode`. All
+	 * the mode the control *computed*, exposed upstream as the read-only `DisplayMode`. All
 	 * three members are here; the enum has no others.
+	 *
+	 * It is not the same enum as `NavigationViewPaneDisplayMode` below and not in the same
+	 * position: this one is complete, that one had a member missing. A comment here used to
+	 * claim they were one fact, and that claim is how a top pane nobody had built read as a
+	 * top pane nobody needed.
 	 */
 	export type NavigationViewDisplayMode = 'minimal' | 'compact' | 'expanded';
 
 	/**
-	 * The WinUI `NavigationViewPaneDisplayMode` enum the consumer sets —
-	 * `Auto | Left | LeftCompact | LeftMinimal`. `Top` is absent for the same reason
-	 * it is absent from `NavigationViewDisplayMode`.
+	 * The WinUI `NavigationViewPaneDisplayMode` enum the consumer *sets* — `Auto | Left | Top |
+	 * LeftCompact | LeftMinimal`, in `NavigationView.idl:24`'s own member order. All five are
+	 * implemented.
 	 */
-	export type NavigationViewPaneDisplayMode = 'auto' | 'left' | 'leftCompact' | 'leftMinimal';
+	export type NavigationViewPaneDisplayMode =
+		'auto' | 'left' | 'top' | 'leftCompact' | 'leftMinimal';
 
 	/**
 	 * The two shapes are disjoint on their own, so the discriminant is a field one of them
@@ -73,9 +79,9 @@
 		/** IsPaneToggleButtonVisible — an app whose title bar carries the toggle hides this one. */
 		paneToggleButtonVisible?: boolean;
 		/**
-		 * PaneDisplayMode — the settable mode the consumer chooses. `Top` is absent (see
-		 * `NavigationViewPaneDisplayMode`); the read-only `DisplayMode` member and its
-		 * `DisplayModeChanged` event are not implemented because nothing consumes them.
+		 * PaneDisplayMode — the settable mode the consumer chooses, and all five of its members
+		 * are here. The read-only `DisplayMode` member and its `DisplayModeChanged` event are
+		 * still not implemented, because nothing consumes them.
 		 */
 		paneDisplayMode?: NavigationViewPaneDisplayMode;
 		/**
@@ -107,7 +113,9 @@
 </script>
 
 <script lang="ts">
+	import Flyout from './Flyout.svelte';
 	import NavigationViewItem from './NavigationViewItem.svelte';
+	import NavigationViewTopItem from './NavigationViewTopItem.svelte';
 
 	let {
 		items,
@@ -151,8 +159,30 @@
 		content: 'Settings',
 		glyph: 'E713'
 	};
+	// The same item on the top pane, with no content. That is not a shortcut for hiding the
+	// label: an empty content is what enters the presenter's `IconOnly` state
+	// (`NavigationView_themeresources.xaml:791`), which is what sizes the button 36 rather than
+	// 44 — the size the reference render shows and `MUX_NavigationViewSettingsItemStyleWhenOnTopPane`
+	// does not. The label survives as the tooltip, which is where upstream puts it too
+	// (`UpdateSettingsItemToolTip`, NavigationView.cpp:1921).
+	const SETTINGS_ITEM_TOP: NavigationViewItemData = { id: 'settings', content: '', glyph: 'E713' };
+
+	// `TopNavigationViewOverflowButtonWidth` — NavigationView_themeresources.xaml:213. A number
+	// rather than the custom property because it is subtracted from a `clientWidth`, and the
+	// token is a string the layout engine owns rather than one this can do arithmetic on.
+	const OVERFLOW_BUTTON_WIDTH = 40;
+	const overflowFlyoutStyle =
+		'--winui-FlyoutContentPadding: var(--winui-TopNavigationViewOverflowMenuPadding);';
+
+	const isTop = $derived(paneDisplayMode === 'top');
 
 	const mode = $derived.by((): NavigationViewDisplayMode => {
+		// Minimal, and not a fourth value: `UpdateVisualStateForDisplayModeGroup` —
+		// NavigationView.cpp:2674-2682 — computes the display mode first and only then, because
+		// `IsTopNavigationView()`, goes to `TopNavigationMinimal` instead of `Minimal`. So in top
+		// mode WinUI's own computed `DisplayMode` is Minimal, which is also why the top pane
+		// always draws the rule `TopNavigationMinimal` sets under it rather than only when narrow.
+		if (isTop) return 'minimal';
 		if (paneDisplayMode === 'left') return 'expanded';
 		if (paneDisplayMode === 'leftCompact') return 'compact';
 		if (paneDisplayMode === 'leftMinimal') return 'minimal';
@@ -248,6 +278,91 @@
 	const overlay = $derived(mode !== 'expanded' && paneOpen);
 	// Icons only, labels and chevrons hidden.
 	const collapsed = $derived(!paneOpen && mode !== 'minimal');
+	// The row is measured against two boxes, and **not** against the box the items sit in.
+	// `.top-items` is content-sized, so hiding an item narrows it — measuring there would feed
+	// the decision back into its own input and the row would collapse one item per frame until
+	// only the selected one was left. `.top-nav-grid` is the row, and `.top-trailing` holds the
+	// footer and the settings button; neither changes when an item moves into the flyout, so
+	// the width the items may occupy is a fixed point rather than a fixed point to be reached.
+	let topGrid: HTMLElement | undefined = $state();
+	let topTrailing: HTMLElement | undefined = $state();
+	let topItemElements: HTMLElement[] = [];
+	let overflowFrom = $state(Number.POSITIVE_INFINITY);
+	let topOverflowOpen = $state(false);
+	const selectedIndex = $derived(
+		items.findIndex((entry) => !isNavigationViewHeader(entry) && entry.id === selected)
+	);
+	const overflowing = $derived(Number.isFinite(overflowFrom));
+	const isOverflowed = (index: number) => index >= overflowFrom && index !== selectedIndex;
+	const overflowItems = $derived(
+		items.filter(
+			(entry, index) => !isNavigationViewHeader(entry) && isOverflowed(index)
+		) as NavigationViewItemData[]
+	);
+
+	function recomputeTopOverflow() {
+		if (!isTop || items.length < 2 || !topGrid) {
+			overflowFrom = Number.POSITIVE_INFINITY;
+			return;
+		}
+		// `ArrangeTopNavItems` — NavigationView.cpp:3738-3751 — measures the row with the
+		// overflow button hidden and only then, if it does not fit, makes the button visible,
+		// measures again and shrinks. Two passes, which is also why showing the button cannot
+		// decide whether to show the button.
+		const room = topGrid.clientWidth - (topTrailing?.offsetWidth ?? 0);
+		const widths = topItemElements.map((element) => element?.offsetWidth ?? 0);
+		if (widths.reduce((total, itemWidth) => total + itemWidth, 0) <= room) {
+			overflowFrom = Number.POSITIVE_INFINITY;
+			return;
+		}
+		// `FindMovableItemsBeyondAvailableWidth` — NavigationView.cpp:4019-4059 — accumulates
+		// the primary list's widths front to back and moves everything from the first overrun
+		// on. It never counts the selected item, which is what keeps a selected entry on the
+		// row when the window narrows rather than hiding the one the user is looking at.
+		//
+		// Not counting it also leaves the row over budget by exactly that item's width, and
+		// upstream pays for that with a second pass: `ShrinkTopNavigationSize` — :3922-3952 —
+		// re-measures and calls `FindMovableItemsToBeRemovedFromPrimaryList` for the residue.
+		// Charging the selected item's width to the budget before the walk reaches the same
+		// state in one pass, and it was a measurement that said so: with the two passes
+		// collapsed into one and the charge missing, a 412-wide strip kept three 130-wide items
+		// in 332 pixels and clipped the third against the overflow button.
+		const selectedWidth =
+			selectedIndex >= 0 ? (topItemElements[selectedIndex]?.offsetWidth ?? 0) : 0;
+		const available = room - OVERFLOW_BUTTON_WIDTH - selectedWidth;
+		let required = 0;
+		let next = Number.POSITIVE_INFINITY;
+		for (let index = 0; index < items.length; index++) {
+			if (index === selectedIndex) continue;
+			if (required + (widths[index] ?? 0) > available) {
+				next = index;
+				break;
+			}
+			required += widths[index] ?? 0;
+		}
+		// `KeepAtLeastOneItemInPrimaryList` — NavigationView.cpp:4062. With nothing selected the
+		// walk can reach index 0, and a row with no items at all is not a state WinUI enters.
+		if (next === 0 && selectedIndex < 0) next = 1;
+		overflowFrom = next;
+	}
+
+	$effect(() => {
+		// Reading each label is what makes a relabelled entry re-measure: the array reference
+		// alone does not change when a consumer edits one record in place.
+		items.forEach((entry) => void (isNavigationViewHeader(entry) ? entry.header : entry.content));
+		const grid = topGrid;
+		if (!grid) return;
+		// The `<li>` a `NavigationViewTopItem` renders belongs to that component, so there is no
+		// `bind:this` to collect the way `BreadcrumbBar` collects its own crumbs. The list is
+		// keyed and its rows are never removed — an overflowed one is hidden, not unmounted —
+		// so one query per change of `items` is enough.
+		topItemElements = Array.from(grid.querySelectorAll<HTMLElement>('.top-items > .top-list > li'));
+		recomputeTopOverflow();
+		const observer = new ResizeObserver(recomputeTopOverflow);
+		observer.observe(grid);
+		if (topTrailing) observer.observe(topTrailing);
+		return () => observer.disconnect();
+	});
 </script>
 
 <div
@@ -259,33 +374,63 @@
 	data-pane-open={paneOpen}
 	data-overlay={overlay}
 	data-collapsed={collapsed}
+	data-pane-display-mode={paneDisplayMode}
 	{...rest}
 >
-	{#if paneVisible}
-		<div class="pane">
-			<div class="pane-content-grid">
-				{#if paneToggleButtonVisible}
-					<div class="button-holder-grid">
-						<button
-							type="button"
-							class="pane-toggle"
-							aria-label={paneOpen ? 'Close navigation' : 'Open navigation'}
-							aria-expanded={paneOpen}
-							onclick={() => setPaneOpen(!paneOpen)}
-						></button>
-					</div>
-				{/if}
+	{#if !isTop}
+		{#if paneVisible}
+			<div class="pane">
+				<div class="pane-content-grid">
+					{#if paneToggleButtonVisible}
+						<div class="button-holder-grid">
+							<button
+								type="button"
+								class="pane-toggle"
+								aria-label={paneOpen ? 'Close navigation' : 'Open navigation'}
+								aria-expanded={paneOpen}
+								onclick={() => setPaneOpen(!paneOpen)}
+							></button>
+						</div>
+					{/if}
 
-				<div class="items-container-grid" bind:this={menuViewport}>
-					<ul role="tree" class="menu-items">
-						{#each items as entry, i (isNavigationViewHeader(entry) ? `h${i}` : entry.id)}
-							{#if isNavigationViewHeader(entry)}
-								<li role="none">
-									<div class="item-header winui-BodyStrongTextBlockStyle">{entry.header}</div>
-								</li>
-							{:else}
+					<div class="items-container-grid" bind:this={menuViewport}>
+						<ul role="tree" class="menu-items">
+							{#each items as entry, i (isNavigationViewHeader(entry) ? `h${i}` : entry.id)}
+								{#if isNavigationViewHeader(entry)}
+									<li role="none">
+										<div class="item-header winui-BodyStrongTextBlockStyle">{entry.header}</div>
+									</li>
+								{:else}
+									<NavigationViewItem
+										item={entry}
+										level={1}
+										{selected}
+										{expandedItems}
+										{setExpanded}
+										{onItemInvoked}
+										{collapsed}
+									/>
+								{/if}
+							{/each}
+						</ul>
+					</div>
+
+					{#if menuOverflows}
+						<div class="items-separator"></div>
+					{/if}
+
+					<!-- Always in the grid, as `FooterContentBorder` is — NavigationView.xaml:377.
+				     Empty it is 4 pixels of bottom margin, and those 4 are part of the space
+				     the footer sits in whether or not an app fills the slot. -->
+					<div class="footer-content-border">
+						{#if paneFooter}{@render paneFooter()}{/if}
+					</div>
+
+					{#if settingsVisible}
+						<div class="footer-items">
+							<ul role="tree" class="menu-items">
 								<NavigationViewItem
-									item={entry}
+									item={SETTINGS_ITEM}
 									level={1}
 									{selected}
 									{expandedItems}
@@ -293,37 +438,70 @@
 									{onItemInvoked}
 									{collapsed}
 								/>
+							</ul>
+						</div>
+					{/if}
+				</div>
+			</div>
+		{/if}
+	{:else}
+		<div class="top-pane">
+			<!-- BackButtonPlaceholderOnTopNav is zero in BackButtonCollapsed; this library has no back-button prop. -->
+			<div class="top-nav-grid" bind:this={topGrid}>
+				<div class="top-items">
+					<ul role="tree" class="top-list">
+						{#each items as entry, index (isNavigationViewHeader(entry) ? `h${index}` : entry.id)}
+							{#if isNavigationViewHeader(entry)}
+								<li role="none" data-overflowed={isOverflowed(index) || undefined}>
+									<div class="top-header winui-BodyStrongTextBlockStyle">{entry.header}</div>
+								</li>
+							{:else}
+								<!-- WD-025: top-pane children are not drawn; see docs/divergences.md -->
+								<NavigationViewTopItem
+									item={entry}
+									{selected}
+									{onItemInvoked}
+									placement="primary"
+									overflowed={isOverflowed(index)}
+								/>
 							{/if}
 						{/each}
 					</ul>
 				</div>
-
-				{#if menuOverflows}
-					<div class="items-separator"></div>
+				{#if overflowing}
+					<Flyout
+						bind:open={topOverflowOpen}
+						placement="bottomEdgeAlignedRight"
+						style={overflowFlyoutStyle}
+						content={overflowRows}
+					>
+						{#snippet children(props)}<button
+								{...props}
+								type="button"
+								class="overflow-button"
+								aria-label="More"
+							></button>{/snippet}
+					</Flyout>
 				{/if}
-
-				<!-- Always in the grid, as `FooterContentBorder` is — NavigationView.xaml:377.
-				     Empty it is 4 pixels of bottom margin, and those 4 are part of the space
-				     the footer sits in whether or not an app fills the slot. -->
-				<div class="footer-content-border">
-					{#if paneFooter}{@render paneFooter()}{/if}
-				</div>
-
-				{#if settingsVisible}
-					<div class="footer-items">
-						<ul role="tree" class="menu-items">
-							<NavigationViewItem
-								item={SETTINGS_ITEM}
-								level={1}
+				<div class="top-spacer"></div>
+				<!-- `PaneFooterOnTopPane` and `TopFooterMenuItemsHost` — NavigationView.xaml:278
+				     and :280 — are two columns; they share one box here because what the
+				     overflow measurement needs is the width of everything trailing the items,
+				     and one box is one `offsetWidth`. -->
+				<div class="top-trailing" bind:this={topTrailing}>
+					{#if paneFooter}<div class="top-footer">{@render paneFooter()}</div>{/if}
+					{#if settingsVisible}
+						<ul role="tree" class="top-list">
+							<NavigationViewTopItem
+								item={SETTINGS_ITEM_TOP}
 								{selected}
-								{expandedItems}
-								{setExpanded}
 								{onItemInvoked}
-								{collapsed}
+								placement="primary"
+								tooltip="Settings"
 							/>
 						</ul>
-					</div>
-				{/if}
+					{/if}
+				</div>
 			</div>
 		</div>
 	{/if}
@@ -337,6 +515,23 @@
 		</div>
 	</div>
 </div>
+
+{#snippet overflowRows()}
+	<!-- Headers have no overflow presenter style in the pin, so an overflowed header is dropped. -->
+	<ul role="tree" class="overflow-list">
+		{#each overflowItems as item (item.id)}
+			<NavigationViewTopItem
+				{item}
+				{selected}
+				placement="overflow"
+				onItemInvoked={(id) => {
+					onItemInvoked?.(id);
+					topOverflowOpen = false;
+				}}
+			/>
+		{/each}
+	</ul>
+{/snippet}
 
 <style>
 	.root {
@@ -352,6 +547,129 @@
 		position: relative;
 		display: flex;
 		min-height: 0;
+	}
+
+	.root[data-pane-display-mode='top'] {
+		flex-direction: column;
+	}
+	/* `TopNavArea` — NavigationView.xaml:212. The transparent background shows what is behind it. */
+	.top-pane {
+		flex: 0 0 auto;
+		background: var(--winui-NavigationViewTopPaneBackground);
+	}
+	/* `TopNavGrid` — NavigationView.xaml:214. */
+	.top-nav-grid {
+		display: flex;
+		align-items: stretch;
+		height: var(--winui-NavigationViewTopPaneHeight);
+		margin: var(--winui-TopNavigationViewTopNavGridMargin);
+	}
+	/* `TopNavMenuItemsHost` — NavigationView.xaml:232 — sits in an `Auto` column, so the box is
+	   the visible items' width and the `*` column beside it takes the slack. The `ScrollViewer`
+	   around the repeater at :230 has both scroll modes `Disabled` with its bars hidden, so it
+	   clips and never scrolls. */
+	.top-items {
+		flex: 0 1 auto;
+		min-width: 0;
+		overflow: hidden;
+	}
+	.top-list {
+		display: flex;
+		height: 100%;
+		list-style: none;
+		margin: 0;
+		padding: 0;
+	}
+	/* The `*` column at NavigationView.xaml:221, which is what pushes the footer group to the
+	   right of the row. */
+	.top-spacer {
+		flex: 1 1 auto;
+		min-width: 0;
+	}
+
+	.top-trailing {
+		display: flex;
+		align-items: stretch;
+		flex: none;
+	}
+
+	.top-footer {
+		display: flex;
+		align-items: center;
+	}
+	/* NavigationView.xaml:557-564. */
+	.top-header {
+		display: flex;
+		align-items: center;
+		height: 40px;
+		margin: var(--winui-TopNavigationViewItemInnerHeaderMargin);
+	}
+	/* An item that has moved into the flyout stays mounted, because the next measurement needs
+	   its width. `display: none` would report 0 and the row would then decide it fits, put it
+	   back, and take it out again. `visibility: hidden` keeps the box measurable and takes the
+	   row out of the tab order; `position: absolute` takes it out of the flow. */
+	.top-list > :global([data-overflowed='true']) {
+		visibility: hidden;
+		position: absolute;
+		pointer-events: none;
+	}
+	/* `NavigationViewOverflowButtonStyleWhenPaneOnTop` — NavigationView_themeresources.xaml:348.
+	   It has neither border nor rounded corners, and that is not an omission here: the Style
+	   sets `BorderBrush` and `BorderThickness` and sets no `CornerRadius`, while its `RootGrid`
+	   at :362 binds only `Height`, `Width` and `Background`. Unit 2's lesson — a `Style` setter
+	   is not layout until some element in the template binds it. */
+	.overflow-button {
+		position: relative;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		flex: none;
+		align-self: center;
+		width: var(--winui-TopNavigationViewOverflowButtonWidth);
+		height: var(--winui-TopNavigationViewOverflowButtonHeight);
+		margin: var(--winui-TopNavigationViewOverflowButtonMargin);
+		background: var(--winui-NavigationViewItemBackground);
+		color: var(--winui-TopNavigationViewItemForeground);
+		border: 0;
+		cursor: pointer;
+		font-family: var(--winui-SymbolThemeFontFamily);
+		/* c1-allow: NavigationView_themeresources.xaml:388, the FontIcon's FontSize="16" */
+		font-size: 16px;
+		line-height: normal;
+		/* The user agent's own ':focus-visible' ring is a second one; see Button.svelte. */
+		outline: none;
+	}
+
+	/* `More`, the glyph the FontIcon at :388 draws. Written here rather than in the markup
+	   because it is a picture, not text: the button already carries an `aria-label`. */
+	.overflow-button::before {
+		content: '\e712';
+	}
+	.overflow-button:hover {
+		background: var(--winui-TopNavigationViewItemBackgroundPointerOver);
+		color: var(--winui-TopNavigationViewItemForegroundPointerOver);
+	}
+	.overflow-button:active {
+		background: var(--winui-TopNavigationViewItemBackgroundPressed);
+		color: var(--winui-TopNavigationViewItemForegroundPressed);
+	}
+	.overflow-button:focus-visible::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		border-radius: inherit;
+		box-shadow:
+			inset 0 0 0 var(--winui-FocusVisualPrimaryThickness)
+				var(--winui-SystemControlFocusVisualPrimaryBrush),
+			inset 0 0 0
+				calc(var(--winui-FocusVisualPrimaryThickness) + var(--winui-FocusVisualSecondaryThickness))
+				var(--winui-SystemControlFocusVisualSecondaryBrush);
+		pointer-events: none;
+	}
+	.overflow-list {
+		list-style: none;
+		margin: 0;
+		padding: 0;
 	}
 
 	.pane {
@@ -581,6 +899,14 @@
 		border-width: var(--winui-NavigationViewMinimalContentGridBorderThickness);
 		border-radius: var(--winui-NavigationViewMinimalContentGridCornerRadius);
 		margin: var(--winui-NavigationViewMinimalContentMargin);
+	}
+
+	.root[data-pane-display-mode='top'] .content-grid {
+		margin: var(--winui-TopNavigationViewContentMargin);
+		border-style: solid;
+		border-color: var(--winui-NavigationViewItemSeparatorForeground);
+		border-width: var(--winui-TopNavigationViewContentGridBorderThickness);
+		border-radius: var(--winui-TopNavigationViewContentGridCornerRadius);
 	}
 
 	.header-content {
