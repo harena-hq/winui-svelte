@@ -662,3 +662,25 @@ gate does.
   Done-when compares against the original.
 - **Would reconsider if**: the Gallery's hierarchical sample enters the acceptance comparison,
   which happens when roadmap item 10 puts these pages on `ControlExample`.
+
+---
+
+### WD-026 — a collection renders every item, and nothing is virtualised
+
+- **Control**: ItemsRepeater, and every collection control this tranche builds on it.
+- **WinUI does**: realise only the elements inside the viewport plus a cache buffer, recycle
+  them as the viewport moves, and publish that machinery — `HorizontalCacheLength` and
+  `VerticalCacheLength` default to 2.0 viewport-lengths each
+  (`.upstream/microsoft-ui-xaml/controls/dev/Repeater/ItemsRepeater.idl`), `ElementPrepared`,
+  `ElementClearing` and `ElementIndexChanged` report each realisation, and `GetElementIndex`,
+  `TryGetElement` and `GetOrCreateElement` reach the realized elements. Virtualisation is the
+  reason `ItemsRepeater` exists upstream at all.
+- **We do**: render every item into the DOM, in order, and carry none of those eight members.
+- **Why accepted**: the largest collection any page in the Gallery's Collections group builds
+  is 1 000 recipes (`.upstream/WinUI-Gallery/WinUIGallery/Samples/ItemsRepeater/ItemsRepeaterPage.xaml.cs:346-347`)
+  and the next largest is 500 integers (the same file, line 26); a browser lays out a thousand
+  rows without complaint, so the acceptance surface never reaches the size the machinery is
+  for.
+- **Would reconsider if**: a page in this reproduction is given a collection large enough to
+  drop frames on the reference machine, which no page in the pinned Gallery's Collections group
+  is.
