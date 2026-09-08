@@ -684,3 +684,27 @@ gate does.
 - **Would reconsider if**: a page in this reproduction is given a collection large enough to
   drop frames on the reference machine, which no page in the pinned Gallery's Collections group
   is.
+
+---
+
+### WD-027 — ItemsView items are each a tab stop, and there is no current item
+
+- **Control**: `ItemsView`.
+- **WinUI does**: the view is a single tab stop — `IsTabStop="False"` and
+  `TabNavigation="Once"` on its Style, `ItemsView.xaml:6-7`. Tab enters it and lands on one
+  item; arrow keys move a _current item_ between items, which `CurrentItemIndex`
+  (`ItemsView.idl:47`) reports and which `OnFocusedAction` on each selector can turn into a
+  selection; Tab leaves the whole view.
+- **We do**: every `ItemContainer` a consumer's template renders is a tab stop of its own,
+  which is `ItemContainer`'s own default. Tab walks the items in document order. There are no
+  arrow keys, no Home or End, and no `CurrentItemIndex`, because without focus management the
+  property would report nothing the view actually knows.
+- **Why accepted**: it is WD-004's situation on a second control, and the same answer. The
+  keyboard contract for a grid of items is a roving-tabindex state machine whose candidate set
+  changes with the layout — a stack moves by one, a uniform grid by a row, a lined flow by a
+  line whose length is measured — and getting it wrong is worse than not having it, because a
+  half-working arrow key is a trap where a Tab key is merely a longer road. The visual bar this
+  project sets is met either way: focus draws the same band on the same element.
+- **Would reconsider if**: the tranche's `TreeView` unit builds the roving-tabindex rig WD-004
+  is already waiting on, at which point both rows are re-examined together and this one is
+  deleted if the rig fits a two-dimensional candidate set.
