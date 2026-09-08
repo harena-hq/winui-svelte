@@ -59,6 +59,15 @@ Do this **before** sealing a control, from now on. It costs minutes.
    exactly like a right one. `MenuBarItem` under `MenuBar/` only escapes it by being
    swept alongside the control it is named after.
 
+   **A "no second half" verdict is where the sweep is most useful, not least.** Pivot has no
+   `.cpp` in the pin — WinUI 3 restyles a control the closed-source XAML framework implements —
+   and its template writes the title part as `Visibility="Collapsed"` with nothing in the file
+   reversing it. The original renders the title. The code that shows it is in the framework, so
+   the pin cannot be read for it and step 1 cannot end the sweep: **a part a template collapses
+   is not therefore an absent part**, and where the pin has no code the picture is the only
+   place the rest of the control is written down. Step 4 and the reference machine are the whole
+   sweep for those controls, and they are the ones where skipping it costs most.
+
 2. Grep the implementation for the ways code changes what is drawn:
    `GoToState` (a visual state the template defines but the code decides),
    `Visibility(`, `CornerRadius(`, `Opacity(`, `Foreground(`, `Background(`,
@@ -91,6 +100,7 @@ Per control, what the second half adds beyond the template this library already 
 | TitleBar           | `TitleBar.cpp`'s `UpdateHeight` picks compact or expanded height from which slots are filled                                                                            | already built — the one code-behind rule this project had read before the sweep   |
 | NavigationView     | pane, header, back-button, settings and auto-suggest visibility states, all decided in code                                                                             | already built as display modes                                                    |
 | Slider             | `IsThumbToolTipEnabled` — the value in a tooltip while the thumb is dragged                                                                                             | closed in `1c20909`; **not in the pin** — measured on the reference guest instead |
+| Pivot              | no implementation in the pin, and the template collapses `TitleContentControl` (`Pivot_themeresources.xaml:316`) — the framework shows it, and the original draws it    | built in `9844c14`, from the photograph rather than from the pin                  |
 | the other six      | no implementation in the pin                                                                                                                                            | see the Gallery column below                                                      |
 
 And what the Gallery's own pages demonstrate that this library cannot do yet:
