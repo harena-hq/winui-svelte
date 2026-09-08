@@ -63,9 +63,35 @@ export const ADDITIONAL_KEYS = {
  * What this list leaves out, so that a gap reads as a decision rather than an oversight.
  * The three templates between them reference 104 resources; these are the ones not here:
  *
- * - **The top display mode** — every `Top*` key, `NavigationViewTopPane*`, and the two
- *   overflow-button styles. Not built. It arrives with the Navigation tranche, and its
- *   keys arrive with it.
+ * - **The top display mode** is built, and its keys are seeded below. What follows are the
+ *   top-pane keys that are *not* seeded, and why each one is not.
+ * - **`TopNavigationViewSettingsButtonWidth` and `TopNavigationViewSettingsButtonHeight`.**
+ *   Both are 40, and both are read only by `MUX_NavigationViewSettingsItemStyleWhenOnTopPane`
+ *   (`NavigationView_themeresources.xaml:635`) — a `Style` that is defined in the pin and
+ *   applied by nothing in it: `grep -rn SettingsItemStyleWhenOnTopPane .upstream/` matches its
+ *   own definition and nothing else. The settings item on the top pane goes through the
+ *   ordinary item presenter instead, whose `IconOnly` state sizes it 36 rather than 40, and
+ *   the reference render agrees with the state and not with the style. Same class as
+ *   `TabViewButton*ActiveTab`: grep the whole pin before seeding a key, not only the
+ *   dictionary that defines it.
+ * - **`TopNavigationViewItemSeparatorWidth` and `TopNavigationViewItemSeparatorMargin`.** They
+ *   are read by `NavigationViewItemSeparator`'s `VerticalLine` state
+ *   (`NavigationView.xaml:588-596`), and that WinUI item type is not modelled here — this
+ *   library's data record has headers and items and no separator.
+ *   `TopNavigationViewItemSeparatorForeground` *is* seeded, because the top pane's own grid
+ *   reads it as its `BorderBrush` (`NavigationView.xaml:214`).
+ * - **`TopNavigationViewPaneCustomContentMinWidth` and `TopNavigationViewAutoSuggestBoxMargin`.**
+ *   They size `PaneCustomContentOnTopPane` (`:274`) and `TopPaneAutoSuggestArea` (`:275`), two
+ *   slots this control does not expose. `PaneCustomContent` and `AutoSuggestBox` are absent in
+ *   the left pane too, so neither is a top-pane omission.
+ * - **The three `TopNavigationViewItem*ExpandChevron*` margins, and
+ *   `TopNavigationViewItemOnOverflowExpandChevron{Margin,Padding}`.** The top pane draws no
+ *   chevron; see `WD-025`.
+ * - **`TopNavigationViewItemMargin`.** It is `0`
+ *   (`NavigationView_themeresources.xaml:246`) and `OnTopNavigationPrimary` applies it to the
+ *   `NavigationViewItemPresenter` — the box *outside* the one this reproduction draws, whose
+ *   own margin is `NavigationViewItemButtonMargin`. A zero margin on a box CSS does not need
+ *   is a key with nothing to paint.
  * - **The pane header and pane title** — `NavigationViewPaneHeaderRowMinHeight` and
  *   `NavigationViewPaneTitlePresenterMargin`. The Gallery sets neither property, so
  *   nothing renders in either slot. `NavigationViewItemInnerHeaderMargin` was listed here
@@ -1653,6 +1679,43 @@ export const SHELL_KEYS = {
 	NavigationViewItemExpandedGlyph: 'NavigationView item, the expand chevron',
 	NavigationViewItemExpandedGlyphFontSize: 'NavigationView item, the expand chevron',
 
+	// The top display mode.
+	NavigationViewTopPaneBackground: 'NavigationView top pane background',
+	TopNavigationViewItemForeground: 'top NavigationView item foreground',
+	TopNavigationViewItemForegroundPointerOver: 'top NavigationView item foreground, pointer over',
+	TopNavigationViewItemForegroundPressed: 'top NavigationView item foreground, pressed',
+	TopNavigationViewItemForegroundDisabled: 'top NavigationView item foreground, disabled',
+	TopNavigationViewItemForegroundSelected: 'top NavigationView item foreground, selected',
+	TopNavigationViewItemForegroundSelectedPointerOver:
+		'top NavigationView item foreground, selected pointer over',
+	TopNavigationViewItemForegroundSelectedPressed:
+		'top NavigationView item foreground, selected pressed',
+	TopNavigationViewItemBackgroundPointerOver: 'top NavigationView item background, pointer over',
+	TopNavigationViewItemBackgroundPressed: 'top NavigationView item background, pressed',
+	TopNavigationViewItemBackgroundSelected: 'top NavigationView item background, selected',
+	TopNavigationViewItemBackgroundSelectedPointerOver:
+		'top NavigationView item background, selected pointer over',
+	TopNavigationViewItemBackgroundSelectedPressed:
+		'top NavigationView item background, selected pressed',
+	TopNavigationViewItemSeparatorForeground: 'top NavigationView pane separator',
+	NavigationViewTopPaneHeight: 'NavigationView top pane row',
+	TopNavigationViewOverflowButtonWidth: 'top NavigationView overflow button',
+	TopNavigationViewOverflowButtonHeight: 'top NavigationView overflow button',
+	TopNavigationViewTopNavGridMargin: 'top NavigationView pane inset',
+	TopNavigationViewContentGridBorderThickness: 'top NavigationView content border',
+	TopNavigationViewContentGridCornerRadius: 'top NavigationView content corners',
+	TopNavigationViewContentMargin: 'top NavigationView content inset',
+	TopNavigationViewOverflowButtonMargin: 'top NavigationView overflow button inset',
+	TopNavigationViewItemContentPresenterMargin: 'top NavigationView item label inset',
+	TopNavigationViewItemContentOnlyContentPresenterMargin:
+		'top NavigationView item label inset without icon',
+	TopNavigationViewItemInnerHeaderMargin: 'top NavigationView header inset',
+	TopNavigationViewItemOnOverflowContentPresenterMargin:
+		'top NavigationView overflow item label inset',
+	TopNavigationViewItemOnOverflowNoIconContentPresenterMargin:
+		'top NavigationView overflow item label inset without icon',
+	TopNavigationViewOverflowMenuPadding: 'top NavigationView overflow menu inset',
+
 	// The pane-toggle and back buttons, which are Buttons with their own brushes.
 	NavigationViewButtonBackgroundPointerOver: 'NavigationView pane button background, pointer over',
 	NavigationViewButtonBackgroundPressed: 'NavigationView pane button background, pressed',
@@ -2349,6 +2412,9 @@ export const DOUBLE_LENGTHS = {
 	AutoSuggestBoxRightButtonMargin: 'the spacer column right of the query button',
 	TitleBarMinDragRegionWidth: 'the column the title bar keeps clear for dragging',
 	NavigationViewAutoSuggestAreaHeight: 'the search row in the pane',
+	NavigationViewTopPaneHeight: 'the top pane row',
+	TopNavigationViewOverflowButtonWidth: 'the top pane overflow button',
+	TopNavigationViewOverflowButtonHeight: 'the top pane overflow button',
 	NavigationViewCompactPaneLength: 'the collapsed pane',
 	NavigationViewIconBoxWidth: "an item's icon column",
 	NavigationViewItemOnLeftIconBoxHeight: "an item's icon box",

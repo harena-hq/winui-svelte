@@ -645,3 +645,20 @@ gate does.
   selection and layout change.
 - **Would reconsider if**: a selected tab outside the viewport becomes a required interaction
   path, at which point the selected tab's bounds can drive the same scroll adjustment.
+
+---
+
+### WD-025 — top-pane children are not rendered
+
+- **Control**: NavigationView
+- **WinUI does**: a top-pane item with children draws a chevron and opens its subtree in a
+  `Flyout` — `NavigationView.xaml:469`, the `ChildrenFlyout`; the Gallery demonstrates it on
+  its hierarchical sample's `Top mode` radio (`NavigationViewPage.xaml:316-336`).
+- **We do**: the top pane renders top-level entries only. An entry's `children` are not drawn
+  and no chevron appears; the same entry in the left pane still expands.
+- **Why accepted**: the subtree is a second portalled surface per item, with its own placement,
+  dismissal and keyboard contract, on top of the one this unit already opens for the overflow
+  row. It is a mechanism rather than a value, and the overflow flyout is the one this version's
+  Done-when compares against the original.
+- **Would reconsider if**: the Gallery's hierarchical sample enters the acceptance comparison,
+  which happens when roadmap item 10 puts these pages on `ControlExample`.

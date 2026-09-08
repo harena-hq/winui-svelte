@@ -39,6 +39,19 @@
 		{ id: 'basic-input', content: 'Basic input', glyph: 'E73A' },
 		{ id: 'collections', content: 'Collections', glyph: 'E80A' }
 	];
+	// nvSample6 carries no Icon, which places these in the top presenter's ContentOnly state.
+	const topContentItems: NavigationViewEntry[] = [
+		{ id: 'menu-1', content: 'Menu Item1' },
+		{ id: 'menu-2', content: 'Menu Item2' },
+		{ id: 'menu-3', content: 'Menu Item3' },
+		{ id: 'menu-4', content: 'Menu Item4' }
+	];
+	const topIconItems: NavigationViewEntry[] = [
+		{ id: 'menu-1', content: 'Menu Item1', glyph: 'E80F' },
+		{ id: 'menu-2', content: 'Menu Item2', glyph: 'E8A5' },
+		{ id: 'menu-3', content: 'Menu Item3', glyph: 'E713' },
+		{ id: 'menu-4', content: 'Menu Item4', glyph: 'E790' }
+	];
 
 	let selected = $state<string | null>('color');
 	let events = $state<string[]>([]);
@@ -117,6 +130,55 @@
 	</NavigationView>
 </div>
 
+<h2 class="winui-SubtitleTextBlockStyle">top — the pane above the content</h2>
+<div class="frame">
+	<NavigationView
+		items={topContentItems}
+		selected="menu-1"
+		onItemInvoked={select('top')}
+		paneDisplayMode="top"
+		><p class="winui-BodyTextBlockStyle">Content sits below the pane.</p></NavigationView
+	>
+</div>
+
+<h2 class="winui-SubtitleTextBlockStyle">top — with icons</h2>
+<div class="frame">
+	<NavigationView
+		items={topIconItems}
+		selected="menu-1"
+		onItemInvoked={select('top-icons')}
+		paneDisplayMode="top"
+		><p class="winui-BodyTextBlockStyle">Content sits below the pane.</p></NavigationView
+	>
+</div>
+
+<h2 class="winui-SubtitleTextBlockStyle">top — narrower than its items</h2>
+<div class="frame">
+	<div class="narrow">
+		<NavigationView
+			items={topIconItems}
+			selected="menu-1"
+			onItemInvoked={select('top-narrow')}
+			paneDisplayMode="top"
+			><p class="winui-BodyTextBlockStyle">
+				The overflow button opens the remaining items.
+			</p></NavigationView
+		>
+	</div>
+</div>
+
+<h2 class="winui-SubtitleTextBlockStyle">top — no settings row</h2>
+<div class="frame">
+	<NavigationView
+		items={topContentItems}
+		selected="menu-1"
+		onItemInvoked={select('top-no-settings')}
+		paneDisplayMode="top"
+		settingsVisible={false}
+		><p class="winui-BodyTextBlockStyle">The settings row is absent.</p></NavigationView
+	>
+</div>
+
 <h2 class="winui-SubtitleTextBlockStyle">selection</h2>
 <pre class="log">{events.length ? events.join('\n') : 'nothing selected yet'}</pre>
 
@@ -131,6 +193,11 @@
 	}
 
 	.frame :global(> *) {
+		height: 100%;
+	}
+
+	.narrow {
+		max-width: 420px;
 		height: 100%;
 	}
 
