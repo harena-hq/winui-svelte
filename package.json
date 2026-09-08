@@ -19,6 +19,8 @@
 		"tokens:build": "node scripts/tokens/generate.mjs",
 		"gallery:fetch": "node scripts/gallery/fetch.mjs",
 		"gallery:extract": "node scripts/gallery/extract.mjs",
+		"colorcode:fetch": "node scripts/colorcode/fetch.mjs",
+		"colorcode:extract": "node scripts/colorcode/extract.mjs",
 		"framework:fetch": "node scripts/framework/fetch.mjs",
 		"framework:extract": "node scripts/framework/extract.mjs",
 		"test": "playwright test",

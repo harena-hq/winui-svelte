@@ -1,0 +1,1297 @@
+{
+	"source": {
+		"repository": "CommunityToolkit/ColorCode-Universal",
+		"url": "https://github.com/CommunityToolkit/ColorCode-Universal",
+		"ref": "v2.0.15",
+		"commit": "e6c2701c365a7a91d74d7ef38a6b60075008ce94",
+		"extractedAt": "2026-09-08",
+		"fileCount": 7,
+		"files": [
+			{
+				"path": "ColorCode.Core/Common/ScopeName.cs",
+				"sha256": "90846cac7011ce0adce27c41d41c79df86faf08280db41caf9c86e79aebc63a5"
+			},
+			{
+				"path": "ColorCode.Core/Common/LanguageId.cs",
+				"sha256": "5603adcd4b8e1bd2c0e7002178372585908e36ce4516c8cdbd17ec6f2fcb2105"
+			},
+			{
+				"path": "ColorCode.Core/Styling/StyleDictionary.cs",
+				"sha256": "e736a73fea4b5a0b02a4301d715181966f1ac64aa573cb9273cf4b4f8336bf79"
+			},
+			{
+				"path": "ColorCode.Core/Styling/StyleDictionary.DefaultLight.cs",
+				"sha256": "ec49cf2a2a30cdfb1329ff65d1119caac1cbc32d7b2d558ffdcc9b622625d836"
+			},
+			{
+				"path": "ColorCode.Core/Styling/StyleDictionary.DefaultDark.cs",
+				"sha256": "977eebf8fb91bcbcee057b1714315e57c9d71c56e736b03615c392b4d846eba9"
+			},
+			{
+				"path": "ColorCode.Core/Compilation/Languages/Xml.cs",
+				"sha256": "d8d489330a9ec715433f22bb3e4ee1437422323b4d1e7fffc4f29a75b09713cd"
+			},
+			{
+				"path": "ColorCode.Core/Compilation/Languages/CSharp.cs",
+				"sha256": "f7ce86d1a41bdd85967a0c369cca547016fbb9f7bdd6af3b33bab8a48b07c2dd"
+			}
+		]
+	},
+	"gallery": {
+		"repository": "microsoft/WinUI-Gallery",
+		"commit": "7a8a6aa6f432bee71b89aeb24c3e69a5b854dc4f",
+		"fileCount": 1,
+		"files": [
+			{
+				"path": "WinUIGallery/Controls/SampleCodePresenter.xaml.cs",
+				"sha256": "0143d2f46ec12da1895b7017065f7b003253cb02694dc631c67239b5a2f0c0e7"
+			}
+		]
+	},
+	"census": {
+		"scopeNames": 62,
+		"colorConstants": 21,
+		"lightStyles": 58,
+		"darkStyles": 58,
+		"overridesRemoved": 6,
+		"overridesAdded": 6,
+		"languages": 2,
+		"rules": {
+			"xml": 7,
+			"csharp": 10
+		},
+		"reachableScopes": 16
+	},
+	"scopeNames": {
+		"ClassName": "Class Name",
+		"Comment": "Comment",
+		"CssPropertyName": "CSS Property Name",
+		"CssPropertyValue": "CSS Property Value",
+		"CssSelector": "CSS Selector",
+		"HtmlAttributeName": "HTML Attribute ScopeName",
+		"HtmlAttributeValue": "HTML Attribute Value",
+		"HtmlComment": "HTML Comment",
+		"HtmlElementName": "HTML Element ScopeName",
+		"HtmlEntity": "HTML Entity",
+		"HtmlOperator": "HTML Operator",
+		"HtmlServerSideScript": "HTML Server-Side Script",
+		"HtmlTagDelimiter": "Html Tag Delimiter",
+		"JsonKey": "Json Key",
+		"JsonString": "Json String",
+		"JsonNumber": "Json Number",
+		"JsonConst": "Json Const",
+		"Keyword": "Keyword",
+		"LanguagePrefix": "&",
+		"PlainText": "Plain Text",
+		"PowerShellAttribute": "PowerShell Attribute",
+		"PowerShellOperator": "PowerShell Operator",
+		"PowerShellType": "PowerShell Type",
+		"PowerShellVariable": "PowerShell Variable",
+		"PowerShellCommand": "PowerShell Command",
+		"PowerShellParameter": "PowerShell Parameter",
+		"PreprocessorKeyword": "Preprocessor Keyword",
+		"SqlSystemFunction": "SQL System Function",
+		"String": "String",
+		"StringCSharpVerbatim": "String (C# @ Verbatim)",
+		"XmlAttribute": "XML Attribute",
+		"XmlAttributeQuotes": "XML Attribute Quotes",
+		"XmlAttributeValue": "XML Attribute Value",
+		"XmlCDataSection": "XML CData Section",
+		"XmlComment": "XML Comment",
+		"XmlDelimiter": "XML Delimiter",
+		"XmlDocComment": "XML Doc Comment",
+		"XmlDocTag": "XML Doc Tag",
+		"XmlName": "XML Name",
+		"Type": "Type",
+		"TypeVariable": "Type Variable",
+		"NameSpace": "Name Space",
+		"Constructor": "Constructor",
+		"Predefined": "Predefined",
+		"PseudoKeyword": "Pseudo Keyword",
+		"StringEscape": "String Escape",
+		"ControlKeyword": "Control Keyword",
+		"Number": "Number",
+		"Operator": "Operator",
+		"Delimiter": "Delimiter",
+		"MarkdownHeader": "Markdown Header",
+		"MarkdownCode": "Markdown Code",
+		"MarkdownListItem": "Markdown List Item",
+		"MarkdownEmph": "Markdown Emphasized",
+		"MarkdownBold": "Markdown Bold",
+		"BuiltinFunction": "Built In Function",
+		"BuiltinValue": "Built In Value",
+		"Attribute": "Attribute",
+		"SpecialCharacter": "Special Character",
+		"Intrinsic": "Intrinsic",
+		"Brackets": "Brackets",
+		"Continuation": "Continuation"
+	},
+	"colorConstants": {
+		"Blue": "#FF0000FF",
+		"White": "#FFFFFFFF",
+		"Black": "#FF000000",
+		"DullRed": "#FFA31515",
+		"Yellow": "#FFFFFF00",
+		"Green": "#FF008000",
+		"PowderBlue": "#FFB0E0E6",
+		"Teal": "#FF008080",
+		"Gray": "#FF808080",
+		"Navy": "#FF000080",
+		"OrangeRed": "#FFFF4500",
+		"Purple": "#FF800080",
+		"Red": "#FFFF0000",
+		"MediumTurqoise": "FF48D1CC",
+		"Magenta": "FFFF00FF",
+		"OliveDrab": "#FF6B8E23",
+		"DarkOliveGreen": "#FF556B2F",
+		"DarkCyan": "#FF008B8B",
+		"DarkOrange": "#FFFF8700",
+		"BrightGreen": "#FF00d700",
+		"BrightPurple": "#FFaf87ff"
+	},
+	"palette": {
+		"light": [
+			{
+				"scope": "Plain Text",
+				"foreground": "#FF000000",
+				"background": "#FFFFFFFF",
+				"referenceName": "plainText",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "HTML Server-Side Script",
+				"foreground": null,
+				"background": "#FFFFFF00",
+				"referenceName": "htmlServerSideScript",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "HTML Comment",
+				"foreground": "#FF008000",
+				"background": null,
+				"referenceName": "htmlComment",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "Html Tag Delimiter",
+				"foreground": "#FF0000FF",
+				"background": null,
+				"referenceName": "htmlTagDelimiter",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "HTML Element ScopeName",
+				"foreground": "#FFA31515",
+				"background": null,
+				"referenceName": "htmlElementName",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "HTML Attribute ScopeName",
+				"foreground": "#FFFF0000",
+				"background": null,
+				"referenceName": "htmlAttributeName",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "HTML Attribute Value",
+				"foreground": "#FF0000FF",
+				"background": null,
+				"referenceName": "htmlAttributeValue",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "HTML Operator",
+				"foreground": "#FF0000FF",
+				"background": null,
+				"referenceName": "htmlOperator",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "Comment",
+				"foreground": "#FF008000",
+				"background": null,
+				"referenceName": "comment",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "XML Doc Tag",
+				"foreground": "#FF808080",
+				"background": null,
+				"referenceName": "xmlDocTag",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "XML Doc Comment",
+				"foreground": "#FF008000",
+				"background": null,
+				"referenceName": "xmlDocComment",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "String",
+				"foreground": "#FFA31515",
+				"background": null,
+				"referenceName": "string",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "String (C# @ Verbatim)",
+				"foreground": "#FFA31515",
+				"background": null,
+				"referenceName": "stringCSharpVerbatim",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "Keyword",
+				"foreground": "#FF0000FF",
+				"background": null,
+				"referenceName": "keyword",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "Preprocessor Keyword",
+				"foreground": "#FF0000FF",
+				"background": null,
+				"referenceName": "preprocessorKeyword",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "HTML Entity",
+				"foreground": "#FFFF0000",
+				"background": null,
+				"referenceName": "htmlEntity",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "Json Key",
+				"foreground": "#FFFF8700",
+				"background": null,
+				"referenceName": "jsonKey",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "Json String",
+				"foreground": "#FF008B8B",
+				"background": null,
+				"referenceName": "jsonString",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "Json Number",
+				"foreground": "#FF00d700",
+				"background": null,
+				"referenceName": "jsonNumber",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "Json Const",
+				"foreground": "#FFaf87ff",
+				"background": null,
+				"referenceName": "jsonConst",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "XML Attribute",
+				"foreground": "#FFFF0000",
+				"background": null,
+				"referenceName": "xmlAttribute",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "XML Attribute Quotes",
+				"foreground": "#FF000000",
+				"background": null,
+				"referenceName": "xmlAttributeQuotes",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "XML Attribute Value",
+				"foreground": "#FF0000FF",
+				"background": null,
+				"referenceName": "xmlAttributeValue",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "XML CData Section",
+				"foreground": "#FF808080",
+				"background": null,
+				"referenceName": "xmlCDataSection",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "XML Comment",
+				"foreground": "#FF008000",
+				"background": null,
+				"referenceName": "xmlComment",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "XML Delimiter",
+				"foreground": "#FF0000FF",
+				"background": null,
+				"referenceName": "xmlDelimiter",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "XML Name",
+				"foreground": "#FFA31515",
+				"background": null,
+				"referenceName": "xmlName",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "Class Name",
+				"foreground": "FF48D1CC",
+				"background": null,
+				"referenceName": "className",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "CSS Selector",
+				"foreground": "#FFA31515",
+				"background": null,
+				"referenceName": "cssSelector",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "CSS Property Name",
+				"foreground": "#FFFF0000",
+				"background": null,
+				"referenceName": "cssPropertyName",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "CSS Property Value",
+				"foreground": "#FF0000FF",
+				"background": null,
+				"referenceName": "cssPropertyValue",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "SQL System Function",
+				"foreground": "FFFF00FF",
+				"background": null,
+				"referenceName": "sqlSystemFunction",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "PowerShell Attribute",
+				"foreground": "#FFB0E0E6",
+				"background": null,
+				"referenceName": "powershellAttribute",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "PowerShell Operator",
+				"foreground": "#FF808080",
+				"background": null,
+				"referenceName": "powershellOperator",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "PowerShell Type",
+				"foreground": "#FF008080",
+				"background": null,
+				"referenceName": "powershellType",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "PowerShell Variable",
+				"foreground": "#FFFF4500",
+				"background": null,
+				"referenceName": "powershellVariable",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "PowerShell Command",
+				"foreground": "#FF000080",
+				"background": null,
+				"referenceName": "powershellCommand",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "PowerShell Parameter",
+				"foreground": "#FF808080",
+				"background": null,
+				"referenceName": "powershellParameter",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "Type",
+				"foreground": "#FF008080",
+				"background": null,
+				"referenceName": "type",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "Type Variable",
+				"foreground": "#FF008080",
+				"background": null,
+				"referenceName": "typeVariable",
+				"italic": true,
+				"bold": false
+			},
+			{
+				"scope": "Name Space",
+				"foreground": "#FF000080",
+				"background": null,
+				"referenceName": "namespace",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "Constructor",
+				"foreground": "#FF800080",
+				"background": null,
+				"referenceName": "constructor",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "Predefined",
+				"foreground": "#FF000080",
+				"background": null,
+				"referenceName": "predefined",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "Pseudo Keyword",
+				"foreground": "#FF000080",
+				"background": null,
+				"referenceName": "pseudoKeyword",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "String Escape",
+				"foreground": "#FF808080",
+				"background": null,
+				"referenceName": "stringEscape",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "Control Keyword",
+				"foreground": "#FF0000FF",
+				"background": null,
+				"referenceName": "controlKeyword",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "Number",
+				"foreground": null,
+				"background": null,
+				"referenceName": "number",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "Operator",
+				"foreground": null,
+				"background": null,
+				"referenceName": "operator",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "Delimiter",
+				"foreground": null,
+				"background": null,
+				"referenceName": "delimiter",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "Markdown Header",
+				"foreground": "#FF0000FF",
+				"background": null,
+				"referenceName": "markdownHeader",
+				"italic": false,
+				"bold": true
+			},
+			{
+				"scope": "Markdown Code",
+				"foreground": "#FF008080",
+				"background": null,
+				"referenceName": "markdownCode",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "Markdown List Item",
+				"foreground": null,
+				"background": null,
+				"referenceName": "markdownListItem",
+				"italic": false,
+				"bold": true
+			},
+			{
+				"scope": "Markdown Emphasized",
+				"foreground": null,
+				"background": null,
+				"referenceName": "italic",
+				"italic": true,
+				"bold": false
+			},
+			{
+				"scope": "Markdown Bold",
+				"foreground": null,
+				"background": null,
+				"referenceName": "bold",
+				"italic": false,
+				"bold": true
+			},
+			{
+				"scope": "Built In Function",
+				"foreground": "#FF6B8E23",
+				"background": null,
+				"referenceName": "builtinFunction",
+				"italic": false,
+				"bold": true
+			},
+			{
+				"scope": "Built In Value",
+				"foreground": "#FF556B2F",
+				"background": null,
+				"referenceName": "builtinValue",
+				"italic": false,
+				"bold": true
+			},
+			{
+				"scope": "Attribute",
+				"foreground": "#FF008B8B",
+				"background": null,
+				"referenceName": "attribute",
+				"italic": true,
+				"bold": false
+			},
+			{
+				"scope": "Special Character",
+				"foreground": null,
+				"background": null,
+				"referenceName": "specialChar",
+				"italic": false,
+				"bold": false
+			}
+		],
+		"dark": [
+			{
+				"scope": "Plain Text",
+				"foreground": "#FFDADADA",
+				"background": "#FF1E1E1E",
+				"referenceName": "plainText",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "HTML Server-Side Script",
+				"foreground": null,
+				"background": "#FFFFFF00",
+				"referenceName": "htmlServerSideScript",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "HTML Comment",
+				"foreground": "#FF57A64A",
+				"background": null,
+				"referenceName": "htmlComment",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "Html Tag Delimiter",
+				"foreground": "#FF569CD6",
+				"background": null,
+				"referenceName": "htmlTagDelimiter",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "HTML Element ScopeName",
+				"foreground": "#FFA31515",
+				"background": null,
+				"referenceName": "htmlElementName",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "HTML Attribute ScopeName",
+				"foreground": "#FFFF0000",
+				"background": null,
+				"referenceName": "htmlAttributeName",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "HTML Attribute Value",
+				"foreground": "#FF569CD6",
+				"background": null,
+				"referenceName": "htmlAttributeValue",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "HTML Operator",
+				"foreground": "#FF569CD6",
+				"background": null,
+				"referenceName": "htmlOperator",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "Comment",
+				"foreground": "#FF57A64A",
+				"background": null,
+				"referenceName": "comment",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "XML Doc Tag",
+				"foreground": "#FF608B4E",
+				"background": null,
+				"referenceName": "xmlDocTag",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "XML Doc Comment",
+				"foreground": "#FF608B4E",
+				"background": null,
+				"referenceName": "xmlDocComment",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "String",
+				"foreground": "#FFD69D85",
+				"background": null,
+				"referenceName": "string",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "String (C# @ Verbatim)",
+				"foreground": "#FFD69D85",
+				"background": null,
+				"referenceName": "stringCSharpVerbatim",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "Keyword",
+				"foreground": "#FF569CD6",
+				"background": null,
+				"referenceName": "keyword",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "Preprocessor Keyword",
+				"foreground": "#FF569CD6",
+				"background": null,
+				"referenceName": "preprocessorKeyword",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "HTML Entity",
+				"foreground": "#FFFF0000",
+				"background": null,
+				"referenceName": "htmlEntity",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "Json Key",
+				"foreground": "#FFFF8700",
+				"background": null,
+				"referenceName": "jsonKey",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "Json String",
+				"foreground": "#FF008B8B",
+				"background": null,
+				"referenceName": "jsonString",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "Json Number",
+				"foreground": "#FF00d700",
+				"background": null,
+				"referenceName": "jsonNumber",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "Json Const",
+				"foreground": "#FFaf87ff",
+				"background": null,
+				"referenceName": "jsonConst",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "XML Attribute",
+				"foreground": "#FF92CAF4",
+				"background": null,
+				"referenceName": "xmlAttribute",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "XML Attribute Quotes",
+				"foreground": "#FF569CD6",
+				"background": null,
+				"referenceName": "xmlAttributeQuotes",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "XML Attribute Value",
+				"foreground": "#FF569CD6",
+				"background": null,
+				"referenceName": "xmlAttributeValue",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "XML CData Section",
+				"foreground": "#FFC0D088",
+				"background": null,
+				"referenceName": "xmlCDataSection",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "XML Comment",
+				"foreground": "#FF57A64A",
+				"background": null,
+				"referenceName": "xmlComment",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "XML Delimiter",
+				"foreground": "#FF808080",
+				"background": null,
+				"referenceName": "xmlDelimiter",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "XML Name",
+				"foreground": "#FF#E6E6E6",
+				"background": null,
+				"referenceName": "xmlName",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "Class Name",
+				"foreground": "#FF4EC9B0",
+				"background": null,
+				"referenceName": "className",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "CSS Selector",
+				"foreground": "#FFA31515",
+				"background": null,
+				"referenceName": "cssSelector",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "CSS Property Name",
+				"foreground": "#FFFF0000",
+				"background": null,
+				"referenceName": "cssPropertyName",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "CSS Property Value",
+				"foreground": "#FF569CD6",
+				"background": null,
+				"referenceName": "cssPropertyValue",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "SQL System Function",
+				"foreground": "FFFF00FF",
+				"background": null,
+				"referenceName": "sqlSystemFunction",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "PowerShell Attribute",
+				"foreground": "#FFB0E0E6",
+				"background": null,
+				"referenceName": "powershellAttribute",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "PowerShell Operator",
+				"foreground": "#FF9B9B9B",
+				"background": null,
+				"referenceName": "powershellOperator",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "PowerShell Type",
+				"foreground": "#FF008080",
+				"background": null,
+				"referenceName": "powershellType",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "PowerShell Variable",
+				"foreground": "#FFFF4500",
+				"background": null,
+				"referenceName": "powershellVariable",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "PowerShell Command",
+				"foreground": "#FFFFFF00",
+				"background": null,
+				"referenceName": "powershellCommand",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "PowerShell Parameter",
+				"foreground": "#FF9B9B9B",
+				"background": null,
+				"referenceName": "powershellParameter",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "Type",
+				"foreground": "#FF008080",
+				"background": null,
+				"referenceName": "type",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "Type Variable",
+				"foreground": "#FF008080",
+				"background": null,
+				"referenceName": "typeVariable",
+				"italic": true,
+				"bold": false
+			},
+			{
+				"scope": "Name Space",
+				"foreground": "#FF000080",
+				"background": null,
+				"referenceName": "namespace",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "Constructor",
+				"foreground": "#FF800080",
+				"background": null,
+				"referenceName": "constructor",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "Predefined",
+				"foreground": "#FF000080",
+				"background": null,
+				"referenceName": "predefined",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "Pseudo Keyword",
+				"foreground": "#FF000080",
+				"background": null,
+				"referenceName": "pseudoKeyword",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "String Escape",
+				"foreground": "#FF9B9B9B",
+				"background": null,
+				"referenceName": "stringEscape",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "Control Keyword",
+				"foreground": "#FF569CD6",
+				"background": null,
+				"referenceName": "controlKeyword",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "Number",
+				"foreground": "#FFB5CEA8",
+				"background": null,
+				"referenceName": "number",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "Operator",
+				"foreground": null,
+				"background": null,
+				"referenceName": "operator",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "Delimiter",
+				"foreground": null,
+				"background": null,
+				"referenceName": "delimiter",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "Markdown Header",
+				"foreground": "#FF569CD6",
+				"background": null,
+				"referenceName": "markdownHeader",
+				"italic": false,
+				"bold": true
+			},
+			{
+				"scope": "Markdown Code",
+				"foreground": "#FFD69D85",
+				"background": null,
+				"referenceName": "markdownCode",
+				"italic": false,
+				"bold": false
+			},
+			{
+				"scope": "Markdown List Item",
+				"foreground": null,
+				"background": null,
+				"referenceName": "markdownListItem",
+				"italic": false,
+				"bold": true
+			},
+			{
+				"scope": "Markdown Emphasized",
+				"foreground": null,
+				"background": null,
+				"referenceName": "italic",
+				"italic": true,
+				"bold": false
+			},
+			{
+				"scope": "Markdown Bold",
+				"foreground": null,
+				"background": null,
+				"referenceName": "bold",
+				"italic": false,
+				"bold": true
+			},
+			{
+				"scope": "Built In Function",
+				"foreground": "#FF6B8E23",
+				"background": null,
+				"referenceName": "builtinFunction",
+				"italic": false,
+				"bold": true
+			},
+			{
+				"scope": "Built In Value",
+				"foreground": "#FF556B2F",
+				"background": null,
+				"referenceName": "builtinValue",
+				"italic": false,
+				"bold": true
+			},
+			{
+				"scope": "Attribute",
+				"foreground": "#FF008B8B",
+				"background": null,
+				"referenceName": "attribute",
+				"italic": true,
+				"bold": false
+			},
+			{
+				"scope": "Special Character",
+				"foreground": null,
+				"background": null,
+				"referenceName": "specialChar",
+				"italic": false,
+				"bold": false
+			}
+		],
+		"galleryDark": {
+			"removed": [
+				"XML Attribute",
+				"XML Attribute Quotes",
+				"XML Attribute Value",
+				"HTML Comment",
+				"XML Delimiter",
+				"XML Name"
+			],
+			"added": [
+				{
+					"scope": "XML Attribute",
+					"foreground": "#FF87CEFA",
+					"referenceName": "xmlAttribute"
+				},
+				{
+					"scope": "XML Attribute Quotes",
+					"foreground": "#FFFFA07A",
+					"referenceName": "xmlAttributeQuotes"
+				},
+				{
+					"scope": "XML Attribute Value",
+					"foreground": "#FFFFA07A",
+					"referenceName": "xmlAttributeValue"
+				},
+				{
+					"scope": "HTML Comment",
+					"foreground": "#FF6B8E23",
+					"referenceName": "htmlComment"
+				},
+				{
+					"scope": "XML Delimiter",
+					"foreground": "#FF808080",
+					"referenceName": "xmlDelimiter"
+				},
+				{
+					"scope": "XML Name",
+					"foreground": "#FF5F82E8",
+					"referenceName": "xmlName"
+				}
+			]
+		}
+	},
+	"languages": [
+		{
+			"id": "xml",
+			"name": "XML",
+			"cssClassName": "xml",
+			"aliases": [
+				"xaml",
+				"axml"
+			],
+			"rules": [
+				{
+					"pattern": "\\<![ \\r\\n\\t]*(--([^\\-]|[\\r\\n]|-[^\\-])*--[ \\r\\n\\t]*)\\>",
+					"captures": {
+						"0": "HTML Comment"
+					}
+				},
+				{
+					"pattern": "(?i)(<!)(doctype)(?:\\s+([a-z0-9]+))*(?:\\s+(\")([^\\n]*?)(\"))*(>)",
+					"captures": {
+						"1": "XML Delimiter",
+						"2": "XML Name",
+						"3": "XML Attribute",
+						"4": "XML Attribute Quotes",
+						"5": "XML Attribute Value",
+						"6": "XML Attribute Quotes",
+						"7": "XML Delimiter"
+					}
+				},
+				{
+					"pattern": "(?i)(<\\?)(xml-stylesheet)((?:\\s+[a-z0-9]+=\"[^\\n\"]*\")*(?:\\s+[a-z0-9]+=\\'[^\\n\\']*\\')*\\s*?)(\\?>)",
+					"captures": {
+						"1": "XML Delimiter",
+						"2": "XML Name",
+						"3": "XML Doc Tag",
+						"4": "XML Delimiter"
+					}
+				},
+				{
+					"pattern": "(?i)(<\\?)([a-z][a-z0-9-]*)(?:\\s+([a-z0-9]+)(=)(\")([^\\n]*?)(\"))*(?:\\s+([a-z0-9]+)(=)(\\')([^\\n]*?)(\\'))*\\s*?(\\?>)",
+					"captures": {
+						"1": "XML Delimiter",
+						"2": "XML Name",
+						"3": "XML Attribute",
+						"4": "XML Delimiter",
+						"5": "XML Attribute Quotes",
+						"6": "XML Attribute Value",
+						"7": "XML Attribute Quotes",
+						"8": "XML Attribute",
+						"9": "XML Delimiter",
+						"10": "XML Attribute Quotes",
+						"11": "XML Attribute Value",
+						"12": "XML Attribute Quotes",
+						"13": "XML Delimiter"
+					}
+				},
+				{
+					"pattern": "(?xi)(</?)\n                                          (?: ([a-z][a-z0-9-]*)(:) )*\n                                          ([a-z][a-z0-9-_\\.]*)\n                                          (?:\n                                            |[\\s\\n]+([a-z0-9-_\\.:]+)[\\s\\n]*(=)[\\s\\n]*(\")([^\\n]+?)(\")\n                                            |[\\s\\n]+([a-z0-9-_\\.:]+)[\\s\\n]*(=)[\\s\\n]*(')([^\\n]+?)(')\n                                            |[\\s\\n]+([a-z0-9-_\\.:]+) )*\n                                          [\\s\\n]*\n                                          (/?>)",
+					"captures": {
+						"1": "XML Delimiter",
+						"2": "XML Name",
+						"3": "XML Delimiter",
+						"4": "XML Name",
+						"5": "XML Attribute",
+						"6": "XML Delimiter",
+						"7": "XML Attribute Quotes",
+						"8": "XML Attribute Value",
+						"9": "XML Attribute Quotes",
+						"10": "XML Attribute",
+						"11": "XML Delimiter",
+						"12": "XML Attribute Quotes",
+						"13": "XML Attribute Value",
+						"14": "XML Attribute Quotes",
+						"15": "XML Attribute",
+						"16": "XML Delimiter"
+					}
+				},
+				{
+					"pattern": "(?i)&[a-z0-9]+?;",
+					"captures": {
+						"0": "XML Attribute"
+					}
+				},
+				{
+					"pattern": "(?s)(<!\\[CDATA\\[)(.*?)(\\]\\]>)",
+					"captures": {
+						"1": "XML Delimiter",
+						"2": "XML CData Section",
+						"3": "XML Delimiter"
+					}
+				}
+			]
+		},
+		{
+			"id": "c#",
+			"name": "C#",
+			"cssClassName": "csharp",
+			"aliases": [
+				"cs",
+				"c#",
+				"csharp",
+				"cake"
+			],
+			"rules": [
+				{
+					"pattern": "/\\*([^*]|[\\r\\n]|(\\*+([^*/]|[\\r\\n])))*\\*+/",
+					"captures": {
+						"0": "Comment"
+					}
+				},
+				{
+					"pattern": "(///)(?:\\s*?(<[/a-zA-Z0-9\\s\"=]+>))*([^\\r\\n]*)",
+					"captures": {
+						"1": "XML Doc Tag",
+						"2": "XML Doc Tag",
+						"3": "XML Doc Comment"
+					}
+				},
+				{
+					"pattern": "(//.*?)\\r?$",
+					"captures": {
+						"1": "Comment"
+					}
+				},
+				{
+					"pattern": "'[^\\n]*?(?<!\\\\)'",
+					"captures": {
+						"0": "String"
+					}
+				},
+				{
+					"pattern": "(?s)@\"(?:\"\"|.)*?\"(?!\")",
+					"captures": {
+						"0": "String (C# @ Verbatim)"
+					}
+				},
+				{
+					"pattern": "(?s)(\"[^\\n]*?(?<!\\\\)\")",
+					"captures": {
+						"0": "String"
+					}
+				},
+				{
+					"pattern": "\\[(assembly|module|type|return|param|method|field|property|event):[^\\]\"]*(\"[^\\n]*?(?<!\\\\)\")?[^\\]]*\\]",
+					"captures": {
+						"1": "Keyword",
+						"2": "String"
+					}
+				},
+				{
+					"pattern": "^\\s*(\\#define|\\#elif|\\#else|\\#endif|\\#endregion|\\#error|\\#if|\\#line|\\#pragma|\\#region|\\#undef|\\#warning).*?$",
+					"captures": {
+						"1": "Preprocessor Keyword"
+					}
+				},
+				{
+					"pattern": "\\b(abstract|as|ascending|base|bool|break|by|byte|case|catch|char|checked|class|const|continue|decimal|default|delegate|descending|do|double|dynamic|else|enum|equals|event|explicit|extern|false|finally|fixed|float|for|foreach|from|get|goto|group|if|implicit|in|int|into|interface|internal|is|join|let|lock|long|namespace|new|null|object|on|operator|orderby|out|override|params|partial|private|protected|public|readonly|ref|return|sbyte|sealed|select|set|short|sizeof|stackalloc|static|string|struct|switch|this|throw|true|try|typeof|uint|ulong|unchecked|unsafe|ushort|using|var|virtual|void|volatile|where|while|yield|async|await|warning|disable)\\b",
+					"captures": {
+						"1": "Keyword"
+					}
+				},
+				{
+					"pattern": "\\b[0-9]{1,}\\b",
+					"captures": {
+						"0": "Number"
+					}
+				}
+			]
+		}
+	]
+}
