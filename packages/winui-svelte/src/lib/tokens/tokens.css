@@ -736,6 +736,26 @@
 	--winui-TextOnAccentFillColorDefault: #ffffff;
 	--winui-ControlAAStrokeColorDefault: #00000072;
 	--winui-TextOnAccentFillColorDefaultBrush: var(--winui-TextOnAccentFillColorDefault);
+	--winui-FlipViewItemBackground: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-FlipViewButtonBorderThemeThickness: 0px;
+	--winui-FlipViewBackground: var(--winui-SolidBackgroundFillColorBaseBrush);
+	--winui-FlipViewNextPreviousButtonBackground: var(--winui-AcrylicInAppFillColorDefaultBrush);
+	--winui-FlipViewNextPreviousButtonBackgroundPointerOver: var(
+		--winui-AcrylicInAppFillColorDefaultBrush
+	);
+	--winui-FlipViewNextPreviousButtonBackgroundPressed: var(
+		--winui-AcrylicInAppFillColorDefaultBrush
+	);
+	--winui-FlipViewNextPreviousArrowForeground: var(--winui-ControlStrongFillColorDefaultBrush);
+	--winui-FlipViewNextPreviousArrowForegroundPointerOver: var(--winui-TextFillColorSecondaryBrush);
+	--winui-FlipViewNextPreviousArrowForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
+	--winui-FlipViewNextPreviousButtonBorderBrush: var(--winui-ControlStrokeColorDefaultBrush);
+	--winui-FlipViewNextPreviousButtonBorderBrushPointerOver: var(
+		--winui-ControlStrokeColorDefaultBrush
+	);
+	--winui-FlipViewNextPreviousButtonBorderBrushPressed: var(--winui-ControlStrokeColorDefaultBrush);
+	--winui-FlipViewButtonFontSize: 8px;
+	--winui-FlipViewButtonScalePressed: 0.875;
 	--winui-FlyoutPresenterBackground: var(--winui-AcrylicInAppFillColorDefaultBrush);
 	--winui-FlyoutBorderThemeBrush: var(--winui-SurfaceStrokeColorFlyoutBrush);
 	--winui-FlyoutBorderThemeThickness: 1px;
@@ -2383,6 +2403,24 @@
 	--winui-TextOnAccentFillColorDefault: #ffffff;
 	--winui-ControlAAStrokeColorDefault: #ffffff8b;
 	--winui-TextOnAccentFillColorDefaultBrush: var(--winui-TextOnAccentFillColorDefault);
+	--winui-FlipViewItemBackground: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-FlipViewButtonBorderThemeThickness: 0px;
+	--winui-FlipViewBackground: var(--winui-SolidBackgroundFillColorBaseBrush);
+	--winui-FlipViewNextPreviousButtonBackground: var(--winui-AcrylicInAppFillColorDefaultBrush);
+	--winui-FlipViewNextPreviousButtonBackgroundPointerOver: var(
+		--winui-AcrylicInAppFillColorDefaultBrush
+	);
+	--winui-FlipViewNextPreviousButtonBackgroundPressed: var(
+		--winui-AcrylicInAppFillColorDefaultBrush
+	);
+	--winui-FlipViewNextPreviousArrowForeground: var(--winui-ControlStrongFillColorDefaultBrush);
+	--winui-FlipViewNextPreviousArrowForegroundPointerOver: var(--winui-TextFillColorSecondaryBrush);
+	--winui-FlipViewNextPreviousArrowForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
+	--winui-FlipViewNextPreviousButtonBorderBrush: var(--winui-ControlStrokeColorDefaultBrush);
+	--winui-FlipViewNextPreviousButtonBorderBrushPointerOver: var(
+		--winui-ControlStrokeColorDefaultBrush
+	);
+	--winui-FlipViewNextPreviousButtonBorderBrushPressed: var(--winui-ControlStrokeColorDefaultBrush);
 	--winui-FlyoutPresenterBackground: var(--winui-AcrylicInAppFillColorDefaultBrush);
 	--winui-FlyoutBorderThemeBrush: var(--winui-SurfaceStrokeColorFlyoutBrush);
 	--winui-FlyoutBorderThemeThickness: 1px;
@@ -3856,6 +3894,28 @@
 		--winui-TextOnAccentFillColorDefault: #ffffff;
 		--winui-ControlAAStrokeColorDefault: #ffffff8b;
 		--winui-TextOnAccentFillColorDefaultBrush: var(--winui-TextOnAccentFillColorDefault);
+		--winui-FlipViewItemBackground: var(--winui-SubtleFillColorTransparentBrush);
+		--winui-FlipViewButtonBorderThemeThickness: 0px;
+		--winui-FlipViewBackground: var(--winui-SolidBackgroundFillColorBaseBrush);
+		--winui-FlipViewNextPreviousButtonBackground: var(--winui-AcrylicInAppFillColorDefaultBrush);
+		--winui-FlipViewNextPreviousButtonBackgroundPointerOver: var(
+			--winui-AcrylicInAppFillColorDefaultBrush
+		);
+		--winui-FlipViewNextPreviousButtonBackgroundPressed: var(
+			--winui-AcrylicInAppFillColorDefaultBrush
+		);
+		--winui-FlipViewNextPreviousArrowForeground: var(--winui-ControlStrongFillColorDefaultBrush);
+		--winui-FlipViewNextPreviousArrowForegroundPointerOver: var(
+			--winui-TextFillColorSecondaryBrush
+		);
+		--winui-FlipViewNextPreviousArrowForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
+		--winui-FlipViewNextPreviousButtonBorderBrush: var(--winui-ControlStrokeColorDefaultBrush);
+		--winui-FlipViewNextPreviousButtonBorderBrushPointerOver: var(
+			--winui-ControlStrokeColorDefaultBrush
+		);
+		--winui-FlipViewNextPreviousButtonBorderBrushPressed: var(
+			--winui-ControlStrokeColorDefaultBrush
+		);
 		--winui-FlyoutPresenterBackground: var(--winui-AcrylicInAppFillColorDefaultBrush);
 		--winui-FlyoutBorderThemeBrush: var(--winui-SurfaceStrokeColorFlyoutBrush);
 		--winui-FlyoutBorderThemeThickness: 1px;
@@ -5337,6 +5397,28 @@
 	--winui-TextOnAccentFillColorDefault: #ffffff;
 	--winui-ControlAAStrokeColorDefault: #ffffff8b;
 	--winui-TextOnAccentFillColorDefaultBrush: var(--winui-SystemColorWindowTextColor);
+	--winui-FlipViewItemBackground: var(--winui-SystemControlTransparentBrush);
+	--winui-FlipViewButtonBorderThemeThickness: 1px;
+	--winui-FlipViewBackground: var(--winui-SystemColorButtonFaceColorBrush);
+	--winui-FlipViewNextPreviousButtonBackground: var(--winui-SystemColorButtonFaceColorBrush);
+	--winui-FlipViewNextPreviousButtonBackgroundPointerOver: var(
+		--winui-SystemColorHighlightColorBrush
+	);
+	--winui-FlipViewNextPreviousButtonBackgroundPressed: var(--winui-SystemColorHighlightColorBrush);
+	--winui-FlipViewNextPreviousArrowForeground: var(--winui-SystemColorButtonTextColorBrush);
+	--winui-FlipViewNextPreviousArrowForegroundPointerOver: var(
+		--winui-SystemColorHighlightTextColorBrush
+	);
+	--winui-FlipViewNextPreviousArrowForegroundPressed: var(
+		--winui-SystemColorHighlightTextColorBrush
+	);
+	--winui-FlipViewNextPreviousButtonBorderBrush: var(--winui-SystemColorButtonTextColorBrush);
+	--winui-FlipViewNextPreviousButtonBorderBrushPointerOver: var(
+		--winui-SystemColorButtonTextColorBrush
+	);
+	--winui-FlipViewNextPreviousButtonBorderBrushPressed: var(
+		--winui-SystemColorButtonTextColorBrush
+	);
 	--winui-FlyoutPresenterBackground: var(--winui-SystemColorWindowColorBrush);
 	--winui-FlyoutBorderThemeBrush: var(--winui-SystemColorWindowTextColorBrush);
 	--winui-FlyoutBorderThemeThickness: 2px;

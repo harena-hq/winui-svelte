@@ -711,3 +711,13 @@ gate does.
 - **Would reconsider if**: the tranche's `TreeView` unit builds the roving-tabindex rig WD-004
   is already waiting on, at which point both rows are re-examined together and this one is
   deleted if the rig fits a two-dimensional candidate set.
+
+---
+
+### WD-028 — a FlipView moves by its buttons, and does not scroll
+
+- **Control**: `FlipView`.
+- **WinUI does**: the panel is inside a `ScrollViewer` whose snap points are `MandatorySingle` on both axes (`FlipView_themeresources.xaml:297`), so a drag, a wheel or a touch swipe moves the carousel and lands on an item; the flip buttons are one way in.
+- **We do**: move a transform by one item's width when a flip button is pressed, and nothing else. There is no drag, no wheel and no swipe, and the panel cannot be left between two items.
+- **Why accepted**: the resting visual is the same — an item filling the viewport with a button at each end — and what differs is the motion between two states rather than either state. Reproducing it needs a scroll container with snap points and a scroll handler that writes `selectedIndex` back, which is a scroll-position feedback loop of exactly the kind v8's sixth unit paid for; the Scrolling tranche is where the container it needs gets built.
+- **Would reconsider if**: the Scrolling tranche lands a `ScrollView` this control can sit in, at which point the transform becomes a scroll offset and this row is deleted.

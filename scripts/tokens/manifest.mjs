@@ -2536,6 +2536,7 @@ export const DOUBLE_RATIOS = {
 	SelectorBarItemIconScale: "the SelectorBarItem icon's 0.8 scale",
 	ComboBoxItemPillMinScale: "the selection pill's pressed scale, 0.625",
 	ItemContainerDisabledOpacity: "the disabled ItemContainer's 0.3 opacity",
+	FlipViewButtonScalePressed: "the pressed flip button's 0.875 scale",
 	ListViewItemDisabledThemeOpacity: "the disabled ListViewItem's 0.3 opacity"
 };
 
@@ -3120,6 +3121,7 @@ export const INFOBAR_KEYS = {
  * selecting nothing and the duplicate returning.
  */
 export const DEFINED_BY = {
+	FlipViewItemBackground: 'controls/dev/CommonStyles/FlipViewItem_themeresources.xaml',
 	AppBarThemeMinHeight: 'controls/dev/CommonStyles/CommandBar_themeresources.xaml',
 	AppBarThemeCompactHeight: 'controls/dev/CommonStyles/CommandBar_themeresources.xaml',
 	ExpanderHeaderBackground: 'controls/dev/Expander/Expander_themeresources.xaml',
@@ -3907,6 +3909,38 @@ export const TREEVIEWITEM_KEYS = {
 	TreeViewItemSelectionIndicatorForegroundPressed: 'TreeViewItem selection indicator while pressed',
 	TreeViewItemSelectionIndicatorForegroundDisabled:
 		'TreeViewItem selection indicator while disabled'
+};
+
+/**
+ * Keys FlipView and FlipViewItem read — the Collections tranche's fifth and last seed set.
+ *
+ * Absent: the nine `FlipViewButton*ThemeBrush` entries
+ * (`FlipView_themeresources.xaml:17-25`), which are the pre-Fluent button palette — hard
+ * colours like `#59D5D5D5` that no current template reads, the same category `PIVOT_KEYS`
+ * records. The four `FlipViewNextPreviousButtonBackground*` brushes resolve to an acrylic,
+ * and WD-002 is why what lands is its `FallbackColor`; measured on the reference machine, the
+ * original's own flip button renders at that fallback exactly.
+ *
+ * `FlipViewItemBackground` is defined identically in both `FlipView_themeresources.xaml:16`
+ * and `FlipViewItem_themeresources.xaml:5`, so `DEFINED_BY` names the item's own file as
+ * the one this layer reads it from.
+ */
+export const FLIPVIEW_KEYS = {
+	FlipViewBackground: 'FlipView background',
+	FlipViewItemBackground: 'FlipViewItem background',
+	FlipViewButtonBorderThemeThickness: 'FlipView flip button border width',
+	FlipViewButtonFontSize: 'FlipView flip button arrow size',
+	FlipViewButtonScalePressed: 'FlipView flip button scale while pressed',
+	FlipViewNextPreviousButtonBackground: 'FlipView flip button background, at rest',
+	FlipViewNextPreviousButtonBackgroundPointerOver:
+		'FlipView flip button background under the pointer',
+	FlipViewNextPreviousButtonBackgroundPressed: 'FlipView flip button background while pressed',
+	FlipViewNextPreviousButtonBorderBrush: 'FlipView flip button border, at rest',
+	FlipViewNextPreviousButtonBorderBrushPointerOver: 'FlipView flip button border under the pointer',
+	FlipViewNextPreviousButtonBorderBrushPressed: 'FlipView flip button border while pressed',
+	FlipViewNextPreviousArrowForeground: 'FlipView flip button arrow, at rest',
+	FlipViewNextPreviousArrowForegroundPointerOver: 'FlipView flip button arrow under the pointer',
+	FlipViewNextPreviousArrowForegroundPressed: 'FlipView flip button arrow while pressed'
 };
 
 /**
