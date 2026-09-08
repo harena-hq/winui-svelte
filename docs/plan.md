@@ -1577,6 +1577,26 @@ controls/dev -name 'AppBar*'` matches three `*_themeresources.xaml` files and no
     Each is a `WD-` with a measurement behind it or it is built — the one thing none of them may
     be is unmentioned.
 
+    **What this version leaves owed.** None of these is a divergence; each is simply not built,
+    and each is on a page the acceptance gate will eventually walk.
+
+    | control           | not yet built                                       |
+    | ----------------- | --------------------------------------------------- |
+    | UniformGridLayout | `ItemsStretch="Uniform"` and `MaximumRowsOrColumns` |
+
+    `MaximumRowsOrColumns` is not in that table, and the difference between the two is the
+    acceptance surface rather than the difficulty. Both need the width a line actually resolved
+    to fed back into a track size — `Uniform` scales a cell's height by the ratio the extra
+    width added, and `MaximumRowsOrColumns` caps a count `auto-fill` computes for itself — so
+    each is a JavaScript layout pass rather than a value, and unit 2 built neither. But
+    `ItemsStretch` is set twice in the pinned Gallery and both are `Fill` on a `LinedFlowLayout`,
+    and `ItemsJustification` is set nowhere, so `Uniform` is owed to no page. **`MaximumRowsOrColumns`
+    is set on a `UniformGridLayout` inside an `ItemsView` (`ItemsViewPage.xaml:346`), and that
+    page gives it a `NumberBox` options pane (`:301-304`) — which by v8's rule puts it on the
+    surface with every value shown. Unit 4 owes it**, and unit 4 is also where a container
+    measurement stops being a new mechanism, because `ItemsView` wraps its repeater in a scroll
+    viewport it has to measure anyway.
+
     Done-when is v8's, applied to nine units: each control snapshotted in three themes, each
     compared against the original on the reference guest, every prop following D21 as ADR 0012
     amends it, ADR 0013 written in unit 1 and cited by the rest, the surface sweep's step-1

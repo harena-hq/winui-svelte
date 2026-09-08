@@ -41,7 +41,8 @@ export { default as ItemsRepeater } from './components/ItemsRepeater.svelte';
 export type {
 	ItemsRepeaterLayout,
 	ItemsRepeaterProps,
-	StackLayoutOptions
+	StackLayoutOptions,
+	UniformGridLayoutOptions
 } from './components/ItemsRepeater.svelte';
 export { default as MenuFlyout } from './components/MenuFlyout.svelte';
 export type {
