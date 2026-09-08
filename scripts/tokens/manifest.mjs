@@ -2315,6 +2315,12 @@ export const TYPE_RAMP = {
  * these gets the inputs rather than the answer.
  */
 export const DOUBLE_LENGTHS = {
+	TabViewItemHeaderIconSize: 'TabViewItem icon box size',
+	TabViewItemHeaderCloseButtonHeight: 'TabViewItem close button height',
+	TabViewItemHeaderCloseButtonWidth: 'TabViewItem close button width',
+	TabViewItemMinHeight: 'TabViewItem minimum height',
+	TabViewItemMinWidth: 'TabViewItem minimum width',
+	TabViewItemMaxWidth: 'TabViewItem maximum width',
 	SelectorBarItemSpacing: 'the SelectorBarItem icon-to-text gap',
 	SelectorBarItemPillWidth: 'the SelectorBarItem pill base width',
 	SelectorBarItemPillHeight: 'the SelectorBarItem pill height',
@@ -3263,6 +3269,88 @@ export const PIVOT_KEYS = {
 	PivotHeaderItemForegroundDisabled: 'PivotHeaderItem disabled foreground',
 	PivotHeaderItemSelectedPipeFill: 'PivotHeaderItem selected pipe fill',
 	PivotHeaderItemSelectedPipeCornerRadius: 'PivotHeaderItem selected pipe radius'
+};
+
+/**
+ * Keys TabView and TabViewItem read — the strip, its direct item rendering, and the selected
+ * item's geometry. `TabViewBackground` is the strip's own Background; the rest map to the
+ * corresponding template paint, metrics, and visual states.
+ *
+ * The add-button family (`TabViewButtonBackground*`, `TabViewButtonForeground*`,
+ * `TabViewButtonBorderBrush*`, `TabViewButtonBorderThickness`,
+ * `TabViewButtonBackgroundActiveTab`, `TabViewButtonForegroundActiveTab`, and
+ * `TabViewItemAddButton*`) and scroll-button family (`TabViewScrollButton*`,
+ * `TabViewItemScrollButton*`, `TabViewItemLeftScrollButtonContainerPadding`, and
+ * `TabViewItemRightScrollButtonContainerPadding`) are the next unit's (`TabView.xaml:39`,
+ * `:118-123`).
+ *
+ * **`TabViewItemHeaderPadding` is absent, and its two variants are here instead.** The item's
+ * Style binds it as `TabContainer.Padding` (`TabView.xaml:562`), and then the `CloseIconStates`
+ * group (`:492-503`) overwrites it in *both* of its states —
+ * `TabViewItemHeaderPaddingWithCloseButton` (`8,3,4,3`, identical to it) when the close button
+ * shows and `TabViewItemHeaderPaddingWithoutCloseButton` (`8,3,8,3`) when it is collapsed.
+ * `TabViewItem::UpdateCloseButton` (`TabViewItem.cpp:251-282`) enters one of the two on load and
+ * on every change, so the Style's own value is never the effective one and a tab whose
+ * `IsClosable` is false is 4px wider on the right than seeding the base key would draw it.
+ *
+ * `TabViewSelectedItemHeaderPadding` (`TabView_themeresources.xaml:241`) is absent for the
+ * neighbouring reason: nothing binds it at all. The Selected state changes
+ * `TabViewSelectedItemHeaderMargin`, not the padding. Likewise,
+ * `TabViewItemHeaderFontSize` (`TabView_themeresources.xaml:245`) is absent because the label
+ * carries `winui-CaptionTextBlockStyle`, whose 12px Small face is the measured source of its
+ * typography. `TabViewItemHeaderDragBackground` (`TabView.xaml:554`) and `TabViewShadowDepth`
+ * are declined by WD-023.
+ */
+export const TABVIEW_KEYS = {
+	TabViewBackground: 'TabView strip background',
+	TabViewBorderBrush: 'TabView strip and selected tab border',
+	TabViewHeaderPadding: 'TabView tab list padding',
+	TabViewItemHeaderBackground: 'TabViewItem resting background',
+	TabViewItemHeaderBackgroundSelected: 'TabViewItem selected background',
+	TabViewItemHeaderBackgroundPointerOver: 'TabViewItem hover background',
+	TabViewItemHeaderBackgroundPressed: 'TabViewItem pressed background',
+	TabViewItemHeaderBackgroundDisabled: 'TabViewItem disabled background',
+	TabViewItemHeaderForeground: 'TabViewItem resting label foreground',
+	TabViewItemHeaderForegroundSelected: 'TabViewItem selected label foreground',
+	TabViewItemHeaderForegroundPointerOver: 'TabViewItem hover label foreground',
+	TabViewItemHeaderForegroundPressed: 'TabViewItem pressed label foreground',
+	TabViewItemHeaderForegroundDisabled: 'TabViewItem disabled label foreground',
+	TabViewItemIconForeground: 'TabViewItem resting icon foreground',
+	TabViewItemIconForegroundSelected: 'TabViewItem selected icon foreground',
+	TabViewItemIconForegroundPointerOver: 'TabViewItem hover icon foreground',
+	TabViewItemIconForegroundPressed: 'TabViewItem pressed icon foreground',
+	TabViewItemIconForegroundDisabled: 'TabViewItem disabled icon foreground',
+	TabViewItemHeaderCloseButtonBackground: 'TabViewItem resting close button background',
+	TabViewItemHeaderCloseButtonBackgroundPointerOver: 'TabViewItem close button hover background',
+	TabViewItemHeaderCloseButtonBackgroundPressed: 'TabViewItem close button pressed background',
+	TabViewItemHeaderCloseButtonForeground: 'TabViewItem resting close button foreground',
+	TabViewItemHeaderCloseButtonForegroundPointerOver: 'TabViewItem close button hover foreground',
+	TabViewItemHeaderCloseButtonForegroundPressed: 'TabViewItem close button pressed foreground',
+	TabViewItemHeaderPointerOverCloseButtonBackground: 'TabViewItem hover close button background',
+	TabViewItemHeaderPointerOverCloseButtonForeground: 'TabViewItem hover close button foreground',
+	TabViewItemHeaderPressedCloseButtonBackground: 'TabViewItem pressed close button background',
+	TabViewItemHeaderPressedCloseButtonForeground: 'TabViewItem pressed close button foreground',
+	TabViewItemHeaderSelectedCloseButtonBackground: 'TabViewItem selected close button background',
+	TabViewItemHeaderSelectedCloseButtonForeground: 'TabViewItem selected close button foreground',
+	TabViewItemHeaderDisabledCloseButtonBackground: 'TabViewItem disabled close button background',
+	TabViewItemHeaderDisabledCloseButtonForeground: 'TabViewItem disabled close button foreground',
+	TabViewItemSeparator: 'TabViewItem separator',
+	TabViewItemSeparatorMargin: 'TabViewItem separator inset',
+	TabViewItemHeaderPaddingWithCloseButton: 'TabViewItem padding while its close button shows',
+	TabViewItemHeaderPaddingWithoutCloseButton:
+		'TabViewItem padding while its close button is collapsed',
+	TabViewItemHeaderIconSize: 'TabViewItem icon box size',
+	TabViewItemHeaderIconMargin: 'TabViewItem icon trailing margin',
+	TabViewItemHeaderCloseButtonHeight: 'TabViewItem close button height',
+	TabViewItemHeaderCloseButtonWidth: 'TabViewItem close button width',
+	TabViewItemHeaderCloseFontSize: 'TabViewItem close glyph size',
+	TabViewItemHeaderCloseMargin: 'TabViewItem close button margin',
+	TabViewItemMinHeight: 'TabViewItem minimum height',
+	TabViewItemMinWidth: 'TabViewItem minimum width',
+	TabViewItemMaxWidth: 'TabViewItem maximum width',
+	TabViewItemBorderThickness: 'TabViewItem resting border width',
+	TabViewSelectedItemBorderThickness: 'TabViewItem selected border width',
+	TabViewSelectedItemHeaderMargin: 'TabViewItem selected header margin'
 };
 
 /**
