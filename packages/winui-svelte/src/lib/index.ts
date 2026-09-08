@@ -37,6 +37,12 @@ export { default as InfoBadge } from './components/InfoBadge.svelte';
 export type { InfoBadgeProps } from './components/InfoBadge.svelte';
 export { default as InfoBar } from './components/InfoBar.svelte';
 export type { InfoBarProps } from './components/InfoBar.svelte';
+export { default as ItemsRepeater } from './components/ItemsRepeater.svelte';
+export type {
+	ItemsRepeaterLayout,
+	ItemsRepeaterProps,
+	StackLayoutOptions
+} from './components/ItemsRepeater.svelte';
 export { default as MenuFlyout } from './components/MenuFlyout.svelte';
 export type {
 	MenuFlyoutEntry,
