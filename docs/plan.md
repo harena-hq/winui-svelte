@@ -62,6 +62,7 @@ pnpm workspace. The library is publishable and imposes no build tooling on its c
 | D23 | The XAML framework dictionary is a third pinned upstream; the control pin wins per key and theme     | ADR 0010                          |
 | D24 | The type ramp's line height is `normal`, the font's own spacing, not the published ramp's number     | ADR 0011                          |
 | D25 | An icon is a snippet the consumer draws, with a Segoe Fluent Icons code point as its shorthand       | ADR 0012                          |
+| D26 | A control's internal items host is template-private; the tranche renders its items directly          | this file, "Roadmap → v8"         |
 
 ## Verification
 
@@ -1164,7 +1165,172 @@ controls/dev -name 'AppBar*'` matches three `*_themeresources.xaml` files and no
     that has not admitted it. Naming the destination is what the list below is for.
     Scheduling it is a decision for whoever plans v8.
 
-8.  **Navigation** — BreadcrumbBar, Pivot, SelectorBar, TabView. NavigationView was v2.
+8.  **Navigation** — BreadcrumbBar, Pivot, SelectorBar, TabView, and NavigationView's top
+    display mode. NavigationView itself was v2.
+
+    Goal: **the application can say where the user is, and move them between peers.**
+
+    **This is the first tranche that empties a Gallery group.** The Navigation group holds
+    five pages — `data/winui-gallery-shell.json:645` — and NavigationView is v2's, so the
+    group closes when this version does. Every tranche before it took a slice of one group or
+    reached across two, which is D22 working as designed and is also why none of them could be
+    checked against a group boundary. This one can, and the check is worth stating as a
+    Done-when rather than as an observation: the five entries under Navigation are the list,
+    and a page still rendering the placeholder frame at the end of v8 is a failure of it.
+
+    **A fifth deliverable is already owed, and this entry is where it surfaces.**
+    `scripts/tokens/manifest.mjs:66` defers "every `Top*` key, `NavigationViewTopPane*`, and
+    the two overflow-button styles" by name to _the Navigation tranche_, which is this one.
+    Nothing in this file recorded it until this entry — the string `PaneDisplayMode` occurs
+    nowhere above — and the Gallery's own page sets `PaneDisplayMode="Top"` on two samples
+    (`NavigationViewPage.xaml:123,196`) and switches three more into it from code (`:309-320`).
+    The top pane is on the surface the acceptance gate walks, and it is v8's.
+
+    **The component states a reason for the absence, and it is not the reason.**
+    `NavigationView.svelte:31` says `Top` is missing from `NavigationViewPaneDisplayMode` "for
+    the same reason it is absent from `NavigationViewDisplayMode`". The two enums are not in
+    the same position. `NavigationViewDisplayMode` is the mode the control _computed_ and
+    upstream gives it three members — `Minimal | Compact | Expanded` — with no `Top` to leave
+    out; `PaneDisplayMode` is the one the consumer _sets_ and `Top` is a member of it. One
+    enum is complete and the other is short by one, and the comment reads them as the same
+    fact. **A deferral written as a completeness claim is invisible to the reader who would
+    otherwise schedule it**, which is how this one survived from v2 to v7: it was found by
+    reading the token manifest, not by reading the component that carries the gap.
+
+    The units, in dependency order. The first three are independent of each other and of
+    everything else in the library; the last three are ordered last for three different
+    reasons.
+
+    1. **BreadcrumbBar, BreadcrumbBarItem, and the ellipsis flyout.** The control template is
+       one line — an `ItemsRepeater`, `BreadcrumbBar.xaml:334` — and every visual is in
+       `DefaultBreadcrumbBarItemStyle` at `:3-326`, where one template carries the crumb in
+       four appearances: an inline crumb with a chevron, the last crumb with neither chevron
+       nor button (`PART_LastItemContentPresenter`, `:285`), the ellipsis crumb itself
+       (`PART_EllipsisTextBlock`, `:273`), and a row inside the flyout the ellipsis opens
+       (the `EllipsisDropDown` item-type state, `:25`). The chevron is `&#xE974;` at 12px with
+       `2,0` padding, and `BreadcrumbBarChevronRightToLeft` is its mirror for RTL.
+       **The dropping is not in the template.** `BreadcrumbLayout.cpp:101-110` accumulates
+       crumb widths from the right against the available width and returns the first index it
+       can still arrange; `:139-184` then arranges the ellipsis before it. Nothing in the XAML
+       says a crumb is ever hidden. This is the sweep's step 3 in the same pure form
+       SplitButton's state machine was, and it is this version's one real measurement job:
+       the web equivalent is a `ResizeObserver` and the unit says so, or it declines the
+       collapse and writes a `WD-`. It does not get to leave the question unasked, because
+       the resting state of a bar that fits is identical either way and the baseline agrees
+       with both.
+       The flyout's presenter is styled inline at `:113-152` over
+       `BreadcrumbBarEllipsisFlyoutPresenterBackground`, which aliases
+       `AcrylicBackgroundFillColorDefaultBrush` — already emitted, already read by MenuFlyout,
+       so no new material question and nothing WD-003 reaches.
+
+    2. **SelectorBar and SelectorBarItem.** The smallest control in the tranche and the one
+       carrying its trap; see below. Its selected item draws an accent pill, and the pill is
+       the one number in this tranche a reader will get wrong from the resources alone:
+       `SelectorBarItemPill` sizes the rectangle 4 wide by 3 tall
+       (`SelectorBar_themeresources.xaml:96-97`) at `Opacity="0"`, and the three `Selected*`
+       states fade it in and scale it to **4x on X** over 167ms
+       (`SelectorBar.xaml:108-113`) — so what is on screen under a selected item is 16px
+       wide, and the resource says 4. `SelectorBarItemPadding` is `12,10,12,7`, asymmetric
+       top to bottom, and that bottom 7 is the room the pill sits in.
+
+    3. **Pivot, PivotItem and PivotHeaderItem.** The odd control of the four in every respect.
+       Its whole template is in `CommonStyles/Pivot_themeresources.xaml:207` to the end of
+       that file — WinUI 3 restyles it and carries no implementation — and its brushes are
+       `SystemControl*` legacy names almost without exception (`:19-63`), which is D17 and
+       ADR 0008's table rather than anything new. Its header is 24px `SemiLight` with `-25`
+       character spacing, a ramp entry nothing else in this library uses.
+       Three groups in that template are behaviour a still image cannot photograph and the
+       unit decides each on the record rather than by feel: `HeaderStatic` against
+       `HeaderDynamic` (`:299-300`), the `PreviousButtonVisible`/`NextButtonVisible` carousel
+       arrows (`:277-298`), and `Portrait` against `Landscape` (`:244-259`). The Gallery
+       demonstrates exactly one Pivot, four headers wide, in one example
+       (`PivotPage.xaml:14-27`) — so the acceptance surface is the static header row, and
+       everything else is a decision to declare, not to build silently.
+
+    4. **TabView and TabViewItem** — the strip and the tab. The largest unit this project has
+       specified: a 649-line template, 270 lines of resources, and `TabViewItem.cpp` entering
+       eleven states by name against `TabView.cpp`'s four. The tab's own geometry is settled
+       and small — `TabViewItemHeaderPadding` `8,3,4,3`, the selected tab one pixel wider on
+       three sides at `9,3,5,4`, `TabViewItemMinWidth` 100 and `TabViewItemMaxWidth` 240 — and
+       what makes the unit large is that the close button is a fifth control with its own
+       eight-brush family and its own visibility state machine (`TabViewItem.cpp:255-277`).
+       The bottom border line is drawn in three places that must agree (`TabView.xaml:36-37`,
+       `:118-123`, `:155-156`) and `TabView.cpp:343-354` turns all three off together while a
+       tab is being dragged.
+
+    5. **The strip's chrome** — the add button, the two scroll buttons, `TabWidthMode` and
+       `CloseButtonOverlayMode`. Split from unit 4 because they are a second intent — adjacent
+       intents are still separate commits — and because the scroll buttons are not part of any
+       collections control: they are two `RepeatButton`s inside the `ScrollViewer` style at
+       `TabView.xaml:157-165`, which this library already has the control for. The Gallery
+       gives `TabWidthMode` and `CloseButtonOverlayMode` an options pane each
+       (`TabViewPage.xaml:239-249`, `:285-297`), so both are on the surface with every value
+       shown — three and three. The first pane is labelled `TabWidthBehavior` and the member
+       is `TabWidthMode`; the spec uses the member, and the harness row uses the label,
+       because the acceptance gate compares what the page says.
+
+    6. **NavigationView's top pane.** Last, because it re-opens a control whose baselines four
+       versions of work already photograph, and a widening that lands mid-tranche makes every
+       intervening failure ambiguous. It is `NavigationViewPaneDisplayMode` gaining `'top'`,
+       the `Top*` and `NavigationViewTopPane*` keys manifest.mjs is holding, and the overflow
+       button that takes the items the top row cannot fit — which is the same width-driven
+       collapse unit 1 solves for crumbs, and the two units should agree rather than each
+       invent one.
+
+    **What the pin carries — `docs/surface.md` step 1, and it is the reverse of v7's answer.**
+    Three of the four controls have a full implementation under `controls/dev`: `Breadcrumb/`
+    (found by file, not by directory name — the near-miss v7 recorded), `SelectorBar/` and
+    `TabView/`. Only Pivot has none, and unlike v7's seven that is not because the Gallery
+    page is the sole enumeration: the pin carries Pivot's whole template in `CommonStyles/`,
+    so the missing half is code, not shape. Where v7 had to say "the pin says nothing" eight
+    times, v8 has to read three C++ implementations, and `TabView.cpp` alone is 2301 lines.
+    **Budget the sweep, not the template.**
+
+    **The trap in this tranche is SelectorBarItem, and it is ToggleSplitButton's shape again.**
+    `SelectorBarItem.cpp` contains no `GoToState` and no `VisualStateManager` — a reader
+    grepping the control's own file concludes its eight `CombinedStates` are entered by XAML
+    triggers, and ships a control that never leaves `UnselectedNormal`. `SelectorBarItem.h:12`
+    derives it from `ItemContainer`, and `ItemContainer.cpp:185-220` is what enters
+    `SelectedPointerOver`, `UnselectedPressed` and the rest. The sweep's step 1 has to follow
+    the base class, and `docs/surface.md` gets that sentence the way it got "search for the
+    file, not the directory".
+
+    **D26 — a template's internal items host is not this library's surface.** Three of the four
+    controls hold a collections control inside their own template: `ItemsRepeater`
+    (`BreadcrumbBar.xaml:334`), `ItemsView` (`SelectorBar.xaml:30`) and `TabViewListView`
+    (`TabView.xaml:39`). None is a member a consumer sets, each is template-private, and each
+    is there for virtualisation that a bar of five crumbs and a strip of eight tabs does not
+    need. v8 renders the items directly, and the Collections tranche does not come back to
+    retrofit them. The rejected alternative was to reorder the roadmap and build v9 first,
+    which buys correctness this tranche cannot spend: what these hosts contribute visually is
+    padding and a scroll viewport, and both are cheaper to write than to inherit.
+    This does not cover a collections control a **page** uses as content — SelectorBar's third
+    example is an `ItemsView` of `ItemContainer` colour swatches
+    (`SelectorBarPage.xaml:59-79`) and that is genuinely v9's; the page carries the deferral.
+
+    **What this version is likely to decline, decided in the units and not here.** TabView's
+    tear-out sample opens a second OS window (`TabViewWindowingSamplePage`), which a page
+    cannot do; Pivot's carousel arrows and its `PivotHeaderItemLockedTranslation` of 40 are
+    Windows-Phone-era behaviour the Gallery never demonstrates; and `CanReorderTabs` is a drag
+    the web can express and may still not be worth its weight. Each is a `WD-` with a
+    measurement behind it or it is built — the one thing none of them may be is unmentioned.
+
+    Done-when is v7's, applied to five controls and one widening: each snapshotted in three
+    themes, each compared against the original on the reference guest, every prop following
+    D21 as ADR 0012 amends it, the surface sweep's step-1 verdict recorded before the seal —
+    and, this version only, the Navigation group's five entries all rendering their own page.
+
+    **The question v7 left for whoever planned v8, answered: no.** That entry closed by
+    handing on four unscheduled Menus & toolbars pages — CommandBarFlyout, SwipeControl,
+    StandardUICommand, XamlUICommand — and the two `KeyboardAccelerator` rows whose natural
+    home is the first of them. v8 does not take them. They are not navigation, they would
+    make this the second tranche in a row about commands, and the honest reason the question
+    was asked at all is that the roadmap has no version to hand them to. That is still true,
+    and it is still recorded in the gap list below rather than resolved here. What v8 owes
+    the next planner is the same courtesy in a narrower form: **the destination is a
+    scheduling decision, and a tranche that inherits one and neither takes it nor re-states
+    it is how a deferral becomes a decline nobody made.**
+
 9.  **Collections** — ListView, GridView, TreeView, ItemsRepeater, ItemsView, FlipView.
 10. **The sample-page frame** — `ControlExample`'s three panes, `SampleCodePresenter`, the
     copy button, and `ItemPage`'s content root. Its syntax highlighting is ColorCode, pinned by
