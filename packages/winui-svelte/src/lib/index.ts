@@ -13,6 +13,8 @@ export { default as AppBarToggleButton } from './components/AppBarToggleButton.s
 export type { AppBarToggleButtonProps } from './components/AppBarToggleButton.svelte';
 export { default as AutoSuggestBox } from './components/AutoSuggestBox.svelte';
 export type { AutoSuggestBoxProps } from './components/AutoSuggestBox.svelte';
+export { default as BreadcrumbBar } from './components/BreadcrumbBar.svelte';
+export type { BreadcrumbBarItemData, BreadcrumbBarProps } from './components/BreadcrumbBar.svelte';
 export { default as Button } from './components/Button.svelte';
 export type { ButtonProps } from './components/Button.svelte';
 export { default as CheckBox } from './components/CheckBox.svelte';

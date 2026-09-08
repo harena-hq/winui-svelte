@@ -2468,7 +2468,8 @@ export const GLYPHS = {
 	InfoBarWarningIconGlyph: 'the InfoBar warning icon',
 	InfoBarSuccessIconGlyph: 'the InfoBar success icon',
 	ExpanderChevronUpGlyph: "the Expander chevron's up form",
-	ExpanderChevronDownGlyph: "the Expander chevron's down form"
+	ExpanderChevronDownGlyph: "the Expander chevron's down form",
+	BreadcrumbBarChevronLeftToRight: 'the BreadcrumbBar chevron pointing left to right'
 };
 
 /**
@@ -3096,6 +3097,47 @@ export const EXPANDER_KEYS = {
 	ExpanderContentDownBorderThickness: 'the content border expanding downward',
 	ExpanderContentUpBorderThickness: 'the content border expanding upward',
 	FlyoutThemeMinWidth: "the floor under the Expander's own width, `Expander.xaml:20`"
+};
+
+/**
+ * Keys BreadcrumbBar reads. `BreadcrumbBarChevronRightToLeft` is absent because this unit does
+ * not build RTL (`BreadcrumbBar.xaml:82-85` and :103-108). `BreadcrumbBarFocusForegroundBrush`
+ * and `BreadcrumbBarCurrentFocusForegroundBrush` are absent because their declared states
+ * (`BreadcrumbBar.xaml:232-240`) cannot be composed by `UpdateButtonCommonVisualState`
+ * (`BreadcrumbBarItem.cpp:390-424`). `BreadcrumbBarCurrentHoverForegroundBrush`,
+ * `BreadcrumbBarCurrentPressedForegroundBrush` and `BreadcrumbBarCurrentDisabledForegroundBrush`
+ * are absent because they paint `PART_ItemButton` (`BreadcrumbBar.xaml:201-229`), which
+ * `LastItem` collapses (`BreadcrumbBar.xaml:87-95`).
+ */
+export const BREADCRUMBBAR_KEYS = {
+	BreadcrumbBarBackgroundBrush: 'BreadcrumbBar item background',
+	BreadcrumbBarBorderBrush: 'BreadcrumbBar item border',
+	BreadcrumbBarItemThemeFontSize: 'BreadcrumbBar item text size',
+	BreadcrumbBarItemFontWeight: 'BreadcrumbBar item text weight',
+	BreadcrumbBarNormalForegroundBrush: 'BreadcrumbBar item text, at rest',
+	BreadcrumbBarHoverForegroundBrush: 'BreadcrumbBar item text under the pointer',
+	BreadcrumbBarPressedForegroundBrush: 'BreadcrumbBar item text while pressed',
+	BreadcrumbBarDisabledForegroundBrush: 'BreadcrumbBar item text when disabled',
+	BreadcrumbBarCurrentNormalForegroundBrush: 'BreadcrumbBar current item text',
+	BreadcrumbBarChevronFontSize: 'BreadcrumbBar chevron size',
+	BreadcrumbBarChevronPadding: 'BreadcrumbBar chevron inset',
+	BreadcrumbBarChevronLeftToRight: 'BreadcrumbBar left-to-right chevron',
+	BreadcrumbBarEllipsisDropDownItemBackground: 'BreadcrumbBar ellipsis row, at rest',
+	BreadcrumbBarEllipsisDropDownItemBackgroundPointerOver:
+		'BreadcrumbBar ellipsis row under the pointer',
+	BreadcrumbBarEllipsisDropDownItemBackgroundPressed: 'BreadcrumbBar ellipsis row while pressed',
+	BreadcrumbBarEllipsisDropDownItemBackgroundDisabled: 'BreadcrumbBar ellipsis row when disabled',
+	BreadcrumbBarEllipsisDropDownItemForegroundPointerOver:
+		'BreadcrumbBar ellipsis row text under the pointer',
+	BreadcrumbBarEllipsisDropDownItemForegroundPressed:
+		'BreadcrumbBar ellipsis row text while pressed',
+	BreadcrumbBarEllipsisDropDownItemForegroundDisabled:
+		'BreadcrumbBar ellipsis row text when disabled',
+	BreadcrumbBarForegroundBrush: 'BreadcrumbBar ellipsis row text, at rest',
+	BreadcrumbBarEllipsisFlyoutPresenterBackground: 'BreadcrumbBar ellipsis flyout surface',
+	BreadcrumbBarEllipsisFlyoutPresenterBorderBrush: 'BreadcrumbBar ellipsis flyout border',
+	BreadcrumbBarEllipsisFlyoutPresenterBorderThemeThickness:
+		'BreadcrumbBar ellipsis flyout border width'
 };
 
 /**

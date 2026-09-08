@@ -45,6 +45,45 @@
 	--winui-AutoSuggestBoxQueryButtonPadding: 2px 3px;
 	--winui-AutoSuggestBoxLeftButtonMargin: 3px;
 	--winui-AutoSuggestBoxRightButtonMargin: 4px;
+	--winui-BreadcrumbBarChevronLeftToRight: '\00e974';
+	--winui-BreadcrumbBarChevronPadding: 0px 2px;
+	--winui-BreadcrumbBarItemFontWeight: 400;
+	--winui-BreadcrumbBarNormalForegroundBrush: var(--winui-TextFillColorPrimaryBrush);
+	--winui-BreadcrumbBarHoverForegroundBrush: var(--winui-TextFillColorSecondaryBrush);
+	--winui-BreadcrumbBarPressedForegroundBrush: var(--winui-TextFillColorTertiaryBrush);
+	--winui-BreadcrumbBarDisabledForegroundBrush: var(--winui-TextFillColorDisabledBrush);
+	--winui-BreadcrumbBarCurrentNormalForegroundBrush: var(--winui-TextFillColorPrimaryBrush);
+	--winui-BreadcrumbBarEllipsisDropDownItemBackground: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-BreadcrumbBarEllipsisDropDownItemBackgroundPointerOver: var(
+		--winui-SubtleFillColorSecondaryBrush
+	);
+	--winui-BreadcrumbBarEllipsisDropDownItemBackgroundPressed: var(
+		--winui-SubtleFillColorTertiaryBrush
+	);
+	--winui-BreadcrumbBarEllipsisDropDownItemBackgroundDisabled: var(
+		--winui-SubtleFillColorTransparentBrush
+	);
+	--winui-BreadcrumbBarEllipsisDropDownItemForegroundPointerOver: var(
+		--winui-TextFillColorPrimaryBrush
+	);
+	--winui-BreadcrumbBarEllipsisDropDownItemForegroundPressed: var(
+		--winui-TextFillColorPrimaryBrush
+	);
+	--winui-BreadcrumbBarEllipsisDropDownItemForegroundDisabled: var(
+		--winui-TextFillColorDisabledBrush
+	);
+	--winui-BreadcrumbBarForegroundBrush: var(--winui-TextFillColorPrimaryBrush);
+	--winui-BreadcrumbBarBackgroundBrush: transparent;
+	--winui-BreadcrumbBarBorderBrush: transparent;
+	--winui-BreadcrumbBarEllipsisFlyoutPresenterBackground: var(
+		--winui-AcrylicBackgroundFillColorDefaultBrush
+	);
+	--winui-BreadcrumbBarEllipsisFlyoutPresenterBorderBrush: var(
+		--winui-SurfaceStrokeColorFlyoutBrush
+	);
+	--winui-BreadcrumbBarEllipsisFlyoutPresenterBorderThemeThickness: 1px;
+	--winui-BreadcrumbBarItemThemeFontSize: var(--winui-ControlContentThemeFontSize);
+	--winui-BreadcrumbBarChevronFontSize: 12px;
 	--winui-ComboBoxItemForeground: var(--winui-TextFillColorPrimaryBrush);
 	--winui-ComboBoxItemForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
 	--winui-ComboBoxItemForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
@@ -1407,6 +1446,45 @@
 	);
 	--winui-AutoSuggestBoxSuggestionsListBorderBrush: var(--winui-SurfaceStrokeColorFlyoutBrush);
 	--winui-AutoSuggestBoxIconFontSize: 12px;
+	--winui-BreadcrumbBarChevronLeftToRight: '\00e974';
+	--winui-BreadcrumbBarChevronPadding: 0px 2px;
+	--winui-BreadcrumbBarItemFontWeight: 400;
+	--winui-BreadcrumbBarNormalForegroundBrush: var(--winui-TextFillColorPrimaryBrush);
+	--winui-BreadcrumbBarHoverForegroundBrush: var(--winui-TextFillColorSecondaryBrush);
+	--winui-BreadcrumbBarPressedForegroundBrush: var(--winui-TextFillColorTertiaryBrush);
+	--winui-BreadcrumbBarDisabledForegroundBrush: var(--winui-TextFillColorDisabledBrush);
+	--winui-BreadcrumbBarCurrentNormalForegroundBrush: var(--winui-TextFillColorPrimaryBrush);
+	--winui-BreadcrumbBarEllipsisDropDownItemBackground: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-BreadcrumbBarEllipsisDropDownItemBackgroundPointerOver: var(
+		--winui-SubtleFillColorSecondaryBrush
+	);
+	--winui-BreadcrumbBarEllipsisDropDownItemBackgroundPressed: var(
+		--winui-SubtleFillColorTertiaryBrush
+	);
+	--winui-BreadcrumbBarEllipsisDropDownItemBackgroundDisabled: var(
+		--winui-SubtleFillColorTransparentBrush
+	);
+	--winui-BreadcrumbBarEllipsisDropDownItemForegroundPointerOver: var(
+		--winui-TextFillColorPrimaryBrush
+	);
+	--winui-BreadcrumbBarEllipsisDropDownItemForegroundPressed: var(
+		--winui-TextFillColorPrimaryBrush
+	);
+	--winui-BreadcrumbBarEllipsisDropDownItemForegroundDisabled: var(
+		--winui-TextFillColorDisabledBrush
+	);
+	--winui-BreadcrumbBarForegroundBrush: var(--winui-TextFillColorPrimaryBrush);
+	--winui-BreadcrumbBarBackgroundBrush: transparent;
+	--winui-BreadcrumbBarBorderBrush: transparent;
+	--winui-BreadcrumbBarEllipsisFlyoutPresenterBackground: var(
+		--winui-AcrylicBackgroundFillColorDefaultBrush
+	);
+	--winui-BreadcrumbBarEllipsisFlyoutPresenterBorderBrush: var(
+		--winui-SurfaceStrokeColorFlyoutBrush
+	);
+	--winui-BreadcrumbBarEllipsisFlyoutPresenterBorderThemeThickness: 1px;
+	--winui-BreadcrumbBarItemThemeFontSize: var(--winui-ControlContentThemeFontSize);
+	--winui-BreadcrumbBarChevronFontSize: 12px;
 	--winui-ComboBoxItemForeground: var(--winui-TextFillColorPrimaryBrush);
 	--winui-ComboBoxItemForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
 	--winui-ComboBoxItemForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
@@ -2564,6 +2642,47 @@
 		);
 		--winui-AutoSuggestBoxSuggestionsListBorderBrush: var(--winui-SurfaceStrokeColorFlyoutBrush);
 		--winui-AutoSuggestBoxIconFontSize: 12px;
+		--winui-BreadcrumbBarChevronLeftToRight: '\00e974';
+		--winui-BreadcrumbBarChevronPadding: 0px 2px;
+		--winui-BreadcrumbBarItemFontWeight: 400;
+		--winui-BreadcrumbBarNormalForegroundBrush: var(--winui-TextFillColorPrimaryBrush);
+		--winui-BreadcrumbBarHoverForegroundBrush: var(--winui-TextFillColorSecondaryBrush);
+		--winui-BreadcrumbBarPressedForegroundBrush: var(--winui-TextFillColorTertiaryBrush);
+		--winui-BreadcrumbBarDisabledForegroundBrush: var(--winui-TextFillColorDisabledBrush);
+		--winui-BreadcrumbBarCurrentNormalForegroundBrush: var(--winui-TextFillColorPrimaryBrush);
+		--winui-BreadcrumbBarEllipsisDropDownItemBackground: var(
+			--winui-SubtleFillColorTransparentBrush
+		);
+		--winui-BreadcrumbBarEllipsisDropDownItemBackgroundPointerOver: var(
+			--winui-SubtleFillColorSecondaryBrush
+		);
+		--winui-BreadcrumbBarEllipsisDropDownItemBackgroundPressed: var(
+			--winui-SubtleFillColorTertiaryBrush
+		);
+		--winui-BreadcrumbBarEllipsisDropDownItemBackgroundDisabled: var(
+			--winui-SubtleFillColorTransparentBrush
+		);
+		--winui-BreadcrumbBarEllipsisDropDownItemForegroundPointerOver: var(
+			--winui-TextFillColorPrimaryBrush
+		);
+		--winui-BreadcrumbBarEllipsisDropDownItemForegroundPressed: var(
+			--winui-TextFillColorPrimaryBrush
+		);
+		--winui-BreadcrumbBarEllipsisDropDownItemForegroundDisabled: var(
+			--winui-TextFillColorDisabledBrush
+		);
+		--winui-BreadcrumbBarForegroundBrush: var(--winui-TextFillColorPrimaryBrush);
+		--winui-BreadcrumbBarBackgroundBrush: transparent;
+		--winui-BreadcrumbBarBorderBrush: transparent;
+		--winui-BreadcrumbBarEllipsisFlyoutPresenterBackground: var(
+			--winui-AcrylicBackgroundFillColorDefaultBrush
+		);
+		--winui-BreadcrumbBarEllipsisFlyoutPresenterBorderBrush: var(
+			--winui-SurfaceStrokeColorFlyoutBrush
+		);
+		--winui-BreadcrumbBarEllipsisFlyoutPresenterBorderThemeThickness: 1px;
+		--winui-BreadcrumbBarItemThemeFontSize: var(--winui-ControlContentThemeFontSize);
+		--winui-BreadcrumbBarChevronFontSize: 12px;
 		--winui-ComboBoxItemForeground: var(--winui-TextFillColorPrimaryBrush);
 		--winui-ComboBoxItemForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
 		--winui-ComboBoxItemForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
@@ -3777,6 +3896,43 @@
 	);
 	--winui-AutoSuggestBoxSuggestionsListBorderBrush: var(--winui-SystemControlTransientBorderBrush);
 	--winui-AutoSuggestBoxIconFontSize: 12px;
+	--winui-BreadcrumbBarChevronLeftToRight: '\00e974';
+	--winui-BreadcrumbBarChevronPadding: 0px 2px;
+	--winui-BreadcrumbBarItemFontWeight: 400;
+	--winui-BreadcrumbBarNormalForegroundBrush: var(--winui-SystemColorButtonTextColorBrush);
+	--winui-BreadcrumbBarHoverForegroundBrush: var(--winui-SystemColorHighlightColorBrush);
+	--winui-BreadcrumbBarPressedForegroundBrush: var(--winui-SystemColorHighlightColorBrush);
+	--winui-BreadcrumbBarDisabledForegroundBrush: var(--winui-SystemColorGrayTextColorBrush);
+	--winui-BreadcrumbBarCurrentNormalForegroundBrush: var(--winui-SystemColorButtonTextColorBrush);
+	--winui-BreadcrumbBarEllipsisDropDownItemBackground: var(--winui-SystemControlTransparentBrush);
+	--winui-BreadcrumbBarEllipsisDropDownItemBackgroundPointerOver: var(
+		--winui-SystemControlTransparentBrush
+	);
+	--winui-BreadcrumbBarEllipsisDropDownItemBackgroundPressed: var(
+		--winui-SystemControlTransparentBrush
+	);
+	--winui-BreadcrumbBarEllipsisDropDownItemBackgroundDisabled: var(
+		--winui-SystemControlTransparentBrush
+	);
+	--winui-BreadcrumbBarEllipsisDropDownItemForegroundPointerOver: var(
+		--winui-SystemColorHighlightColorBrush
+	);
+	--winui-BreadcrumbBarEllipsisDropDownItemForegroundPressed: var(
+		--winui-SystemColorHighlightColorBrush
+	);
+	--winui-BreadcrumbBarEllipsisDropDownItemForegroundDisabled: var(
+		--winui-SystemColorGrayTextColorBrush
+	);
+	--winui-BreadcrumbBarForegroundBrush: var(--winui-SystemColorButtonTextColorBrush);
+	--winui-BreadcrumbBarBackgroundBrush: var(--winui-SystemControlTransparentBrush);
+	--winui-BreadcrumbBarBorderBrush: var(--winui-SystemControlTransparentBrush);
+	--winui-BreadcrumbBarEllipsisFlyoutPresenterBackground: var(--winui-SystemColorWindowColorBrush);
+	--winui-BreadcrumbBarEllipsisFlyoutPresenterBorderBrush: var(
+		--winui-SystemColorWindowTextColorBrush
+	);
+	--winui-BreadcrumbBarEllipsisFlyoutPresenterBorderThemeThickness: 2px;
+	--winui-BreadcrumbBarItemThemeFontSize: var(--winui-ControlContentThemeFontSize);
+	--winui-BreadcrumbBarChevronFontSize: 12px;
 	--winui-ComboBoxItemForeground: var(--winui-SystemControlForegroundBaseHighBrush);
 	--winui-ComboBoxItemForegroundPressed: var(--winui-SystemColorHighlightTextColor);
 	--winui-ComboBoxItemForegroundPointerOver: var(--winui-SystemColorHighlightTextColor);
