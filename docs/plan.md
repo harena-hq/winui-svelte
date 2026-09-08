@@ -1346,6 +1346,62 @@ controls/dev -name 'AppBar*'` matches three `*_themeresources.xaml` files and no
     scheduling decision, and a tranche that inherits one and neither takes it nor re-states
     it is how a deferral becomes a decline nobody made.**
 
+    **Closed.** Five controls and one widening exist and are exported. `PaneDisplayMode` now
+    carries all five members its IDL declares, the `Top*` and `NavigationViewTopPane*` keys
+    `scripts/tokens/manifest.mjs` had been deferring since v2 are seeded, and the Navigation
+    group's five sample pages name no control the library does not have — which was this
+    version's own extra Done-when and the first time a group boundary has been checkable at
+    all. Thirty-nine components render under the three themes, forty-three baseline sets pass
+    on the reference guest, the nine gates are green and the packed consumer builds.
+
+    **What the version cost that its goal did not predict.** Four findings, and three of them
+    are one finding growing a clause per unit.
+
+    - **The rule about reading an upstream `Style` now has four clauses, and each cost a
+      unit.** A `Style` setter is not layout until some element in the template binds it (u2,
+      `SelectorBarItemBorderThickness`). Binding it is not enough if an always-entered visual
+      state overwrites it (u4, `TabViewItemHeaderPadding`). A value can be layout while
+      appearing in no setter, no binding and no state at all (u5, the eight pixels before the
+      strip's first tab, composed from four boxes none of which is a resource). And **a
+      `Style` can be defined in the pin and applied by nothing in it** (u6):
+      `MUX_NavigationViewSettingsItemStyleWhenOnTopPane` sizes the top pane's settings button
+      40 by 40 and the reference measures 36 by 36, because nothing applies that style and the
+      item goes through the ordinary presenter's `IconOnly` state instead. Every one of the
+      four was found by measuring the original, and none by reading the template.
+    - **Three of the four controls hold a collections control inside their own template**, and
+      D26 is the decision not to inherit it. What those hosts contribute visually is padding
+      and a scroll viewport, and both were cheaper to write than to inherit.
+    - **A group boundary and a page are two different things, and this entry conflated them**
+      until two units had already sealed. No control page renders anything but the placeholder
+      frame in any tranche, because that frame is roadmap item 10. What survives is a claim
+      about the library, which is the claim the Done-when above now makes.
+    - **A deferral written as a completeness claim is invisible to whoever would schedule
+      it.** The top pane was owed from v2 and appeared in no plan for five versions, because
+      `NavigationView.svelte` stated its absence as a fact about an enum rather than as work
+      not done. It was found by reading the token manifest, not by reading the component that
+      carried the gap.
+
+    **What this version leaves owed.** None of these is a divergence; each is simply not
+    built, and each is on a page the acceptance gate will eventually walk.
+
+    | control        | not yet built                                                                     |
+    | -------------- | --------------------------------------------------------------------------------- |
+    | NavigationView | `FooterMenuItems` — a second item list, in either pane                            |
+    | NavigationView | `PaneCustomContent`, `PaneHeader`, `PaneTitle`, and the pane's `AutoSuggestBox`   |
+    | NavigationView | `OverflowLabelMode`, whose two styles differ by a glyph size and drop both labels |
+    | TabView        | tear-out, `CanReorderTabs`, and the rest of unit 5's table                        |
+
+    `WD-025` is the one thing declined rather than postponed: an item's children are not
+    expanded on the top pane, because that subtree is a second portalled surface per item and
+    the overflow flyout is the one this version's Done-when compares against the original.
+
+    **The debt unit 1 opened is half paid.** The collapsed BreadcrumbBar was still not
+    photographed against the original, but the obstacle is now measured rather than unknown.
+    The Gallery's window can be resized from here after all — `Alt+Space`, `s`, `Right`, then a
+    run of `Left` presses chained into one VNC invocation — and its minimum width is about 625,
+    which is wider than the point at which either the top pane's four items or the bar's crumbs
+    stop fitting. The technique exists; the window is the wall.
+
 9.  **Collections** — ListView, GridView, TreeView, ItemsRepeater, ItemsView, FlipView.
 10. **The sample-page frame** — `ControlExample`'s three panes, `SampleCodePresenter`, the
     copy button, and `ItemPage`'s content root. Its syntax highlighting is ColorCode, pinned by
