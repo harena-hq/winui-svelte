@@ -630,3 +630,18 @@ gate does.
 - **Would reconsider if**: reordering is asked for as a feature rather than as fidelity. The HTML
   drag-and-drop API expresses it, the drop indicator is one absolutely positioned rule, and the
   honest cost is the eleven states — not the drag.
+
+---
+
+### WD-024 — the strip does not scroll a newly selected tab into view
+
+- **Control**: `TabView`'s tab strip.
+- **WinUI does**: `TabView::BringSelectedTabIntoView` (`TabView.cpp:748`) scrolls the selected
+  tab fully into the viewport whenever the selection or the layout changes.
+- **We do**: change what is drawn for selection and leave the scroll offset where the user put
+  it; the two scroll buttons and the wheel are the only things that move it.
+- **Why accepted**: the visual contract of the strip does not require selection to move the
+  viewport, while reproducing it needs per-tab geometry and a scroll operation on every
+  selection and layout change.
+- **Would reconsider if**: a selected tab outside the viewport becomes a required interaction
+  path, at which point the selected tab's bounds can drive the same scroll adjustment.
