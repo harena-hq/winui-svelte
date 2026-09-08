@@ -64,6 +64,8 @@ pnpm workspace. The library is publishable and imposes no build tooling on its c
 | D25 | An icon is a snippet the consumer draws, with a Segoe Fluent Icons code point as its shorthand       | ADR 0012                          |
 | D26 | A control's internal items host is template-private; the tranche renders its items directly          | this file, "Roadmap → v8"         |
 | D27 | A collection control is generic in its item type and draws it through a snippet the caller writes    | ADR 0013                          |
+| D28 | The sample-page frame is the Gallery's own harness around WinUI, so it is Gallery code               | this file, "Roadmap → v10"        |
+| D29 | Syntax highlighting is ColorCode's rules and palette as data, applied by an engine of ours           | ADR 0014                          |
 
 ## Verification
 
@@ -1692,6 +1694,140 @@ controls/dev -name 'AppBar*'` matches three `*_themeresources.xaml` files and no
     far past the page titles the search reaches** — titles only, titles plus the group each
     page sits in, or the sample text as well. The original's own reach is the thing to
     measure on the guest before choosing, not to infer from the record.
+
+    **The goal, in one line: a sample page is a frame that the Gallery's own source fills.**
+    Nine versions have built controls and given each one a bare harness route. What the original
+    shows is never a bare control: it is a header, a display pane, an options pane beside it,
+    and — one `Expander` below — the source that produced what is on screen. Until that frame
+    exists a control page can be compared against the original as a control and not as a page,
+    which is exactly what v8's entry found when it wrote a group-level Done-when it could not
+    meet.
+
+    **None of the five pieces is a WinUI control**, and that is this version's first decision.
+    `ControlExample`, `SampleCodePresenter`, `CopyButton`, `PageHeader` and `ItemPage` are
+    `WinUIGallery.Controls` and `WinUIGallery.Pages` — the harness Microsoft wrote around WinUI,
+    not WinUI. **D28**: they are built in `apps/gallery/src/lib/frame/` and nothing about them is
+    exported from the package. That is not a lighter standard. C1 and C9 already walk
+    `apps/gallery/src`, so the frame is written under the same rules as a component: no visual
+    literal without a citation, and every `var(--winui-…)` it reads has to be emitted.
+
+    **What the pin carries.** Every piece is fully written down — this is the first version since
+    v3 with no measuring in its critical path, and the risk moves accordingly to the one thing
+    that is not in the Gallery's own repository at all.
+
+    | piece                 | source                                          | what it is                                                                        |
+    | --------------------- | ----------------------------------------------- | --------------------------------------------------------------------------------- |
+    | `ControlExample`      | `Controls/ControlExample.xaml`, `.xaml.cs`      | three panes at `CornerRadius="8"`, an `Expander` under them, two adaptive layouts |
+    | `SampleCodePresenter` | `Controls/SampleCodePresenter.xaml`, `.xaml.cs` | the code pane, its scroller, `$(Key)` substitution, and three sample types        |
+    | `CopyButton`          | `Controls/CopyButton.xaml`, `.xaml.cs`          | a `Button` style with `E8C8`, and a success animation that swaps the glyph        |
+    | `PageHeader`          | `Controls/PageHeader.xaml`, `.xaml.cs`          | the title, the API-details flyout, the Documentation and Source drop-downs        |
+    | `ItemPage`            | `Pages/ItemPage.xaml`                           | header margin `36,24,36,0`, content padding `36,0,36,36`, a `1028` wide frame     |
+    | the samples           | `Samples/**/*.txt`                              | 480 files, 316 of them in the `--- header` / `--- xaml` / `--- csharp` shape      |
+
+    **The sample code is data, and this is where it lands.** `SampleDefinition` names a `.txt`
+    under `WinUIGallery/Samples/`, which `ParseSampleCodeSections` splits on its `--- ` lines
+    (`ControlExample.xaml.cs`). Both shapes in the pin are read mechanically and neither needs a
+    judgement, so **`data/winui-gallery-samples.json` is a third Gallery record**, extracted by
+    `scripts/gallery/extract.mjs` and checked by C8 the same way as the other two — the pin it
+    names, plus a census against its own contents. `$lib/samples.ts` imports it whole, the way
+    `$lib/design.ts` imports the 287 KB design record: the Gallery is a prerendered static site
+    whose bundle size is not a deliverable here, and a second reading mechanism invented before a
+    page needs one is a build for a problem no evidence has shown yet.
+
+    **The highlighter is generated data plus an engine of ours, and two mechanisms force that
+    split — ADR 0014.** ColorCode is not vendored in the Gallery pin: `standalone.props` names
+    version `2.0.15` and NuGet supplies it, so it is a **fourth pinned upstream**
+    (`CommunityToolkit/ColorCode-Universal`, tag `v2.0.15`, MIT). What can be generated from it is
+    the data — `StyleDictionary.DefaultLight` and `DefaultDark`, and the rule tables of
+    `Compilation/Languages/Xml.cs` and `CSharp.cs`, each rule a pattern and a map from capture
+    index to scope name, in the order the file lists them. What cannot be carried across is the
+    engine, for two reasons that are both in `ColorCode.Core`:
+
+    - `LanguageCompiler.CompileRules` joins every rule into one alternation under `(?x)`, wrapping
+      each in `(?-xis)(?m)(…)(?x)`. Inline option scopes are a .NET regex feature; JavaScript has
+      never had `(?x)` at all. Trying each rule's own pattern in order at each position, sticky,
+      is the same thing the alternation means — leftmost match, first alternative that matches
+      there — and it needs no option scopes to say it.
+    - `LanguageParser.GetCapturedStyles` iterates `regexGroup.Captures`. .NET keeps every
+      iteration of a group inside a quantifier; JavaScript keeps the last one only. The XML tag
+      rule is `(?: … attribute … )*` with twelve captures inside the repetition, so under
+      JavaScript's semantics a tag with four attributes would colour one of them. The engine
+      recovers the rest by rescanning the matched span, and the residue is measured against the
+      original rather than asserted.
+
+    One value in the pin is not a colour: `VSDarkXMLName` is `"#FF#E6E6E6"`, seven hex digits and
+    a stray `#`. The Gallery replaces `XmlName` in dark with `#FF5F82E8`
+    (`SampleCodePresenter.xaml.cs`), so the broken value is reachable from neither of the two
+    grammars this version renders. The extractor records it as it stands and the generator refuses
+    to emit anything that is not `#AARRGGBB`, which is what makes a later grammar reaching it a
+    build failure instead of a silent black run.
+
+    **High contrast is not a third palette here, and that is upstream's answer rather than ours.**
+    ColorCode consults no system colour: it holds two dictionaries of literal `#AARRGGBB` strings
+    and picks between them on `ActualTheme`, which under a high-contrast Windows theme is still
+    Light or Dark. So the original paints a high-contrast code pane in the same literals, and so
+    do we. The colours arrive as data rather than as CSS, so C1 does not see them, and D10's
+    remapping has nothing to remap. This one is derived from the source and not measured: the
+    guest's theme is a reference parameter that stays where it is.
+
+    **What the two design pages keep.** Upstream's Typography and Geometry examples are a `Canvas`
+    holding one annotated PNG from `Assets/Design/` with `TeachingTip` buttons pinned over it at
+    fixed coordinates. Those images are Microsoft binaries inside an untracked pin; v1 reproduced
+    both pages as tables instead, and it is the table that moves onto the frame — as the display
+    pane's content, with the page's prose above it and `TypographyTypeRamp.txt` and `Geometry.txt`
+    in the source pane below, which is what the original shows there. **WD-029** records the
+    substitution. Nothing has recorded it in the nine versions these two pages have existed.
+
+    **The units.**
+
+    1. **The ColorCode pin, and the palette and the two grammars as a record.**
+       `scripts/colorcode/fetch.mjs` and `extract.mjs` on the pattern the other three pins already
+       have, `data/colorcode.json`, ADR 0014, and C8 extended to a third record. Nothing renders
+       in this unit: it is the version's one external dependency, and an external dependency is
+       settled before anything is built on it.
+
+    2. **The engine.** `apps/gallery/src/lib/highlight/`: the record's rules applied to a string,
+       producing the scope tree `RichTextBlockFormatter` walks, and the spans that tree paints.
+       Verified on a dev route that renders the same sample text the original shows, in all three
+       themes, and compared against the original's own pane on the guest — colour by colour, which
+       is the only comparison that says the two engines agree.
+
+    3. **`SampleCodePresenter`, and the copy button.** The pane, its horizontal scroller, the
+       Consolas-then-Cascadia face, `$(Key)` substitution, the three sample types, and
+       `CopyButton` with its success state. The copy button is the one piece here that touches an
+       API the browser gates — `navigator.clipboard` needs a secure context, which
+       `http://10.0.2.2:4173` is not — so what it does when the write is refused is part of the
+       unit rather than a discovery during the seal.
+
+    4. **`ControlExample`.** The three panes, the header, the `Expander` at
+       `CardBackgroundFillColorSecondaryBrush` with the `SelectorBar` of XAML and C# inside it, the
+       rule that a tab with no code is hidden and the first visible one is selected, and the
+       `PhoneLayout` state that moves the options pane under the display below 740.
+
+    5. **`PageHeader`, and `ItemPage`'s content root.** The title, the API-details flyout, the
+       Documentation and Source drop-downs, the description, and the padding and the 1028 ceiling
+       the page's own grid carries. The shell record's items hold `uniqueId` and `title` and
+       nothing else today, so `scripts/gallery/extract.mjs` gains the subtitle, the description,
+       the docs, the API namespace and the base classes — with C8's census extended to match,
+       because a record that grows a field its census does not count is a record that can be
+       hand-edited afterwards.
+
+    6. **Typography and Geometry onto the frame.** Both pages, their tables inside the display
+       pane, their sample definitions in the source pane, WD-029, and the baselines re-photographed
+       for every shell page whose body the new frame changes.
+
+    7. **The title bar's search.** `items` and the submit callback on the `AutoSuggestBox` v4 put
+       there, over the corpus D18 already treats as the source of every menu entry and its path.
+       **How far past the page titles the reach goes is measured on the guest first** — typing into
+       the original's box and reading what comes back — and the entry above says why that is not
+       inferred from the record.
+
+    Done-when: a control page's route renders the frame rather than the placeholder for the two
+    pages this version moves onto it; each of the two compares clean against the original on the
+    reference guest, as a page and not only as a table; the source pane's colouring matches the
+    original's colour for colour on the same sample text; the copy button puts the sample on the
+    clipboard where the browser allows it and says what it did where it does not; the search box
+    opens the page a suggestion names; and the nine gates stay green with C8 covering three records.
 
 11. **Layout** — Border, SplitView, Viewbox, and the Gallery's Grid and StackPanel pages, which
     are mostly documentation of CSS this library does not need to reimplement.
