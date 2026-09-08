@@ -415,6 +415,8 @@
 		cursor: pointer;
 		font-family: var(--winui-SymbolThemeFontFamily);
 		font-size: var(--winui-NavigationViewItemOnLeftIconBoxHeight);
+		/* The user agent's own `:focus-visible` ring is a second one; see Button.svelte. */
+		outline: none;
 	}
 
 	/* GlobalNavButton, the hamburger. Written here rather than in the markup because it

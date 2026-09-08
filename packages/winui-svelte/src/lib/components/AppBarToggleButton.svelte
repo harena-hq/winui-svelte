@@ -193,6 +193,8 @@
 		text-align: left;
 		cursor: pointer;
 		user-select: none;
+		/* The user agent's own `:focus-visible` ring is a second one; see Button.svelte. */
+		outline: none;
 	}
 
 	/* The 68px column at AppBarToggleButton_themeresources.xaml:221 is the icon-over-label column;

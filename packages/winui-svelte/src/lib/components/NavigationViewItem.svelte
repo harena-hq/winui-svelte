@@ -171,6 +171,8 @@
 		border-color: var(--winui-NavigationViewItemBorderBrush);
 		cursor: pointer;
 		user-select: none;
+		/* The user agent's own `:focus-visible` ring is a second one; see Button.svelte. */
+		outline: none;
 	}
 
 	/* One `c_itemIndentation` per level below the top, on the item's padding rather than on
@@ -339,6 +341,8 @@
 		/* c1-allow: NavigationView_themeresources.xaml:617, AnimatedIcon Width="12" Height="12" */
 		font-size: 12px;
 		line-height: normal;
+		/* The user agent's own `:focus-visible` ring is a second one; see Button.svelte. */
+		outline: none;
 	}
 
 	/* `NavigationViewItemExpandedGlyph` is ChevronDown, and the token is already a quoted

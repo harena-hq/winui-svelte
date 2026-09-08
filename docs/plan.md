@@ -1172,6 +1172,18 @@ controls/dev -name 'AppBar*'` matches three `*_themeresources.xaml` files and no
     generated from that source rather than transcribed, as ADR 0001 and 0007 do for the other
     two upstreams. Expander and SelectorBar are already built by here.
     The Gallery's Typography and Geometry pages move onto the frame in this version.
+
+    **The title bar's search box starts working here.** The control in the shell layout is
+    already the published `AutoSuggestBox` — v4 retired D20 and put the real control there —
+    so nothing about the control changes: what is missing is the two props that make it a
+    search box, `items` and the submit callback, and a route to navigate to on submit. The
+    corpus is the committed Gallery records, which D18 already treats as the source of every
+    menu entry and its path, so a suggestion carries the route it opens rather than a title
+    that then has to be matched back to one. **The decision this version has to make is how
+    far past the page titles the search reaches** — titles only, titles plus the group each
+    page sits in, or the sample text as well. The original's own reach is the thing to
+    measure on the guest before choosing, not to infer from the record.
+
 11. **Layout** — Border, SplitView, Viewbox, and the Gallery's Grid and StackPanel pages, which
     are mostly documentation of CSS this library does not need to reimplement.
 12. **Date and time** — CalendarView, CalendarDatePicker, DatePicker, TimePicker.
@@ -1374,6 +1386,19 @@ Automated, and a unit that fails one cannot be sealed.
   record's census against its own contents — and re-derives both when the checkout is present
   at that pin. The weaker half is the one that catches the failure that actually happens: a
   record edited by hand rather than through the extractor.
+
+- **C10 — a self-drawn focus visual suppresses the user agent's.** Proposed, not built. A
+  component that draws WinUI's focus band on a `:focus-visible` pseudo-element must also set
+  `outline: none` on the element that takes focus, or the browser paints a second ring on that
+  element's own border box. Thirteen components shipped without it, and the reason no gate and
+  no baseline caught it is worth stating plainly: the band is drawn 3px outside the control, so
+  on a control with room around it the two rings overlap and the defect reads as a slightly
+  heavier ring. It only separates where the control has no room — an overflow menu row, whose
+  border box is flush with the menu's own border — and there it reads as the ring breaking out
+  of the menu. The check is a static one of the same shape as C1: a stylesheet that matches
+  `:focus-visible` names an element, and that element's own rule must carry `outline: none`.
+  The three controls whose focusable element is an `<input>` at `opacity: 0` are outside it,
+  and the gate has to say so rather than exempt them silently.
 
 C5 is the mechanism for the project's central constraint: WinUI behaviour we choose not to
 reproduce is a recorded decision, never a silent one.

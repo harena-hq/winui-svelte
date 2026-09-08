@@ -169,6 +169,8 @@
 		border: none;
 		font: inherit;
 		cursor: pointer;
+		/* The user agent's own `:focus-visible` ring is a second one; see Button.svelte. */
+		outline: none;
 	}
 
 	.primary {

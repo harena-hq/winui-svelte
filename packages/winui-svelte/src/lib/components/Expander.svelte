@@ -132,6 +132,8 @@
 		border-radius: var(--header-radius);
 		cursor: pointer;
 		text-align: left;
+		/* The user agent's own `:focus-visible` ring is a second one; see Button.svelte. */
+		outline: none;
 	}
 
 	.root[data-direction='down'] .header[data-state='open'] {
