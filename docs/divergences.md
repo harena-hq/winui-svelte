@@ -687,18 +687,21 @@ gate does.
 
 ---
 
-### WD-027 — ItemsView items are each a tab stop, and there is no current item
+### WD-027 — ItemsView and TreeView items are each a tab stop, and there is no current item
 
-- **Control**: `ItemsView`.
+- **Control**: `ItemsView` and `TreeView`.
 - **WinUI does**: the view is a single tab stop — `IsTabStop="False"` and
   `TabNavigation="Once"` on its Style, `ItemsView.xaml:6-7`. Tab enters it and lands on one
   item; arrow keys move a _current item_ between items, which `CurrentItemIndex`
   (`ItemsView.idl:47`) reports and which `OnFocusedAction` on each selector can turn into a
-  selection; Tab leaves the whole view.
+  selection; Tab leaves the whole view. A tree also moves with Left and Right, which collapse
+  and expand a branch and step to a parent or first child (`TreeViewItem::IsExpandCollapse`,
+  `TreeViewItem.cpp:527`).
 - **We do**: every `ItemContainer` a consumer's template renders is a tab stop of its own,
   which is `ItemContainer`'s own default. Tab walks the items in document order. There are no
   arrow keys, no Home or End, and no `CurrentItemIndex`, because without focus management the
-  property would report nothing the view actually knows.
+  property would report nothing the view actually knows. A TreeView branch opens by clicking
+  its chevron and by Enter or Space on a row that has one.
 - **Why accepted**: it is WD-004's situation on a second control, and the same answer. The
   keyboard contract for a grid of items is a roving-tabindex state machine whose candidate set
   changes with the layout — a stack moves by one, a uniform grid by a row, a lined flow by a

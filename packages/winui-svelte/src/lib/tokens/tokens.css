@@ -1620,6 +1620,41 @@
 	--winui-TitleBarTitleMinWidth: 0px;
 	--winui-TitleBarIconMargin: 0px 16px 0px 0px;
 	--winui-TitleBarTitleMargin: 0px 8px 0px 0px;
+	--winui-TreeViewItemBackground: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-TreeViewItemBackgroundPointerOver: var(--winui-SubtleFillColorSecondaryBrush);
+	--winui-TreeViewItemBackgroundPressed: var(--winui-SubtleFillColorTertiaryBrush);
+	--winui-TreeViewItemBackgroundDisabled: var(--winui-SubtleFillColorDisabledBrush);
+	--winui-TreeViewItemBackgroundSelected: var(--winui-SubtleFillColorSecondaryBrush);
+	--winui-TreeViewItemBackgroundSelectedPointerOver: var(--winui-SubtleFillColorTertiaryBrush);
+	--winui-TreeViewItemBackgroundSelectedPressed: var(--winui-SubtleFillColorSecondaryBrush);
+	--winui-TreeViewItemBackgroundSelectedDisabled: var(--winui-SubtleFillColorDisabledBrush);
+	--winui-TreeViewItemForeground: var(--winui-TextFillColorPrimaryBrush);
+	--winui-TreeViewItemForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
+	--winui-TreeViewItemForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
+	--winui-TreeViewItemForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+	--winui-TreeViewItemForegroundSelected: var(--winui-TextFillColorPrimaryBrush);
+	--winui-TreeViewItemForegroundSelectedPointerOver: var(--winui-TextFillColorPrimaryBrush);
+	--winui-TreeViewItemForegroundSelectedPressed: var(--winui-TextFillColorSecondaryBrush);
+	--winui-TreeViewItemForegroundSelectedDisabled: var(--winui-TextFillColorDisabledBrush);
+	--winui-TreeViewItemBorderBrush: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-TreeViewItemBorderBrushPointerOver: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-TreeViewItemBorderBrushPressed: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-TreeViewItemBorderBrushDisabled: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-TreeViewItemBorderBrushSelected: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-TreeViewItemBorderBrushSelectedPointerOver: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-TreeViewItemBorderBrushSelectedPressed: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-TreeViewItemBorderBrushSelectedDisabled: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-TreeViewItemSelectionIndicatorForeground: var(--winui-AccentFillColorDefaultBrush);
+	--winui-TreeViewItemSelectionIndicatorForegroundPointerOver: var(
+		--winui-AccentFillColorDefaultBrush
+	);
+	--winui-TreeViewItemSelectionIndicatorForegroundPressed: var(--winui-AccentFillColorDefaultBrush);
+	--winui-TreeViewItemSelectionIndicatorForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+	--winui-TreeViewItemBorderThemeThickness: 0px;
+	--winui-TreeViewItemPresenterMargin: 2px 4px;
+	--winui-TreeViewItemPresenterPadding: 3px 0px 5px 0px;
+	--winui-TreeViewItemMinHeight: 28px;
+	--winui-TreeViewItemContentHeight: 20px;
 	--winui-AppBarExpandButtonThemeWidth: 48px;
 	--winui-AppBarExpandButtonCircleDiameter: 3px;
 	--winui-AutoSuggestListMaxHeight: 374px;
@@ -3031,6 +3066,41 @@
 	--winui-TitleBarPaneToggleButtonForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
 	--winui-TitleBarPaneToggleButtonForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
 	--winui-TitleBarPaneToggleButtonForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+	--winui-TreeViewItemBackground: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-TreeViewItemBackgroundPointerOver: var(--winui-SubtleFillColorSecondaryBrush);
+	--winui-TreeViewItemBackgroundPressed: var(--winui-SubtleFillColorTertiaryBrush);
+	--winui-TreeViewItemBackgroundDisabled: var(--winui-SubtleFillColorDisabledBrush);
+	--winui-TreeViewItemBackgroundSelected: var(--winui-SubtleFillColorSecondaryBrush);
+	--winui-TreeViewItemBackgroundSelectedPointerOver: var(--winui-SubtleFillColorTertiaryBrush);
+	--winui-TreeViewItemBackgroundSelectedPressed: var(--winui-SubtleFillColorSecondaryBrush);
+	--winui-TreeViewItemBackgroundSelectedDisabled: var(--winui-SubtleFillColorDisabledBrush);
+	--winui-TreeViewItemForeground: var(--winui-TextFillColorPrimaryBrush);
+	--winui-TreeViewItemForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
+	--winui-TreeViewItemForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
+	--winui-TreeViewItemForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+	--winui-TreeViewItemForegroundSelected: var(--winui-TextFillColorPrimaryBrush);
+	--winui-TreeViewItemForegroundSelectedPointerOver: var(--winui-TextFillColorPrimaryBrush);
+	--winui-TreeViewItemForegroundSelectedPressed: var(--winui-TextFillColorSecondaryBrush);
+	--winui-TreeViewItemForegroundSelectedDisabled: var(--winui-TextFillColorDisabledBrush);
+	--winui-TreeViewItemBorderBrush: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-TreeViewItemBorderBrushPointerOver: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-TreeViewItemBorderBrushPressed: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-TreeViewItemBorderBrushDisabled: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-TreeViewItemBorderBrushSelected: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-TreeViewItemBorderBrushSelectedPointerOver: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-TreeViewItemBorderBrushSelectedPressed: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-TreeViewItemBorderBrushSelectedDisabled: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-TreeViewItemSelectionIndicatorForeground: var(--winui-AccentFillColorDefaultBrush);
+	--winui-TreeViewItemSelectionIndicatorForegroundPointerOver: var(
+		--winui-AccentFillColorDefaultBrush
+	);
+	--winui-TreeViewItemSelectionIndicatorForegroundPressed: var(--winui-AccentFillColorDefaultBrush);
+	--winui-TreeViewItemSelectionIndicatorForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+	--winui-TreeViewItemBorderThemeThickness: 0px;
+	--winui-TreeViewItemPresenterMargin: 2px 4px;
+	--winui-TreeViewItemPresenterPadding: 3px 0px 5px 0px;
+	--winui-TreeViewItemMinHeight: 28px;
+	--winui-TreeViewItemContentHeight: 20px;
 	--winui-AppBarExpandButtonThemeWidth: 48px;
 	--winui-AppBarExpandButtonCircleDiameter: 3px;
 	--winui-AutoSuggestListMaxHeight: 374px;
@@ -4513,6 +4583,47 @@
 		--winui-TitleBarPaneToggleButtonForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
 		--winui-TitleBarPaneToggleButtonForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
 		--winui-TitleBarPaneToggleButtonForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+		--winui-TreeViewItemBackground: var(--winui-SubtleFillColorTransparentBrush);
+		--winui-TreeViewItemBackgroundPointerOver: var(--winui-SubtleFillColorSecondaryBrush);
+		--winui-TreeViewItemBackgroundPressed: var(--winui-SubtleFillColorTertiaryBrush);
+		--winui-TreeViewItemBackgroundDisabled: var(--winui-SubtleFillColorDisabledBrush);
+		--winui-TreeViewItemBackgroundSelected: var(--winui-SubtleFillColorSecondaryBrush);
+		--winui-TreeViewItemBackgroundSelectedPointerOver: var(--winui-SubtleFillColorTertiaryBrush);
+		--winui-TreeViewItemBackgroundSelectedPressed: var(--winui-SubtleFillColorSecondaryBrush);
+		--winui-TreeViewItemBackgroundSelectedDisabled: var(--winui-SubtleFillColorDisabledBrush);
+		--winui-TreeViewItemForeground: var(--winui-TextFillColorPrimaryBrush);
+		--winui-TreeViewItemForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
+		--winui-TreeViewItemForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
+		--winui-TreeViewItemForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+		--winui-TreeViewItemForegroundSelected: var(--winui-TextFillColorPrimaryBrush);
+		--winui-TreeViewItemForegroundSelectedPointerOver: var(--winui-TextFillColorPrimaryBrush);
+		--winui-TreeViewItemForegroundSelectedPressed: var(--winui-TextFillColorSecondaryBrush);
+		--winui-TreeViewItemForegroundSelectedDisabled: var(--winui-TextFillColorDisabledBrush);
+		--winui-TreeViewItemBorderBrush: var(--winui-SubtleFillColorTransparentBrush);
+		--winui-TreeViewItemBorderBrushPointerOver: var(--winui-SubtleFillColorTransparentBrush);
+		--winui-TreeViewItemBorderBrushPressed: var(--winui-SubtleFillColorTransparentBrush);
+		--winui-TreeViewItemBorderBrushDisabled: var(--winui-SubtleFillColorTransparentBrush);
+		--winui-TreeViewItemBorderBrushSelected: var(--winui-SubtleFillColorTransparentBrush);
+		--winui-TreeViewItemBorderBrushSelectedPointerOver: var(
+			--winui-SubtleFillColorTransparentBrush
+		);
+		--winui-TreeViewItemBorderBrushSelectedPressed: var(--winui-SubtleFillColorTransparentBrush);
+		--winui-TreeViewItemBorderBrushSelectedDisabled: var(--winui-SubtleFillColorTransparentBrush);
+		--winui-TreeViewItemSelectionIndicatorForeground: var(--winui-AccentFillColorDefaultBrush);
+		--winui-TreeViewItemSelectionIndicatorForegroundPointerOver: var(
+			--winui-AccentFillColorDefaultBrush
+		);
+		--winui-TreeViewItemSelectionIndicatorForegroundPressed: var(
+			--winui-AccentFillColorDefaultBrush
+		);
+		--winui-TreeViewItemSelectionIndicatorForegroundDisabled: var(
+			--winui-TextFillColorDisabledBrush
+		);
+		--winui-TreeViewItemBorderThemeThickness: 0px;
+		--winui-TreeViewItemPresenterMargin: 2px 4px;
+		--winui-TreeViewItemPresenterPadding: 3px 0px 5px 0px;
+		--winui-TreeViewItemMinHeight: 28px;
+		--winui-TreeViewItemContentHeight: 20px;
 		--winui-AppBarExpandButtonThemeWidth: 48px;
 		--winui-AppBarExpandButtonCircleDiameter: 3px;
 		--winui-AutoSuggestListMaxHeight: 374px;
@@ -5938,6 +6049,45 @@
 	--winui-TitleBarPaneToggleButtonForegroundDisabled: var(
 		--winui-SystemControlDisabledBaseMediumLowBrush
 	);
+	--winui-TreeViewItemBackground: var(--winui-SystemColorWindowColorBrush);
+	--winui-TreeViewItemBackgroundPointerOver: var(--winui-SystemColorWindowColorBrush);
+	--winui-TreeViewItemBackgroundPressed: var(--winui-SystemColorWindowColorBrush);
+	--winui-TreeViewItemBackgroundDisabled: var(--winui-SystemColorWindowColorBrush);
+	--winui-TreeViewItemBackgroundSelected: var(--winui-SystemColorWindowColorBrush);
+	--winui-TreeViewItemBackgroundSelectedPointerOver: var(--winui-SystemColorButtonFaceColorBrush);
+	--winui-TreeViewItemBackgroundSelectedPressed: var(--winui-SystemColorButtonFaceColorBrush);
+	--winui-TreeViewItemBackgroundSelectedDisabled: var(--winui-SystemColorWindowColorBrush);
+	--winui-TreeViewItemForeground: var(--winui-SystemColorButtonTextColorBrush);
+	--winui-TreeViewItemForegroundPointerOver: var(--winui-SystemColorHighlightColorBrush);
+	--winui-TreeViewItemForegroundPressed: var(--winui-SystemColorHighlightColorBrush);
+	--winui-TreeViewItemForegroundDisabled: var(--winui-SystemColorGrayTextColorBrush);
+	--winui-TreeViewItemForegroundSelected: var(--winui-SystemColorHighlightColorBrush);
+	--winui-TreeViewItemForegroundSelectedPointerOver: var(--winui-SystemColorButtonTextColorBrush);
+	--winui-TreeViewItemForegroundSelectedPressed: var(--winui-SystemColorButtonTextColorBrush);
+	--winui-TreeViewItemForegroundSelectedDisabled: var(--winui-SystemColorGrayTextColorBrush);
+	--winui-TreeViewItemBorderBrush: var(--winui-SystemColorWindowColorBrush);
+	--winui-TreeViewItemBorderBrushPointerOver: var(--winui-SystemColorHighlightColorBrush);
+	--winui-TreeViewItemBorderBrushPressed: var(--winui-SystemColorWindowColorBrush);
+	--winui-TreeViewItemBorderBrushDisabled: var(--winui-SystemColorWindowColorBrush);
+	--winui-TreeViewItemBorderBrushSelected: var(--winui-SystemColorHighlightColorBrush);
+	--winui-TreeViewItemBorderBrushSelectedPointerOver: var(--winui-SystemColorButtonTextColorBrush);
+	--winui-TreeViewItemBorderBrushSelectedPressed: var(--winui-SystemColorButtonFaceColorBrush);
+	--winui-TreeViewItemBorderBrushSelectedDisabled: var(--winui-SystemColorGrayTextColorBrush);
+	--winui-TreeViewItemSelectionIndicatorForeground: var(--winui-SystemColorHighlightColorBrush);
+	--winui-TreeViewItemSelectionIndicatorForegroundPointerOver: var(
+		--winui-SystemColorButtonTextColorBrush
+	);
+	--winui-TreeViewItemSelectionIndicatorForegroundPressed: var(
+		--winui-SystemColorButtonTextColorBrush
+	);
+	--winui-TreeViewItemSelectionIndicatorForegroundDisabled: var(
+		--winui-SystemColorGrayTextColorBrush
+	);
+	--winui-TreeViewItemBorderThemeThickness: 1px;
+	--winui-TreeViewItemPresenterMargin: 2px 4px;
+	--winui-TreeViewItemPresenterPadding: 3px 0px 5px 0px;
+	--winui-TreeViewItemMinHeight: 28px;
+	--winui-TreeViewItemContentHeight: 20px;
 	--winui-SystemAltMediumColor: #00000099;
 	--winui-SystemAltMediumLowColor: #00000066;
 	--winui-SystemBaseHighColor: #ffffffff;
