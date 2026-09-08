@@ -1421,15 +1421,14 @@ controls/dev -name 'AppBar*'` matches three `*_themeresources.xaml` files and no
     than by a field named `id`. The escape it replaces is `unknown[]`, which type-checks and
     tells the consumer nothing.
 
-    That the packaging survives it was verified before this entry was written, not assumed —
-    an external dependency is verified before anything is built on it, and the toolchain
-    counts as one. A `<script lang="ts" generics="T">` component through
-    `pnpm --filter winui-svelte build` reaches `dist` with `generics="T"` intact and
-    `lang="ts"` stripped by `scripts/package/strip-script-lang.mjs`, emits a fully generic
-    `.d.ts`, compiles under `svelte/compiler` with zero warnings, and passes `publint`. The
-    one residue is an `export {};` left in the packaged script, which is inert. Had any of
-    that failed, the ADR would have had to choose differently, and it would have found out
-    in unit 8 rather than here.
+    That the packaging survives it was verified before this entry was written, not assumed — an
+    external dependency is verified before anything is built on it, and the toolchain counts as one.
+    Built with `pnpm --filter winui-svelte build`, a `<script lang="ts" generics="T">` component
+    reaches `dist` with `generics="T"` intact and its `lang="ts"` stripped by the packaging script,
+    emits a fully generic `.d.ts`, compiles under `svelte/compiler` with zero warnings, and passes
+    `publint`. The one residue is an `export {};` left in the packaged script, which is inert. Had
+    any of that failed, the ADR would have had to choose differently, and it would have found out in
+    unit 9 rather than here.
 
     **What the pins carry — `docs/surface.md` step 1, and this group answers in three ways
     where the file's table has two.**
@@ -1451,12 +1450,12 @@ controls/dev -name 'AppBar*'` matches three `*_themeresources.xaml` files and no
     indicator sits and how big it is, how far the check mark insets the content, what the hover
     fill's inset is — exists in no file this project can read.** The brushes and a handful of
     sizes are in `ListViewItem_themeresources.xaml`; the geometry is not, and step 4 with the
-    reference machine is the only source for it. Unit 4 exists because of this row, and its
+    reference machine is the only source for it. Unit 5 exists because of this row, and its
     spec cannot be written before the measuring is done.
 
     **The trap is `ListViewItemExpanded`, and it is v8's fourth clause with a costume on.**
     `ListViewItem_themeresources.xaml:261` holds a complete, readable, tempting XAML tree for
-    exactly the item unit 4 has to invent: `BorderBackground`, a `ContentPresenter`, a
+    exactly the item unit 5 has to invent: `BorderBackground`, a `ContentPresenter`, a
     `MultiSelectSquare` 20 by 20 with a 2px border at `Margin="12,0,0,0"`, six named common
     states. Nothing in either pin applies it — `grep -rn ListViewItemExpanded .upstream/`
     returns the definition and nothing else — and its design is a generation older than the
@@ -1466,31 +1465,43 @@ controls/dev -name 'AppBar*'` matches three `*_themeresources.xaml` files and no
 
     **The units, in dependency order.**
 
-    1. **ItemsRepeater, its layouts, and the item-template contract.** First because it is the
+    1. **ItemsRepeater, StackLayout, and the item-template contract.** First because it is the
        contract with nothing else attached: a repeater has no chrome, no selection, no scroll
        viewport and no states — it is items, a template and a layout, which is exactly what
-       ADR 0013 has to get right. `StackLayout` and `UniformGridLayout` both ship here, because
-       the Gallery sets both on this page (`ItemsRepeaterPage.xaml`, four and three uses) and a
-       repeater with one layout is not the control. The ADR is written in this unit and cited
-       by the seven that follow.
+       ADR 0013 has to get right. The ADR is written in this unit and cited by the eight that
+       follow. `StackLayout` is two properties, `Orientation` and `Spacing`
+       (`ItemsRepeater.idl:481-483`), and it is a flex line with a gap.
 
-    2. **ItemContainer.** The modern selection chrome, and the one piece of this tranche that
+    2. **UniformGridLayout.** Split out of unit 1 after reading it, and the reading is the
+       argument: this layout is not "the grid version of a stack". Every cell in it is one
+       uniform size, and where `MinItemWidth`/`MinItemHeight` are unset that size is **measured
+       from the first item** — `UniformGridLayoutState::SetSize` takes item 0's desired size
+       whenever the layout's own value is `NaN`, which is what the member defaults to
+       (`UniformGridLayout.h:144`) whatever the IDL's `MUX_DEFAULT_VALUE` says. So a faithful
+       reproduction measures item 0 the way upstream does, and that is a second intent with its
+       own failure modes, not a second value on unit 1's prop. On top of it sit `ItemsStretch`'s
+       three members — `Fill` adds the leftover pixels of a line to every item, `Uniform` adds
+       them and the matching major-axis pixels to keep the ratio — `ItemsJustification`'s six,
+       and `MaximumRowsOrColumns`, which is a cap on a line rather than a count and therefore
+       is not `repeat(N, …)`.
+
+    3. **ItemContainer.** The modern selection chrome, and the one piece of this tranche that
        is fully written down: `ItemContainer.xaml` is 150 readable lines with a
        `PART_SelectionVisual` at `BorderThickness="3"`, a `PART_CommonVisual` stroked at
        `ItemContainerSelectedInnerThickness` 1 inset by `ItemContainerSelectedInnerMargin` 2,
-       and a lazily-loaded check box for multiple selection. Second because unit 3 hosts it and
+       and a lazily-loaded check box for multiple selection. Third because unit 4 hosts it and
        because `SelectorBarItem` already derives from it upstream — v8 found that the hard way
        (`ItemContainer.cpp:185-220` is what enters SelectorBarItem's states) and this is the
        unit that makes the base class a real component rather than a footnote.
 
-    3. **ItemsView.** `ItemsView.xaml:19-38` is a `ScrollView` wrapping an `ItemsRepeater`, so
+    4. **ItemsView.** `ItemsView.xaml:19-38` is a `ScrollView` wrapping an `ItemsRepeater`, so
        this unit is composition plus the part neither of its pieces has: selection.
        `SelectionMode`'s four members, `LinedFlowLayout` for the page's first example, and the
        `ItemContainer` states driven from the view rather than from the container. This is also
        what closes v8's one page-level deferral — `SelectorBarPage.xaml:59-79`'s colour swatches
        are an `ItemsView` of `ItemContainer`s, and after this unit the control exists.
 
-    4. **ListViewItem and GridViewItem — the chrome that has to be measured.** Its own unit,
+    5. **ListViewItem and GridViewItem — the chrome that has to be measured.** Its own unit,
        ahead of the two controls that host it, because the row above says its geometry is in no
        file, and because two controls depending on a guess is worse than one. What the pin does
        give: `ListViewItemMinWidth` 88, `ListViewItemMinHeight` 40, `ListViewItemCornerRadius`
@@ -1500,22 +1511,21 @@ controls/dev -name 'AppBar*'` matches three `*_themeresources.xaml` files and no
        (`ListViewItem_themeresources.xaml:5-60`). What it does not give is where any of it goes.
        **The spec for this unit is written after the measurements, from the measurements.**
 
-    5. **ListView.** The control around the item: `generic.xaml:9000-9026`'s border, scroll
+    6. **ListView.** The control around the item: `generic.xaml:9000-9026`'s border, scroll
        viewport and `ItemsPresenter`, the `Header`/`Footer` slots, `SelectionMode`, and grouped
        headers — `ListViewHeaderItem` (`generic.xaml:9131`) is fully readable, a padded
        `ContentPresenter` over a half-pixel divider inset 12 on both sides. The scrollbar is the
        treatment `NavigationView.svelte:782-830` already worked out against
        `ScrollBar_themeresources.xaml`; the ScrollBar control itself stays roadmap item 13.
 
-    6. **GridView and GridViewItem.** The same presenter with its own 45-key family and its own
-       geometry, plus the wrapping panel. Split from unit 5 rather than folded into it because
+    7. **GridView and GridViewItem.** The same presenter with its own 45-key family and its own
+       geometry, plus the wrapping panel. Split from unit 6 rather than folded into it because
        `GridViewItem`'s numbers are measured separately — sharing a presenter upstream is not
-       evidence that two controls share a pixel — and because adjacent intents are
-       separate commits.
+       evidence that two controls share a pixel — and because adjacent intents are separate commits.
 
-    7. **TreeView and TreeViewItem.** Fully readable and self-contained: `TreeViewItem.xaml`
+    8. **TreeView and TreeViewItem.** Fully readable and self-contained: `TreeViewItem.xaml`
        overrides the template it inherits from `DefaultListViewItemStyle`, so this unit depends
-       on unit 4's token family but on none of its geometry. The indentation is the one number
+       on unit 5's token family but on none of its geometry. The indentation is the one number
        that is code — `TreeViewItem.cpp:515-524`, `depth * 16` — and the chevron, the 3-by-16
        selection indicator at `RadiusX="2"`, and the multi-select check box are all in the file.
        **D9 names TreeView as one of three controls to build on its own Zag machine, and this
@@ -1523,7 +1533,7 @@ controls/dev -name 'AppBar*'` matches three `*_themeresources.xaml` files and no
        is a `Directive:` trailer, and the decision is made against `@zag-js/tree-view`'s actual
        surface rather than against the row's memory of it.
 
-    8. **FlipView and FlipViewItem.** Last because it is the only one that is not a list: a
+    9. **FlipView and FlipViewItem.** Last because it is the only one that is not a list: a
        viewport of one item with a previous and a next button, both readable at
        `generic.xaml:30284-30539` — four `FontIcon` glyphs, `EDD9` and `EDDA` horizontally and
        `EDDB` and `EDDC` vertically, on a `FlipViewNextPreviousButton*` brush family — with
@@ -1552,7 +1562,7 @@ controls/dev -name 'AppBar*'` matches three `*_themeresources.xaml` files and no
     unscheduled page and leave it unscheduled, so: `RefreshContainer` and `RefreshVisualizer`
     belong with `ScrollView` and `AnnotatedScrollBar` in roadmap item 13. Three reasons, none of
     them "later". Its templates are two empty `Grid`s — `RefreshContainer.xaml:11-13` and
-    `RefreshVisualizer.xaml:11` — so every pixel it draws is code, the same wall unit 4 hits and
+    `RefreshVisualizer.xaml:11` — so every pixel it draws is code, the same wall unit 5 hits and
     with no reference state to photograph: **at rest the control is invisible**, and a
     three-theme snapshot of it is a snapshot of a ListView. The gesture that reveals it is a
     touch or pen pull, which `WD-020` already declines. And the surface it attaches to is a
@@ -1567,11 +1577,11 @@ controls/dev -name 'AppBar*'` matches three `*_themeresources.xaml` files and no
     Each is a `WD-` with a measurement behind it or it is built — the one thing none of them may
     be is unmentioned.
 
-    Done-when is v8's, applied to eight units: each control snapshotted in three themes, each
+    Done-when is v8's, applied to nine units: each control snapshotted in three themes, each
     compared against the original on the reference guest, every prop following D21 as ADR 0012
     amends it, ADR 0013 written in unit 1 and cited by the rest, the surface sweep's step-1
-    verdict recorded before each seal — and, this version only, **every number in unit 4 and
-    unit 6 traceable to either a pinned line or a recorded measurement of the original**, since
+    verdict recorded before each seal — and, this version only, **every number in unit 5 and
+    unit 7 traceable to either a pinned line or a recorded measurement of the original**, since
     those are the two units where no file can be cited and a plausible guess is indistinguishable
     from a reading.
 
