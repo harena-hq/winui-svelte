@@ -16,6 +16,10 @@
 		{ id: 'fruit', title: 'Fruit', entries: ['Apple', 'Pear', 'Plum'] },
 		{ id: 'veg', title: 'Vegetables', entries: ['Leek', 'Onion'] }
 	];
+	// Aspect ratios rather than images: an item's width on a line is its width at the line
+	// height, and a fixed-ratio box states that without loading anything. Item 0 is neither
+	// the widest nor the narrowest.
+	const ratios = [1.5, 0.75, 2.2, 1, 1.75, 0.6, 1.3, 2];
 </script>
 
 <svelte:head><title>ItemsRepeater — harness</title></svelte:head>
@@ -242,6 +246,71 @@
 	</ItemsRepeater>
 </div>
 
+<h2 class="winui-SubtitleTextBlockStyle">lined flow — items keep their width</h2>
+<div class="row lined-row">
+	<ItemsRepeater
+		items={ratios}
+		layout={{ kind: 'linedFlow', lineHeight: 60, lineSpacing: 8, minItemSpacing: 8 }}
+	>
+		{#snippet itemTemplate(ratio)}
+			{@render ratioTile(ratio)}
+		{/snippet}
+	</ItemsRepeater>
+</div>
+
+<h2 class="winui-SubtitleTextBlockStyle">lined flow — the line ends flush, except the last</h2>
+<div class="row lined-row">
+	<ItemsRepeater
+		items={ratios}
+		layout={{
+			kind: 'linedFlow',
+			lineHeight: 60,
+			lineSpacing: 8,
+			minItemSpacing: 8,
+			itemsStretch: 'fill'
+		}}
+	>
+		{#snippet itemTemplate(ratio)}
+			{@render ratioTile(ratio)}
+		{/snippet}
+	</ItemsRepeater>
+</div>
+
+<h2 class="winui-SubtitleTextBlockStyle">lined flow — the line height is the first item's</h2>
+<div class="row lined-row">
+	<ItemsRepeater items={ratios} layout={{ kind: 'linedFlow', lineSpacing: 8, minItemSpacing: 8 }}>
+		{#snippet itemTemplate(ratio)}
+			{@render sizedTile(ratio)}
+		{/snippet}
+	</ItemsRepeater>
+</div>
+
+<h2 class="winui-SubtitleTextBlockStyle">lined flow — the leftover space between items</h2>
+<div class="row lined-row">
+	<ItemsRepeater
+		items={ratios}
+		layout={{
+			kind: 'linedFlow',
+			lineHeight: 60,
+			lineSpacing: 8,
+			minItemSpacing: 8,
+			itemsJustification: 'spaceBetween'
+		}}
+	>
+		{#snippet itemTemplate(ratio)}
+			{@render ratioTile(ratio)}
+		{/snippet}
+	</ItemsRepeater>
+</div>
+
+{#snippet ratioTile(ratio: number)}
+	<div class="tile" style:aspect-ratio={ratio}></div>
+{/snippet}
+
+{#snippet sizedTile(ratio: number)}
+	<div class="tile sized" style:aspect-ratio={ratio}></div>
+{/snippet}
+
 <style>
 	.row {
 		display: flex;
@@ -259,6 +328,18 @@
 		background: var(--winui-TextFillColorPrimaryBrush);
 	}
 
+	/* An ink tile, because under high contrast every accent and card brush resolves to
+	   `SystemColorWindowColor` — the page's own background — and a tile painted with one is
+	   invisible in exactly the theme this row has to prove itself in. */
+	.tile {
+		height: 100%;
+		background: var(--winui-TextFillColorPrimaryBrush);
+	}
+
+	.tile.sized {
+		height: 48px;
+	}
+
 	.category {
 		display: flex;
 		flex-direction: column;
@@ -269,6 +350,13 @@
 	   rules are what give the four grid rows something to wrap against, and a fixed number
 	   rather than the viewport's keeps the wrap count the same in every snapshot. */
 	.grid-row {
+		display: block;
+		width: 560px;
+	}
+
+	/* A lined flow wraps against its own content width, so it needs a definite one — the same
+	   reason `.grid-row` exists. */
+	.lined-row {
 		display: block;
 		width: 560px;
 	}

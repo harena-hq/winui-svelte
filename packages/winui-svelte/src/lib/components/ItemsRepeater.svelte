@@ -10,7 +10,11 @@
 	 * virtualisation buffers; `ElementPrepared`, `ElementClearing`, and `ElementIndexChanged`
 	 * are its lifecycle; and `GetElementIndex`, `TryGetElement`, and `GetOrCreateElement` are
 	 * imperative access to realized elements, so none are carried. `ItemTransitionProvider` is
-	 * animation, which the roadmap's Motion tranche owns.
+	 * animation, which the roadmap's Motion tranche owns. `ItemsInfoRequested`, `ItemsUnlocked`,
+	 * `InvalidateItemsInfo`, `LockItemToLine`, `RequestedRangeStartIndex`, and
+	 * `RequestedRangeLength` are the items-info fast path, which sizes a line without realizing
+	 * its items; WD-026 realizes every item. `ActualLineHeight` is read-only resolved-layout
+	 * state, and a Svelte component reports nothing back through a prop it does not own.
 	 */
 
 	/** StackLayout. */
@@ -53,8 +57,32 @@
 			'start' | 'center' | 'end' | 'spaceAround' | 'spaceBetween' | 'spaceEvenly';
 	}
 
+	/** LinedFlowLayout. */
+	export interface LinedFlowLayoutOptions {
+		/** Not a WinUI member: identifies the upstream `LinedFlowLayout` class. */
+		kind: 'linedFlow';
+		/**
+		 * LinedFlowLayout.LineHeight. Upstream's default is `NaN`, which means the first item's
+		 * desired height — `LinedFlowLayout.cpp:7529-7566`. Omitted here means the same.
+		 */
+		lineHeight?: number;
+		/** LinedFlowLayout.LineSpacing. Defaults to `0.0`. */
+		lineSpacing?: number;
+		/** LinedFlowLayout.MinItemSpacing. Defaults to `0.0`. */
+		minItemSpacing?: number;
+		/**
+		 * LinedFlowLayout.ItemsStretch. Defaults to `None`. `fill` scales each line's items by
+		 * one factor so the line ends flush; the collection's last line is never scaled.
+		 */
+		itemsStretch?: 'none' | 'fill';
+		/** LinedFlowLayout.ItemsJustification. Defaults to `Start`. */
+		itemsJustification?:
+			'start' | 'center' | 'end' | 'spaceAround' | 'spaceBetween' | 'spaceEvenly';
+	}
+
 	/** ItemsRepeater.Layout. */
-	export type ItemsRepeaterLayout = StackLayoutOptions | UniformGridLayoutOptions;
+	export type ItemsRepeaterLayout =
+		StackLayoutOptions | UniformGridLayoutOptions | LinedFlowLayoutOptions;
 
 	/** ItemsRepeater. */
 	export interface ItemsRepeaterProps<T> {
@@ -87,12 +115,17 @@
 
 	const kind = $derived(layout?.kind ?? 'stack');
 	const orientation = $derived(
-		layout?.orientation ?? (kind === 'stack' ? 'vertical' : 'horizontal')
+		kind === 'stack'
+			? ((layout as StackLayoutOptions | undefined)?.orientation ?? 'vertical')
+			: kind === 'uniformGrid'
+				? ((layout as UniformGridLayoutOptions | undefined)?.orientation ?? 'horizontal')
+				: 'horizontal'
 	);
 	const spacing = $derived(
 		kind === 'stack' ? ((layout as StackLayoutOptions | undefined)?.spacing ?? 0) : 0
 	);
 	const grid = $derived(kind === 'uniformGrid' ? (layout as UniformGridLayoutOptions) : null);
+	const lined = $derived(kind === 'linedFlow' ? (layout as LinedFlowLayoutOptions) : null);
 	const horizontal = $derived(orientation === 'horizontal');
 
 	let measured = $state<{ width: number; height: number } | null>(null);
@@ -133,6 +166,80 @@
 	const cellWidth = $derived(grid?.minItemWidth ?? measured?.width ?? null);
 	const cellHeight = $derived(grid?.minItemHeight ?? measured?.height ?? null);
 	const measuring = $derived(kind === 'uniformGrid' && (cellWidth === null || cellHeight === null));
+
+	// The natural size of every item, measured once per change of input with no height
+	// imposed. Only needed when `lineHeight` is omitted, because that is the only case where
+	// the line height is itself a measurement (LinedFlowLayout.cpp:7529-7566).
+	let naturalHeight = $state<number | null>(null);
+	// Every item's width at the resolved line height, and the width one line has to fill.
+	let lineWidths = $state<number[] | null>(null);
+	let lineExtent = $state<number | null>(null);
+
+	const resolvedLineHeight = $derived(lined ? (lined.lineHeight ?? naturalHeight) : null);
+	const linedMeasuring = $derived(
+		kind === 'linedFlow' && (resolvedLineHeight === null || lineWidths === null)
+	);
+
+	$effect(() => {
+		void items;
+		void kind;
+		void lined?.lineHeight;
+		naturalHeight = null;
+		lineWidths = null;
+		lineExtent = null;
+	});
+
+	$effect(() => {
+		if (kind !== 'linedFlow' || !ref) return;
+		const wrappers = Array.from(ref.children) as HTMLElement[];
+		if (wrappers.length !== items.length) return;
+
+		// Step one, and only when the line height is a measurement: item 0's natural height.
+		if (resolvedLineHeight === null) {
+			if (wrappers.length === 0) {
+				naturalHeight = 0;
+				return;
+			}
+			naturalHeight = wrappers[0].getBoundingClientRect().height;
+			return;
+		}
+
+		// Step two: with the line height applied, each item reports the width it wants — which
+		// for an image is its aspect ratio times that height. `ref.clientWidth` is the width the
+		// parent gave this component, not a width these items produced, so reading it here is
+		// not a measurement of our own output.
+		if (lineWidths === null) {
+			lineWidths = wrappers.map((wrapper) => wrapper.getBoundingClientRect().width);
+			lineExtent = ref.clientWidth;
+		}
+	});
+
+	// Where the collection's last line begins. Flex does the wrapping; this repeats the same
+	// arithmetic on the measured widths so the last line's items can be told not to grow —
+	// LinedFlowLayout.cpp:1635-1637, where a forward pass stretches every line but the last.
+	const lastLineStart = $derived.by(() => {
+		if (!lined || lineWidths === null || lineExtent === null) return 0;
+		const gap = lined.minItemSpacing ?? 0;
+		let start = 0;
+		let used = 0;
+		for (let i = 0; i < lineWidths.length; i++) {
+			const width = lineWidths[i];
+			const needed = used === 0 ? width : used + gap + width;
+			if (needed > lineExtent && used > 0) {
+				start = i;
+				used = width;
+			} else {
+				used = needed;
+			}
+		}
+		return start;
+	});
+
+	const itemBasis = (index: number) => (lineWidths === null ? null : `${lineWidths[index]}px`);
+	const itemGrow = (index: number) =>
+		lined?.itemsStretch === 'fill' && lineWidths !== null && index < lastLineStart
+			? lineWidths[index]
+			: 0;
 
 	// Along the line, and across it. Horizontal wraps into rows, so the line runs along the
 	// width; vertical wraps into columns, so it runs along the height.
@@ -188,12 +295,14 @@
 					spaceAround: 'space-around',
 					spaceBetween: 'space-between',
 					spaceEvenly: 'space-evenly'
-				}[grid?.itemsJustification ?? 'start']
+				}[grid?.itemsJustification ?? lined?.itemsJustification ?? 'start']
 	);
 	const columnGap = $derived(
-		kind === 'stack' ? `${spacing}px` : `${grid?.minColumnSpacing ?? 0}px`
+		kind === 'stack' ? `${spacing}px` : `${grid?.minColumnSpacing ?? lined?.minItemSpacing ?? 0}px`
 	);
-	const rowGap = $derived(kind === 'stack' ? `${spacing}px` : `${grid?.minRowSpacing ?? 0}px`);
+	const rowGap = $derived(
+		kind === 'stack' ? `${spacing}px` : `${grid?.minRowSpacing ?? lined?.lineSpacing ?? 0}px`
+	);
 
 	// The upstream names gaps by their role, but CSS names physical axes: a vertical line's item
 	// gap is still vertical. Therefore column-gap is always MinColumnSpacing and row-gap is always
@@ -206,6 +315,7 @@
 	{style}
 	data-layout={kind}
 	data-measuring={measuring ? 'true' : null}
+	data-lined-measuring={linedMeasuring ? 'true' : null}
 	style:grid-template-columns={templateColumns}
 	style:grid-template-rows={templateRows}
 	style:grid-auto-rows={autoRows}
@@ -220,7 +330,21 @@
 	{...rest}
 >
 	{#each items as entry, index (key ? key(entry, index) : index)}
-		{@render itemTemplate(entry, index)}
+		{#if lined}
+			<!-- This layout alone wraps items because it gives each one a width of its own, while
+			     the caller owns that item's markup and this component may not restyle it. Stack and
+			     grid place the caller's own root in a track and add no element. -->
+			<div
+				class="line-item"
+				style:height={resolvedLineHeight === null ? null : `${resolvedLineHeight}px`}
+				style:flex-basis={itemBasis(index)}
+				style:flex-grow={itemGrow(index)}
+			>
+				{@render itemTemplate(entry, index)}
+			</div>
+		{:else}
+			{@render itemTemplate(entry, index)}
+		{/if}
 	{/each}
 </div>
 
@@ -253,5 +377,27 @@
 		display: flex;
 		flex-direction: column;
 		align-items: flex-start;
+	}
+
+	.root[data-layout='linedFlow'] {
+		display: flex;
+		flex-wrap: wrap;
+		align-content: start;
+	}
+
+	/* Each item is a fixed-height box that starts at the width it asked for. `min-width: 0`
+	   lets a line shrink an item rather than overflow, which is upstream's shrink factor
+	   (LinedFlowLayout.cpp:1622-1631) reached by a different road. */
+	.root[data-layout='linedFlow'] .line-item {
+		flex-shrink: 1;
+		min-width: 0;
+		overflow: hidden;
+	}
+
+	/* The measuring pass. No height is imposed in its first step and no width in either, so
+	   each item reports what it wants; the row is `wrap` already, and the widths read here are
+	   read from the wrappers rather than from the line they landed on. */
+	.root[data-layout='linedFlow'][data-lined-measuring='true'] .line-item {
+		flex: 0 0 auto;
 	}
 </style>
