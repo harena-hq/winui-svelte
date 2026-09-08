@@ -110,6 +110,44 @@ example of the very first page in the group.
 properties without being rendered, and rendering a layout would put an element in the tree that
 XAML does not have.
 
+## Amendment, v9 unit 4c — a control that owns selection tells the template what it decided
+
+`ItemsRepeater` draws items and decides nothing about them, so `Snippet<[T, number]>` is the
+whole contract. `ItemsView` is the first control here that decides something: which items are
+selected, and whether the container should show a check box. Upstream puts that decision on an
+element inside the consumer's own `DataTemplate` — every `ItemsView` example in the Gallery
+opens its template with `<ItemContainer>` — and reaches it by walking the visual tree at run
+time (`ItemsView.cpp`'s container bookkeeping). A Svelte component cannot reach into a snippet
+to set a prop on something the snippet rendered.
+
+So **a collection control that owns selection passes what it decided as the snippet's third
+argument**: `Snippet<[T, number, ItemsViewItemState]>`, where the state is a plain object of
+the container props the view owns — `selected`, and the `multiSelectMode` the view's own
+`selectionMode` implies. The consumer still writes the `ItemContainer`, still sizes it, still
+gives it a label, and spreads the view's decision onto it:
+
+```svelte
+{#snippet itemTemplate(photo, index, state)}
+  <ItemContainer selected={state.selected} multiSelectMode={state.multiSelectMode}>
+    <img src={photo.src} alt={photo.title} />
+  </ItemContainer>
+{/snippet}
+```
+
+The alternative — the view rendering the `ItemContainer` itself and the snippet drawing only
+its content — was rejected because it takes the container away from the consumer, and the
+Gallery's own first template sets `Width`, `Height`, `HorizontalAlignment` and an automation
+name on it (`ItemsViewPage.xaml:22-27`). A control whose reproduction silently drops four
+attributes of the element the source hands the consumer is a different control.
+
+The state object carries no callback. Selection needs to know whether Ctrl or Shift was down —
+`SingleSelector`, `MultipleSelector` and `ExtendedSelector` each branch on them — and
+`ItemContainer.onItemInvoked` carries no event, by unit 3's decision and upstream's own event
+args. The view therefore listens on its own viewport, where the click and the key press arrive
+with their modifiers intact, and finds the index by asking which of the repeater's children
+contains the event's target. That also means a consumer's own `onItemInvoked` on the container
+still fires: the two are on different elements and the event reaches both.
+
 ## Status
 
 Accepted, v9 unit 1. It governs every control in roadmap item 9 and nothing before it: the six
