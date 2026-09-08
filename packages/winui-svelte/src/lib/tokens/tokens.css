@@ -1169,6 +1169,28 @@
 	--winui-InfoBarMessageVerticalOrientationMargin: 4px 0px 0px 0px;
 	--winui-InfoBarActionHorizontalOrientationMargin: 8px 0px 0px 16px;
 	--winui-InfoBarActionVerticalOrientationMargin: 12px 0px 0px 0px;
+	--winui-ItemContainerBackground: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-ItemContainerPointerOverBackground: var(--winui-SubtleFillColorSecondaryBrush);
+	--winui-ItemContainerPressedBackground: var(--winui-SubtleFillColorTertiaryBrush);
+	--winui-ItemContainerBorderBrush: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-ItemContainerPointerOverBorderBrush: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-ItemContainerPressedBorderBrush: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-ItemContainerSelectedBackground: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-ItemContainerSelectedPointerOverBackground: var(--winui-SubtleFillColorSecondaryBrush);
+	--winui-ItemContainerSelectedPressedBackground: var(--winui-SubtleFillColorTertiaryBrush);
+	--winui-ItemContainerSelectionVisualBackground: var(--winui-AccentFillColorDefaultBrush);
+	--winui-ItemContainerSelectionVisualPointerOverBackground: var(
+		--winui-AccentFillColorDefaultBrush
+	);
+	--winui-ItemContainerSelectionVisualPressedBackground: var(--winui-AccentFillColorDefaultBrush);
+	--winui-ItemContainerSelectedInnerBorderBrush: var(--winui-ControlSolidFillColorDefaultBrush);
+	--winui-ItemContainerCheckboxBackgroundUnchecked: var(
+		--winui-ControlOnImageFillColorDefaultBrush
+	);
+	--winui-ItemContainerDisabledOpacity: 0.3;
+	--winui-ItemContainerCheckboxMargin: -2px 4px;
+	--winui-ItemContainerSelectedInnerMargin: 2px;
+	--winui-ItemContainerSelectedInnerThickness: 1px;
 	--winui-SystemControlTransientBorderBrush: color-mix(in srgb, #000000 14%, transparent);
 	--winui-AcrylicBackgroundFillColorDefaultBrush: #f9f9f9;
 	--winui-AcrylicInAppFillColorDefaultBrush: #f9f9f9;
@@ -2639,6 +2661,24 @@
 	--winui-InfoBarHyperlinkButtonForeground: var(--winui-AccentTextFillColorPrimaryBrush);
 	--winui-InfoBarBorderBrush: var(--winui-CardStrokeColorDefaultBrush);
 	--winui-InfoBarBorderThickness: 1px;
+	--winui-ItemContainerBackground: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-ItemContainerPointerOverBackground: var(--winui-SubtleFillColorSecondaryBrush);
+	--winui-ItemContainerPressedBackground: var(--winui-SubtleFillColorTertiaryBrush);
+	--winui-ItemContainerBorderBrush: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-ItemContainerPointerOverBorderBrush: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-ItemContainerPressedBorderBrush: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-ItemContainerSelectedBackground: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-ItemContainerSelectedPointerOverBackground: var(--winui-SubtleFillColorSecondaryBrush);
+	--winui-ItemContainerSelectedPressedBackground: var(--winui-SubtleFillColorTertiaryBrush);
+	--winui-ItemContainerSelectionVisualBackground: var(--winui-AccentFillColorDefaultBrush);
+	--winui-ItemContainerSelectionVisualPointerOverBackground: var(
+		--winui-AccentFillColorDefaultBrush
+	);
+	--winui-ItemContainerSelectionVisualPressedBackground: var(--winui-AccentFillColorDefaultBrush);
+	--winui-ItemContainerSelectedInnerBorderBrush: var(--winui-ControlSolidFillColorDefaultBrush);
+	--winui-ItemContainerCheckboxBackgroundUnchecked: var(
+		--winui-ControlOnImageFillColorDefaultBrush
+	);
 	--winui-SystemControlTransientBorderBrush: color-mix(in srgb, #000000 36%, transparent);
 	--winui-AcrylicBackgroundFillColorDefaultBrush: #2c2c2c;
 	--winui-AcrylicInAppFillColorDefaultBrush: #2c2c2c;
@@ -4040,6 +4080,24 @@
 		--winui-InfoBarHyperlinkButtonForeground: var(--winui-AccentTextFillColorPrimaryBrush);
 		--winui-InfoBarBorderBrush: var(--winui-CardStrokeColorDefaultBrush);
 		--winui-InfoBarBorderThickness: 1px;
+		--winui-ItemContainerBackground: var(--winui-SubtleFillColorTransparentBrush);
+		--winui-ItemContainerPointerOverBackground: var(--winui-SubtleFillColorSecondaryBrush);
+		--winui-ItemContainerPressedBackground: var(--winui-SubtleFillColorTertiaryBrush);
+		--winui-ItemContainerBorderBrush: var(--winui-SubtleFillColorTransparentBrush);
+		--winui-ItemContainerPointerOverBorderBrush: var(--winui-SubtleFillColorTransparentBrush);
+		--winui-ItemContainerPressedBorderBrush: var(--winui-SubtleFillColorTransparentBrush);
+		--winui-ItemContainerSelectedBackground: var(--winui-SubtleFillColorTransparentBrush);
+		--winui-ItemContainerSelectedPointerOverBackground: var(--winui-SubtleFillColorSecondaryBrush);
+		--winui-ItemContainerSelectedPressedBackground: var(--winui-SubtleFillColorTertiaryBrush);
+		--winui-ItemContainerSelectionVisualBackground: var(--winui-AccentFillColorDefaultBrush);
+		--winui-ItemContainerSelectionVisualPointerOverBackground: var(
+			--winui-AccentFillColorDefaultBrush
+		);
+		--winui-ItemContainerSelectionVisualPressedBackground: var(--winui-AccentFillColorDefaultBrush);
+		--winui-ItemContainerSelectedInnerBorderBrush: var(--winui-ControlSolidFillColorDefaultBrush);
+		--winui-ItemContainerCheckboxBackgroundUnchecked: var(
+			--winui-ControlOnImageFillColorDefaultBrush
+		);
 		--winui-SystemControlTransientBorderBrush: color-mix(in srgb, #000000 36%, transparent);
 		--winui-AcrylicBackgroundFillColorDefaultBrush: #2c2c2c;
 		--winui-AcrylicInAppFillColorDefaultBrush: #2c2c2c;
@@ -5380,6 +5438,24 @@
 	--winui-InfoBarHyperlinkButtonForeground: var(--winui-SystemColorHotlightColorBrush);
 	--winui-InfoBarBorderBrush: var(--winui-SystemControlTransientBorderBrush);
 	--winui-InfoBarBorderThickness: 2px;
+	--winui-ItemContainerBackground: var(--winui-SystemControlTransparentBrush);
+	--winui-ItemContainerPointerOverBackground: var(--winui-SystemControlTransparentBrush);
+	--winui-ItemContainerPressedBackground: var(--winui-SystemControlTransparentBrush);
+	--winui-ItemContainerBorderBrush: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-ItemContainerPointerOverBorderBrush: var(--winui-SystemColorHighlightColorBrush);
+	--winui-ItemContainerPressedBorderBrush: var(--winui-SystemColorHighlightColorBrush);
+	--winui-ItemContainerSelectedBackground: var(--winui-SystemControlTransparentBrush);
+	--winui-ItemContainerSelectedPointerOverBackground: var(--winui-SystemControlTransparentBrush);
+	--winui-ItemContainerSelectedPressedBackground: var(--winui-SystemControlTransparentBrush);
+	--winui-ItemContainerSelectionVisualBackground: var(
+		--winui-SystemControlHighlightListAccentLowBrush
+	);
+	--winui-ItemContainerSelectionVisualPointerOverBackground: var(
+		--winui-SystemColorButtonTextColor
+	);
+	--winui-ItemContainerSelectionVisualPressedBackground: var(--winui-SystemColorButtonTextColor);
+	--winui-ItemContainerSelectedInnerBorderBrush: var(--winui-SystemColorHighlightTextColorBrush);
+	--winui-ItemContainerCheckboxBackgroundUnchecked: var(--winui-SystemColorButtonFaceColor);
 	--winui-SystemControlTransientBorderBrush: var(--winui-SystemColorWindowTextColor);
 	--winui-AcrylicBackgroundFillColorDefaultBrush: var(--winui-SystemColorWindowColor);
 	--winui-AcrylicInAppFillColorDefaultBrush: var(--winui-SystemColorWindowColor);

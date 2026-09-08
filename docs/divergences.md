@@ -176,8 +176,8 @@ exactly the reason above.
 ### WD-006 — an animated icon renders as the static glyph WinUI falls back to
 
 - **Control**: `NavigationView`'s settings item, `TitleBar`'s back and pane-toggle buttons,
-  `CheckBox`'s check glyph, `Expander`'s chevron, and `DropDownButton`'s and `SplitButton`'s
-  chevrons.
+  `CheckBox`'s check glyph, `ItemContainer`'s multi-select check glyph, `Expander`'s chevron,
+  and `DropDownButton`'s and `SplitButton`'s chevrons.
 - **WinUI does**: give each of them an `AnimatedIcon` with a `FallbackIconSource` — the
   settings item in `CreateAndHookEventsToSettings`, `NavigationView.cpp:1319`; the two title
   bar buttons in their styles, `TitleBar_themeresources.xaml:160` and `:230`. The buttons'
