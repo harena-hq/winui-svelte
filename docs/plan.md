@@ -1494,12 +1494,21 @@ controls/dev -name 'AppBar*'` matches three `*_themeresources.xaml` files and no
        (`ItemContainer.cpp:185-220` is what enters SelectorBarItem's states) and this is the
        unit that makes the base class a real component rather than a footnote.
 
-    4. **ItemsView.** `ItemsView.xaml:19-38` is a `ScrollView` wrapping an `ItemsRepeater`, so
-       this unit is composition plus the part neither of its pieces has: selection.
-       `SelectionMode`'s four members, `LinedFlowLayout` for the page's first example, and the
-       `ItemContainer` states driven from the view rather than from the container. This is also
-       what closes v8's one page-level deferral — `SelectorBarPage.xaml:59-79`'s colour swatches
-       are an `ItemsView` of `ItemContainer`s, and after this unit the control exists.
+    4. **ItemsView — three units, and the split is the layouts.** `ItemsView.xaml:19-38` is a
+       `ScrollView` wrapping an `ItemsRepeater`, so the control itself is composition plus the
+       part neither of its pieces has: selection. But the Gallery's page asks for two things
+       that are not the control and are not each other, and each is its own intent:
+
+       - **4a. `UniformGridLayout.MaximumRowsOrColumns`**, which the options pane at
+         `ItemsViewPage.xaml:301-304` sets and unit 2 left owed.
+       - **4b. `LinedFlowLayout`**, the layout the page's second example opens on and the third
+         layout in ADR 0013's union.
+       - **4c. `ItemsView` itself**: `SelectionMode`'s four members, item invocation, and the
+         `ItemContainer` states driven from the view rather than from the container.
+
+       4c is also what closes v8's one page-level deferral — `SelectorBarPage.xaml:59-79`'s
+       colour swatches are an `ItemsView` of `ItemContainer`s, and after it the control
+       exists.
 
     5. **ListViewItem and GridViewItem — the chrome that has to be measured.** Its own unit,
        ahead of the two controls that host it, because the row above says its geometry is in no
@@ -1580,22 +1589,24 @@ controls/dev -name 'AppBar*'` matches three `*_themeresources.xaml` files and no
     **What this version leaves owed.** None of these is a divergence; each is simply not built,
     and each is on a page the acceptance gate will eventually walk.
 
-    | control           | not yet built                                       |
-    | ----------------- | --------------------------------------------------- |
-    | UniformGridLayout | `ItemsStretch="Uniform"` and `MaximumRowsOrColumns` |
+    | control           | not yet built            |
+    | ----------------- | ------------------------ |
+    | UniformGridLayout | `ItemsStretch="Uniform"` |
 
-    `MaximumRowsOrColumns` is not in that table, and the difference between the two is the
-    acceptance surface rather than the difficulty. Both need the width a line actually resolved
-    to fed back into a track size — `Uniform` scales a cell's height by the ratio the extra
-    width added, and `MaximumRowsOrColumns` caps a count `auto-fill` computes for itself — so
-    each is a JavaScript layout pass rather than a value, and unit 2 built neither. But
-    `ItemsStretch` is set twice in the pinned Gallery and both are `Fill` on a `LinedFlowLayout`,
-    and `ItemsJustification` is set nowhere, so `Uniform` is owed to no page. **`MaximumRowsOrColumns`
-    is set on a `UniformGridLayout` inside an `ItemsView` (`ItemsViewPage.xaml:346`), and that
-    page gives it a `NumberBox` options pane (`:301-304`) — which by v8's rule puts it on the
-    surface with every value shown. Unit 4 owes it**, and unit 4 is also where a container
-    measurement stops being a new mechanism, because `ItemsView` wraps its repeater in a scroll
-    viewport it has to measure anyway.
+    `MaximumRowsOrColumns` was in that table when unit 2 wrote it, and the prose beneath it
+    said it was not — a row and its own paragraph disagreeing inside one commit. Unit 4a
+    settled the disagreement by building it, and the difference the paragraph was drawing is
+    still the right one: both members need the width a line actually resolved to fed back into
+    a track size, `Uniform` scaling a cell's height by the ratio the extra width added and
+    `MaximumRowsOrColumns` capping a count `auto-fill` computes for itself. What separates them
+    is the acceptance surface. `ItemsStretch` is set twice in the pinned Gallery and both are
+    `Fill` on a `LinedFlowLayout`, and `ItemsJustification` is set nowhere, so `Uniform` is owed
+    to no page; `MaximumRowsOrColumns` is set on a `UniformGridLayout` inside an `ItemsView`
+    (`ItemsViewPage.xaml:346`) with a `NumberBox` options pane beside it (`:301-304`), which by
+    v8's rule puts it on the surface with every value shown. It turned out not to need the
+    JavaScript pass either member was assumed to need: without `ItemsStretch` the cap is the
+    line's own extent taken away from `auto-fill`, and with it the cap is each track's minimum
+    raised to the share a capped line would give.
 
     Done-when is v8's, applied to nine units: each control snapshotted in three themes, each
     compared against the original on the reference guest, every prop following D21 as ADR 0012

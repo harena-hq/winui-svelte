@@ -42,6 +42,12 @@
 		 * deferred because it needs a JavaScript layout pass.
 		 */
 		itemsStretch?: 'none' | 'fill';
+		/**
+		 * UniformGridLayout.MaximumRowsOrColumns — a cap on the items one line may hold. Upstream's
+		 * default is `-1` read as an unsigned int, which is no cap at all; a value below 1 is
+		 * clamped to 1 (`UniformGridLayout.cpp:338`). Omitted here means uncapped.
+		 */
+		maximumRowsOrColumns?: number;
 		/** UniformGridLayout.ItemsJustification. Defaults to `Start`. */
 		itemsJustification?:
 			'start' | 'center' | 'end' | 'spaceAround' | 'spaceBetween' | 'spaceEvenly';
@@ -133,8 +139,40 @@
 	const lineCell = $derived(horizontal ? cellWidth : cellHeight);
 	const crossCell = $derived(horizontal ? cellHeight : cellWidth);
 
+	// `min(what fits, the cap)` is upstream's GetItemsPerLine (UniformGridLayout.cpp:333-352),
+	// and CSS computes the first half for us — `repeat(auto-fill, …)` already fits as many
+	// tracks as the container's line extent allows. Capping is therefore a question of taking
+	// that extent away from it, and the two stretch modes need it taken away differently.
+	const cap = $derived(
+		grid?.maximumRowsOrColumns === undefined
+			? null
+			: Math.max(1, Math.trunc(grid.maximumRowsOrColumns))
+	);
+	const lineGap = $derived(horizontal ? (grid?.minColumnSpacing ?? 0) : (grid?.minRowSpacing ?? 0));
+
+	// Without Fill the layout narrows itself to the capped line and the items keep their size
+	// (UniformGridLayout.cpp:216-235), which is exactly a maximum extent along the line: the
+	// grid's own `auto-fill` then cannot fit more than the cap.
+	const lineMax = $derived(
+		measuring || cap === null || grid?.itemsStretch === 'fill'
+			? null
+			: `${cap * (lineCell ?? 0) + (cap - 1) * lineGap}px`
+	);
+	const maxWidth = $derived(horizontal ? lineMax : null);
+	const maxHeight = $derived(horizontal ? null : lineMax);
+
+	// With Fill the extent stays the whole available width and the items divide it, so the
+	// extent cannot be the lever. Raising each track's *minimum* to the share a capped line
+	// would give it is: `auto-fill` fits at most `cap` of them, and `1fr` still stretches them
+	// across everything available. Where the container is narrower than that share, `max()`
+	// falls back to the cell and fewer tracks fit, which is `min(what fits, the cap)` again.
+	const fillMin = $derived(
+		cap === null
+			? `${lineCell}px`
+			: `max(${lineCell}px, calc((100% - ${(cap - 1) * lineGap}px) / ${cap}))`
+	);
 	const track = $derived(
-		grid?.itemsStretch === 'fill' ? `minmax(${lineCell}px, 1fr)` : `${lineCell}px`
+		grid?.itemsStretch === 'fill' ? `minmax(${fillMin}, 1fr)` : `${lineCell}px`
 	);
 	const templateColumns = $derived(measuring || !horizontal ? null : `repeat(auto-fill, ${track})`);
 	const templateRows = $derived(measuring || horizontal ? null : `repeat(auto-fill, ${track})`);
@@ -172,6 +210,8 @@
 	style:grid-template-rows={templateRows}
 	style:grid-auto-rows={autoRows}
 	style:grid-auto-columns={autoColumns}
+	style:max-width={maxWidth}
+	style:max-height={maxHeight}
 	style:column-gap={columnGap}
 	style:row-gap={rowGap}
 	style:justify-content={horizontal ? justification : null}

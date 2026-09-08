@@ -177,6 +177,71 @@
 	</ItemsRepeater>
 </div>
 
+<h2 class="winui-SubtitleTextBlockStyle">uniform grid — at most three per line</h2>
+<div class="row grid-row">
+	<ItemsRepeater
+		items={swatches}
+		layout={{
+			kind: 'uniformGrid',
+			minItemWidth: 108,
+			minItemHeight: 108,
+			minColumnSpacing: 12,
+			minRowSpacing: 12,
+			maximumRowsOrColumns: 3
+		}}
+	>
+		{#snippet itemTemplate(word)}
+			<span class="winui-BodyTextBlockStyle">{word}</span>
+		{/snippet}
+	</ItemsRepeater>
+</div>
+
+<h2 class="winui-SubtitleTextBlockStyle">uniform grid — at most three per line, stretched</h2>
+<!-- The cap has two implementations and this is the second one. Without `fill` the layout
+     narrows itself to the capped line; with it the line keeps the whole width and the items
+     divide it, so the cap has to live in each track's minimum instead of in the extent. A row
+     for one of them leaves the other built and unexercised. -->
+<div class="row grid-row">
+	<ItemsRepeater
+		items={swatches}
+		layout={{
+			kind: 'uniformGrid',
+			minItemWidth: 108,
+			minItemHeight: 108,
+			minColumnSpacing: 12,
+			minRowSpacing: 12,
+			itemsStretch: 'fill',
+			maximumRowsOrColumns: 3
+		}}
+	>
+		{#snippet itemTemplate(word)}
+			<span class="winui-BodyTextBlockStyle">{word}</span>
+		{/snippet}
+	</ItemsRepeater>
+</div>
+
+<h2 class="winui-SubtitleTextBlockStyle">uniform grid — vertical, at most two per line</h2>
+<!-- The third path: a vertical line wraps into columns, so the extent the cap takes away is
+     the height rather than the width. -->
+<div class="row tall">
+	<ItemsRepeater
+		items={swatches}
+		layout={{
+			kind: 'uniformGrid',
+			orientation: 'vertical',
+			minItemWidth: 108,
+			minItemHeight: 40,
+			minColumnSpacing: 12,
+			minRowSpacing: 12,
+			maximumRowsOrColumns: 2
+		}}
+	>
+		{#snippet itemTemplate(word)}
+			<span class="winui-BodyTextBlockStyle">{word}</span>
+		{/snippet}
+	</ItemsRepeater>
+</div>
+
 <style>
 	.row {
 		display: flex;
