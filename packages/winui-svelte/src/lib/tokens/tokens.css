@@ -1342,6 +1342,68 @@
 	--winui-SplitButtonPrimaryButtonSize: 35px;
 	--winui-SplitButtonSecondaryButtonSize: 35px;
 	--winui-SplitButtonPadding: 6px 11px 7px 11px;
+	--winui-TabViewBackground: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-TabViewItemHeaderBackground: var(--winui-LayerOnMicaBaseAltFillColorTransparentBrush);
+	--winui-TabViewItemHeaderBackgroundSelected: var(--winui-SolidBackgroundFillColorTertiaryBrush);
+	--winui-TabViewItemHeaderBackgroundPointerOver: var(
+		--winui-LayerOnMicaBaseAltFillColorSecondaryBrush
+	);
+	--winui-TabViewItemHeaderBackgroundPressed: var(--winui-LayerOnMicaBaseAltFillColorDefaultBrush);
+	--winui-TabViewItemHeaderBackgroundDisabled: var(
+		--winui-LayerOnMicaBaseAltFillColorTransparentBrush
+	);
+	--winui-TabViewItemHeaderForeground: var(--winui-TextFillColorSecondaryBrush);
+	--winui-TabViewItemHeaderForegroundPressed: var(--winui-TextFillColorTertiaryBrush);
+	--winui-TabViewItemHeaderForegroundSelected: var(--winui-TextFillColorPrimaryBrush);
+	--winui-TabViewItemHeaderForegroundPointerOver: var(--winui-TextFillColorSecondaryBrush);
+	--winui-TabViewItemHeaderForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+	--winui-TabViewItemIconForeground: var(--winui-TextFillColorSecondaryBrush);
+	--winui-TabViewItemIconForegroundPressed: var(--winui-TextFillColorTertiaryBrush);
+	--winui-TabViewItemIconForegroundSelected: var(--winui-TextFillColorPrimaryBrush);
+	--winui-TabViewItemIconForegroundPointerOver: var(--winui-TextFillColorSecondaryBrush);
+	--winui-TabViewItemIconForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+	--winui-TabViewItemSeparator: var(--winui-DividerStrokeColorDefaultBrush);
+	--winui-TabViewItemHeaderCloseButtonBackground: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-TabViewItemHeaderCloseButtonBackgroundPressed: var(--winui-SubtleFillColorTertiaryBrush);
+	--winui-TabViewItemHeaderCloseButtonBackgroundPointerOver: var(
+		--winui-SubtleFillColorSecondaryBrush
+	);
+	--winui-TabViewItemHeaderPressedCloseButtonBackground: var(
+		--winui-SubtleFillColorTransparentBrush
+	);
+	--winui-TabViewItemHeaderPointerOverCloseButtonBackground: var(
+		--winui-SubtleFillColorTransparentBrush
+	);
+	--winui-TabViewItemHeaderSelectedCloseButtonBackground: var(
+		--winui-SubtleFillColorTransparentBrush
+	);
+	--winui-TabViewItemHeaderDisabledCloseButtonBackground: var(
+		--winui-SubtleFillColorTransparentBrush
+	);
+	--winui-TabViewItemHeaderCloseButtonForeground: var(--winui-TextFillColorPrimaryBrush);
+	--winui-TabViewItemHeaderCloseButtonForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
+	--winui-TabViewItemHeaderCloseButtonForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
+	--winui-TabViewItemHeaderPressedCloseButtonForeground: var(--winui-TextFillColorPrimaryBrush);
+	--winui-TabViewItemHeaderPointerOverCloseButtonForeground: var(--winui-TextFillColorPrimaryBrush);
+	--winui-TabViewItemHeaderSelectedCloseButtonForeground: var(--winui-TextFillColorPrimaryBrush);
+	--winui-TabViewItemHeaderDisabledCloseButtonForeground: var(--winui-TextFillColorDisabledBrush);
+	--winui-TabViewBorderBrush: var(--winui-CardStrokeColorDefault);
+	--winui-TabViewHeaderPadding: 8px 0px 0px 0px;
+	--winui-TabViewItemMinHeight: 32px;
+	--winui-TabViewItemMaxWidth: 240px;
+	--winui-TabViewItemMinWidth: 100px;
+	--winui-TabViewItemHeaderIconSize: 16px;
+	--winui-TabViewItemHeaderIconMargin: 0px 10px 0px 0px;
+	--winui-TabViewItemHeaderCloseButtonHeight: 24px;
+	--winui-TabViewItemHeaderCloseButtonWidth: 32px;
+	--winui-TabViewItemHeaderCloseFontSize: 12px;
+	--winui-TabViewItemHeaderCloseMargin: 0px 0px 0px 4px;
+	--winui-TabViewItemHeaderPaddingWithCloseButton: 3px 4px 3px 8px;
+	--winui-TabViewItemHeaderPaddingWithoutCloseButton: 3px 8px 3px 8px;
+	--winui-TabViewItemSeparatorMargin: 8px 0px 8px 0px;
+	--winui-TabViewItemBorderThickness: 1px;
+	--winui-TabViewSelectedItemBorderThickness: 1px 1px 0px 1px;
+	--winui-TabViewSelectedItemHeaderMargin: 0px -1px 1px -1px;
 	--winui-TeachingTipBorderBrush: var(--winui-SurfaceStrokeColorDefaultBrush);
 	--winui-TeachingTipTransientBackground: var(--winui-AcrylicInAppFillColorDefaultBrush);
 	--winui-TeachingTipForegroundBrush: var(--winui-TextFillColorPrimaryBrush);
@@ -2628,6 +2690,52 @@
 		--winui-ControlStrokeColorOnAccentTertiaryBrush
 	);
 	--winui-SplitButtonBorderThemeThickness: 1px;
+	--winui-TabViewBackground: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-TabViewItemHeaderBackground: var(--winui-LayerOnMicaBaseAltFillColorTransparentBrush);
+	--winui-TabViewItemHeaderBackgroundSelected: var(--winui-SolidBackgroundFillColorTertiaryBrush);
+	--winui-TabViewItemHeaderBackgroundPointerOver: var(
+		--winui-LayerOnMicaBaseAltFillColorSecondaryBrush
+	);
+	--winui-TabViewItemHeaderBackgroundPressed: var(--winui-LayerOnMicaBaseAltFillColorDefaultBrush);
+	--winui-TabViewItemHeaderBackgroundDisabled: var(
+		--winui-LayerOnMicaBaseAltFillColorTransparentBrush
+	);
+	--winui-TabViewItemHeaderForeground: var(--winui-TextFillColorSecondaryBrush);
+	--winui-TabViewItemHeaderForegroundPressed: var(--winui-TextFillColorTertiaryBrush);
+	--winui-TabViewItemHeaderForegroundSelected: var(--winui-TextFillColorPrimaryBrush);
+	--winui-TabViewItemHeaderForegroundPointerOver: var(--winui-TextFillColorSecondaryBrush);
+	--winui-TabViewItemHeaderForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+	--winui-TabViewItemIconForeground: var(--winui-TextFillColorSecondaryBrush);
+	--winui-TabViewItemIconForegroundPressed: var(--winui-TextFillColorTertiaryBrush);
+	--winui-TabViewItemIconForegroundSelected: var(--winui-TextFillColorPrimaryBrush);
+	--winui-TabViewItemIconForegroundPointerOver: var(--winui-TextFillColorSecondaryBrush);
+	--winui-TabViewItemIconForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+	--winui-TabViewItemSeparator: var(--winui-DividerStrokeColorDefaultBrush);
+	--winui-TabViewItemHeaderCloseButtonBackground: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-TabViewItemHeaderCloseButtonBackgroundPressed: var(--winui-SubtleFillColorTertiaryBrush);
+	--winui-TabViewItemHeaderCloseButtonBackgroundPointerOver: var(
+		--winui-SubtleFillColorSecondaryBrush
+	);
+	--winui-TabViewItemHeaderPressedCloseButtonBackground: var(
+		--winui-SubtleFillColorTransparentBrush
+	);
+	--winui-TabViewItemHeaderPointerOverCloseButtonBackground: var(
+		--winui-SubtleFillColorTransparentBrush
+	);
+	--winui-TabViewItemHeaderSelectedCloseButtonBackground: var(
+		--winui-SubtleFillColorTransparentBrush
+	);
+	--winui-TabViewItemHeaderDisabledCloseButtonBackground: var(
+		--winui-SubtleFillColorTransparentBrush
+	);
+	--winui-TabViewItemHeaderCloseButtonForeground: var(--winui-TextFillColorPrimaryBrush);
+	--winui-TabViewItemHeaderCloseButtonForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
+	--winui-TabViewItemHeaderCloseButtonForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
+	--winui-TabViewItemHeaderPressedCloseButtonForeground: var(--winui-TextFillColorPrimaryBrush);
+	--winui-TabViewItemHeaderPointerOverCloseButtonForeground: var(--winui-TextFillColorPrimaryBrush);
+	--winui-TabViewItemHeaderSelectedCloseButtonForeground: var(--winui-TextFillColorPrimaryBrush);
+	--winui-TabViewItemHeaderDisabledCloseButtonForeground: var(--winui-TextFillColorDisabledBrush);
+	--winui-TabViewBorderBrush: var(--winui-CardStrokeColorDefault);
 	--winui-TeachingTipBorderBrush: var(--winui-SurfaceStrokeColorDefaultBrush);
 	--winui-TeachingTipTransientBackground: var(--winui-AcrylicInAppFillColorDefaultBrush);
 	--winui-TeachingTipForegroundBrush: var(--winui-TextFillColorPrimaryBrush);
@@ -3940,6 +4048,60 @@
 			--winui-ControlStrokeColorOnAccentTertiaryBrush
 		);
 		--winui-SplitButtonBorderThemeThickness: 1px;
+		--winui-TabViewBackground: var(--winui-SubtleFillColorTransparentBrush);
+		--winui-TabViewItemHeaderBackground: var(--winui-LayerOnMicaBaseAltFillColorTransparentBrush);
+		--winui-TabViewItemHeaderBackgroundSelected: var(--winui-SolidBackgroundFillColorTertiaryBrush);
+		--winui-TabViewItemHeaderBackgroundPointerOver: var(
+			--winui-LayerOnMicaBaseAltFillColorSecondaryBrush
+		);
+		--winui-TabViewItemHeaderBackgroundPressed: var(
+			--winui-LayerOnMicaBaseAltFillColorDefaultBrush
+		);
+		--winui-TabViewItemHeaderBackgroundDisabled: var(
+			--winui-LayerOnMicaBaseAltFillColorTransparentBrush
+		);
+		--winui-TabViewItemHeaderForeground: var(--winui-TextFillColorSecondaryBrush);
+		--winui-TabViewItemHeaderForegroundPressed: var(--winui-TextFillColorTertiaryBrush);
+		--winui-TabViewItemHeaderForegroundSelected: var(--winui-TextFillColorPrimaryBrush);
+		--winui-TabViewItemHeaderForegroundPointerOver: var(--winui-TextFillColorSecondaryBrush);
+		--winui-TabViewItemHeaderForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+		--winui-TabViewItemIconForeground: var(--winui-TextFillColorSecondaryBrush);
+		--winui-TabViewItemIconForegroundPressed: var(--winui-TextFillColorTertiaryBrush);
+		--winui-TabViewItemIconForegroundSelected: var(--winui-TextFillColorPrimaryBrush);
+		--winui-TabViewItemIconForegroundPointerOver: var(--winui-TextFillColorSecondaryBrush);
+		--winui-TabViewItemIconForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+		--winui-TabViewItemSeparator: var(--winui-DividerStrokeColorDefaultBrush);
+		--winui-TabViewItemHeaderCloseButtonBackground: var(--winui-SubtleFillColorTransparentBrush);
+		--winui-TabViewItemHeaderCloseButtonBackgroundPressed: var(
+			--winui-SubtleFillColorTertiaryBrush
+		);
+		--winui-TabViewItemHeaderCloseButtonBackgroundPointerOver: var(
+			--winui-SubtleFillColorSecondaryBrush
+		);
+		--winui-TabViewItemHeaderPressedCloseButtonBackground: var(
+			--winui-SubtleFillColorTransparentBrush
+		);
+		--winui-TabViewItemHeaderPointerOverCloseButtonBackground: var(
+			--winui-SubtleFillColorTransparentBrush
+		);
+		--winui-TabViewItemHeaderSelectedCloseButtonBackground: var(
+			--winui-SubtleFillColorTransparentBrush
+		);
+		--winui-TabViewItemHeaderDisabledCloseButtonBackground: var(
+			--winui-SubtleFillColorTransparentBrush
+		);
+		--winui-TabViewItemHeaderCloseButtonForeground: var(--winui-TextFillColorPrimaryBrush);
+		--winui-TabViewItemHeaderCloseButtonForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
+		--winui-TabViewItemHeaderCloseButtonForegroundPointerOver: var(
+			--winui-TextFillColorPrimaryBrush
+		);
+		--winui-TabViewItemHeaderPressedCloseButtonForeground: var(--winui-TextFillColorPrimaryBrush);
+		--winui-TabViewItemHeaderPointerOverCloseButtonForeground: var(
+			--winui-TextFillColorPrimaryBrush
+		);
+		--winui-TabViewItemHeaderSelectedCloseButtonForeground: var(--winui-TextFillColorPrimaryBrush);
+		--winui-TabViewItemHeaderDisabledCloseButtonForeground: var(--winui-TextFillColorDisabledBrush);
+		--winui-TabViewBorderBrush: var(--winui-CardStrokeColorDefault);
 		--winui-TeachingTipBorderBrush: var(--winui-SurfaceStrokeColorDefaultBrush);
 		--winui-TeachingTipTransientBackground: var(--winui-AcrylicInAppFillColorDefaultBrush);
 		--winui-TeachingTipForegroundBrush: var(--winui-TextFillColorPrimaryBrush);
@@ -5187,6 +5349,60 @@
 	--winui-SplitButtonBorderBrushCheckedPressed: var(--winui-SystemColorButtonFaceColorBrush);
 	--winui-SplitButtonBorderBrushCheckedDivider: var(--winui-SystemColorHighlightTextColorBrush);
 	--winui-SplitButtonBorderThemeThickness: 1px;
+	--winui-TabViewBackground: var(--winui-SystemColorButtonFaceColorBrush);
+	--winui-TabViewItemHeaderBackground: var(--winui-SystemColorButtonFaceColorBrush);
+	--winui-TabViewItemHeaderBackgroundSelected: var(--winui-SystemColorWindowColorBrush);
+	--winui-TabViewItemHeaderBackgroundPointerOver: var(--winui-SystemColorHighlightColorBrush);
+	--winui-TabViewItemHeaderBackgroundPressed: var(--winui-SystemColorHighlightColorBrush);
+	--winui-TabViewItemHeaderBackgroundDisabled: var(--winui-SystemColorWindowColorBrush);
+	--winui-TabViewItemHeaderForeground: var(--winui-SystemColorWindowTextColorBrush);
+	--winui-TabViewItemHeaderForegroundPressed: var(--winui-SystemColorHighlightTextColorBrush);
+	--winui-TabViewItemHeaderForegroundSelected: var(--winui-SystemColorHighlightColorBrush);
+	--winui-TabViewItemHeaderForegroundPointerOver: var(--winui-SystemColorHighlightTextColorBrush);
+	--winui-TabViewItemHeaderForegroundDisabled: var(--winui-SystemColorGrayTextColorBrush);
+	--winui-TabViewItemIconForeground: var(--winui-SystemColorWindowTextColorBrush);
+	--winui-TabViewItemIconForegroundPressed: var(--winui-SystemColorHighlightTextColorBrush);
+	--winui-TabViewItemIconForegroundSelected: var(--winui-SystemColorHighlightColorBrush);
+	--winui-TabViewItemIconForegroundPointerOver: var(--winui-SystemColorHighlightTextColorBrush);
+	--winui-TabViewItemIconForegroundDisabled: var(--winui-SystemColorGrayTextColorBrush);
+	--winui-TabViewItemSeparator: var(--winui-SystemColorWindowTextColorBrush);
+	--winui-TabViewItemHeaderCloseButtonBackground: var(--winui-SystemColorButtonFaceColorBrush);
+	--winui-TabViewItemHeaderCloseButtonBackgroundPressed: var(
+		--winui-SystemColorButtonFaceColorBrush
+	);
+	--winui-TabViewItemHeaderCloseButtonBackgroundPointerOver: var(
+		--winui-SystemColorButtonFaceColorBrush
+	);
+	--winui-TabViewItemHeaderPressedCloseButtonBackground: var(
+		--winui-SubtleFillColorTransparentBrush
+	);
+	--winui-TabViewItemHeaderPointerOverCloseButtonBackground: var(
+		--winui-SubtleFillColorTransparentBrush
+	);
+	--winui-TabViewItemHeaderSelectedCloseButtonBackground: var(
+		--winui-SubtleFillColorTransparentBrush
+	);
+	--winui-TabViewItemHeaderDisabledCloseButtonBackground: var(--winui-SystemColorWindowColorBrush);
+	--winui-TabViewItemHeaderCloseButtonForeground: var(--winui-SystemColorButtonTextColorBrush);
+	--winui-TabViewItemHeaderCloseButtonForegroundPressed: var(
+		--winui-SystemColorButtonTextColorBrush
+	);
+	--winui-TabViewItemHeaderCloseButtonForegroundPointerOver: var(
+		--winui-SystemColorButtonTextColorBrush
+	);
+	--winui-TabViewItemHeaderPressedCloseButtonForeground: var(
+		--winui-SystemColorHighlightTextColorBrush
+	);
+	--winui-TabViewItemHeaderPointerOverCloseButtonForeground: var(
+		--winui-SystemColorHighlightTextColorBrush
+	);
+	--winui-TabViewItemHeaderSelectedCloseButtonForeground: var(
+		--winui-SystemColorHighlightColorBrush
+	);
+	--winui-TabViewItemHeaderDisabledCloseButtonForeground: var(
+		--winui-SystemColorGrayTextColorBrush
+	);
+	--winui-TabViewBorderBrush: var(--winui-SystemColorHighlightColor);
 	--winui-TeachingTipBorderBrush: var(--winui-SystemColorWindowTextColorBrush);
 	--winui-TeachingTipTransientBackground: var(--winui-AcrylicInAppFillColorDefaultBrush);
 	--winui-TeachingTipForegroundBrush: var(--winui-SystemColorWindowTextColorBrush);

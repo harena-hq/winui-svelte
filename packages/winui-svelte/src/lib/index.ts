@@ -82,6 +82,8 @@ export type {
 	TeachingTipProps,
 	TeachingTipTailVisibility
 } from './components/TeachingTip.svelte';
+export { default as TabView } from './components/TabView.svelte';
+export type { TabViewItemData, TabViewProps } from './components/TabView.svelte';
 export { default as TextBox } from './components/TextBox.svelte';
 export type { TextBoxProps } from './components/TextBox.svelte';
 export { default as ToggleButton } from './components/ToggleButton.svelte';

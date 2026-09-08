@@ -605,3 +605,28 @@ gate does.
 - **Would reconsider if**: a control puts trimmed text against a hard edge where the bearing is
   the whole margin, rather than inside a 12px padding. A per-glyph measurement in script, run
   once per label, is the mechanism; it costs a layout pass per header and buys back one pixel.
+
+---
+
+### WD-023 — tabs cannot be dragged, reordered or torn out
+
+- **Control**: `TabView`, `TabViewItem`.
+- **WinUI does**: make the strip a drag source and a drop target. `CanReorderTabs`, `CanDragTabs`
+  and `AllowDropTabs` are three properties on the control (`TabView.xaml:39`); `TabViewItem`'s
+  template carries a `ReorderHintStates` group of five states and a `DragStates` group of eleven
+  (`TabView.xaml:411-472`), a `TabDragVisualContainer` painted in
+  `TabViewItemHeaderDragBackground` (`:554`), and `TabView.cpp:338-356` turns all three bottom
+  border lines off together while a drag is in flight. Dragging a tab out of the strip raises
+  `TabDroppedOutside`, which the Gallery's windowing sample answers by opening a second OS window.
+- **We do**: none of it. A tab is selected and closed and nothing else; the reorder and drag
+  state groups have no counterpart, and `Control+Tab` is left to the browser, which owns that
+  chord.
+- **Why accepted**: two different reasons that both hold on their own. Tear-out needs a second
+  top-level window, which a page cannot open — the same wall `WD-020` and the TitleBar deferrals
+  meet. Reordering does not need one, and is declined for its weight rather than its possibility:
+  the drop indicator, the eleven drag states and the three-way border-line suppression are a
+  second unit's worth of work for an interaction the acceptance surface never shows in a still
+  frame, and the Gallery demonstrates it in prose rather than in a state the gate can compare.
+- **Would reconsider if**: reordering is asked for as a feature rather than as fidelity. The HTML
+  drag-and-drop API expresses it, the drop indicator is one absolutely positioned rule, and the
+  honest cost is the eleven states — not the drag.
