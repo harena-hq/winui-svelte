@@ -54,8 +54,15 @@ export default defineConfig({
 		// against the previous build of it, which is the failure the paragraph above says
 		// this command exists to prevent, one layer further down. Found by editing a
 		// component, building the Gallery, and watching the rule stay absent from `dist`.
+		//
+		// `--host 127.0.0.1`, even though the browser producing the pixels runs on another
+		// machine. The Windows guest reaches this host as `10.0.2.2`, and QEMU's SLIRP
+		// proxies that over the host's loopback rather than over the host's interfaces — so
+		// the guest reads a loopback-bound server fine. Verified from inside the guest.
+		// `0.0.0.0` was the first thing that worked and was never narrowed; on a host with a
+		// public address it publishes the build to that address for the length of a run.
 		command:
-			'pnpm --filter gallery... build && pnpm exec sirv apps/gallery/build --port 4173 --host 0.0.0.0 --single --quiet',
+			'pnpm --filter gallery... build && pnpm exec sirv apps/gallery/build --port 4173 --host 127.0.0.1 --single --quiet',
 		// Checked from here, whatever the browser reaches it as.
 		url: 'http://localhost:4173',
 		// Never adopt a running server: it was started from an earlier build, which is the
