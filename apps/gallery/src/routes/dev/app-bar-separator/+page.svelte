@@ -41,11 +41,16 @@
 		margin-bottom: 24px;
 	}
 
-	/* A separator stretches to its parent. `AppBarThemeMinHeight` is what an AppBarButton's
-	   content root measures, so a row of that height is what a bar command sits in. */
+	/* A separator stretches to its parent, so the row's height is the whole of what this page
+	   photographs. It is `AppBarThemeCompactHeight`, the command bar row — **not**
+	   `AppBarThemeMinHeight`, which is an AppBarButton's own content-root floor and 16 taller.
+	   A closed compact bar clips its 64-tall commands to 48, and the separator stretches to the
+	   48, not to the 64: measured on the reference guest's own AppBarSeparator page, the rule is
+	   32 rows, which is 48 less `AppBarSeparatorMargin`'s 8 above and 8 below. Reading the token
+	   by its name rather than measuring the row drew this rule half again too tall. */
 	.bar {
 		display: flex;
-		height: var(--winui-AppBarThemeMinHeight);
+		height: var(--winui-AppBarThemeCompactHeight);
 	}
 
 	/* Harness furniture: the dev page gives overflow rows a flyout surface to sit on. The
