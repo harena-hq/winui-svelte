@@ -1175,8 +1175,22 @@ controls/dev -name 'AppBar*'` matches three `*_themeresources.xaml` files and no
     group closes when this version does. Every tranche before it took a slice of one group or
     reached across two, which is D22 working as designed and is also why none of them could be
     checked against a group boundary. This one can, and the check is worth stating as a
-    Done-when rather than as an observation: the five entries under Navigation are the list,
-    and a page still rendering the placeholder frame at the end of v8 is a failure of it.
+    Done-when rather than as an observation: **every control the five entries demonstrate
+    exists in the library at the end of v8**, read off the five sample pages rather than off
+    this heading.
+
+    **What that check is not, corrected after two of the units were already sealed.** The
+    entry first wrote it as "a page still rendering the placeholder frame at the end of v8 is
+    a failure of it", which is not reachable from here and was not reachable when it was
+    written. No control page in the shell renders anything but the placeholder frame today,
+    for every tranche and not only this one, because the frame those pages are built on —
+    `ControlExample`'s three panes and `SampleCodePresenter` — is **roadmap item 10**, and
+    that item names SelectorBar and Expander as controls it finds already built. A group of
+    pages therefore cannot close before item 10 regardless of which controls exist, and a
+    Done-when that says otherwise fails every version that meets it. **A group boundary is a
+    property of the component library; a page is a property of the frame.** The two are one
+    sentence apart in the roadmap and belong to versions two apart, which is how the
+    conflation survived being written down and read back twice.
 
     **A fifth deliverable is already owed, and this entry is where it surfaces.**
     `scripts/tokens/manifest.mjs:66` defers "every `Top*` key, `NavigationViewTopPane*`, and
@@ -1318,7 +1332,8 @@ controls/dev -name 'AppBar*'` matches three `*_themeresources.xaml` files and no
     Done-when is v7's, applied to five controls and one widening: each snapshotted in three
     themes, each compared against the original on the reference guest, every prop following
     D21 as ADR 0012 amends it, the surface sweep's step-1 verdict recorded before the seal —
-    and, this version only, the Navigation group's five entries all rendering their own page.
+    and, this version only, every control named by the Navigation group's five sample pages
+    present in `packages/winui-svelte/src/lib/index.ts`. The pages themselves are item 10's.
 
     **The question v7 left for whoever planned v8, answered: no.** That entry closed by
     handing on four unscheduled Menus & toolbars pages — CommandBarFlyout, SwipeControl,
