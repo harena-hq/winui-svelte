@@ -33,6 +33,7 @@ import {
 	EXPANDER_KEYS,
 	BREADCRUMBBAR_KEYS,
 	SELECTORBAR_KEYS,
+	PIVOT_KEYS,
 	FLYOUT_KEYS,
 	CONTENTDIALOG_KEYS,
 	MENUFLYOUT_KEYS,
@@ -467,7 +468,10 @@ function acrylic(record) {
 // not assumed — see `FONT_WEIGHTS` below for the contrast with the XAML's full set.
 //
 // `SemiLight` is the weight `ComboBoxPlaceholderTextThemeFontWeight` declares; the
-// ComboBox tranche is the first one that reads it.
+// ComboBox tranche is the first one that reads it. `Bold` arrived the same way, four
+// tranches later: `PivotTitleThemeFontWeight` (`Pivot_themeresources.xaml:18`) is the
+// first key this project reads that declares it.
+//
 // The XAML weight names, as the numbers CSS and OpenType use. No dictionary in either pin
 // states them numerically — they are `FontWeights` enum members — so this map is the one
 // place the correspondence is written down, and it is written to keep names the platform
@@ -478,7 +482,8 @@ function acrylic(record) {
 const FONT_WEIGHTS = new Map([
 	['Normal', 400],
 	['SemiBold', 600],
-	['SemiLight', 350]
+	['SemiLight', 350],
+	['Bold', 700]
 ]);
 
 /**
@@ -816,6 +821,7 @@ function select(resources, framework) {
 		['EXPANDER_KEYS', EXPANDER_KEYS],
 		['BREADCRUMBBAR_KEYS', BREADCRUMBBAR_KEYS],
 		['SELECTORBAR_KEYS', SELECTORBAR_KEYS],
+		['PIVOT_KEYS', PIVOT_KEYS],
 		['FLYOUT_KEYS', FLYOUT_KEYS],
 		['MENUFLYOUT_KEYS', MENUFLYOUT_KEYS],
 		['CONTENTDIALOG_KEYS', CONTENTDIALOG_KEYS],
