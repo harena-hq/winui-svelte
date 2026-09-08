@@ -2528,7 +2528,8 @@ export const DOUBLE_LENGTHS = {
  */
 export const DOUBLE_RATIOS = {
 	SelectorBarItemIconScale: "the SelectorBarItem icon's 0.8 scale",
-	ComboBoxItemPillMinScale: "the selection pill's pressed scale, 0.625"
+	ComboBoxItemPillMinScale: "the selection pill's pressed scale, 0.625",
+	ItemContainerDisabledOpacity: "the disabled ItemContainer's 0.3 opacity"
 };
 
 /**
@@ -3711,6 +3712,48 @@ export const MENUBAR_KEYS = {
 	MenuBarHeight: 'MenuBar minimum height',
 	MenuBarItemButtonPadding: 'MenuBarItem content padding',
 	MenuBarItemMargin: 'MenuBarItem outer margin'
+};
+
+/**
+ * Keys ItemContainer reads — the Collections tranche's first seed set, and the first control
+ * in it that draws anything at all.
+ *
+ * The eighteen below are every key `ItemContainer.xaml` and `ItemContainer_themeresources.xaml`
+ * put on screen. Four of the file's twenty-two are absent and each for its own reason:
+ *
+ * `ItemContainerSelectionCheckboxStyle` (`:70`) is a `Style`, not a token — this layer emits
+ * custom properties, and a re-templated CheckBox is a component's markup.
+ *
+ * `ItemContainerCheckboxHorizontalAlignment` and `ItemContainerCheckboxVerticalAlignment`
+ * (`:66-67`) are `Right` and `Top`, and no `HorizontalAlignment` or `VerticalAlignment`
+ * resource is emitted anywhere in this layer: an alignment is a CSS placement, not a value a
+ * property can hold.
+ *
+ * `ItemContainerCheckboxMinWidth` (`:64`) is `0`, and it exists to defeat `CheckBox`'s own
+ * `MinWidth` — a default the reproduction's checkbox never has, because it is markup written
+ * for this control rather than a `CheckBox` re-templated. Emitting it would publish a token
+ * nothing reads.
+ */
+export const ITEMCONTAINER_KEYS = {
+	ItemContainerBackground: 'ItemContainer background, at rest',
+	ItemContainerPointerOverBackground: 'ItemContainer fill under the pointer',
+	ItemContainerPressedBackground: 'ItemContainer fill while pressed',
+	ItemContainerBorderBrush: 'ItemContainer inner stroke, at rest',
+	ItemContainerPointerOverBorderBrush: 'ItemContainer inner stroke under the pointer',
+	ItemContainerPressedBorderBrush: 'ItemContainer inner stroke while pressed',
+	ItemContainerSelectedBackground: 'ItemContainer selected fill',
+	ItemContainerSelectedPointerOverBackground: 'ItemContainer selected fill under the pointer',
+	ItemContainerSelectedPressedBackground: 'ItemContainer selected fill while pressed',
+	ItemContainerSelectionVisualBackground: 'ItemContainer selection ring',
+	ItemContainerSelectionVisualPointerOverBackground:
+		'ItemContainer selection ring under the pointer',
+	ItemContainerSelectionVisualPressedBackground: 'ItemContainer selection ring while pressed',
+	ItemContainerSelectedInnerBorderBrush: 'ItemContainer inner stroke while selected',
+	ItemContainerCheckboxBackgroundUnchecked: 'ItemContainer multi-select checkbox fill, unchecked',
+	ItemContainerDisabledOpacity: 'ItemContainer opacity while disabled',
+	ItemContainerCheckboxMargin: 'ItemContainer multi-select checkbox margin',
+	ItemContainerSelectedInnerMargin: 'ItemContainer inner stroke inset while selected',
+	ItemContainerSelectedInnerThickness: 'ItemContainer inner stroke width'
 };
 
 /**
