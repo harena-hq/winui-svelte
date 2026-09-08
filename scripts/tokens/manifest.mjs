@@ -2378,6 +2378,10 @@ export const TYPE_RAMP = {
  * these gets the inputs rather than the answer.
  */
 export const DOUBLE_LENGTHS = {
+	ListViewItemMinWidth: 'ListViewItem minimum width',
+	ListViewItemMinHeight: 'ListViewItem minimum height',
+	GridViewItemMinWidth: 'GridViewItem minimum width',
+	GridViewItemMinHeight: 'GridViewItem minimum height',
 	TabViewItemHeaderIconSize: 'TabViewItem icon box size',
 	TabViewItemHeaderCloseButtonHeight: 'TabViewItem close button height',
 	TabViewItemHeaderCloseButtonWidth: 'TabViewItem close button width',
@@ -2529,7 +2533,8 @@ export const DOUBLE_LENGTHS = {
 export const DOUBLE_RATIOS = {
 	SelectorBarItemIconScale: "the SelectorBarItem icon's 0.8 scale",
 	ComboBoxItemPillMinScale: "the selection pill's pressed scale, 0.625",
-	ItemContainerDisabledOpacity: "the disabled ItemContainer's 0.3 opacity"
+	ItemContainerDisabledOpacity: "the disabled ItemContainer's 0.3 opacity",
+	ListViewItemDisabledThemeOpacity: "the disabled ListViewItem's 0.3 opacity"
 };
 
 /**
@@ -3754,6 +3759,100 @@ export const ITEMCONTAINER_KEYS = {
 	ItemContainerCheckboxMargin: 'ItemContainer multi-select checkbox margin',
 	ItemContainerSelectedInnerMargin: 'ItemContainer inner stroke inset while selected',
 	ItemContainerSelectedInnerThickness: 'ItemContainer inner stroke width'
+};
+
+/**
+ * Keys ListViewItem reads — the Collections tranche's second seed set.
+ *
+ * `ListViewItem` has no `.cpp` in the pin and no `ControlTemplate` anywhere in it: the
+ * template is a single `ListViewItemPresenter` (`generic.xaml:27546`), which the framework
+ * draws in C++. What that leaves readable is more than v9's plan expected. The `Style`
+ * itself (`generic.xaml:27524-27545`) gives `Padding` 16,0,12,0, `MinWidth` 88, `MinHeight`
+ * 40, `VerticalContentAlignment` Center, a `FocusVisualMargin` of 1 with a 2 and 1 band, and
+ * every brush by state. What is genuinely nowhere is the presenter's own inset — the
+ * background is not the item's box — and that was measured on the reference machine: 2 above
+ * and below, 4 either side, in a 40-tall row.
+ *
+ * Absent, with reasons. The drag, reorder, placeholder and multi-arrange families
+ * (`ListViewItem_themeresources.xaml:7-11`, `:35-39`) belong to reordering, which this
+ * version does not build. The fifteen pre-Fluent `*ThemeBrush` entries (`:42-56`) are
+ * read by no current template — the same category `PIVOT_KEYS` records. `ListViewItemBorderBackground`,
+ * `ListViewItemSelectedBorderThemeThickness` and `ListViewItemCompactSelectedBorderThemeThickness`
+ * (`:12`, `:15-16`) are the pre-Fluent selection border, replaced by the indicator.
+ * `ListViewItemFocusBorderBrush` and `ListViewItemFocusSecondaryBorderBrush` (`:31-32`) are
+ * the presenter's own focus rectangle, which the system focus visual supersedes.
+ * `ListViewItemContentOffsetX`, `ListViewItemCheckMode`, the two `*VisualEnabled` booleans and
+ * the whole `ListViewItemCheckBox*` family are the inline check box, which v9 leaves owed —
+ * see docs/plan.md.
+ */
+export const LISTVIEWITEM_KEYS = {
+	ListViewItemMinWidth: 'ListViewItem minimum width',
+	ListViewItemMinHeight: 'ListViewItem minimum height',
+	ListViewItemCornerRadius: 'ListViewItem background corner radius',
+	ListViewItemSelectionIndicatorCornerRadius: 'ListViewItem selection indicator corner radius',
+	ListViewItemDisabledThemeOpacity: 'ListViewItem opacity while disabled',
+	ListViewItemBackground: 'ListViewItem background, at rest',
+	ListViewItemBackgroundPointerOver: 'ListViewItem background under the pointer',
+	ListViewItemBackgroundPressed: 'ListViewItem background while pressed',
+	ListViewItemBackgroundSelected: 'ListViewItem selected background',
+	ListViewItemBackgroundSelectedPointerOver: 'ListViewItem selected background under the pointer',
+	ListViewItemBackgroundSelectedPressed: 'ListViewItem selected background while pressed',
+	ListViewItemBackgroundSelectedDisabled: 'ListViewItem selected background while disabled',
+	ListViewItemForeground: 'ListViewItem foreground, at rest',
+	ListViewItemForegroundPointerOver: 'ListViewItem foreground under the pointer',
+	ListViewItemForegroundPressed: 'ListViewItem foreground while pressed',
+	ListViewItemForegroundSelected: 'ListViewItem selected foreground',
+	ListViewItemForegroundSelectedPointerOver: 'ListViewItem selected foreground under the pointer',
+	ListViewItemForegroundSelectedPressed: 'ListViewItem selected foreground while pressed',
+	ListViewItemFocusVisualPrimaryBrush: 'ListViewItem focus band, outer',
+	ListViewItemFocusVisualSecondaryBrush: 'ListViewItem focus band, inner',
+	ListViewItemSelectionIndicatorBrush: 'ListViewItem selection indicator',
+	ListViewItemSelectionIndicatorPointerOverBrush:
+		'ListViewItem selection indicator under the pointer',
+	ListViewItemSelectionIndicatorPressedBrush: 'ListViewItem selection indicator while pressed',
+	ListViewItemSelectionIndicatorDisabledBrush: 'ListViewItem selection indicator while disabled'
+};
+
+/**
+ * Keys GridViewItem reads — the Collections tranche's third seed set, and the same shape as
+ * ListViewItem's with one difference that decides the whole control: a grid item has no
+ * selection indicator and draws a ring instead. `GridViewItemSelectedBorderThickness` is 2 and
+ * `GridViewItemSelectedInnerBorderBrush` is the line inside it, which is `ItemContainer`'s
+ * chrome one pixel thinner — measured on the reference machine as 2 of accent and 1 of ink at
+ * the item's own edge.
+ *
+ * `GridViewItemMinWidth` and `GridViewItemMinHeight` are 44 and live in the framework
+ * dictionary (`generic.xaml:112-113`) rather than in the control's own, which is why they are
+ * named here rather than pulled in by the closure.
+ *
+ * Absent, for the reasons LISTVIEWITEM_KEYS gives: the drag and placeholder families, the
+ * presenter's own focus rectangle, and the whole `GridViewItemCheckBox*` family with the check
+ * box v9 leaves owed. `GridViewItemPointerOverBorderBrush` is absent because it paints
+ * nothing: an unselected grid item under the pointer was measured on the reference machine
+ * and its content runs to the item's own edge with no ring at all.
+ */
+export const GRIDVIEWITEM_KEYS = {
+	GridViewItemMinWidth: 'GridViewItem minimum width',
+	GridViewItemMinHeight: 'GridViewItem minimum height',
+	GridViewItemCornerRadius: 'GridViewItem corner radius',
+	GridViewItemSelectedBorderThickness: 'GridViewItem selection ring width',
+	GridViewItemBackground: 'GridViewItem background, at rest',
+	GridViewItemBackgroundPointerOver: 'GridViewItem background under the pointer',
+	GridViewItemBackgroundPressed: 'GridViewItem background while pressed',
+	GridViewItemBackgroundSelected: 'GridViewItem selected background',
+	GridViewItemBackgroundSelectedPointerOver: 'GridViewItem selected background under the pointer',
+	GridViewItemBackgroundSelectedPressed: 'GridViewItem selected background while pressed',
+	GridViewItemBackgroundSelectedDisabled: 'GridViewItem selected background while disabled',
+	GridViewItemForeground: 'GridViewItem foreground, at rest',
+	GridViewItemForegroundPointerOver: 'GridViewItem foreground under the pointer',
+	GridViewItemForegroundSelected: 'GridViewItem selected foreground',
+	GridViewItemFocusVisualPrimaryBrush: 'GridViewItem focus band, outer',
+	GridViewItemFocusVisualSecondaryBrush: 'GridViewItem focus band, inner',
+	GridViewItemSelectedBorderBrush: 'GridViewItem selection ring',
+	GridViewItemSelectedPointerOverBorderBrush: 'GridViewItem selection ring under the pointer',
+	GridViewItemSelectedPressedBorderBrush: 'GridViewItem selection ring while pressed',
+	GridViewItemSelectedDisabledBorderBrush: 'GridViewItem selection ring while disabled',
+	GridViewItemSelectedInnerBorderBrush: 'GridViewItem line inside the selection ring'
 };
 
 /**

@@ -33,6 +33,8 @@ export { default as HyperlinkButton } from './components/HyperlinkButton.svelte'
 export type { HyperlinkButtonProps } from './components/HyperlinkButton.svelte';
 export { default as Flyout } from './components/Flyout.svelte';
 export type { FlyoutPlacement, FlyoutProps } from './components/Flyout.svelte';
+export { default as GridViewItem } from './components/GridViewItem.svelte';
+export type { GridViewItemProps } from './components/GridViewItem.svelte';
 export { default as InfoBadge } from './components/InfoBadge.svelte';
 export type { InfoBadgeProps } from './components/InfoBadge.svelte';
 export { default as InfoBar } from './components/InfoBar.svelte';
@@ -41,6 +43,8 @@ export { default as ItemContainer } from './components/ItemContainer.svelte';
 export type { ItemContainerProps } from './components/ItemContainer.svelte';
 export { default as ItemsView } from './components/ItemsView.svelte';
 export type { ItemsViewItemState, ItemsViewProps } from './components/ItemsView.svelte';
+export { default as ListViewItem } from './components/ListViewItem.svelte';
+export type { ListViewItemProps } from './components/ListViewItem.svelte';
 export { default as ItemsRepeater } from './components/ItemsRepeater.svelte';
 export type {
 	ItemsRepeaterLayout,

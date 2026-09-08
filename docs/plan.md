@@ -1589,9 +1589,20 @@ generics="T">` component through `pnpm --filter winui-svelte build` reaches `dis
     **What this version leaves owed.** None of these is a divergence; each is simply not built,
     and each is on a page the acceptance gate will eventually walk.
 
-    | control           | not yet built            |
-    | ----------------- | ------------------------ |
-    | UniformGridLayout | `ItemsStretch="Uniform"` |
+    | control                    | not yet built                     |
+    | -------------------------- | --------------------------------- |
+    | UniformGridLayout          | `ItemsStretch="Uniform"`          |
+    | ListViewItem, GridViewItem | the inline multi-select check box |
+
+    The check box is owed to the ListView page's selection-support example, which offers
+    Multiple among its four modes. Everything about it that is written down is in the pin —
+    `ListViewItemCheckMode` is `Inline`, `ListViewItemCheckBoxCornerRadius` is 3, and there is
+    a brush for every state of it — and the one thing that is not is where it goes. That is
+    drawn by the native `ListViewItemPresenter`, and `ListViewItemContentOffsetX` of -40.5 is
+    the only number near it. Unit 5 measured the reference machine for everything else this
+    tranche needed and could not reach a multiple-selection example on it: the Gallery's page
+    would not scroll to the second sample under the wheel this host can send. The measurement
+    is the blocker, not the drawing, and whoever can scroll that page can write the unit.
 
     `MaximumRowsOrColumns` was in that table when unit 2 wrote it, and the prose beneath it
     said it was not — a row and its own paragraph disagreeing inside one commit. Unit 4a
