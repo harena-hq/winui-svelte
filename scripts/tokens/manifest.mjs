@@ -2538,13 +2538,26 @@ export const SYSTEM_COLORS = {
  * nothing. `tests/visual/fonts.spec.ts` fails if they stop resolving where the baselines
  * are taken, which is the only place the reference can be checked.
  *
- * Two entries, because two is what the acceptance surface needs. WinUI's text-family
- * resource is not here for the same reason the rest of the per-control vocabulary is not:
+ * `PivotHeaderItemFontFamily` and `PivotTitleFontFamily` are different: their records exist in
+ * all three Pivot dictionaries, but each says `XamlAutoFontFamily`, a name neither pin defines.
+ * They therefore need the same platform choice as the two record-less entries above.
+ *
+ * ADR 0003 gives the type ramp an explicit family per step because Windows registers Segoe UI
+ * Variable as three families rather than one with an `opsz` axis, and the ramp switches to the
+ * Display face at 20px. Pivot's 24px header uses the Text face: the reference labels measure
+ * 26, 75 and 82px for All, Unread and Flagged; Text at weight 350 measures 26.02, 75.50 and
+ * 82.50, while Display measures 24.63, 73.50 and 79.97. The ramp's family is a property of
+ * its step, not a rule about size, so XamlAutoFontFamily outside it gets Text whatever size.
+ *
+ * Four entries, because four are what the acceptance surface needs. WinUI's other text-family
+ * resources are not here for the same reason the rest of the per-control vocabulary is not:
  * emitting a name nothing reads makes the layer harder to audit and easier to trust wrongly.
  */
 export const PLATFORM_FONTS = {
 	SymbolThemeFontFamily: "'Segoe Fluent Icons'",
-	ContentControlThemeFontFamily: "'Segoe UI Variable Text', 'Segoe UI', sans-serif"
+	ContentControlThemeFontFamily: "'Segoe UI Variable Text', 'Segoe UI', sans-serif",
+	PivotHeaderItemFontFamily: "'Segoe UI Variable Text', 'Segoe UI', sans-serif",
+	PivotTitleFontFamily: "'Segoe UI Variable Text', 'Segoe UI', sans-serif"
 };
 
 /**
@@ -2614,11 +2627,17 @@ export const PLATFORM_SHADOWS = {
  * alternative — a token per name — fails on the first objection, that these names appear
  * only under high contrast and no source gives them a light or dark value.
  *
- * `themes` is a guard, not decoration, and it has now fired for real. It said that the
- * day a tranche referenced one of these from `Default` or `Light` the generator would
- * stop rather than silently apply a high-contrast reading to a light record, and the
- * Text tranche is that day: the framework dictionary defines `TextControlHeaderForeground`
- * as an alias onto `SystemControlForegroundBaseHighBrush` in all three themes.
+ * `themes` is a guard, not decoration, and it has now fired twice for real. It said that the
+ * day a tranche referenced one of these from `Default` or `Light` the generator would stop
+ * rather than silently apply a high-contrast reading to a light record. The Text tranche was
+ * the first day: the framework dictionary defines `TextControlHeaderForeground` as an alias
+ * onto `SystemControlForegroundBaseHighBrush` in all three themes. The Navigation tranche's
+ * Pivot is the second, and it took three rows at once — `PivotHeaderItemForegroundUnselected`,
+ * `…ForegroundSelected` and the seven `PivotHeaderItemBackground*` keys name
+ * `SystemControlForegroundBaseMediumBrush`, `SystemControlHighlightAltBaseHighBrush` and
+ * `SystemControlHighlightTransparentBrush` from `Default` and `Light` as well as from
+ * `HighContrast`. All three left the table, and the framework dictionary's high-contrast value
+ * matched the reading each row had chosen, three times out of three.
  *
  * **A row is deleted, not widened, when that happens.** ADR 0008 chose substitution
  * because these names had no definition anywhere and no light or dark value could be
@@ -2640,10 +2659,6 @@ export const PLATFORM_SHADOWS = {
 export const PLATFORM_BRUSHES = {
 	SystemControlBackgroundBaseLowBrush: {
 		to: 'SystemColorButtonFaceColor',
-		themes: ['HighContrast']
-	},
-	SystemControlHighlightAltBaseHighBrush: {
-		to: 'SystemColorHighlightTextColor',
 		themes: ['HighContrast']
 	},
 	SystemControlHighlightListLowBrush: { to: 'SystemColorHighlightColor', themes: ['HighContrast'] },
@@ -2712,10 +2727,6 @@ export const PLATFORM_BRUSHES = {
 		to: 'SystemColorHighlightColor',
 		themes: ['HighContrast']
 	},
-	SystemControlHighlightTransparentBrush: {
-		to: 'SystemColorHighlightColor',
-		themes: ['HighContrast']
-	},
 	SystemControlDisabledTransparentBrush: {
 		to: 'SystemColorGrayTextColor',
 		themes: ['HighContrast']
@@ -2739,10 +2750,6 @@ export const PLATFORM_BRUSHES = {
 	// foreground/background pair the row takes part in before relying on it.
 	SystemControlBackgroundAltHighBrush: {
 		to: 'SystemColorButtonFaceColor',
-		themes: ['HighContrast']
-	},
-	SystemControlForegroundBaseMediumBrush: {
-		to: 'SystemColorButtonTextColor',
 		themes: ['HighContrast']
 	},
 	SystemControlForegroundBaseMediumHighBrush: {
@@ -3189,6 +3196,73 @@ export const SELECTORBAR_KEYS = {
 	SelectorBarItemBackgroundSelected: 'SelectorBarItem selected background',
 	SelectorBarItemBackgroundPressed: 'SelectorBarItem background while pressed',
 	SelectorBarItemBackgroundDisabled: 'SelectorBarItem disabled background'
+};
+
+/**
+ * Keys Pivot reads — the third seed set of the Navigation tranche, after BreadcrumbBar and
+ * SelectorBar.
+ *
+ * `PivotHeaderItemCharacterSpacing` (`Pivot_themeresources.xaml:10`) is absent, and it is the
+ * omission worth reading first because a reader who checks the Style will expect it. The Style
+ * sets it (`:479`) and **the template binds nothing to it**: the item's ContentPresenter
+ * (`:586`) binds FontSize, FontFamily and FontWeight and stops. The difference is measurable
+ * and was measured — the original's four header labels have content-box widths of 26, 75 and
+ * 82px for All, Unread and Flagged, which is `letter-spacing: normal` at 24px to within half a
+ * pixel and 3 to 6px per label wider than the −0.025em that `CharacterSpacing="-25"` means.
+ *
+ * `PivotHeaderItemLockedTranslation` (`:8`) and the navigation
+ * buttons (`PivotNavButtonBorderThemeThickness` (`:14`), `PivotNavButtonMargin` (`:15`),
+ * `PivotNextButtonBackground`, `PivotNextButtonBackgroundPointerOver`,
+ * `PivotNextButtonBackgroundPressed`, `PivotNextButtonBorderBrush`,
+ * `PivotNextButtonBorderBrushPointerOver`, `PivotNextButtonBorderBrushPressed`,
+ * `PivotNextButtonForeground`, `PivotNextButtonForegroundPointerOver`,
+ * `PivotNextButtonForegroundPressed` (`:21-29`), `PivotPreviousButtonBackground`,
+ * `PivotPreviousButtonBackgroundPointerOver`, `PivotPreviousButtonBackgroundPressed`,
+ * `PivotPreviousButtonBorderBrush`, `PivotPreviousButtonBorderBrushPointerOver`,
+ * `PivotPreviousButtonBorderBrushPressed`, `PivotPreviousButtonForeground`,
+ * `PivotPreviousButtonForegroundPointerOver`, and `PivotPreviousButtonForegroundPressed`
+ * (`:30-38`)) are declined by WD-021.
+ *
+ * `PivotLandscapeThemePadding` (`:13`) equals Portrait in every dictionary, so the template's
+ * Orientation group (`:243`) cannot change a pixel and only Portrait is read. The unreferenced
+ * `PivotHeaderItemFocusPipeFill` (`:54`) is absent because the template only fills SelectedPipe.
+ *
+ * The pre-Fluent `*ThemeBrush` family (`:56-69`) is absent because no current template reads it:
+ * PivotForegroundThemeBrush, PivotHeaderBackgroundSelectedBrush,
+ * PivotHeaderBackgroundUnselectedBrush, PivotHeaderForegroundSelectedBrush,
+ * PivotHeaderForegroundUnselectedBrush, PivotNavButtonBackgroundThemeBrush,
+ * PivotNavButtonBorderThemeBrush, PivotNavButtonForegroundThemeBrush,
+ * PivotNavButtonPointerOverBackgroundThemeBrush, PivotNavButtonPointerOverBorderThemeBrush,
+ * PivotNavButtonPointerOverForegroundThemeBrush, PivotNavButtonPressedBackgroundThemeBrush,
+ * PivotNavButtonPressedBorderThemeBrush, and PivotNavButtonPressedForegroundThemeBrush.
+ */
+export const PIVOT_KEYS = {
+	PivotBackground: 'Pivot background',
+	PivotHeaderBackground: 'Pivot header background',
+	PivotItemBackground: 'PivotItem background',
+	PivotItemMargin: 'PivotItem panel margin',
+	PivotPortraitThemePadding: 'Pivot title margin',
+	PivotTitleFontSize: 'Pivot title font size',
+	PivotTitleThemeFontWeight: 'Pivot title font weight',
+	PivotHeaderItemFontSize: 'PivotHeaderItem font size',
+	PivotHeaderItemThemeFontWeight: 'PivotHeaderItem font weight',
+	PivotHeaderItemMargin: 'PivotHeaderItem padding',
+	PivotHeaderItemBackgroundUnselected: 'PivotHeaderItem unselected background',
+	PivotHeaderItemBackgroundUnselectedPointerOver: 'PivotHeaderItem unselected hover background',
+	PivotHeaderItemBackgroundUnselectedPressed: 'PivotHeaderItem unselected pressed background',
+	PivotHeaderItemBackgroundSelected: 'PivotHeaderItem selected background',
+	PivotHeaderItemBackgroundSelectedPointerOver: 'PivotHeaderItem selected hover background',
+	PivotHeaderItemBackgroundSelectedPressed: 'PivotHeaderItem selected pressed background',
+	PivotHeaderItemBackgroundDisabled: 'PivotHeaderItem disabled background',
+	PivotHeaderItemForegroundUnselected: 'PivotHeaderItem unselected foreground',
+	PivotHeaderItemForegroundUnselectedPointerOver: 'PivotHeaderItem unselected hover foreground',
+	PivotHeaderItemForegroundUnselectedPressed: 'PivotHeaderItem unselected pressed foreground',
+	PivotHeaderItemForegroundSelected: 'PivotHeaderItem selected foreground',
+	PivotHeaderItemForegroundSelectedPointerOver: 'PivotHeaderItem selected hover foreground',
+	PivotHeaderItemForegroundSelectedPressed: 'PivotHeaderItem selected pressed foreground',
+	PivotHeaderItemForegroundDisabled: 'PivotHeaderItem disabled foreground',
+	PivotHeaderItemSelectedPipeFill: 'PivotHeaderItem selected pipe fill',
+	PivotHeaderItemSelectedPipeCornerRadius: 'PivotHeaderItem selected pipe radius'
 };
 
 /**

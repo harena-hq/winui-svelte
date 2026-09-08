@@ -57,6 +57,8 @@ export { default as NumberBox } from './components/NumberBox.svelte';
 export type { NumberBoxProps } from './components/NumberBox.svelte';
 export { default as PasswordBox } from './components/PasswordBox.svelte';
 export type { PasswordBoxProps } from './components/PasswordBox.svelte';
+export { default as Pivot } from './components/Pivot.svelte';
+export type { PivotItemData, PivotProps } from './components/Pivot.svelte';
 export { default as ProgressBar } from './components/ProgressBar.svelte';
 export type { ProgressBarProps } from './components/ProgressBar.svelte';
 export { default as ProgressRing } from './components/ProgressRing.svelte';

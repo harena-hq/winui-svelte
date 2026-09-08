@@ -555,3 +555,53 @@ gate does.
   signal.
 - **Would reconsider if**: the library gains a shared last-input-device signal for another
   reason, or CommandBar overflow is measured against the original on a touch-only device.
+
+---
+
+### WD-021 — the pivot's header row is static, and does not carousel
+
+- **Control**: `Pivot`.
+- **WinUI does**: carry a second, dynamic header. `Pivot_themeresources.xaml:298-311` declares
+  `HeaderDynamic` and `HeaderStatic`; the dynamic one keeps the selected header pinned at the
+  left and slides the rest under a clip, `UnselectedLocked` (`:519`) translates a header out by
+  `PivotHeaderItemLockedTranslation` (40) and fades it, and the `NavigationButtonsVisibility`
+  group (`:259`) reveals two 20x36 arrow buttons at `:429` and `:430` that step the carousel.
+- **We do**: render the static header only. Every header is drawn in place, the selection moves
+  the pipe and nothing else, no arrows exist, and a row wider than the control is clipped
+  (`overflow: hidden`) with no way to reach the part past the cut.
+- **Why accepted**: the carousel is the phone-era interaction the control was designed around,
+  and the original does not show it on the acceptance surface — selecting a later header on
+  Windows moves the pipe and leaves the labels where they are, which was photographed and is
+  what `HeaderStatic` does. Building the dynamic header would mean reproducing a snap-point
+  scroll and a per-header translation storyboard for a state the Gallery never enters, and the
+  arrows are a fifth control's worth of template for a row of four labels that fits.
+- **Would reconsider if**: a page puts more headers in a Pivot than its width holds. The clip is
+  what makes that unreachable rather than merely ugly, so the first such page is the trigger,
+  and the arrows are the smaller half of the work — the dynamic header is the rest.
+
+---
+
+### WD-022 — a header's glyphs keep their side bearings, so the ink sits a pixel or two right
+
+- **Control**: `Pivot`, where it was first measured; the attribute it comes from is on text
+  parts across the pinned source.
+- **WinUI does**: set `OpticalMarginAlignment="TrimSideBearings"` on the parts that draw the
+  header and the title — `Pivot_themeresources.xaml:586` for the header item's
+  `ContentPresenter` and `:231` for the one every title inherits. XAML then pulls the first
+  glyph's left side bearing out of the layout, so the ink of `All` starts exactly where its
+  content box does.
+- **We do**: nothing, because CSS has no equivalent. `text-indent` with a negative value would
+  need the bearing of whatever glyph happens to be first, which is a font measurement a
+  stylesheet cannot take. The declaration has been dropped project-wide since v1 —
+  `scripts/tokens/generate.mjs` lists `OpticalMarginAlignment` among the type-ramp's ignored
+  setters — and this is the first unit that measured the difference rather than assuming none.
+- **Why accepted**: measured on the original against ours, the box is identical and only the
+  ink moves. The selected pipe under `All` is 26px wide in both and under `Flagged` 82px in
+  both; the ink is 23px and 78px wide in both; every header's box sits at the same x in both.
+  What differs is the offset from the pipe's left edge to the first ink pixel: 0 and 0 on
+  Windows, 1 and 2 in the browser, which is the left side bearing of `A` and `F` at 24px. It
+  does not accumulate — the next header starts at the same place either way — so the cost is a
+  one- to two-pixel shift of a label inside a box that is in the right place.
+- **Would reconsider if**: a control puts trimmed text against a hard edge where the bearing is
+  the whole margin, rather than inside a 12px padding. A per-glyph measurement in script, run
+  once per label, is the mechanism; it costs a layout pass per header and buys back one pixel.

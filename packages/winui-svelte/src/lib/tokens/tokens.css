@@ -29,6 +29,8 @@
 	--winui-SystemAccentColorLight3: #99ebff;
 	--winui-SymbolThemeFontFamily: 'Segoe Fluent Icons';
 	--winui-ContentControlThemeFontFamily: 'Segoe UI Variable Text', 'Segoe UI', sans-serif;
+	--winui-PivotHeaderItemFontFamily: 'Segoe UI Variable Text', 'Segoe UI', sans-serif;
+	--winui-PivotTitleFontFamily: 'Segoe UI Variable Text', 'Segoe UI', sans-serif;
 	--winui-FocusVisualPrimaryThickness: 2px;
 	--winui-FocusVisualSecondaryThickness: 1px;
 	--winui-PopupShadow: 0 3px 2px rgba(0, 0, 0, 0.035), 0 10px 8px rgba(0, 0, 0, 0.09);
@@ -818,6 +820,48 @@
 	--winui-SplitMenuFlyoutItemChevronButtonWidth: 38px;
 	--winui-PasswordBoxTopHeaderMargin: 0px 0px 8px 0px;
 	--winui-PasswordBoxIconFontSize: 12px;
+	--winui-PivotHeaderItemFontSize: 24px;
+	--winui-PivotTitleFontSize: 14px;
+	--winui-PivotHeaderItemMargin: 0px 12px 0px 12px;
+	--winui-PivotItemMargin: 0px 12px 0px 12px;
+	--winui-PivotPortraitThemePadding: 14px 0px 13px 12px;
+	--winui-PivotHeaderItemThemeFontWeight: 350;
+	--winui-PivotTitleThemeFontWeight: 700;
+	--winui-PivotBackground: var(--winui-SystemControlTransparentBrush);
+	--winui-PivotHeaderBackground: var(--winui-SystemControlTransparentBrush);
+	--winui-PivotItemBackground: var(--winui-SystemControlTransparentBrush);
+	--winui-PivotHeaderItemBackgroundUnselected: var(--winui-SystemControlTransparentBrush);
+	--winui-PivotHeaderItemBackgroundUnselectedPointerOver: var(
+		--winui-SystemControlHighlightTransparentBrush
+	);
+	--winui-PivotHeaderItemBackgroundUnselectedPressed: var(
+		--winui-SystemControlHighlightTransparentBrush
+	);
+	--winui-PivotHeaderItemBackgroundSelected: var(--winui-SystemControlHighlightTransparentBrush);
+	--winui-PivotHeaderItemBackgroundSelectedPointerOver: var(
+		--winui-SystemControlHighlightTransparentBrush
+	);
+	--winui-PivotHeaderItemBackgroundSelectedPressed: var(
+		--winui-SystemControlHighlightTransparentBrush
+	);
+	--winui-PivotHeaderItemBackgroundDisabled: var(--winui-SystemControlTransparentBrush);
+	--winui-PivotHeaderItemForegroundUnselected: var(--winui-SystemControlForegroundBaseMediumBrush);
+	--winui-PivotHeaderItemForegroundUnselectedPointerOver: var(
+		--winui-SystemControlHighlightAltBaseMediumHighBrush
+	);
+	--winui-PivotHeaderItemForegroundUnselectedPressed: var(
+		--winui-SystemControlHighlightAltBaseMediumHighBrush
+	);
+	--winui-PivotHeaderItemForegroundSelected: var(--winui-SystemControlHighlightAltBaseHighBrush);
+	--winui-PivotHeaderItemForegroundSelectedPointerOver: var(
+		--winui-SystemControlHighlightAltBaseMediumHighBrush
+	);
+	--winui-PivotHeaderItemForegroundSelectedPressed: var(
+		--winui-SystemControlHighlightAltBaseMediumHighBrush
+	);
+	--winui-PivotHeaderItemForegroundDisabled: var(--winui-SystemControlDisabledBaseMediumLowBrush);
+	--winui-PivotHeaderItemSelectedPipeFill: var(--winui-AccentFillColorDefaultBrush);
+	--winui-PivotHeaderItemSelectedPipeCornerRadius: 1.5px;
 	--winui-RadioButtonBorderThemeThickness: 1px;
 	--winui-RadioButtonForeground: var(--winui-TextFillColorPrimaryBrush);
 	--winui-RadioButtonForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
@@ -1398,6 +1442,7 @@
 	--winui-SystemBaseHighColor: #000000ff;
 	--winui-SystemBaseLowColor: #00000033;
 	--winui-SystemBaseMediumColor: #00000099;
+	--winui-SystemBaseMediumHighColor: #000000cc;
 	--winui-SystemBaseMediumLowColor: #00000066;
 	--winui-SystemChromeDisabledHighColor: #ccccccff;
 	--winui-SystemChromeDisabledLowColor: #7a7a7aff;
@@ -1418,8 +1463,11 @@
 	--winui-SystemControlDisabledChromeDisabledHighBrush: var(--winui-SystemChromeDisabledHighColor);
 	--winui-SystemControlDisabledChromeDisabledLowBrush: var(--winui-SystemChromeDisabledLowColor);
 	--winui-SystemControlForegroundBaseHighBrush: var(--winui-SystemBaseHighColor);
+	--winui-SystemControlForegroundBaseMediumBrush: var(--winui-SystemBaseMediumColor);
 	--winui-SystemControlForegroundChromeHighBrush: var(--winui-SystemChromeHighColor);
+	--winui-SystemControlHighlightAltBaseHighBrush: var(--winui-SystemBaseHighColor);
 	--winui-SystemControlHighlightAltBaseMediumBrush: var(--winui-SystemBaseMediumColor);
+	--winui-SystemControlHighlightAltBaseMediumHighBrush: var(--winui-SystemBaseMediumHighColor);
 	--winui-SystemControlHighlightAltChromeWhiteBrush: var(--winui-SystemChromeWhiteColor);
 	--winui-SystemControlHighlightAltTransparentBrush: transparent;
 	--winui-SystemControlHighlightBaseMediumBrush: var(--winui-SystemBaseMediumColor);
@@ -1438,6 +1486,7 @@
 		var(--winui-SystemAccentColor) 60%,
 		transparent
 	);
+	--winui-SystemControlHighlightTransparentBrush: transparent;
 	--winui-SystemControlHyperlinkTextBrush: var(--winui-SystemAccentColor);
 	--winui-SystemControlPageBackgroundAltMediumBrush: var(--winui-SystemAltMediumColor);
 	--winui-SystemControlPageBackgroundMediumAltMediumBrush: var(--winui-SystemAltMediumColor);
@@ -2174,6 +2223,47 @@
 	--winui-MenuFlyoutSubItemBorderThickness: 0px;
 	--winui-MenuFlyoutItemPlaceholderThemeThickness: 0px 0px 0px 28px;
 	--winui-MenuFlyoutItemDoublePlaceholderThemeThickness: 0px 0px 0px 56px;
+	--winui-PivotHeaderItemFontSize: 24px;
+	--winui-PivotTitleFontSize: 14px;
+	--winui-PivotHeaderItemMargin: 0px 12px 0px 12px;
+	--winui-PivotItemMargin: 0px 12px 0px 12px;
+	--winui-PivotPortraitThemePadding: 14px 0px 13px 12px;
+	--winui-PivotHeaderItemThemeFontWeight: 350;
+	--winui-PivotTitleThemeFontWeight: 700;
+	--winui-PivotBackground: var(--winui-SystemControlTransparentBrush);
+	--winui-PivotHeaderBackground: var(--winui-SystemControlTransparentBrush);
+	--winui-PivotItemBackground: var(--winui-SystemControlTransparentBrush);
+	--winui-PivotHeaderItemBackgroundUnselected: var(--winui-SystemControlTransparentBrush);
+	--winui-PivotHeaderItemBackgroundUnselectedPointerOver: var(
+		--winui-SystemControlHighlightTransparentBrush
+	);
+	--winui-PivotHeaderItemBackgroundUnselectedPressed: var(
+		--winui-SystemControlHighlightTransparentBrush
+	);
+	--winui-PivotHeaderItemBackgroundSelected: var(--winui-SystemControlHighlightTransparentBrush);
+	--winui-PivotHeaderItemBackgroundSelectedPointerOver: var(
+		--winui-SystemControlHighlightTransparentBrush
+	);
+	--winui-PivotHeaderItemBackgroundSelectedPressed: var(
+		--winui-SystemControlHighlightTransparentBrush
+	);
+	--winui-PivotHeaderItemBackgroundDisabled: var(--winui-SystemControlTransparentBrush);
+	--winui-PivotHeaderItemForegroundUnselected: var(--winui-SystemControlForegroundBaseMediumBrush);
+	--winui-PivotHeaderItemForegroundUnselectedPointerOver: var(
+		--winui-SystemControlHighlightAltBaseMediumHighBrush
+	);
+	--winui-PivotHeaderItemForegroundUnselectedPressed: var(
+		--winui-SystemControlHighlightAltBaseMediumHighBrush
+	);
+	--winui-PivotHeaderItemForegroundSelected: var(--winui-SystemControlHighlightAltBaseHighBrush);
+	--winui-PivotHeaderItemForegroundSelectedPointerOver: var(
+		--winui-SystemControlHighlightAltBaseMediumHighBrush
+	);
+	--winui-PivotHeaderItemForegroundSelectedPressed: var(
+		--winui-SystemControlHighlightAltBaseMediumHighBrush
+	);
+	--winui-PivotHeaderItemForegroundDisabled: var(--winui-SystemControlDisabledBaseMediumLowBrush);
+	--winui-PivotHeaderItemSelectedPipeFill: var(--winui-AccentFillColorDefaultBrush);
 	--winui-RadioButtonBorderThemeThickness: 1px;
 	--winui-RadioButtonForeground: var(--winui-TextFillColorPrimaryBrush);
 	--winui-RadioButtonForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
@@ -2609,6 +2699,7 @@
 	--winui-SystemBaseHighColor: #ffffffff;
 	--winui-SystemBaseLowColor: #ffffff33;
 	--winui-SystemBaseMediumColor: #ffffff99;
+	--winui-SystemBaseMediumHighColor: #ffffffcc;
 	--winui-SystemBaseMediumLowColor: #ffffff66;
 	--winui-SystemChromeDisabledHighColor: #333333ff;
 	--winui-SystemChromeDisabledLowColor: #858585ff;
@@ -2629,8 +2720,11 @@
 	--winui-SystemControlDisabledChromeDisabledHighBrush: var(--winui-SystemChromeDisabledHighColor);
 	--winui-SystemControlDisabledChromeDisabledLowBrush: var(--winui-SystemChromeDisabledLowColor);
 	--winui-SystemControlForegroundBaseHighBrush: var(--winui-SystemBaseHighColor);
+	--winui-SystemControlForegroundBaseMediumBrush: var(--winui-SystemBaseMediumColor);
 	--winui-SystemControlForegroundChromeHighBrush: var(--winui-SystemChromeHighColor);
+	--winui-SystemControlHighlightAltBaseHighBrush: var(--winui-SystemBaseHighColor);
 	--winui-SystemControlHighlightAltBaseMediumBrush: var(--winui-SystemBaseMediumColor);
+	--winui-SystemControlHighlightAltBaseMediumHighBrush: var(--winui-SystemBaseMediumHighColor);
 	--winui-SystemControlHighlightAltChromeWhiteBrush: var(--winui-SystemChromeWhiteColor);
 	--winui-SystemControlHighlightAltTransparentBrush: transparent;
 	--winui-SystemControlHighlightBaseMediumBrush: var(--winui-SystemBaseMediumColor);
@@ -2649,6 +2743,7 @@
 		var(--winui-SystemAccentColor) 80%,
 		transparent
 	);
+	--winui-SystemControlHighlightTransparentBrush: transparent;
 	--winui-SystemControlHyperlinkTextBrush: var(--winui-SystemAccentColor);
 	--winui-SystemControlPageBackgroundAltMediumBrush: var(--winui-SystemAltMediumColor);
 	--winui-SystemControlPageBackgroundMediumAltMediumBrush: var(--winui-SystemAltMediumColor);
@@ -3414,6 +3509,49 @@
 		--winui-MenuFlyoutSubItemBorderThickness: 0px;
 		--winui-MenuFlyoutItemPlaceholderThemeThickness: 0px 0px 0px 28px;
 		--winui-MenuFlyoutItemDoublePlaceholderThemeThickness: 0px 0px 0px 56px;
+		--winui-PivotHeaderItemFontSize: 24px;
+		--winui-PivotTitleFontSize: 14px;
+		--winui-PivotHeaderItemMargin: 0px 12px 0px 12px;
+		--winui-PivotItemMargin: 0px 12px 0px 12px;
+		--winui-PivotPortraitThemePadding: 14px 0px 13px 12px;
+		--winui-PivotHeaderItemThemeFontWeight: 350;
+		--winui-PivotTitleThemeFontWeight: 700;
+		--winui-PivotBackground: var(--winui-SystemControlTransparentBrush);
+		--winui-PivotHeaderBackground: var(--winui-SystemControlTransparentBrush);
+		--winui-PivotItemBackground: var(--winui-SystemControlTransparentBrush);
+		--winui-PivotHeaderItemBackgroundUnselected: var(--winui-SystemControlTransparentBrush);
+		--winui-PivotHeaderItemBackgroundUnselectedPointerOver: var(
+			--winui-SystemControlHighlightTransparentBrush
+		);
+		--winui-PivotHeaderItemBackgroundUnselectedPressed: var(
+			--winui-SystemControlHighlightTransparentBrush
+		);
+		--winui-PivotHeaderItemBackgroundSelected: var(--winui-SystemControlHighlightTransparentBrush);
+		--winui-PivotHeaderItemBackgroundSelectedPointerOver: var(
+			--winui-SystemControlHighlightTransparentBrush
+		);
+		--winui-PivotHeaderItemBackgroundSelectedPressed: var(
+			--winui-SystemControlHighlightTransparentBrush
+		);
+		--winui-PivotHeaderItemBackgroundDisabled: var(--winui-SystemControlTransparentBrush);
+		--winui-PivotHeaderItemForegroundUnselected: var(
+			--winui-SystemControlForegroundBaseMediumBrush
+		);
+		--winui-PivotHeaderItemForegroundUnselectedPointerOver: var(
+			--winui-SystemControlHighlightAltBaseMediumHighBrush
+		);
+		--winui-PivotHeaderItemForegroundUnselectedPressed: var(
+			--winui-SystemControlHighlightAltBaseMediumHighBrush
+		);
+		--winui-PivotHeaderItemForegroundSelected: var(--winui-SystemControlHighlightAltBaseHighBrush);
+		--winui-PivotHeaderItemForegroundSelectedPointerOver: var(
+			--winui-SystemControlHighlightAltBaseMediumHighBrush
+		);
+		--winui-PivotHeaderItemForegroundSelectedPressed: var(
+			--winui-SystemControlHighlightAltBaseMediumHighBrush
+		);
+		--winui-PivotHeaderItemForegroundDisabled: var(--winui-SystemControlDisabledBaseMediumLowBrush);
+		--winui-PivotHeaderItemSelectedPipeFill: var(--winui-AccentFillColorDefaultBrush);
 		--winui-RadioButtonBorderThemeThickness: 1px;
 		--winui-RadioButtonForeground: var(--winui-TextFillColorPrimaryBrush);
 		--winui-RadioButtonForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
@@ -3877,6 +4015,7 @@
 		--winui-SystemBaseHighColor: #ffffffff;
 		--winui-SystemBaseLowColor: #ffffff33;
 		--winui-SystemBaseMediumColor: #ffffff99;
+		--winui-SystemBaseMediumHighColor: #ffffffcc;
 		--winui-SystemBaseMediumLowColor: #ffffff66;
 		--winui-SystemChromeDisabledHighColor: #333333ff;
 		--winui-SystemChromeDisabledLowColor: #858585ff;
@@ -3899,8 +4038,11 @@
 		);
 		--winui-SystemControlDisabledChromeDisabledLowBrush: var(--winui-SystemChromeDisabledLowColor);
 		--winui-SystemControlForegroundBaseHighBrush: var(--winui-SystemBaseHighColor);
+		--winui-SystemControlForegroundBaseMediumBrush: var(--winui-SystemBaseMediumColor);
 		--winui-SystemControlForegroundChromeHighBrush: var(--winui-SystemChromeHighColor);
+		--winui-SystemControlHighlightAltBaseHighBrush: var(--winui-SystemBaseHighColor);
 		--winui-SystemControlHighlightAltBaseMediumBrush: var(--winui-SystemBaseMediumColor);
+		--winui-SystemControlHighlightAltBaseMediumHighBrush: var(--winui-SystemBaseMediumHighColor);
 		--winui-SystemControlHighlightAltChromeWhiteBrush: var(--winui-SystemChromeWhiteColor);
 		--winui-SystemControlHighlightAltTransparentBrush: transparent;
 		--winui-SystemControlHighlightBaseMediumBrush: var(--winui-SystemBaseMediumColor);
@@ -3919,6 +4061,7 @@
 			var(--winui-SystemAccentColor) 80%,
 			transparent
 		);
+		--winui-SystemControlHighlightTransparentBrush: transparent;
 		--winui-SystemControlHyperlinkTextBrush: var(--winui-SystemAccentColor);
 		--winui-SystemControlPageBackgroundAltMediumBrush: var(--winui-SystemAltMediumColor);
 		--winui-SystemControlPageBackgroundMediumAltMediumBrush: var(--winui-SystemAltMediumColor);
@@ -3992,12 +4135,16 @@
 	--winui-BreadcrumbBarItemThemeFontSize: var(--winui-ControlContentThemeFontSize);
 	--winui-BreadcrumbBarChevronFontSize: 12px;
 	--winui-ComboBoxItemForeground: var(--winui-SystemControlForegroundBaseHighBrush);
-	--winui-ComboBoxItemForegroundPressed: var(--winui-SystemColorHighlightTextColor);
-	--winui-ComboBoxItemForegroundPointerOver: var(--winui-SystemColorHighlightTextColor);
+	--winui-ComboBoxItemForegroundPressed: var(--winui-SystemControlHighlightAltBaseHighBrush);
+	--winui-ComboBoxItemForegroundPointerOver: var(--winui-SystemControlHighlightAltBaseHighBrush);
 	--winui-ComboBoxItemForegroundDisabled: var(--winui-SystemControlDisabledBaseMediumLowBrush);
-	--winui-ComboBoxItemForegroundSelected: var(--winui-SystemColorHighlightTextColor);
-	--winui-ComboBoxItemForegroundSelectedPressed: var(--winui-SystemColorHighlightTextColor);
-	--winui-ComboBoxItemForegroundSelectedPointerOver: var(--winui-SystemColorHighlightTextColor);
+	--winui-ComboBoxItemForegroundSelected: var(--winui-SystemControlHighlightAltBaseHighBrush);
+	--winui-ComboBoxItemForegroundSelectedPressed: var(
+		--winui-SystemControlHighlightAltBaseHighBrush
+	);
+	--winui-ComboBoxItemForegroundSelectedPointerOver: var(
+		--winui-SystemControlHighlightAltBaseHighBrush
+	);
 	--winui-ComboBoxItemForegroundSelectedDisabled: var(
 		--winui-SystemControlDisabledBaseMediumLowBrush
 	);
@@ -4027,7 +4174,7 @@
 	--winui-ComboBoxPlaceHolderForegroundFocusedPressed: var(
 		--winui-SystemControlPageTextBaseMediumBrush
 	);
-	--winui-ComboBoxBorderBrush: var(--winui-SystemColorButtonTextColor);
+	--winui-ComboBoxBorderBrush: var(--winui-SystemControlForegroundBaseMediumBrush);
 	--winui-ComboBoxBorderBrushPointerOver: var(--winui-SystemColorHighlightColor);
 	--winui-ComboBoxBorderBrushPressed: var(--winui-SystemControlHighlightBaseMediumBrush);
 	--winui-ComboBoxBorderBrushDisabled: var(--winui-SystemControlDisabledBaseLowBrush);
@@ -4045,10 +4192,12 @@
 	--winui-AppBarButtonBackgroundPressed: var(--winui-SystemColorHighlightColor);
 	--winui-AppBarButtonBackgroundDisabled: var(--winui-SystemControlTransparentBrush);
 	--winui-AppBarButtonForeground: var(--winui-SystemControlForegroundBaseHighBrush);
-	--winui-AppBarButtonForegroundPointerOver: var(--winui-SystemColorHighlightTextColor);
-	--winui-AppBarButtonForegroundPressed: var(--winui-SystemColorHighlightTextColor);
+	--winui-AppBarButtonForegroundPointerOver: var(--winui-SystemControlHighlightAltBaseHighBrush);
+	--winui-AppBarButtonForegroundPressed: var(--winui-SystemControlHighlightAltBaseHighBrush);
 	--winui-AppBarButtonForegroundDisabled: var(--winui-SystemControlDisabledBaseMediumLowBrush);
-	--winui-AppBarButtonKeyboardAcceleratorTextForeground: var(--winui-SystemColorButtonTextColor);
+	--winui-AppBarButtonKeyboardAcceleratorTextForeground: var(
+		--winui-SystemControlForegroundBaseMediumBrush
+	);
 	--winui-AppBarButtonKeyboardAcceleratorTextForegroundPointerOver: var(
 		--winui-SystemControlHighlightAltBaseMediumBrush
 	);
@@ -4061,15 +4210,17 @@
 	--winui-AppBarButtonBackgroundSubMenuOpened: var(
 		--winui-SystemControlHighlightListAccentLowBrush
 	);
-	--winui-AppBarButtonForegroundSubMenuOpened: var(--winui-SystemColorHighlightTextColor);
+	--winui-AppBarButtonForegroundSubMenuOpened: var(--winui-SystemControlHighlightAltBaseHighBrush);
 	--winui-AppBarButtonKeyboardAcceleratorTextForegroundSubMenuOpened: var(
 		--winui-SystemControlHighlightAltBaseMediumBrush
 	);
 	--winui-AppBarButtonSubItemChevronForeground: var(--winui-SystemColorButtonTextColor);
 	--winui-AppBarButtonSubItemChevronForegroundPointerOver: var(
-		--winui-SystemColorHighlightTextColor
+		--winui-SystemControlHighlightAltBaseHighBrush
 	);
-	--winui-AppBarButtonSubItemChevronForegroundPressed: var(--winui-SystemColorHighlightTextColor);
+	--winui-AppBarButtonSubItemChevronForegroundPressed: var(
+		--winui-SystemControlHighlightAltBaseHighBrush
+	);
 	--winui-AppBarButtonSubItemChevronForegroundDisabled: var(
 		--winui-SystemControlDisabledBaseMediumLowBrush
 	);
@@ -4134,25 +4285,25 @@
 		--winui-SystemColorHighlightTextColorBrush
 	);
 	--winui-AppBarToggleButtonOverflowLabelForegroundPointerOver: var(
-		--winui-SystemColorHighlightTextColor
+		--winui-SystemControlHighlightAltBaseHighBrush
 	);
 	--winui-AppBarToggleButtonOverflowLabelForegroundPressed: var(
-		--winui-SystemColorHighlightTextColor
+		--winui-SystemControlHighlightAltBaseHighBrush
 	);
 	--winui-AppBarToggleButtonOverflowLabelForegroundDisabled: var(
 		--winui-SystemControlDisabledBaseMediumLowBrush
 	);
 	--winui-AppBarToggleButtonOverflowLabelForegroundCheckedPointerOver: var(
-		--winui-SystemColorHighlightTextColor
+		--winui-SystemControlHighlightAltBaseHighBrush
 	);
 	--winui-AppBarToggleButtonOverflowLabelForegroundCheckedPressed: var(
-		--winui-SystemColorHighlightTextColor
+		--winui-SystemControlHighlightAltBaseHighBrush
 	);
 	--winui-AppBarToggleButtonOverflowLabelForegroundCheckedDisabled: var(
 		--winui-SystemControlDisabledBaseMediumLowBrush
 	);
 	--winui-AppBarToggleButtonKeyboardAcceleratorTextForeground: var(
-		--winui-SystemColorButtonTextColor
+		--winui-SystemControlForegroundBaseMediumBrush
 	);
 	--winui-AppBarToggleButtonKeyboardAcceleratorTextForegroundPointerOver: var(
 		--winui-SystemControlHighlightAltBaseMediumBrush
@@ -4164,7 +4315,7 @@
 		--winui-SystemControlDisabledBaseMediumLowBrush
 	);
 	--winui-AppBarToggleButtonKeyboardAcceleratorTextForegroundChecked: var(
-		--winui-SystemColorButtonTextColor
+		--winui-SystemControlForegroundBaseMediumBrush
 	);
 	--winui-AppBarToggleButtonKeyboardAcceleratorTextForegroundCheckedPointerOver: var(
 		--winui-SystemControlHighlightAltBaseMediumBrush
@@ -4185,7 +4336,7 @@
 	--winui-AccentButtonForegroundDisabled: var(--winui-SystemControlDisabledBaseMediumLowBrush);
 	--winui-AccentButtonBorderBrush: var(--winui-SystemColorHighlightColor);
 	--winui-AccentButtonBorderBrushPointerOver: var(--winui-SystemColorHighlightColor);
-	--winui-AccentButtonBorderBrushPressed: var(--winui-SystemColorHighlightColor);
+	--winui-AccentButtonBorderBrushPressed: var(--winui-SystemControlHighlightTransparentBrush);
 	--winui-AccentButtonBorderBrushDisabled: var(--winui-SystemColorGrayTextColor);
 	--winui-SubtleButtonBackground: var(--winui-SystemColorButtonFaceColor);
 	--winui-SubtleButtonBackgroundPointerOver: var(--winui-SystemColorHighlightTextColorBrush);
@@ -4638,6 +4789,47 @@
 	--winui-MenuFlyoutSubItemBorderThickness: 0px;
 	--winui-MenuFlyoutItemPlaceholderThemeThickness: 0px 0px 0px 28px;
 	--winui-MenuFlyoutItemDoublePlaceholderThemeThickness: 0px 0px 0px 56px;
+	--winui-PivotBackground: var(--winui-SystemControlTransparentBrush);
+	--winui-PivotHeaderBackground: var(--winui-SystemControlTransparentBrush);
+	--winui-PivotItemBackground: var(--winui-SystemControlTransparentBrush);
+	--winui-PivotHeaderItemBackgroundUnselected: var(--winui-SystemControlTransparentBrush);
+	--winui-PivotHeaderItemBackgroundUnselectedPointerOver: var(
+		--winui-SystemControlHighlightTransparentBrush
+	);
+	--winui-PivotHeaderItemBackgroundUnselectedPressed: var(
+		--winui-SystemControlHighlightTransparentBrush
+	);
+	--winui-PivotHeaderItemBackgroundSelected: var(--winui-SystemControlHighlightTransparentBrush);
+	--winui-PivotHeaderItemBackgroundSelectedPointerOver: var(
+		--winui-SystemControlHighlightTransparentBrush
+	);
+	--winui-PivotHeaderItemBackgroundSelectedPressed: var(
+		--winui-SystemControlHighlightTransparentBrush
+	);
+	--winui-PivotHeaderItemBackgroundDisabled: var(--winui-SystemControlTransparentBrush);
+	--winui-PivotHeaderItemForegroundUnselected: var(--winui-SystemControlForegroundBaseMediumBrush);
+	--winui-PivotHeaderItemForegroundUnselectedPointerOver: var(
+		--winui-SystemControlHighlightAltBaseMediumHighBrush
+	);
+	--winui-PivotHeaderItemForegroundUnselectedPressed: var(
+		--winui-SystemControlHighlightAltBaseMediumHighBrush
+	);
+	--winui-PivotHeaderItemForegroundSelected: var(--winui-SystemControlHighlightAltBaseHighBrush);
+	--winui-PivotHeaderItemForegroundSelectedPointerOver: var(
+		--winui-SystemControlHighlightAltBaseMediumHighBrush
+	);
+	--winui-PivotHeaderItemForegroundSelectedPressed: var(
+		--winui-SystemControlHighlightAltBaseMediumHighBrush
+	);
+	--winui-PivotHeaderItemForegroundDisabled: var(--winui-SystemControlDisabledBaseMediumLowBrush);
+	--winui-PivotHeaderItemSelectedPipeFill: var(--winui-SystemColorHighlightTextColor);
+	--winui-PivotHeaderItemFontSize: 24px;
+	--winui-PivotTitleFontSize: 14px;
+	--winui-PivotHeaderItemMargin: 0px 12px 0px 12px;
+	--winui-PivotItemMargin: 0px 12px 0px 12px;
+	--winui-PivotPortraitThemePadding: 14px 0px 13px 12px;
+	--winui-PivotHeaderItemThemeFontWeight: 350;
+	--winui-PivotTitleThemeFontWeight: 700;
 	--winui-RadioButtonBorderThemeThickness: 1px;
 	--winui-RadioButtonForeground: var(--winui-SystemColorButtonTextColorBrush);
 	--winui-RadioButtonForegroundPointerOver: var(--winui-SystemColorButtonTextColorBrush);
@@ -4690,7 +4882,7 @@
 	--winui-RepeatButtonForegroundDisabled: var(--winui-SystemControlDisabledBaseMediumLowBrush);
 	--winui-RepeatButtonBorderBrush: var(--winui-SystemColorButtonTextColor);
 	--winui-RepeatButtonBorderBrushPointerOver: var(--winui-SystemColorHighlightColor);
-	--winui-RepeatButtonBorderBrushPressed: var(--winui-SystemColorHighlightColor);
+	--winui-RepeatButtonBorderBrushPressed: var(--winui-SystemControlHighlightTransparentBrush);
 	--winui-RepeatButtonBorderBrushDisabled: var(--winui-SystemColorGrayTextColor);
 	--winui-SliderContainerBackgroundPointerOver: var(--winui-SystemControlTransparentBrush);
 	--winui-SliderContainerBackgroundPressed: var(--winui-SystemControlTransparentBrush);
@@ -4701,7 +4893,7 @@
 	--winui-SliderThumbBorderBrush: var(--winui-SystemColorButtonTextColor);
 	--winui-SliderOuterThumbBackground: var(--winui-SystemColorButtonTextColor);
 	--winui-SliderTrackFill: var(--winui-SystemColorButtonTextColor);
-	--winui-SliderTrackFillPointerOver: var(--winui-SystemColorButtonTextColor);
+	--winui-SliderTrackFillPointerOver: var(--winui-SystemControlForegroundBaseMediumBrush);
 	--winui-SliderTrackFillPressed: var(--winui-SystemColorButtonTextColor);
 	--winui-SliderTrackFillDisabled: var(--winui-SystemControlDisabledChromeDisabledHighBrush);
 	--winui-SliderTrackValueFill: var(--winui-SystemColorHighlightColor);
@@ -4714,7 +4906,7 @@
 	--winui-SliderHeaderThemeFontWeight: 400;
 	--winui-TemporaryTextFillColorDisabled: #0101015c;
 	--winui-TextControlBackgroundFocused: var(--winui-SystemColorButtonFaceColor);
-	--winui-TextControlBorderBrush: var(--winui-SystemColorButtonTextColor);
+	--winui-TextControlBorderBrush: var(--winui-SystemControlForegroundBaseMediumBrush);
 	--winui-TextControlBorderBrushPointerOver: var(--winui-SystemColorHighlightColor);
 	--winui-TextControlButtonForeground: var(--winui-SystemColorButtonTextColor);
 	--winui-TextControlForegroundFocused: var(--winui-SystemControlForegroundBaseHighBrush);
@@ -4768,7 +4960,9 @@
 	--winui-ToggleButtonBorderBrushCheckedDisabled: var(--winui-SystemColorGrayTextColor);
 	--winui-ToggleButtonBorderBrushIndeterminate: var(--winui-SystemColorButtonTextColor);
 	--winui-ToggleButtonBorderBrushIndeterminatePointerOver: var(--winui-SystemColorHighlightColor);
-	--winui-ToggleButtonBorderBrushIndeterminatePressed: var(--winui-SystemColorHighlightColor);
+	--winui-ToggleButtonBorderBrushIndeterminatePressed: var(
+		--winui-SystemControlHighlightTransparentBrush
+	);
 	--winui-ToggleButtonBorderBrushIndeterminateDisabled: var(--winui-SystemColorGrayTextColor);
 	--winui-ToggleSwitchOnStrokeThickness: 1px;
 	--winui-ToggleSwitchOuterBorderStrokeThickness: 1px;
@@ -4898,16 +5092,20 @@
 		--winui-SystemControlTransparentRevealBackgroundBrush
 	);
 	--winui-NavigationViewItemForeground: var(--winui-SystemControlForegroundBaseHighBrush);
-	--winui-NavigationViewItemForegroundPointerOver: var(--winui-SystemColorHighlightTextColor);
-	--winui-NavigationViewItemForegroundPressed: var(--winui-SystemColorHighlightTextColor);
+	--winui-NavigationViewItemForegroundPointerOver: var(
+		--winui-SystemControlHighlightAltBaseHighBrush
+	);
+	--winui-NavigationViewItemForegroundPressed: var(--winui-SystemControlHighlightAltBaseHighBrush);
 	--winui-NavigationViewItemForegroundDisabled: var(
 		--winui-SystemControlDisabledBaseMediumLowBrush
 	);
-	--winui-NavigationViewItemForegroundSelected: var(--winui-SystemColorHighlightTextColor);
+	--winui-NavigationViewItemForegroundSelected: var(--winui-SystemControlHighlightAltBaseHighBrush);
 	--winui-NavigationViewItemForegroundSelectedPointerOver: var(
-		--winui-SystemColorHighlightTextColor
+		--winui-SystemControlHighlightAltBaseHighBrush
 	);
-	--winui-NavigationViewItemForegroundSelectedPressed: var(--winui-SystemColorHighlightTextColor);
+	--winui-NavigationViewItemForegroundSelectedPressed: var(
+		--winui-SystemControlHighlightAltBaseHighBrush
+	);
 	--winui-NavigationViewItemForegroundSelectedDisabled: var(
 		--winui-SystemControlDisabledBaseMediumLowBrush
 	);
@@ -4929,8 +5127,12 @@
 	--winui-NavigationViewButtonBackgroundPointerOver: var(--winui-SystemColorHighlightColor);
 	--winui-NavigationViewButtonBackgroundPressed: var(--winui-SystemColorHighlightColor);
 	--winui-NavigationViewButtonBackgroundDisabled: var(--winui-SystemColorButtonFaceColor);
-	--winui-NavigationViewButtonForegroundPointerOver: var(--winui-SystemColorHighlightTextColor);
-	--winui-NavigationViewButtonForegroundPressed: var(--winui-SystemColorHighlightTextColor);
+	--winui-NavigationViewButtonForegroundPointerOver: var(
+		--winui-SystemControlHighlightAltBaseHighBrush
+	);
+	--winui-NavigationViewButtonForegroundPressed: var(
+		--winui-SystemControlHighlightAltBaseHighBrush
+	);
 	--winui-NavigationViewButtonForegroundDisabled: var(
 		--winui-SystemControlDisabledBaseMediumLowBrush
 	);
@@ -5028,8 +5230,10 @@
 	--winui-TitleBarBackButtonBackgroundPressed: var(--winui-SystemColorHighlightColor);
 	--winui-TitleBarBackButtonBackgroundDisabled: var(--winui-SystemColorButtonFaceColor);
 	--winui-TitleBarBackButtonForeground: var(--winui-SystemControlForegroundBaseHighBrush);
-	--winui-TitleBarBackButtonForegroundPointerOver: var(--winui-SystemColorHighlightTextColor);
-	--winui-TitleBarBackButtonForegroundPressed: var(--winui-SystemColorHighlightTextColor);
+	--winui-TitleBarBackButtonForegroundPointerOver: var(
+		--winui-SystemControlHighlightAltBaseHighBrush
+	);
+	--winui-TitleBarBackButtonForegroundPressed: var(--winui-SystemControlHighlightAltBaseHighBrush);
 	--winui-TitleBarBackButtonForegroundDisabled: var(
 		--winui-SystemControlDisabledBaseMediumLowBrush
 	);
@@ -5038,8 +5242,12 @@
 	--winui-TitleBarPaneToggleButtonBackgroundPressed: var(--winui-SystemColorHighlightColor);
 	--winui-TitleBarPaneToggleButtonBackgroundDisabled: var(--winui-SystemColorButtonFaceColor);
 	--winui-TitleBarPaneToggleButtonForeground: var(--winui-SystemControlForegroundBaseHighBrush);
-	--winui-TitleBarPaneToggleButtonForegroundPointerOver: var(--winui-SystemColorHighlightTextColor);
-	--winui-TitleBarPaneToggleButtonForegroundPressed: var(--winui-SystemColorHighlightTextColor);
+	--winui-TitleBarPaneToggleButtonForegroundPointerOver: var(
+		--winui-SystemControlHighlightAltBaseHighBrush
+	);
+	--winui-TitleBarPaneToggleButtonForegroundPressed: var(
+		--winui-SystemControlHighlightAltBaseHighBrush
+	);
 	--winui-TitleBarPaneToggleButtonForegroundDisabled: var(
 		--winui-SystemControlDisabledBaseMediumLowBrush
 	);
@@ -5048,6 +5256,7 @@
 	--winui-SystemBaseHighColor: #ffffffff;
 	--winui-SystemBaseLowColor: #ffffff33;
 	--winui-SystemBaseMediumColor: #ffffff99;
+	--winui-SystemBaseMediumHighColor: #ffffffcc;
 	--winui-SystemBaseMediumLowColor: #ffffff66;
 	--winui-SystemChromeDisabledHighColor: #333333ff;
 	--winui-SystemChromeDisabledLowColor: #7a7a7aff;
@@ -5068,14 +5277,18 @@
 	--winui-SystemControlDisabledChromeDisabledHighBrush: var(--winui-SystemColorGrayTextColor);
 	--winui-SystemControlDisabledChromeDisabledLowBrush: var(--winui-SystemColorGrayTextColor);
 	--winui-SystemControlForegroundBaseHighBrush: var(--winui-SystemColorButtonTextColor);
+	--winui-SystemControlForegroundBaseMediumBrush: var(--winui-SystemColorButtonTextColor);
 	--winui-SystemControlForegroundChromeHighBrush: var(--winui-SystemColorButtonTextColor);
+	--winui-SystemControlHighlightAltBaseHighBrush: var(--winui-SystemColorHighlightTextColor);
 	--winui-SystemControlHighlightAltBaseMediumBrush: var(--winui-SystemColorHighlightTextColor);
+	--winui-SystemControlHighlightAltBaseMediumHighBrush: var(--winui-SystemColorHighlightTextColor);
 	--winui-SystemControlHighlightAltChromeWhiteBrush: var(--winui-SystemColorHighlightTextColor);
 	--winui-SystemControlHighlightAltTransparentBrush: var(--winui-SystemColorHighlightTextColor);
 	--winui-SystemControlHighlightBaseMediumBrush: var(--winui-SystemColorHighlightColor);
 	--winui-SystemControlHighlightListAccentHighBrush: var(--winui-SystemColorHighlightColor);
 	--winui-SystemControlHighlightListAccentLowBrush: var(--winui-SystemColorHighlightColor);
 	--winui-SystemControlHighlightListAccentMediumBrush: var(--winui-SystemColorHighlightColor);
+	--winui-SystemControlHighlightTransparentBrush: var(--winui-SystemColorHighlightColor);
 	--winui-SystemControlHyperlinkTextBrush: var(--winui-SystemColorHotlightColor);
 	--winui-SystemControlPageBackgroundAltMediumBrush: var(--winui-SystemColorWindowColor);
 	--winui-SystemControlPageBackgroundMediumAltMediumBrush: color-mix(
