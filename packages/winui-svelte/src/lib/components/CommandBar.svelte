@@ -258,6 +258,8 @@
 		color: var(--winui-AppBarButtonForeground);
 		cursor: pointer;
 		position: relative;
+		/* The user agent's own `:focus-visible` ring is a second one; see Button.svelte. */
+		outline: none;
 	}
 
 	.more-fill {

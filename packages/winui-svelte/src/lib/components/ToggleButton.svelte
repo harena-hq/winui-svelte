@@ -93,6 +93,8 @@
 		white-space: nowrap;
 		cursor: pointer;
 		user-select: none;
+		/* The user agent's own `:focus-visible` ring is a second one; see Button.svelte. */
+		outline: none;
 	}
 	/* The gradient brush is painted on a masked pseudo-element, as Button does, so it occupies the border ring rather than the opaque fill. */
 	.root::after {

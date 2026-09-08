@@ -169,6 +169,8 @@
 		text-align: left;
 		cursor: pointer;
 		user-select: none;
+		/* The user agent's own `:focus-visible` ring is a second one; see Button.svelte. */
+		outline: none;
 	}
 
 	/* The 68px column at AppBarButton_themeresources.xaml:136 is the icon-over-label column;

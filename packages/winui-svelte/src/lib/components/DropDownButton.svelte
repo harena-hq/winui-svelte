@@ -60,6 +60,8 @@
 		white-space: nowrap;
 		cursor: pointer;
 		user-select: none;
+		/* The user agent's own `:focus-visible` ring is a second one; see Button.svelte. */
+		outline: none;
 	}
 
 	/* The border brush is a gradient, and a gradient cannot be a `border-color`. It is painted

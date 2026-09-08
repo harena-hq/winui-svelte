@@ -94,6 +94,11 @@
 		white-space: nowrap;
 		cursor: pointer;
 		user-select: none;
+		/* The user agent draws a focus ring of its own for `:focus-visible`, and it is a
+		   second focus visual: `-webkit-focus-ring-color auto`, traced on the element's own
+		   border box, where the band above sits 3px outside it. Suppressed on every root
+		   that draws its own, so the band is the only ring — as it is in WinUI. */
+		outline: none;
 	}
 
 	/* The border brush is a gradient, and a gradient cannot be a `border-color`. It used to be
