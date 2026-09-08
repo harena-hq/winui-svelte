@@ -1627,6 +1627,54 @@ generics="T">` component through `pnpm --filter winui-svelte build` reaches `dis
     those are the two units where no file can be cited and a plausible guess is indistinguishable
     from a reading.
 
+    **Closed.** Eleven controls and three layouts exist and are exported: ItemsRepeater with
+    StackLayout, UniformGridLayout and LinedFlowLayout, ItemContainer, ItemsView, ListViewItem,
+    GridViewItem, ListView, GridView, TreeView, TreeViewItem, FlipView and FlipViewItem. Fifty
+    baseline sets pass on the reference guest, the nine gates are green and the packed consumer
+    builds. `SelectorBarPage.xaml:59-79`'s colour swatches — v8's one page-level deferral —
+    became buildable at unit 4c, and AutoSuggestBox's borrowing of the `ComboBoxItem*` families
+    stops being forced at unit 6.
+
+    **The version's fourth unit became three, and its fifth was easier than its plan.** Unit 4
+    was written as one entry and is three commits, because `MaximumRowsOrColumns`,
+    `LinedFlowLayout` and `ItemsView` are three intents that share a page rather than one unit.
+    And unit 5, this tranche's named headline risk, was not the risk: the plan said
+    `ListViewItem`'s geometry was nowhere, and in fact `generic.xaml:27524` carries its Padding,
+    its two minimums, its focus band and every brush. What was genuinely nowhere was the native
+    presenter's own inset — 2 above and below, 4 either side, in a 40-tall row — and one
+    afternoon on the reference machine produced it.
+
+    **What the version cost that its goal did not predict.**
+
+    - **A visual-state group is mutually exclusive and a CSS rule is not.** Unit 3 shipped
+      `ItemContainer`'s six `CombinedStates` as five rules, and the unselected pointer-over
+      rule — one attribute selector heavier than the selected rule — repainted a selected
+      container's inner stroke transparent. Nine gates were green and three baselines showed
+      nothing, because no baseline can hold a pointer. Every control after it writes its
+      exclusions out, and every one of them needed to.
+    - **The count of harness rows a unit needs is the count of branches its implementation
+      has.** Unit 2 sealed with `itemsJustification` exercised by nothing; unit 4a's spec asked
+      for one row and the property had three code paths; unit 4b's had four. This is v7's
+      "open the PNG" lesson one level down: a baseline can only catch what a row renders.
+    - **The reference machine answers questions no file can, and the driving is the cost.**
+      Unit 5's four numbers, unit 9's two rules and the fill of a flip button all came from
+      pixel scans of the original. What that afternoon could not reach was the ListView page's
+      second sample, because the Gallery's page would not scroll under the wheel this host can
+      send — which is why the inline check box is owed rather than measured.
+    - **A refactor is verified by replay, not by assertion.** Unit 6 moved four selectors out
+      of `ItemsView` into `internal/selection.ts`; what says the move changed nothing is that
+      the twenty interactions unit 4c drove produce byte-identical selections after it.
+    - **The baselines cannot photograph a scrollbar.** The reference guest drives a headless
+      Edge, and headless Chromium uses overlay scrollbars on every platform: they take no
+      layout space, they are hidden at rest, and `::-webkit-scrollbar` rules do not paint them.
+      Three components now carry the same scrollbar block and none of it appears in any
+      baseline. The Scrolling tranche is where one `ScrollView` replaces all three.
+
+    **What this version declined.** WD-026, that a collection renders every item and nothing is
+    virtualised. WD-027, that every item is a tab stop and there is no current item, extended
+    from ItemsView to TreeView and still waiting on the roving-tabindex rig WD-004 named.
+    WD-028, that a FlipView moves by its buttons and does not scroll.
+
 10. **The sample-page frame** — `ControlExample`'s three panes, `SampleCodePresenter`, the
     copy button, and `ItemPage`'s content root. Its syntax highlighting is ColorCode, pinned by
     the Gallery's own `standalone.props` at 2.0.15; the palette and the XML and C# grammars are
