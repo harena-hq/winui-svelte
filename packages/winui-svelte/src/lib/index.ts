@@ -110,6 +110,10 @@ export type {
 } from './components/TabView.svelte';
 export { default as TextBox } from './components/TextBox.svelte';
 export type { TextBoxProps } from './components/TextBox.svelte';
+export { default as TreeView } from './components/TreeView.svelte';
+export type { TreeViewProps } from './components/TreeView.svelte';
+export { default as TreeViewItem } from './components/TreeViewItem.svelte';
+export type { TreeViewItemProps } from './components/TreeViewItem.svelte';
 export { default as ToggleButton } from './components/ToggleButton.svelte';
 export type { ToggleButtonProps } from './components/ToggleButton.svelte';
 export { default as ToggleSplitButton } from './components/ToggleSplitButton.svelte';

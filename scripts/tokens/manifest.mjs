@@ -2378,6 +2378,8 @@ export const TYPE_RAMP = {
  * these gets the inputs rather than the answer.
  */
 export const DOUBLE_LENGTHS = {
+	TreeViewItemMinHeight: 'TreeViewItem minimum height',
+	TreeViewItemContentHeight: 'TreeViewItem content minimum height',
 	ListViewItemMinWidth: 'ListViewItem minimum width',
 	ListViewItemMinHeight: 'ListViewItem minimum height',
 	GridViewItemMinWidth: 'GridViewItem minimum width',
@@ -3853,6 +3855,58 @@ export const GRIDVIEWITEM_KEYS = {
 	GridViewItemSelectedPressedBorderBrush: 'GridViewItem selection ring while pressed',
 	GridViewItemSelectedDisabledBorderBrush: 'GridViewItem selection ring while disabled',
 	GridViewItemSelectedInnerBorderBrush: 'GridViewItem line inside the selection ring'
+};
+
+/**
+ * Keys TreeViewItem reads — the Collections tranche's fourth seed set, and the first in it
+ * whose control is written down in full: `TreeViewItem.xaml` is 154 lines of readable
+ * template, based on `DefaultListViewItemStyle` and then replacing all of it.
+ *
+ * Absent, with reasons. `TreeViewItemCheckBoxBackgroundSelected`,
+ * `TreeViewItemCheckBoxBorderSelected` and `TreeViewItemCheckGlyphSelected`
+ * (`TreeView_themeresources.xaml:26-28`) belong to the multi-select check box, which is
+ * v9's `TreeViewSelectionMode.Multiple` and is not built — the plan records it.
+ * `TreeViewItemMultiSelectBorderBrushSelected`, `TreeViewItemMultiSelectCheckBoxMinHeight`
+ * and `TreeViewItemMultiSelectSelectedItemBorderMargin` are the same check box's own frame.
+ * `TreeViewItemBorderThemeThickness` is emitted because the template binds it at two levels
+ * and it is zero outside high contrast, where it is what draws the item's edge.
+ */
+export const TREEVIEWITEM_KEYS = {
+	TreeViewItemMinHeight: 'TreeViewItem minimum height',
+	TreeViewItemContentHeight: 'TreeViewItem content minimum height',
+	TreeViewItemPresenterMargin: 'TreeViewItem outer margin',
+	TreeViewItemPresenterPadding: 'TreeViewItem inner padding',
+	TreeViewItemBorderThemeThickness: 'TreeViewItem border width',
+	TreeViewItemBackground: 'TreeViewItem background, at rest',
+	TreeViewItemBackgroundPointerOver: 'TreeViewItem background under the pointer',
+	TreeViewItemBackgroundPressed: 'TreeViewItem background while pressed',
+	TreeViewItemBackgroundSelected: 'TreeViewItem selected background',
+	TreeViewItemBackgroundSelectedPointerOver: 'TreeViewItem selected background under the pointer',
+	TreeViewItemBackgroundSelectedPressed: 'TreeViewItem selected background while pressed',
+	TreeViewItemBackgroundDisabled: 'TreeViewItem background while disabled',
+	TreeViewItemBackgroundSelectedDisabled: 'TreeViewItem selected background while disabled',
+	TreeViewItemForeground: 'TreeViewItem foreground, at rest',
+	TreeViewItemForegroundPointerOver: 'TreeViewItem foreground under the pointer',
+	TreeViewItemForegroundPressed: 'TreeViewItem foreground while pressed',
+	TreeViewItemForegroundSelected: 'TreeViewItem selected foreground',
+	TreeViewItemForegroundSelectedPointerOver: 'TreeViewItem selected foreground under the pointer',
+	TreeViewItemForegroundSelectedPressed: 'TreeViewItem selected foreground while pressed',
+	TreeViewItemForegroundDisabled: 'TreeViewItem foreground while disabled',
+	TreeViewItemForegroundSelectedDisabled: 'TreeViewItem selected foreground while disabled',
+	TreeViewItemBorderBrush: 'TreeViewItem border, at rest',
+	TreeViewItemBorderBrushPointerOver: 'TreeViewItem border under the pointer',
+	TreeViewItemBorderBrushPressed: 'TreeViewItem border while pressed',
+	TreeViewItemBorderBrushSelected: 'TreeViewItem selected border',
+	TreeViewItemBorderBrushSelectedPointerOver: 'TreeViewItem selected border under the pointer',
+	TreeViewItemBorderBrushSelectedPressed: 'TreeViewItem selected border while pressed',
+	TreeViewItemBorderBrushDisabled: 'TreeViewItem border while disabled',
+	TreeViewItemBorderBrushSelectedDisabled: 'TreeViewItem selected border while disabled',
+	TreeViewItemSelectionIndicatorForeground: 'TreeViewItem selection indicator',
+	TreeViewItemSelectionIndicatorForegroundPointerOver:
+		'TreeViewItem selection indicator under the pointer',
+	TreeViewItemSelectionIndicatorForegroundPressed: 'TreeViewItem selection indicator while pressed',
+	TreeViewItemSelectionIndicatorForegroundDisabled:
+		'TreeViewItem selection indicator while disabled'
 };
 
 /**
