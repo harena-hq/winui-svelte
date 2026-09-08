@@ -63,6 +63,7 @@ pnpm workspace. The library is publishable and imposes no build tooling on its c
 | D24 | The type ramp's line height is `normal`, the font's own spacing, not the published ramp's number     | ADR 0011                          |
 | D25 | An icon is a snippet the consumer draws, with a Segoe Fluent Icons code point as its shorthand       | ADR 0012                          |
 | D26 | A control's internal items host is template-private; the tranche renders its items directly          | this file, "Roadmap → v8"         |
+| D27 | A collection control is generic in its item type and draws it through a snippet the caller writes    | ADR 0013                          |
 
 ## Verification
 
@@ -1402,7 +1403,178 @@ controls/dev -name 'AppBar*'` matches three `*_themeresources.xaml` files and no
     which is wider than the point at which either the top pane's four items or the bar's crumbs
     stop fitting. The technique exists; the window is the wall.
 
-9.  **Collections** — ListView, GridView, TreeView, ItemsRepeater, ItemsView, FlipView.
+9.  **Collections** — ItemsRepeater, ItemsView, ListView, GridView, TreeView and FlipView,
+    plus the two item containers that carry every one of their pixels.
+
+    **The goal, in one line: a collection is the consumer's own items drawn by a template the
+    consumer writes.** Every items-taking control this library has shipped narrows that away.
+    `MenuFlyoutEntry`, `NavigationViewItemData`, `TabViewItemData`, `SelectorBarItemData` and
+    the rest are plain records with a fixed set of fields, and the phrase "narrowed to plain
+    records" appears in five components because the narrowing was right five times: a menu item
+    really is a glyph, a label and a callback. It is wrong here. `ItemTemplate` is not a corner
+    of ListView, it is the whole of what ListView does, and a control that only draws records
+    this library declared is not the control the Gallery page shows.
+
+    So the tranche opens by widening the contract rather than by drawing anything, and
+    **ADR 0013** is where that lands: a collection control is generic in its item type, takes
+    `items: T[]` and an `item` snippet, and identifies an item by a caller-supplied key rather
+    than by a field named `id`. The escape it replaces is `unknown[]`, which type-checks and
+    tells the consumer nothing.
+
+    That the packaging survives it was verified before this entry was written, not assumed —
+    an external dependency is verified before anything is built on it, and the toolchain
+    counts as one. A `<script lang="ts" generics="T">` component through
+    `pnpm --filter winui-svelte build` reaches `dist` with `generics="T"` intact and
+    `lang="ts"` stripped by `scripts/package/strip-script-lang.mjs`, emits a fully generic
+    `.d.ts`, compiles under `svelte/compiler` with zero warnings, and passes `publint`. The
+    one residue is an `export {};` left in the packaged script, which is inert. Had any of
+    that failed, the ADR would have had to choose differently, and it would have found out
+    in unit 8 rather than here.
+
+    **What the pins carry — `docs/surface.md` step 1, and this group answers in three ways
+    where the file's table has two.**
+
+    | control                                                                            | pin C++     | XAML visual tree                       |
+    | ---------------------------------------------------------------------------------- | ----------- | -------------------------------------- |
+    | ItemsRepeater, StackLayout, UniformGridLayout, LinedFlowLayout                     | `Repeater/` | none needed — a layout draws nothing   |
+    | ItemsView, ItemContainer                                                           | yes         | `ItemsView.xaml`, `ItemContainer.xaml` |
+    | TreeView, TreeViewItem                                                             | yes         | `TreeView.xaml`, `TreeViewItem.xaml`   |
+    | ListView, GridView, FlipView, FlipViewItem, ListViewHeaderItem, GridViewHeaderItem | none        | `generic.xaml`, in full                |
+    | **ListViewItem, GridViewItem**                                                     | none        | **none, in either pin**                |
+
+    The last row is this version's headline risk and it is a category `docs/surface.md` does not
+    yet name. `DefaultListViewItemStyle` (`generic.xaml:27524`) has exactly one element in its
+    template: a `ListViewItemPresenter` configured by some fifty brush, opacity and enum
+    properties. That presenter has no `ControlTemplate` anywhere in either pin — it is drawn by
+    the framework's own C++, which is not in `microsoft-ui-xaml` because ListViewItem is a
+    `Windows.UI.Xaml` control. **Every number in the item's chrome — where the selection
+    indicator sits and how big it is, how far the check mark insets the content, what the hover
+    fill's inset is — exists in no file this project can read.** The brushes and a handful of
+    sizes are in `ListViewItem_themeresources.xaml`; the geometry is not, and step 4 with the
+    reference machine is the only source for it. Unit 4 exists because of this row, and its
+    spec cannot be written before the measuring is done.
+
+    **The trap is `ListViewItemExpanded`, and it is v8's fourth clause with a costume on.**
+    `ListViewItem_themeresources.xaml:261` holds a complete, readable, tempting XAML tree for
+    exactly the item unit 4 has to invent: `BorderBackground`, a `ContentPresenter`, a
+    `MultiSelectSquare` 20 by 20 with a 2px border at `Margin="12,0,0,0"`, six named common
+    states. Nothing in either pin applies it — `grep -rn ListViewItemExpanded .upstream/`
+    returns the definition and nothing else — and its design is a generation older than the
+    control on screen, which has a rounded 3px check box, a 4px corner radius and a selection
+    indicator bar the old tree has no element for. Transcribing it would produce a Windows-8-era
+    item that passes every gate. **Read it for the state names; take no number from it.**
+
+    **The units, in dependency order.**
+
+    1. **ItemsRepeater, its layouts, and the item-template contract.** First because it is the
+       contract with nothing else attached: a repeater has no chrome, no selection, no scroll
+       viewport and no states — it is items, a template and a layout, which is exactly what
+       ADR 0013 has to get right. `StackLayout` and `UniformGridLayout` both ship here, because
+       the Gallery sets both on this page (`ItemsRepeaterPage.xaml`, four and three uses) and a
+       repeater with one layout is not the control. The ADR is written in this unit and cited
+       by the seven that follow.
+
+    2. **ItemContainer.** The modern selection chrome, and the one piece of this tranche that
+       is fully written down: `ItemContainer.xaml` is 150 readable lines with a
+       `PART_SelectionVisual` at `BorderThickness="3"`, a `PART_CommonVisual` stroked at
+       `ItemContainerSelectedInnerThickness` 1 inset by `ItemContainerSelectedInnerMargin` 2,
+       and a lazily-loaded check box for multiple selection. Second because unit 3 hosts it and
+       because `SelectorBarItem` already derives from it upstream — v8 found that the hard way
+       (`ItemContainer.cpp:185-220` is what enters SelectorBarItem's states) and this is the
+       unit that makes the base class a real component rather than a footnote.
+
+    3. **ItemsView.** `ItemsView.xaml:19-38` is a `ScrollView` wrapping an `ItemsRepeater`, so
+       this unit is composition plus the part neither of its pieces has: selection.
+       `SelectionMode`'s four members, `LinedFlowLayout` for the page's first example, and the
+       `ItemContainer` states driven from the view rather than from the container. This is also
+       what closes v8's one page-level deferral — `SelectorBarPage.xaml:59-79`'s colour swatches
+       are an `ItemsView` of `ItemContainer`s, and after this unit the control exists.
+
+    4. **ListViewItem and GridViewItem — the chrome that has to be measured.** Its own unit,
+       ahead of the two controls that host it, because the row above says its geometry is in no
+       file, and because two controls depending on a guess is worse than one. What the pin does
+       give: `ListViewItemMinWidth` 88, `ListViewItemMinHeight` 40, `ListViewItemCornerRadius`
+       4, `ListViewItemCheckBoxCornerRadius` 3, `ListViewItemSelectionIndicatorCornerRadius`
+       1.5, `ListViewItemContentOffsetX` -40.5, `CheckMode` `Inline`, and both
+       `SelectionCheckMarkVisualEnabled` and `SelectionIndicatorVisualEnabled` true
+       (`ListViewItem_themeresources.xaml:5-60`). What it does not give is where any of it goes.
+       **The spec for this unit is written after the measurements, from the measurements.**
+
+    5. **ListView.** The control around the item: `generic.xaml:9000-9026`'s border, scroll
+       viewport and `ItemsPresenter`, the `Header`/`Footer` slots, `SelectionMode`, and grouped
+       headers — `ListViewHeaderItem` (`generic.xaml:9131`) is fully readable, a padded
+       `ContentPresenter` over a half-pixel divider inset 12 on both sides. The scrollbar is the
+       treatment `NavigationView.svelte:782-830` already worked out against
+       `ScrollBar_themeresources.xaml`; the ScrollBar control itself stays roadmap item 13.
+
+    6. **GridView and GridViewItem.** The same presenter with its own 45-key family and its own
+       geometry, plus the wrapping panel. Split from unit 5 rather than folded into it because
+       `GridViewItem`'s numbers are measured separately — sharing a presenter upstream is not
+       evidence that two controls share a pixel — and because adjacent intents are
+       separate commits.
+
+    7. **TreeView and TreeViewItem.** Fully readable and self-contained: `TreeViewItem.xaml`
+       overrides the template it inherits from `DefaultListViewItemStyle`, so this unit depends
+       on unit 4's token family but on none of its geometry. The indentation is the one number
+       that is code — `TreeViewItem.cpp:515-524`, `depth * 16` — and the chevron, the 3-by-16
+       selection indicator at `RadiusX="2"`, and the multi-select check box are all in the file.
+       **D9 names TreeView as one of three controls to build on its own Zag machine, and this
+       unit is where that is honoured or deviated from with a reason**; the deviation, if any,
+       is a `Directive:` trailer, and the decision is made against `@zag-js/tree-view`'s actual
+       surface rather than against the row's memory of it.
+
+    8. **FlipView and FlipViewItem.** Last because it is the only one that is not a list: a
+       viewport of one item with a previous and a next button, both readable at
+       `generic.xaml:30284-30539` — four `FontIcon` glyphs, `EDD9` and `EDDA` horizontally and
+       `EDDB` and `EDDC` vertically, on a `FlipViewNextPreviousButton*` brush family — with
+       `Orientation="Vertical"` as the page's third sample.
+
+    **D27 — inside this tranche, composition is real; outside it, D26 still stands.** ItemsView
+    is built on this library's own ItemsRepeater and ItemContainer because `ItemsView.xaml` is
+    literally those two elements and both are public controls a consumer sets properties on.
+    That is the opposite of D26, and the distinction is exactly the one D26 draws: a
+    template-private host nobody can name is not a surface, and a control the Gallery gives its
+    own page to is. **v9 does not go back and rebuild BreadcrumbBar, SelectorBar or TabView on
+    their upstream hosts.** D26 rejected that already, on the grounds that what those hosts
+    contribute is padding and a viewport; that reason does not expire because the hosts now
+    exist.
+
+    **Nothing here virtualises, and that is a `WD-` with a number behind it.** ItemsRepeater's
+    reason to exist upstream is virtualisation, and this library renders every item into the
+    DOM. The measurement that makes it affordable is the acceptance surface's own: the largest
+    collection any Collections page builds is 1 000 recipes
+    (`ItemsRepeaterPage.xaml.cs:346-347`), and the next is 500 integers (`:26`). A browser lays
+    out a thousand rows without complaint. The divergence says that, names the sizes, and does
+    not claim the control would hold up at a million.
+
+    **PullToRefresh moves to the Scrolling tranche, and this is a scheduling decision rather
+    than another deferral.** v8's closing entry asked the next planner not to inherit an
+    unscheduled page and leave it unscheduled, so: `RefreshContainer` and `RefreshVisualizer`
+    belong with `ScrollView` and `AnnotatedScrollBar` in roadmap item 13. Three reasons, none of
+    them "later". Its templates are two empty `Grid`s — `RefreshContainer.xaml:11-13` and
+    `RefreshVisualizer.xaml:11` — so every pixel it draws is code, the same wall unit 4 hits and
+    with no reference state to photograph: **at rest the control is invisible**, and a
+    three-theme snapshot of it is a snapshot of a ListView. The gesture that reveals it is a
+    touch or pen pull, which `WD-020` already declines. And the surface it attaches to is a
+    scroll viewport, which is item 13's subject. The gap list above loses its Collections row.
+
+    **What this version is likely to decline, decided in the units and not here.** Drag-and-drop
+    reordering appears on three of the seven pages and is the same web-expressible-but-heavy
+    question `WD-023` answered for tabs; ListView's `ScrollIntoView` and its restore-scroll
+    sample are behaviour with no resting visual; `ItemsView`'s `LinedFlowLayout` has an
+    items-info fast path that exists for virtualisation this version does not do; and grouped
+    headers may or may not carry the sticky behaviour upstream's `ItemsStackPanel` gives them.
+    Each is a `WD-` with a measurement behind it or it is built — the one thing none of them may
+    be is unmentioned.
+
+    Done-when is v8's, applied to eight units: each control snapshotted in three themes, each
+    compared against the original on the reference guest, every prop following D21 as ADR 0012
+    amends it, ADR 0013 written in unit 1 and cited by the rest, the surface sweep's step-1
+    verdict recorded before each seal — and, this version only, **every number in unit 4 and
+    unit 6 traceable to either a pinned line or a recorded measurement of the original**, since
+    those are the two units where no file can be cited and a plausible guess is indistinguishable
+    from a reading.
+
 10. **The sample-page frame** — `ControlExample`'s three panes, `SampleCodePresenter`, the
     copy button, and `ItemPage`'s content root. Its syntax highlighting is ColorCode, pinned by
     the Gallery's own `standalone.props` at 2.0.15; the palette and the XML and C# grammars are
@@ -1424,7 +1596,10 @@ controls/dev -name 'AppBar*'` matches three `*_themeresources.xaml` files and no
 11. **Layout** — Border, SplitView, Viewbox, and the Gallery's Grid and StackPanel pages, which
     are mostly documentation of CSS this library does not need to reimplement.
 12. **Date and time** — CalendarView, CalendarDatePicker, DatePicker, TimePicker.
-13. **Scrolling** — ScrollView, PipsPager, AnnotatedScrollBar, SemanticZoom.
+13. **Scrolling** — ScrollView, PipsPager, AnnotatedScrollBar, SemanticZoom, and
+    **PullToRefresh**, moved here from Collections by v9 for the reasons its entry gives:
+    the control draws nothing at rest, everything it does draw is code rather than template,
+    and the surface it attaches to is a scroll viewport this tranche is already building.
 14. **Styles** (10) and **Motion** (7) — AcrylicBrush, AnimatedIcon, ThemeShadow, System
     Backdrops, transitions, easing, connected animation. WD-006 closes here.
 15. **Media / Windowing / System / Shell** (18) — see open question O2.
@@ -1446,7 +1621,7 @@ who builds it or when, and the acceptance gate walks the navigation tree page by
 | ---------------- | ---------------------------------------------------------------- |
 | Menus & toolbars | CommandBarFlyout, SwipeControl, StandardUICommand, XamlUICommand |
 | Basic input      | ColorPicker, RatingControl                                       |
-| Collections      | PullToRefresh                                                    |
+| Collections      | ~~PullToRefresh~~ — item 13 takes it, decided in v9's entry      |
 | Scrolling        | ScrollViewer                                                     |
 | Layout           | Canvas, RelativePanel, VariableSizedWrapGrid                     |
 | Text             | RichEditBox, RichTextBlock, TextBlock                            |
@@ -1466,6 +1641,11 @@ they are command objects with no template — so their honest disposition is a `
 page that says so, decided when the group is reached rather than now. What the list is for is
 that this gap was found by planning one tranche carefully, three tranches later than it could
 have been, and it would be found the same way again if it were not written down.
+
+**One row has been struck, and striking it is what the list is for.** Planning v9 read the
+Collections group as seven pages rather than the six its roadmap line named, found
+PullToRefresh sitting in this table, and moved it to item 13 with a reason rather than leaving
+it where it was. Twenty-three pages remain unscheduled.
 
 **A release becomes possible from v3 onward, and is deliberately taken after `Final`.** The
 capability and the decision are different questions: a release is technically possible now, and

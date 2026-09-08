@@ -68,6 +68,17 @@ Do this **before** sealing a control, from now on. It costs minutes.
    place the rest of the control is written down. Step 4 and the reference machine are the whole
    sweep for those controls, and they are the ones where skipping it costs most.
 
+   **And a control can have no first half either.** This step assumes the template is the
+   half that is readable and the code the half that is not. `ListViewItem` breaks the
+   assumption: it has no `.cpp` in the pin, and its template
+   (`generic.xaml:27524`) contains exactly one element — a `ListViewItemPresenter` set up
+   through fifty-odd properties, with no `ControlTemplate` of its own anywhere in either pin,
+   because the framework draws it in C++ this project cannot read. The brushes are resources
+   and the geometry is nowhere. When step 1 finds no code **and** the template bottoms out in
+   a presenter, both of the sweep's readable sources are gone at once and step 4 is not a
+   supplement to the reading — it is the reading. Say so in the unit, and measure before
+   writing the spec rather than after the diff.
+
 2. Grep the implementation for the ways code changes what is drawn:
    `GoToState` (a visual state the template defines but the code decides),
    `Visibility(`, `CornerRadius(`, `Opacity(`, `Foreground(`, `Background(`,
