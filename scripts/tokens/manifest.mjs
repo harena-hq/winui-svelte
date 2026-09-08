@@ -2318,6 +2318,10 @@ export const DOUBLE_LENGTHS = {
 	TabViewItemHeaderIconSize: 'TabViewItem icon box size',
 	TabViewItemHeaderCloseButtonHeight: 'TabViewItem close button height',
 	TabViewItemHeaderCloseButtonWidth: 'TabViewItem close button width',
+	TabViewItemAddButtonWidth: 'TabView add button width',
+	TabViewItemAddButtonHeight: 'TabView add button height',
+	TabViewItemScrollButtonWidth: 'TabView scroll button width',
+	TabViewItemScrollButtonHeight: 'TabView scroll button height',
 	TabViewItemMinHeight: 'TabViewItem minimum height',
 	TabViewItemMinWidth: 'TabViewItem minimum width',
 	TabViewItemMaxWidth: 'TabViewItem maximum width',
@@ -3276,13 +3280,14 @@ export const PIVOT_KEYS = {
  * item's geometry. `TabViewBackground` is the strip's own Background; the rest map to the
  * corresponding template paint, metrics, and visual states.
  *
- * The add-button family (`TabViewButtonBackground*`, `TabViewButtonForeground*`,
- * `TabViewButtonBorderBrush*`, `TabViewButtonBorderThickness`,
- * `TabViewButtonBackgroundActiveTab`, `TabViewButtonForegroundActiveTab`, and
- * `TabViewItemAddButton*`) and scroll-button family (`TabViewScrollButton*`,
- * `TabViewItemScrollButton*`, `TabViewItemLeftScrollButtonContainerPadding`, and
- * `TabViewItemRightScrollButtonContainerPadding`) are the next unit's (`TabView.xaml:39`,
- * `:118-123`).
+ * `TabViewButtonBackgroundActiveTab` and `TabViewButtonForegroundActiveTab`
+ * (`TabView_themeresources.xaml:66-67`, `:144-145`, `:222-223`) are absent because they are
+ * defined in all three themes and in the framework dictionary but are referenced by nothing
+ * in this pin. `TabViewItemScrollButtonPadding` (`:258`) is absent because
+ * `TabViewScrollButtonStyle` (`TabView.xaml:583-596`) and its template bind no Padding.
+ * `TabViewItemHeaderCloseButtonSize` (`:250`) is defined but referenced by nothing. The
+ * `TabViewScrollButton*` family has no border-thickness key of its own: the scroll style reads
+ * `TabViewButtonBorderThickness` (`TabView.xaml:592`), the add button's key.
  *
  * **`TabViewItemHeaderPadding` is absent, and its two variants are here instead.** The item's
  * Style binds it as `TabContainer.Padding` (`TabView.xaml:562`), and then the `CloseIconStates`
@@ -3350,7 +3355,51 @@ export const TABVIEW_KEYS = {
 	TabViewItemMaxWidth: 'TabViewItem maximum width',
 	TabViewItemBorderThickness: 'TabViewItem resting border width',
 	TabViewSelectedItemBorderThickness: 'TabViewItem selected border width',
-	TabViewSelectedItemHeaderMargin: 'TabViewItem selected header margin'
+	TabViewSelectedItemHeaderMargin: 'TabViewItem selected header margin',
+
+	// The add button's four brush states and shared border thickness.
+	TabViewButtonBackground: 'TabView add button resting background',
+	TabViewButtonBackgroundPointerOver: 'TabView add button hover background',
+	TabViewButtonBackgroundPressed: 'TabView add button pressed background',
+	TabViewButtonBackgroundDisabled: 'TabView add button disabled background',
+	TabViewButtonForeground: 'TabView add button resting foreground',
+	TabViewButtonForegroundPointerOver: 'TabView add button hover foreground',
+	TabViewButtonForegroundPressed: 'TabView add button pressed foreground',
+	TabViewButtonForegroundDisabled: 'TabView add button disabled foreground',
+	TabViewButtonBorderBrush: 'TabView add button resting border',
+	TabViewButtonBorderBrushPointerOver: 'TabView add button hover border',
+	TabViewButtonBorderBrushPressed: 'TabView add button pressed border',
+	TabViewButtonBorderBrushDisabled: 'TabView add button disabled border',
+	TabViewButtonBorderThickness: 'TabView add and scroll button border width',
+
+	// The scroll buttons' four brush states.
+	TabViewScrollButtonBackground: 'TabView scroll button resting background',
+	TabViewScrollButtonBackgroundPointerOver: 'TabView scroll button hover background',
+	TabViewScrollButtonBackgroundPressed: 'TabView scroll button pressed background',
+	TabViewScrollButtonBackgroundDisabled: 'TabView scroll button disabled background',
+	TabViewScrollButtonForeground: 'TabView scroll button resting foreground',
+	TabViewScrollButtonForegroundPointerOver: 'TabView scroll button hover foreground',
+	TabViewScrollButtonForegroundPressed: 'TabView scroll button pressed foreground',
+	TabViewScrollButtonForegroundDisabled: 'TabView scroll button disabled foreground',
+	TabViewScrollButtonBorderBrush: 'TabView scroll button resting border',
+	TabViewScrollButtonBorderBrushPointerOver: 'TabView scroll button hover border',
+	TabViewScrollButtonBorderBrushPressed: 'TabView scroll button pressed border',
+	TabViewScrollButtonBorderBrushDisabled: 'TabView scroll button disabled border',
+
+	// The add and scroll button metrics and their containers.
+	TabViewItemAddButtonWidth: 'TabView add button width',
+	TabViewItemAddButtonHeight: 'TabView add button height',
+	TabViewItemAddButtonFontSize: 'TabView add button glyph size',
+	TabViewItemAddButtonContainerPadding: 'TabView add button container padding',
+	TabViewItemScrollButtonWidth: 'TabView scroll button width',
+	TabViewItemScrollButtonHeight: 'TabView scroll button height',
+	// `Buton`, one t, is how upstream spells it (`TabView_themeresources.xaml:257`, read by
+	// `TabView.xaml:159`, `:165` and `:587`). ADR 0006 keeps the WinUI key verbatim, so the
+	// misspelling is the name — correcting it here changes the emitted custom property, which
+	// is what C2 compares against the generator and what a consumer overrides.
+	TabViewItemScrollButonFontSize: 'TabView scroll button glyph size',
+	TabViewItemLeftScrollButtonContainerPadding: 'TabView left scroll button container padding',
+	TabViewItemRightScrollButtonContainerPadding: 'TabView right scroll button container padding'
 };
 
 /**

@@ -1,6 +1,20 @@
 <script lang="ts" module>
 	import type { Snippet } from 'svelte';
 
+	/**
+	 * The WinUI `TabViewWidthMode` enum (`TabView.idl:6-11`) — `Equal | SizeToContent | Compact`.
+	 * All three members are here.
+	 */
+	export type TabViewWidthMode = 'equal' | 'sizeToContent' | 'compact';
+
+	/**
+	 * The WinUI `TabViewCloseButtonOverlayMode` enum (`TabView.idl:15-20`) —
+	 * `Auto | OnPointerOver | Always`. All three members are here. `Auto` and `Always` are the
+	 * same rule; `TabViewItem::UpdateCloseButton` (`TabViewItem.cpp:251-282`) has no third
+	 * branch, and `Auto` reaches it through `default:`.
+	 */
+	export type TabViewCloseButtonOverlayMode = 'auto' | 'onPointerOver' | 'always';
+
 	/** One tab. `TabView.TabItems` narrowed to plain records — D26 and NavigationView's narrowing. */
 	export interface TabViewItemData {
 		/** Stable identity. What `selected` holds and what the callbacks report. */
@@ -30,6 +44,18 @@
 		onTabCloseRequested?: (id: string) => void;
 		/** IsEnabled on the control, inverted to the attribute — ADR 0009. */
 		disabled?: boolean;
+		/** TabWidthMode. Defaults to `Equal`, as upstream does (`TabView.idl:105`). */
+		tabWidthMode?: TabViewWidthMode;
+		/** CloseButtonOverlayMode. Defaults to `Auto`, as upstream does (`TabView.idl:109`). */
+		closeButtonOverlayMode?: TabViewCloseButtonOverlayMode;
+		/** IsAddTabButtonVisible. Defaults to true, as upstream does (`TabView.idl:119`). */
+		addTabButtonVisible?: boolean;
+		/** AddTabButtonClick. */
+		onAddTabButtonClick?: () => void;
+		/** TabStripHeader, ADR 0012's general form — the content left of the tabs. */
+		tabStripHeader?: Snippet;
+		/** TabStripFooter, ADR 0012's general form — the content right of the add button. */
+		tabStripFooter?: Snippet;
 		class?: string;
 		style?: string;
 		ref?: HTMLElement | null;
@@ -37,10 +63,13 @@
 	}
 
 	// WD-023: dragging, reordering, tear-out, and browser-owned Ctrl+Tab are intentionally absent;
-	// see docs/divergences.md. TabStripHeader, TabStripFooter, and add/scroll buttons are the next
-	// unit's surface, not divergences. TabViewListView is a template-private items host, so D26 has
-	// this component render its records directly. WD-022 also applies here: the label presenter uses
-	// `OpticalMarginAlignment="TrimSideBearings"` (`TabView.xaml:575`), which CSS cannot express.
+	// WD-024: selection leaves the scroll offset where the user put it; see docs/divergences.md.
+	// AddTabButtonCommand and AddTabButtonCommandParameter are XAML ICommand plumbing for the click;
+	// `onAddTabButtonClick` is the web surface. TabStripHeaderTemplate and TabStripFooterTemplate
+	// are DataTemplates, folded into their snippets by ADR 0012. TabViewListView is a template-private
+	// items host, so D26 has this component render its records directly. WD-022 also applies here:
+	// the label presenter uses `OpticalMarginAlignment="TrimSideBearings"` (`TabView.xaml:575`),
+	// which CSS cannot express.
 </script>
 
 <script lang="ts">
@@ -50,6 +79,12 @@
 		onSelectionChanged,
 		onTabCloseRequested,
 		disabled = false,
+		tabWidthMode = 'equal',
+		closeButtonOverlayMode = 'auto',
+		addTabButtonVisible = true,
+		onAddTabButtonClick,
+		tabStripHeader,
+		tabStripFooter,
 		class: className,
 		style,
 		ref = $bindable(null),
@@ -61,6 +96,9 @@
 	// literal rather than a resource. Named here because a Private Use Area character
 	// written into the source is invisible in a diff and in most editors.
 	const closeGlyph = String.fromCodePoint(0xe711);
+	const addGlyph = String.fromCodePoint(0xe710); // TabView.xaml:41
+	const scrollBackGlyph = String.fromCodePoint(0xedd9); // TabView.xaml:159
+	const scrollForwardGlyph = String.fromCodePoint(0xedda); // TabView.xaml:165
 	const isItemDisabled = (item: TabViewItemData) => disabled || item.disabled === true;
 	const isClosable = (item: TabViewItemData) => item.closable !== false;
 	const current = $derived(selected ?? items[0]?.id ?? null);
@@ -75,6 +113,8 @@
 	}
 
 	const closeId = (id: string) => `${uid}-close-${id}`;
+	const hasCloseButton = (item: TabViewItemData) =>
+		isClosable(item) && (closeButtonOverlayMode !== 'onPointerOver' || item.id === current);
 
 	// The strip's arrow order, measured on the original: Left from the selected tab moves focus
 	// to the *previous tab's close button*, and the selection does not follow. So the order is
@@ -85,7 +125,7 @@
 		items.flatMap((item) =>
 			isItemDisabled(item)
 				? []
-				: isClosable(item)
+				: hasCloseButton(item)
 					? [tabId(item.id), closeId(item.id)]
 					: [tabId(item.id)]
 		)
@@ -131,62 +171,184 @@
 	function handleCloseKeydown(event: KeyboardEvent, item: TabViewItemData) {
 		if (walk(event, closeId(item.id))) event.stopPropagation();
 	}
+
+	let viewport = $state<HTMLElement | null>(null);
+	let overflowing = $state(false);
+	let atStart = $state(true);
+	let atEnd = $state(false);
+	let repeatDelay: ReturnType<typeof setTimeout> | undefined;
+	let repeatInterval: ReturnType<typeof setInterval> | undefined;
+
+	function syncScroll() {
+		if (!viewport) return;
+		const { clientWidth, scrollLeft, scrollWidth } = viewport;
+		overflowing = scrollWidth - clientWidth > 0.1;
+		atStart = scrollLeft < 0.1;
+		atEnd = Math.abs(scrollLeft - (scrollWidth - clientWidth)) < 0.1;
+	}
+
+	function scrollBy(direction: number) {
+		// `c_scrollAmount` is 50 (`TabView.cpp:30`); its two click handlers are `:1103-1117`.
+		viewport?.scrollBy({ left: direction * 50, behavior: 'smooth' });
+	}
+
+	function stopRepeat() {
+		if (repeatDelay !== undefined) clearTimeout(repeatDelay);
+		if (repeatInterval !== undefined) clearInterval(repeatInterval);
+		repeatDelay = undefined;
+		repeatInterval = undefined;
+	}
+
+	function startRepeat(event: PointerEvent, direction: number) {
+		if (disabled || (direction < 0 ? atStart : atEnd)) return;
+		(event.currentTarget as HTMLElement).setPointerCapture(event.pointerId);
+		stopRepeat();
+		scrollBy(direction);
+		repeatDelay = setTimeout(() => {
+			repeatInterval = setInterval(() => {
+				// Reaching the end disables this button, and a disabled control is dispatched no
+				// `pointerup` — so the repeat has to be what notices, or the interval outlives the
+				// press. `Delay="50" Interval="100"` are upstream's (`TabView.xaml:158`, `:164`).
+				if (direction < 0 ? atStart : atEnd) {
+					stopRepeat();
+					return;
+				}
+				scrollBy(direction);
+			}, 100);
+		}, 50);
+	}
+
+	$effect(() => {
+		if (!viewport) return;
+		const list = viewport.firstElementChild;
+		const observer = new ResizeObserver(syncScroll);
+		observer.observe(viewport);
+		if (list) observer.observe(list);
+		syncScroll();
+		// Showing the buttons only shrinks the viewport, which cannot turn an overflow into a fit,
+		// and hiding them only grows it, so these observations cannot oscillate.
+		return () => observer.disconnect();
+	});
+
+	$effect(() => stopRepeat);
 </script>
 
-<div bind:this={ref} class={['root', className]} {style} {...rest}>
+<div
+	bind:this={ref}
+	class={['root', className]}
+	data-width-mode={tabWidthMode}
+	data-close-mode={closeButtonOverlayMode}
+	{style}
+	{...rest}
+>
 	<div class="strip">
 		<div class="line"></div>
-		<div class="list" role="tablist">
-			{#each items as item (item.id)}
-				<div
-					class="tab"
-					role="tab"
-					id={tabId(item.id)}
-					data-closable={isClosable(item) || undefined}
-					tabindex={item.id === current ? 0 : -1}
-					aria-selected={item.id === current}
-					aria-disabled={isItemDisabled(item) || undefined}
-					aria-controls={panelId}
-					data-selected={item.id === current || undefined}
-					onclick={() => select(item)}
-					onkeydown={(event) => handleKeydown(event, item)}
-				>
-					<div class="body">
-						{#if item.icon || item.glyph}
-							<!-- `{:else if item.glyph}` rather than a bare `{:else}` with a non-null
+		{#if tabStripHeader}<div class="strip-header">{@render tabStripHeader()}</div>{/if}
+		<div class="scroller">
+			{#if overflowing}
+				<div class="scroll-slot back">
+					<button
+						type="button"
+						class="scroll"
+						tabindex="-1"
+						aria-label="Scroll tab list backward"
+						disabled={disabled || atStart}
+						onclick={(event) => {
+							// Pointer-down already stepped; keyboard clicks alone have detail zero.
+							if (event.detail === 0) scrollBy(-1);
+						}}
+						onpointerdown={(event) => startRepeat(event, -1)}
+						onpointerup={stopRepeat}
+						onpointercancel={stopRepeat}
+						onlostpointercapture={stopRepeat}>{scrollBackGlyph}</button
+					>
+				</div>
+			{/if}
+			<div class="viewport" bind:this={viewport} onscroll={syncScroll}>
+				<div class="list" role="tablist">
+					{#each items as item (item.id)}
+						<div
+							class="tab"
+							role="tab"
+							id={tabId(item.id)}
+							data-closable={isClosable(item) || undefined}
+							tabindex={item.id === current ? 0 : -1}
+							aria-selected={item.id === current}
+							aria-disabled={isItemDisabled(item) || undefined}
+							aria-controls={panelId}
+							data-selected={item.id === current || undefined}
+							onclick={() => select(item)}
+							onkeydown={(event) => handleKeydown(event, item)}
+						>
+							<div class="body">
+								{#if item.icon || item.glyph}
+									<!-- `{:else if item.glyph}` rather than a bare `{:else}` with a non-null
 							     assertion: a published `.svelte` file's markup expressions are parsed as
 							     JavaScript by the consumer's compiler, so a TypeScript `!` in one is a
 							     syntax error in their build and not in ours. `pnpm smoke` is what says so. -->
-							<span class="icon" aria-hidden="true">
-								{#if item.icon}{@render item.icon()}{:else if item.glyph}{String.fromCodePoint(
-										Number.parseInt(item.glyph, 16)
-									)}{/if}
-							</span>
-						{/if}
-						<span class="label winui-CaptionTextBlockStyle"
-							>{#if item.headerContent}{@render item.headerContent()}{:else}{item.header}{/if}</span
-						>
-						{#if isClosable(item)}
-							<button
-								type="button"
-								class="close"
-								tabindex="-1"
-								aria-label="Close"
-								disabled={isItemDisabled(item)}
-								id={closeId(item.id)}
-								onkeydown={(event) => handleCloseKeydown(event, item)}
-								onclick={(event) => {
-									event.stopPropagation();
-									onTabCloseRequested?.(item.id);
-								}}>{closeGlyph}</button
-							>
-						{/if}
-					</div>
-					<span class="separator"></span>
-					{#if item.id === current}<span class="flare-right"></span>{/if}
+									<span class="icon" aria-hidden="true">
+										{#if item.icon}{@render item.icon()}{:else if item.glyph}{String.fromCodePoint(
+												Number.parseInt(item.glyph, 16)
+											)}{/if}
+									</span>
+								{/if}
+								<span class="label winui-CaptionTextBlockStyle"
+									>{#if item.headerContent}{@render item.headerContent()}{:else}{item.header}{/if}</span
+								>
+								{#if isClosable(item)}
+									<!-- The pointer follows CSS hover while the keyboard walks only buttons certainly shown. -->
+									<button
+										type="button"
+										class="close"
+										tabindex="-1"
+										aria-label="Close"
+										disabled={isItemDisabled(item)}
+										id={closeId(item.id)}
+										onkeydown={(event) => handleCloseKeydown(event, item)}
+										onclick={(event) => {
+											event.stopPropagation();
+											onTabCloseRequested?.(item.id);
+										}}>{closeGlyph}</button
+									>
+								{/if}
+							</div>
+							<span class="separator"></span>
+							{#if item.id === current}<span class="flare-right"></span>{/if}
+						</div>
+					{/each}
 				</div>
-			{/each}
+			</div>
+			{#if overflowing}
+				<div class="scroll-slot forward">
+					<button
+						type="button"
+						class="scroll"
+						tabindex="-1"
+						aria-label="Scroll tab list forward"
+						disabled={disabled || atEnd}
+						onclick={(event) => {
+							if (event.detail === 0) scrollBy(1);
+						}}
+						onpointerdown={(event) => startRepeat(event, 1)}
+						onpointerup={stopRepeat}
+						onpointercancel={stopRepeat}
+						onlostpointercapture={stopRepeat}>{scrollForwardGlyph}</button
+					>
+				</div>
+			{/if}
 		</div>
+		{#if addTabButtonVisible}
+			<div class="add-slot">
+				<button
+					type="button"
+					class="add"
+					aria-label="Add New Tab"
+					{disabled}
+					onclick={() => onAddTabButtonClick?.()}>{addGlyph}</button
+				>
+			</div>
+		{/if}
+		{#if tabStripFooter}<div class="strip-footer">{@render tabStripFooter()}</div>{/if}
 	</div>
 	<div
 		class="panel"
@@ -231,6 +393,150 @@
 	.list {
 		display: flex;
 		min-width: 0;
+		/* The 8px before the first tab and the 4px after the last were measured on the guest;
+		   upstream builds the pair from four boxes that are never separately observable — the
+		   `TabContainerGrid`'s 2px minimum left column (`TabView.xaml:31`), the ScrollViewer
+		   grid's own 2px minimum column (`:151`), the `ScrollContentPresenter`'s 1px padding
+		   (`:162`) and the `ItemsPresenter`'s 4px Header and Footer (`:116-125`). One padding
+		   rather than four boxes. */
+		padding: 0 4px 0 8px;
+	}
+
+	.scroller {
+		display: flex;
+		min-width: 0;
+		/* `TabColumn` is `Auto` (`TabView.xaml:32`): the strip is as wide as its tabs until the
+		   window runs out, and only then does it stop growing. */
+		flex: 0 1 auto;
+	}
+
+	.viewport {
+		min-width: 0;
+		/* The ScrollViewer the two RepeatButtons flank (`TabView.xaml:162`). `auto` and not
+		   `hidden`, so the wheel and a trackpad still move the strip the way they do upstream;
+		   the bar itself is upstream's thin overlay one and is not drawn here. */
+		overflow-x: auto;
+		overflow-y: hidden;
+		scrollbar-width: none;
+	}
+	.viewport::-webkit-scrollbar {
+		display: none;
+	}
+
+	.strip-header,
+	.strip-footer {
+		display: flex;
+		align-items: center;
+	}
+	.strip-footer {
+		/* `RightContentColumn` is the Grid's only `*` column (`TabView.xaml:34`) and its presenter
+		   stretches into it (`TabView.xaml:43`). */
+		flex: 1 1 auto;
+		min-width: 0;
+	}
+
+	.add-slot,
+	.scroll-slot {
+		display: flex;
+		/* `VerticalAlignment="Bottom"` on all three containers (`TabView.xaml:40`, `:157`, `:163`),
+		   which puts the button's bottom edge on the bottom of the strip's border line. */
+		align-self: flex-end;
+		flex: none;
+	}
+	.add-slot {
+		padding: var(--winui-TabViewItemAddButtonContainerPadding);
+	}
+	.scroll-slot.back {
+		padding: var(--winui-TabViewItemLeftScrollButtonContainerPadding);
+	}
+	.scroll-slot.forward {
+		padding: var(--winui-TabViewItemRightScrollButtonContainerPadding);
+	}
+
+	.add,
+	.scroll {
+		position: relative;
+		display: grid;
+		flex: none;
+		place-items: center;
+		padding: 0;
+		font-family: var(--winui-SymbolThemeFontFamily);
+		line-height: normal;
+		border-style: solid;
+		/* `TabViewScrollButtonStyle` reads the add button's thickness key and has none of its own
+		   (`TabView.xaml:592`). */
+		border-width: var(--winui-TabViewButtonBorderThickness);
+		border-radius: var(--winui-ControlCornerRadius);
+		cursor: pointer;
+		/* The user agent's own `:focus-visible` ring is a second one; see Button.svelte. */
+		outline: none;
+	}
+
+	.add {
+		width: var(--winui-TabViewItemAddButtonWidth);
+		height: var(--winui-TabViewItemAddButtonHeight);
+		font-size: var(--winui-TabViewItemAddButtonFontSize);
+		background: var(--winui-TabViewButtonBackground);
+		color: var(--winui-TabViewButtonForeground);
+		border-color: var(--winui-TabViewButtonBorderBrush);
+	}
+	.add:hover:not(:disabled) {
+		background: var(--winui-TabViewButtonBackgroundPointerOver);
+		color: var(--winui-TabViewButtonForegroundPointerOver);
+		border-color: var(--winui-TabViewButtonBorderBrushPointerOver);
+	}
+	.add:active:not(:disabled) {
+		background: var(--winui-TabViewButtonBackgroundPressed);
+		color: var(--winui-TabViewButtonForegroundPressed);
+		border-color: var(--winui-TabViewButtonBorderBrushPressed);
+	}
+	.add:disabled {
+		background: var(--winui-TabViewButtonBackgroundDisabled);
+		color: var(--winui-TabViewButtonForegroundDisabled);
+		border-color: var(--winui-TabViewButtonBorderBrushDisabled);
+		cursor: default;
+	}
+
+	.scroll {
+		width: var(--winui-TabViewItemScrollButtonWidth);
+		height: var(--winui-TabViewItemScrollButtonHeight);
+		font-size: var(--winui-TabViewItemScrollButonFontSize);
+		background: var(--winui-TabViewScrollButtonBackground);
+		color: var(--winui-TabViewScrollButtonForeground);
+		border-color: var(--winui-TabViewScrollButtonBorderBrush);
+	}
+	.scroll:hover:not(:disabled) {
+		background: var(--winui-TabViewScrollButtonBackgroundPointerOver);
+		color: var(--winui-TabViewScrollButtonForegroundPointerOver);
+		border-color: var(--winui-TabViewScrollButtonBorderBrushPointerOver);
+	}
+	.scroll:active:not(:disabled) {
+		background: var(--winui-TabViewScrollButtonBackgroundPressed);
+		color: var(--winui-TabViewScrollButtonForegroundPressed);
+		border-color: var(--winui-TabViewScrollButtonBorderBrushPressed);
+	}
+	.scroll:disabled {
+		background: var(--winui-TabViewScrollButtonBackgroundDisabled);
+		color: var(--winui-TabViewScrollButtonForegroundDisabled);
+		border-color: var(--winui-TabViewScrollButtonBorderBrushDisabled);
+		cursor: default;
+	}
+
+	.add:focus-visible::before,
+	.scroll:focus-visible::before {
+		content: '';
+		position: absolute;
+		/* c1-allow: TabView.xaml:238 and :594, both `FocusVisualMargin="-3"` */
+		inset: -3px;
+		/* c1-allow: TabView.xaml:238 and :594, both `FocusVisualMargin="-3"` */
+		border-radius: calc(var(--winui-ControlCornerRadius) + 3px);
+		box-shadow:
+			inset 0 0 0 var(--winui-FocusVisualPrimaryThickness)
+				var(--winui-SystemControlFocusVisualPrimaryBrush),
+			inset 0 0 0
+				calc(var(--winui-FocusVisualPrimaryThickness) + var(--winui-FocusVisualSecondaryThickness))
+				var(--winui-SystemControlFocusVisualSecondaryBrush);
+		pointer-events: none;
 	}
 
 	.tab {
@@ -250,6 +556,27 @@
 		cursor: pointer;
 		/* The user agent's own `:focus-visible` ring is a second one; see Button.svelte. */
 		outline: none;
+	}
+
+	/* `TabView::UpdateTabWidths` (`TabView.cpp:1140` and `:1276`) leaves `tabWidth` at NaN for both
+	   of the non-Equal modes, so `tvi.Width(NaN)` is Auto and neither `TabViewItemMinWidth` nor
+	   `TabViewItemMaxWidth` is read at all — measured, a `Home` tab comes out 78px in both. */
+	.root[data-width-mode='sizeToContent'] .tab,
+	.root[data-width-mode='compact'] .tab {
+		flex: 0 0 auto;
+		width: auto;
+		min-width: 0;
+	}
+
+	/* `TabViewItem::UpdateWidthModeVisualState` (`TabViewItem.cpp:284-295`) enters `Compact`
+	   only for a tab that is *not* selected, and the state (`TabView.xaml:482-491`) collapses the
+	   label and zeroes the icon's trailing margin. The icon already carries
+	   `TabViewItemHeaderIconSize` as its width, which is the third setter. */
+	.root[data-width-mode='compact'] .tab:not([data-selected='true']) .label {
+		display: none;
+	}
+	.root[data-width-mode='compact'] .tab:not([data-selected='true']) .icon {
+		margin: 0;
 	}
 
 	.body {
@@ -273,6 +600,12 @@
 	}
 
 	.tab:not([data-closable]) .body {
+		padding: var(--winui-TabViewItemHeaderPaddingWithoutCloseButton);
+	}
+	.root[data-close-mode='onPointerOver'] .tab:not([data-selected='true']):not(:hover) .close {
+		display: none;
+	}
+	.root[data-close-mode='onPointerOver'] .tab:not([data-selected='true']):not(:hover) .body {
 		padding: var(--winui-TabViewItemHeaderPaddingWithoutCloseButton);
 	}
 
