@@ -1,6 +1,7 @@
 <script lang="ts" module>
 	import type { Snippet } from 'svelte';
 	import type { ItemsRepeaterLayout } from './ItemsRepeater.svelte';
+	export type SelectionMode = import('../internal/selection').SelectionMode;
 
 	/*
 	 * `ScrollView`, `VerticalScrollController`, `TryGetItemIndex`, and `StartBringItemIntoView`
@@ -41,7 +42,7 @@
 		/** ItemsView.Layout. An omitted layout is the default `StackLayout` (ItemsView.xaml:11-15). */
 		layout?: ItemsRepeaterLayout;
 		/** ItemsView.SelectionMode. Defaults to `Single` (ItemsView.h:21). */
-		selectionMode?: 'none' | 'single' | 'multiple' | 'extended';
+		selectionMode?: SelectionMode;
 		/**
 		 * ItemsView.SelectedItems, held as indexes rather than items — an index is what every
 		 * selector method upstream takes, and what identifies an item this control cannot compare
@@ -62,6 +63,7 @@
 </script>
 
 <script lang="ts" generics="T">
+	import { nextSelection } from '../internal/selection';
 	import ItemsRepeater from './ItemsRepeater.svelte';
 
 	let {
@@ -102,55 +104,6 @@
 		onSelectionChanged?.(sorted);
 	}
 
-	const range = (from: number, to: number) => {
-		const [lo, hi] = from <= to ? [from, to] : [to, from];
-		return Array.from({ length: hi - lo + 1 }, (_, index) => lo + index);
-	};
-
-	// SingleSelector::OnInteractedAction, ItemsView/SingleSelector.cpp:25-45. The model is put
-	// in single-select first, so a plain click always moves the selection rather than adding to
-	// it; Ctrl is the only way to end up with nothing selected.
-	function interactSingle(index: number, ctrl: boolean) {
-		if (!ctrl || !isSelected(index)) commit([index]);
-		else commit([]);
-	}
-
-	// MultipleSelector::OnInteractedAction, ItemsView/MultipleSelector.cpp:18-63. A Shift range
-	// takes the anchor's own state: it selects the range when the anchor is selected and
-	// deselects it when the anchor is not, and does nothing when the two already agree.
-	function interactMultiple(index: number, shift: boolean) {
-		if (shift && anchor !== null) {
-			const anchorSelected = isSelected(anchor);
-			if (anchorSelected === isSelected(index)) return;
-			const span = range(anchor, index);
-			commit(
-				anchorSelected
-					? [...selectedIndexes, ...span]
-					: selectedIndexes.filter((selectedIndex) => !span.includes(selectedIndex))
-			);
-			return;
-		}
-		commit(
-			isSelected(index)
-				? selectedIndexes.filter((selectedIndex) => selectedIndex !== index)
-				: [...selectedIndexes, index]
-		);
-	}
-
-	// ExtendedSelector::OnInteractedAction, ItemsView/ExtendedSelector.cpp:18-53. Note the last
-	// branch: a plain click on an item that is already selected changes nothing, which is what
-	// keeps a multi-item selection alive under a click that is about to become a drag.
-	function interactExtended(index: number, ctrl: boolean, shift: boolean) {
-		if (shift && anchor !== null) commit(range(anchor, index));
-		else if (ctrl)
-			commit(
-				isSelected(index)
-					? selectedIndexes.filter((selectedIndex) => selectedIndex !== index)
-					: [...selectedIndexes, index]
-			);
-		else if (!isSelected(index)) commit([index]);
-	}
-
 	// Which item was interacted with. The repeater renders one element per item, in order, so
 	// the index is the position of the child that contains the event's target. Asking the DOM
 	// is what lets the consumer keep ownership of the container — ADR 0013's amendment.
@@ -162,10 +115,10 @@
 	function interact(index: number, ctrl: boolean, shift: boolean) {
 		if (index < 0 || index >= items.length) return;
 		if (isItemInvokedEnabled) onItemInvoked?.(items[index], index);
+		// ItemsView delegates to SingleSelector, MultipleSelector, and ExtendedSelector; ListViewBase's
+		// own selection is in neither pin, so both controls use this one transcription of those rules.
+		commit(nextSelection(selectionMode, { index, selected: selectedIndexes, anchor, ctrl, shift }));
 		if (selectionMode === 'none') return;
-		if (selectionMode === 'single') interactSingle(index, ctrl);
-		else if (selectionMode === 'multiple') interactMultiple(index, shift);
-		else interactExtended(index, ctrl, shift);
 		if (!shift) anchor = index;
 	}
 
