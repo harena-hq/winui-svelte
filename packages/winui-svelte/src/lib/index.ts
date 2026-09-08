@@ -43,6 +43,8 @@ export { default as ItemContainer } from './components/ItemContainer.svelte';
 export type { ItemContainerProps } from './components/ItemContainer.svelte';
 export { default as ItemsView } from './components/ItemsView.svelte';
 export type { ItemsViewItemState, ItemsViewProps } from './components/ItemsView.svelte';
+export { default as ListView } from './components/ListView.svelte';
+export type { ListViewProps } from './components/ListView.svelte';
 export { default as ListViewItem } from './components/ListViewItem.svelte';
 export type { ListViewItemProps } from './components/ListViewItem.svelte';
 export { default as ItemsRepeater } from './components/ItemsRepeater.svelte';
