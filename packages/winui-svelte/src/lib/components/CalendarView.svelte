@@ -121,6 +121,20 @@
 		return date;
 	}
 
+	/**
+	 * The weekday row's labels. WinUI asks the calendar for the shortest weekday string, which is
+	 * CLDR's *short* width — `Su`, `Mo` — and `Intl` exposes only the abbreviated (`Sun`) and
+	 * narrow (`S`) widths, so the first two characters of the abbreviated name stand in. That is
+	 * exact wherever the short width is the abbreviated name truncated, and it collapses where it
+	 * is not: `ar` abbreviates every weekday to a name beginning `ال`, and seven identical labels
+	 * are worse than seven long ones. So the truncation is kept only while it leaves the seven
+	 * distinct. WD-032.
+	 */
+	function weekdayLabels(weekdays: string[]): string[] {
+		const short = weekdays.map((weekday) => Array.from(weekday).slice(0, 2).join(''));
+		return new Set(short).size === short.length ? short : weekdays;
+	}
+
 	function dateFor(value: { toDate: (timeZone: string) => Date }): Date {
 		return value.toDate(timeZone);
 	}
@@ -328,6 +342,7 @@
 		{maxValue}
 	>
 		{#snippet child({ props, months, weekdays })}
+			{@const labels = weekdayLabels(weekdays)}
 			<div
 				{...props}
 				class={['calendar-view', className]}
@@ -396,7 +411,7 @@
 								<span class="weekday winui-CaptionTextBlockStyle">
 									{#if dayOfWeekFormat === undefined}
 										<!-- WD-032: Intl has no CLDR short weekday width. -->
-										{Array.from(weekday).slice(0, 2).join('')}
+										{labels[index]}
 									{:else}
 										{formatDate(dayOfWeekFormat, dateFor(months[0].weeks[0][index]), locale)}
 									{/if}

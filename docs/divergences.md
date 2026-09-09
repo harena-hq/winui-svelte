@@ -795,10 +795,14 @@ gate does.
 - **WinUI does**: ask the calendar for the shortest weekday string (`DayOfWeekAsString(1)`,
   `CalendarView_Partial.cpp:2239-2243`), CLDR's _short_ width — `Su`, `Mo` in en-US, distinct
   from both abbreviated (`Sun`) and narrow (`S`).
-- **We do**: take the abbreviated `Intl.DateTimeFormat` weekday name's first two characters.
-  Intl exposes abbreviated and narrow but not CLDR short, so this is exact for en-US and
-  Latin-script locales whose short width is the abbreviated name truncated, and can differ
-  elsewhere. `DayOfWeekFormat` formats without truncation and is the escape hatch.
+- **We do**: take the abbreviated `Intl.DateTimeFormat` weekday name's first two characters,
+  **unless that leaves two weekdays with the same label**, in which case the abbreviated names
+  are used whole. Intl exposes the abbreviated and narrow widths and not CLDR's short one, so the
+  truncation is exact for en-US and for the Latin-script locales whose short width is the
+  abbreviated name truncated, and it is wrong elsewhere: `ar` abbreviates every weekday to a name
+  beginning `ال`, and seven identical labels are a worse answer than seven long ones. Measured by
+  driving the control through five languages. `DayOfWeekFormat` formats without truncation and is
+  the escape hatch.
 - **Why accepted**: the primitive supplies the correctly ordered abbreviated names, while the
   missing Intl width leaves no native string to look up.
 - **Would reconsider if**: Intl exposes that width, or a consumer needs a locale it gets wrong.
