@@ -1773,6 +1773,10 @@
 	--winui-ProgressBarTrackCornerRadius: 0.5px;
 	--winui-ProgressRingForegroundThemeBrush: var(--winui-AccentFillColorDefaultBrush);
 	--winui-ProgressRingBackgroundThemeBrush: var(--winui-ControlFillColorTransparentBrush);
+	--winui-RefreshContainerForegroundBrush: black;
+	--winui-RefreshContainerBackgroundBrush: transparent;
+	--winui-RefreshVisualizerForeground: black;
+	--winui-RefreshVisualizerBackground: transparent;
 	--winui-RadioButtonsHeaderForeground: var(--winui-TextFillColorPrimaryBrush);
 	--winui-RadioButtonsHeaderForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
 	--winui-RadioButtonsColumnSpacing: 7px;
@@ -3619,6 +3623,10 @@
 	--winui-ProgressBarErrorForegroundColor: var(--winui-SystemFillColorCritical);
 	--winui-ProgressRingForegroundThemeBrush: var(--winui-AccentFillColorDefaultBrush);
 	--winui-ProgressRingBackgroundThemeBrush: var(--winui-ControlFillColorTransparentBrush);
+	--winui-RefreshContainerForegroundBrush: white;
+	--winui-RefreshContainerBackgroundBrush: transparent;
+	--winui-RefreshVisualizerForeground: white;
+	--winui-RefreshVisualizerBackground: transparent;
 	--winui-RadioButtonsHeaderForeground: var(--winui-TextFillColorPrimaryBrush);
 	--winui-RadioButtonsHeaderForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
 	--winui-ScrollViewScrollBarsSeparatorBackground: var(--winui-ControlFillColorTransparentBrush);
@@ -5487,6 +5495,10 @@
 		--winui-ProgressBarErrorForegroundColor: var(--winui-SystemFillColorCritical);
 		--winui-ProgressRingForegroundThemeBrush: var(--winui-AccentFillColorDefaultBrush);
 		--winui-ProgressRingBackgroundThemeBrush: var(--winui-ControlFillColorTransparentBrush);
+		--winui-RefreshContainerForegroundBrush: white;
+		--winui-RefreshContainerBackgroundBrush: transparent;
+		--winui-RefreshVisualizerForeground: white;
+		--winui-RefreshVisualizerBackground: transparent;
 		--winui-RadioButtonsHeaderForeground: var(--winui-TextFillColorPrimaryBrush);
 		--winui-RadioButtonsHeaderForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
 		--winui-ScrollViewScrollBarsSeparatorBackground: var(--winui-ControlFillColorTransparentBrush);
@@ -7296,6 +7308,10 @@
 	--winui-ProgressBarErrorForegroundColor: var(--winui-SystemColorHotlightColor);
 	--winui-ProgressRingForegroundThemeBrush: var(--winui-SystemColorHighlightColor);
 	--winui-ProgressRingBackgroundThemeBrush: var(--winui-SystemColorButtonFaceColor);
+	--winui-RefreshContainerForegroundBrush: var(--winui-SystemColorHighlightTextColor);
+	--winui-RefreshContainerBackgroundBrush: transparent;
+	--winui-RefreshVisualizerForeground: var(--winui-SystemColorHighlightTextColor);
+	--winui-RefreshVisualizerBackground: transparent;
 	--winui-RadioButtonsHeaderForeground: var(--winui-SystemControlForegroundBaseHighBrush);
 	--winui-RadioButtonsHeaderForegroundDisabled: var(
 		--winui-SystemControlDisabledBaseMediumLowBrush

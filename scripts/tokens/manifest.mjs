@@ -4481,6 +4481,24 @@ export const ANNOTATEDSCROLLBAR_KEYS = {
 };
 
 /**
+ * Keys the two `PullToRefresh` dictionaries define —
+ * `controls/dev/PullToRefresh/RefreshVisualizer/RefreshVisualizer_themeresources.xaml` and
+ * `.../RefreshContainer/RefreshContainer_themeresources.xaml`.
+ *
+ * Four brushes for two controls, and every one of them is `Transparent` or a plain
+ * black/white/system foreground in all three themes. They are seeded rather than written into
+ * the components as literals for the reason a zero token and a missing one are indistinguishable
+ * in a snapshot: a consumer overriding `RefreshVisualizerForeground` is exactly who finds out
+ * that the control never read it.
+ */
+export const PULLTOREFRESH_KEYS = {
+	RefreshVisualizerForeground: 'The refresh indicator',
+	RefreshVisualizerBackground: 'The area the indicator is revealed in',
+	RefreshContainerForegroundBrush: 'The container, inherited by its content',
+	RefreshContainerBackgroundBrush: 'The container behind its content and its visualizer'
+};
+
+/**
  * The Windows accent ramp: the stock accent `#0078D4` and the six steps WinUI
  * derives from it, measured on the same guest through
  * `Windows.UI.ViewManagement.UISettings.GetColorValue`.
