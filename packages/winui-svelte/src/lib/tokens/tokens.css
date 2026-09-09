@@ -326,6 +326,94 @@
 	--winui-ButtonBorderBrushPressed: var(--winui-ControlStrokeColorDefaultBrush);
 	--winui-ButtonBorderBrushDisabled: var(--winui-ControlStrokeColorDefaultBrush);
 	--winui-ButtonPadding: 5px 11px 6px 11px;
+	--winui-CalendarViewSelectedHoverBorderBrush: var(--winui-AccentFillColorSecondaryBrush);
+	--winui-CalendarViewSelectedPressedBorderBrush: var(--winui-SubtleFillColorTertiaryBrush);
+	--winui-CalendarViewSelectedBorderBrush: var(--winui-AccentFillColorDefaultBrush);
+	--winui-CalendarViewHoverBorderBrush: var(--winui-SubtleFillColorSecondaryBrush);
+	--winui-CalendarViewPressedBorderBrush: var(--winui-SubtleFillColorTertiaryBrush);
+	--winui-CalendarViewTodayForeground: var(--winui-TextOnAccentFillColorPrimaryBrush);
+	--winui-CalendarViewBlackoutForeground: var(--winui-TextFillColorPrimaryBrush);
+	--winui-CalendarViewSelectedForeground: var(--winui-AccentTextFillColorPrimaryBrush);
+	--winui-CalendarViewPressedForeground: var(--winui-TextFillColorSecondaryBrush);
+	--winui-CalendarViewOutOfScopeForeground: var(--winui-TextFillColorSecondaryBrush);
+	--winui-CalendarViewCalendarItemForeground: var(--winui-TextFillColorPrimaryBrush);
+	--winui-CalendarViewOutOfScopeBackground: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-CalendarViewCalendarItemBackground: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-CalendarViewForeground: var(--winui-TextFillColorPrimaryBrush);
+	--winui-CalendarViewBackground: var(--winui-ControlFillColorInputActiveBrush);
+	--winui-CalendarViewBorderBrush: var(--winui-ControlStrokeColorDefaultBrush);
+	--winui-CalendarViewWeekDayForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+	--winui-CalendarViewNavigationButtonBackground: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-CalendarViewNavigationButtonForegroundPointerOver: var(
+		--winui-ControlStrongFillColorDefaultBrush
+	);
+	--winui-CalendarViewNavigationButtonForegroundPressed: var(
+		--winui-ControlStrongFillColorDefaultBrush
+	);
+	--winui-CalendarViewNavigationButtonForegroundDisabled: var(
+		--winui-ControlStrongFillColorDisabledBrush
+	);
+	--winui-CalendarViewNavigationButtonBorderBrushPointerOver: var(
+		--winui-SubtleFillColorTransparentBrush
+	);
+	--winui-CalendarViewNavigationButtonBorderBrush: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-CalendarViewFocusVisualPrimaryBrush: var(--winui-FocusStrokeColorOuterBrush);
+	--winui-CalendarViewFocusVisualSecondaryBrush: var(--winui-FocusStrokeColorInnerBrush);
+	--winui-CalendarViewBlackoutStrikethroughBrush: var(--winui-ControlStrongStrokeColorDefaultBrush);
+	--winui-CalendarViewSelectedDisabledBorderBrush: var(--winui-AccentFillColorDisabledBrush);
+	--winui-CalendarViewTodaySelectedInnerBorderBrush: var(--winui-TextOnAccentFillColorPrimaryBrush);
+	--winui-CalendarViewDisabledForeground: var(--winui-TextFillColorDisabledBrush);
+	--winui-CalendarViewSelectedHoverForeground: var(--winui-AccentTextFillColorPrimaryBrush);
+	--winui-CalendarViewSelectedPressedForeground: var(--winui-AccentTextFillColorTertiaryBrush);
+	--winui-CalendarViewSelectedDisabledForeground: var(--winui-AccentTextFillColorDisabledBrush);
+	--winui-CalendarViewOutOfScopeHoverForeground: var(--winui-TextFillColorPrimaryBrush);
+	--winui-CalendarViewOutOfScopePressedForeground: var(--winui-TextFillColorTertiaryBrush);
+	--winui-CalendarViewCalendarItemHoverBackground: var(--winui-SubtleFillColorSecondaryBrush);
+	--winui-CalendarViewCalendarItemPressedBackground: var(--winui-SubtleFillColorTertiaryBrush);
+	--winui-CalendarViewCalendarItemDisabledBackground: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-CalendarViewCalendarItemBorderBrush: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-CalendarViewTodayBackground: var(--winui-AccentFillColorDefaultBrush);
+	--winui-CalendarViewTodayBlackoutBackground: var(--winui-AccentFillColorTertiaryBrush);
+	--winui-CalendarViewTodayBlackoutForeground: var(--winui-TextOnAccentFillColorPrimaryBrush);
+	--winui-CalendarViewTodayHoverBackground: var(--winui-AccentFillColorSecondaryBrush);
+	--winui-CalendarViewTodayPressedBackground: var(--winui-AccentFillColorTertiaryBrush);
+	--winui-CalendarViewTodayDisabledBackground: var(--winui-AccentFillColorDisabledBrush);
+	--winui-CalendarViewBlackoutBackground: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-CalendarViewNavigationButtonBackgroundPointerOver: var(
+		--winui-SubtleFillColorSecondaryBrush
+	);
+	--winui-CalendarViewNavigationButtonBackgroundPressed: var(--winui-SubtleFillColorTertiaryBrush);
+	--winui-CalendarViewHeaderNavigationButtonForegroundPointerOver: var(
+		--winui-TextFillColorPrimaryBrush
+	);
+	--winui-CalendarViewHeaderNavigationButtonForegroundPressed: var(
+		--winui-TextFillColorSecondaryBrush
+	);
+	--winui-CalendarViewHeaderNavigationButtonForegroundDisabled: var(
+		--winui-TextFillColorDisabledBrush
+	);
+	--winui-CalendarViewDayItemFontSize: var(--winui-ControlContentThemeFontSize);
+	--winui-CalendarViewMonthYearItemFontSize: var(--winui-ControlContentThemeFontSize);
+	--winui-CalendarViewFirstOfMonthLabelFontSize: 8px;
+	--winui-CalendarViewFirstOfYearDecadeLabelFontSize: 8px;
+	--winui-CalendarViewHeaderNavigationButtonFontSize: 14px;
+	--winui-CalendarViewNavigationButtonFontSize: 8px;
+	--winui-CalendarViewDayItemMargin: 3px 0px 0px 0px;
+	--winui-CalendarViewWeekDayMargin: 1px;
+	--winui-CalendarViewWeekDayPadding: 12px;
+	--winui-CalendarViewMonthYearItemMargin: 0px;
+	--winui-CalendarViewFirstOfMonthLabelMargin: 2px 0px 0px 0px;
+	--winui-CalendarViewFirstOfYearDecadeLabelMargin: 9px 0px 0px 0px;
+	--winui-CalendarViewHeaderNavigationButtonPadding: 7px 8px 8px 8px;
+	--winui-CalendarViewNavigationButtonPadding: 11.5px 12px 11.5px 12px;
+	--winui-CalendarViewHeaderNavigationButtonMargin: 6px 3px 7px 7px;
+	--winui-CalendarViewNavigationPreviousButtonMargin: 6px 3px 7px 3px;
+	--winui-CalendarViewNavigationNextButtonMargin: 6px 7px 7px 3px;
+	--winui-CalendarViewNavigationButtonFocusVisualMargin: -2px;
+	--winui-CalendarViewHeaderNavigationFontWeight: 600;
+	--winui-CalendarViewWeekDayFontWeight: 600;
+	--winui-CalendarViewTodayFontWeight: 400;
+	--winui-CalendarViewNavigationButtonScalePressed: 0.875;
 	--winui-CheckBoxForegroundUnchecked: var(--winui-TextFillColorPrimaryBrush);
 	--winui-CheckBoxForegroundUncheckedPointerOver: var(--winui-TextFillColorPrimaryBrush);
 	--winui-CheckBoxForegroundUncheckedPressed: var(--winui-TextFillColorPrimaryBrush);
@@ -1733,9 +1821,11 @@
 	--winui-SystemControlDisabledBaseMediumLowBrush: var(--winui-SystemBaseMediumLowColor);
 	--winui-SystemControlDisabledChromeDisabledHighBrush: var(--winui-SystemChromeDisabledHighColor);
 	--winui-SystemControlDisabledChromeDisabledLowBrush: var(--winui-SystemChromeDisabledLowColor);
+	--winui-SystemControlDisabledChromeMediumLowBrush: var(--winui-SystemChromeMediumLowColor);
 	--winui-SystemControlForegroundBaseHighBrush: var(--winui-SystemBaseHighColor);
 	--winui-SystemControlForegroundBaseMediumBrush: var(--winui-SystemBaseMediumColor);
 	--winui-SystemControlForegroundChromeHighBrush: var(--winui-SystemChromeHighColor);
+	--winui-SystemControlForegroundChromeMediumBrush: var(--winui-SystemChromeMediumColor);
 	--winui-SystemControlForegroundTransparentBrush: transparent;
 	--winui-SystemControlHighlightAltBaseHighBrush: var(--winui-SystemBaseHighColor);
 	--winui-SystemControlHighlightAltBaseMediumBrush: var(--winui-SystemBaseMediumColor);
@@ -1760,6 +1850,8 @@
 	);
 	--winui-SystemControlHighlightTransparentBrush: transparent;
 	--winui-SystemControlHyperlinkTextBrush: var(--winui-SystemAccentColor);
+	--winui-SystemControlHyperlinkBaseHighBrush: var(--winui-SystemBaseHighColor);
+	--winui-SystemControlHyperlinkBaseMediumHighBrush: var(--winui-SystemBaseMediumHighColor);
 	--winui-SystemControlPageBackgroundAltMediumBrush: var(--winui-SystemAltMediumColor);
 	--winui-SystemControlPageBackgroundMediumAltMediumBrush: var(--winui-SystemAltMediumColor);
 	--winui-SystemControlPageBackgroundChromeLowBrush: var(--winui-SystemChromeLowColor);
@@ -2034,6 +2126,93 @@
 	--winui-ButtonBorderBrushPointerOver: var(--winui-ControlElevationBorderBrush);
 	--winui-ButtonBorderBrushPressed: var(--winui-ControlStrokeColorDefaultBrush);
 	--winui-ButtonBorderBrushDisabled: var(--winui-ControlStrokeColorDefaultBrush);
+	--winui-CalendarViewSelectedHoverBorderBrush: var(--winui-AccentFillColorSecondaryBrush);
+	--winui-CalendarViewSelectedPressedBorderBrush: var(--winui-SubtleFillColorTertiaryBrush);
+	--winui-CalendarViewSelectedBorderBrush: var(--winui-AccentFillColorDefaultBrush);
+	--winui-CalendarViewHoverBorderBrush: var(--winui-SubtleFillColorSecondaryBrush);
+	--winui-CalendarViewPressedBorderBrush: var(--winui-SubtleFillColorTertiaryBrush);
+	--winui-CalendarViewTodayForeground: var(--winui-TextOnAccentFillColorPrimaryBrush);
+	--winui-CalendarViewBlackoutForeground: var(--winui-TextFillColorPrimaryBrush);
+	--winui-CalendarViewSelectedForeground: var(--winui-AccentTextFillColorPrimaryBrush);
+	--winui-CalendarViewPressedForeground: var(--winui-TextFillColorSecondaryBrush);
+	--winui-CalendarViewOutOfScopeForeground: var(--winui-TextFillColorSecondaryBrush);
+	--winui-CalendarViewCalendarItemForeground: var(--winui-TextFillColorPrimaryBrush);
+	--winui-CalendarViewOutOfScopeBackground: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-CalendarViewCalendarItemBackground: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-CalendarViewForeground: var(--winui-TextFillColorPrimaryBrush);
+	--winui-CalendarViewBackground: var(--winui-ControlFillColorInputActiveBrush);
+	--winui-CalendarViewBorderBrush: var(--winui-ControlStrokeColorDefaultBrush);
+	--winui-CalendarViewWeekDayForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+	--winui-CalendarViewNavigationButtonBackground: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-CalendarViewNavigationButtonForegroundPointerOver: var(
+		--winui-ControlStrongFillColorDefaultBrush
+	);
+	--winui-CalendarViewNavigationButtonForegroundPressed: var(
+		--winui-ControlStrongFillColorDefaultBrush
+	);
+	--winui-CalendarViewNavigationButtonForegroundDisabled: var(
+		--winui-ControlStrongFillColorDisabledBrush
+	);
+	--winui-CalendarViewNavigationButtonBorderBrushPointerOver: var(
+		--winui-SubtleFillColorTransparentBrush
+	);
+	--winui-CalendarViewNavigationButtonBorderBrush: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-CalendarViewFocusVisualPrimaryBrush: var(--winui-FocusStrokeColorOuterBrush);
+	--winui-CalendarViewFocusVisualSecondaryBrush: var(--winui-FocusStrokeColorInnerBrush);
+	--winui-CalendarViewBlackoutStrikethroughBrush: var(--winui-ControlStrongStrokeColorDefaultBrush);
+	--winui-CalendarViewSelectedDisabledBorderBrush: var(--winui-AccentFillColorDisabledBrush);
+	--winui-CalendarViewTodaySelectedInnerBorderBrush: var(--winui-TextOnAccentFillColorPrimaryBrush);
+	--winui-CalendarViewDisabledForeground: var(--winui-TextFillColorDisabledBrush);
+	--winui-CalendarViewSelectedHoverForeground: var(--winui-AccentTextFillColorPrimaryBrush);
+	--winui-CalendarViewSelectedPressedForeground: var(--winui-AccentTextFillColorTertiaryBrush);
+	--winui-CalendarViewSelectedDisabledForeground: var(--winui-AccentTextFillColorDisabledBrush);
+	--winui-CalendarViewOutOfScopeHoverForeground: var(--winui-TextFillColorPrimaryBrush);
+	--winui-CalendarViewOutOfScopePressedForeground: var(--winui-TextFillColorTertiaryBrush);
+	--winui-CalendarViewCalendarItemHoverBackground: var(--winui-SubtleFillColorSecondaryBrush);
+	--winui-CalendarViewCalendarItemPressedBackground: var(--winui-SubtleFillColorTertiaryBrush);
+	--winui-CalendarViewCalendarItemDisabledBackground: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-CalendarViewCalendarItemBorderBrush: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-CalendarViewTodayBackground: var(--winui-AccentFillColorDefaultBrush);
+	--winui-CalendarViewTodayBlackoutBackground: var(--winui-AccentFillColorTertiaryBrush);
+	--winui-CalendarViewTodayBlackoutForeground: var(--winui-TextOnAccentFillColorPrimaryBrush);
+	--winui-CalendarViewTodayHoverBackground: var(--winui-AccentFillColorSecondaryBrush);
+	--winui-CalendarViewTodayPressedBackground: var(--winui-AccentFillColorTertiaryBrush);
+	--winui-CalendarViewTodayDisabledBackground: var(--winui-AccentFillColorDisabledBrush);
+	--winui-CalendarViewBlackoutBackground: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-CalendarViewNavigationButtonBackgroundPointerOver: var(
+		--winui-SubtleFillColorSecondaryBrush
+	);
+	--winui-CalendarViewNavigationButtonBackgroundPressed: var(--winui-SubtleFillColorTertiaryBrush);
+	--winui-CalendarViewHeaderNavigationButtonForegroundPointerOver: var(
+		--winui-TextFillColorPrimaryBrush
+	);
+	--winui-CalendarViewHeaderNavigationButtonForegroundPressed: var(
+		--winui-TextFillColorSecondaryBrush
+	);
+	--winui-CalendarViewHeaderNavigationButtonForegroundDisabled: var(
+		--winui-TextFillColorDisabledBrush
+	);
+	--winui-CalendarViewDayItemFontSize: var(--winui-ControlContentThemeFontSize);
+	--winui-CalendarViewMonthYearItemFontSize: var(--winui-ControlContentThemeFontSize);
+	--winui-CalendarViewFirstOfMonthLabelFontSize: 8px;
+	--winui-CalendarViewFirstOfYearDecadeLabelFontSize: 8px;
+	--winui-CalendarViewHeaderNavigationButtonFontSize: 14px;
+	--winui-CalendarViewNavigationButtonFontSize: 8px;
+	--winui-CalendarViewDayItemMargin: 3px 0px 0px 0px;
+	--winui-CalendarViewWeekDayMargin: 1px;
+	--winui-CalendarViewWeekDayPadding: 12px;
+	--winui-CalendarViewMonthYearItemMargin: 0px;
+	--winui-CalendarViewFirstOfMonthLabelMargin: 2px 0px 0px 0px;
+	--winui-CalendarViewFirstOfYearDecadeLabelMargin: 9px 0px 0px 0px;
+	--winui-CalendarViewHeaderNavigationButtonPadding: 7px 8px 8px 8px;
+	--winui-CalendarViewNavigationButtonPadding: 11.5px 12px 11.5px 12px;
+	--winui-CalendarViewHeaderNavigationButtonMargin: 6px 3px 7px 7px;
+	--winui-CalendarViewNavigationPreviousButtonMargin: 6px 3px 7px 3px;
+	--winui-CalendarViewNavigationNextButtonMargin: 6px 7px 7px 3px;
+	--winui-CalendarViewNavigationButtonFocusVisualMargin: -2px;
+	--winui-CalendarViewHeaderNavigationFontWeight: 600;
+	--winui-CalendarViewWeekDayFontWeight: 600;
+	--winui-CalendarViewTodayFontWeight: 400;
 	--winui-CheckBoxForegroundUnchecked: var(--winui-TextFillColorPrimaryBrush);
 	--winui-CheckBoxForegroundUncheckedPointerOver: var(--winui-TextFillColorPrimaryBrush);
 	--winui-CheckBoxForegroundUncheckedPressed: var(--winui-TextFillColorPrimaryBrush);
@@ -3212,9 +3391,11 @@
 	--winui-SystemControlDisabledBaseMediumLowBrush: var(--winui-SystemBaseMediumLowColor);
 	--winui-SystemControlDisabledChromeDisabledHighBrush: var(--winui-SystemChromeDisabledHighColor);
 	--winui-SystemControlDisabledChromeDisabledLowBrush: var(--winui-SystemChromeDisabledLowColor);
+	--winui-SystemControlDisabledChromeMediumLowBrush: var(--winui-SystemChromeMediumLowColor);
 	--winui-SystemControlForegroundBaseHighBrush: var(--winui-SystemBaseHighColor);
 	--winui-SystemControlForegroundBaseMediumBrush: var(--winui-SystemBaseMediumColor);
 	--winui-SystemControlForegroundChromeHighBrush: var(--winui-SystemChromeHighColor);
+	--winui-SystemControlForegroundChromeMediumBrush: var(--winui-SystemChromeMediumColor);
 	--winui-SystemControlForegroundTransparentBrush: transparent;
 	--winui-SystemControlHighlightAltBaseHighBrush: var(--winui-SystemBaseHighColor);
 	--winui-SystemControlHighlightAltBaseMediumBrush: var(--winui-SystemBaseMediumColor);
@@ -3239,6 +3420,8 @@
 	);
 	--winui-SystemControlHighlightTransparentBrush: transparent;
 	--winui-SystemControlHyperlinkTextBrush: var(--winui-SystemAccentColor);
+	--winui-SystemControlHyperlinkBaseHighBrush: var(--winui-SystemBaseHighColor);
+	--winui-SystemControlHyperlinkBaseMediumHighBrush: var(--winui-SystemBaseMediumHighColor);
 	--winui-SystemControlPageBackgroundAltMediumBrush: var(--winui-SystemAltMediumColor);
 	--winui-SystemControlPageBackgroundMediumAltMediumBrush: var(--winui-SystemAltMediumColor);
 	--winui-SystemControlPageBackgroundChromeLowBrush: var(--winui-SystemChromeLowColor);
@@ -3522,6 +3705,101 @@
 		--winui-ButtonBorderBrushPointerOver: var(--winui-ControlElevationBorderBrush);
 		--winui-ButtonBorderBrushPressed: var(--winui-ControlStrokeColorDefaultBrush);
 		--winui-ButtonBorderBrushDisabled: var(--winui-ControlStrokeColorDefaultBrush);
+		--winui-CalendarViewSelectedHoverBorderBrush: var(--winui-AccentFillColorSecondaryBrush);
+		--winui-CalendarViewSelectedPressedBorderBrush: var(--winui-SubtleFillColorTertiaryBrush);
+		--winui-CalendarViewSelectedBorderBrush: var(--winui-AccentFillColorDefaultBrush);
+		--winui-CalendarViewHoverBorderBrush: var(--winui-SubtleFillColorSecondaryBrush);
+		--winui-CalendarViewPressedBorderBrush: var(--winui-SubtleFillColorTertiaryBrush);
+		--winui-CalendarViewTodayForeground: var(--winui-TextOnAccentFillColorPrimaryBrush);
+		--winui-CalendarViewBlackoutForeground: var(--winui-TextFillColorPrimaryBrush);
+		--winui-CalendarViewSelectedForeground: var(--winui-AccentTextFillColorPrimaryBrush);
+		--winui-CalendarViewPressedForeground: var(--winui-TextFillColorSecondaryBrush);
+		--winui-CalendarViewOutOfScopeForeground: var(--winui-TextFillColorSecondaryBrush);
+		--winui-CalendarViewCalendarItemForeground: var(--winui-TextFillColorPrimaryBrush);
+		--winui-CalendarViewOutOfScopeBackground: var(--winui-SubtleFillColorTransparentBrush);
+		--winui-CalendarViewCalendarItemBackground: var(--winui-SubtleFillColorTransparentBrush);
+		--winui-CalendarViewForeground: var(--winui-TextFillColorPrimaryBrush);
+		--winui-CalendarViewBackground: var(--winui-ControlFillColorInputActiveBrush);
+		--winui-CalendarViewBorderBrush: var(--winui-ControlStrokeColorDefaultBrush);
+		--winui-CalendarViewWeekDayForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+		--winui-CalendarViewNavigationButtonBackground: var(--winui-SubtleFillColorTransparentBrush);
+		--winui-CalendarViewNavigationButtonForegroundPointerOver: var(
+			--winui-ControlStrongFillColorDefaultBrush
+		);
+		--winui-CalendarViewNavigationButtonForegroundPressed: var(
+			--winui-ControlStrongFillColorDefaultBrush
+		);
+		--winui-CalendarViewNavigationButtonForegroundDisabled: var(
+			--winui-ControlStrongFillColorDisabledBrush
+		);
+		--winui-CalendarViewNavigationButtonBorderBrushPointerOver: var(
+			--winui-SubtleFillColorTransparentBrush
+		);
+		--winui-CalendarViewNavigationButtonBorderBrush: var(--winui-SubtleFillColorTransparentBrush);
+		--winui-CalendarViewFocusVisualPrimaryBrush: var(--winui-FocusStrokeColorOuterBrush);
+		--winui-CalendarViewFocusVisualSecondaryBrush: var(--winui-FocusStrokeColorInnerBrush);
+		--winui-CalendarViewBlackoutStrikethroughBrush: var(
+			--winui-ControlStrongStrokeColorDefaultBrush
+		);
+		--winui-CalendarViewSelectedDisabledBorderBrush: var(--winui-AccentFillColorDisabledBrush);
+		--winui-CalendarViewTodaySelectedInnerBorderBrush: var(
+			--winui-TextOnAccentFillColorPrimaryBrush
+		);
+		--winui-CalendarViewDisabledForeground: var(--winui-TextFillColorDisabledBrush);
+		--winui-CalendarViewSelectedHoverForeground: var(--winui-AccentTextFillColorPrimaryBrush);
+		--winui-CalendarViewSelectedPressedForeground: var(--winui-AccentTextFillColorTertiaryBrush);
+		--winui-CalendarViewSelectedDisabledForeground: var(--winui-AccentTextFillColorDisabledBrush);
+		--winui-CalendarViewOutOfScopeHoverForeground: var(--winui-TextFillColorPrimaryBrush);
+		--winui-CalendarViewOutOfScopePressedForeground: var(--winui-TextFillColorTertiaryBrush);
+		--winui-CalendarViewCalendarItemHoverBackground: var(--winui-SubtleFillColorSecondaryBrush);
+		--winui-CalendarViewCalendarItemPressedBackground: var(--winui-SubtleFillColorTertiaryBrush);
+		--winui-CalendarViewCalendarItemDisabledBackground: var(
+			--winui-SubtleFillColorTransparentBrush
+		);
+		--winui-CalendarViewCalendarItemBorderBrush: var(--winui-SubtleFillColorTransparentBrush);
+		--winui-CalendarViewTodayBackground: var(--winui-AccentFillColorDefaultBrush);
+		--winui-CalendarViewTodayBlackoutBackground: var(--winui-AccentFillColorTertiaryBrush);
+		--winui-CalendarViewTodayBlackoutForeground: var(--winui-TextOnAccentFillColorPrimaryBrush);
+		--winui-CalendarViewTodayHoverBackground: var(--winui-AccentFillColorSecondaryBrush);
+		--winui-CalendarViewTodayPressedBackground: var(--winui-AccentFillColorTertiaryBrush);
+		--winui-CalendarViewTodayDisabledBackground: var(--winui-AccentFillColorDisabledBrush);
+		--winui-CalendarViewBlackoutBackground: var(--winui-SubtleFillColorTransparentBrush);
+		--winui-CalendarViewNavigationButtonBackgroundPointerOver: var(
+			--winui-SubtleFillColorSecondaryBrush
+		);
+		--winui-CalendarViewNavigationButtonBackgroundPressed: var(
+			--winui-SubtleFillColorTertiaryBrush
+		);
+		--winui-CalendarViewHeaderNavigationButtonForegroundPointerOver: var(
+			--winui-TextFillColorPrimaryBrush
+		);
+		--winui-CalendarViewHeaderNavigationButtonForegroundPressed: var(
+			--winui-TextFillColorSecondaryBrush
+		);
+		--winui-CalendarViewHeaderNavigationButtonForegroundDisabled: var(
+			--winui-TextFillColorDisabledBrush
+		);
+		--winui-CalendarViewDayItemFontSize: var(--winui-ControlContentThemeFontSize);
+		--winui-CalendarViewMonthYearItemFontSize: var(--winui-ControlContentThemeFontSize);
+		--winui-CalendarViewFirstOfMonthLabelFontSize: 8px;
+		--winui-CalendarViewFirstOfYearDecadeLabelFontSize: 8px;
+		--winui-CalendarViewHeaderNavigationButtonFontSize: 14px;
+		--winui-CalendarViewNavigationButtonFontSize: 8px;
+		--winui-CalendarViewDayItemMargin: 3px 0px 0px 0px;
+		--winui-CalendarViewWeekDayMargin: 1px;
+		--winui-CalendarViewWeekDayPadding: 12px;
+		--winui-CalendarViewMonthYearItemMargin: 0px;
+		--winui-CalendarViewFirstOfMonthLabelMargin: 2px 0px 0px 0px;
+		--winui-CalendarViewFirstOfYearDecadeLabelMargin: 9px 0px 0px 0px;
+		--winui-CalendarViewHeaderNavigationButtonPadding: 7px 8px 8px 8px;
+		--winui-CalendarViewNavigationButtonPadding: 11.5px 12px 11.5px 12px;
+		--winui-CalendarViewHeaderNavigationButtonMargin: 6px 3px 7px 7px;
+		--winui-CalendarViewNavigationPreviousButtonMargin: 6px 3px 7px 3px;
+		--winui-CalendarViewNavigationNextButtonMargin: 6px 7px 7px 3px;
+		--winui-CalendarViewNavigationButtonFocusVisualMargin: -2px;
+		--winui-CalendarViewHeaderNavigationFontWeight: 600;
+		--winui-CalendarViewWeekDayFontWeight: 600;
+		--winui-CalendarViewTodayFontWeight: 400;
 		--winui-CheckBoxForegroundUnchecked: var(--winui-TextFillColorPrimaryBrush);
 		--winui-CheckBoxForegroundUncheckedPointerOver: var(--winui-TextFillColorPrimaryBrush);
 		--winui-CheckBoxForegroundUncheckedPressed: var(--winui-TextFillColorPrimaryBrush);
@@ -4774,9 +5052,11 @@
 			--winui-SystemChromeDisabledHighColor
 		);
 		--winui-SystemControlDisabledChromeDisabledLowBrush: var(--winui-SystemChromeDisabledLowColor);
+		--winui-SystemControlDisabledChromeMediumLowBrush: var(--winui-SystemChromeMediumLowColor);
 		--winui-SystemControlForegroundBaseHighBrush: var(--winui-SystemBaseHighColor);
 		--winui-SystemControlForegroundBaseMediumBrush: var(--winui-SystemBaseMediumColor);
 		--winui-SystemControlForegroundChromeHighBrush: var(--winui-SystemChromeHighColor);
+		--winui-SystemControlForegroundChromeMediumBrush: var(--winui-SystemChromeMediumColor);
 		--winui-SystemControlForegroundTransparentBrush: transparent;
 		--winui-SystemControlHighlightAltBaseHighBrush: var(--winui-SystemBaseHighColor);
 		--winui-SystemControlHighlightAltBaseMediumBrush: var(--winui-SystemBaseMediumColor);
@@ -4801,6 +5081,8 @@
 		);
 		--winui-SystemControlHighlightTransparentBrush: transparent;
 		--winui-SystemControlHyperlinkTextBrush: var(--winui-SystemAccentColor);
+		--winui-SystemControlHyperlinkBaseHighBrush: var(--winui-SystemBaseHighColor);
+		--winui-SystemControlHyperlinkBaseMediumHighBrush: var(--winui-SystemBaseMediumHighColor);
 		--winui-SystemControlPageBackgroundAltMediumBrush: var(--winui-SystemAltMediumColor);
 		--winui-SystemControlPageBackgroundMediumAltMediumBrush: var(--winui-SystemAltMediumColor);
 		--winui-SystemControlPageBackgroundChromeLowBrush: var(--winui-SystemChromeLowColor);
@@ -5102,6 +5384,105 @@
 	--winui-ButtonBorderBrushPressed: var(--winui-SystemColorHighlightTextColorBrush);
 	--winui-ButtonBorderBrushDisabled: var(--winui-SystemColorGrayTextColor);
 	--winui-ButtonBorderThemeThickness: 1px;
+	--winui-CalendarViewSelectedHoverBorderBrush: var(
+		--winui-SystemControlHighlightListAccentMediumBrush
+	);
+	--winui-CalendarViewSelectedPressedBorderBrush: var(
+		--winui-SystemControlHighlightListAccentHighBrush
+	);
+	--winui-CalendarViewSelectedBorderBrush: var(--winui-SystemColorHighlightColor);
+	--winui-CalendarViewHoverBorderBrush: var(--winui-SystemColorHighlightColor);
+	--winui-CalendarViewPressedBorderBrush: var(--winui-SystemControlHighlightBaseMediumBrush);
+	--winui-CalendarViewTodayForeground: var(--winui-SystemControlHighlightAltChromeWhiteBrush);
+	--winui-CalendarViewBlackoutForeground: var(--winui-SystemControlDisabledBaseMediumLowBrush);
+	--winui-CalendarViewSelectedForeground: var(--winui-SystemColorHighlightColor);
+	--winui-CalendarViewPressedForeground: var(--winui-SystemColorHighlightColor);
+	--winui-CalendarViewOutOfScopeForeground: var(--winui-SystemControlHyperlinkBaseHighBrush);
+	--winui-CalendarViewCalendarItemForeground: var(--winui-SystemControlForegroundBaseHighBrush);
+	--winui-CalendarViewOutOfScopeBackground: var(--winui-SystemControlDisabledChromeMediumLowBrush);
+	--winui-CalendarViewCalendarItemBackground: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-CalendarViewForeground: var(--winui-SystemControlHyperlinkBaseMediumHighBrush);
+	--winui-CalendarViewBackground: var(--winui-SystemColorButtonFaceColor);
+	--winui-CalendarViewBorderBrush: var(--winui-SystemControlForegroundChromeMediumBrush);
+	--winui-CalendarViewWeekDayForegroundDisabled: var(
+		--winui-SystemControlDisabledBaseMediumLowBrush
+	);
+	--winui-CalendarViewNavigationButtonBackground: var(--winui-SystemControlTransparentBrush);
+	--winui-CalendarViewNavigationButtonForegroundPointerOver: var(
+		--winui-SystemColorHighlightTextColorBrush
+	);
+	--winui-CalendarViewNavigationButtonForegroundPressed: var(
+		--winui-SystemColorHighlightTextColorBrush
+	);
+	--winui-CalendarViewNavigationButtonForegroundDisabled: var(
+		--winui-SystemColorGrayTextColorBrush
+	);
+	--winui-CalendarViewNavigationButtonBorderBrushPointerOver: var(
+		--winui-SystemControlTransparentBrush
+	);
+	--winui-CalendarViewNavigationButtonBorderBrush: var(--winui-SystemControlTransparentBrush);
+	--winui-CalendarViewFocusVisualPrimaryBrush: var(--winui-SystemColorWindowTextColorBrush);
+	--winui-CalendarViewFocusVisualSecondaryBrush: var(--winui-SystemColorWindowColorBrush);
+	--winui-CalendarViewBlackoutStrikethroughBrush: var(--winui-SystemColorButtonTextColorBrush);
+	--winui-CalendarViewSelectedDisabledBorderBrush: var(--winui-SystemColorGrayTextColorBrush);
+	--winui-CalendarViewTodaySelectedInnerBorderBrush: var(
+		--winui-SystemControlHighlightAltChromeWhiteBrush
+	);
+	--winui-CalendarViewDisabledForeground: var(--winui-SystemControlDisabledBaseMediumLowBrush);
+	--winui-CalendarViewSelectedHoverForeground: var(--winui-SystemColorHighlightColor);
+	--winui-CalendarViewSelectedPressedForeground: var(--winui-SystemColorHighlightColor);
+	--winui-CalendarViewSelectedDisabledForeground: var(--winui-SystemColorGrayTextColorBrush);
+	--winui-CalendarViewOutOfScopeHoverForeground: var(--winui-SystemControlHyperlinkBaseHighBrush);
+	--winui-CalendarViewOutOfScopePressedForeground: var(--winui-SystemColorHighlightColor);
+	--winui-CalendarViewCalendarItemHoverBackground: var(--winui-SystemColorWindowColorBrush);
+	--winui-CalendarViewCalendarItemPressedBackground: var(--winui-SystemColorWindowColorBrush);
+	--winui-CalendarViewCalendarItemDisabledBackground: var(--winui-SystemControlTransparentBrush);
+	--winui-CalendarViewCalendarItemBorderBrush: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-CalendarViewTodayBackground: var(--winui-SystemColorHighlightColorBrush);
+	--winui-CalendarViewTodayBlackoutBackground: var(--winui-SystemColorHighlightColorBrush);
+	--winui-CalendarViewTodayBlackoutForeground: var(
+		--winui-SystemControlHighlightAltChromeWhiteBrush
+	);
+	--winui-CalendarViewTodayHoverBackground: var(--winui-SystemColorHighlightColorBrush);
+	--winui-CalendarViewTodayPressedBackground: var(--winui-SystemColorHighlightColorBrush);
+	--winui-CalendarViewTodayDisabledBackground: var(--winui-SystemColorHighlightColorBrush);
+	--winui-CalendarViewBlackoutBackground: var(--winui-SystemControlTransparentBrush);
+	--winui-CalendarViewNavigationButtonBackgroundPointerOver: var(
+		--winui-SystemColorHighlightColorBrush
+	);
+	--winui-CalendarViewNavigationButtonBackgroundPressed: var(
+		--winui-SystemColorHighlightColorBrush
+	);
+	--winui-CalendarViewHeaderNavigationButtonForegroundPointerOver: var(
+		--winui-SystemColorHighlightTextColorBrush
+	);
+	--winui-CalendarViewHeaderNavigationButtonForegroundPressed: var(
+		--winui-SystemColorHighlightTextColorBrush
+	);
+	--winui-CalendarViewHeaderNavigationButtonForegroundDisabled: var(
+		--winui-SystemColorGrayTextColorBrush
+	);
+	--winui-CalendarViewDayItemFontSize: var(--winui-ControlContentThemeFontSize);
+	--winui-CalendarViewMonthYearItemFontSize: var(--winui-ControlContentThemeFontSize);
+	--winui-CalendarViewFirstOfMonthLabelFontSize: 8px;
+	--winui-CalendarViewFirstOfYearDecadeLabelFontSize: 8px;
+	--winui-CalendarViewHeaderNavigationButtonFontSize: 14px;
+	--winui-CalendarViewNavigationButtonFontSize: 8px;
+	--winui-CalendarViewDayItemMargin: 3px 0px 0px 0px;
+	--winui-CalendarViewWeekDayMargin: 1px;
+	--winui-CalendarViewWeekDayPadding: 12px;
+	--winui-CalendarViewMonthYearItemMargin: 0px;
+	--winui-CalendarViewFirstOfMonthLabelMargin: 2px 0px 0px 0px;
+	--winui-CalendarViewFirstOfYearDecadeLabelMargin: 9px 0px 0px 0px;
+	--winui-CalendarViewHeaderNavigationButtonPadding: 7px 8px 8px 8px;
+	--winui-CalendarViewNavigationButtonPadding: 11.5px 12px 11.5px 12px;
+	--winui-CalendarViewHeaderNavigationButtonMargin: 6px 3px 7px 7px;
+	--winui-CalendarViewNavigationPreviousButtonMargin: 6px 3px 7px 3px;
+	--winui-CalendarViewNavigationNextButtonMargin: 6px 7px 7px 3px;
+	--winui-CalendarViewNavigationButtonFocusVisualMargin: -2px;
+	--winui-CalendarViewHeaderNavigationFontWeight: 600;
+	--winui-CalendarViewWeekDayFontWeight: 600;
+	--winui-CalendarViewTodayFontWeight: 400;
 	--winui-CheckBoxForegroundUnchecked: var(--winui-SystemColorButtonTextColorBrush);
 	--winui-CheckBoxForegroundUncheckedPointerOver: var(--winui-SystemColorButtonTextColorBrush);
 	--winui-CheckBoxForegroundUncheckedPressed: var(--winui-SystemColorButtonTextColorBrush);
@@ -6261,9 +6642,11 @@
 	--winui-SystemControlDisabledBaseMediumLowBrush: var(--winui-SystemColorGrayTextColor);
 	--winui-SystemControlDisabledChromeDisabledHighBrush: var(--winui-SystemColorGrayTextColor);
 	--winui-SystemControlDisabledChromeDisabledLowBrush: var(--winui-SystemColorGrayTextColor);
+	--winui-SystemControlDisabledChromeMediumLowBrush: var(--winui-SystemColorButtonFaceColor);
 	--winui-SystemControlForegroundBaseHighBrush: var(--winui-SystemColorButtonTextColor);
 	--winui-SystemControlForegroundBaseMediumBrush: var(--winui-SystemColorButtonTextColor);
 	--winui-SystemControlForegroundChromeHighBrush: var(--winui-SystemColorButtonTextColor);
+	--winui-SystemControlForegroundChromeMediumBrush: var(--winui-SystemColorButtonTextColor);
 	--winui-SystemControlForegroundTransparentBrush: var(--winui-SystemColorButtonTextColor);
 	--winui-SystemControlHighlightAltBaseHighBrush: var(--winui-SystemColorHighlightTextColor);
 	--winui-SystemControlHighlightAltBaseMediumBrush: var(--winui-SystemColorHighlightTextColor);
@@ -6276,6 +6659,8 @@
 	--winui-SystemControlHighlightListAccentMediumBrush: var(--winui-SystemColorHighlightColor);
 	--winui-SystemControlHighlightTransparentBrush: var(--winui-SystemColorHighlightColor);
 	--winui-SystemControlHyperlinkTextBrush: var(--winui-SystemColorHotlightColor);
+	--winui-SystemControlHyperlinkBaseHighBrush: var(--winui-SystemColorHotlightColor);
+	--winui-SystemControlHyperlinkBaseMediumHighBrush: var(--winui-SystemColorHotlightColor);
 	--winui-SystemControlPageBackgroundAltMediumBrush: var(--winui-SystemColorWindowColor);
 	--winui-SystemControlPageBackgroundMediumAltMediumBrush: color-mix(
 		in srgb,
