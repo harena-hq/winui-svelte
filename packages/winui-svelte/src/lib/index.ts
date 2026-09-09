@@ -90,6 +90,8 @@ export { default as Popup } from './components/Popup.svelte';
 export type { PopupProps } from './components/Popup.svelte';
 export { default as RadioButton } from './components/RadioButton.svelte';
 export type { RadioButtonProps } from './components/RadioButton.svelte';
+export { default as RadioButtons } from './components/RadioButtons.svelte';
+export type { RadioButtonsProps } from './components/RadioButtons.svelte';
 export { default as RepeatButton } from './components/RepeatButton.svelte';
 export type { RepeatButtonProps } from './components/RepeatButton.svelte';
 export { default as SelectorBar } from './components/SelectorBar.svelte';

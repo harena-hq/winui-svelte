@@ -1121,6 +1121,19 @@ export const RADIOBUTTON_KEYS = {
 };
 
 /**
+ * Keys RadioButtons reads — v11's first set. The group control around RadioButton
+ * (`controls/dev/RadioButtons/RadioButtons.xaml`): a header with two foregrounds and the
+ * margin below it, and the two gaps of the column-major grid its items fill.
+ */
+export const RADIOBUTTONS_KEYS = {
+	RadioButtonsHeaderForeground: 'RadioButtons header text',
+	RadioButtonsHeaderForegroundDisabled: 'RadioButtons header text, disabled',
+	RadioButtonsColumnSpacing: 'RadioButtons, the gap between columns',
+	RadioButtonsRowSpacing: 'RadioButtons, the gap between rows',
+	RadioButtonsTopHeaderMargin: 'RadioButtons header, the gap below it'
+};
+
+/**
  * Keys ToggleSwitch reads — the seventh seed set.
  *
  * The track is two stacked 40x20 rectangles, `OuterBorder` for off and `SwitchKnobBounds`
@@ -2463,6 +2476,8 @@ export const DOUBLE_LENGTHS = {
 	RadioButtonCheckGlyphSize: 'the dot inside a checked RadioButton',
 	RadioButtonCheckGlyphPointerOverSize: 'the dot inside a RadioButton under the pointer',
 	RadioButtonCheckGlyphPressedOverSize: 'the dot inside a RadioButton while pressed',
+	RadioButtonsColumnSpacing: 'the gap between RadioButtons columns',
+	RadioButtonsRowSpacing: 'the gap between RadioButtons rows',
 
 	ToggleSwitchOnStrokeThickness: "the stroke around a ToggleSwitch's on track",
 	ToggleSwitchOuterBorderStrokeThickness: "the stroke around a ToggleSwitch's off track",
