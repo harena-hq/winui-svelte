@@ -18,6 +18,12 @@
 		minDate?: Date | undefined;
 		/** CalendarView.MaxDate. */
 		maxDate?: Date | undefined;
+		/** CalendarView.SelectionMode. */
+		selectionMode?: 'none' | 'single' | 'multiple';
+		/** CalendarView.SelectedDates. */
+		selectedDates?: Date[];
+		/** CalendarView.SelectedDatesChanged. */
+		onSelectedDatesChange?: ((dates: Date[]) => void) | undefined;
 		class?: string;
 		style?: string;
 		/** The Calendar.Root element. */
@@ -36,13 +42,16 @@
 	import {
 		fromDate,
 		getLocalTimeZone,
+		isSameDay,
 		toCalendar,
+		toCalendarDate,
 		today,
 		type DateValue
 	} from '@internationalized/date';
 	import { Calendar } from 'bits-ui';
 	import { SvelteDate } from 'svelte/reactivity';
 	import { calendarOf, formatDate, localeOf, weekStartsOn } from '../internal/datetime';
+	import { focusVisual } from '../internal/focus-visual';
 
 	let {
 		calendarIdentifier = 'GregorianCalendar',
@@ -55,6 +64,9 @@
 		// CalendarView clamps against the same ±100-year default (DatePicker_Partial.cpp:31).
 		minDate = dateOffsetByYears(-100),
 		maxDate = dateOffsetByYears(100),
+		selectionMode = 'single',
+		selectedDates = $bindable([]),
+		onSelectedDatesChange,
 		class: className,
 		style,
 		ref = $bindable(null),
@@ -83,9 +95,11 @@
 	const firstWeekday = $derived(
 		(firstDayOfWeek ?? weekStartsOn(locale)) as 0 | 1 | 2 | 3 | 4 | 5 | 6
 	);
-	const minValue = $derived(toCalendar(fromDate(minDate, timeZone), calendar));
-	const maxValue = $derived(toCalendar(fromDate(maxDate, timeZone), calendar));
+	const minValue = $derived(calendarDateOf(minDate));
+	const maxValue = $derived(calendarDateOf(maxDate));
+	const selectedValues = $derived(selectedDates.map(calendarDateOf));
 	const dayNumberFormat = $derived(new Intl.NumberFormat(locale));
+	let previousSelectionMode = $state<'none' | 'single' | 'multiple' | undefined>(undefined);
 
 	function dateOffsetByYears(years: number): Date {
 		const date = new SvelteDate();
@@ -96,13 +110,58 @@
 	function dateFor(value: { toDate: (timeZone: string) => Date }): Date {
 		return value.toDate(timeZone);
 	}
+
+	/**
+	 * A `Date` becomes a `CalendarDate` in the identifier's calendar, and the day is the whole
+	 * of it. The intermediate has to be dropped: `fromDate` returns a `ZonedDateTime`, and a
+	 * zoned value reaching the primitive as a placeholder makes it parse every cell's
+	 * `data-value` — a plain `YYYY-MM-DD` — as a zoned string, which throws on the first arrow
+	 * key. The primitive picks its parser from the placeholder's own type.
+	 */
+	function calendarDateOf(date: Date): DateValue {
+		return toCalendar(toCalendarDate(fromDate(date, timeZone)), calendar);
+	}
+
+	function commitSelectedDates(next: Date[]) {
+		selectedDates = next;
+		onSelectedDatesChange?.(next);
+	}
+
+	function changeSelectedDates(next: DateValue[] = []) {
+		if (selectionMode === 'none') return;
+
+		if (next.length > selectedValues.length && selectionMode === 'single') {
+			const added = next.find((candidate) =>
+				selectedValues.every((selected) => !isSameDay(selected, candidate))
+			);
+			if (added) commitSelectedDates([dateFor(added)]);
+			return;
+		}
+
+		commitSelectedDates(next.map(dateFor));
+	}
+
+	$effect(() => {
+		if (previousSelectionMode === undefined) {
+			previousSelectionMode = selectionMode;
+			return;
+		}
+		if (selectionMode === previousSelectionMode) return;
+
+		previousSelectionMode = selectionMode;
+		if (selectionMode === 'none') {
+			commitSelectedDates([]);
+		} else if (selectionMode === 'single' && selectedDates.length > 1) {
+			commitSelectedDates([selectedDates[0]]);
+		}
+	});
 </script>
 
 {#key calendarIdentifier}
-	<!-- `single` satisfies bits-ui's required mode only. No value or onValueChange is passed,
-	     so this unit never selects; unit 3 gives the mode its selection meaning. -->
 	<Calendar.Root
-		type="single"
+		bind:ref
+		type="multiple"
+		bind:value={() => selectedValues, changeSelectedDates}
 		{locale}
 		bind:placeholder={
 			() => placeholder, (value) => (navigated = { identifier: calendarIdentifier, value })
@@ -117,7 +176,6 @@
 		{#snippet child({ props, months, weekdays })}
 			<div
 				{...props}
-				bind:this={ref}
 				class={['calendar-view', className]}
 				{style}
 				data-out-of-scope-enabled={isOutOfScopeEnabled ? '' : undefined}
@@ -172,7 +230,7 @@
 														<div {...cellProps} class="cell">
 															<Calendar.Day>
 																{#snippet child({ props: dayProps })}
-																	<div {...dayProps} class="day">
+																	<div {...dayProps} class="day" {@attach focusVisual}>
 																		{#if isGroupLabelVisible && date.day === 1}
 																			<!-- CalendarViewGeneratorMonthViewHost.cpp:121-150 uses the
 																			     abbreviated month name on the first day. -->
@@ -408,6 +466,26 @@
 		color: var(--winui-CalendarViewOutOfScopePressedForeground);
 	}
 
+	.day[data-selected] {
+		border-color: var(--winui-CalendarViewSelectedBorderBrush);
+		color: var(--winui-CalendarViewSelectedForeground);
+	}
+
+	.day[data-selected]:hover {
+		border-color: var(--winui-CalendarViewSelectedHoverBorderBrush);
+		color: var(--winui-CalendarViewSelectedHoverForeground);
+	}
+
+	.day[data-selected]:active {
+		border-color: var(--winui-CalendarViewSelectedPressedBorderBrush);
+		color: var(--winui-CalendarViewSelectedPressedForeground);
+	}
+
+	.day[data-selected][data-disabled] {
+		border-color: var(--winui-CalendarViewSelectedDisabledBorderBrush);
+		color: var(--winui-CalendarViewSelectedDisabledForeground);
+	}
+
 	.calendar-view[data-today-highlighted] .day[data-today] {
 		/* The rounded chrome gives today a background ring, not a border brush. */
 		border-color: var(--winui-CalendarViewCalendarItemBorderBrush);
@@ -430,5 +508,30 @@
 
 	.calendar-view[data-today-highlighted] .day[data-disabled][data-today] {
 		background: var(--winui-CalendarViewTodayDisabledBackground);
+	}
+
+	.calendar-view[data-today-highlighted] .day[data-today][data-selected] {
+		/* c1-allow: CalendarViewBaseItemChrome.cpp:26 — TodaySelectedInnerBorderThickness is 2.0f. */
+		box-shadow: inset 0 0 0 2px var(--winui-CalendarViewTodaySelectedInnerBorderBrush);
+	}
+
+	.day[data-focus-visual]::before {
+		content: '';
+		position: absolute;
+		/* c1-allow: CalendarView_themeresources.xaml:249 — `FocusVisualMargin="-3"`, and a
+		   negative focus-visual margin grows the band outward rather than inward: the same
+		   reading Slider's `-7,0,-7,0` gets, and what `GetItemFocusVisualMargin` returns for
+		   the rounded chrome (CalendarViewGeneratorHost.cpp:227-236). Three pixels is exactly
+		   the panel's 2px margin plus the frame's 1px border, so the band on an edge cell
+		   stops at the inside of the border instead of being clipped by it. */
+		inset: -3px;
+		border-radius: 50%;
+		box-shadow:
+			inset 0 0 0 var(--winui-FocusVisualPrimaryThickness)
+				var(--winui-CalendarViewFocusVisualPrimaryBrush),
+			inset 0 0 0
+				calc(var(--winui-FocusVisualPrimaryThickness) + var(--winui-FocusVisualSecondaryThickness))
+				var(--winui-CalendarViewFocusVisualSecondaryBrush);
+		pointer-events: none;
 	}
 </style>

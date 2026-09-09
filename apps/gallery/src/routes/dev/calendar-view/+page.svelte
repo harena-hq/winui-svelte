@@ -3,6 +3,13 @@
 
 	const minimumDate = new Date(2026, 8, 1);
 	const maximumDate = new Date(2026, 8, 15);
+	const singleSelectedDates = [new Date(2026, 8, 15)];
+	const todaySelectedDates = [new Date(2026, 8, 8)];
+	const multipleSelectedDates = [
+		new Date(2026, 8, 4),
+		new Date(2026, 8, 12),
+		new Date(2026, 8, 24)
+	];
 </script>
 
 <svelte:head><title>CalendarView — harness</title></svelte:head>
@@ -35,6 +42,20 @@
 
 <h2 class="winui-SubtitleTextBlockStyle">day-of-week formatter</h2>
 <div class="row"><CalendarView dayOfWeekFormat={'{dayofweek.abbreviated}'} /></div>
+
+<h2 class="winui-SubtitleTextBlockStyle">selectionMode=single</h2>
+<div class="row"><CalendarView selectionMode="single" selectedDates={singleSelectedDates} /></div>
+
+<h2 class="winui-SubtitleTextBlockStyle">today and selected</h2>
+<div class="row"><CalendarView selectedDates={todaySelectedDates} /></div>
+
+<h2 class="winui-SubtitleTextBlockStyle">selectionMode=multiple</h2>
+<div class="row">
+	<CalendarView selectionMode="multiple" selectedDates={multipleSelectedDates} />
+</div>
+
+<h2 class="winui-SubtitleTextBlockStyle">selectionMode=none</h2>
+<div class="row"><CalendarView selectionMode="none" /></div>
 
 <style>
 	/* c1-allow: harness layout, not a WinUI value */
