@@ -31,9 +31,16 @@ interface RecordMenuHeader {
 
 type RecordMenuEntry = RecordMenuItem | RecordMenuHeader;
 
-interface RecordGroupItem {
+export interface GalleryItem {
 	uniqueId: string;
 	title: string;
+	subtitle: string | null;
+	description: string | null;
+	apiNamespace: string | null;
+	baseClasses: string[];
+	docs: { title: string; uri: string }[];
+	sourcePath: string | null;
+	samplePagePath: string | null;
 }
 
 interface RecordGroup {
@@ -41,7 +48,7 @@ interface RecordGroup {
 	title: string;
 	iconGlyph: string | null;
 	isSpecialSection: boolean;
-	items: RecordGroupItem[];
+	items: GalleryItem[];
 }
 
 interface RecordShape {
@@ -214,6 +221,17 @@ export function isContainer(path: string): boolean {
 export function titleOf(path: string): string | null {
 	const f = findById(menu, path);
 	return f === null ? null : f.content;
+}
+
+/** The record's entry for a control page's path, or `null` where the path names no item. */
+export function itemOf(path: string): GalleryItem | null {
+	for (const group of r.groups) {
+		const groupPath = `/${slug(group.uniqueId)}`;
+		for (const item of group.items) {
+			if (`${groupPath}/${slug(item.uniqueId)}` === path) return item;
+		}
+	}
+	return null;
 }
 
 function ancestorsFor(
