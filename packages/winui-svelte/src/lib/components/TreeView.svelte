@@ -38,6 +38,7 @@
 
 <script lang="ts" generics="T">
 	import TreeViewItem from './TreeViewItem.svelte';
+	import ScrollView from './ScrollView.svelte';
 
 	let {
 		items,
@@ -105,7 +106,9 @@
 </script>
 
 <div bind:this={ref} class={['root', className]} {style} {...rest}>
-	<div class="viewport" role="tree" tabindex="-1">
+	<!-- TreeView.xaml:8-28 is one TreeViewList, a ListView subclass. This region is now a
+	     ScrollView with vertical content orientation. -->
+	<ScrollView class="viewport" style="flex: 1 1 auto; min-height: 0" role="tree" tabindex="-1">
 		{#each rows as row (row.id)}
 			<TreeViewItem
 				depth={row.depth}
@@ -118,7 +121,7 @@
 				{@render itemTemplate(row.item, row.depth)}
 			</TreeViewItem>
 		{/each}
-	</div>
+	</ScrollView>
 </div>
 
 <style>
@@ -129,46 +132,5 @@
 		display: flex;
 		min-height: 0;
 		flex-direction: column;
-	}
-
-	/* TreeView.xaml:8-28 is one TreeViewList, a ListView subclass. This is ListView's viewport:
-	   horizontal scrolling is absent, vertical scrolling is automatic, and scoped scrollbar rules
-	   reproduce ScrollBar_themeresources.xaml until the Scrolling tranche owns the control. */
-	.viewport {
-		flex: 1 1 auto;
-		min-height: 0;
-		overflow: auto;
-	}
-
-	/* `ScrollBarSize` is 12 and `ScrollBarVerticalThumbMinWidth` is 8 —
-	   ScrollBar_themeresources.xaml:180 and :182 — where the browser's default rail is half
-	   again as wide. */
-	.viewport::-webkit-scrollbar {
-		/* c1-allow: ScrollBar_themeresources.xaml:180, ScrollBarSize 12 */
-		width: 12px;
-	}
-
-	.viewport::-webkit-scrollbar-track {
-		background: transparent;
-	}
-
-	.viewport::-webkit-scrollbar-thumb {
-		background: var(--winui-ControlStrongFillColorDefaultBrush);
-		background-clip: padding-box;
-		/* c1-allow: measured 2px on a capture of the real Gallery's pane */
-		border: 5px solid transparent;
-		/* c1-allow: ScrollBar_themeresources.xaml:180, half of ScrollBarSize 12 */
-		border-radius: 6px;
-	}
-
-	/* `Expanded` — ScrollBar_themeresources.xaml:587; the native animation is represented by
-	   its pointer-over endpoint. */
-	.viewport:hover::-webkit-scrollbar-track {
-		background: var(--winui-AcrylicInAppFillColorDefaultBrush);
-	}
-
-	.viewport:hover::-webkit-scrollbar-thumb {
-		/* c1-allow: measured 6px of thumb inside the 12 of ScrollBarSize on the original */
-		border: 3px solid transparent;
 	}
 </style>

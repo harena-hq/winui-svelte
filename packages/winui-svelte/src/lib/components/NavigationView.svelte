@@ -116,6 +116,7 @@
 	import Flyout from './Flyout.svelte';
 	import NavigationViewItem from './NavigationViewItem.svelte';
 	import NavigationViewTopItem from './NavigationViewTopItem.svelte';
+	import ScrollView from './ScrollView.svelte';
 
 	let {
 		items,
@@ -246,30 +247,10 @@
 		onExpandedItemsChange?.(next);
 	}
 
-	// `UpdatePaneLayout` shows the pane's separator exactly when the menu items do not fit
-	// beside the footer group — NavigationView.cpp, and the `SeparatorVisible` state at
-	// NavigationView.xaml:171. On the web that is the same question as "does the menu
-	// region scroll", and the answer is a measurement rather than a value, so it is
-	// observed rather than derived.
-	//
-	// The observer writes `menuOverflows` and nothing here reads it back, so the effect
-	// has nothing to fight — the trap the display-mode effect below documents.
-	let menuViewport: HTMLElement | undefined = $state();
-	let menuOverflows = $state(false);
-	$effect(() => {
-		const el = menuViewport;
-		if (!el) return;
-		const measure = () => {
-			menuOverflows = el.scrollHeight > el.clientHeight;
-		};
-		measure();
-		const observer = new ResizeObserver(measure);
-		observer.observe(el);
-		// The list as well as its viewport: expanding an item changes the content's height
-		// without changing the box that holds it.
-		if (el.firstElementChild) observer.observe(el.firstElementChild);
-		return () => observer.disconnect();
-	});
+	// `UpdatePaneLayout` shows the pane's separator when the menu scrolls. ScrollView observes
+	// both its viewport and content, so its published scrollable height answers that directly.
+	let paneScrollableHeight = $state(0);
+	let menuOverflows = $derived(paneScrollableHeight > 0);
 
 	// Minimal hides the pane entirely when it is closed; the other two keep it, narrowed.
 	const paneVisible = $derived(mode !== 'minimal' || paneOpen);
@@ -393,7 +374,13 @@
 						</div>
 					{/if}
 
-					<div class="items-container-grid" bind:this={menuViewport}>
+					<!-- This pane region is now a ScrollView; horizontal scrolling remains disabled. -->
+					<ScrollView
+						class="items-container-grid"
+						style="flex: 1 1 auto; min-height: 0"
+						horizontalScrollMode="disabled"
+						bind:scrollableHeight={paneScrollableHeight}
+					>
 						<ul role="tree" class="menu-items">
 							{#each items as entry, i (isNavigationViewHeader(entry) ? `h${i}` : entry.id)}
 								{#if isNavigationViewHeader(entry)}
@@ -413,7 +400,7 @@
 								{/if}
 							{/each}
 						</ul>
-					</div>
+					</ScrollView>
 
 					{#if menuOverflows}
 						<div class="items-separator"></div>
@@ -770,61 +757,6 @@
 	.pane-toggle:active {
 		background: var(--winui-NavigationViewButtonBackgroundPressed);
 		color: var(--winui-NavigationViewButtonForegroundPressed);
-	}
-
-	.items-container-grid {
-		flex: 1 1 auto;
-		min-height: 0;
-		overflow-y: auto;
-		overflow-x: hidden;
-	}
-
-	/* `ScrollBarSize` is 12 and `ScrollBarVerticalThumbMinWidth` is 8 —
-	   ScrollBar_themeresources.xaml:180 and :182 — where the browser's default rail is half
-	   again as wide. The thumb is inset into the rail with a transparent border, so both
-	   numbers are the source's rather than one being the other minus a guess. The real
-	   ScrollBar, with the collapse and expand its visual states drive, is the Scrolling
-	   tranche's. */
-	.items-container-grid::-webkit-scrollbar {
-		/* c1-allow: ScrollBar_themeresources.xaml:180, ScrollBarSize 12 */
-		width: 12px;
-	}
-
-	.items-container-grid::-webkit-scrollbar-track {
-		background: transparent;
-	}
-
-	.items-container-grid::-webkit-scrollbar-thumb {
-		background: var(--winui-ControlStrongFillColorDefaultBrush);
-		background-clip: padding-box;
-		/* The source's `Collapsed` state names 8 — ScrollBar_themeresources.xaml:543 — and
-		   what Windows renders at rest is thinner than that. 5 of border in a 12 rail
-		   leaves the 2 the original draws. */
-		/* c1-allow: measured 2px on a capture of the real Gallery's pane */
-		border: 5px solid transparent;
-		/* A capsule at both widths. `border-radius` applies to the border box and the
-		   visible thumb is the padding box, so the radius it sees is this minus the border:
-		   1 against a 2 wide thumb at rest, 3 against a 6 wide one on hover. Half of
-		   `ScrollBarSize` is the number that makes both come out round. */
-		/* c1-allow: ScrollBar_themeresources.xaml:180, half of ScrollBarSize 12 */
-		border-radius: 6px;
-	}
-
-	/* `Expanded` — ScrollBar_themeresources.xaml:587, the rail at `ScrollBarSize` with the
-	   thumb at `ScrollBarVerticalThumbMinWidth`. WinUI animates between the two; a hover
-	   rule is the same two states without the animation. */
-	/* Measured on the original with the pointer over it: the track fills with
-	   `ScrollBarTrackFillPointerOver` — `AcrylicInAppFillColorDefaultBrush`,
-	   ScrollBar_themeresources.xaml:32 — across the full 12, and the thumb inside it is 6,
-	   not the 8 the `Expanded` state's own number suggests. The padding either side of the
-	   thumb is what makes it read as thinner than a bar drawn edge to edge. */
-	.items-container-grid:hover::-webkit-scrollbar-track {
-		background: var(--winui-AcrylicInAppFillColorDefaultBrush);
-	}
-
-	.items-container-grid:hover::-webkit-scrollbar-thumb {
-		/* c1-allow: measured 6px of thumb inside the 12 of ScrollBarSize on the original */
-		border: 3px solid transparent;
 	}
 
 	/* `NavigationViewPaneContentGridMargin` belongs to `PaneContentGrid` — NavigationView.xaml:291
