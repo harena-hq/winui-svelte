@@ -22,6 +22,10 @@ body {
 
 .gallery-tile-grid {
 	display: grid;
+	/* XAML's `Grid.CornerRadius` clips what the grid holds; CSS's `border-radius` does not, so
+	   the tiles painted their own square corners over this one and the Color page's rows came
+	   out as hard rectangles. Measured against the original, whose four corner tiles curve. */
+	overflow: hidden;
 	background: var(--winui-SolidBackgroundFillColorBaseBrush);
 	/* c1-allow: 1px is the Gallery's card stroke width, not a tokenized theme value */
 	border: 1px solid var(--winui-CardStrokeColorDefaultBrush);
