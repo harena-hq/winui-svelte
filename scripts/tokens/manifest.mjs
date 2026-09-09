@@ -1237,6 +1237,49 @@ export const CALENDARVIEW_KEYS = {
 };
 
 /**
+ * Every resource DateTimePickerFlyout_themeresources.xaml defines. The accept and dismiss
+ * button family arrives with the dictionary rather than with the unit that first draws it;
+ * a token set is seeded by key, not by the first control to consume that key (D15).
+ */
+export const DATETIMEPICKERFLYOUT_KEYS = {
+	DateTimePickerFlyoutButtonBackground: 'Date and time flyout accept/dismiss button background',
+	DateTimePickerFlyoutButtonBackgroundPointerOver:
+		'Date and time flyout accept/dismiss button pointer-over background',
+	DateTimePickerFlyoutButtonBackgroundPressed:
+		'Date and time flyout accept/dismiss button pressed background',
+	DateTimePickerFlyoutButtonBorderBrush: 'Date and time flyout accept/dismiss button border',
+	DateTimePickerFlyoutButtonBorderBrushPointerOver:
+		'Date and time flyout accept/dismiss button pointer-over border',
+	DateTimePickerFlyoutButtonBorderBrushPressed:
+		'Date and time flyout accept/dismiss button pressed border',
+	DateTimePickerFlyoutButtonForegroundPointerOver:
+		'Date and time flyout accept/dismiss button pointer-over foreground',
+	DateTimePickerFlyoutButtonForegroundPressed:
+		'Date and time flyout accept/dismiss button pressed foreground',
+	LoopingSelectorUpDownButtonForeground: 'LoopingSelector navigation button foreground',
+	LoopingSelectorUpDownButtonForegroundPointerOver:
+		'LoopingSelector navigation button pointer-over foreground',
+	LoopingSelectorUpDownButtonForegroundPressed:
+		'LoopingSelector navigation button pressed foreground',
+	LoopingSelectorUpDownButtonBackground: 'LoopingSelector navigation button background',
+	LoopingSelectorUpDownButtonBackgroundPointerOver:
+		'LoopingSelector navigation button pointer-over background',
+	LoopingSelectorUpDownButtonBackgroundPressed:
+		'LoopingSelector navigation button pressed background',
+	LoopingSelectorItemForeground: 'LoopingSelector item foreground',
+	LoopingSelectorItemForegroundSelected: 'LoopingSelector selected item foreground',
+	LoopingSelectorItemForegroundPointerOver: 'LoopingSelector item pointer-over foreground',
+	LoopingSelectorItemForegroundPressed: 'LoopingSelector item pressed foreground',
+	LoopingSelectorItemBackgroundSelected: 'LoopingSelector selected item background',
+	LoopingSelectorItemBackgroundPointerOver: 'LoopingSelector item pointer-over background',
+	LoopingSelectorItemBackgroundPressed: 'LoopingSelector item pressed background',
+	LoopingSelectorItemMargin: 'LoopingSelector item margin',
+	LoopingSelectorUpDownButtonMargin: 'LoopingSelector navigation button margin',
+	LoopingSelectorUpDownButtonHeight: 'LoopingSelector navigation button height',
+	LoopingSelectorUpDownButtonScalePressed: 'LoopingSelector navigation button pressed scale'
+};
+
+/**
  * Keys SplitView reads from its template: its lengths, border, corner, inline motion, and
  * framework brushes. `SplitViewLightDismissOverlayBackground` is absent because desktop Auto
  * light dismiss remains transparent; `SplitViewPaneAnimationOpenPreDuration` times a content
@@ -2661,7 +2704,8 @@ export const DOUBLE_LENGTHS = {
 	TeachingTipMaxHeight: 'the height a tip never exceeds',
 	TeachingTipBorderThickness: "the tail's stroke width",
 	TeachingTipAlternateCloseButtonSize: 'the tip header close button box',
-	TeachingTipAlternateCloseButtonGlyphSize: 'the tip header close button glyph'
+	TeachingTipAlternateCloseButtonGlyphSize: 'the tip header close button glyph',
+	LoopingSelectorUpDownButtonHeight: 'the LoopingSelector navigation button height'
 };
 
 /**
@@ -2681,6 +2725,8 @@ export const DOUBLE_RATIOS = {
 	FlipViewButtonScalePressed: "the pressed flip button's 0.875 scale",
 	CalendarViewNavigationButtonScalePressed:
 		"the pressed CalendarView navigation button's 0.875 scale",
+	LoopingSelectorUpDownButtonScalePressed:
+		"the pressed LoopingSelector navigation button's 0.875 scale",
 	ListViewItemDisabledThemeOpacity: "the disabled ListViewItem's 0.3 opacity"
 };
 
