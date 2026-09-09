@@ -35,38 +35,40 @@ pnpm workspace. The library is publishable and imposes no build tooling on its c
 
 ## Locked decisions
 
-| #   | Decision                                                                                             | Where                             |
-| --- | ---------------------------------------------------------------------------------------------------- | --------------------------------- |
-| D1  | Library + Gallery showcase, split as above                                                           | this file                         |
-| D2  | Token values are extracted from `microsoft-ui-xaml` (MIT), not from Fluent 2 web packages            | ADR 0001                          |
-| D3  | Styling is Svelte scoped CSS over a CSS custom-property token cascade. No Tailwind, no CSS-in-JS     | ADR 0002                          |
-| D4  | Fonts and icons are referenced by name from the local system, never embedded                         | ADR 0003                          |
-| D5  | Visual truth is a human side-by-side against Windows 11; automation gates regression only            | this file, "Verification"         |
-| D6  | Snapshots run on a local Windows VM runner, not on the Linux host                                    | this file, "Verification"         |
-| D7  | Out-of-scope Gallery groups keep their pages, implemented where the web allows                       | this file, "Roadmap → v4"         |
-| D8  | Accent is six tokens with a baked default, plus an optional derivation from one base                 | this file, "Accent"               |
-| D9  | bits-ui as the primitive base; individual Zag machines for TreeView, ColorPicker, NumberBox          | ADR 0004                          |
-| D10 | High contrast is generated as aliases onto eight system colors, not as a third palette               | ADR 0005                          |
-| D11 | A token is named `--winui-` plus the WinUI resource key, unchanged                                   | ADR 0006                          |
-| D12 | The token layer is a curated closure of four base files plus what the Design pages name              | this file, "Roadmap → v1"         |
-| D13 | Gallery page structure and page data are read from the pinned `WinUI-Gallery` source                 | ADR 0007                          |
-| D14 | A composed WinUI `Style` ships as a CSS class, not as a custom property                              | this file, "Roadmap → v1"         |
-| D15 | A control tranche seeds the token selection by key, never by dictionary file                         | this file, "Roadmap → v2"         |
-| D16 | The window backdrop paints Mica's solid counterpart; the material is not approximated                | this file, "Roadmap → v2"; WD-003 |
-| D17 | A legacy `SystemControl*Brush` resolves through a table to a system colour, and is never emitted     | ADR 0008                          |
-| D18 | Every menu entry is a route; the path is derived from the record, never hand-written                 | this file, "Roadmap → v2"         |
-| D19 | The shell is the Gallery's layout, and the selected navigation item is the URL                       | this file, "Roadmap → v2"         |
-| D20 | ~~The title bar's search box is the Gallery's own~~ — **retired in v4**, it is the published control | this file, "Roadmap → v4"         |
-| D21 | A WinUI member becomes a Svelte prop by one stated rule, and every component takes `...rest`/`ref`   | ADR 0009                          |
-| D22 | Tranches are ordered by what an application reaches for; harness scaffolding follows the controls    | this file, "Roadmap → v3"         |
-| D23 | The XAML framework dictionary is a third pinned upstream; the control pin wins per key and theme     | ADR 0010                          |
-| D24 | The type ramp's line height is `normal`, the font's own spacing, not the published ramp's number     | ADR 0011                          |
-| D25 | An icon is a snippet the consumer draws, with a Segoe Fluent Icons code point as its shorthand       | ADR 0012                          |
-| D26 | A control's internal items host is template-private; the tranche renders its items directly          | this file, "Roadmap → v8"         |
-| D27 | A collection control is generic in its item type and draws it through a snippet the caller writes    | ADR 0013                          |
-| D28 | The sample-page frame is the Gallery's own harness around WinUI, so it is Gallery code               | this file, "Roadmap → v10"        |
-| D29 | Syntax highlighting is ColorCode's rules and palette as data, applied by an engine of ours           | ADR 0014                          |
-| D30 | Grid and StackPanel are Gallery pages drawn in CSS, not components; Border stays a component         | this file, "Roadmap → v11"        |
+| #   | Decision                                                                                               | Where                             |
+| --- | ------------------------------------------------------------------------------------------------------ | --------------------------------- |
+| D1  | Library + Gallery showcase, split as above                                                             | this file                         |
+| D2  | Token values are extracted from `microsoft-ui-xaml` (MIT), not from Fluent 2 web packages              | ADR 0001                          |
+| D3  | Styling is Svelte scoped CSS over a CSS custom-property token cascade. No Tailwind, no CSS-in-JS       | ADR 0002                          |
+| D4  | Fonts and icons are referenced by name from the local system, never embedded                           | ADR 0003                          |
+| D5  | Visual truth is a human side-by-side against Windows 11; automation gates regression only              | this file, "Verification"         |
+| D6  | Snapshots run on a local Windows VM runner, not on the Linux host                                      | this file, "Verification"         |
+| D7  | Out-of-scope Gallery groups keep their pages, implemented where the web allows                         | this file, "Roadmap → v4"         |
+| D8  | Accent is six tokens with a baked default, plus an optional derivation from one base                   | this file, "Accent"               |
+| D9  | bits-ui as the primitive base; individual Zag machines for TreeView, ColorPicker, NumberBox            | ADR 0004                          |
+| D10 | High contrast is generated as aliases onto eight system colors, not as a third palette                 | ADR 0005                          |
+| D11 | A token is named `--winui-` plus the WinUI resource key, unchanged                                     | ADR 0006                          |
+| D12 | The token layer is a curated closure of four base files plus what the Design pages name                | this file, "Roadmap → v1"         |
+| D13 | Gallery page structure and page data are read from the pinned `WinUI-Gallery` source                   | ADR 0007                          |
+| D14 | A composed WinUI `Style` ships as a CSS class, not as a custom property                                | this file, "Roadmap → v1"         |
+| D15 | A control tranche seeds the token selection by key, never by dictionary file                           | this file, "Roadmap → v2"         |
+| D16 | The window backdrop paints Mica's solid counterpart; the material is not approximated                  | this file, "Roadmap → v2"; WD-003 |
+| D17 | A legacy `SystemControl*Brush` resolves through a table to a system colour, and is never emitted       | ADR 0008                          |
+| D18 | Every menu entry is a route; the path is derived from the record, never hand-written                   | this file, "Roadmap → v2"         |
+| D19 | The shell is the Gallery's layout, and the selected navigation item is the URL                         | this file, "Roadmap → v2"         |
+| D20 | ~~The title bar's search box is the Gallery's own~~ — **retired in v4**, it is the published control   | this file, "Roadmap → v4"         |
+| D21 | A WinUI member becomes a Svelte prop by one stated rule, and every component takes `...rest`/`ref`     | ADR 0009                          |
+| D22 | Tranches are ordered by what an application reaches for; harness scaffolding follows the controls      | this file, "Roadmap → v3"         |
+| D23 | The XAML framework dictionary is a third pinned upstream; the control pin wins per key and theme       | ADR 0010                          |
+| D24 | The type ramp's line height is `normal`, the font's own spacing, not the published ramp's number       | ADR 0011                          |
+| D25 | An icon is a snippet the consumer draws, with a Segoe Fluent Icons code point as its shorthand         | ADR 0012                          |
+| D26 | A control's internal items host is template-private; the tranche renders its items directly            | this file, "Roadmap → v8"         |
+| D27 | A collection control is generic in its item type and draws it through a snippet the caller writes      | ADR 0013                          |
+| D28 | The sample-page frame is the Gallery's own harness around WinUI, so it is Gallery code                 | this file, "Roadmap → v10"        |
+| D29 | Syntax highlighting is ColorCode's rules and palette as data, applied by an engine of ours             | ADR 0014                          |
+| D30 | Grid and StackPanel are Gallery pages drawn in CSS, not components; Border stays a component           | this file, "Roadmap → v11"        |
+| D31 | CalendarView's month grid is bits-ui's `Calendar`; its year and decade grids are ours                  | this file, "Roadmap → v12"        |
+| D32 | A date-valued prop is a native `Date`; the arithmetic is `@internationalized/date`, the strings `Intl` | this file, "Roadmap → v12"        |
 
 ## Verification
 
@@ -2162,6 +2164,161 @@ generics="T">` component through `pnpm --filter winui-svelte build` reaches `dis
       `slider-ticks-measure.mjs`, `grid-thumbs.mjs`, `splitview-drive.mjs`.
 
 12. **Date and time** — CalendarView, CalendarDatePicker, DatePicker, TimePicker.
+
+    **The goal, in one line: the Date & time group's four pages render on the frame, and the
+    four controls they demonstrate exist in the library.** All four are `Windows.UI.Xaml`
+    controls WinUI 3 only restyles, so the control pin carries a `*_themeresources.xaml` for
+    each and no implementation — and, as v11 found, the pin's _repository_ carries the
+    implementation anyway, outside the sparse checkout. This is the first tranche where that is
+    true of every control in it, which is why the first unit widens the checkout instead of
+    fetching five more files by URL.
+
+    **The four pages, read on the reference guest before anything was decided.**
+
+    | page               | display pane                                                                                                      | options pane                                                                       |
+    | ------------------ | ----------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+    | CalendarView       | one `CalendarView`, `VerticalAlignment="Top"` (`CalendarViewPage.xaml:15-21`)                                     | two CheckBoxes and three ComboBoxes in a StackPanel `Margin="0,-5,0,0"` (`:24-60`) |
+    | CalendarDatePicker | one `CalendarDatePicker`, `Header="Calendar"`, `PlaceholderText="Pick a date"` (`CalendarDatePickerPage.xaml:9`)  | none                                                                               |
+    | DatePicker         | two examples — a `Header`ed picker, then a `DayFormat`/`YearVisible="False"` picker (`DatePickerPage.xaml:22-37`) | none                                                                               |
+    | TimePicker         | three examples — bare, `MinuteIncrement="15"`, `ClockIdentifier="24HourClock"` (`TimePickerPage.xaml:22-35`)      | none                                                                               |
+
+    Three of the four pages have no options pane at all, which makes this tranche the opposite
+    shape of v11's: nearly all the work is inside the controls and the pages are thin. The
+    CalendarView page is the exception, and its options pane is the widest in the version — a
+    `SelectionMode` ComboBox, a `CalendarIdentifier` ComboBox of ten calendars, and a `Language`
+    ComboBox of eighty-seven languages from `Helpers/Language/LanguageList.cs`.
+
+    **What the library does not have.** Four controls, and two things under them that are not
+    controls. `CalendarView` is a header, a weekday row and a panel that renders three different
+    grids. `CalendarDatePicker` is a button whose flyout is a `CalendarView`. `DatePicker` and
+    `TimePicker` are each a three-column button whose flyout is three scrolling columns over an
+    accept/dismiss bar, and that column is `LoopingSelector`, a
+    `Windows.UI.Xaml.Controls.Primitives` type both of them create in code and neither exposes.
+    The other missing piece is a formatter: `DayFormat`, `MonthFormat`, `YearFormat` and
+    `DateFormat` take Windows' `DateTimeFormatter` template grammar, the Gallery's own DatePicker
+    sample passes `"{day.integer} ({dayofweek.abbreviated})"`, and nothing here parses it.
+
+    **D31 — CalendarView's month grid is bits-ui's `Calendar`; its year and decade grids are
+    ours.** The month grid is what that primitive already computes: the weeks spanning the
+    month padded to six rows, a roving tabindex over the day cells, `minValue`/`maxValue`
+    disabling cells rather than removing them, single and multiple selection. It computes all of
+    it through the `DateValue`'s own `calendar` object and never assumes Gregorian, so eight of
+    the ten identifiers the Gallery's ComboBox lists arrive with the primitive rather than being
+    written here. The year and decade grids are sixteen flat cells with no week structure and no
+    month rollover; there is no primitive to borrow for them, and bits-ui's `MonthSelect` and
+    `YearSelect` are `<select>` elements, which is the wrong shape entirely. Every element is
+    drawn through `child` snippets, which ADR 0004 calls the normal path.
+
+    **D32 — a date-valued prop is a native `Date`; the arithmetic behind it is
+    `@internationalized/date` and every string comes from `Intl`.** A consumer writes
+    `date={new Date()}` and imports no date package. Inside, the value becomes a `CalendarDate`
+    in whichever calendar `CalendarIdentifier` names, and the weekday names, month names, header
+    title, day numerals and looping-selector items are all produced by `Intl.DateTimeFormat`
+    with the `Language` locale and the `-u-ca-<identifier>` extension that names the calendar —
+    the extension is required, because the grid's shape follows the date's calendar while
+    `Intl`'s names follow the locale, and without it the numbers and the names disagree. WinUI's
+    format templates are read by a parser in `packages/winui-svelte/src/lib/internal/`, one
+    `{unit.modifier}` at a time, mapped onto `Intl.DateTimeFormatOptions`, with the template's
+    literal text kept between the parts. `@internationalized/date` is already a peer dependency,
+    because bits-ui requires it, so the version adds no dependency.
+
+    **The day item has no template, and its chrome is C++.** `CalendarViewDayItem`'s
+    `ControlTemplate` is empty (`CalendarView_themeresources.xaml:256`): the today circle, the
+    selection ring, the group label, the blackout strikethrough and the density bars are painted
+    by `CalendarViewBaseItemChrome`, and the item's state is not a visual-state group at all but
+    six booleans read by two brush-selection functions with a stated precedence — disabled,
+    today, blackout, out-of-scope, pressed, hovered, normal
+    (`dxaml/xcp/core/core/elements/CalendarViewBaseItemChrome.cpp:1446-1531` for the background,
+    `:1543-1622` for the foreground). The XAML gives only the setters: `MinWidth`/`MinHeight` 40,
+    `Margin` 1, `Padding` `0,0,0,4`, and two focus-visual brushes. Year and decade items have no
+    template _and_ no style — their margin is 9 with rounded chrome enabled and 1 without
+    (`CalendarViewGeneratorHost.cpp:215-224`), which is the 74-pixel pitch the guest measures.
+
+    **The decade view opens two years early, and the reason is the row the scroll lands on.**
+    Driven on the guest: the decade view first shows `2018 … 2033` under the header
+    `2020 - 2029`, and one press of the next button shows `2030 … 2045` with `2030` in the first
+    cell. Sixteen cells, four to a row, and the row boundary does not move with the scope — it
+    is fixed by the start of the whole range, which is `MinDate`, a hundred years back from
+    today. `2018` starts a row because `2018 - 1926` divides by four, and so does `2030 - 1926`.
+    The year view opens on `Jan` for the same reason and not because a year starts a row:
+    twelve hundred months from January 1926 divides by four too. The rule to implement is
+    _scroll to the row holding the scope's first item_, and the scope's own bounds are what
+    `IsOutOfScopeEnabled` dims — each item is tested against the scope independently
+    (`CalendarView_Partial.cpp:1818`), so out-of-scope cells appear before, after or on both
+    sides of the in-scope run.
+
+    **What the guest measured.** The CalendarView is 297 wide with a 1px border, a header row
+    closed by a full-width 1px divider, and a 7×6 grid of 40×40 day items on a 42 pitch. The
+    title button is left-aligned 16px from the border and its text is the `"month year"`
+    template in month view, `"year"` in year view, and a `"YYYY - YYYY"` concatenation in decade
+    view (`CalendarViewGeneratorDecadeViewHost.cpp:260-277`); it zooms out one level per click
+    and is disabled at decade level. The two navigation buttons carry `EDDB` and `EDDC` at
+    `CalendarViewNavigationButtonFontSize` 8 and move a whole scope at a time. Today is a filled
+    accent circle with white text. With `IsOutOfScopeEnabled` clear, out-of-scope days render in
+    the ordinary foreground and stay selectable — the property is purely visual
+    (`CalendarView_Partial.cpp:1903-1930`). `IsGroupLabelVisible` draws an 8px label on the first
+    day of each month in month view and on the first month of each year in year view, and
+    nothing in decade view. The DatePicker is 296 wide (`DatePickerThemeMinWidth`) in three star
+    columns — `78*`, `132*`, `78*` with a 1px spacer between — and its flyout is the same width
+    and 398 tall, holding three looping selectors under a 40-high highlight and over a 41-high
+    accept/dismiss row. The TimePicker is 242 wide in three equal columns.
+
+    **The flyout is placed by its own highlight, not by an anchor.** Both pickers compute the
+    open position so that the presenter's `HighlightRect` is centred over the control
+    (`dxaml/phone/lib/DateTimePickerFlyoutHelper.cpp:9-77`) and force the presenter to the
+    control's width on open (`DatePickerFlyout_Partial.cpp:202-206`) — which is why the flyout
+    the guest photographs sits _on_ the control rather than under it. Month and day loop and
+    year does not; hour and minute loop and the period does not
+    (`DatePickerFlyoutPresenter_Partial.cpp:337-367`,
+    `TimePickerFlyoutPresenter_Partial.cpp:298-317`). A column change writes nothing to the
+    control: the presenter holds a pending value and only Accept commits it
+    (`DatePickerFlyout_Partial.cpp:104-130`). The column _order_ is read out of a formatter
+    rather than declared — WinUI formats the literal pattern `"day month.full year"` and takes
+    the order the result puts them in (`DatePicker_Partial.cpp:1798-1885`), which on the web is
+    `Intl.DateTimeFormat(locale).formatToParts()`. `MinYear`/`MaxYear` default to a hundred
+    years either side of today (`DatePicker_Partial.cpp:31`, `:1003-1035`), `ClockIdentifier`
+    defaults to the system clock read back off a formatter (`TimePicker_Partial.cpp:229-239`),
+    and `MinuteIncrement="0"` means the minute column holds only `00`
+    (`TimePicker_Partial.cpp:39`).
+
+    **The version's globalization is `Intl`'s, and Windows' is deeper.** With
+    `CalendarIdentifier="HebrewCalendar"` and `Language="English"` the original renders Hebrew
+    numerals right to left: the identifier changes the numeral system and the reading direction,
+    not only the arithmetic. `@internationalized/date` has no Julian or Korean calendar at all.
+    Both are declined here and written up as divergences rather than deferred, and the page's
+    ComboBox keeps all ten rows with the two unimplemented ones rendering the Gregorian grid —
+    dropping the rows would change the page the acceptance gate compares.
+
+    **The units.**
+
+    | #   | unit                                                                                                          |
+    | --- | ------------------------------------------------------------------------------------------------------------- |
+    | 0   | the sparse checkout carries the second half — `dxaml/` in `tokens:fetch`, and `surface.md`'s step 1 rewritten |
+    | 1   | the format-template parser and the calendar map, with a harness page that renders a table of cases            |
+    | 2   | CalendarView's frame and month grid — border, header, divider, weekday row, day items, today, out of scope    |
+    | 3   | CalendarView's selection — `SelectionMode` None/Single/Multiple, the selected chrome, the keyboard            |
+    | 4   | CalendarView's year and decade views, the title button, and the transition between the three                  |
+    | 5   | the CalendarView page, and the language list as a fourth Gallery record                                       |
+    | 6   | `LoopingSelector` — the column, its items, its up and down buttons, its snap and its looping                  |
+    | 7   | DatePicker, its flyout, and the two examples on its page                                                      |
+    | 8   | TimePicker, its flyout, and the three examples on its page                                                    |
+    | 9   | CalendarDatePicker and its page                                                                               |
+
+    Units 6 and 7 each turn on a mechanism no document settles — the column's scroll snap and
+    the flyout's alignment onto the control's own row — so both are prototyped in a scratch page
+    before their specs are written, which is v10's lesson and v11's practice.
+
+    Done-when: each of the four routes renders the frame rather than the placeholder, and each
+    compares clean against the original on the reference guest as a page; the CalendarView page's
+    five options each move the sample and its substitution, including a non-Gregorian identifier
+    and a non-English language, and the calendar opens on the same three views as the original
+    with the same cells in each; the DatePicker and TimePicker flyouts open with their selected
+    row over the control and their columns hold the original's items, the second DatePicker
+    example rendering `{day.integer} ({dayofweek.abbreviated})` with no year column and the third
+    TimePicker example two columns; the CalendarDatePicker's flyout is a CalendarView centred
+    under its button and picking a date closes it; all four controls render in the three themes
+    in the snapshot suite; and the nine gates stay green.
+
 13. **Scrolling** — ScrollView, PipsPager, AnnotatedScrollBar, SemanticZoom, and
     **PullToRefresh**, moved here from Collections by v9 for the reasons its entry gives:
     the control draws nothing at rest, everything it does draw is code rather than template,
