@@ -69,6 +69,10 @@ function counted(design, shell, samples, colorcode) {
 			groups: shell.groups.length,
 			specialSections: shell.groups.filter((group) => group.isSpecialSection).length,
 			groupItems: shell.groups.reduce((n, group) => n + group.items.length, 0),
+			itemsWithTags: shell.groups.reduce(
+				(n, group) => n + group.items.filter((item) => item.tags.length > 0).length,
+				0
+			),
 			itemsWithDocs: shell.groups.reduce(
 				(n, group) => n + group.items.filter((item) => item.docs.length > 0).length,
 				0

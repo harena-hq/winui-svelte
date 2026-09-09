@@ -3,9 +3,30 @@
 	import { page } from '$app/state';
 	import { resolve } from '$app/paths';
 	import { AutoSuggestBox, NavigationView, TitleBar } from 'winui-svelte';
-	import { QUERY_GLYPH, ancestorsOf, isContainer, menu, titleBar } from '$lib/shell';
+	import {
+		QUERY_GLYPH,
+		ancestorsOf,
+		isContainer,
+		menu,
+		pathOfSuggestion,
+		searchSuggestions,
+		titleBar
+	} from '$lib/shell';
 
 	let { children } = $props();
+	let searchValue = $state('');
+	const searchSuggestionsForValue = $derived(searchSuggestions(searchValue));
+
+	// The one row a chosen suggestion can be without a page behind it is `No results found`,
+	// which upstream puts in the list rather than in an empty state.
+	//
+	// The query stays in the box afterwards, which is what the original does — measured on
+	// the reference guest, where the box still reads `Typography` on the page it opened.
+	function chooseSuggestion(suggestion: string) {
+		const path = pathOfSuggestion(suggestion);
+		if (path === null) return;
+		void goto(resolve(path as `/${string}`));
+	}
 
 	// `selected` is the row the pane highlights; derived from the URL, so the back and
 	// forward buttons stay coherent without a binding. `'settings'` is the id
@@ -83,8 +104,17 @@
 			     rule that matches nothing — `pnpm check` says so, and the box would have
 			     looked right anyway, because its own `TextControlThemeMinWidth` is the width
 			     the original renders. -->
+			<!-- No `onQuerySubmitted`: upstream opens a `SearchResultsPage` for text submitted
+			     without choosing a suggestion, and that page is a page of the Gallery this
+			     version does not build. It is recorded as owed in docs/plan.md. -->
 			<div class="search">
-				<AutoSuggestBox placeholder={titleBar.placeholderText} queryIcon={QUERY_GLYPH} />
+				<AutoSuggestBox
+					bind:value={searchValue}
+					suggestions={searchSuggestionsForValue}
+					onSuggestionChosen={chooseSuggestion}
+					placeholder={titleBar.placeholderText}
+					queryIcon={QUERY_GLYPH}
+				/>
 			</div>
 		{/snippet}
 	</TitleBar>

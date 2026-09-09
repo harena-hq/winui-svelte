@@ -585,6 +585,7 @@ function groups(json) {
 				return {
 					uniqueId: it.UniqueId,
 					title: it.Title,
+					tags: it.Tags ?? [],
 					subtitle: it.Subtitle ?? null,
 					description: it.Description ?? null,
 					apiNamespace: it.ApiNamespace ?? null,
@@ -622,6 +623,10 @@ function buildShell(mainWindowRoot, controlInfo) {
 			groups: groupData.groups.length,
 			specialSections: groupData.specials,
 			groupItems: groupData.groups.reduce((n, g) => n + g.items.length, 0),
+			itemsWithTags: groupData.groups.reduce(
+				(n, g) => n + g.items.filter((item) => item.tags.length > 0).length,
+				0
+			),
 			itemsWithDocs: groupData.groups.reduce(
 				(n, g) => n + g.items.filter((item) => item.docs.length > 0).length,
 				0
@@ -765,7 +770,7 @@ const censusShell = (doc) => {
 		`files             ${c.files} read`,
 		`menu              ${c.menuItems} top-level, ${c.menuItemsTotal} total`,
 		`groups            ${c.groups} (${c.specialSections} special), ${c.groupItems} items`,
-		`page details      ${c.itemsWithDocs} docs, ${c.itemsWithApi} API, ${c.itemsWithSamplePage} sample pages`
+		`page details      ${c.itemsWithTags} tags, ${c.itemsWithDocs} docs, ${c.itemsWithApi} API, ${c.itemsWithSamplePage} sample pages`
 	].join('\n');
 };
 

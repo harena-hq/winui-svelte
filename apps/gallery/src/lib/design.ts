@@ -1,4 +1,4 @@
-import record from '../../../../data/winui-gallery-design.json';
+import record from '../../../../data/winui-gallery-design.json' with { type: 'json' };
 
 /**
  * The Design pages' content, extracted from microsoft/WinUI-Gallery at the commit
