@@ -982,6 +982,7 @@
 	--winui-RepeatButtonBorderBrushPointerOver: var(--winui-ControlElevationBorderBrush);
 	--winui-RepeatButtonBorderBrushPressed: var(--winui-ControlStrokeColorDefaultBrush);
 	--winui-RepeatButtonBorderBrushDisabled: var(--winui-ControlStrokeColorDefaultBrush);
+	--winui-SliderOutsideTickBarThemeHeight: 4px;
 	--winui-SliderTrackThemeHeight: 4px;
 	--winui-SliderHeaderThemeFontWeight: 400;
 	--winui-SliderContainerBackgroundPointerOver: var(--winui-ControlFillColorTransparentBrush);
@@ -1002,13 +1003,19 @@
 	--winui-SliderTrackValueFillDisabled: var(--winui-AccentFillColorDisabledBrush);
 	--winui-SliderHeaderForeground: var(--winui-TextFillColorPrimaryBrush);
 	--winui-SliderHeaderForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+	--winui-SliderTickBarFill: var(--winui-ControlStrongFillColorDefaultBrush);
+	--winui-SliderTickBarFillDisabled: var(--winui-ControlStrongFillColorDisabledBrush);
+	--winui-SliderInlineTickBarFill: var(--winui-ControlFillColorInputActiveBrush);
 	--winui-SliderTopHeaderMargin: 0px 0px 4px 0px;
 	--winui-SliderTrackCornerRadius: 2px;
 	--winui-SliderThumbCornerRadius: 10px;
 	--winui-SliderInnerThumbHeight: 12px;
 	--winui-SliderHorizontalHeight: 32px;
+	--winui-SliderVerticalWidth: 32px;
 	--winui-SliderHorizontalThumbWidth: 18px;
 	--winui-SliderHorizontalThumbHeight: 18px;
+	--winui-SliderVerticalThumbWidth: 18px;
+	--winui-SliderVerticalThumbHeight: 18px;
 	--winui-SliderInnerThumbWidth: 12px;
 	--winui-CaptionTextBlockFontSize: 12px;
 	--winui-BodyTextBlockFontSize: 14px;
@@ -2636,6 +2643,7 @@
 	--winui-RepeatButtonBorderBrushPointerOver: var(--winui-ControlElevationBorderBrush);
 	--winui-RepeatButtonBorderBrushPressed: var(--winui-ControlStrokeColorDefaultBrush);
 	--winui-RepeatButtonBorderBrushDisabled: var(--winui-ControlStrokeColorDefaultBrush);
+	--winui-SliderOutsideTickBarThemeHeight: 4px;
 	--winui-SliderTrackThemeHeight: 4px;
 	--winui-SliderHeaderThemeFontWeight: 400;
 	--winui-SliderContainerBackgroundPointerOver: var(--winui-ControlFillColorTransparentBrush);
@@ -2656,6 +2664,9 @@
 	--winui-SliderTrackValueFillDisabled: var(--winui-AccentFillColorDisabledBrush);
 	--winui-SliderHeaderForeground: var(--winui-TextFillColorPrimaryBrush);
 	--winui-SliderHeaderForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+	--winui-SliderTickBarFill: var(--winui-ControlStrongFillColorDefaultBrush);
+	--winui-SliderTickBarFillDisabled: var(--winui-ControlStrongFillColorDisabledBrush);
+	--winui-SliderInlineTickBarFill: var(--winui-ControlFillColorInputActiveBrush);
 	--winui-TemporaryTextFillColorDisabled: #fefefe5d;
 	--winui-TextControlBackground: var(--winui-ControlFillColorDefaultBrush);
 	--winui-TextControlBackgroundPointerOver: var(--winui-ControlFillColorSecondaryBrush);
@@ -4145,6 +4156,7 @@
 		--winui-RepeatButtonBorderBrushPointerOver: var(--winui-ControlElevationBorderBrush);
 		--winui-RepeatButtonBorderBrushPressed: var(--winui-ControlStrokeColorDefaultBrush);
 		--winui-RepeatButtonBorderBrushDisabled: var(--winui-ControlStrokeColorDefaultBrush);
+		--winui-SliderOutsideTickBarThemeHeight: 4px;
 		--winui-SliderTrackThemeHeight: 4px;
 		--winui-SliderHeaderThemeFontWeight: 400;
 		--winui-SliderContainerBackgroundPointerOver: var(--winui-ControlFillColorTransparentBrush);
@@ -4165,6 +4177,9 @@
 		--winui-SliderTrackValueFillDisabled: var(--winui-AccentFillColorDisabledBrush);
 		--winui-SliderHeaderForeground: var(--winui-TextFillColorPrimaryBrush);
 		--winui-SliderHeaderForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+		--winui-SliderTickBarFill: var(--winui-ControlStrongFillColorDefaultBrush);
+		--winui-SliderTickBarFillDisabled: var(--winui-ControlStrongFillColorDisabledBrush);
+		--winui-SliderInlineTickBarFill: var(--winui-ControlFillColorInputActiveBrush);
 		--winui-TemporaryTextFillColorDisabled: #fefefe5d;
 		--winui-TextControlBackground: var(--winui-ControlFillColorDefaultBrush);
 		--winui-TextControlBackgroundPointerOver: var(--winui-ControlFillColorSecondaryBrush);
@@ -5666,6 +5681,10 @@
 	--winui-SliderTrackValueFillDisabled: var(--winui-SystemControlDisabledChromeDisabledHighBrush);
 	--winui-SliderHeaderForeground: var(--winui-SystemControlForegroundBaseHighBrush);
 	--winui-SliderHeaderForegroundDisabled: var(--winui-SystemControlDisabledBaseMediumLowBrush);
+	--winui-SliderTickBarFill: var(--winui-SystemColorButtonTextColor);
+	--winui-SliderTickBarFillDisabled: var(--winui-SystemColorGrayTextColor);
+	--winui-SliderInlineTickBarFill: var(--winui-SystemColorButtonFaceColor);
+	--winui-SliderOutsideTickBarThemeHeight: 4px;
 	--winui-SliderTrackThemeHeight: 2px;
 	--winui-SliderHeaderThemeFontWeight: 400;
 	--winui-TemporaryTextFillColorDisabled: #0101015c;
