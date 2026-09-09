@@ -2319,6 +2319,111 @@ controls/dev -name 'AppBar*'` matches three `*_themeresources.xaml` files and no
     under its button and picking a date closes it; all four controls render in the three themes
     in the snapshot suite; and the nine gates stay green.
 
+    **Closed.** Twelve commits. Four controls — `CalendarView`, `CalendarDatePicker`,
+    `DatePicker`, `TimePicker` — the `LoopingSelector` two of them are made of, WinUI's date
+    format grammar as a reader, the Gallery's language list as a fourth record, and the Date and
+    time group's four pages on the frame, each compared against the original on the reference
+    guest as a page. WD-031 to WD-034. 68 tests green on the guest, nine gates green.
+
+    **Its Done-when, met.** The four routes render the frame rather than the placeholder, and each
+    compares clean as a page: CalendarView's control is 300 by 352 at the same pixel with its
+    options pane on the same column; the two DatePicker examples and the three TimePicker examples
+    are 296 by 30 and 242 by 30 at the same three rows as the original's; CalendarDatePicker's
+    button is 113 by 32 against 111, the two pixels being the text's advance width between
+    DirectWrite and Chromium. The CalendarView page's five options each move the sample and its
+    substitution, including a Hebrew calendar and a German language. Both pickers' flyouts open
+    with their highlight centred on the control, to the pixel. The second DatePicker example
+    renders `{day.integer} ({dayofweek.abbreviated})` with two fields, and the third TimePicker
+    example two. CalendarDatePicker's flyout is a CalendarView four pixels under its button and
+    centred on it, and picking a day closes it. All four controls render in the three themes.
+
+    **What the checkout hid, and what it cost to open it.** Unit 0 widened the sparse checkout to
+    four `dxaml` directories — 3.4k files, 35 MB to 78 MB, 2.8 seconds — and rewrote
+    `surface.md`'s step 1, which had been reading "no `.cpp` under `controls/dev`" as "no second
+    half" and saying so in as many words. The correction is not cosmetic: `IsThumbToolTipEnabled`,
+    the omission that whole document exists because of, is handled in `Slider_Partial.cpp`, which
+    was on disk during neither the sweep that missed it nor the sweep that followed. Every "no
+    second half" verdict in that file is now marked open rather than quietly rewritten.
+
+    **The measurements that stand.** CalendarView is 300 by 352 in all three display modes,
+    because a 74px year cell is a 56px item plus the 9px margin the rounded chrome uses and four
+    of them equal six 42s plus the weekday row. Below the header, our month view and the
+    original's differ in 2852 pixels of 105,600 above a threshold of 30, all of it on glyph edges;
+    the year and decade views differ in 2125 and 1974, the same way. The DatePicker is 296 wide in
+    134 / 79 / 79, which is 132 : 78 : 78 of what its two 1px spacers leave, and with the year
+    hidden the two that remain are 184 and 109 — the same weights, because the columns travel with
+    the fields rather than with the positions.
+
+    **The decade view opens two years before its scope**, and the reason is that the panel indexes
+    every item from `MinDate` rather than from the scope and lays them out four to a row, so the
+    row boundary never moves; navigation lands on the row holding the scope's first item. Measured
+    by driving the original, then found in `CalculateOffsetFromMinDate`. The same rule puts the
+    year view's January in the first cell, which had looked like the obvious behaviour and is a
+    coincidence of arithmetic.
+
+    **A resource can be defined for a role and applied by nothing.** Neither of CalendarView's
+    button styles carries a `Foreground` setter and neither template binds one, so the arrows take
+    the ordinary `ButtonForeground` and the title takes the control's own `CalendarViewForeground`
+    — and ours drew them in the grey those two keys name until the original's ink was sampled at
+    (27, 27, 27). v11 found the same shape in `SplitViewRightBorderThemeThickness`. Two versions
+    running makes it a category: **grep for a key's use before believing its name.**
+
+    **Three defects a green battery hid, and what saw each.**
+
+    - A `<button>` inherits neither `font-family` nor `font-size` nor `color`. The CalendarView
+      header rendered in Arial, and two units later the month-year cells did the same. Seen by
+      reading the computed style on the guest, not by any gate.
+    - `fromDate` returns a `ZonedDateTime`; bits-ui writes the placeholder to the last selected
+      value; and it picks its date parser from the placeholder's type. So one click on a date
+      broke the arrow keys for the life of the page, with an exception inside a keydown handler
+      that `check`, `conform` and every screenshot were blind to. Seen by a `page.on('pageerror')`
+      listener, which every drive probe now attaches.
+    - A gradient named as a `border-color` makes the whole `border` shorthand invalid, and it is
+      dropped silently. Three of this tranche's controls had no border at all until it was
+      measured: DatePicker's button came out 28 tall instead of 30, and because the flyout's
+      placement is computed from the button's height, the flyout moved with it. TextBox has
+      carried the ring that fixes this since v4.
+
+    **What this version owes.**
+
+    | owed                                                                  | what it needs                                                                                                                              |
+    | --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+    | re-sweeping the controls `surface.md` cleared under the narrow search | step 1 re-run against the widened checkout for Pivot, ListViewItem, Slider and the seven `Windows.UI.Xaml` controls before them            |
+    | CalendarView's blackout dates and density bars                        | a property surface WinUI does not have either — both are set through `CalendarViewDayItemChanging`, which this library has no analogue for |
+    | `DatePicker.CalendarIdentifier`                                       | the three columns in the identifier's own calendar; no Gallery sample sets it                                                              |
+    | TimePicker's right-to-left column correction                          | `GetOrder`'s swap of hour and minute under RTL, and a locale to test it against                                                            |
+    | CalendarDatePicker's `HeaderPlacement="Left"`                         | two resources referenced by the template and defined in neither pin                                                                        |
+    | the four pages' narrow adaptive states                                | v10's owed row, unchanged                                                                                                                  |
+
+    **What this version declined.** WD-031, two of the ten calendar identifiers render a Gregorian
+    grid because `@internationalized/date` implements neither Julian nor Korean. WD-032, the
+    weekday row's two-letter names are derived from the abbreviated ones and kept only while the
+    seven stay distinct — `ar` abbreviates every weekday to a name beginning `ال`, and the entry
+    said only that the rule "can differ elsewhere" until it was run there. WD-033,
+    `NumberOfWeeksInView` is absent and the month view is always six weeks. WD-034, the calendar
+    identifier changes the arithmetic and not the numerals or the reading direction, where Windows
+    derives all three from it.
+
+    **What v12 leaves for whoever picks this up.**
+
+    - **Attach `page.on('pageerror')` to every drive probe.** Three lines, and the only thing that
+      saw this version's worst defect.
+    - **A divergence entry that says a rule "can differ elsewhere" has not been run elsewhere.**
+    - **Carry the previous unit's corrections into the next unit's spec.** Unit 7 paid for six
+      details of the picker flyout; unit 8's spec listed all six and the review found none of them
+      repeated.
+    - **A second author lane is not a substitute by default.** With the usual lane unavailable,
+      unit 5 went to another: it wrote plausible files, no report, and three defects a cold read
+      caught in a minute. It was reverted whole and re-dispatched an hour later. Waiting was
+      cheaper than repairing.
+    - Captures: `.private/captures/068-datetime/` — the four originals, the CalendarView in three
+      views and five states, both picker flyouts in three states, and a crop comparison beside each.
+      Probes added: `calendar-measure.mjs`, `calendar-measure-guest.mjs`, `calendar-drive.mjs`,
+      `calendar-select-drive.mjs`, `calendar-views-drive.mjs`, `calendarview-page-drive.mjs`,
+      `looping-drive.mjs`, `date-picker-drive.mjs`, `date-picker-guest.mjs`, `dp-page-guest.mjs`,
+      `tp-page-guest.mjs`, `cdp-page-guest.mjs`, `clock-check.mjs`, and the three prototypes
+      `proto-calendar.mjs`, `loop-proto.mjs`, `proto-flyout.mjs`.
+
 13. **Scrolling** — ScrollView, PipsPager, AnnotatedScrollBar, SemanticZoom, and
     **PullToRefresh**, moved here from Collections by v9 for the reasons its entry gives:
     the control draws nothing at rest, everything it does draw is code rather than template,
