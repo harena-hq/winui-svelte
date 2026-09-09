@@ -198,12 +198,19 @@
 					>
 				</div>
 				<!-- Base URL: WinUIGallery/Pages/ItemPage.xaml.cs:22. -->
-				<HyperlinkButton
-					navigateUri={WINUI_SOURCE_URL + item.sourcePath}
-					target="_blank"
-					rel="noreferrer">{item.title}</HyperlinkButton
-				>
+				<div class="source-link">
+					<HyperlinkButton
+						navigateUri={WINUI_SOURCE_URL + item.sourcePath}
+						target="_blank"
+						rel="noreferrer">{item.title}</HyperlinkButton
+					>
+				</div>
 			</section>
+		{/if}
+		{#if item.sourcePath && item.samplePagePath}
+			<!-- `MenuFlyoutSeparator Margin="-12"` (PageHeader.xaml:177): the rule runs the full
+			     width of the presenter, which is what the negative margin buys. -->
+			<div class="separator"></div>
 		{/if}
 		{#if item.samplePagePath}
 			<section>
@@ -216,16 +223,20 @@
 					>
 				</div>
 				<!-- Base URL: WinUIGallery/Pages/ItemPage.xaml.cs:23. -->
-				<HyperlinkButton
-					navigateUri={GALLERY_SOURCE_URL + item.samplePagePath}
-					target="_blank"
-					rel="noreferrer">XAML</HyperlinkButton
-				>
-				<HyperlinkButton
-					navigateUri={GALLERY_SOURCE_URL + item.samplePagePath + '.cs'}
-					target="_blank"
-					rel="noreferrer">C#</HyperlinkButton
-				>
+				<div class="source-link">
+					<HyperlinkButton
+						navigateUri={GALLERY_SOURCE_URL + item.samplePagePath}
+						target="_blank"
+						rel="noreferrer">XAML</HyperlinkButton
+					>
+				</div>
+				<div class="source-link">
+					<HyperlinkButton
+						navigateUri={GALLERY_SOURCE_URL + item.samplePagePath + '.cs'}
+						target="_blank"
+						rel="noreferrer">C#</HyperlinkButton
+					>
+				</div>
 			</section>
 		{/if}
 	</div>
@@ -317,8 +328,33 @@
 		flex-direction: column;
 		align-items: stretch;
 	}
+
+	/* Upstream cancels the flyout presenter's padding where a list of buttons fills it, so the
+	   only inset left is each button's own 11 — `Margin="-12"` on the docs list
+	   (PageHeader.xaml:112) and `Margin="0,-8,0,-12"` on the source panel (:146). Measured on
+	   the original: 16px from the presenter's border to the first link's text, against 29 here
+	   before this rule. */
+	.link-list {
+		margin: -12px;
+	}
+
 	.source-list {
+		margin: -8px 0 -12px;
 		gap: 8px;
+	}
+
+	/* `Margin="-12,4,-12,0"` on each source HyperlinkButton (PageHeader.xaml:169, :204, :212).
+	   On a wrapper rather than on the button, because the button is a component and a class
+	   handed to one carries no scope hash — and because the info Button beside these links has
+	   the same root class. */
+	.source-link {
+		margin: 4px -12px 0;
+	}
+
+	.separator {
+		margin: -12px;
+		height: var(--winui-MenuFlyoutSeparatorHeight);
+		background: var(--winui-MenuFlyoutSeparatorBackground);
 	}
 	.source-list section {
 		gap: 4px;
