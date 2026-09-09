@@ -418,7 +418,11 @@
 	.accept,
 	.dismiss {
 		z-index: 1;
-		border: 0;
+		/* The thickness the button style names is in the framework pin rather than either control
+		   dictionary: 0 in Default and Light, 1 under HighContrast. See DatePicker.svelte, which
+		   carries the same two buttons and the same reasoning. */
+		border: var(--winui-DateTimeFlyoutButtonBorderThickness) solid
+			var(--winui-DateTimePickerFlyoutButtonBorderBrush);
 		padding: 4px;
 		background: var(--winui-DateTimePickerFlyoutButtonBackground);
 		color: inherit;
@@ -433,11 +437,13 @@
 	}
 	.accept:hover,
 	.dismiss:hover {
+		border-color: var(--winui-DateTimePickerFlyoutButtonBorderBrushPointerOver);
 		background: var(--winui-DateTimePickerFlyoutButtonBackgroundPointerOver);
 		color: var(--winui-DateTimePickerFlyoutButtonForegroundPointerOver);
 	}
 	.accept:active,
 	.dismiss:active {
+		border-color: var(--winui-DateTimePickerFlyoutButtonBorderBrushPressed);
 		background: var(--winui-DateTimePickerFlyoutButtonBackgroundPressed);
 		color: var(--winui-DateTimePickerFlyoutButtonForegroundPressed);
 	}
