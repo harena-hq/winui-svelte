@@ -1279,6 +1279,45 @@ export const DATETIMEPICKERFLYOUT_KEYS = {
 	LoopingSelectorUpDownButtonScalePressed: 'LoopingSelector navigation button pressed scale'
 };
 
+/** Every resource DatePicker_themeresources.xaml defines for DatePicker and its presenter. */
+export const DATEPICKER_KEYS = {
+	DateTimeFlyoutBorderThickness: 'DatePicker flyout border thickness',
+	DatePickerBorderThemeThickness: 'DatePicker button border thickness',
+	DatePickerButtonBackground: 'DatePicker button background',
+	DatePickerButtonBackgroundDisabled: 'DatePicker disabled button background',
+	DatePickerButtonBackgroundPointerOver: 'DatePicker button pointer-over background',
+	DatePickerButtonBackgroundPressed: 'DatePicker button pressed background',
+	DatePickerButtonBorderBrush: 'DatePicker button border',
+	DatePickerButtonBorderBrushDisabled: 'DatePicker disabled button border',
+	DatePickerButtonBorderBrushPointerOver: 'DatePicker button pointer-over border',
+	DatePickerButtonBorderBrushPressed: 'DatePicker button pressed border',
+	DatePickerButtonForeground: 'DatePicker button foreground',
+	DatePickerButtonForegroundDefault: 'DatePicker empty button foreground',
+	DatePickerButtonForegroundDisabled: 'DatePicker disabled button foreground',
+	DatePickerButtonForegroundPointerOver: 'DatePicker button pointer-over foreground',
+	DatePickerButtonForegroundPressed: 'DatePicker button pressed foreground',
+	DatePickerFlyoutPresenterAcceptDismissHostGridHeight: 'DatePicker flyout action bar height',
+	DatePickerFlyoutPresenterAcceptMargin: 'DatePicker flyout accept button margin',
+	DatePickerFlyoutPresenterBackground: 'DatePicker flyout background',
+	DatePickerFlyoutPresenterBorderBrush: 'DatePicker flyout border',
+	DatePickerFlyoutPresenterDismissMargin: 'DatePicker flyout dismiss button margin',
+	DatePickerFlyoutPresenterHighlightFill: 'DatePicker flyout selected-row fill',
+	DatePickerFlyoutPresenterHighlightForegroundColor: 'DatePicker flyout selected-row foreground',
+	DatePickerFlyoutPresenterHighlightHeight: 'DatePicker flyout selected-row height',
+	DatePickerFlyoutPresenterItemHeight: 'DatePicker flyout item height',
+	DatePickerFlyoutPresenterSpacerFill: 'DatePicker flyout spacer fill',
+	DatePickerHeaderForeground: 'DatePicker header foreground',
+	DatePickerHeaderForegroundDisabled: 'DatePicker disabled header foreground',
+	DatePickerHostMonthPadding: 'DatePicker month field padding',
+	DatePickerHostPadding: 'DatePicker day and year field padding',
+	DatePickerSpacerFill: 'DatePicker closed spacer fill',
+	DatePickerSpacerFillDisabled: 'DatePicker disabled closed spacer fill',
+	DatePickerSpacerThemeWidth: 'DatePicker spacer width',
+	DatePickerThemeMaxWidth: 'DatePicker maximum width',
+	DatePickerThemeMinWidth: 'DatePicker minimum width',
+	DatePickerTopHeaderMargin: 'DatePicker header margin'
+};
+
 /**
  * Keys SplitView reads from its template: its lengths, border, corner, inline motion, and
  * framework brushes. `SplitViewLightDismissOverlayBackground` is absent because desktop Auto
@@ -2555,6 +2594,12 @@ export const TYPE_RAMP = {
  * these gets the inputs rather than the answer.
  */
 export const DOUBLE_LENGTHS = {
+	DatePickerFlyoutPresenterAcceptDismissHostGridHeight: 'DatePicker flyout action bar height',
+	DatePickerFlyoutPresenterHighlightHeight: 'DatePicker flyout selected-row height',
+	DatePickerFlyoutPresenterItemHeight: 'DatePicker flyout item height',
+	DatePickerSpacerThemeWidth: 'DatePicker spacer width',
+	DatePickerThemeMaxWidth: 'DatePicker maximum width',
+	DatePickerThemeMinWidth: 'DatePicker minimum width',
 	SplitViewOpenPaneThemeLength: 'SplitView open pane length',
 	SplitViewCompactPaneThemeLength: 'SplitView compact pane length',
 	TreeViewItemMinHeight: 'TreeViewItem minimum height',
