@@ -361,6 +361,7 @@
 								{...headingProps}
 								class="title"
 								type="button"
+								{@attach focusVisual}
 								disabled={displayMode === 'decade'}
 								onclick={() => setDisplayMode(displayMode === 'month' ? 'year' : 'decade')}
 							>
@@ -376,18 +377,21 @@
 						<!-- bits-ui owns month navigation because it also owns its date-bound disabled state. -->
 						<Calendar.PrevButton>
 							{#snippet child({ props: previousProps })}
-								<button {...previousProps} class="nav previous">&#xEDDB;</button>
+								<button {...previousProps} class="nav previous" {@attach focusVisual}
+									>&#xEDDB;</button
+								>
 							{/snippet}
 						</Calendar.PrevButton>
 						<Calendar.NextButton>
 							{#snippet child({ props: nextProps })}
-								<button {...nextProps} class="nav next">&#xEDDC;</button>
+								<button {...nextProps} class="nav next" {@attach focusVisual}>&#xEDDC;</button>
 							{/snippet}
 						</Calendar.NextButton>
 					{:else}
 						<button
 							class="nav previous"
 							type="button"
+							{@attach focusVisual}
 							disabled={!scopeCanNavigate(-1)}
 							onclick={() => navigateScope(-1)}
 						>
@@ -396,6 +400,7 @@
 						<button
 							class="nav next"
 							type="button"
+							{@attach focusVisual}
 							disabled={!scopeCanNavigate(1)}
 							onclick={() => navigateScope(1)}
 						>
@@ -545,7 +550,12 @@
 
 	.title,
 	.nav {
+		position: relative;
 		border: 0;
+		/* The user agent's own focus ring is not WinUI's, and it appears wherever a script moves
+		   focus — a CalendarDatePicker's flyout focuses this button as it opens. The band below
+		   is the one the item style declares, on the same attachment the day cell uses. */
+		outline: none;
 		border-radius: var(--winui-ControlCornerRadius);
 		background: var(--winui-CalendarViewNavigationButtonBackground);
 	}
@@ -907,6 +917,24 @@
 	.calendar-view[data-today-highlighted] .day[data-today][data-selected] {
 		/* c1-allow: CalendarViewBaseItemChrome.cpp:26 — TodaySelectedInnerBorderThickness is 2.0f. */
 		box-shadow: inset 0 0 0 2px var(--winui-CalendarViewTodaySelectedInnerBorderBrush);
+	}
+
+	.title[data-focus-visual]::after,
+	.nav[data-focus-visual]::after {
+		content: '';
+		position: absolute;
+		/* c1-allow: CalendarView_themeresources.xaml:252 —
+		   `FocusVisualMargin="{StaticResource CalendarViewNavigationButtonFocusVisualMargin}"` is
+		   -2, so the band grows two pixels beyond the button. */
+		inset: -2px;
+		border-radius: var(--winui-ControlCornerRadius);
+		box-shadow:
+			inset 0 0 0 var(--winui-FocusVisualPrimaryThickness)
+				var(--winui-CalendarViewFocusVisualPrimaryBrush),
+			inset 0 0 0
+				calc(var(--winui-FocusVisualPrimaryThickness) + var(--winui-FocusVisualSecondaryThickness))
+				var(--winui-CalendarViewFocusVisualSecondaryBrush);
+		pointer-events: none;
 	}
 
 	.day[data-focus-visual]::before,

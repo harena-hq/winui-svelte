@@ -21,6 +21,8 @@ export { default as Button } from './components/Button.svelte';
 export type { ButtonProps } from './components/Button.svelte';
 export { default as CalendarView } from './components/CalendarView.svelte';
 export type { CalendarViewProps } from './components/CalendarView.svelte';
+export { default as CalendarDatePicker } from './components/CalendarDatePicker.svelte';
+export type { CalendarDatePickerProps } from './components/CalendarDatePicker.svelte';
 export { default as CheckBox } from './components/CheckBox.svelte';
 export type { CheckBoxProps } from './components/CheckBox.svelte';
 export { default as CommandBar } from './components/CommandBar.svelte';
