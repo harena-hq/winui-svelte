@@ -162,6 +162,32 @@ const groupMenu = buildGroupMenu(r.groups);
 
 export const menu: NavigationViewEntry[] = [...xamlMenu, ...groupMenu];
 
+/** One of the record's groups — a title and the items under it. */
+export interface GalleryGroup {
+	uniqueId: string;
+	title: string;
+	items: GalleryItem[];
+}
+
+/**
+ * The record's groups, in the order it lists them.
+ *
+ * This is `ControlInfoDataSource.Instance.Groups`, which is what the Gallery's own
+ * `SemanticZoomPage` binds its grouped `CollectionViewSource` to — all nineteen, the three
+ * special sections included, because `ControlInfoData.json` lists them as groups like any
+ * other and nothing in that page filters them.
+ *
+ * Exported because until now the only readings of the record here were the flat `menu` tree
+ * and the per-item `itemOf`, and a page that needs the collection *grouped* would otherwise
+ * have to open the JSON a second time — a second reading of the record, in the tree, with no
+ * one keeping the two agreed.
+ */
+export const groups: readonly GalleryGroup[] = r.groups.map((g) => ({
+	uniqueId: g.uniqueId,
+	title: g.title,
+	items: g.items
+}));
+
 /**
  * Every menu row that names a record item, keyed by that item's uniqueId.
  *

@@ -114,6 +114,8 @@ export { default as ScrollViewer } from './components/ScrollViewer.svelte';
 export type { ScrollViewerProps } from './components/ScrollViewer.svelte';
 export { default as SelectorBar } from './components/SelectorBar.svelte';
 export type { SelectorBarItemData, SelectorBarProps } from './components/SelectorBar.svelte';
+export { default as SemanticZoom } from './components/SemanticZoom.svelte';
+export type { SemanticZoomProps } from './components/SemanticZoom.svelte';
 export { default as Slider } from './components/Slider.svelte';
 export type { SliderProps } from './components/Slider.svelte';
 export { default as SplitButton } from './components/SplitButton.svelte';
