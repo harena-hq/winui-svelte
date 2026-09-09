@@ -106,6 +106,8 @@ export { default as RepeatButton } from './components/RepeatButton.svelte';
 export type { RepeatButtonProps } from './components/RepeatButton.svelte';
 export { default as ScrollView } from './components/ScrollView.svelte';
 export type { ScrollViewProps } from './components/ScrollView.svelte';
+export { default as ScrollViewer } from './components/ScrollViewer.svelte';
+export type { ScrollViewerProps } from './components/ScrollViewer.svelte';
 export { default as SelectorBar } from './components/SelectorBar.svelte';
 export type { SelectorBarItemData, SelectorBarProps } from './components/SelectorBar.svelte';
 export { default as Slider } from './components/Slider.svelte';
