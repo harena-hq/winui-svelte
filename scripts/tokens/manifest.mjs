@@ -1318,6 +1318,39 @@ export const DATEPICKER_KEYS = {
 	DatePickerTopHeaderMargin: 'DatePicker header margin'
 };
 
+/** Every TimePicker resource its closed template and distinct presenter paint. */
+export const TIMEPICKER_KEYS = {
+	TimePickerSpacerFill: 'TimePicker closed spacer fill',
+	TimePickerSpacerFillDisabled: 'TimePicker disabled closed spacer fill',
+	TimePickerHeaderForeground: 'TimePicker header foreground',
+	TimePickerHeaderForegroundDisabled: 'TimePicker disabled header foreground',
+	TimePickerButtonBorderBrush: 'TimePicker button pointer-state border',
+	TimePickerButtonBorderBrushPointerOver: 'TimePicker button pointer-over border',
+	TimePickerButtonBorderBrushPressed: 'TimePicker button pressed border',
+	TimePickerButtonBorderBrushDisabled: 'TimePicker disabled button border',
+	TimePickerButtonBackgroundPointerOver: 'TimePicker button pointer-over background',
+	TimePickerButtonBackgroundPressed: 'TimePicker button pressed background',
+	TimePickerButtonBackgroundDisabled: 'TimePicker disabled button background',
+	TimePickerButtonForeground: 'TimePicker button foreground',
+	TimePickerButtonForegroundDefault: 'TimePicker empty button foreground',
+	TimePickerButtonForegroundPointerOver: 'TimePicker button pointer-over foreground',
+	TimePickerButtonForegroundPressed: 'TimePicker button pressed foreground',
+	TimePickerButtonForegroundDisabled: 'TimePicker disabled button foreground',
+	TimePickerFlyoutPresenterBackground: 'TimePicker flyout background',
+	TimePickerFlyoutPresenterBorderBrush: 'TimePicker flyout border',
+	TimePickerFlyoutPresenterSpacerFill: 'TimePicker flyout spacer fill',
+	TimePickerFlyoutPresenterHighlightFill: 'TimePicker flyout selected-row fill',
+	TimePickerFlyoutPresenterHighlightForegroundColor: 'TimePicker flyout selected-row foreground',
+	TimePickerSpacerThemeWidth: 'TimePicker spacer width',
+	TimePickerTopHeaderMargin: 'TimePicker header margin',
+	TimePickerFlyoutPresenterHighlightHeight: 'TimePicker flyout selected-row height',
+	TimePickerFlyoutPresenterAcceptDismissHostGridHeight: 'TimePicker flyout action bar height',
+	TimePickerThemeMinWidth: 'TimePicker minimum width',
+	TimePickerThemeMaxWidth: 'TimePicker maximum width',
+	TimePickerFlyoutPresenterItemHeight: 'TimePicker flyout item height',
+	TimePickerHostPadding: 'TimePicker closed field padding'
+};
+
 /**
  * Keys SplitView reads from its template: its lengths, border, corner, inline motion, and
  * framework brushes. `SplitViewLightDismissOverlayBackground` is absent because desktop Auto
@@ -2600,6 +2633,12 @@ export const DOUBLE_LENGTHS = {
 	DatePickerSpacerThemeWidth: 'DatePicker spacer width',
 	DatePickerThemeMaxWidth: 'DatePicker maximum width',
 	DatePickerThemeMinWidth: 'DatePicker minimum width',
+	TimePickerFlyoutPresenterAcceptDismissHostGridHeight: 'TimePicker flyout action bar height',
+	TimePickerFlyoutPresenterHighlightHeight: 'TimePicker flyout selected-row height',
+	TimePickerFlyoutPresenterItemHeight: 'TimePicker flyout item height',
+	TimePickerSpacerThemeWidth: 'TimePicker spacer width',
+	TimePickerThemeMaxWidth: 'TimePicker maximum width',
+	TimePickerThemeMinWidth: 'TimePicker minimum width',
 	SplitViewOpenPaneThemeLength: 'SplitView open pane length',
 	SplitViewCompactPaneThemeLength: 'SplitView compact pane length',
 	TreeViewItemMinHeight: 'TreeViewItem minimum height',

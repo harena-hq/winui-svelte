@@ -31,6 +31,8 @@ export { default as ComboBox } from './components/ComboBox.svelte';
 export type { ComboBoxItemData, ComboBoxProps } from './components/ComboBox.svelte';
 export { default as DatePicker } from './components/DatePicker.svelte';
 export type { DatePickerProps } from './components/DatePicker.svelte';
+export { default as TimePicker } from './components/TimePicker.svelte';
+export type { TimePickerProps } from './components/TimePicker.svelte';
 export { default as DropDownButton } from './components/DropDownButton.svelte';
 export type { DropDownButtonProps } from './components/DropDownButton.svelte';
 export { default as Expander } from './components/Expander.svelte';
