@@ -102,6 +102,8 @@ export { default as Slider } from './components/Slider.svelte';
 export type { SliderProps } from './components/Slider.svelte';
 export { default as SplitButton } from './components/SplitButton.svelte';
 export type { SplitButtonProps } from './components/SplitButton.svelte';
+export { default as SplitView } from './components/SplitView.svelte';
+export type { SplitViewProps } from './components/SplitView.svelte';
 export { default as TeachingTip } from './components/TeachingTip.svelte';
 export type {
 	TeachingTipHeroContentPlacementMode,

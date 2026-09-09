@@ -43,7 +43,9 @@ export const ADDITIONAL_KEYS = {
 	AcrylicBackgroundFillColorDefaultBrush: 'Color page, Background',
 	AcrylicBackgroundFillColorBaseBrush: 'Color page, Background',
 	AccentAcrylicBackgroundFillColorDefaultBrush: 'Color page, Background',
-	AccentAcrylicBackgroundFillColorBaseBrush: 'Color page, Background'
+	AccentAcrylicBackgroundFillColorBaseBrush: 'Color page, Background',
+	SystemControlBackgroundChromeMediumLowBrush:
+		'SplitView page, PaneBackground — SplitViewPage.xaml:61'
 };
 
 /**
@@ -1131,6 +1133,26 @@ export const RADIOBUTTONS_KEYS = {
 	RadioButtonsColumnSpacing: 'RadioButtons, the gap between columns',
 	RadioButtonsRowSpacing: 'RadioButtons, the gap between rows',
 	RadioButtonsTopHeaderMargin: 'RadioButtons header, the gap below it'
+};
+
+/**
+ * Keys SplitView reads from its template: its lengths, border, corner, inline motion, and
+ * framework brushes. `SplitViewLightDismissOverlayBackground` is absent because desktop Auto
+ * light dismiss remains transparent; `SplitViewPaneAnimationOpenPreDuration` times a content
+ * translation this grid-column transcription does not use; and `SplitViewRightBorderThemeThickness`
+ * is defined but not applied by the template, whose style always uses the left thickness.
+ */
+export const SPLITVIEW_KEYS = {
+	SplitViewOpenPaneThemeLength: 'SplitView pane, open',
+	SplitViewCompactPaneThemeLength: 'SplitView pane, the compact strip',
+	SplitViewLeftBorderThemeThickness: 'SplitView pane border, whichever side the pane is on',
+	SplitViewPaneRootCornerRadius: 'SplitView pane corner',
+	SplitViewPaneAnimationOpenDuration: 'SplitView pane, opening inline',
+	SplitViewPaneAnimationCloseDuration: 'SplitView pane, closing inline',
+	SystemControlPageBackgroundChromeLowBrush:
+		'SplitView pane background, the style default (framework dictionary)',
+	SystemControlForegroundTransparentBrush:
+		'SplitView pane border and high-contrast edge (framework dictionary)'
 };
 
 /**
@@ -2389,6 +2411,8 @@ export const TYPE_RAMP = {
  * these gets the inputs rather than the answer.
  */
 export const DOUBLE_LENGTHS = {
+	SplitViewOpenPaneThemeLength: 'SplitView open pane length',
+	SplitViewCompactPaneThemeLength: 'SplitView compact pane length',
 	TreeViewItemMinHeight: 'TreeViewItem minimum height',
 	TreeViewItemContentHeight: 'TreeViewItem content minimum height',
 	ListViewItemMinWidth: 'ListViewItem minimum width',
