@@ -28,6 +28,11 @@ body {
 	border-radius: var(--winui-OverlayCornerRadius);
 }
 
+/* App.xaml:47-48 maps both Gallery brushes to SystemColorWindowColor in HighContrast. */
+:root[data-theme='high-contrast'] .gallery-tile-grid {
+	border-color: var(--winui-SystemColorWindowColor);
+}
+
 .design-row {
 	min-height: 68px;
 	border-radius: var(--winui-ControlCornerRadius);
