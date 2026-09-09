@@ -142,6 +142,20 @@ function buildGroupMenu(groups: RecordGroup[]): NavigationViewEntry[] {
 
 const r = record as unknown as RecordShape;
 
+const ITEMS_BY_UNIQUE_ID: ReadonlyMap<string, GalleryItem> = (() => {
+	const items = new Map<string, GalleryItem>();
+	for (const group of r.groups) {
+		for (const item of group.items) {
+			const key = slug(item.uniqueId);
+			if (items.has(key)) {
+				throw new Error(`shell: duplicate GalleryItem uniqueId ${JSON.stringify(item.uniqueId)}`);
+			}
+			items.set(key, item);
+		}
+	}
+	return items;
+})();
+
 const xamlMenu = buildXamlMenu(r.menu);
 const groupMenu = buildGroupMenu(r.groups);
 
@@ -223,15 +237,11 @@ export function titleOf(path: string): string | null {
 	return f === null ? null : f.content;
 }
 
-/** The record's entry for a control page's path, or `null` where the path names no item. */
+/** The record's entry for a page path, or `null` where its final segment names no item. */
 export function itemOf(path: string): GalleryItem | null {
-	for (const group of r.groups) {
-		const groupPath = `/${slug(group.uniqueId)}`;
-		for (const item of group.items) {
-			if (`${groupPath}/${slug(item.uniqueId)}` === path) return item;
-		}
-	}
-	return null;
+	const segments = path.split('/').filter(Boolean);
+	if (segments.length < 2) return null;
+	return ITEMS_BY_UNIQUE_ID.get(slug(segments.at(-1)!)) ?? null;
 }
 
 function ancestorsFor(

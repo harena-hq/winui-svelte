@@ -721,3 +721,25 @@ gate does.
 - **We do**: move a transform by one item's width when a flip button is pressed, and nothing else. There is no drag, no wheel and no swipe, and the panel cannot be left between two items.
 - **Why accepted**: the resting visual is the same — an item filling the viewport with a button at each end — and what differs is the motion between two states rather than either state. Reproducing it needs a scroll container with snap points and a scroll handler that writes `selectedIndex` back, which is a scroll-position feedback loop of exactly the kind v8's sixth unit paid for; the Scrolling tranche is where the container it needs gets built.
 - **Would reconsider if**: the Scrolling tranche lands a `ScrollView` this control can sit in, at which point the transform becomes a scroll offset and this row is deleted.
+
+---
+
+### WD-029 — the annotated image above each design table is absent
+
+- **Control**: the Gallery's Typography and Geometry pages.
+- **WinUI does**: put two things in one `ControlExample`. Above, a `Canvas` holding one
+  annotated PNG from `Assets/Design/` with `TeachingTip` buttons pinned over it at fixed
+  coordinates — `TypographyPage.xaml:54-160` and `GeometryPage.xaml:51-150`. Below it, in a
+  second `ScrollViewer`, the table of rows: nine type-ramp rows at `TypographyPage.xaml:162-265`
+  and three corner-radius rows at `GeometryPage.xaml:151-249`.
+- **We do**: draw the table and not the image. The table is the original's own, row for row —
+  v1 read the type ramp's nine rows out of that markup and they are what
+  `data/winui-gallery-design.json` carries.
+- **Why accepted**: the images are Microsoft binaries inside `.upstream/`, which this repository
+  deliberately does not track, and every annotation on them is a coordinate measured against
+  their pixels. Nothing about the token layer or the frame is shown by them that the table below
+  does not show, which is why the pages were built this way in v1 — what was missing until now
+  is this entry.
+- **Would reconsider if**: the assets become redistributable and their annotation coordinates
+  are recorded as data. The renderer is the cheap half; a tracked image and a list of tip
+  positions is what does not exist.
