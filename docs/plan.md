@@ -66,6 +66,7 @@ pnpm workspace. The library is publishable and imposes no build tooling on its c
 | D27 | A collection control is generic in its item type and draws it through a snippet the caller writes    | ADR 0013                          |
 | D28 | The sample-page frame is the Gallery's own harness around WinUI, so it is Gallery code               | this file, "Roadmap → v10"        |
 | D29 | Syntax highlighting is ColorCode's rules and palette as data, applied by an engine of ours           | ADR 0014                          |
+| D30 | Grid and StackPanel are Gallery pages drawn in CSS, not components; Border stays a component         | this file, "Roadmap → v11"        |
 
 ## Verification
 
@@ -1909,6 +1910,160 @@ generics="T">` component through `pnpm --filter winui-svelte build` reaches `dis
 
 11. **Layout** — Border, SplitView, Viewbox, and the Gallery's Grid and StackPanel pages, which
     are mostly documentation of CSS this library does not need to reimplement.
+
+    **The goal, in one line: the Layout group's five roadmap pages render on the frame, and the
+    three controls they demonstrate exist in the library.** This is the first version to put a
+    _control_ page on the frame v10 built — the two pages v10 moved were Design pages, tables in a
+    display pane with no options pane beside them. Every control page in the shell still renders
+    the placeholder, and what these five need that the frame has never been asked for is the
+    thing v10's closing entry named: a container built for one child, tried with an options pane
+    full of controls that drive it.
+
+    **The five pages, read on the reference guest before anything was decided.** Each is one
+    `ControlExample` with an options pane, and the display pane holds exactly what the roadmap
+    line says.
+
+    | page       | display pane                                                                          | options pane                                                                                |
+    | ---------- | ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+    | Border     | a `Border` around a TextBlock, `VerticalAlignment="Top"` (`BorderPage.xaml:24`)       | a Slider and two `RadioButtons` side by side in a Grid with `ColumnSpacing="8"` (`:47`)     |
+    | SplitView  | a `SplitView` in a 400×300 Grid (`SplitViewPage.xaml:53`)                             | a ToggleButton, a ToggleSwitch, two ComboBoxes and two Sliders, each 196 wide (`:123-163`)  |
+    | Viewbox    | a `Viewbox` sized by a Slider, `VerticalAlignment="Top"` (`ViewboxPage.xaml:24-26`)   | a StackPanel 200 wide: a Slider and two `RadioButtons` (`:55`)                              |
+    | Grid       | a 240×160 Grid of four Rectangles (`GridPage.xaml:24-25`), no alignment set           | two horizontal Sliders and **two vertical, direction-reversed** ones (`:89-93`, `:122-126`) |
+    | StackPanel | four Rectangles in a StackPanel, `VerticalAlignment="Top"` (`StackPanelPage.xaml:27`) | a `RadioButtons` and a Slider in a StackPanel with `Spacing="12"` (`:41`)                   |
+
+    Three things the library does not have are on that table, and none of them is a Layout
+    control. **`RadioButtons`** — the group control with a header and a column-major layout,
+    `controls/dev/RadioButtons/RadioButtons.xaml` — was never built: v3's unit 5 built
+    `RadioButton` "and the group that owns the selection", and the group it built is the native
+    one a shared `name` makes, which is the right selection model and not the control. Three of
+    the five options panes are made of it. **A vertical `Slider`** — the `VerticalTemplate` at
+    `Slider_themeresources.xaml:418-434` — was deferred by the Slider unit with a comment saying
+    so, and the Grid page's `RowSpacing` and `Grid.Row` sliders are vertical and reversed. And
+    **the display pane has no way to put a child at the top.** v10's u6a made the pane a grid
+    column with `align-content: center`, which is where a XAML child with a fixed height and the
+    default `VerticalAlignment="Stretch"` lands, and three of these five samples say
+    `VerticalAlignment="Top"` instead. In CSS that is the container's property; in XAML it is the
+    child's. The mechanism was prototyped before this entry was written, per v10's lesson: the
+    pane becomes a flex column with `justify-content: center`, and a direct child carrying
+    `data-vertical-alignment="top"` takes `margin-bottom: auto`, which the flex algorithm
+    resolves before `justify-content` does. Measured in a scratch page — top lands at the
+    padding edge, centre where it landed before, `stretch` fills, and a column of rows still
+    stacks. The attribute is read on the pane's direct children only, and a second child after a
+    `top` one is pushed to the bottom by the same auto margin — a caveat for a page that stacks
+    two aligned samples, which none of these five does. Symbol icons need nothing: D25 already
+    says an icon is a code point the consumer draws, and the SplitView page draws four.
+
+    **D30 — Grid and StackPanel are pages, not components.** The roadmap line said so and the
+    reading confirms it: `Grid` with `ColumnDefinitions="50, 50, 50"` and `RowSpacing` is CSS
+    grid with `grid-template-columns` and `row-gap`; `StackPanel` with `Orientation` and
+    `Spacing` is a flex column or row with `gap`. A component whose whole body is one CSS
+    declaration per prop would give a consumer a worse grid than the one the browser already
+    has, and a Gallery page that shows the XAML beside a CSS rendering of it is the documentation
+    the roadmap line describes. The two pages draw their samples in page-local CSS, cited to
+    the sample, and the options drive it through custom properties on the page's own element —
+    C1 walks `apps/gallery/src`, so each declaration carries its citation like a component's.
+    Border is not in that sentence, and it stays a component: it is a `FrameworkElement` with
+    its own `Thickness` grammar, its page names it as a control, and a consumer porting XAML
+    reaches for it by name.
+
+    **A `Thickness` or `CornerRadius` prop takes XAML's own string.** `BorderThickness="2"`,
+    `Margin="8,5"`, `Padding="1,2,3,4"` — one, two or four numbers, in XAML's order, which is
+    left, top, right, bottom and not CSS's. D21 maps the member; the value grammar has had no
+    rule until now because no component has taken one of these types as a prop. A shared reader
+    in `packages/winui-svelte/src/lib/internal/` turns the string into CSS's four values, and
+    a number is the one-value form. The alternative — CSS strings on a prop named after a XAML
+    member — puts two grammars under one name, and a page substituting `$(BorderThickness)`
+    into XAML text would then show a value the XAML could not parse.
+
+    **Sample media is copied from the pin, as v9 did.** `apps/gallery/static/sunset.jpg` is
+    byte-identical to the Gallery's `Assets/SampleMedia/sunset.jpg`; the Viewbox sample's
+    `Slices.png` (`ViewboxPage.xaml:48`, 90×90) goes in beside it the same way. WD-029's images
+    are a different case and stay one — what makes them unreproducible is the annotation
+    coordinates measured against their pixels, not the bytes.
+
+    **Viewbox, measured rather than recalled.** The guest was driven through all four `Stretch`
+    values at 200×200. The child is scaled from the **top-left corner**, not centred: under
+    `Uniform` a 190×150 child becomes 200×158 and sits at the pane's padding edge with the
+    remaining 42 pixels empty below it. `Fill` scales the axes independently — the disc becomes
+    an ellipse. `UniformToFill` **clips**: the child scales to 253 wide and the box shows its
+    left 200 pixels. `None` is scale 1. So the component is a box with `overflow: hidden` whose
+    child is laid out at its natural size and transformed from origin `0 0`, with the scale
+    computed from a `ResizeObserver` on both; `StretchDirection` clamps the scale to at least
+    or at most 1. A size comes from the caller through `style`, as XAML's `Width`/`Height` do.
+
+    **SplitView is a template with eleven states and no code in the pin.** `SplitView` is a
+    `Windows.UI.Xaml` control WinUI restyles; the pin carries `SplitView_themeresources.xaml`
+    and nothing else, so its behaviour is the template's setters plus the published API. The
+    template is a two-column grid: `PaneRoot` spans both columns, is `OpenPaneLength` wide,
+    aligned left or right, at `Canvas.ZIndex="1"`, and carries the pane's background and a
+    border whose brush is `SystemControlForegroundTransparentBrush` — transparent in light and
+    dark, `SystemColorButtonTextColor` in high contrast (`:700`); `ContentRoot` spans both
+    columns too until a state gives it one (`:718`). The display modes are the states
+    (`:542-683`): the inline ones give the content its own column, the overlay ones leave the
+    content where it is and show the pane over it with a `LightDismissLayer` over the content
+    (`:723`); the compact ones keep the pane visible when closed, its column
+    `CompactPaneLength` wide and the pane clipped to that width — `PaneClipRectangle`
+    translated by the difference, which is `clip-path: inset(…)` here. Six of those states were
+    photographed on the guest: an overlay pane covers the content text; a closed compact pane is
+    a 48-pixel strip of icons; placed right, it is the strip at the right edge and the pane opens
+    over the content from there. The open transition is 200 ms on a `0.0,0.35 0.15,1.0` spline
+    and the close is 100 ms, both in the template, and both are transcribed. Light dismiss —
+    a click on the layer closing an overlay pane — is one line, and the layer's fill stays
+    transparent because `LightDismissOverlayMode` defaults to `Auto`, which is off on desktop.
+
+    **The pages carry their substitutions live.** Every `$(Key)` in the five sample texts is
+    bound upstream to the option that drives it, and `SampleCodePresenter` throws on a key the
+    page does not supply, so each page passes the whole set in the strings XAML would show:
+    `Colors.Gold` is `#FFFFD700`, a bool is `True`, an enum is its member name, a double is
+    its number. The Border page's radio groups name their colours the way the code-behind does
+    (`BorderPage.xaml.cs`): the background is `Yellow`/`Green`/`Blue`/`White` and the brush is
+    `Gold`/`DarkGreen`/`DarkBlue`/`White` behind the same four labels.
+
+    **Not taken, and where each goes.** The Layout group has nine pages; this version takes
+    the five the roadmap names. `Expander` is built and its page is not moved: whose version
+    moves the pages of the controls built before v10 is open question O-pages below, and
+    answering it for one page here would answer it by accident. Canvas, RelativePanel and
+    VariableSizedWrapGrid stay in the unscheduled table. `RadioButtons.SelectedIndex` and
+    `SelectedItem` are not reproduced — selection is the children's native group, which is what
+    v3 decided and what the keyboard already does right — and the layout's habit of dropping
+    columns when the width runs out (`ColumnMajorUniformToLargestGridLayout.cpp:132-162`) is
+    not either; `MaxColumns` is honoured as written.
+
+    Seven units, in dependency order:
+
+    1. **The display pane's vertical alignment.** The prototype above, into
+       `ControlExample`. Authored directly: ten lines, measured before this entry, and nothing
+       about timing or lifetime in it.
+    2. **`RadioButtons`.** Header (`RadioButtons.xaml`, `RadioButtonsTopHeaderMargin` 0,0,0,8),
+       and the column-major layout uniform to the largest child
+       (`ColumnMajorUniformToLargestGridLayout.cpp:16-42`; `RadioButtonsColumnSpacing` 7,
+       `RadioButtonsRowSpacing` 8), `MaxColumns` defaulting to 1 (`RadioButtons.idl:24`). Children
+       are `RadioButton`s the caller writes with a shared `name`.
+    3. **Border, and its page.** The component, the `Thickness` reader, the harness; then the
+       page, which is the first control page on the frame and the first options pane with two
+       groups side by side. Sealed as two commits.
+    4. **Slider's vertical template.** `orientation` and `isDirectionReversed`, from
+       `Slider_themeresources.xaml:418-434` and the three `SliderVertical*` keys the manifest
+       excluded by name. bits-ui's `orientation` is verified against its documentation before the
+       spec is written, and whether it can reverse a vertical track is the thing to verify.
+    5. **The Grid and StackPanel pages.** D30 — CSS in the page, four sliders on one and a radio
+       group on the other, every substitution live.
+    6. **Viewbox, and its page.** The mechanism above; the page copies `Slices.png` and draws
+       the four Rectangles and the text the sample stacks inside a Border.
+    7. **SplitView, and its page.** The template above, the ten `SplitView*` and framework keys
+       it reads, the transitions; then the page — a `ListView` of four code-point icons in the
+       pane, the two item templates the placement toggles between, and six options.
+
+    Done-when: each of the five routes renders the frame with its options pane rather than the
+    placeholder, and each compares clean against the original on the reference guest as a page,
+    the display pane's child at the top where the sample puts it there; every option on every
+    page moves the sample and its substitution — the Border page's thickness and two colours,
+    the Viewbox page's size and eight radio states, the Grid page's four sliders, the StackPanel
+    page's orientation and spacing, the SplitView page's four display modes, both placements,
+    the toggle and the two lengths; Border, Viewbox, SplitView and RadioButtons render in the
+    three themes in the snapshot suite with the vertical Slider in Slider's; and the nine gates
+    stay green.
+
 12. **Date and time** — CalendarView, CalendarDatePicker, DatePicker, TimePicker.
 13. **Scrolling** — ScrollView, PipsPager, AnnotatedScrollBar, SemanticZoom, and
     **PullToRefresh**, moved here from Collections by v9 for the reasons its entry gives:
@@ -2240,6 +2395,16 @@ title bar on the reference guest, and the cause was structural:
 `TextBox` inside the control and leaves both buttons outside it. Moved, and the box measures
 32 — top border on row 8 and bottom on row 39 in the original's capture and in ours, the
 same height at the same place in the row.
+
+**O-pages — whose version moves a pre-v10 control page onto the frame?** Every control built
+from v3 to v9 has a harness route and a placeholder page, because the frame those pages need
+is v10's and the tranches that built the controls closed before it existed. v11 puts its own
+five pages on the frame as it builds their controls, and every tranche from here on does the
+same; that leaves some fifty pages whose controls exist and whose pages do not, and the
+acceptance gate walks them. Not resolved here. The candidates are one pages-only version per
+closed group, or a page folded into the next version that touches its control; the cost of
+either is one page-unit each, and the order should follow what the driving session finds
+worst rather than the group list.
 
 ## Sources
 
