@@ -2,7 +2,7 @@
 	import { afterNavigate, goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import { resolve } from '$app/paths';
-	import { AutoSuggestBox, NavigationView, TitleBar } from 'winui-svelte';
+	import { AutoSuggestBox, NavigationView, ScrollView, TitleBar } from 'winui-svelte';
 	import {
 		QUERY_GLYPH,
 		ancestorsOf,
@@ -127,7 +127,13 @@
 		paneToggleButtonVisible={false}
 		bind:expandedItems
 	>
-		<div class="page">{@render children()}</div>
+		<!-- The page scrolls, not the window. In the original each Gallery page carries its own
+		     ScrollViewer, so this region is now a ScrollView rather than a NavigationView rule.
+		     The gutter is on the content inside it rather than on the scroller, which is where
+		     upstream puts it and what lets the rule below take it away from a framed page. -->
+		<ScrollView class="page" style="height: 100%">
+			<div class="page-gutter">{@render children()}</div>
+		</ScrollView>
 	</NavigationView>
 </div>
 
@@ -150,60 +156,7 @@
 		flex-direction: column;
 	}
 
-	/* The page scrolls, not the window. In the original each Gallery page carries its own
-	   ScrollViewer, so the scrolling belongs to the page rather than to NavigationView —
-	   which is why this is a wrapper here and not a rule in the control. */
-	/* The same rail the pane's scroller uses — `ScrollBarSize` 12 with an 8 wide thumb,
-	   ScrollBar_themeresources.xaml:180 and :182. Setting `scrollbar-width` as well would
-	   be worse than useless: Chromium ignores every `::-webkit-scrollbar` rule on an
-	   element that has it, which is how the first attempt at this ended up with the
-	   browser's default rail and a comment claiming otherwise. */
-	.page::-webkit-scrollbar {
-		/* c1-allow: ScrollBar_themeresources.xaml:180, ScrollBarSize 12 */
-		width: 12px;
-	}
-
-	.page::-webkit-scrollbar-track {
-		background: transparent;
-	}
-
-	.page::-webkit-scrollbar-thumb {
-		background: var(--winui-ControlStrongFillColorDefaultBrush);
-		background-clip: padding-box;
-		/* The source's `Collapsed` state names 8 — ScrollBar_themeresources.xaml:543 — and
-		   what Windows renders at rest is thinner than that. 5 of border in a 12 rail
-		   leaves the 2 the original draws. */
-		/* c1-allow: measured 2px on a capture of the real Gallery's pane */
-		border: 5px solid transparent;
-		/* A capsule at both widths. `border-radius` applies to the border box and the
-		   visible thumb is the padding box, so the radius it sees is this minus the border:
-		   1 against a 2 wide thumb at rest, 3 against a 6 wide one on hover. Half of
-		   `ScrollBarSize` is the number that makes both come out round. */
-		/* c1-allow: ScrollBar_themeresources.xaml:180, half of ScrollBarSize 12 */
-		border-radius: 6px;
-	}
-
-	/* `Expanded` — ScrollBar_themeresources.xaml:587, the rail at `ScrollBarSize` with the
-	   thumb at `ScrollBarVerticalThumbMinWidth`. WinUI animates between the two; a hover
-	   rule is the same two states without the animation. */
-	/* Measured on the original with the pointer over it: the track fills with
-	   `ScrollBarTrackFillPointerOver` — `AcrylicInAppFillColorDefaultBrush`,
-	   ScrollBar_themeresources.xaml:32 — across the full 12, and the thumb inside it is 6,
-	   not the 8 the `Expanded` state's own number suggests. The padding either side of the
-	   thumb is what makes it read as thinner than a bar drawn edge to edge. */
-	.page:hover::-webkit-scrollbar-track {
-		background: var(--winui-AcrylicInAppFillColorDefaultBrush);
-	}
-
-	.page:hover::-webkit-scrollbar-thumb {
-		/* c1-allow: measured 6px of thumb inside the 12 of ScrollBarSize on the original */
-		border: 3px solid transparent;
-	}
-
-	.page {
-		height: 100%;
-		overflow-y: auto;
-		box-sizing: border-box;
+	.page-gutter {
 		/* The Gallery's own gutter, not NavigationView's — `NavigationViewContentPresenterMargin`
 		   is 0. `ItemPage.xaml:39` gives the page header `Margin="36,24,36,0"` and `:48` gives
 		   the content root `Padding="36,0,36,36"`, which together are 36 a side, 24 above and
@@ -216,7 +169,7 @@
 	/* Except where the page is an `ItemPage`, which carries those same margins itself — the
 	   gutter above is v2's interim stand-in for a frame that now exists, and two of them
 	   would be 72 a side. The pages still without a frame keep it until their own unit. */
-	.page:has(> :global([data-item-page])) {
+	.page-gutter:has(> :global([data-item-page])) {
 		padding: 0;
 	}
 </style>

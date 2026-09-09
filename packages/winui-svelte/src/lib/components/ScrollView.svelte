@@ -18,6 +18,18 @@
 		horizontalOffset?: number;
 		/** ScrollView.VerticalOffset — read-only upstream, bindable here (ADR 0009). */
 		verticalOffset?: number;
+		/** ScrollView.ExtentWidth — read-only upstream, bindable here (ADR 0009). */
+		extentWidth?: number;
+		/** ScrollView.ExtentHeight — read-only upstream, bindable here (ADR 0009). */
+		extentHeight?: number;
+		/** ScrollView.ViewportWidth — read-only upstream, bindable here (ADR 0009). */
+		viewportWidth?: number;
+		/** ScrollView.ViewportHeight — read-only upstream, bindable here (ADR 0009). */
+		viewportHeight?: number;
+		/** ScrollView.ScrollableWidth — read-only upstream, bindable here (ADR 0009). */
+		scrollableWidth?: number;
+		/** ScrollView.ScrollableHeight — read-only upstream, bindable here (ADR 0009). */
+		scrollableHeight?: number;
 		/** No WinUI member: ADR 0009 pairs bindable state with a change callback. */
 		onOffsetChange?: ((offset: { horizontal: number; vertical: number }) => void) | undefined;
 		/** UIElement.IsEnabled. */
@@ -46,6 +58,12 @@
 		verticalScrollMode = 'auto',
 		horizontalOffset = $bindable(0),
 		verticalOffset = $bindable(0),
+		extentWidth = $bindable(0),
+		extentHeight = $bindable(0),
+		viewportWidth = $bindable(0),
+		viewportHeight = $bindable(0),
+		scrollableWidth = $bindable(0),
+		scrollableHeight = $bindable(0),
 		onOffsetChange,
 		disabled = false,
 		class: className,
@@ -58,20 +76,20 @@
 	let content = $state<HTMLDivElement | null>(null);
 	let scrollTop = $state(0);
 	let scrollLeft = $state(0);
-	let scrollHeight = $state(0);
-	let scrollWidth = $state(0);
-	let clientHeight = $state(0);
-	let clientWidth = $state(0);
+	// The six extent and viewport props are this component's own measurement state as well as
+	// what it publishes: upstream reports the same six numbers as read-only properties
+	// (ScrollView.idl:29-34), and keeping a private copy beside them would be two sources for
+	// one measurement.
 
 	// ScrollBarController::UpdateCanScroll (ScrollBarController.cpp:299-308) is
 	// `m_isScrollable && m_scrollBar.IsEnabled() && Maximum > Minimum`, so a disabled control
 	// reports that it cannot scroll and an Auto bar collapses with it. A Visible one still draws,
 	// because ScrollView.cpp:1667 sets that from the property alone.
 	let canScrollVertically = $derived(
-		!disabled && verticalScrollMode !== 'disabled' && scrollHeight > clientHeight
+		!disabled && verticalScrollMode !== 'disabled' && extentHeight > viewportHeight
 	);
 	let canScrollHorizontally = $derived(
-		!disabled && horizontalScrollMode !== 'disabled' && scrollWidth > clientWidth
+		!disabled && horizontalScrollMode !== 'disabled' && extentWidth > viewportWidth
 	);
 	// ScrollView.cpp:1646-1706: Hidden and Auto without scrollable extent draw nothing; only
 	// Visible forces a controller, whose ScrollBar draws a rail without a thumb at zero range.
@@ -88,10 +106,12 @@
 		if (!viewport) return;
 		scrollTop = viewport.scrollTop;
 		scrollLeft = viewport.scrollLeft;
-		scrollHeight = viewport.scrollHeight;
-		scrollWidth = viewport.scrollWidth;
-		clientHeight = viewport.clientHeight;
-		clientWidth = viewport.clientWidth;
+		extentWidth = viewport.scrollWidth;
+		extentHeight = viewport.scrollHeight;
+		viewportWidth = viewport.clientWidth;
+		viewportHeight = viewport.clientHeight;
+		scrollableWidth = Math.max(0, extentWidth - viewportWidth);
+		scrollableHeight = Math.max(0, extentHeight - viewportHeight);
 	}
 
 	function onScroll() {
@@ -148,8 +168,8 @@
 			<ScrollBar
 				value={scrollTop}
 				minimum={0}
-				maximum={Math.max(0, scrollHeight - clientHeight)}
-				viewportSize={clientHeight}
+				maximum={scrollableHeight}
+				viewportSize={viewportHeight}
 				indicatorMode="mouse"
 				{disabled}
 				onValueChange={scrollVertically}
@@ -162,8 +182,8 @@
 				orientation="horizontal"
 				value={scrollLeft}
 				minimum={0}
-				maximum={Math.max(0, scrollWidth - clientWidth)}
-				viewportSize={clientWidth}
+				maximum={scrollableWidth}
+				viewportSize={viewportWidth}
 				indicatorMode="mouse"
 				{disabled}
 				onValueChange={scrollHorizontally}

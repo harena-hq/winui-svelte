@@ -4,9 +4,9 @@
 	export type SelectionMode = import('../internal/selection').SelectionMode;
 
 	/*
-	 * `ScrollView`, `VerticalScrollController`, `TryGetItemIndex`, and `StartBringItemIntoView`
-	 * are absent because this viewport is `overflow: auto`, not a `ScrollView` object with a
-	 * controller to hand back. The real ScrollView is its own control and tranche. `Select`,
+	 * `VerticalScrollController`, `TryGetItemIndex`, and `StartBringItemIntoView` are absent.
+	 * This viewport is now a `ScrollView`, but this control does not expose its controller or
+	 * imperative members. `Select`,
 	 * `Deselect`, `IsSelected`, `SelectAll`, `DeselectAll`, and `InvertSelection` are six
 	 * imperative methods expressible by assigning bindable `selectedIndexes`: this library
 	 * publishes state, not commands, as ItemsRepeater did for its three imperative members.
@@ -65,6 +65,7 @@
 <script lang="ts" generics="T">
 	import { nextSelection } from '../internal/selection';
 	import ItemsRepeater from './ItemsRepeater.svelte';
+	import ScrollView from './ScrollView.svelte';
 
 	let {
 		items,
@@ -141,8 +142,11 @@
 	     interacted with and with which modifiers, and because upstream's own Style is
 	     `IsTabStop="False"` (ItemsView.xaml:6), which is what `tabindex="-1"` says here: reachable
 	     by script and by an assistive technology, never by the Tab key. -->
-	<div
+	<!-- PART_ScrollView (ItemsView.xaml:19-27). This region is now a ScrollView and inherits the
+	     control's corner radius. -->
+	<ScrollView
 		class="viewport"
+		style="height: 100%; border-radius: inherit"
 		role="listbox"
 		tabindex="-1"
 		aria-multiselectable={selectionMode === 'multiple' || selectionMode === 'extended'}
@@ -160,7 +164,7 @@
 				})}
 			{/snippet}
 		</ItemsRepeater>
-	</div>
+	</ScrollView>
 </div>
 
 <style>
@@ -169,62 +173,5 @@
 	   (ItemsView_themeresources.xaml:3-7). This control paints nothing else. */
 	.root {
 		border-radius: var(--winui-ControlCornerRadius);
-	}
-
-	/* PART_ScrollView (ItemsView.xaml:19-27). A real ScrollView is its own control and its own
-	   tranche; what the view needs here is the viewport, and the scrollbar rules below are
-	   NavigationView's, which reproduce ScrollBar_themeresources.xaml's two states. */
-	.viewport {
-		height: 100%;
-		overflow: auto;
-		border-radius: inherit;
-	}
-
-	/* `ScrollBarSize` is 12 and `ScrollBarVerticalThumbMinWidth` is 8 —
-	   ScrollBar_themeresources.xaml:180 and :182 — where the browser's default rail is half
-	   again as wide. The thumb is inset into the rail with a transparent border, so both
-	   numbers are the source's rather than one being the other minus a guess. The real
-	   ScrollBar, with the collapse and expand its visual states drive, is the Scrolling
-	   tranche's. */
-	.viewport::-webkit-scrollbar {
-		/* c1-allow: ScrollBar_themeresources.xaml:180, ScrollBarSize 12 */
-		width: 12px;
-	}
-
-	.viewport::-webkit-scrollbar-track {
-		background: transparent;
-	}
-
-	.viewport::-webkit-scrollbar-thumb {
-		background: var(--winui-ControlStrongFillColorDefaultBrush);
-		background-clip: padding-box;
-		/* The source's `Collapsed` state names 8 — ScrollBar_themeresources.xaml:543 — and
-		   what Windows renders at rest is thinner than that. 5 of border in a 12 rail
-		   leaves the 2 the original draws. */
-		/* c1-allow: measured 2px on a capture of the real Gallery's pane */
-		border: 5px solid transparent;
-		/* A capsule at both widths. `border-radius` applies to the border box and the
-		   visible thumb is the padding box, so the radius it sees is this minus the border:
-		   1 against a 2 wide thumb at rest, 3 against a 6 wide one on hover. Half of
-		   `ScrollBarSize` is the number that makes both come out round. */
-		/* c1-allow: ScrollBar_themeresources.xaml:180, half of ScrollBarSize 12 */
-		border-radius: 6px;
-	}
-
-	/* `Expanded` — ScrollBar_themeresources.xaml:587, the rail at `ScrollBarSize` with the
-	   thumb at `ScrollBarVerticalThumbMinWidth`. WinUI animates between the two; a hover
-	   rule is the same two states without the animation. */
-	/* Measured on the original with the pointer over it: the track fills with
-	   `ScrollBarTrackFillPointerOver` — `AcrylicInAppFillColorDefaultBrush`,
-	   ScrollBar_themeresources.xaml:32 — across the full 12, and the thumb inside it is 6,
-	   not the 8 the `Expanded` state's own number suggests. The padding either side of the
-	   thumb is what makes it read as thinner than a bar drawn edge to edge. */
-	.viewport:hover::-webkit-scrollbar-track {
-		background: var(--winui-AcrylicInAppFillColorDefaultBrush);
-	}
-
-	.viewport:hover::-webkit-scrollbar-thumb {
-		/* c1-allow: measured 6px of thumb inside the 12 of ScrollBarSize on the original */
-		border: 3px solid transparent;
 	}
 </style>
