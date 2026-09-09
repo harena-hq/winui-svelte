@@ -57,6 +57,15 @@
 <h2 class="winui-SubtitleTextBlockStyle">selectionMode=none</h2>
 <div class="row"><CalendarView selectionMode="none" /></div>
 
+<h2 class="winui-SubtitleTextBlockStyle">displayMode="year"</h2>
+<div class="row"><CalendarView displayMode="year" /></div>
+
+<h2 class="winui-SubtitleTextBlockStyle">displayMode="decade"</h2>
+<div class="row"><CalendarView displayMode="decade" /></div>
+
+<h2 class="winui-SubtitleTextBlockStyle">displayMode="year" with isGroupLabelVisible</h2>
+<div class="row"><CalendarView displayMode="year" isGroupLabelVisible /></div>
+
 <style>
 	/* c1-allow: harness layout, not a WinUI value */
 	.row {
