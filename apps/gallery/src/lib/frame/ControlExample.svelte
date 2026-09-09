@@ -143,14 +143,19 @@
 		border-radius: var(--winui-OverlayCornerRadius) var(--winui-OverlayCornerRadius) 0 0;
 	}
 
-	/* Measured on the original's Button page: the sample keeps its own height and sits in the
+	/* One column, not one row. A `ContentPresenter` upstream holds a single element; a snippet
+	   here can emit several roots, and as flex items they came out side by side — the type
+	   ramp's nine rows ran off the right edge of the pane. A grid with one auto column stacks
+	   them the way a reader expects and says the alignment properties more directly than flex
+	   did: `justify-items` is HorizontalContentAlignment, `stretch` included.
+	   Measured on the original's Button page: the sample keeps its own height and sits in the
 	   middle of a pane whose height the tallest column decides — a 32px button centred in a
 	   94px pane, and a 48px one centred in a 99px pane. The template says only
 	   `VerticalAlignment="Stretch"` on the presenter, which is the pane rather than its
-	   content. */
+	   content, and `align-content` is where that lands on a grid. */
 	.example {
-		display: flex;
-		align-items: center;
+		display: grid;
+		align-content: center;
 		padding: 12px;
 		background: var(--winui-SolidBackgroundFillColorBaseBrush);
 		border-color: var(--winui-CardStrokeColorDefaultBrush);
@@ -161,16 +166,16 @@
 	}
 
 	.example[data-horizontal-content-alignment='left'] {
-		justify-content: flex-start;
+		justify-items: start;
 	}
 	.example[data-horizontal-content-alignment='center'] {
-		justify-content: center;
+		justify-items: center;
 	}
 	.example[data-horizontal-content-alignment='right'] {
-		justify-content: flex-end;
+		justify-items: end;
 	}
-	.example[data-horizontal-content-alignment='stretch'] > :global(*) {
-		flex: 1 1 auto;
+	.example[data-horizontal-content-alignment='stretch'] {
+		justify-items: stretch;
 	}
 
 	/* High contrast already maps SolidBackgroundFillColorBaseBrush to SystemColorWindowColor. */
