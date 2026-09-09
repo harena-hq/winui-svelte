@@ -36,6 +36,21 @@
 	--winui-PopupShadow: 0 3px 2px rgba(0, 0, 0, 0.035), 0 10px 8px rgba(0, 0, 0, 0.09);
 	--winui-DialogShadow: 0 4px 6px rgba(0, 0, 0, 0.04), 0 24px 32px rgba(0, 0, 0, 0.18);
 
+	--winui-ScrollButtonBackground: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-ScrollButtonForeground: var(--winui-TextFillColorPrimaryBrush);
+	--winui-ScrollButtonForegroundPointerOver: var(--winui-TextFillColorSecondaryBrush);
+	--winui-ScrollButtonForegroundPressed: var(--winui-TextFillColorTertiaryBrush);
+	--winui-ScrollButtonForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+	--winui-ScrollButtonBorderBrush: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-VerticalThumbBrush: var(--winui-AccentFillColorDefaultBrush);
+	--winui-ScrollButtonStyleBorderThickness: 0px;
+	--winui-ThumbHeight: 3px;
+	--winui-ThumbWidth: 30px;
+	--winui-LabelsGridMinWidth: 44px;
+	--winui-AnnotatedScrollBarTooltipMaxWidth: 360px;
+	--winui-AnnotatedScrollBarTooltipMinHeight: 40px;
+	--winui-ScrollButtonFontSize: 8px;
+	--winui-ThumbCornerRadius: 1.5px;
 	--winui-AutoSuggestBoxSuggestionsListBackground: var(
 		--winui-AcrylicBackgroundFillColorDefaultBrush
 	);
@@ -2139,6 +2154,14 @@
 	--winui-SystemColorHighlightTextColor: #212d3b;
 	--winui-SystemColorHotlightColor: #70ebde;
 
+	--winui-ScrollButtonBackground: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-ScrollButtonForeground: var(--winui-TextFillColorPrimaryBrush);
+	--winui-ScrollButtonForegroundPointerOver: var(--winui-TextFillColorSecondaryBrush);
+	--winui-ScrollButtonForegroundPressed: var(--winui-TextFillColorTertiaryBrush);
+	--winui-ScrollButtonForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+	--winui-ScrollButtonBorderBrush: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-VerticalThumbBrush: var(--winui-AccentFillColorDefaultBrush);
+	--winui-ScrollButtonStyleBorderThickness: 0px;
 	--winui-AutoSuggestBoxSuggestionsListBackground: var(
 		--winui-AcrylicBackgroundFillColorDefaultBrush
 	);
@@ -3915,6 +3938,14 @@
 		--winui-SystemColorHighlightTextColor: #212d3b;
 		--winui-SystemColorHotlightColor: #70ebde;
 
+		--winui-ScrollButtonBackground: var(--winui-SubtleFillColorTransparentBrush);
+		--winui-ScrollButtonForeground: var(--winui-TextFillColorPrimaryBrush);
+		--winui-ScrollButtonForegroundPointerOver: var(--winui-TextFillColorSecondaryBrush);
+		--winui-ScrollButtonForegroundPressed: var(--winui-TextFillColorTertiaryBrush);
+		--winui-ScrollButtonForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+		--winui-ScrollButtonBorderBrush: var(--winui-SubtleFillColorTransparentBrush);
+		--winui-VerticalThumbBrush: var(--winui-AccentFillColorDefaultBrush);
+		--winui-ScrollButtonStyleBorderThickness: 0px;
 		--winui-AutoSuggestBoxSuggestionsListBackground: var(
 			--winui-AcrylicBackgroundFillColorDefaultBrush
 		);
@@ -5799,6 +5830,14 @@
 	--winui-SystemColorHighlightTextColor: #212d3b;
 	--winui-SystemColorHotlightColor: #70ebde;
 
+	--winui-ScrollButtonBackground: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-ScrollButtonForeground: var(--winui-SystemColorButtonTextColorBrush);
+	--winui-ScrollButtonForegroundPointerOver: var(--winui-SystemColorHighlightColorBrush);
+	--winui-ScrollButtonForegroundPressed: var(--winui-SystemColorHighlightColorBrush);
+	--winui-ScrollButtonForegroundDisabled: var(--winui-SystemColorGrayTextColorBrush);
+	--winui-ScrollButtonBorderBrush: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-VerticalThumbBrush: var(--winui-SystemColorHighlightColorBrush);
+	--winui-ScrollButtonStyleBorderThickness: 1px;
 	--winui-AutoSuggestBoxSuggestionsListBackground: var(
 		--winui-SystemControlBackgroundChromeMediumLowBrush
 	);

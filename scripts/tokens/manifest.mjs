@@ -2848,7 +2848,13 @@ export const DOUBLE_LENGTHS = {
 	PipsPagerVerticalOrientationButtonWidth: 'the pip box width in vertical orientation',
 	PipsPagerVerticalOrientationButtonHeight: 'the pip box height in vertical orientation',
 	PipsPagerNavigationButtonWidth: 'the PipsPager navigation button width',
-	PipsPagerNavigationButtonHeight: 'the PipsPager navigation button height'
+	PipsPagerNavigationButtonHeight: 'the PipsPager navigation button height',
+	// AnnotatedScrollBar's five, all of them generically named and all of them its own.
+	ThumbHeight: "the AnnotatedScrollBar thumb's height",
+	ThumbWidth: "the AnnotatedScrollBar thumb's width",
+	LabelsGridMinWidth: "the AnnotatedScrollBar label column's minimum width",
+	AnnotatedScrollBarTooltipMaxWidth: 'the width the detail-label tooltip never exceeds',
+	AnnotatedScrollBarTooltipMinHeight: 'the height the detail-label tooltip never goes under'
 };
 
 /**
@@ -4439,6 +4445,39 @@ export const PIPSPAGER_KEYS = {
 	PipsPagerNormalGlyph: 'the unselected pip glyph',
 	PipsPagerPreviousPageButtonGlyph: 'the previous-page chevron',
 	PipsPagerNextPageButtonGlyph: 'the next-page chevron'
+};
+
+/**
+ * Keys `controls/dev/AnnotatedScrollBar/AnnotatedScrollBar_themeresources.xaml` defines for
+ * the AnnotatedScrollBar template: the seven brushes and one thickness of its three theme
+ * dictionaries, and the seven themeless values its template and its scroll-button style read.
+ *
+ * Six of these names carry no control prefix — `ThumbHeight`, `ThumbWidth`,
+ * `ThumbCornerRadius`, `LabelsGridMinWidth`, `ScrollButtonFontSize` and the six
+ * `ScrollButton…` brushes and thickness. **They all belong to AnnotatedScrollBar.**
+ * `--winui-ThumbHeight` reads like Slider's or ScrollBar's and is this control's 3-pixel
+ * accent thumb; `--winui-ScrollButtonForeground` reads like ScrollBar's arrow and is this
+ * control's chevron. ADR 0006 emits a token as `--winui-` plus the key unchanged, and no
+ * other dictionary in either pin defines any of the fifteen, so nothing collides and the
+ * rule stands as written — but a reader who meets the emitted name first has no way to know
+ * which control owns it, which is what this paragraph is for.
+ */
+export const ANNOTATEDSCROLLBAR_KEYS = {
+	ScrollButtonBackground: 'Chevron button background',
+	ScrollButtonForeground: 'Chevron glyph, at rest',
+	ScrollButtonForegroundPointerOver: 'Chevron glyph under the pointer',
+	ScrollButtonForegroundPressed: 'Chevron glyph while pressed',
+	ScrollButtonForegroundDisabled: 'Chevron glyph while disabled',
+	ScrollButtonBorderBrush: 'Chevron button border',
+	ScrollButtonStyleBorderThickness: 'Chevron button border width',
+	VerticalThumbBrush: 'The thumb that marks where the scrolled region is',
+	ThumbHeight: 'Thumb height',
+	ThumbWidth: 'Thumb width',
+	ThumbCornerRadius: 'Thumb corner radius',
+	LabelsGridMinWidth: 'Minimum width of the label column, and of the control',
+	ScrollButtonFontSize: 'Chevron glyph size',
+	AnnotatedScrollBarTooltipMaxWidth: 'Detail-label tooltip maximum width',
+	AnnotatedScrollBarTooltipMinHeight: 'Detail-label tooltip minimum height'
 };
 
 /**

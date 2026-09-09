@@ -5,6 +5,8 @@
  */
 export const VERSION = '0.0.0';
 
+export { default as AnnotatedScrollBar } from './components/AnnotatedScrollBar.svelte';
+export type { AnnotatedScrollBarProps } from './components/AnnotatedScrollBar.svelte';
 export { default as AppBarButton } from './components/AppBarButton.svelte';
 export type { AppBarButtonProps } from './components/AppBarButton.svelte';
 export { default as AppBarSeparator } from './components/AppBarSeparator.svelte';
