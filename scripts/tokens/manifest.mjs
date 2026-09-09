@@ -4337,6 +4337,16 @@ export const SCROLLBAR_KEYS = {
 };
 
 /**
+ * Keys `controls/dev/ScrollView/ScrollView_themeresources.xaml` defines for the ScrollView
+ * template beyond its ScrollBar parts. The separator is transparent in every shipped theme,
+ * but remains a token because the template deliberately paints it when both bars are present.
+ */
+export const SCROLLVIEW_KEYS = {
+	ScrollViewScrollBarsMargin: 'Inset around each ScrollView scrollbar',
+	ScrollViewScrollBarsSeparatorBackground: 'Corner between two visible ScrollView scrollbars'
+};
+
+/**
  * The Windows accent ramp: the stock accent `#0078D4` and the six steps WinUI
  * derives from it, measured on the same guest through
  * `Windows.UI.ViewManagement.UISettings.GetColorValue`.
