@@ -2006,8 +2006,11 @@ generics="T">` component through `pnpm --filter winui-svelte build` reaches `dis
     translated by the difference, which is `clip-path: inset(…)` here. Six of those states were
     photographed on the guest: an overlay pane covers the content text; a closed compact pane is
     a 48-pixel strip of icons; placed right, it is the strip at the right edge and the pane opens
-    over the content from there. The open transition is 200 ms on a `0.0,0.35 0.15,1.0` spline
-    and the close is 100 ms, both in the template, and both are transcribed. Light dismiss —
+    over the content from there. The inline shapes open in 200 ms on a `0.0,0.35 0.15,1.0`
+    spline and close in 100 ms, both resources; the overlay shapes open in 350 ms and close in
+    120 ms on a `0.1,0.9 0.2,1.0` spline, both literals in the transitions (`:64`, `:186`) —
+    corrected at close; the entry first said 200 and 100 for everything. All four are
+    transcribed. Light dismiss —
     a click on the layer closing an overlay pane — is one line, and the layer's fill stays
     transparent because `LightDismissOverlayMode` defaults to `Auto`, which is off on desktop.
 
@@ -2063,6 +2066,100 @@ generics="T">` component through `pnpm --filter winui-svelte build` reaches `dis
     the toggle and the two lengths; Border, Viewbox, SplitView and RadioButtons render in the
     three themes in the snapshot suite with the vertical Slider in Slider's; and the nine gates
     stay green.
+
+    **Closed.** Fourteen commits. Four library components — `RadioButtons`, `Border`, `Viewbox`,
+    `SplitView` — a vertical `Slider` with tick marks, XAML's `Thickness` grammar as a reader,
+    and the Layout group's five roadmap pages on the frame: the first control pages to render
+    it, each compared against the original on the reference guest as a page. WD-030. 62 tests
+    green on the guest, nine gates green.
+
+    **Its Done-when, met.** The five routes render the frame with an options pane, and each
+    compares clean as a page — Border's description, example header and sample text on the
+    same pixel rows as the original's; Grid's grey box and four thumb centres within a pixel;
+    StackPanel's rectangles and divider on the same pixels; Viewbox's box on the same pixels with
+    the child at 200×157 against 200×156; SplitView driven through the six states the original
+    was photographed in, pane, strip, content offset and icons matching in each. Every option
+    moves its sample and its substitution. One residue: Border's options pane is 281 wide against
+    273, because the RadioButton's `MinWidth="120"` reaches both of our star columns and the
+    shipped Gallery lets its first column go to 112.
+
+    **What the reading found that the entry did not know.** Two things, both on the Grid page,
+    both because the original was zoomed into rather than read. Its sliders draw **tick marks**:
+    `TickPlacement` defaults to `Inline` and every slider on that page and the StackPanel one sets
+    `TickFrequency="1"`, so unit 4 grew a second deliverable — and the ticks are not where a
+    naive frequency puts them. WinUI's `TickBar` refuses to draw ticks closer than 20px and
+    thins to a multiple, the first tick under the thumb's resting centre; transcribed from
+    `TickBar_Partial.cpp`, the rule reproduces the original's tick pixels on all three slider
+    shapes the page has. And under a wide header a vertical slider's track sits 14px from the
+    left edge, not centred: a XAML Grid does not spread fixed columns across a wider slot.
+
+    **The pin's repository carries the code the sparse checkout does not.** The entry said
+    SplitView has "no code in the pin", which is true of `controls/dev` and false of the
+    repository: `dxaml/xcp/dxaml/lib/SplitView_Partial.cpp`, `Slider_Partial.cpp`,
+    `TickBar_Partial.cpp` and `dxaml/xcp/core/core/elements/Viewbox.cpp` and `SplitView.cpp`
+    exist at the pinned commit and were read from it. They settled five things this version
+    would otherwise have guessed: the tick rule; the vertical thumb tooltip's placement (left,
+    for a right-handed user); the light-dismiss condition (open, and a mode that is not Inline
+    or CompactInline); that `SplitViewRightBorderThemeThickness` is defined and never applied,
+    so the pane's border stays on its right edge in both placements; and Viewbox's scale and
+    clamp order, arrange at `(0, 0)`, and the one-axis behaviour WD-030 declines. Widening the
+    sparse checkout to `dxaml/xcp/dxaml/lib` and `dxaml/xcp/core` is a build-unit's worth of
+    work and is owed below; until then a file is fetched by URL at the pin's commit.
+
+    **The transition timings, corrected.** The entry said the open transition is 200 ms and the
+    close 100 ms, "both in the template". The two resource durations time the inline shapes;
+    the overlay shapes open in 350 ms and close in 120 ms on a different spline, and both
+    numbers are literals in the transitions (`:64`, `:186`) rather than resources. The component
+    carries all four.
+
+    **XAML margins add and CSS margins collapse.** Two sites in the frame transcribed their
+    margins exactly and were wrong beside their neighbours: the example header's 12 collapsed
+    through the control's 16, and the description's 4 into the page header's 12. Every page
+    since v10 had the description 4px high and the example header 12px high, and nothing said
+    so until a page put the original's own content under the frame. Both roots are formatting
+    context roots now, and a third case turned up the same day — a TextBlock's margin on an
+    inline span. The lesson is on the seal of `db96ae9` and in the harness fix that followed.
+
+    **The one-column layout has a pre-count state, and it is the default's own.** `RadioButtons`
+    counts its children in the DOM to know its row count; before the count exists, a
+    column-flow grid would put every child in its own column. The pre-count rendering is a
+    single column with uniform implicit rows, which is exactly what `MaxColumns="1"` renders at
+    any count, so the default case never changes shape at hydration and only a wider group
+    reflows once. The same `1fr`-on-a-shrink-wrapped-grid mechanism failed once at review, when
+    the grid was a stretched flex item and the tracks split the parent's width instead — measured
+    on the harness, and the reason the prototype had been shrink-wrapped.
+
+    **What this version owes.**
+
+    | owed                                                                      | what it needs                                                                                                                           |
+    | ------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+    | the sparse checkout widened to `dxaml/xcp/dxaml/lib` and `dxaml/xcp/core` | a `tokens:fetch` change and a note in ADR 0001's successor about what the extra paths are for; five files were read by URL this version |
+    | `RadioButtons` dropping columns when the width runs out                   | `ColumnMajorUniformToLargestGridLayout.cpp:132-162`, and a measurement of a group that hits it                                          |
+    | Border's first star column going under `MinWidth`                         | a reading of how the shipped Gallery resolves star columns against a child's minimum; 8px on one page                                   |
+    | the SplitView content's slide in the inline transition                    | `SplitViewPaneAnimationOpenPreDuration` and a translation of the content; the column interpolates instead                               |
+    | Expander's page, and the Layout group's three unscheduled pages           | O-pages for the first; Canvas, RelativePanel and VariableSizedWrapGrid stay in the unscheduled table                                    |
+
+    **What this version declined.** WD-030: a Viewbox sized on one axis keeps the child's own
+    size on the other where XAML follows the scale. Every sample in the Gallery sizes both.
+
+    **What v11 leaves for whoever picks this up.**
+
+    - **Zoom into the original before writing the unit.** Both of this version's surprises were
+      visible in the first capture at 2× and invisible at 1×: the tick marks and the track's
+      left offset. The reading that plans a page is not the same as the reading that plans a
+      control on it.
+    - **A transcribed margin is right alone and wrong beside its neighbour.** Three sites this
+      version; make the parent a formatting-context root, or measure the stacked pair.
+    - **The code is in the repository.** `controls/dev` is the sparse checkout, not the pin;
+      a `*_Partial.cpp` or a core element exists for every Windows.UI.Xaml control WinUI
+      restyles, and reading it beats recalling WPF.
+    - **Drive the page, not only the harness.** SplitView's six states were compared by driving
+      our page with the same clicks the original was given; the harness photographs rest states
+      only, and the pane's clip is only right when the state before it was.
+    - Captures: `.private/captures/067-layout/` — the five originals, the Viewbox in four
+      stretches, the SplitView in six states, ours beside each. Probes added:
+      `valign-proto.mjs`, `rb-layout-proto.mjs`, `radio-buttons-measure.mjs`, `page-measure.mjs`,
+      `slider-ticks-measure.mjs`, `grid-thumbs.mjs`, `splitview-drive.mjs`.
 
 12. **Date and time** — CalendarView, CalendarDatePicker, DatePicker, TimePicker.
 13. **Scrolling** — ScrollView, PipsPager, AnnotatedScrollBar, SemanticZoom, and
