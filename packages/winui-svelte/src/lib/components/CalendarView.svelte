@@ -24,6 +24,10 @@
 		selectedDates?: Date[];
 		/** CalendarView.SelectedDatesChanged. */
 		onSelectedDatesChange?: ((dates: Date[]) => void) | undefined;
+		/** CalendarView.DisplayMode. */
+		displayMode?: 'month' | 'year' | 'decade';
+		/** CalendarView.DisplayModeChanged. */
+		onDisplayModeChange?: ((mode: 'month' | 'year' | 'decade') => void) | undefined;
 		class?: string;
 		style?: string;
 		/** The Calendar.Root element. */
@@ -67,6 +71,8 @@
 		selectionMode = 'single',
 		selectedDates = $bindable([]),
 		onSelectedDatesChange,
+		displayMode = $bindable('month'),
+		onDisplayModeChange,
 		class: className,
 		style,
 		ref = $bindable(null),
@@ -99,6 +105,14 @@
 	const maxValue = $derived(calendarDateOf(maxDate));
 	const selectedValues = $derived(selectedDates.map(calendarDateOf));
 	const dayNumberFormat = $derived(new Intl.NumberFormat(locale));
+	const todayValue = $derived(toCalendar(today(timeZone), calendar));
+	const yearScopeStart = $derived(placeholder.set({ month: 1, day: 1 }));
+	const decadeScopeStart = $derived(
+		placeholder.set({ year: placeholder.year - (placeholder.year % 10), month: 1, day: 1 })
+	);
+	const activeScopeStart = $derived(displayMode === 'year' ? yearScopeStart : decadeScopeStart);
+	const yearItems = $derived(itemsForScope(yearScopeStart, 'month'));
+	const decadeItems = $derived(itemsForScope(decadeScopeStart, 'year'));
 	let previousSelectionMode = $state<'none' | 'single' | 'multiple' | undefined>(undefined);
 
 	function dateOffsetByYears(years: number): Date {
@@ -141,6 +155,146 @@
 		commitSelectedDates(next.map(dateFor));
 	}
 
+	function setDisplayMode(mode: 'month' | 'year' | 'decade') {
+		if (displayMode === mode) return;
+		displayMode = mode;
+		onDisplayModeChange?.(mode);
+	}
+
+	function itemsForScope(scopeStart: DateValue, unit: 'month' | 'year'): DateValue[] {
+		const index = unit === 'month' ? monthOffset(scopeStart) : scopeStart.year - minValue.year;
+		const firstCellIndex = Math.floor(index / 4) * 4;
+		return Array.from({ length: 16 }, (_, offset) =>
+			minValue.add(
+				unit === 'month' ? { months: firstCellIndex + offset } : { years: firstCellIndex + offset }
+			)
+		);
+	}
+
+	function monthOffset(scopeStart: DateValue): number {
+		let months = 0;
+		for (let year = minValue.year; year < scopeStart.year; year++) {
+			if (year - minValue.year >= 4000) {
+				throw new Error('CalendarView month offset exceeds 4000 calendar years.');
+			}
+			months += calendar.getMonthsInYear(minValue.set({ year }));
+		}
+		return months + scopeStart.month - minValue.month;
+	}
+
+	function unitStart(value: DateValue, unit: 'month' | 'year'): DateValue {
+		return unit === 'month' ? value.set({ day: 1 }) : value.set({ month: 1, day: 1 });
+	}
+
+	function unitEnd(value: DateValue, unit: 'month' | 'year'): DateValue {
+		return unitStart(value, unit)
+			.add(unit === 'month' ? { months: 1 } : { years: 1 })
+			.subtract({ days: 1 });
+	}
+
+	function isDisabled(value: DateValue, unit: 'month' | 'year'): boolean {
+		return (
+			unitEnd(value, unit).compare(minValue) < 0 || unitStart(value, unit).compare(maxValue) > 0
+		);
+	}
+
+	function isOutOfScope(value: DateValue, unit: 'month' | 'year'): boolean {
+		return unit === 'month'
+			? value.year !== yearScopeStart.year
+			: value.year < decadeScopeStart.year || value.year > decadeScopeStart.year + 9;
+	}
+
+	function isPlaceholder(value: DateValue, unit: 'month' | 'year'): boolean {
+		return unit === 'month'
+			? value.year === placeholder.year && value.month === placeholder.month
+			: value.year === placeholder.year;
+	}
+
+	function isToday(value: DateValue, unit: 'month' | 'year'): boolean {
+		return unit === 'month'
+			? value.year === todayValue.year && value.month === todayValue.month
+			: value.year === todayValue.year;
+	}
+
+	function scopeCanNavigate(direction: -1 | 1): boolean {
+		const unit = displayMode === 'year' ? 'month' : 'year';
+		const amount = displayMode === 'year' ? 1 : 10;
+		const target = activeScopeStart.add({ years: direction * amount });
+		const targetItems = itemsForScope(target, unit);
+		return direction < 0
+			? unitStart(targetItems[0], unit).compare(minValue) >= 0
+			: unitEnd(targetItems.at(-1)!, unit).compare(maxValue) <= 0;
+	}
+
+	function navigateScope(direction: -1 | 1) {
+		if (!scopeCanNavigate(direction)) return;
+		const amount = displayMode === 'year' ? 1 : 10;
+		navigated = {
+			identifier: calendarIdentifier,
+			value: placeholder.add({ years: direction * amount })
+		};
+	}
+
+	function chooseItem(value: DateValue, unit: 'month' | 'year') {
+		if (isDisabled(value, unit)) return;
+		navigated = {
+			identifier: calendarIdentifier,
+			value:
+				unit === 'month'
+					? value.set({ day: placeholder.day })
+					: placeholder.set({ year: value.year })
+		};
+		setDisplayMode(unit === 'month' ? 'month' : 'year');
+	}
+
+	function moveItemFocus(event: KeyboardEvent, index: number, unit: 'month' | 'year') {
+		if (event.ctrlKey) return;
+		const movement =
+			event.key === 'ArrowLeft'
+				? -1
+				: event.key === 'ArrowRight'
+					? 1
+					: event.key === 'ArrowUp'
+						? -4
+						: event.key === 'ArrowDown'
+							? 4
+							: 0;
+		if (movement === 0) return;
+		const next = index + movement;
+		if (next < 0 || next >= 16) return;
+		event.preventDefault();
+		const nextValue = (unit === 'month' ? yearItems : decadeItems)[next];
+		navigated = {
+			identifier: calendarIdentifier,
+			value:
+				unit === 'month'
+					? nextValue.set({ day: placeholder.day })
+					: placeholder.set({ year: nextValue.year })
+		};
+		(event.currentTarget as HTMLButtonElement)
+			.closest('.year-decade-panel')
+			?.querySelector<HTMLButtonElement>(`[data-calendar-unit="${unit}"][data-index="${next}"]`)
+			?.focus();
+	}
+
+	function handleRootKeydown(event: KeyboardEvent) {
+		if (!event.ctrlKey) return;
+		if (event.key === 'ArrowUp' && displayMode !== 'decade') {
+			event.preventDefault();
+			setDisplayMode(displayMode === 'month' ? 'year' : 'decade');
+		} else if (event.key === 'ArrowDown' && displayMode !== 'month') {
+			event.preventDefault();
+			setDisplayMode(displayMode === 'decade' ? 'year' : 'month');
+		}
+	}
+
+	function rootKeydown(node: HTMLElement) {
+		// bits-ui owns the root's bubbling keyboard listener. Capture keeps Ctrl+Up/Down at this
+		// control boundary before that primitive handles the ordinary calendar arrows.
+		node.addEventListener('keydown', handleRootKeydown, true);
+		return () => node.removeEventListener('keydown', handleRootKeydown, true);
+	}
+
 	$effect(() => {
 		if (previousSelectionMode === undefined) {
 			previousSelectionMode = selectionMode;
@@ -178,35 +332,65 @@
 				{...props}
 				class={['calendar-view', className]}
 				{style}
+				data-display-mode={displayMode}
 				data-out-of-scope-enabled={isOutOfScopeEnabled ? '' : undefined}
 				data-today-highlighted={isTodayHighlighted ? '' : undefined}
 				data-group-labels={isGroupLabelVisible ? '' : undefined}
+				{@attach rootKeydown}
 				{...rest}
 			>
 				<div class="header">
-					<!-- The month-year formatter follows CalendarView_Partial.cpp:1012-1013. This
-					     button has no handler because unit 4 supplies the display-mode transition. -->
 					<Calendar.Heading>
 						{#snippet child({ props: headingProps })}
-							<button {...headingProps} class="title" type="button">
-								{formatDate('month year', dateFor(placeholder), locale)}
+							<button
+								{...headingProps}
+								class="title"
+								type="button"
+								disabled={displayMode === 'decade'}
+								onclick={() => setDisplayMode(displayMode === 'month' ? 'year' : 'decade')}
+							>
+								{displayMode === 'month'
+									? formatDate('month year', dateFor(placeholder), locale)
+									: displayMode === 'year'
+										? formatDate('year', dateFor(placeholder), locale)
+										: `${formatDate('year', dateFor(decadeScopeStart), locale)} - ${formatDate('year', dateFor(decadeScopeStart.add({ years: 9 })), locale)}`}
 							</button>
 						{/snippet}
 					</Calendar.Heading>
-					<Calendar.PrevButton>
-						{#snippet child({ props: previousProps })}
-							<button {...previousProps} class="nav previous">&#xEDDB;</button>
-						{/snippet}
-					</Calendar.PrevButton>
-					<Calendar.NextButton>
-						{#snippet child({ props: nextProps })}
-							<button {...nextProps} class="nav next">&#xEDDC;</button>
-						{/snippet}
-					</Calendar.NextButton>
+					{#if displayMode === 'month'}
+						<!-- bits-ui owns month navigation because it also owns its date-bound disabled state. -->
+						<Calendar.PrevButton>
+							{#snippet child({ props: previousProps })}
+								<button {...previousProps} class="nav previous">&#xEDDB;</button>
+							{/snippet}
+						</Calendar.PrevButton>
+						<Calendar.NextButton>
+							{#snippet child({ props: nextProps })}
+								<button {...nextProps} class="nav next">&#xEDDC;</button>
+							{/snippet}
+						</Calendar.NextButton>
+					{:else}
+						<button
+							class="nav previous"
+							type="button"
+							disabled={!scopeCanNavigate(-1)}
+							onclick={() => navigateScope(-1)}
+						>
+							&#xEDDB;
+						</button>
+						<button
+							class="nav next"
+							type="button"
+							disabled={!scopeCanNavigate(1)}
+							onclick={() => navigateScope(1)}
+						>
+							&#xEDDC;
+						</button>
+					{/if}
 				</div>
 				<div class="divider"></div>
 				<div class="views">
-					<div class="month-view">
+					<div class="view-layer month-view" aria-hidden={displayMode !== 'month'}>
 						<div class="weekdays">
 							{#each weekdays as weekday, index (weekday)}
 								<span class="weekday winui-CaptionTextBlockStyle">
@@ -230,7 +414,7 @@
 														<div {...cellProps} class="cell">
 															<Calendar.Day>
 																{#snippet child({ props: dayProps })}
-																	<div {...dayProps} class="day" {@attach focusVisual}>
+																	<div {...dayProps} class="day item-chrome" {@attach focusVisual}>
 																		{#if isGroupLabelVisible && date.day === 1}
 																			<!-- CalendarViewGeneratorMonthViewHost.cpp:121-150 uses the
 																			     abbreviated month name on the first day. -->
@@ -253,6 +437,65 @@
 										</div>
 									{/snippet}
 								</Calendar.GridRow>
+							{/each}
+						</div>
+					</div>
+					<div class="view-layer year-view" aria-hidden={displayMode !== 'year'}>
+						<div class="year-decade-panel">
+							{#each yearItems as item, index (item.toString())}
+								<button
+									class="year-decade-cell"
+									class:out-of-scope={isOutOfScope(item, 'month')}
+									data-calendar-unit="month"
+									data-index={index}
+									disabled={isDisabled(item, 'month')}
+									tabindex={isPlaceholder(item, 'month') ? 0 : -1}
+									onclick={() => chooseItem(item, 'month')}
+									onkeydown={(event) => moveItemFocus(event, index, 'month')}
+									{@attach focusVisual}
+								>
+									<div
+										class="month-year-item item-chrome"
+										data-today={isToday(item, 'month') ? '' : undefined}
+										data-disabled={isDisabled(item, 'month') ? '' : undefined}
+									>
+										{#if isGroupLabelVisible && item.month === 1}
+											<span class="year-decade-label"
+												>{formatDate('year', dateFor(item), locale)}</span
+											>
+										{/if}
+										<span class="year-decade-main"
+											>{formatDate('month.abbreviated', dateFor(item), locale)}</span
+										>
+									</div>
+								</button>
+							{/each}
+						</div>
+					</div>
+					<div class="view-layer decade-view" aria-hidden={displayMode !== 'decade'}>
+						<!-- BackgroundLayer has no Background in style C, so its opacity animation paints nothing. -->
+						<div class="year-decade-panel">
+							{#each decadeItems as item, index (item.toString())}
+								<button
+									class="year-decade-cell"
+									class:out-of-scope={isOutOfScope(item, 'year')}
+									data-calendar-unit="year"
+									data-index={index}
+									disabled={isDisabled(item, 'year')}
+									tabindex={isPlaceholder(item, 'year') ? 0 : -1}
+									onclick={() => chooseItem(item, 'year')}
+									onkeydown={(event) => moveItemFocus(event, index, 'year')}
+									{@attach focusVisual}
+								>
+									<div
+										class="month-year-item item-chrome"
+										data-today={isToday(item, 'year') ? '' : undefined}
+										data-disabled={isDisabled(item, 'year') ? '' : undefined}
+									>
+										<span class="year-decade-main">{formatDate('year', dateFor(item), locale)}</span
+										>
+									</div>
+								</button>
 							{/each}
 						</div>
 					</div>
@@ -370,6 +613,184 @@
 		background: var(--winui-CalendarViewBorderBrush);
 	}
 
+	.views {
+		position: relative;
+		/* c1-allow: the three views are stacked, so the box needs a height of its own, and all
+		   three fill the same one: the month view's 44px weekday row plus its 252px of six rows
+		   and 4px of margin, and the year view's four 74px rows plus the same 4px. Measured on
+		   the reference guest, where the control is 300 by 352 in every mode. */
+		height: 300px;
+		/* A layer resting at scale 1.29 overflows the frame; the original clips it too, with a
+		   Grid.Clip bound to TemplateSettings.ClipRect (CalendarView_themeresources.xaml:356). */
+		overflow: hidden;
+	}
+
+	.view-layer {
+		position: absolute;
+		inset: 0;
+		opacity: 0;
+		pointer-events: none;
+		visibility: hidden;
+		/* c1-allow: CalendarView_themeresources.xaml:495-667 — every DisplayModeStates transition
+		   fades the outgoing view out by KeyTime 0:0:0.150 on ControlFastOutSlowInKeySpline,
+		   whose value is the string `0,0,0,1` (Common_themeresources_any.xaml:602). The
+		   visibility change waits for that fade rather than cutting it short. */
+		transition:
+			opacity 150ms cubic-bezier(0, 0, 0, 1),
+			transform 150ms cubic-bezier(0, 0, 0, 1),
+			visibility 0s linear 150ms;
+	}
+
+	.month-view {
+		transform: scale(0.84);
+	}
+
+	.year-view,
+	.decade-view {
+		transform: scale(1.29);
+	}
+
+	.calendar-view[data-display-mode='month'] .month-view,
+	.calendar-view[data-display-mode='year'] .year-view,
+	.calendar-view[data-display-mode='decade'] .decade-view {
+		transform: scale(1);
+		opacity: 1;
+		pointer-events: auto;
+		visibility: visible;
+		/* c1-allow: CalendarView_themeresources.xaml:495-667 — the arriving view holds its
+		   starting scale and zero opacity until KeyTime 0:0:0.150 and reaches 1 at 0:0:0.500,
+		   which is a 350ms transition after a 150ms delay. */
+		transition:
+			opacity 350ms 150ms cubic-bezier(0, 0, 0, 1),
+			transform 350ms 150ms cubic-bezier(0, 0, 0, 1),
+			visibility 0s linear 0s;
+	}
+
+	.calendar-view[data-display-mode='year'] .month-view,
+	.calendar-view[data-display-mode='decade'] .month-view,
+	.calendar-view[data-display-mode='decade'] .year-view {
+		transform: scale(0.84);
+	}
+
+	/* c1-allow: four columns and four rows is the year and decade default
+	   (CalendarView_Partial.cpp:40-42); 74 is the item's 56 plus the 9px margin
+	   CalendarViewGeneratorHost::GetItemMargin returns for the rounded chrome
+	   (CalendarViewGeneratorHost.cpp:215-224); the panel's own 2px margin is
+	   CalendarView_themeresources.xaml:395, the same one the month panel takes. */
+	.year-decade-panel {
+		display: grid;
+		grid-template-columns: repeat(4, 74px);
+		grid-template-rows: repeat(4, 74px);
+		margin: 2px;
+	}
+
+	.year-decade-cell {
+		box-sizing: border-box;
+		width: 74px;
+		height: 74px;
+		/* c1-allow: CalendarViewGeneratorHost.cpp:215-224 — the item's margin is 9 under the
+		   rounded chrome, and it is the cell's padding here because the cell is the button. */
+		padding: 9px;
+		border: 0;
+		background: transparent;
+		/* A `<button>` does not inherit the family; without this the months and years render in
+		   the user agent's face. The same trap the header title carries. */
+		font-family: inherit;
+		font-size: inherit;
+		color: inherit;
+	}
+
+	/* c1-allow: 74 less the 9px margin on each side. The four rows of 74 are the same 296 the
+	   month view fills with six rows of 42 and its weekday row, which is why the control does
+	   not resize between views — measured at 300 by 352 in all three on the reference guest. */
+	.month-year-item {
+		width: 56px;
+		height: 56px;
+	}
+
+	/* Every item in every view is the same chrome at a different size: a circle whose radius is
+	   half its side (CalendarViewBaseItemChrome.cpp:2102-2115), one border, and the brush chains
+	   below. The day cell and the month-year cell carry this class and declare only their size. */
+	.item-chrome {
+		position: relative;
+		box-sizing: border-box;
+		/* c1-allow: CalendarView_themeresources.xaml:311 — CalendarItemBorderThickness="1". */
+		border: 1px solid var(--winui-CalendarViewCalendarItemBorderBrush);
+		border-radius: 50%;
+		background: var(--winui-CalendarViewCalendarItemBackground);
+		color: var(--winui-CalendarViewCalendarItemForeground);
+	}
+
+	.item-chrome:hover {
+		border-color: var(--winui-CalendarViewHoverBorderBrush);
+		background: var(--winui-CalendarViewCalendarItemHoverBackground);
+	}
+
+	.item-chrome:active {
+		border-color: var(--winui-CalendarViewPressedBorderBrush);
+		background: var(--winui-CalendarViewCalendarItemPressedBackground);
+		color: var(--winui-CalendarViewPressedForeground);
+	}
+
+	.calendar-view[data-out-of-scope-enabled]
+		.year-decade-cell.out-of-scope
+		.item-chrome:not(:hover):not(:active) {
+		background: var(--winui-CalendarViewOutOfScopeBackground);
+		color: var(--winui-CalendarViewOutOfScopeForeground);
+	}
+
+	.calendar-view[data-out-of-scope-enabled] .year-decade-cell.out-of-scope .item-chrome:hover {
+		color: var(--winui-CalendarViewOutOfScopeHoverForeground);
+	}
+
+	.calendar-view[data-out-of-scope-enabled] .year-decade-cell.out-of-scope .item-chrome:active {
+		color: var(--winui-CalendarViewOutOfScopePressedForeground);
+	}
+
+	.calendar-view[data-today-highlighted] .item-chrome[data-today] {
+		/* The rounded chrome gives today a background ring, not a border brush. */
+		border-color: var(--winui-CalendarViewCalendarItemBorderBrush);
+		background: var(--winui-CalendarViewTodayBackground);
+		color: var(--winui-CalendarViewTodayForeground);
+	}
+
+	.calendar-view[data-today-highlighted] .item-chrome[data-today]:hover {
+		background: var(--winui-CalendarViewTodayHoverBackground);
+	}
+
+	.calendar-view[data-today-highlighted] .item-chrome[data-today]:active {
+		background: var(--winui-CalendarViewTodayPressedBackground);
+	}
+
+	.item-chrome[data-disabled] {
+		background: var(--winui-CalendarViewCalendarItemDisabledBackground);
+		color: var(--winui-CalendarViewDisabledForeground);
+	}
+
+	.calendar-view[data-today-highlighted] .item-chrome[data-disabled][data-today] {
+		background: var(--winui-CalendarViewTodayDisabledBackground);
+	}
+
+	.year-decade-main,
+	.year-decade-label {
+		position: absolute;
+		inset: 0;
+		display: flex;
+		justify-content: center;
+	}
+
+	.year-decade-main {
+		align-items: center;
+		margin: var(--winui-CalendarViewMonthYearItemMargin);
+		font-size: var(--winui-CalendarViewMonthYearItemFontSize);
+	}
+
+	.year-decade-label {
+		align-items: flex-start;
+		margin: var(--winui-CalendarViewFirstOfYearDecadeLabelMargin);
+		font-size: var(--winui-CalendarViewFirstOfYearDecadeLabelFontSize);
+	}
+
 	/* c1-allow: CalendarView_themeresources.xaml:363 — WeekDayNames Margin="2,2,2,0". */
 	.weekdays {
 		display: flex;
@@ -408,17 +829,10 @@
 	}
 
 	.day {
-		position: relative;
-		box-sizing: border-box;
 		/* c1-allow: CalendarView_themeresources.xaml:245 — MinWidth="40". */
 		width: 40px;
 		/* c1-allow: CalendarView_themeresources.xaml:246 — MinHeight="40". */
 		height: 40px;
-		/* c1-allow: CalendarView_themeresources.xaml:311 — CalendarItemBorderThickness="1". */
-		border: 1px solid var(--winui-CalendarViewCalendarItemBorderBrush);
-		border-radius: 50%;
-		background: var(--winui-CalendarViewCalendarItemBackground);
-		color: var(--winui-CalendarViewCalendarItemForeground);
 	}
 
 	.main,
@@ -440,17 +854,6 @@
 		align-items: flex-start;
 		margin: var(--winui-CalendarViewFirstOfMonthLabelMargin);
 		font-size: var(--winui-CalendarViewFirstOfMonthLabelFontSize);
-	}
-
-	.day:hover {
-		border-color: var(--winui-CalendarViewHoverBorderBrush);
-		background: var(--winui-CalendarViewCalendarItemHoverBackground);
-	}
-
-	.day:active {
-		border-color: var(--winui-CalendarViewPressedBorderBrush);
-		background: var(--winui-CalendarViewCalendarItemPressedBackground);
-		color: var(--winui-CalendarViewPressedForeground);
 	}
 
 	.calendar-view[data-out-of-scope-enabled] .day[data-outside-month]:not(:hover):not(:active) {
@@ -486,36 +889,13 @@
 		color: var(--winui-CalendarViewSelectedDisabledForeground);
 	}
 
-	.calendar-view[data-today-highlighted] .day[data-today] {
-		/* The rounded chrome gives today a background ring, not a border brush. */
-		border-color: var(--winui-CalendarViewCalendarItemBorderBrush);
-		background: var(--winui-CalendarViewTodayBackground);
-		color: var(--winui-CalendarViewTodayForeground);
-	}
-
-	.calendar-view[data-today-highlighted] .day[data-today]:hover {
-		background: var(--winui-CalendarViewTodayHoverBackground);
-	}
-
-	.calendar-view[data-today-highlighted] .day[data-today]:active {
-		background: var(--winui-CalendarViewTodayPressedBackground);
-	}
-
-	.day[data-disabled] {
-		background: var(--winui-CalendarViewCalendarItemDisabledBackground);
-		color: var(--winui-CalendarViewDisabledForeground);
-	}
-
-	.calendar-view[data-today-highlighted] .day[data-disabled][data-today] {
-		background: var(--winui-CalendarViewTodayDisabledBackground);
-	}
-
 	.calendar-view[data-today-highlighted] .day[data-today][data-selected] {
 		/* c1-allow: CalendarViewBaseItemChrome.cpp:26 — TodaySelectedInnerBorderThickness is 2.0f. */
 		box-shadow: inset 0 0 0 2px var(--winui-CalendarViewTodaySelectedInnerBorderBrush);
 	}
 
-	.day[data-focus-visual]::before {
+	.day[data-focus-visual]::before,
+	.year-decade-cell[data-focus-visual] .item-chrome::before {
 		content: '';
 		position: absolute;
 		/* c1-allow: CalendarView_themeresources.xaml:249 — `FocusVisualMargin="-3"`, and a
