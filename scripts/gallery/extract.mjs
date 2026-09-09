@@ -8,6 +8,7 @@ import { parse } from '../tokens/xaml.mjs';
 const OUTPUT = join(ROOT, 'data', 'winui-gallery-design.json');
 const OUTPUT_SHELL = join(ROOT, 'data', 'winui-gallery-shell.json');
 const OUTPUT_SAMPLES = join(ROOT, 'data', 'winui-gallery-samples.json');
+const OUTPUT_LANGUAGES = join(ROOT, 'data', 'winui-gallery-languages.json');
 
 // The five Design pages — Color, Typography, Iconography, Geometry, Spacing —
 // are written against two upstream shapes that this script treats differently:
@@ -29,6 +30,7 @@ const ICONS_DATA = 'WinUIGallery/Samples/Iconography/IconsData.json';
 const CONTROL_INFO = 'WinUIGallery/SampleSupport/Data/ControlInfoData.json';
 const MAIN_WINDOW = 'WinUIGallery/MainWindow.xaml';
 const SAMPLES_DIR = 'WinUIGallery/Samples';
+const LANGUAGE_LIST = 'WinUIGallery/Helpers/Language/LanguageList.cs';
 
 // This record's body is the files' own contents, so a hash beside each path would be a
 // second statement of the same bytes. The other records need hashes because their bodies
@@ -747,6 +749,43 @@ function extractShell() {
 	};
 }
 
+/**
+ * The Gallery's `LanguageList` constructor, in the ComboBox's source order.
+ *
+ * The five trailing spaces in source names are deliberate: the Gallery displays them, so this
+ * record preserves them rather than tidying a value that is part of the compared page.
+ */
+function extractLanguages() {
+	const source = readFileSync(join(CHECKOUT, LANGUAGE_LIST), 'utf8');
+	const languages = Array.from(
+		source.matchAll(/new Language\("([^"]*)", "([^"]*)"\)/g),
+		([, name, code]) => ({ name, code })
+	);
+	if (languages.length !== 86) {
+		throw new Error(
+			`${LANGUAGE_LIST} holds ${languages.length} new Language(...) calls; expected 86`
+		);
+	}
+
+	return {
+		source: {
+			url: UPSTREAM.url,
+			ref: UPSTREAM.ref,
+			commit: UPSTREAM.commit,
+			extractedAt: new Date().toISOString().slice(0, 10),
+			fileCount: 1,
+			files: [
+				{
+					path: LANGUAGE_LIST,
+					sha256: createHash('sha256').update(source).digest('hex')
+				}
+			]
+		},
+		census: { languages: languages.length },
+		languages
+	};
+}
+
 const censusDesign = (doc) => {
 	const c = doc.census;
 	const tileLine = (obj) =>
@@ -841,11 +880,13 @@ function main(argv) {
 	const design = extractDesign();
 	const shell = extractShell();
 	const samples = extractSamples();
+	const languages = extractLanguages();
 
 	if (argv.includes('--check')) {
 		checkOne(OUTPUT, design);
 		checkOne(OUTPUT_SHELL, shell);
 		checkOne(OUTPUT_SAMPLES, samples);
+		checkOne(OUTPUT_LANGUAGES, languages);
 
 		console.log(
 			`${relative(ROOT, OUTPUT)} matches the extractor (${design.census.colorTiles} tiles, ${design.census.icons} icons).`
@@ -856,6 +897,9 @@ function main(argv) {
 		console.log(
 			`${relative(ROOT, OUTPUT_SAMPLES)} matches the extractor (${samples.census.files} files, ${samples.census.sectioned} sectioned).`
 		);
+		console.log(
+			`${relative(ROOT, OUTPUT_LANGUAGES)} matches the extractor (${languages.census.languages} languages).`
+		);
 		return;
 	}
 
@@ -863,12 +907,15 @@ function main(argv) {
 	writeFileSync(OUTPUT, `${JSON.stringify(design, null, '\t')}\n`);
 	writeFileSync(OUTPUT_SHELL, `${JSON.stringify(shell, null, '\t')}\n`);
 	writeFileSync(OUTPUT_SAMPLES, `${JSON.stringify(samples, null, '\t')}\n`);
+	writeFileSync(OUTPUT_LANGUAGES, `${JSON.stringify(languages, null, '\t')}\n`);
 	console.log(censusDesign(design));
 	console.log(`written           ${relative(ROOT, OUTPUT)}`);
 	console.log(censusShell(shell));
 	console.log(`written           ${relative(ROOT, OUTPUT_SHELL)}`);
 	console.log(censusSamples(samples));
 	console.log(`written           ${relative(ROOT, OUTPUT_SAMPLES)}`);
+	console.log(`languages         ${languages.census.languages}`);
+	console.log(`written           ${relative(ROOT, OUTPUT_LANGUAGES)}`);
 }
 
 /**
@@ -886,7 +933,12 @@ export function records() {
 			`.upstream/WinUI-Gallery ${state}, not ${UPSTREAM.commit}. Run \`pnpm gallery:fetch\`.`
 		);
 	}
-	return { design: extractDesign(), shell: extractShell(), samples: extractSamples() };
+	return {
+		design: extractDesign(),
+		shell: extractShell(),
+		samples: extractSamples(),
+		languages: extractLanguages()
+	};
 }
 
 // Importing this module must not write files or exit: C8 wants `records()`, not the side

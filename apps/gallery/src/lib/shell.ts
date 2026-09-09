@@ -255,7 +255,13 @@ export const BUILT_PAGES = [
 	'/design/geometry',
 	'/design/iconography',
 	'/design/spacing',
-	'/design/typography'
+	'/design/typography',
+	'/layout/border',
+	'/layout/grid',
+	'/layout/splitview',
+	'/layout/stackpanel',
+	'/layout/viewbox',
+	'/dateandtime/calendarview'
 ] as const;
 
 function collectPlaceholder(entries: NavigationViewEntry[], into: string[]): void {

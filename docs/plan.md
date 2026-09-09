@@ -2186,7 +2186,7 @@ generics="T">` component through `pnpm --filter winui-svelte build` reaches `dis
     shape of v11's: nearly all the work is inside the controls and the pages are thin. The
     CalendarView page is the exception, and its options pane is the widest in the version — a
     `SelectionMode` ComboBox, a `CalendarIdentifier` ComboBox of ten calendars, and a `Language`
-    ComboBox of eighty-seven languages from `Helpers/Language/LanguageList.cs`.
+    ComboBox of eighty-six languages from `Helpers/Language/LanguageList.cs`.
 
     **What the library does not have.** Four controls, and two things under them that are not
     controls. `CalendarView` is a header, a weekday row and a panel that renders three different

@@ -1,0 +1,364 @@
+{
+	"source": {
+		"url": "https://github.com/microsoft/WinUI-Gallery",
+		"ref": "main",
+		"commit": "7a8a6aa6f432bee71b89aeb24c3e69a5b854dc4f",
+		"extractedAt": "2026-09-09",
+		"fileCount": 1,
+		"files": [
+			{
+				"path": "WinUIGallery/Helpers/Language/LanguageList.cs",
+				"sha256": "d060c96e20db03418d916bad6edbcadacee252d5204f32f7556709ac6311f105"
+			}
+		]
+	},
+	"census": {
+		"languages": 86
+	},
+	"languages": [
+		{
+			"name": "English",
+			"code": "en"
+		},
+		{
+			"name": "Arabic",
+			"code": "ar"
+		},
+		{
+			"name": "Afrikaans",
+			"code": "af"
+		},
+		{
+			"name": "Albanian",
+			"code": "sq"
+		},
+		{
+			"name": "Amharic",
+			"code": "am"
+		},
+		{
+			"name": "Armenian",
+			"code": "hy"
+		},
+		{
+			"name": "Assamese",
+			"code": "as"
+		},
+		{
+			"name": "Azerbaijani",
+			"code": "az"
+		},
+		{
+			"name": "Basque ",
+			"code": "eu"
+		},
+		{
+			"name": "Belarusian",
+			"code": "be"
+		},
+		{
+			"name": "Bangla",
+			"code": "bn"
+		},
+		{
+			"name": "Bosnian",
+			"code": "bs"
+		},
+		{
+			"name": "Bulgarian",
+			"code": "bg"
+		},
+		{
+			"name": "Catalan",
+			"code": "ca"
+		},
+		{
+			"name": "Chinese (Simplified)",
+			"code": "zh"
+		},
+		{
+			"name": "Croatian",
+			"code": "hr"
+		},
+		{
+			"name": "Czech",
+			"code": "cs"
+		},
+		{
+			"name": "Danish",
+			"code": "da"
+		},
+		{
+			"name": "Dari",
+			"code": "prs"
+		},
+		{
+			"name": "Dutch",
+			"code": "nl"
+		},
+		{
+			"name": "Estonian",
+			"code": "et"
+		},
+		{
+			"name": "Filipino",
+			"code": "fil"
+		},
+		{
+			"name": "Finnish",
+			"code": "fi"
+		},
+		{
+			"name": "French ",
+			"code": "fr"
+		},
+		{
+			"name": "Galician",
+			"code": "gl"
+		},
+		{
+			"name": "Georgian",
+			"code": "ka"
+		},
+		{
+			"name": "German",
+			"code": "de"
+		},
+		{
+			"name": "Greek",
+			"code": "el"
+		},
+		{
+			"name": "Gujarati",
+			"code": "gu"
+		},
+		{
+			"name": "Hausa",
+			"code": "ha"
+		},
+		{
+			"name": "Hebrew",
+			"code": "he"
+		},
+		{
+			"name": "Hindi",
+			"code": "hi"
+		},
+		{
+			"name": "Hungarian",
+			"code": "hu"
+		},
+		{
+			"name": "Icelandic",
+			"code": "is"
+		},
+		{
+			"name": "Indonesian",
+			"code": "id"
+		},
+		{
+			"name": "Irish",
+			"code": "ga"
+		},
+		{
+			"name": "isiXhosa",
+			"code": "xh"
+		},
+		{
+			"name": "isiZulu",
+			"code": "zu"
+		},
+		{
+			"name": "Italian",
+			"code": "it"
+		},
+		{
+			"name": "Japanese ",
+			"code": "ja"
+		},
+		{
+			"name": "Kannada",
+			"code": "kn"
+		},
+		{
+			"name": "Kazakh",
+			"code": "kk"
+		},
+		{
+			"name": "Khmer",
+			"code": "km"
+		},
+		{
+			"name": "Kinyarwanda",
+			"code": "rw"
+		},
+		{
+			"name": "KiSwahili",
+			"code": "sw"
+		},
+		{
+			"name": "Konkani",
+			"code": "kok"
+		},
+		{
+			"name": "Korean",
+			"code": "ko"
+		},
+		{
+			"name": "Lao",
+			"code": "lo"
+		},
+		{
+			"name": "Latvian",
+			"code": "lv"
+		},
+		{
+			"name": "Lithuanian",
+			"code": "lt"
+		},
+		{
+			"name": "Luxembourgish",
+			"code": "lb"
+		},
+		{
+			"name": "Macedonian",
+			"code": "mk"
+		},
+		{
+			"name": "Malay",
+			"code": "ms"
+		},
+		{
+			"name": "Malayalam",
+			"code": "ml"
+		},
+		{
+			"name": "Maltese",
+			"code": "mt"
+		},
+		{
+			"name": "Maori ",
+			"code": "mi"
+		},
+		{
+			"name": "Marathi",
+			"code": "mr"
+		},
+		{
+			"name": "Nepali",
+			"code": "ne"
+		},
+		{
+			"name": "Norwegian",
+			"code": "nb"
+		},
+		{
+			"name": "Odia",
+			"code": "or"
+		},
+		{
+			"name": "Persian",
+			"code": "fa"
+		},
+		{
+			"name": "Polish",
+			"code": "pl"
+		},
+		{
+			"name": "Portuguese",
+			"code": "pt"
+		},
+		{
+			"name": "Punjabi",
+			"code": "pa"
+		},
+		{
+			"name": "Quechua",
+			"code": "quz"
+		},
+		{
+			"name": "Romanian",
+			"code": "ro"
+		},
+		{
+			"name": "Russian",
+			"code": "ru"
+		},
+		{
+			"name": "Serbian (Latin)",
+			"code": "sr"
+		},
+		{
+			"name": "Sesotho sa Leboa",
+			"code": "nso"
+		},
+		{
+			"name": "Setswana",
+			"code": "tn"
+		},
+		{
+			"name": "Sinhala",
+			"code": "si"
+		},
+		{
+			"name": "Slovak ",
+			"code": "sk"
+		},
+		{
+			"name": "Slovenian",
+			"code": "sl"
+		},
+		{
+			"name": "Spanish",
+			"code": "es"
+		},
+		{
+			"name": "Swedish",
+			"code": "sv"
+		},
+		{
+			"name": "Tamil",
+			"code": "ta"
+		},
+		{
+			"name": "Telugu",
+			"code": "te"
+		},
+		{
+			"name": "Thai",
+			"code": "th"
+		},
+		{
+			"name": "Tigrinya",
+			"code": "ti"
+		},
+		{
+			"name": "Turkish",
+			"code": "tr"
+		},
+		{
+			"name": "Ukrainian",
+			"code": "uk"
+		},
+		{
+			"name": "Urdu",
+			"code": "ur"
+		},
+		{
+			"name": "Uzbek (Latin)",
+			"code": "uz"
+		},
+		{
+			"name": "Vietnamese",
+			"code": "vi"
+		},
+		{
+			"name": "Welsh",
+			"code": "cy"
+		},
+		{
+			"name": "Wolof",
+			"code": "wo"
+		}
+	]
+}
