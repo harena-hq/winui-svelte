@@ -113,7 +113,7 @@
 
 <!-- GridPage.xaml:97: `TextBlock Margin="0,0,0,10"` inside `Slider.Header`. -->
 {#snippet rowSpacingHeader()}
-	<span style="margin-bottom: 10px">RowSpacing</span>
+	<span style="display: block; margin-bottom: 10px">RowSpacing</span>
 {/snippet}
 
 <style>
