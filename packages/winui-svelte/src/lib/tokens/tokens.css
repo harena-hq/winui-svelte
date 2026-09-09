@@ -821,6 +821,41 @@
 	--winui-ContentDialogSeparatorThickness: 0px 0px 1px 0px;
 	--winui-ControlCornerRadius: 4px;
 	--winui-OverlayCornerRadius: 8px;
+	--winui-DateTimePickerFlyoutButtonBackground: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-DateTimePickerFlyoutButtonBackgroundPointerOver: var(
+		--winui-SubtleFillColorSecondaryBrush
+	);
+	--winui-DateTimePickerFlyoutButtonBackgroundPressed: var(--winui-SubtleFillColorTertiaryBrush);
+	--winui-DateTimePickerFlyoutButtonBorderBrush: var(--winui-ControlStrokeColorDefaultBrush);
+	--winui-DateTimePickerFlyoutButtonBorderBrushPointerOver: var(
+		--winui-ControlStrokeColorDefaultBrush
+	);
+	--winui-DateTimePickerFlyoutButtonBorderBrushPressed: var(--winui-ControlStrokeColorDefaultBrush);
+	--winui-DateTimePickerFlyoutButtonForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
+	--winui-DateTimePickerFlyoutButtonForegroundPressed: var(--winui-TextFillColorPrimaryBrush);
+	--winui-LoopingSelectorUpDownButtonForeground: var(--winui-TextFillColorSecondaryBrush);
+	--winui-LoopingSelectorUpDownButtonForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
+	--winui-LoopingSelectorUpDownButtonForegroundPressed: var(--winui-TextFillColorPrimaryBrush);
+	--winui-LoopingSelectorUpDownButtonBackground: var(
+		--winui-AcrylicBackgroundFillColorDefaultBrush
+	);
+	--winui-LoopingSelectorUpDownButtonBackgroundPointerOver: var(
+		--winui-SubtleFillColorTransparentBrush
+	);
+	--winui-LoopingSelectorUpDownButtonBackgroundPressed: var(
+		--winui-SubtleFillColorTransparentBrush
+	);
+	--winui-LoopingSelectorItemForeground: var(--winui-TextFillColorPrimaryBrush);
+	--winui-LoopingSelectorItemForegroundSelected: var(--winui-TextFillColorPrimaryBrush);
+	--winui-LoopingSelectorItemForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
+	--winui-LoopingSelectorItemForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
+	--winui-LoopingSelectorItemBackgroundSelected: var(--winui-SubtleFillColorSecondaryBrush);
+	--winui-LoopingSelectorItemBackgroundPointerOver: var(--winui-SubtleFillColorSecondaryBrush);
+	--winui-LoopingSelectorItemBackgroundPressed: var(--winui-SubtleFillColorTertiaryBrush);
+	--winui-LoopingSelectorItemMargin: 2px 4px 2px 4px;
+	--winui-LoopingSelectorUpDownButtonMargin: 0px;
+	--winui-LoopingSelectorUpDownButtonHeight: 34px;
+	--winui-LoopingSelectorUpDownButtonScalePressed: 0.875;
 	--winui-TextOnAccentFillColorDefault: #ffffff;
 	--winui-ControlAAStrokeColorDefault: #00000072;
 	--winui-TextOnAccentFillColorDefaultBrush: var(--winui-TextOnAccentFillColorDefault);
@@ -2600,6 +2635,37 @@
 	--winui-ContentDialogSeparatorThickness: 0px 0px 1px 0px;
 	--winui-ControlCornerRadius: 4px;
 	--winui-OverlayCornerRadius: 8px;
+	--winui-DateTimePickerFlyoutButtonBackground: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-DateTimePickerFlyoutButtonBackgroundPointerOver: var(
+		--winui-SubtleFillColorSecondaryBrush
+	);
+	--winui-DateTimePickerFlyoutButtonBackgroundPressed: var(--winui-SubtleFillColorTertiaryBrush);
+	--winui-DateTimePickerFlyoutButtonBorderBrush: var(--winui-ControlStrokeColorDefaultBrush);
+	--winui-DateTimePickerFlyoutButtonBorderBrushPointerOver: var(
+		--winui-ControlStrokeColorDefaultBrush
+	);
+	--winui-DateTimePickerFlyoutButtonBorderBrushPressed: var(--winui-ControlStrokeColorDefaultBrush);
+	--winui-DateTimePickerFlyoutButtonForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
+	--winui-DateTimePickerFlyoutButtonForegroundPressed: var(--winui-TextFillColorPrimaryBrush);
+	--winui-LoopingSelectorUpDownButtonForeground: var(--winui-TextFillColorSecondaryBrush);
+	--winui-LoopingSelectorUpDownButtonForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
+	--winui-LoopingSelectorUpDownButtonForegroundPressed: var(--winui-TextFillColorPrimaryBrush);
+	--winui-LoopingSelectorUpDownButtonBackground: var(
+		--winui-AcrylicBackgroundFillColorDefaultBrush
+	);
+	--winui-LoopingSelectorUpDownButtonBackgroundPointerOver: var(
+		--winui-SubtleFillColorTransparentBrush
+	);
+	--winui-LoopingSelectorUpDownButtonBackgroundPressed: var(
+		--winui-SubtleFillColorTransparentBrush
+	);
+	--winui-LoopingSelectorItemForeground: var(--winui-TextFillColorPrimaryBrush);
+	--winui-LoopingSelectorItemForegroundSelected: var(--winui-TextFillColorPrimaryBrush);
+	--winui-LoopingSelectorItemForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
+	--winui-LoopingSelectorItemForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
+	--winui-LoopingSelectorItemBackgroundSelected: var(--winui-SubtleFillColorSecondaryBrush);
+	--winui-LoopingSelectorItemBackgroundPointerOver: var(--winui-SubtleFillColorSecondaryBrush);
+	--winui-LoopingSelectorItemBackgroundPressed: var(--winui-SubtleFillColorTertiaryBrush);
 	--winui-TextOnAccentFillColorDefault: #ffffff;
 	--winui-ControlAAStrokeColorDefault: #ffffff8b;
 	--winui-TextOnAccentFillColorDefaultBrush: var(--winui-TextOnAccentFillColorDefault);
@@ -4205,6 +4271,41 @@
 		--winui-ContentDialogSeparatorThickness: 0px 0px 1px 0px;
 		--winui-ControlCornerRadius: 4px;
 		--winui-OverlayCornerRadius: 8px;
+		--winui-DateTimePickerFlyoutButtonBackground: var(--winui-SubtleFillColorTransparentBrush);
+		--winui-DateTimePickerFlyoutButtonBackgroundPointerOver: var(
+			--winui-SubtleFillColorSecondaryBrush
+		);
+		--winui-DateTimePickerFlyoutButtonBackgroundPressed: var(--winui-SubtleFillColorTertiaryBrush);
+		--winui-DateTimePickerFlyoutButtonBorderBrush: var(--winui-ControlStrokeColorDefaultBrush);
+		--winui-DateTimePickerFlyoutButtonBorderBrushPointerOver: var(
+			--winui-ControlStrokeColorDefaultBrush
+		);
+		--winui-DateTimePickerFlyoutButtonBorderBrushPressed: var(
+			--winui-ControlStrokeColorDefaultBrush
+		);
+		--winui-DateTimePickerFlyoutButtonForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
+		--winui-DateTimePickerFlyoutButtonForegroundPressed: var(--winui-TextFillColorPrimaryBrush);
+		--winui-LoopingSelectorUpDownButtonForeground: var(--winui-TextFillColorSecondaryBrush);
+		--winui-LoopingSelectorUpDownButtonForegroundPointerOver: var(
+			--winui-TextFillColorPrimaryBrush
+		);
+		--winui-LoopingSelectorUpDownButtonForegroundPressed: var(--winui-TextFillColorPrimaryBrush);
+		--winui-LoopingSelectorUpDownButtonBackground: var(
+			--winui-AcrylicBackgroundFillColorDefaultBrush
+		);
+		--winui-LoopingSelectorUpDownButtonBackgroundPointerOver: var(
+			--winui-SubtleFillColorTransparentBrush
+		);
+		--winui-LoopingSelectorUpDownButtonBackgroundPressed: var(
+			--winui-SubtleFillColorTransparentBrush
+		);
+		--winui-LoopingSelectorItemForeground: var(--winui-TextFillColorPrimaryBrush);
+		--winui-LoopingSelectorItemForegroundSelected: var(--winui-TextFillColorPrimaryBrush);
+		--winui-LoopingSelectorItemForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
+		--winui-LoopingSelectorItemForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
+		--winui-LoopingSelectorItemBackgroundSelected: var(--winui-SubtleFillColorSecondaryBrush);
+		--winui-LoopingSelectorItemBackgroundPointerOver: var(--winui-SubtleFillColorSecondaryBrush);
+		--winui-LoopingSelectorItemBackgroundPressed: var(--winui-SubtleFillColorTertiaryBrush);
 		--winui-TextOnAccentFillColorDefault: #ffffff;
 		--winui-ControlAAStrokeColorDefault: #ffffff8b;
 		--winui-TextOnAccentFillColorDefaultBrush: var(--winui-TextOnAccentFillColorDefault);
@@ -5826,6 +5927,37 @@
 	--winui-ContentDialogSeparatorThickness: 0px 0px 1px 0px;
 	--winui-ControlCornerRadius: 4px;
 	--winui-OverlayCornerRadius: 8px;
+	--winui-DateTimePickerFlyoutButtonBackground: var(--winui-SystemColorWindowColorBrush);
+	--winui-DateTimePickerFlyoutButtonBackgroundPointerOver: var(
+		--winui-SystemColorHighlightTextColorBrush
+	);
+	--winui-DateTimePickerFlyoutButtonBackgroundPressed: var(--winui-SystemColorWindowColorBrush);
+	--winui-DateTimePickerFlyoutButtonBorderBrush: var(--winui-SystemColorButtonTextColorBrush);
+	--winui-DateTimePickerFlyoutButtonBorderBrushPointerOver: var(
+		--winui-SystemColorHighlightColorBrush
+	);
+	--winui-DateTimePickerFlyoutButtonBorderBrushPressed: var(--winui-SystemColorHighlightColorBrush);
+	--winui-DateTimePickerFlyoutButtonForegroundPointerOver: var(
+		--winui-SystemColorHighlightColorBrush
+	);
+	--winui-DateTimePickerFlyoutButtonForegroundPressed: var(--winui-SystemColorHighlightColorBrush);
+	--winui-LoopingSelectorUpDownButtonForeground: var(--winui-SystemColorButtonTextColorBrush);
+	--winui-LoopingSelectorUpDownButtonForegroundPointerOver: var(
+		--winui-SystemColorHighlightTextColorBrush
+	);
+	--winui-LoopingSelectorUpDownButtonForegroundPressed: var(--winui-SystemColorHighlightColorBrush);
+	--winui-LoopingSelectorUpDownButtonBackground: var(--winui-SystemColorWindowColorBrush);
+	--winui-LoopingSelectorUpDownButtonBackgroundPointerOver: var(
+		--winui-SystemColorHighlightColorBrush
+	);
+	--winui-LoopingSelectorUpDownButtonBackgroundPressed: var(--winui-SystemColorWindowColorBrush);
+	--winui-LoopingSelectorItemForeground: var(--winui-SystemColorButtonTextColorBrush);
+	--winui-LoopingSelectorItemForegroundSelected: var(--winui-SystemColorHighlightTextColorBrush);
+	--winui-LoopingSelectorItemForegroundPointerOver: var(--winui-SystemColorHighlightTextColorBrush);
+	--winui-LoopingSelectorItemForegroundPressed: var(--winui-SystemColorHighlightColorBrush);
+	--winui-LoopingSelectorItemBackgroundSelected: var(--winui-SystemColorHighlightColorBrush);
+	--winui-LoopingSelectorItemBackgroundPointerOver: var(--winui-SystemColorHighlightColorBrush);
+	--winui-LoopingSelectorItemBackgroundPressed: var(--winui-SystemColorWindowColorBrush);
 	--winui-TextOnAccentFillColorDefault: #ffffff;
 	--winui-ControlAAStrokeColorDefault: #ffffff8b;
 	--winui-TextOnAccentFillColorDefaultBrush: var(--winui-SystemColorWindowTextColor);
