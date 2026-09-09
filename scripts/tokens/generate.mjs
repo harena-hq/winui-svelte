@@ -65,6 +65,7 @@ import {
 	SCROLLBAR_KEYS,
 	SCROLLVIEW_KEYS,
 	PIPSPAGER_KEYS,
+	ANNOTATEDSCROLLBAR_KEYS,
 	DEFINED_BY,
 	TYPE_RAMP
 } from './manifest.mjs';
@@ -882,7 +883,8 @@ function select(resources, framework) {
 		['FLIPVIEW_KEYS', FLIPVIEW_KEYS],
 		['SCROLLBAR_KEYS', SCROLLBAR_KEYS],
 		['SCROLLVIEW_KEYS', SCROLLVIEW_KEYS],
-		['PIPSPAGER_KEYS', PIPSPAGER_KEYS]
+		['PIPSPAGER_KEYS', PIPSPAGER_KEYS],
+		['ANNOTATEDSCROLLBAR_KEYS', ANNOTATEDSCROLLBAR_KEYS]
 	];
 	for (let i = 0; i < SEED_SETS.length; i++)
 		for (let j = i + 1; j < SEED_SETS.length; j++) {
