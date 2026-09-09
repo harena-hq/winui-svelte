@@ -76,6 +76,24 @@ five components import bits-ui and all five use `child` — fifteen sites — wh
 escape has been needed **zero** times. Ark's `asChild` would be used just as universally, since
 what drives it is Fluent's specificity about element structure, not the library.
 
+## A third category, found in v13
+
+The decision above sorts primitives into two: bits-ui has one, or bits-ui has none and a Zag
+machine fills the gap. v13 found a third — **bits-ui has one and it computes something else.**
+
+`ScrollArea` exists, is well shaped, and carries a viewport, a scrollbar, a thumb and a corner.
+Its thumb is floored at a hard-coded 18 pixels where WinUI floors it at 30, it divides by a
+different length, it has none of WinUI's three conditions for drawing no thumb, and it writes the
+thumb's offset into `style.transform` on every scroll — the channel WinUI's collapsed state needs.
+None of that is reachable through props.
+
+The test this ADR applies is unchanged and it is what decided the case: a primitive is worth
+adopting for what it computes, not for what it is named. Where the arithmetic is the control's
+whole visual identity and the primitive's arithmetic is different, the primitive is not a base,
+and reading its shipped code before building on it is what turns a fidelity defect no gate can see
+into a paragraph. `ScrollView` therefore uses no primitive; it is a scrolling box and this
+library's own `ScrollBar`.
+
 ## Alternatives rejected
 
 - **Ark UI** — actively maintained, `asChild` on every component, and it covers the three
