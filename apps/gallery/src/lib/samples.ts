@@ -1,4 +1,4 @@
-import record from '../../../../data/winui-gallery-samples.json';
+import record from '../../../../data/winui-gallery-samples.json' with { type: 'json' };
 
 /** A `ControlExample.SampleDefinition` resolved from the Gallery's samples record. */
 export interface SampleDefinition {

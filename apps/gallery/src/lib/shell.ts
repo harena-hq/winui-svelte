@@ -1,4 +1,4 @@
-import record from '../../../../data/winui-gallery-shell.json';
+import record from '../../../../data/winui-gallery-shell.json' with { type: 'json' };
 import type { NavigationViewEntry } from 'winui-svelte';
 
 /**
@@ -34,6 +34,7 @@ type RecordMenuEntry = RecordMenuItem | RecordMenuHeader;
 export interface GalleryItem {
 	uniqueId: string;
 	title: string;
+	tags: string[];
 	subtitle: string | null;
 	description: string | null;
 	apiNamespace: string | null;
@@ -160,6 +161,81 @@ const xamlMenu = buildXamlMenu(r.menu);
 const groupMenu = buildGroupMenu(r.groups);
 
 export const menu: NavigationViewEntry[] = [...xamlMenu, ...groupMenu];
+
+/**
+ * Every menu row that names a record item, keyed by that item's uniqueId.
+ *
+ * By uniqueId and not by label, because four rows are labelled differently from the item
+ * they open: `Styles` opens `Style`, and the three Accessibility rows read `Screen reader
+ * support`, `Keyboard support` and `Color contrast` against titles of `Screen Reader`,
+ * `Keyboard Navigation` and `Color Contrast`. Keyed by label, those four suggestions open
+ * nothing. The row's own id already ends in the uniqueId — `buildXamlItem` slugs the row's
+ * `Tag` and `buildGroupMenu` the item's uniqueId — which makes this the inverse of `itemOf`.
+ */
+function menuItemPaths(entries: NavigationViewEntry[], into: Map<string, string>): void {
+	for (const entry of entries) {
+		if ('header' in entry) continue;
+		const key = entry.id.split('/').filter(Boolean).at(-1) ?? '';
+		if (ITEMS_BY_UNIQUE_ID.has(key)) {
+			if (into.has(key)) {
+				throw new Error(`shell: duplicate GalleryItem menu path ${JSON.stringify(entry.id)}`);
+			}
+			into.set(key, entry.id);
+		}
+		if (entry.children) menuItemPaths(entry.children, into);
+	}
+}
+
+const ITEMS_BY_TITLE: ReadonlyMap<string, GalleryItem> = (() => {
+	const items = new Map<string, GalleryItem>();
+	for (const group of r.groups) {
+		for (const item of group.items) {
+			if (items.has(item.title)) {
+				throw new Error(`shell: duplicate GalleryItem title ${JSON.stringify(item.title)}`);
+			}
+			items.set(item.title, item);
+		}
+	}
+	return items;
+})();
+
+const MENU_ITEM_PATHS: ReadonlyMap<string, string> = (() => {
+	const paths = new Map<string, string>();
+	menuItemPaths(menu, paths);
+	return paths;
+})();
+
+/** The string the Gallery shows when nothing matches — MainWindow.xaml.cs:456. */
+export const NO_SEARCH_RESULTS = 'No results found';
+
+/** The titles the Gallery would suggest for a query, in its order. Empty query, empty list. */
+export function searchSuggestions(query: string): string[] {
+	if (query === '') return [];
+	const tokens = query.split(' ');
+	const matches = [...ITEMS_BY_TITLE.values()].filter((item) =>
+		tokens.every(
+			(token) =>
+				item.title.toLocaleLowerCase().includes(token.toLocaleLowerCase()) ||
+				(item.tags ?? []).some((tag) => tag.toLocaleLowerCase().includes(token.toLocaleLowerCase()))
+		)
+	);
+	// Every record item is IncludedInBuild upstream, so there is no field to reproduce here.
+	if (matches.length === 0) return [NO_SEARCH_RESULTS];
+	return matches
+		.sort((a, b) => {
+			const aStarts = a.title.toLocaleLowerCase().startsWith(query.toLocaleLowerCase());
+			const bStarts = b.title.toLocaleLowerCase().startsWith(query.toLocaleLowerCase());
+			if (aStarts !== bStarts) return aStarts ? -1 : 1;
+			return a.title.localeCompare(b.title);
+		})
+		.map((item) => item.title);
+}
+
+/** The route a suggested title opens, or `null` for the no-results string. */
+export function pathOfSuggestion(title: string): string | null {
+	const item = ITEMS_BY_TITLE.get(title);
+	return item === undefined ? null : (MENU_ITEM_PATHS.get(slug(item.uniqueId)) ?? null);
+}
 
 export const titleBar = {
 	title: r.titleBar.title,

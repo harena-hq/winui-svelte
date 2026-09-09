@@ -7,6 +7,7 @@
 	const everything: GalleryItem = {
 		uniqueId: 'Everything',
 		title: 'Everything',
+		tags: [],
 		subtitle: 'A complete item-page fixture.',
 		description: 'An item with every page-header field.',
 		apiNamespace: 'Microsoft.UI.Xaml.Controls',
@@ -22,6 +23,7 @@
 		...everything,
 		uniqueId: 'NoApiDetails',
 		title: 'No API details',
+		tags: [],
 		apiNamespace: null,
 		baseClasses: []
 	};
@@ -29,6 +31,7 @@
 		...everything,
 		uniqueId: 'NoDocsAndSource',
 		title: 'No docs and no source',
+		tags: [],
 		docs: [],
 		sourcePath: null,
 		samplePagePath: null
@@ -37,6 +40,7 @@
 		...everything,
 		uniqueId: 'NoDescription',
 		title: 'No description',
+		tags: [],
 		description: null
 	};
 </script>

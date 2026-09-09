@@ -23,6 +23,7 @@
 		"groups": 19,
 		"specialSections": 3,
 		"groupItems": 120,
+		"itemsWithTags": 119,
 		"itemsWithDocs": 120,
 		"itemsWithApi": 106,
 		"itemsWithSamplePage": 120
@@ -273,6 +274,13 @@
 				{
 					"uniqueId": "XamlResources",
 					"title": "Resources",
+					"tags": [
+						"ResourceDictionary",
+						"StaticResource",
+						"ThemeResource",
+						"Resources",
+						"lightweight styling"
+					],
 					"subtitle": "Reusable definitions for shared values to ensure consistency and maintainability.",
 					"description": "In WinUI 3, XAML resources are reusable objects like colors, brushes, or strings, defined once and used throughout your app to maintain consistency and simplify updates. These resources are typically stored in a ResourceDictionary for better organization and scalability. Special theme resources adapt automatically to light or dark modes, ensuring a seamless look across themes.",
 					"apiNamespace": null,
@@ -297,6 +305,12 @@
 				{
 					"uniqueId": "XamlStyles",
 					"title": "Style",
+					"tags": [
+						"Setter",
+						"BasedOn",
+						"implicit style",
+						"default style"
+					],
 					"subtitle": "A XAML style is a Reusable property settings to define consistent UI design elements.",
 					"description": "XAML Styles in WinUI 3 are reusable sets of property values that you can apply to multiple controls. They help maintain a consistent look and feel across your app. Instead of setting the same properties on every control, you define a style once and then reuse it wherever needed.",
 					"apiNamespace": "Microsoft.UI.Xaml",
@@ -320,6 +334,15 @@
 				{
 					"uniqueId": "Binding",
 					"title": "Binding",
+					"tags": [
+						"x:Bind",
+						"data binding",
+						"INotifyPropertyChanged",
+						"ObservableCollection",
+						"TwoWay",
+						"OneWay",
+						"DataContext"
+					],
 					"subtitle": "Connecting UI elements to data for automatic synchronization and updates.",
 					"description": "Binding in WinUI 3 is a way to connect a property of a control to a source, such as another property, a data object, or a view model. It keeps the data synchronized between the source and the target control, enabling dynamic updates.",
 					"apiNamespace": null,
@@ -352,6 +375,12 @@
 				{
 					"uniqueId": "Templates",
 					"title": "Templates",
+					"tags": [
+						"ControlTemplate",
+						"DataTemplate",
+						"ItemTemplate",
+						"DataTemplateSelector"
+					],
 					"subtitle": "Customize controls' visuals, item layouts, and data presentation in XAML.",
 					"description": "A template defines the structure and appearance of a control. Unlike styles, which set properties, templates allow you to completely customize how a control looks by redefining its visual tree (the XAML elements that make up the control). Templates provide the flexibility to change the look of controls while maintaining their functionality.",
 					"apiNamespace": "Microsoft.UI.Xaml.Controls",
@@ -384,6 +413,11 @@
 				{
 					"uniqueId": "CustomUserControls",
 					"title": "Custom & User Controls",
+					"tags": [
+						"UserControl",
+						"custom control",
+						"reusable control"
+					],
 					"subtitle": "Create reusable UI components with custom functionality and appearance.",
 					"description": "Custom controls and user controls allow to create reusable UI components with unique behavior and styling. A UserControl is a simple way to encapsulate a UI layout, while a custom control provides full styling and templating flexibility. Both approaches help in building modular and maintainable applications.",
 					"apiNamespace": "Microsoft.UI.Xaml.Controls",
@@ -413,6 +447,11 @@
 				{
 					"uniqueId": "CustomXamlConditionals",
 					"title": "XAML Conditions",
+					"tags": [
+						"IXamlCondition",
+						"conditional XAML",
+						"markup extension"
+					],
 					"subtitle": "Define custom XAML conditions evaluated at parse time using IXamlCondition.",
 					"description": "XAML conditions let you conditionally include markup based on application-specific state such as feature flags, device capabilities, or configuration. Implement IXamlCondition (Windows App SDK 2.0) and reference your condition from a conditional XAML namespace. Conditions are evaluated by the XAML parser when a page is loaded and the result for each (condition, argument) pair is cached for the lifetime of the process.",
 					"apiNamespace": "Microsoft.UI.Xaml.Markup",
@@ -429,6 +468,11 @@
 				{
 					"uniqueId": "ScratchPad",
 					"title": "Scratch Pad",
+					"tags": [
+						"playground",
+						"sandbox",
+						"test markup"
+					],
 					"subtitle": "Scratch pad for testing simple XAML markup",
 					"description": "Provides an edit box where you can type in some markup and load it to see how it looks and behaves.",
 					"apiNamespace": null,
@@ -453,6 +497,12 @@
 				{
 					"uniqueId": "Color",
 					"title": "Color",
+					"tags": [
+						"palette",
+						"brush",
+						"accent color",
+						"theme color"
+					],
 					"subtitle": "Balanced color design creates clarity and aesthetic harmony.",
 					"description": null,
 					"apiNamespace": null,
@@ -477,6 +527,11 @@
 				{
 					"uniqueId": "Geometry",
 					"title": "Geometry",
+					"tags": [
+						"path",
+						"vector",
+						"figures"
+					],
 					"subtitle": "Clear geometric design ensures visual coherence and structure.",
 					"description": null,
 					"apiNamespace": null,
@@ -497,6 +552,14 @@
 				{
 					"uniqueId": "Iconography",
 					"title": "Iconography",
+					"tags": [
+						"icons",
+						"glyph",
+						"Segoe Fluent Icons",
+						"FontIcon",
+						"SymbolIcon",
+						"icon font"
+					],
 					"subtitle": "Icons are a visual design language that can be used to communicate information quickly and effectively.",
 					"description": "The icons below use Segoe Fluent Icons on Windows 11 and Segoe MDL2 Assets on Windows 10.",
 					"apiNamespace": null,
@@ -521,6 +584,11 @@
 				{
 					"uniqueId": "Spacing",
 					"title": "Spacing",
+					"tags": [
+						"margin",
+						"padding",
+						"layout spacing"
+					],
 					"subtitle": "Thoughtful spacing design enhances readability and flow.",
 					"description": null,
 					"apiNamespace": null,
@@ -537,6 +605,13 @@
 				{
 					"uniqueId": "Typography",
 					"title": "Typography",
+					"tags": [
+						"font",
+						"text style",
+						"TitleTextBlockStyle",
+						"BodyTextBlockStyle",
+						"font size"
+					],
 					"subtitle": "Typography design guides attention with intuitive fonts and hierarchy.",
 					"description": null,
 					"apiNamespace": null,
@@ -569,6 +644,11 @@
 				{
 					"uniqueId": "AccessibilityColorContrast",
 					"title": "Color Contrast",
+					"tags": [
+						"high contrast",
+						"WCAG",
+						"accessibility"
+					],
 					"subtitle": "High contrast design ensures accessibility for all users.",
 					"description": null,
 					"apiNamespace": null,
@@ -589,6 +669,13 @@
 				{
 					"uniqueId": "AccessibilityKeyboard",
 					"title": "Keyboard Navigation",
+					"tags": [
+						"keyboard",
+						"tab navigation",
+						"access keys",
+						"focus",
+						"accessibility"
+					],
 					"subtitle": "Keyboard-friendly design enables seamless interactions.",
 					"description": null,
 					"apiNamespace": null,
@@ -633,6 +720,12 @@
 				{
 					"uniqueId": "AccessibilityScreenReader",
 					"title": "Screen Reader",
+					"tags": [
+						"Narrator",
+						"AutomationProperties",
+						"assistive technology",
+						"accessibility"
+					],
 					"subtitle": "Inclusive design ensures meaningful content for assistive technologies.",
 					"description": null,
 					"apiNamespace": null,
@@ -677,6 +770,10 @@
 				{
 					"uniqueId": "AppBarButton",
 					"title": "AppBarButton",
+					"tags": [
+						"toolbar button",
+						"command button"
+					],
 					"subtitle": "A button that's styled for use in a CommandBar.",
 					"description": "AppBarButton differs from standard buttons in several ways:\n- Their default appearance is a transparent background with a smaller size.\n- You use the Label and Icon properties to set the content instead of the Content property. The Content property is ignored.\n- The button's IsCompact property controls its size.",
 					"apiNamespace": "Microsoft.UI.Xaml.Controls",
@@ -722,6 +819,9 @@
 				{
 					"uniqueId": "AppBarSeparator",
 					"title": "AppBarSeparator",
+					"tags": [
+						"divider"
+					],
 					"subtitle": "A vertical line that's used to visually separate groups of commands in an app bar.",
 					"description": "An AppBarSeparator creates a vertical line to visually separate groups of commands in a app bar. It has a compact state with reduced padding to match the compact state of the AppBarButton and AppBarToggleButton controls.",
 					"apiNamespace": "Microsoft.UI.Xaml.Controls",
@@ -748,6 +848,10 @@
 				{
 					"uniqueId": "AppBarToggleButton",
 					"title": "AppBarToggleButton",
+					"tags": [
+						"toolbar toggle",
+						"command toggle"
+					],
 					"subtitle": "A button that can be on, off, or indeterminate like a CheckBox, and is styled for use in an app bar or other specialized UI.",
 					"description": "An AppBarToggleButton looks like an AppBarButton, but works like a CheckBox. It typically has two states, checked (on) or unchecked (off), but can be indeterminate if the IsThreeState property is true. You can determine it's state by checking the IsChecked property.",
 					"apiNamespace": "Microsoft.UI.Xaml.Controls",
@@ -793,6 +897,11 @@
 				{
 					"uniqueId": "CommandBar",
 					"title": "CommandBar",
+					"tags": [
+						"toolbar",
+						"commands",
+						"app bar"
+					],
 					"subtitle": "A toolbar for displaying application-specific commands that handles layout and resizing of its contents.",
 					"description": "Command bars provide users with easy access to your app's most common tasks. Command bars can provide access to app-level or page-specific commands and can be used with any navigation pattern. By default, the command bar shows a row of icon buttons and an optional \"see more\" button, which is represented by an ellipsis [...].",
 					"apiNamespace": "Microsoft.UI.Xaml.Controls",
@@ -821,6 +930,11 @@
 				{
 					"uniqueId": "CommandBarFlyout",
 					"title": "CommandBarFlyout",
+					"tags": [
+						"context menu",
+						"toolbar flyout",
+						"commands"
+					],
 					"subtitle": "A mini-toolbar displaying proactive commands, and an optional menu of commands.",
 					"description": "A mini-toolbar which displays a set of proactive commands, as well as a secondary menu of commands if desired.",
 					"apiNamespace": "Microsoft.UI.Xaml.Controls",
@@ -845,6 +959,10 @@
 				{
 					"uniqueId": "MenuBar",
 					"title": "MenuBar",
+					"tags": [
+						"MenuBarItem",
+						"application menu"
+					],
 					"subtitle": "A classic menu, allowing the display of MenuItems containing MenuFlyoutItems.",
 					"description": "The Menubar simplifies the creation of basic applications by providing a set of menus at the top of the app or window.",
 					"apiNamespace": "Microsoft.UI.Xaml.Controls",
@@ -871,6 +989,12 @@
 				{
 					"uniqueId": "MenuFlyout",
 					"title": "MenuFlyout",
+					"tags": [
+						"context menu",
+						"right click menu",
+						"MenuFlyoutItem",
+						"dropdown menu"
+					],
 					"subtitle": "Shows a contextual list of simple commands or options.",
 					"description": "A MenuFlyout displays lightweight UI that is light dismissed by clicking or tapping off of it. Use it to let the user choose from a contextual list of simple commands or options.",
 					"apiNamespace": "Microsoft.UI.Xaml.Controls",
@@ -915,6 +1039,10 @@
 				{
 					"uniqueId": "SwipeControl",
 					"title": "SwipeControl",
+					"tags": [
+						"SwipeItem",
+						"gesture"
+					],
 					"subtitle": "Touch gesture for quick menu actions on items.",
 					"description": "Touch gesture for quick menu actions on items.",
 					"apiNamespace": "Microsoft.UI.Xaml.Controls",
@@ -950,6 +1078,9 @@
 				{
 					"uniqueId": "StandardUICommand",
 					"title": "StandardUICommand",
+					"tags": [
+						"standard command"
+					],
 					"subtitle": "A StandardUICommand is a built-in 'XamlUICommand' which represents a commonly used command, e.g. 'Save'.",
 					"description": "StandardUICommands are a set of built-in XamlUICommands represeting commonly used commands. Including the look and feel of a given command, which can be reused across your app, and which is understood natively by the standard XAML controls. E.g. Save, Open, Copy, Paste, etc.",
 					"apiNamespace": "Microsoft.UI.Xaml.Input",
@@ -974,6 +1105,7 @@
 				{
 					"uniqueId": "XamlUICommand",
 					"title": "XamlUICommand",
+					"tags": [],
 					"subtitle": "An object which is used to define the look and feel of a given command.",
 					"description": "An object which is used to define the look and feel of a given command, which can be reused across your app, and which is understood natively by the standard XAML controls.",
 					"apiNamespace": "Microsoft.UI.Xaml.Input",
@@ -1005,6 +1137,11 @@
 				{
 					"uniqueId": "FlipView",
 					"title": "FlipView",
+					"tags": [
+						"carousel",
+						"slideshow",
+						"gallery"
+					],
 					"subtitle": "Presents a collection of items that the user can flip through, one item at a time.",
 					"description": "The FlipView lets you flip through a collection of items, one at a time. It's great for displaying images from a gallery, pages of a magazine, or similar items.",
 					"apiNamespace": "Microsoft.UI.Xaml.Controls",
@@ -1033,6 +1170,10 @@
 				{
 					"uniqueId": "GridView",
 					"title": "GridView",
+					"tags": [
+						"tiles",
+						"collection grid"
+					],
 					"subtitle": "A control that presents a collection of items in rows and columns.",
 					"description": "The GridView lets you show a collection of items arranged in rows and columns that scroll horizontally.",
 					"apiNamespace": "Microsoft.UI.Xaml.Controls",
@@ -1062,6 +1203,10 @@
 				{
 					"uniqueId": "ItemsRepeater",
 					"title": "ItemsRepeater",
+					"tags": [
+						"data layout",
+						"virtualization"
+					],
 					"subtitle": "A flexible, primitive control for data-driven layouts.",
 					"description": "The ItemsRepeater is like a markup-based loop that supports virtualization.",
 					"apiNamespace": "Microsoft.UI.Xaml.Controls",
@@ -1095,6 +1240,11 @@
 				{
 					"uniqueId": "ItemsView",
 					"title": "ItemsView",
+					"tags": [
+						"collection",
+						"items source",
+						"layout"
+					],
 					"subtitle": "A control that presents a collection of items using various layouts.",
 					"description": "The ItemsView lets you show a collection of items using scrollable & swappable layouts.",
 					"apiNamespace": "Microsoft.UI.Xaml.Controls",
@@ -1121,6 +1271,11 @@
 				{
 					"uniqueId": "ListView",
 					"title": "ListView",
+					"tags": [
+						"list",
+						"selection",
+						"collection list"
+					],
 					"subtitle": "A control that presents a collection of items in a vertical list.",
 					"description": "The ListView lets you show a collection of items in a list that scrolls vertically.",
 					"apiNamespace": "Microsoft.UI.Xaml.Controls",
@@ -1170,6 +1325,11 @@
 				{
 					"uniqueId": "PullToRefresh",
 					"title": "PullToRefresh",
+					"tags": [
+						"pull to refresh",
+						"RefreshContainer",
+						"RefreshVisualizer"
+					],
 					"subtitle": "Provides the ability to pull on a collection of items in a list/grid to refresh the contents of the collection.",
 					"description": "PullToRefresh lets a user pull down on a list of data using touch in order to retrieve more data. PullToRefresh is widely used on devices with a touch screen.",
 					"apiNamespace": "Microsoft.UI.Xaml.Controls",
@@ -1194,6 +1354,12 @@
 				{
 					"uniqueId": "TreeView",
 					"title": "TreeView",
+					"tags": [
+						"tree",
+						"hierarchy",
+						"nodes",
+						"expandable list"
+					],
 					"subtitle": "The  TreeView control is a hierarchical list pattern with expanding and collapsing nodes that contain nested items.",
 					"description": "The TreeView control is a hierarchical list pattern with expanding and collapsing nodes that contain nested items. ",
 					"apiNamespace": "Microsoft.UI.Xaml.Controls",
@@ -1228,6 +1394,9 @@
 				{
 					"uniqueId": "CalendarDatePicker",
 					"title": "CalendarDatePicker",
+					"tags": [
+						"date picker"
+					],
 					"subtitle": "A control that lets users pick a date value using a calendar.",
 					"description": "A control that lets users pick a date value using a calendar.",
 					"apiNamespace": "Microsoft.UI.Xaml.Controls",
@@ -1254,6 +1423,10 @@
 				{
 					"uniqueId": "CalendarView",
 					"title": "CalendarView",
+					"tags": [
+						"date",
+						"month view"
+					],
 					"subtitle": "A control that presents a calendar for a user to choose a date from.",
 					"description": "CalendarView shows a larger view for showing and selecting dates.  DatePicker by contrast has a compact view with inline selection.",
 					"apiNamespace": "Microsoft.UI.Xaml.Controls",
@@ -1280,6 +1453,9 @@
 				{
 					"uniqueId": "DatePicker",
 					"title": "DatePicker",
+					"tags": [
+						"date selection"
+					],
 					"subtitle": "A control that lets a user pick a date value.",
 					"description": "Use a DatePicker to let users set a date in your app, for example to schedule an appointment. The DatePicker displays three controls for month, date, and year. These controls are easy to use with touch or mouse, and they can be styled and configured in several different ways.",
 					"apiNamespace": "Microsoft.UI.Xaml.Controls",
@@ -1306,6 +1482,10 @@
 				{
 					"uniqueId": "TimePicker",
 					"title": "TimePicker",
+					"tags": [
+						"clock",
+						"time selection"
+					],
 					"subtitle": "A configurable control that lets a user pick a time value.",
 					"description": "Use a TimePicker to let users set a time in your app, for example to set a reminder. The TimePicker displays three controls for hour, minute, and AM/PM. These controls are easy to use with touch or mouse, and they can be styled and configured in several different ways.",
 					"apiNamespace": "Microsoft.UI.Xaml.Controls",
@@ -1340,6 +1520,11 @@
 				{
 					"uniqueId": "Button",
 					"title": "Button",
+					"tags": [
+						"click",
+						"push button",
+						"command"
+					],
 					"subtitle": "A control that responds to user input and raises a Click event.",
 					"description": "The Button control provides a Click event to respond to user input from a touch, mouse, keyboard, stylus, or other input device. You can put different kinds of content in a button, such as text or an image, or you can restyle a button to give it a new look.",
 					"apiNamespace": "Microsoft.UI.Xaml.Controls",
@@ -1368,6 +1553,10 @@
 				{
 					"uniqueId": "DropDownButton",
 					"title": "DropDownButton",
+					"tags": [
+						"flyout button",
+						"menu button"
+					],
 					"subtitle": "A button that displays a flyout of choices when clicked.",
 					"description": "A control that drops down a flyout of choices from which one can be chosen.",
 					"apiNamespace": "Microsoft.UI.Xaml.Controls",
@@ -1397,6 +1586,10 @@
 				{
 					"uniqueId": "HyperlinkButton",
 					"title": "HyperlinkButton",
+					"tags": [
+						"URL",
+						"navigate"
+					],
 					"subtitle": "A button that appears as hyperlink text, and can navigate to a URI or handle a Click event.",
 					"description": "A HyperlinkButton appears as a text hyperlink. When a user clicks it, it opens the page you specify in the NavigateUri property in the default browser. Or you can handle its Click event, typically to navigate within your app.",
 					"apiNamespace": "Microsoft.UI.Xaml.Controls",
@@ -1425,6 +1618,9 @@
 				{
 					"uniqueId": "RepeatButton",
 					"title": "RepeatButton",
+					"tags": [
+						"hold button"
+					],
 					"subtitle": "A button that raises its Click event repeatedly from the time it's pressed until it's released.",
 					"description": "The RepeatButton control is like a standard Button, except that the Click event occurs continuously while the user presses the RepeatButton.",
 					"apiNamespace": "Microsoft.UI.Xaml.Controls.Primitives",
@@ -1453,6 +1649,9 @@
 				{
 					"uniqueId": "ToggleButton",
 					"title": "ToggleButton",
+					"tags": [
+						"on off"
+					],
 					"subtitle": "A button that can be switched between two states like a CheckBox.",
 					"description": "A ToggleButton looks like a Button, but works like a CheckBox. It typically has two states, checked (on) or unchecked (off), but can be indeterminate if the IsThreeState property is true. You can determine it's state by checking the IsChecked property.",
 					"apiNamespace": "Microsoft.UI.Xaml.Controls.Primitives",
@@ -1481,6 +1680,10 @@
 				{
 					"uniqueId": "SplitButton",
 					"title": "SplitButton",
+					"tags": [
+						"split",
+						"dropdown button"
+					],
 					"subtitle": "A two-part button that displays a flyout when its secondary part is clicked.",
 					"description": "The SplitButton is a dropdown button, but with an addition execution hit target.",
 					"apiNamespace": "Microsoft.UI.Xaml.Controls",
@@ -1508,6 +1711,10 @@
 				{
 					"uniqueId": "ToggleSplitButton",
 					"title": "ToggleSplitButton",
+					"tags": [
+						"toggle split",
+						"dropdown toggle"
+					],
 					"subtitle": "A version of the SplitButton where the activation target toggles on/off.",
 					"description": "A version of the SplitButton where the activation target toggles on/off.",
 					"apiNamespace": "Microsoft.UI.Xaml.Controls",
@@ -1536,6 +1743,11 @@
 				{
 					"uniqueId": "CheckBox",
 					"title": "CheckBox",
+					"tags": [
+						"tick",
+						"three state",
+						"checkmark"
+					],
 					"subtitle": "A control that a user can select or clear.",
 					"description": "CheckBox controls let the user select a combination of binary options. In contrast, RadioButton controls allow the user to select from mutually exclusive options. The indeterminate state is used to indicate that an option is set for some, but not all, child options. Don't allow users to set an indeterminate state directly to indicate a third option.",
 					"apiNamespace": "Microsoft.UI.Xaml.Controls",
@@ -1565,6 +1777,12 @@
 				{
 					"uniqueId": "ColorPicker",
 					"title": "ColorPicker",
+					"tags": [
+						"color spectrum",
+						"color wheel",
+						"RGB",
+						"hex"
+					],
 					"subtitle": "A control that displays a selectable color spectrum.",
 					"description": "A selectable color spectrum.",
 					"apiNamespace": "Microsoft.UI.Xaml.Controls",
@@ -1591,6 +1809,11 @@
 				{
 					"uniqueId": "ComboBox",
 					"title": "ComboBox",
+					"tags": [
+						"dropdown",
+						"select",
+						"picker"
+					],
 					"subtitle": "A drop-down list of items a user can select from.",
 					"description": "Use a ComboBox when you need to conserve on-screen space and when users select only one option at a time. A ComboBox shows only the currently selected item.",
 					"apiNamespace": "Microsoft.UI.Xaml.Controls",
@@ -1623,6 +1846,11 @@
 				{
 					"uniqueId": "RadioButton",
 					"title": "RadioButton",
+					"tags": [
+						"RadioButtons",
+						"single selection",
+						"option"
+					],
 					"subtitle": "A control that allows a user to select a single option from a group of options.",
 					"description": "Use RadioButton controls to let a user choose between mutually exclusive, related options. Generally contained within a RadioButtons group control.",
 					"apiNamespace": "Microsoft.UI.Xaml.Controls",
@@ -1656,6 +1884,10 @@
 				{
 					"uniqueId": "RatingControl",
 					"title": "RatingControl",
+					"tags": [
+						"stars",
+						"review"
+					],
 					"subtitle": "Rate something 1 to 5 stars.",
 					"description": "Rate something 1 to 5 stars.",
 					"apiNamespace": "Microsoft.UI.Xaml.Controls",
@@ -1682,6 +1914,11 @@
 				{
 					"uniqueId": "Slider",
 					"title": "Slider",
+					"tags": [
+						"range",
+						"track",
+						"Thumb"
+					],
 					"subtitle": "A control that lets the user select from a range of values by moving a Thumb control along a track.",
 					"description": "Use a Slider when you want your users to be able to set defined, contiguous values (such as volume or brightness) or a range of discrete values (such as screen resolution settings).",
 					"apiNamespace": "Microsoft.UI.Xaml.Controls",
@@ -1709,6 +1946,9 @@
 				{
 					"uniqueId": "ToggleSwitch",
 					"title": "ToggleSwitch",
+					"tags": [
+						"on off"
+					],
 					"subtitle": "A switch that can be toggled between 2 states.",
 					"description": "Use ToggleSwitch controls to present users with exactly two mutually exclusive options (like on/off), where choosing an option results in an immediate commit. A toggle switch should have a single label.",
 					"apiNamespace": "Microsoft.UI.Xaml.Controls",
@@ -1743,6 +1983,10 @@
 				{
 					"uniqueId": "InfoBadge",
 					"title": "InfoBadge",
+					"tags": [
+						"notification dot",
+						"count badge"
+					],
 					"subtitle": "An non-intrusive UI to display notifications or bring focus to an area.",
 					"description": "Badging is a non-intrusive and intuitive way to display notifications or bring focus to an area within an app - whether that be for notifications, indicating new content, or showing an alert.",
 					"apiNamespace": "Microsoft.UI.Xaml.Controls",
@@ -1769,6 +2013,12 @@
 				{
 					"uniqueId": "InfoBar",
 					"title": "InfoBar",
+					"tags": [
+						"notification",
+						"status message",
+						"alert",
+						"banner"
+					],
 					"subtitle": "An inline message to display app-wide status change information.",
 					"description": "Use an InfoBar control when a user should be informed of, acknowledge, or take action on a changed application state. By default the notification will remain in the content area until closed by the user but will not necessarily break user flow.",
 					"apiNamespace": "Microsoft.UI.Xaml.Controls",
@@ -1795,6 +2045,11 @@
 				{
 					"uniqueId": "ProgressBar",
 					"title": "ProgressBar",
+					"tags": [
+						"loading",
+						"determinate",
+						"indeterminate"
+					],
 					"subtitle": "Shows the apps progress on a task, or that the app is performing ongoing work that doesn't block user interaction.",
 					"description": "The ProgressBar has two different visual representations:\nIndeterminate - shows that a task is ongoing, but doesn't block user interaction.\nDeterminate - shows how much progress has been made on a known amount of work.",
 					"apiNamespace": "Microsoft.UI.Xaml.Controls",
@@ -1822,6 +2077,11 @@
 				{
 					"uniqueId": "ProgressRing",
 					"title": "ProgressRing",
+					"tags": [
+						"loading",
+						"spinner",
+						"busy"
+					],
 					"subtitle": "Shows the apps progress on a task, or that the app is performing ongoing work that does block user interaction.",
 					"description": "The ProgressRing has two different visual representations:\nIndeterminate - shows that a task is ongoing, but blocks user interaction.\nDeterminate - shows how much progress has been made on a known amount of work.",
 					"apiNamespace": "Microsoft.UI.Xaml.Controls",
@@ -1848,6 +2108,10 @@
 				{
 					"uniqueId": "ToolTip",
 					"title": "ToolTip",
+					"tags": [
+						"hint",
+						"hover text"
+					],
 					"subtitle": "Displays information for an element in a pop-up window.",
 					"description": "A ToolTip shows more information about a UI element. You might show information about what the element does, or what the user should do. The ToolTip is shown when a user hovers over or presses and holds the UI element.",
 					"apiNamespace": "Microsoft.UI.Xaml.Controls",
@@ -1883,6 +2147,11 @@
 				{
 					"uniqueId": "ContentDialog",
 					"title": "ContentDialog",
+					"tags": [
+						"modal",
+						"popup dialog",
+						"message box"
+					],
 					"subtitle": "A dialog box that can be customized to contain any XAML content.",
 					"description": "Use a ContentDialog to show relevant information or to provide a modal dialog experience that can show any XAML content.",
 					"apiNamespace": "Microsoft.UI.Xaml.Controls",
@@ -1910,6 +2179,10 @@
 				{
 					"uniqueId": "Flyout",
 					"title": "Flyout",
+					"tags": [
+						"popup",
+						"contextual"
+					],
 					"subtitle": "Shows contextual information and enables user interaction.",
 					"description": "A Flyout displays lightweight UI that is either information, or requires user interaction. Unlike a dialog, a Flyout can be light dismissed by clicking or tapping off of it. Use it to collect input from the user, show more details about an item, or ask the user to confirm an action.",
 					"apiNamespace": "Microsoft.UI.Xaml.Controls",
@@ -1934,6 +2207,10 @@
 				{
 					"uniqueId": "Popup",
 					"title": "Popup",
+					"tags": [
+						"overlay",
+						"temporary content"
+					],
 					"subtitle": "A UI element displaying temporary content over existing interface.",
 					"description": "The Popup Control allows your app to display temporary content above other UI elements. It can be used for lightweight interactions such as tooltips, notifications, or custom floating panels to enhance user workflows or highlight specific parts of the interface.",
 					"apiNamespace": "Microsoft.UI.Xaml.Controls.Primitives",
@@ -1955,6 +2232,10 @@
 				{
 					"uniqueId": "TeachingTip",
 					"title": "TeachingTip",
+					"tags": [
+						"callout",
+						"coachmark"
+					],
 					"subtitle": "A content-rich flyout for guiding users and enabling teaching moments.",
 					"description": "The XAML TeachingTip Control provides a way for your app to guide and inform users in your application with a non-invasive and content rich notification. TeachingTip can be used for bringing focus to a new or important feature, teaching users how to perform a task, or enhancing the user workflow by providing contextually relevant information to their task at hand.",
 					"apiNamespace": "Microsoft.UI.Xaml.Controls",
@@ -1990,6 +2271,10 @@
 				{
 					"uniqueId": "AnnotatedScrollBar",
 					"title": "AnnotatedScrollBar",
+					"tags": [
+						"annotated scroll",
+						"navigation"
+					],
 					"subtitle": "A control that extends a regular vertical scrollbar's functionality for an easy navigation through large collections.",
 					"description": "The AnnotatedScrollBar lets you navigate through a large collection of items via a clickable rail with labels which act as markers.",
 					"apiNamespace": "Microsoft.UI.Xaml.Controls",
@@ -2012,6 +2297,10 @@
 				{
 					"uniqueId": "PipsPager",
 					"title": "PipsPager",
+					"tags": [
+						"pagination",
+						"dots"
+					],
 					"subtitle": "A control to let the user navigate through a paginated collection when the page numbers do not need to be visually known.",
 					"description": "A PipsPager allows the user to navigate through a paginated collection and is independent of the content shown. Use this control when the content in the layout is not explicitly ordered by relevancy or you desire a glyph-based representation of numbered pages. PipsPagers are commonly used in photo viewers, app lists, carousels, and when display space is limited.",
 					"apiNamespace": "Microsoft.UI.Xaml.Controls",
@@ -2038,6 +2327,11 @@
 				{
 					"uniqueId": "ScrollView",
 					"title": "ScrollView",
+					"tags": [
+						"pan",
+						"zoom",
+						"scrolling"
+					],
 					"subtitle": "A container control that lets the user pan and zoom its content.",
 					"description": "A ScrollView lets a user scroll, pan, and zoom to see content that's larger than the viewable area. The ItemsView has a ScrollView built into its control template to provide automatic scrolling.",
 					"apiNamespace": "Microsoft.UI.Xaml.Controls",
@@ -2064,6 +2358,11 @@
 				{
 					"uniqueId": "ScrollViewer",
 					"title": "ScrollViewer",
+					"tags": [
+						"pan",
+						"zoom",
+						"scrolling"
+					],
 					"subtitle": "A container control that lets the user pan and zoom its content.",
 					"description": "A ScrollViewer lets a user scroll, pan, and zoom to see content that's larger than the viewable area. Many content controls, like ListView, have ScrollViewers built into their control templates to provide automatic scrolling.",
 					"apiNamespace": "Microsoft.UI.Xaml.Controls",
@@ -2091,6 +2390,10 @@
 				{
 					"uniqueId": "SemanticZoom",
 					"title": "SemanticZoom",
+					"tags": [
+						"semantic zoom",
+						"grouped view"
+					],
 					"subtitle": "Lets the user zoom between two different views of a collection, making it easier to navigate through large collections of items.",
 					"description": "The SemanticZoom lets you show grouped data in two different ways, and is useful for quickly navigating through large sets of data.",
 					"apiNamespace": "Microsoft.UI.Xaml.Controls",
@@ -2125,6 +2428,11 @@
 				{
 					"uniqueId": "Border",
 					"title": "Border",
+					"tags": [
+						"outline",
+						"frame",
+						"background"
+					],
 					"subtitle": "A container control that draws a boundary line, background, or both, around another object.",
 					"description": "Use a Border control to draw a boundary line, background, or both, around another object. A Border can contain only one child object.",
 					"apiNamespace": "Microsoft.UI.Xaml.Controls",
@@ -2146,6 +2454,10 @@
 				{
 					"uniqueId": "Canvas",
 					"title": "Canvas",
+					"tags": [
+						"absolute position",
+						"coordinates"
+					],
 					"subtitle": "A layout panel that supports absolute positioning of child elements relative to the top left corner of the canvas.",
 					"description": "The Canvas provides absolute positioning of controls or content. Content is positioned relative to the Canvas using the Canvas.Top and Canvas.Left attached properties.",
 					"apiNamespace": "Microsoft.UI.Xaml.Controls",
@@ -2172,6 +2484,10 @@
 				{
 					"uniqueId": "Expander",
 					"title": "Expander",
+					"tags": [
+						"collapse",
+						"accordion"
+					],
 					"subtitle": "A container with a header that can be expanded to show a body with more content.",
 					"description": "The Expander has a header and can expand to show a body with more content. Use an Expander when some content is only relevant some of the time (for example to read more information or access additional options for an item).",
 					"apiNamespace": "Microsoft.UI.Xaml.Controls",
@@ -2199,6 +2515,10 @@
 				{
 					"uniqueId": "Grid",
 					"title": "Grid",
+					"tags": [
+						"rows",
+						"columns"
+					],
 					"subtitle": "A layout panel that supports arranging child elements in rows and columns. ",
 					"description": "The Grid is used to arrange controls and content in rows and columns. Content is positioned in the grid using Grid.Row and Grid.Column attached properties.",
 					"apiNamespace": "Microsoft.UI.Xaml.Controls",
@@ -2229,6 +2549,10 @@
 				{
 					"uniqueId": "RelativePanel",
 					"title": "RelativePanel",
+					"tags": [
+						"relative layout",
+						"positioning"
+					],
 					"subtitle": "A panel that uses relationships between elements to define layout.",
 					"description": "Use a RelativePanel to layout elements by defining the relationships between elements and in relation to the panel.",
 					"apiNamespace": "Microsoft.UI.Xaml.Controls",
@@ -2255,6 +2579,11 @@
 				{
 					"uniqueId": "SplitView",
 					"title": "SplitView",
+					"tags": [
+						"pane",
+						"hamburger",
+						"navigation pane"
+					],
 					"subtitle": "A container that has 2 content areas, with multiple display options for the pane.",
 					"description": "Use a SplitView to display content, such as navigation options, in a pane on the side. There are multiple options for displaying the pane, namely CompactOverlay, Compact, Overlay, Inline. If you are looking for a hamburger navigation pattern, check out the NavigationView sample.",
 					"apiNamespace": "Microsoft.UI.Xaml.Controls",
@@ -2281,6 +2610,11 @@
 				{
 					"uniqueId": "StackPanel",
 					"title": "StackPanel",
+					"tags": [
+						"stack",
+						"vertical layout",
+						"horizontal layout"
+					],
 					"subtitle": "A layout panel that arranges child elements into a single line that can be oriented horizontally or vertically.",
 					"description": "A StackPanel is used to arrange items in a line, either horizontally or vertically.",
 					"apiNamespace": "Microsoft.UI.Xaml.Controls",
@@ -2307,6 +2641,11 @@
 				{
 					"uniqueId": "VariableSizedWrapGrid",
 					"title": "VariableSizedWrapGrid",
+					"tags": [
+						"wrap grid",
+						"tiles",
+						"spanning"
+					],
 					"subtitle": "A layout panel that supports arranging child elements in rows and columns. Each child element can span multiple rows and columns.",
 					"description": "A VariableSizedWrapGrip is used to create grid layouts where content can span multiple rows and columns.",
 					"apiNamespace": "Microsoft.UI.Xaml.Controls",
@@ -2333,6 +2672,11 @@
 				{
 					"uniqueId": "Viewbox",
 					"title": "Viewbox",
+					"tags": [
+						"scale",
+						"stretch",
+						"zoom content"
+					],
 					"subtitle": "A container control that scales its content to a specified size.",
 					"description": "Use a Viewbox control scale content up or down to a specified size.",
 					"apiNamespace": "Microsoft.UI.Xaml.Controls",
@@ -2362,6 +2706,10 @@
 				{
 					"uniqueId": "BreadcrumbBar",
 					"title": "BreadcrumbBar",
+					"tags": [
+						"navigation trail",
+						"path"
+					],
 					"subtitle": "Shows the trail of navigation taken to the current location.",
 					"description": "The BreadcrumbBar control provides a common horizontal layout to display the trail of navigation taken to the current location. Resize to see the nodes crumble, starting at the root.",
 					"apiNamespace": "Microsoft.UI.Xaml.Controls",
@@ -2388,6 +2736,11 @@
 				{
 					"uniqueId": "NavigationView",
 					"title": "NavigationView",
+					"tags": [
+						"hamburger menu",
+						"side nav",
+						"nav pane"
+					],
 					"subtitle": "Common vertical layout for top-level areas of your app via a collapsible navigation menu.",
 					"description": "The NavigationView control provides a common vertical layout for top-level areas of your app via a collapsible navigation menu.",
 					"apiNamespace": "Microsoft.UI.Xaml.Controls",
@@ -2415,6 +2768,10 @@
 				{
 					"uniqueId": "Pivot",
 					"title": "Pivot",
+					"tags": [
+						"tabs",
+						"tabbed view"
+					],
 					"subtitle": "Presents information from different sources in a tabbed view.",
 					"description": "Pivot is not recommended for Windows 11 design patterns. Please use the SelectorBar and SelectorBarItem. A Pivot allows you to show a collection of items from different sources in a tabbed view.",
 					"apiNamespace": "Microsoft.UI.Xaml.Controls",
@@ -2442,6 +2799,10 @@
 				{
 					"uniqueId": "SelectorBar",
 					"title": "SelectorBar",
+					"tags": [
+						"segmented",
+						"tabs"
+					],
 					"subtitle": "Presents information from a small set of different sources. The user can pick one of them.",
 					"description": "SelectorBar is used to modify the content shown by allowing users to select and switch between a small, finite set of data.",
 					"apiNamespace": "Microsoft.UI.Xaml.Controls",
@@ -2468,6 +2829,11 @@
 				{
 					"uniqueId": "TabView",
 					"title": "TabView",
+					"tags": [
+						"tabs",
+						"tabbed",
+						"tab control"
+					],
 					"subtitle": "A control that displays a collection of tabs that can be used to display several documents.",
 					"description": "TabView provides the user with a collection of tabs that can be used to display several documents.",
 					"apiNamespace": "Microsoft.UI.Xaml.Controls",
@@ -2506,6 +2872,11 @@
 				{
 					"uniqueId": "AnimatedVisualPlayer",
 					"title": "AnimatedVisualPlayer",
+					"tags": [
+						"Lottie",
+						"animation",
+						"motion graphics"
+					],
 					"subtitle": "An element to render and control playback of motion graphics.",
 					"description": "An element to render and control playback of motion graphics.",
 					"apiNamespace": "Microsoft.UI.Xaml.Controls",
@@ -2543,6 +2914,10 @@
 				{
 					"uniqueId": "CaptureElementPreview",
 					"title": "Capture Element / Camera Preview",
+					"tags": [
+						"camera",
+						"webcam"
+					],
 					"subtitle": "A sample for doing a camera preview.",
 					"description": "You can use a MediaPlayerElement control to show a camera preview with a MediaCapture object.",
 					"apiNamespace": null,
@@ -2559,6 +2934,11 @@
 				{
 					"uniqueId": "Image",
 					"title": "Image",
+					"tags": [
+						"picture",
+						"BitmapImage",
+						"photo"
+					],
 					"subtitle": "A control to display image content.",
 					"description": "You can use an Image control to show and scale images.",
 					"apiNamespace": "Microsoft.UI.Xaml.Controls",
@@ -2584,6 +2964,11 @@
 				{
 					"uniqueId": "MapControl",
 					"title": "MapControl",
+					"tags": [
+						"maps",
+						"geography",
+						"location"
+					],
 					"subtitle": "Displays a symbolic map of the Earth.",
 					"description": "Displays a symbolic map of the Earth",
 					"apiNamespace": "Microsoft.UI.Xaml.Controls",
@@ -2606,6 +2991,12 @@
 				{
 					"uniqueId": "MediaPlayerElement",
 					"title": "MediaPlayerElement",
+					"tags": [
+						"video",
+						"media player",
+						"audio",
+						"playback"
+					],
 					"subtitle": "A control to display video and image content.",
 					"description": "You can use a MediaPlayerElement control to playback videos and show images. You can show transport controls or make the video autoplay.",
 					"apiNamespace": "Microsoft.UI.Xaml.Controls",
@@ -2632,6 +3023,10 @@
 				{
 					"uniqueId": "PersonPicture",
 					"title": "PersonPicture",
+					"tags": [
+						"avatar",
+						"contact photo"
+					],
 					"subtitle": "Displays the picture of a person/contact.",
 					"description": "Displays the picture of a person/contact.",
 					"apiNamespace": "Microsoft.UI.Xaml.Controls",
@@ -2658,6 +3053,11 @@
 				{
 					"uniqueId": "Sound",
 					"title": "Sound",
+					"tags": [
+						"audio",
+						"UI sound",
+						"ElementSoundPlayer"
+					],
 					"subtitle": "A code-behind only API that enables 2D and 3D UI sounds on all XAML controls.",
 					"description": "Sound is enabled by default for UWP apps running on Xbox, but can be set to always play on all devices if desired. Sound may also be put into Spatial Audio mode for a more immersive 10ft experience.",
 					"apiNamespace": "Microsoft.UI.Xaml",
@@ -2678,6 +3078,12 @@
 				{
 					"uniqueId": "WebView2",
 					"title": "WebView2",
+					"tags": [
+						"browser",
+						"HTML",
+						"Edge",
+						"web content"
+					],
 					"subtitle": "A Microsoft Edge (Chromium) based control that hosts HTML content in an app.",
 					"description": "A Microsoft Edge (Chromium) based control that hosts HTML content in an app.",
 					"apiNamespace": "Microsoft.UI.Xaml.Controls",
@@ -2715,6 +3121,13 @@
 				{
 					"uniqueId": "Acrylic",
 					"title": "AcrylicBrush",
+					"tags": [
+						"acrylic",
+						"material",
+						"translucent",
+						"blur",
+						"AcrylicBrush"
+					],
 					"subtitle": "A translucent material recommended for panel backgrounds.",
 					"description": "A translucent material recommended for panel backgrounds.",
 					"apiNamespace": "Microsoft.UI.Xaml.Media",
@@ -2735,6 +3148,11 @@
 				{
 					"uniqueId": "AnimatedIcon",
 					"title": "AnimatedIcon",
+					"tags": [
+						"animated icon",
+						"icon animation",
+						"Lottie icon"
+					],
 					"subtitle": "An element that displays and controls an icon that animates when the user interacts with the control.",
 					"description": "An element that displays and controls an icon that animates when the user interacts with the control.",
 					"apiNamespace": "Microsoft.UI.Xaml.Controls",
@@ -2769,6 +3187,10 @@
 				{
 					"uniqueId": "CompactSizing",
 					"title": "Compact Sizing",
+					"tags": [
+						"density",
+						"compact sizing"
+					],
 					"subtitle": "How to use a Resource Dictionary to enable compact sizing.",
 					"description": "Enables the creation of compact, smaller apps by adding a style resource at the app, page or control level.",
 					"apiNamespace": null,
@@ -2785,6 +3207,14 @@
 				{
 					"uniqueId": "IconElement",
 					"title": "IconElement",
+					"tags": [
+						"BitmapIcon",
+						"FontIcon",
+						"PathIcon",
+						"SymbolIcon",
+						"ImageIcon",
+						"AnimatedIcon"
+					],
 					"subtitle": "Represents icon controls that use different image types as its content.",
 					"description": "Represents icon controls that use different image types as its content.",
 					"apiNamespace": "Microsoft.UI.Xaml.Controls",
@@ -2826,6 +3256,10 @@
 				{
 					"uniqueId": "Line",
 					"title": "Line",
+					"tags": [
+						"stroke",
+						"draw line"
+					],
 					"subtitle": "Draws a straight line between two points.",
 					"description": "Draws a straight line between two points.",
 					"apiNamespace": "Microsoft.UI.Xaml.Shapes",
@@ -2852,6 +3286,14 @@
 				{
 					"uniqueId": "Shape",
 					"title": "Shape",
+					"tags": [
+						"shapes",
+						"ellipse",
+						"rectangle",
+						"polygon",
+						"path",
+						"circle"
+					],
 					"subtitle": "How to draw shapes, such as ellipses, rectangles, and polygons.",
 					"description": "Basic shapes are intended for decorative rendering or for compositing non-interactive parts of controls.",
 					"apiNamespace": "Microsoft.UI.Xaml.Shapes",
@@ -2877,6 +3319,11 @@
 				{
 					"uniqueId": "RadialGradientBrush",
 					"title": "RadialGradientBrush",
+					"tags": [
+						"gradient",
+						"radial gradient",
+						"brush"
+					],
 					"subtitle": "A brush to show radial gradients.",
 					"description": "Paints an area with a radial gradient. A center point defines the beginning of the gradient, and a radius defines the end point of the gradient.",
 					"apiNamespace": "Microsoft.UI.Xaml.Media",
@@ -2898,6 +3345,11 @@
 				{
 					"uniqueId": "SystemBackdrops",
 					"title": "System Backdrops (Mica/Acrylic)",
+					"tags": [
+						"Mica",
+						"Acrylic",
+						"window material"
+					],
 					"subtitle": "System backdrops, like Mica and Acrylic, for app windows.",
 					"description": "System backdrops apply a material effect to the window background. Mica is opaque and samples the desktop wallpaper; Desktop Acrylic is semi-transparent and shows a blurred view of what is behind the window. Available backdrop kinds: Mica, Mica Alt, Desktop Acrylic Base, and Desktop Acrylic Thin. Use the built-in MicaBackdrop or DesktopAcrylicBackdrop types for simplicity, or use MicaController / DesktopAcrylicController for full customization.",
 					"apiNamespace": "Microsoft.UI.Composition.SystemBackdrops",
@@ -2933,6 +3385,11 @@
 				{
 					"uniqueId": "SystemBackdropElement",
 					"title": "SystemBackdropElement",
+					"tags": [
+						"Mica",
+						"Acrylic",
+						"material"
+					],
 					"subtitle": "An element to host system backdrop materials.",
 					"description": "SystemBackdropElement applies system backdrop materials (Mica and Acrylic) to specific areas inside the UI tree, extending these materials beyond the window background to enable more flexible and immersive designs.",
 					"apiNamespace": "Microsoft.UI.Xaml.Controls",
@@ -2956,6 +3413,10 @@
 				{
 					"uniqueId": "ThemeShadow",
 					"title": "ThemeShadow",
+					"tags": [
+						"depth",
+						"elevation"
+					],
 					"subtitle": "Adds a depth-aware shadow to UI elements using system lighting.",
 					"description": "Adds a realistic shadow effect to UI elements using the system's lighting and depth to enhance visual hierarchy.",
 					"apiNamespace": "Microsoft.UI.Xaml.Media",
@@ -2988,6 +3449,12 @@
 				{
 					"uniqueId": "AutoSuggestBox",
 					"title": "AutoSuggestBox",
+					"tags": [
+						"search box",
+						"autocomplete",
+						"suggestions",
+						"typeahead"
+					],
 					"subtitle": "A control to provide suggestions as a user is typing.",
 					"description": "A text control that makes suggestions to users as they type. The app is notified when text has been changed by the user and is responsible for providing relevant suggestions for this control to display.",
 					"apiNamespace": "Microsoft.UI.Xaml.Controls",
@@ -3015,6 +3482,11 @@
 				{
 					"uniqueId": "NumberBox",
 					"title": "NumberBox",
+					"tags": [
+						"numeric input",
+						"spinner",
+						"calculator"
+					],
 					"subtitle": "A text control used for numeric input and evaluation of algebraic equations.",
 					"description": "Use NumberBox to allow users to enter algebraic equations and numeric input in your app.",
 					"apiNamespace": "Microsoft.UI.Xaml.Controls",
@@ -3041,6 +3513,10 @@
 				{
 					"uniqueId": "PasswordBox",
 					"title": "PasswordBox",
+					"tags": [
+						"secure input",
+						"reveal"
+					],
 					"subtitle": "A control for entering passwords.",
 					"description": "A user can enter a single line of non-wrapping text in a PasswordBox control. The text is masked by characters that you can specify by using the PasswordChar property, and you can specify the maximum number of characters that the user can enter by setting the MaxLength property.",
 					"apiNamespace": "Microsoft.UI.Xaml.Controls",
@@ -3067,6 +3543,12 @@
 				{
 					"uniqueId": "RichEditBox",
 					"title": "RichEditBox",
+					"tags": [
+						"rich text editor",
+						"RTF",
+						"formatted text",
+						"editor"
+					],
 					"subtitle": "A rich text editing control that supports formatted text, hyperlinks, and other rich content.",
 					"description": "You can use a RichEditBox control to enter and edit rich text documents that contain formatted text, hyperlinks, and images. By default, the RichEditBox supports spell checking. You can make a RichEditBox read-only by setting its IsReadOnly property to true.",
 					"apiNamespace": "Microsoft.UI.Xaml.Controls",
@@ -3093,6 +3575,11 @@
 				{
 					"uniqueId": "RichTextBlock",
 					"title": "RichTextBlock",
+					"tags": [
+						"rich text",
+						"formatted text",
+						"inline content"
+					],
 					"subtitle": "A control that displays formatted text, hyperlinks, inline images, and other rich content.",
 					"description": "RichTextBlock provides more advanced formatting features than the TextBlock control. You can apply character and paragraph formatting to the text in the RichTextBlock. For example, you can apply Bold, Italic, and Underline to any portion of the text in the control. You can use linked text containers (a RichTextBlock linked to RichTextBlockOverflow elements) to create advanced page layouts.",
 					"apiNamespace": "Microsoft.UI.Xaml.Controls",
@@ -3118,6 +3605,10 @@
 				{
 					"uniqueId": "TextBlock",
 					"title": "TextBlock",
+					"tags": [
+						"label",
+						"display text"
+					],
 					"subtitle": "A lightweight control for displaying small amounts of text.",
 					"description": "TextBlock is the primary control for displaying read-only text in your app. You typically display text by setting the Text property to a simple string. You can also display a series of strings in Run elements and give each different formatting.",
 					"apiNamespace": "Microsoft.UI.Xaml.Controls",
@@ -3143,6 +3634,11 @@
 				{
 					"uniqueId": "TextBox",
 					"title": "TextBox",
+					"tags": [
+						"text input",
+						"input field",
+						"text field"
+					],
 					"subtitle": "A single-line or multi-line plain text field.",
 					"description": "Use a TextBox to let a user enter simple text input in your app. You can add a header and placeholder text to let the user know what the TextBox is for, and you can customize it in other ways.",
 					"apiNamespace": "Microsoft.UI.Xaml.Controls",
@@ -3177,6 +3673,12 @@
 				{
 					"uniqueId": "XamlCompInterop",
 					"title": "Animation interop",
+					"tags": [
+						"composition",
+						"Visual layer",
+						"expression animation",
+						"interop"
+					],
 					"subtitle": "XAML and Composition interop allows you to animate elements using expressions, natural animations, and more.",
 					"description": "XAML and Composition interop allows you to animate elements using expressions, natural animations, and more",
 					"apiNamespace": null,
@@ -3201,6 +3703,11 @@
 				{
 					"uniqueId": "ConnectedAnimation",
 					"title": "Connected Animation",
+					"tags": [
+						"connected animation",
+						"continuity",
+						"page transition"
+					],
 					"subtitle": "Connected animations continue elements during page navigation and help the user maintain their context between views.",
 					"description": "Connected animations continue elements during page navigation and help the user maintain their context between views.",
 					"apiNamespace": "Microsoft.UI.Xaml.Media.Animation",
@@ -3231,6 +3738,10 @@
 				{
 					"uniqueId": "EasingFunction",
 					"title": "Easing Functions",
+					"tags": [
+						"animation curve",
+						"velocity"
+					],
 					"subtitle": "Easing is a way to manipulate the velocity of an object as it animates.",
 					"description": "Easing is a way to manipulate the velocity of an object as it animates.",
 					"apiNamespace": "Microsoft.UI.Xaml.Media.Animation",
@@ -3255,6 +3766,11 @@
 				{
 					"uniqueId": "ImplicitTransition",
 					"title": "Implicit Transitions",
+					"tags": [
+						"implicit animation",
+						"transition",
+						"property animation"
+					],
 					"subtitle": "Use Implicit Transitions to automatically animate changes to properties.",
 					"description": "Use Implicit Transitions to automatically animate changes to properties.",
 					"apiNamespace": "Microsoft.UI.Xaml",
@@ -3279,6 +3795,11 @@
 				{
 					"uniqueId": "PageTransition",
 					"title": "Page Transitions",
+					"tags": [
+						"page transition",
+						"navigation transition",
+						"NavigationTransitionInfo"
+					],
 					"subtitle": "Page transitions provide visual feedback about the relationship between pages.",
 					"description": "Page transitions provide visual feedback about the relationship between pages.",
 					"apiNamespace": "Microsoft.UI.Xaml.Media.Animation",
@@ -3303,6 +3824,11 @@
 				{
 					"uniqueId": "ThemeTransition",
 					"title": "Theme Transitions",
+					"tags": [
+						"theme transition",
+						"entrance animation",
+						"EntranceThemeTransition"
+					],
 					"subtitle": "Theme transitions are pre-packaged, easy-to-apply animations.",
 					"description": "Theme transitions are pre-packaged, easy-to-apply animations.",
 					"apiNamespace": "Microsoft.UI.Xaml",
@@ -3327,6 +3853,9 @@
 				{
 					"uniqueId": "ParallaxView",
 					"title": "ParallaxView",
+					"tags": [
+						"scrolling effect"
+					],
 					"subtitle": "A container control that provides the parallax effect when scrolling.",
 					"description": "A container control that provides the parallax effect when scrolling.",
 					"apiNamespace": "Microsoft.UI.Xaml.Controls",
@@ -3360,6 +3889,10 @@
 				{
 					"uniqueId": "AppWindow",
 					"title": "AppWindow",
+					"tags": [
+						"window management",
+						"windowing"
+					],
 					"subtitle": "A flexible, customizable window management system for app development.",
 					"description": "AppWindow provides advanced window management, allowing customization of size, position, and presentation. This sample showcases different ways to create, display, and control windows for enhanced flexibility.",
 					"apiNamespace": "Microsoft.UI.Windowing",
@@ -3398,6 +3931,11 @@
 				{
 					"uniqueId": "AppWindowTitleBar",
 					"title": "AppWindowTitleBar",
+					"tags": [
+						"title bar",
+						"caption",
+						"custom title bar"
+					],
 					"subtitle": "Provides control over the app window title bar.",
 					"description": "Represents the title bar of an AppWindow and exposes APIs for deep, fine-grained customization, including advanced appearance changes, system button styling, and precise control over active and inactive window states.",
 					"apiNamespace": "Microsoft.UI.Windowing",
@@ -3420,6 +3958,11 @@
 				{
 					"uniqueId": "CreateMultipleWindows",
 					"title": "Multiple windows",
+					"tags": [
+						"multiple windows",
+						"new window",
+						"multi window"
+					],
 					"subtitle": "An example showing the creation of single-threaded top level Xaml windows.",
 					"description": "With Windows App SDK 1.0 we are allowing creation of single-threaded multiple top level Xaml windows in Desktop apps",
 					"apiNamespace": "Microsoft.UI.Xaml",
@@ -3440,6 +3983,11 @@
 				{
 					"uniqueId": "TitleBar",
 					"title": "TitleBar",
+					"tags": [
+						"title bar",
+						"caption bar",
+						"custom title bar"
+					],
 					"subtitle": "An example showing how to use the default TitleBar control.",
 					"description": "The TitleBar control provides a simple way to create a modern titlebar UX with interactive content.",
 					"apiNamespace": "Microsoft.UI.Xaml.Controls",
@@ -3474,6 +4022,11 @@
 				{
 					"uniqueId": "Clipboard",
 					"title": "Clipboard",
+					"tags": [
+						"copy",
+						"paste",
+						"cut"
+					],
 					"subtitle": "Copy and paste text, images, and files to and from the system Clipboard.",
 					"description": "Use the Clipboard API to copy and paste text, images, and files. Configure clipboard history and roaming options, monitor content changes, and inspect available formats.",
 					"apiNamespace": "Windows.ApplicationModel.DataTransfer",
@@ -3498,6 +4051,11 @@
 				{
 					"uniqueId": "ContentIsland",
 					"title": "ContentIsland",
+					"tags": [
+						"content island",
+						"hosting",
+						"interop"
+					],
 					"subtitle": "Create ContentIslands to host other frameworks in your app.",
 					"description": "Create ContentIslands to host other frameworks in your app.",
 					"apiNamespace": "Microsoft.UI.Content",
@@ -3514,6 +4072,13 @@
 				{
 					"uniqueId": "StoragePickers",
 					"title": "Storage pickers",
+					"tags": [
+						"file picker",
+						"FileOpenPicker",
+						"FileSavePicker",
+						"FolderPicker",
+						"file dialog"
+					],
 					"subtitle": "Select files and folders with modern system pickers.",
 					"description": "Use the FileOpenPicker, FileSavePicker, and FolderPicker APIs to let users select files and folders in a secure way.",
 					"apiNamespace": "Microsoft.Windows.Storage.Pickers",
@@ -3548,6 +4113,12 @@
 				{
 					"uniqueId": "AppNotification",
 					"title": "App notifications",
+					"tags": [
+						"toast",
+						"notification",
+						"Action Center",
+						"toast notification"
+					],
 					"subtitle": "Send notifications that appear in the Action Center and as toast popups.",
 					"description": "Send rich, interactive notifications from your app. Notifications can include text, images, and actions.",
 					"apiNamespace": "Microsoft.Windows.Notifications",
@@ -3578,6 +4149,11 @@
 				{
 					"uniqueId": "BadgeNotificationManager",
 					"title": "Badge notifications",
+					"tags": [
+						"taskbar badge",
+						"badge",
+						"notification badge"
+					],
 					"subtitle": "Show numeric or icon badges on your app’s taskbar icon.",
 					"description": "Badge notifications are a lightweight way to show status or alerts as small overlays on your app's taskbar icon.",
 					"apiNamespace": "Microsoft.Windows.BadgeNotifications",
@@ -3604,6 +4180,12 @@
 				{
 					"uniqueId": "JumpList",
 					"title": "JumpList",
+					"tags": [
+						"jump list",
+						"taskbar",
+						"recent",
+						"tasks"
+					],
 					"subtitle": "Add custom tasks and groups to the app's taskbar jump list.",
 					"description": "Jump lists let you add custom tasks and groups to the app's right-click menu on the taskbar. Use them to provide quick access to frequently used actions or recently opened items.",
 					"apiNamespace": "Windows.UI.StartScreen",
