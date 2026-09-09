@@ -49,6 +49,15 @@ export const CHECKOUT = join(ROOT, '.upstream', 'microsoft-ui-xaml');
 //   dxaml/xcp/core/inc           the constants those two refer to.
 //   dxaml/phone/lib              the picker flyouts and `LoopingSelector`.
 //
+// A fifth tree, `dxaml/xcp/components`, was added in v14 and cost 17 MB. The four above
+// hold the elements and the code that drives them; this one holds the graphics layer they
+// call into, and one file in it — `graphics/inc/DropShadowRecipe.h` — is the whole of
+// WinUI's theme-shadow recipe as a formula in `translationZ` and the theme. This project
+// had fitted that recipe by eye across two versions on the belief that no pinned source
+// stated it. It was stated, one directory outside the checkout, which is the argument for
+// widening rather than for fetching the one file: a path that is not checked out cannot be
+// grepped, so nobody finds what nobody knows to look for.
+//
 // The per-control test pages are excluded; they are app markup, not the control.
 //
 // `--no-cone` because cone mode can express neither a `**`-and-suffix pattern nor the
@@ -67,7 +76,9 @@ const SPARSE = [
 	'/dxaml/xcp/core/core/elements/**/*.cpp',
 	'/dxaml/xcp/core/inc/**/*.h',
 	'/dxaml/phone/lib/**/*.h',
-	'/dxaml/phone/lib/**/*.cpp'
+	'/dxaml/phone/lib/**/*.cpp',
+	'/dxaml/xcp/components/**/*.h',
+	'/dxaml/xcp/components/**/*.cpp'
 ];
 
 const git = (args) =>
