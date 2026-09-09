@@ -61,6 +61,7 @@ import {
 	GRIDVIEWITEM_KEYS,
 	TREEVIEWITEM_KEYS,
 	FLIPVIEW_KEYS,
+	SCROLLBAR_KEYS,
 	DEFINED_BY,
 	TYPE_RAMP
 } from './manifest.mjs';
@@ -338,10 +339,20 @@ function scalar(record) {
 			return FONT_WEIGHTS.get(value);
 
 		case 'x:String':
-			if (record.key.endsWith('Duration')) return duration(value, where);
+			// `BeginTime` and `Delay` are the same `hh:mm:ss.fff` TimeSpan as `Duration` and reach
+			// CSS as the same milliseconds: ScrollBar's expand and collapse are each a delay plus a
+			// duration, and the delay half has no other name upstream.
+			if (
+				record.key.endsWith('Duration') ||
+				record.key.endsWith('BeginTime') ||
+				record.key.endsWith('Delay')
+			)
+				return duration(value, where);
 			if (record.key.endsWith('KeySpline')) return keySpline(value, where);
 			if (record.key in GLYPHS) return glyph(value, where);
-			return fail(`${where}: x:String that is neither a Duration, a KeySpline nor a glyph`);
+			return fail(
+				`${where}: x:String that is neither a Duration, a BeginTime, a Delay, a KeySpline nor a glyph`
+			);
 
 		default:
 			return fail(`${where}: no conversion for the scalar type \`${record.type}\``);
@@ -861,7 +872,8 @@ function select(resources, framework) {
 		['LISTVIEWITEM_KEYS', LISTVIEWITEM_KEYS],
 		['GRIDVIEWITEM_KEYS', GRIDVIEWITEM_KEYS],
 		['TREEVIEWITEM_KEYS', TREEVIEWITEM_KEYS],
-		['FLIPVIEW_KEYS', FLIPVIEW_KEYS]
+		['FLIPVIEW_KEYS', FLIPVIEW_KEYS],
+		['SCROLLBAR_KEYS', SCROLLBAR_KEYS]
 	];
 	for (let i = 0; i < SEED_SETS.length; i++)
 		for (let j = i + 1; j < SEED_SETS.length; j++) {
