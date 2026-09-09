@@ -763,3 +763,28 @@ gate does.
 - **Would reconsider if**: a consumer sizes one axis, or the page does. The mechanism is to
   observe the child's natural size and set the root's free axis to it times the scale, breaking
   the loop by writing only when the value changes.
+
+### WD-031 — two of the ten calendar identifiers render a Gregorian grid
+
+- **Control**: CalendarView, and every control that carries a `CalendarIdentifier` through to
+  it.
+- **WinUI does**: resolve `CalendarIdentifier` against `Windows.Globalization`, which
+  implements every identifier the Gallery's page offers, including `JulianCalendar` and
+  `KoreanCalendar` — the Julian reckoning that ran until the Gregorian reform, and the Korean
+  calendar that counts years from 2333 BC. Each has its own month lengths, leap rule and era.
+- **We do**: map both to `gregory`, so a page that asks for either gets the Gregorian grid
+  under a Gregorian header. The other eight identifiers are exact: `@internationalized/date`
+  implements Hebrew, Islamic civil, Islamic Umm al-Qura, Japanese, Persian, Minguo, Buddhist
+  and Gregorian, and D31 puts the month grid on a primitive that computes it in whatever
+  calendar the date carries.
+- **Why accepted**: the two missing systems are not a formatting gap, they are two calendar
+  implementations — a `toJulianDay`/`fromJulianDay` pair, month lengths and an era table each,
+  written against a package's interface and verifiable against nothing this project has. The
+  Gallery's page offers the identifier in a ComboBox and every other page in the tranche uses
+  the default, so what a reader sees is a list of ten whose eighth and ninth entries redraw
+  the grid they already had.
+- **Would reconsider if**: `@internationalized/date` gains either calendar, or a consumer
+  needs one. The mechanism is that package's `Calendar` interface, which the grid already
+  consumes generically — a correct implementation drops in with no change to any component.
+  The page keeps both rows meanwhile, because dropping them would change the page the
+  acceptance gate compares.
