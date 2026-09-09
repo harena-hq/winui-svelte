@@ -348,6 +348,11 @@
 	   handed to one carries no scope hash — and because the info Button beside these links has
 	   the same root class. */
 	.source-link {
+		/* A grid, so the link inside stretches. `HorizontalAlignment="Stretch"` upstream, and
+		   the docs list gets it for free — its links are flex items of a column and are
+		   blockified. A link inside this wrapper is not, so it shrank to its text and the
+		   hover fill stopped short of the box. */
+		display: grid;
 		margin: 4px -12px 0;
 	}
 
