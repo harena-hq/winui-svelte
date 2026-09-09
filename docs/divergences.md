@@ -832,3 +832,32 @@ gate does.
   identifier is one line each, but Windows' rule for choosing them is not published where this
   project can read it.
 - **Would reconsider if**: the Windows rule becomes available, or a consumer needs it.
+
+### WD-035 — a pull is a pointer drag, where the original takes only touch
+
+- **Control**: RefreshContainer.
+- **WinUI does**: redirect to its interaction tracker only for a touch pointer
+  (`ScrollViewerIRefreshInfoProviderAdapter.cpp:159`) with a redirection mode of
+  `CapableTouchpadOnly` (`:311`). A mouse never manipulates, so the visualizer never leaves
+  `Idle`. The Gallery's page offers no button and the control has no automation peer, so on a
+  mouse-only desktop the original's page cannot be provoked at all.
+- **We do**: accept a pointer drag at the start of the scrolled content, which a mouse
+  satisfies.
+- **Why accepted**: this is a divergence in the direction the project rarely takes — ours does
+  more rather than less — and the alternative is a control no reachable input can reach. At rest
+  the two agree exactly, which is what the page compares.
+- **Would reconsider if**: a touch-capable reference host makes the original's own gesture
+  observable, at which point the two can be compared rather than only ours described.
+
+### WD-036 — a wheel over a scrollbar does not scroll what it belongs to
+
+- **Control**: ScrollView, and every region built on it.
+- **WinUI does**: scroll the content when the wheel turns over the scrollbar's own strip, as
+  every Windows scroller does.
+- **We do**: nothing. The bar is a sibling of the viewport rather than inside it, so the event
+  reaches a root whose overflow is hidden.
+- **Why accepted**: the bar is 14 pixels wide and the pointer is over it only while the reader is
+  about to drag the thumb, which works. Nothing in either pinned page depends on it.
+- **Would reconsider if**: the cost of a wheel handler that forwards to the viewport is ever
+  weighed against a reader who notices. It is three lines; what stopped it here is that no unit
+  of this version had it in scope.

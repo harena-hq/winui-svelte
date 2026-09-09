@@ -378,7 +378,11 @@
 	}
 
 	/* ScrollView.xaml:146-161 overlays a two-by-two grid. ScrollBarSize is 12
-	   (ScrollBar_themeresources.xaml:180) and the template margin is 1 on both sides. */
+	   (ScrollBar_themeresources.xaml:180) and the template margin is 1 on both sides.
+
+	   WD-036: the wrapper is a sibling of the viewport rather than a child of it, so a wheel over
+	   the bar reaches a root whose overflow is hidden and scrolls nothing, where Windows scrolls
+	   the content. */
 	.bar-wrapper {
 		position: absolute;
 		box-sizing: border-box;
