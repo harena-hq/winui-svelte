@@ -14,6 +14,14 @@
 		horizontalScrollMode?: 'enabled' | 'disabled' | 'auto';
 		/** ScrollView.VerticalScrollMode (ScrollingScrollMode). */
 		verticalScrollMode?: 'enabled' | 'disabled' | 'auto';
+		/** ScrollView.ZoomMode (ScrollingZoomMode). */
+		zoomMode?: 'enabled' | 'disabled';
+		/** ScrollView.ZoomFactor — read-only upstream, bindable here (ADR 0009). */
+		zoomFactor?: number;
+		/** ScrollView.MinZoomFactor. */
+		minZoomFactor?: number;
+		/** ScrollView.MaxZoomFactor. */
+		maxZoomFactor?: number;
 		/** ScrollView.HorizontalOffset — read-only upstream, bindable here (ADR 0009). */
 		horizontalOffset?: number;
 		/** ScrollView.VerticalOffset — read-only upstream, bindable here (ADR 0009). */
@@ -32,6 +40,8 @@
 		scrollableHeight?: number;
 		/** No WinUI member: ADR 0009 pairs bindable state with a change callback. */
 		onOffsetChange?: ((offset: { horizontal: number; vertical: number }) => void) | undefined;
+		/** No WinUI member: ADR 0009 pairs bindable state with a change callback. */
+		onZoomFactorChange?: ((factor: number) => void) | undefined;
 		/** UIElement.IsEnabled. */
 		disabled?: boolean;
 		class?: string;
@@ -41,9 +51,9 @@
 		[key: string]: unknown;
 	}
 
-	/** ZoomMode, ZoomFactor, MinZoomFactor, MaxZoomFactor, ScrollTo, ScrollBy,
-	 * AddScrollVelocity and their options/events, plus anchoring properties, belong to later
-	 * units of this version. They are absent here for that sequencing reason, not declined. */
+	/** ScrollTo, ScrollBy, AddScrollVelocity and their options/events, plus anchoring properties,
+	 * belong to later units of this version. They are absent here for that sequencing reason, not
+	 * declined. */
 </script>
 
 <script lang="ts">
@@ -56,6 +66,10 @@
 		contentOrientation = 'vertical',
 		horizontalScrollMode = 'auto',
 		verticalScrollMode = 'auto',
+		zoomMode = 'disabled', // ScrollView.h:40
+		zoomFactor = $bindable(1),
+		minZoomFactor = 0.1, // ScrollView.h:43
+		maxZoomFactor = 10, // ScrollView.h:44
 		horizontalOffset = $bindable(0),
 		verticalOffset = $bindable(0),
 		extentWidth = $bindable(0),
@@ -65,6 +79,7 @@
 		scrollableWidth = $bindable(0),
 		scrollableHeight = $bindable(0),
 		onOffsetChange,
+		onZoomFactorChange,
 		disabled = false,
 		class: className,
 		style,
@@ -73,9 +88,35 @@
 	}: ScrollViewProps = $props();
 
 	let viewport = $state<HTMLDivElement | null>(null);
+	let zoomBox = $state<HTMLDivElement | null>(null);
 	let content = $state<HTMLDivElement | null>(null);
+	let contentWidth = $state(0);
+	let contentHeight = $state(0);
 	let scrollTop = $state(0);
 	let scrollLeft = $state(0);
+	let constrainedZoomFactor = $derived(
+		Math.max(minZoomFactor, Math.min(maxZoomFactor, zoomFactor))
+	);
+	let zoomBoxStyle = $derived(
+		constrainedZoomFactor === 1 || contentWidth === 0 || contentHeight === 0
+			? undefined
+			: `width: ${contentWidth * constrainedZoomFactor}px; height: ${contentHeight * constrainedZoomFactor}px`
+	);
+	let contentStyle = $derived.by(() => {
+		if (constrainedZoomFactor === 1) return undefined;
+		// The vertical and horizontal orientation rules use 100% on one axis. Once zoom-box has
+		// that axis's scaled size, preserve the measured pre-zoom dimension before transforming so
+		// the percentage does not resolve against the scaled box and apply zoom twice.
+		const dimensions = [
+			...(contentOrientation === 'vertical' || contentOrientation === 'none'
+				? [`width: ${contentWidth}px`]
+				: []),
+			...(contentOrientation === 'horizontal' || contentOrientation === 'none'
+				? [`height: ${contentHeight}px`]
+				: [])
+		];
+		return `${dimensions.join('; ')}${dimensions.length ? '; ' : ''}transform: scale(${constrainedZoomFactor}); transform-origin: 0 0`;
+	});
 	// The six extent and viewport props are this component's own measurement state as well as
 	// what it publishes: upstream reports the same six numbers as read-only properties
 	// (ScrollView.idl:29-34), and keeping a private copy beside them would be two sources for
@@ -104,6 +145,21 @@
 
 	function measure() {
 		if (!viewport) return;
+		if (content) {
+			// offset dimensions exclude transforms, which is the size zoom-box must multiply.
+			// Percentage-oriented content gets its pre-zoom dimension from the current viewport;
+			// measuring that axis from zoom-box would feed the scaled size back into the content.
+			const measuredWidth =
+				contentOrientation === 'vertical' || contentOrientation === 'none'
+					? viewport.clientWidth
+					: content.offsetWidth;
+			const measuredHeight =
+				contentOrientation === 'horizontal' || contentOrientation === 'none'
+					? viewport.clientHeight
+					: content.offsetHeight;
+			contentWidth = measuredWidth;
+			contentHeight = measuredHeight;
+		}
 		scrollTop = viewport.scrollTop;
 		scrollLeft = viewport.scrollLeft;
 		extentWidth = viewport.scrollWidth;
@@ -121,6 +177,20 @@
 		onOffsetChange?.({ horizontal: scrollLeft, vertical: scrollTop });
 	}
 
+	function setZoomFactor(next: number) {
+		const factor = Math.max(minZoomFactor, Math.min(maxZoomFactor, next));
+		if (factor === zoomFactor) return;
+		zoomFactor = factor;
+		onZoomFactorChange?.(factor);
+	}
+
+	function onWheel(event: WheelEvent) {
+		if (disabled || zoomMode !== 'enabled' || !event.ctrlKey || event.deltaY === 0) return;
+		// This implementation uses a 1.1 step for each wheel notch; upstream only gates Ctrl+wheel.
+		setZoomFactor(zoomFactor * (event.deltaY < 0 ? 1.1 : 1 / 1.1));
+		event.preventDefault();
+	}
+
 	function scrollVertically(value: number) {
 		if (viewport && viewport.scrollTop !== value) viewport.scrollTop = value;
 	}
@@ -135,8 +205,13 @@
 		observer.observe(viewport);
 		// A viewport observer does not see content growth inside a fixed viewport.
 		observer.observe(content);
+		if (zoomBox) observer.observe(zoomBox);
 		measure();
 		return () => observer.disconnect();
+	});
+
+	$effect(() => {
+		if (zoomFactor !== constrainedZoomFactor) zoomFactor = constrainedZoomFactor;
 	});
 
 	$effect(() => {
@@ -154,11 +229,18 @@
 	data-vertical-scroll-mode={verticalScrollMode}
 	{...rest}
 >
-	<div bind:this={viewport} class="viewport" onscroll={onScroll}>
+	<div bind:this={viewport} class="viewport" onscroll={onScroll} onwheel={onWheel}>
 		<!-- ScrollPresenter.cpp:636-644 constrains the opposite axes to their names: Both frees
 		     both dimensions while None constrains both, hence the four CSS rules below. -->
-		<div bind:this={content} class="content" data-content-orientation={contentOrientation}>
-			{@render children?.()}
+		<div bind:this={zoomBox} class="zoom-box" style={zoomBoxStyle}>
+			<div
+				bind:this={content}
+				class="content"
+				data-content-orientation={contentOrientation}
+				style={contentStyle}
+			>
+				{@render children?.()}
+			</div>
 		</div>
 	</div>
 	{#if verticalBarVisible}
@@ -225,6 +307,19 @@
 	.scroll-view[data-vertical-scroll-mode='disabled'] .viewport,
 	.scroll-view.disabled .viewport {
 		overflow-y: hidden;
+	}
+
+	.zoom-box {
+		/* The box the zoom scales into, and at a factor of one it must be the viewport exactly.
+		   Without these two the content's `height: 100%` — which is how `none` and `horizontal`
+		   give the content the viewport's size on the axis they constrain — would resolve against
+		   an auto-height parent and mean nothing: measured on the guest, a `none` box whose content
+		   was 600 tall reported the content itself as 647 rather than 200. What upstream constrains
+		   is the size the content is *measured* with (ScrollPresenter.cpp:636-644), not what a child
+		   that cannot shrink then overflows by, and that is what these two reproduce. At a factor
+		   above one the inline width and height override both. */
+		width: 100%;
+		height: 100%;
 	}
 
 	.content {

@@ -87,6 +87,12 @@
 			</div></ScrollView
 		>
 	</section>
+	<section>
+		<h2>zoomed</h2>
+		<ScrollView class="scroll-example" zoomMode="enabled" zoomFactor={2}
+			><div class="zoom-block">200 by 100 block</div></ScrollView
+		>
+	</section>
 </div>
 
 <style>
@@ -118,5 +124,11 @@
 	/* c1-allow: acceptance harness keeps the horizontal-content paragraph unwrapped. */
 	.wide p {
 		white-space: nowrap;
+	}
+	/* c1-allow: acceptance harness content is the specified 200px by 100px pre-zoom block. */
+	.zoom-block {
+		width: 200px;
+		height: 100px;
+		background: var(--winui-AccentFillColorDefaultBrush);
 	}
 </style>
