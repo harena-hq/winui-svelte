@@ -13,6 +13,14 @@
 		max?: number;
 		/** StepFrequency, under the name the primitive and the DOM both use. */
 		step?: number;
+		/** Orientation. Horizontal, or the vertical template (Slider_themeresources.xaml:418). */
+		orientation?: 'horizontal' | 'vertical';
+		/** IsDirectionReversed. The value grows leftward, or downward when vertical. */
+		isDirectionReversed?: boolean;
+		/** TickFrequency. The value interval between tick marks; 0, the default, draws none. */
+		tickFrequency?: number;
+		/** TickPlacement. Where the ticks are drawn; Slider's default is Inline. */
+		tickPlacement?: 'none' | 'topLeft' | 'bottomRight' | 'outside' | 'inline';
 		/** IsEnabled, inverted to HTML's attribute — ADR 0009. */
 		disabled?: boolean;
 		/** IsThumbToolTipEnabled. */
@@ -34,10 +42,8 @@
 	// a `/** */` one: a doc comment here would attach itself to `disabled` below and a
 	// consumer hovering that prop would be told about one of them.
 	//
-	// `Orientation="Vertical"` is not built in this unit; the component is horizontal only.
-	//
-	// `TickPlacement`, `TickFrequency`, and the three `TickBar`s in the upstream template
-	// are not built in this unit; tick marks have no visual state here.
+	// Snapping is `step`'s responsibility. `SnapsTo="Ticks"` with equal `TickFrequency` and
+	// `StepFrequency` — the Gallery's only use — is the same behavior.
 </script>
 
 <script lang="ts">
@@ -51,6 +57,10 @@
 		min = 0,
 		max = 100,
 		step = 1,
+		orientation = 'horizontal',
+		isDirectionReversed = false,
+		tickFrequency = 0,
+		tickPlacement = 'inline',
 		disabled = false,
 		thumbToolTipEnabled = true,
 		header,
@@ -61,6 +71,71 @@
 	}: SliderProps = $props();
 
 	let thumbToolTipOpen = $state(false);
+	let container = $state<HTMLSpanElement | undefined>(undefined);
+	let trackLength = $state<number | undefined>(undefined);
+	let thumbLength = $state<number | undefined>(undefined);
+
+	const showInline = $derived(tickPlacement === 'inline');
+	const showOutsideBefore = $derived(tickPlacement === 'topLeft' || tickPlacement === 'outside');
+	const showOutsideAfter = $derived(tickPlacement === 'bottomRight' || tickPlacement === 'outside');
+	const ticks = $derived.by(() => {
+		if (
+			tickFrequency <= 0 ||
+			trackLength === undefined ||
+			thumbLength === undefined ||
+			max <= min
+		) {
+			return [];
+		}
+
+		const measuredTrackLength = trackLength;
+		const measuredThumbLength = thumbLength;
+		const visualRange = measuredTrackLength - measuredThumbLength;
+		const numIntervals = Math.max(1, (max - min) / tickFrequency);
+		let tickMarkNumber = Math.floor(numIntervals);
+		let interval = Math.max(1, visualRange / numIntervals);
+		if (interval < 20) {
+			const ratio = Math.ceil(20 / interval);
+			interval *= ratio;
+			tickMarkNumber = Math.floor(tickMarkNumber / ratio);
+		}
+		tickMarkNumber += 1;
+
+		const thumbOffset = Math.max(0, (measuredThumbLength - 1) / 2);
+		const forward = orientation === 'horizontal' ? !isDirectionReversed : isDirectionReversed;
+		return Array.from({ length: tickMarkNumber }, (_, index) => {
+			const offset = forward
+				? thumbOffset + index * interval
+				: measuredTrackLength - (thumbOffset + 1) - index * interval;
+			return Math.round(offset);
+		});
+	});
+
+	$effect(() => {
+		if (!container) return;
+		// `measure` reads the orientation at call time; naming it here makes a change of
+		// orientation re-run the measurement rather than wait for the next resize.
+		void orientation;
+
+		const measure = () => {
+			if (!container) return;
+			trackLength = orientation === 'horizontal' ? container.clientWidth : container.clientHeight;
+			const thumbKey =
+				orientation === 'horizontal'
+					? '--winui-SliderHorizontalThumbWidth'
+					: '--winui-SliderVerticalThumbHeight';
+			const measuredThumbLength = parseFloat(
+				getComputedStyle(container).getPropertyValue(thumbKey)
+			);
+			// Without the token layer there is no reliable thumb length, so ticks cannot be placed.
+			thumbLength = Number.isFinite(measuredThumbLength) ? measuredThumbLength : undefined;
+		};
+
+		measure();
+		const observer = new ResizeObserver(measure);
+		observer.observe(container);
+		return () => observer.disconnect();
+	});
 
 	$effect(() => {
 		if (!thumbToolTipEnabled) {
@@ -100,6 +175,7 @@
 	class={['root', 'winui-BodyTextBlockStyle', className]}
 	{style}
 	data-disabled={disabled || undefined}
+	data-orientation={orientation}
 	{...rest}
 >
 	{#if header !== undefined}
@@ -107,6 +183,8 @@
 			{#if typeof header === 'string'}{header}{:else}{@render header()}{/if}
 		</span>
 	{/if}
+	<!-- helpers.js maps horizontal ltr/rtl to lr/rl and vertical ltr/rtl to bt/tb;
+	     `orientation` selects the horizontal or vertical pair, while `rtl` reverses either. -->
 	<Slider.Root
 		type="single"
 		bind:value={
@@ -120,6 +198,8 @@
 		{max}
 		{step}
 		{disabled}
+		{orientation}
+		dir={isDirectionReversed ? 'rtl' : 'ltr'}
 	>
 		{#snippet child({ props, thumbItems })}
 			<!-- Every element the primitive would render is rendered here instead, through its
@@ -130,13 +210,48 @@
 			     DOM without this component's scope hash, every rule for it has to be
 			     `:global(…)`, and `.fill` and `.thumb` then match every element in the
 			     application that shares those very ordinary names. -->
-			<span {...props} class="container">
+			<span {...props} bind:this={container} class="container">
 				<span class="track"></span>
 				<Slider.Range>
 					{#snippet child({ props })}
 						<span {...props} class="fill"></span>
 					{/snippet}
 				</Slider.Range>
+				{#if ticks.length > 0}
+					{#if showOutsideBefore}
+						<span class="tick-bar outside before">
+							{#each ticks as offset (offset)}
+								<span
+									class="tick"
+									style:left={orientation === 'horizontal' ? `${offset}px` : undefined}
+									style:top={orientation === 'vertical' ? `${offset}px` : undefined}
+								></span>
+							{/each}
+						</span>
+					{/if}
+					{#if showInline}
+						<span class="tick-bar inline">
+							{#each ticks as offset (offset)}
+								<span
+									class="tick"
+									style:left={orientation === 'horizontal' ? `${offset}px` : undefined}
+									style:top={orientation === 'vertical' ? `${offset}px` : undefined}
+								></span>
+							{/each}
+						</span>
+					{/if}
+					{#if showOutsideAfter}
+						<span class="tick-bar outside after">
+							{#each ticks as offset (offset)}
+								<span
+									class="tick"
+									style:left={orientation === 'horizontal' ? `${offset}px` : undefined}
+									style:top={orientation === 'vertical' ? `${offset}px` : undefined}
+								></span>
+							{/each}
+						</span>
+					{/if}
+				{/if}
 				{#each thumbItems as thumb (thumb.index)}
 					<Slider.Thumb index={thumb.index}>
 						{#snippet child({ props })}
@@ -145,10 +260,11 @@
 								     (`SliderHorizontalThumbWidth`), while `.thumb::before` grows the
 								     visible circle by 2px on every side from the `Margin="-2"` already
 								     cited above: 20px above the circle is 20px + 2px = 22px above the
-								     element. -->
+								     element. Vertical placement was not measured on the reference and
+								     follows this horizontal logic; the Gallery Grid page checks it later. -->
 								<ToolTip
 									content={String(value)}
-									placement="top"
+									placement={orientation === 'vertical' ? 'left' : 'top'}
 									offset={22}
 									openOnHover={false}
 									bind:open={thumbToolTipOpen}
@@ -353,6 +469,134 @@
 				calc(var(--winui-FocusVisualPrimaryThickness) + var(--winui-FocusVisualSecondaryThickness))
 				var(--winui-SystemControlFocusVisualSecondaryBrush);
 		pointer-events: none;
+	}
+
+	/* `VerticalTemplate` at Slider_themeresources.xaml:418-434 turns the horizontal template
+	   a quarter turn. Its grid's first row stretches, so the container consumes the root height
+	   remaining after the header. The existing `align-items: center` gives the absolutely
+	   positioned thumb its horizontally centred static position. */
+	.root[data-orientation='vertical'] .container {
+		flex: 1 1 auto;
+		flex-direction: column;
+		min-height: 0;
+		/* The template's columns are `SliderPreContentMargin`, `Auto`, `SliderPostContentMargin`
+		   (:424-427) — 14 + 4 + 14 = 32 — and a XAML Grid does not spread its fixed columns
+		   across a wider slot, so under a wide header the track stays 14 from the left edge.
+		   Measured on the original's Grid page: the `RowSpacing` header starts at the track's
+		   left edge minus 14. A column exactly `SliderVerticalWidth` wide, aligned to the
+		   start, is that; centring the track in the header's width was not. */
+		width: var(--winui-SliderVerticalWidth);
+		align-self: flex-start;
+	}
+
+	/* `VerticalTrackRect`, Slider_themeresources.xaml:429. */
+	.root[data-orientation='vertical'] .track {
+		width: var(--winui-SliderTrackThemeHeight);
+		height: 100%;
+	}
+
+	/* `VerticalDecreaseRect`, Slider_themeresources.xaml:430; bits-ui supplies the inline
+	   `top`/`bottom` span. */
+	.root[data-orientation='vertical'] .fill {
+		width: var(--winui-SliderTrackThemeHeight);
+		height: auto;
+	}
+
+	/* `VerticalThumb`, Slider_themeresources.xaml:434. */
+	.root[data-orientation='vertical'] .thumb {
+		width: var(--winui-SliderVerticalThumbWidth);
+		height: var(--winui-SliderVerticalThumbHeight);
+	}
+
+	/* `FocusVisualMargin="-7,0,-7,0"` at Slider_themeresources.xaml:184 belongs to the style,
+	   rather than either template, so `inset: 0 -7px` above applies unchanged when vertical. */
+
+	/* TickBar layers paint over the track. */
+	.tick-bar {
+		position: absolute;
+		pointer-events: none;
+	}
+
+	/* `HorizontalInlineTickBar`, Slider_themeresources.xaml:414. */
+	.tick-bar.inline {
+		left: 0;
+		right: 0;
+		height: var(--winui-SliderTrackThemeHeight);
+		top: 50%;
+		translate: 0 -50%;
+	}
+
+	/* `TopTickBar`/`BottomTickBar`, Slider_themeresources.xaml:413/:415. The 4px margins put
+	   each outside bar beyond the track's centred edge. */
+	.tick-bar.outside {
+		left: 0;
+		right: 0;
+		height: var(--winui-SliderOutsideTickBarThemeHeight);
+	}
+	.tick-bar.outside.before {
+		/* c1-allow: Slider_themeresources.xaml:413, `Margin="0,0,0,4"` */
+		bottom: calc(50% + var(--winui-SliderTrackThemeHeight) / 2 + 4px);
+	}
+	.tick-bar.outside.after {
+		/* c1-allow: Slider_themeresources.xaml:415, `Margin="0,4,0,0"` */
+		top: calc(50% + var(--winui-SliderTrackThemeHeight) / 2 + 4px);
+	}
+
+	/* TickBar_Partial.cpp, `singlePixelWidthScaled`. */
+	.tick {
+		position: absolute;
+		/* c1-allow: TickBar_Partial.cpp, `singlePixelWidthScaled` */
+		width: 1px;
+		height: 100%;
+	}
+
+	/* `HorizontalInlineTickBar`, `TopTickBar`, and `BottomTickBar` at
+	   Slider_themeresources.xaml:413-415. */
+	.tick-bar.inline .tick {
+		background: var(--winui-SliderInlineTickBarFill);
+	}
+	.tick-bar.outside .tick {
+		background: var(--winui-SliderTickBarFill);
+	}
+	.root[data-disabled] .tick-bar.outside .tick {
+		background: var(--winui-SliderTickBarFillDisabled);
+	}
+
+	/* `VerticalInlineTickBar`, Slider_themeresources.xaml:432. */
+	.root[data-orientation='vertical'] .tick-bar.inline {
+		top: 0;
+		bottom: 0;
+		left: 50%;
+		right: auto;
+		width: var(--winui-SliderTrackThemeHeight);
+		height: auto;
+		translate: -50% 0;
+	}
+
+	/* `LeftTickBar`/`RightTickBar`, Slider_themeresources.xaml:431/:433. The 4px margins put
+	   each outside bar beyond the track's centred edge. */
+	.root[data-orientation='vertical'] .tick-bar.outside {
+		top: 0;
+		bottom: 0;
+		width: var(--winui-SliderOutsideTickBarThemeHeight);
+		height: auto;
+	}
+	.root[data-orientation='vertical'] .tick-bar.outside.before {
+		left: auto;
+		/* c1-allow: Slider_themeresources.xaml:431, `Margin="0,0,4,0"` */
+		right: calc(50% + var(--winui-SliderTrackThemeHeight) / 2 + 4px);
+	}
+	.root[data-orientation='vertical'] .tick-bar.outside.after {
+		right: auto;
+		/* c1-allow: Slider_themeresources.xaml:433, `Margin="4,0,0,0"` */
+		left: calc(50% + var(--winui-SliderTrackThemeHeight) / 2 + 4px);
+	}
+
+	/* TickBar_Partial.cpp, `singlePixelWidthScaled`, transposed for vertical. */
+	.root[data-orientation='vertical'] .tick {
+		width: 100%;
+		/* c1-allow: TickBar_Partial.cpp, `singlePixelWidthScaled` */
+		height: 1px;
 	}
 
 	/* ----- PointerOver ----- */

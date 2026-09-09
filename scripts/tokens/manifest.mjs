@@ -1265,24 +1265,16 @@ export const TOGGLESWITCH_KEYS = {
 /**
  * Keys Slider reads — the eighth seed set.
  *
- * The horizontal template is the `DefaultSliderStyle` at Slider_themeresources.xaml:176,
- * which paints a two-row grid: a header row carrying `HeaderContentPresenter`, and a
- * `SliderContainer` row holding a `HorizontalTrackRect` and a `HorizontalDecreaseRect`
- * flanked by a `HorizontalThumb`. `SliderContainerBackground` and its three pointer
- * siblings all alias `ControlFillColorTransparentBrush`/`ControlFillColorTransparent` at
- * every theme, which means they resolve to transparent at this pin and the four are
- * read anyway so a re-pin that gives them a value is not silently ignored.
+ * The `DefaultSliderStyle` at Slider_themeresources.xaml:176 has horizontal and vertical
+ * templates. Both paint a header row and a `SliderContainer` holding a track, decrease
+ * rectangle, TickBars, and thumb. `SliderContainerBackground` and its three pointer siblings
+ * all alias `ControlFillColorTransparentBrush`/`ControlFillColorTransparent` at every theme,
+ * which means they resolve to transparent at this pin and the four are read anyway so a re-pin
+ * that gives them a value is not silently ignored.
  *
  * What this list leaves out, so a gap reads as a decision rather than an oversight.
  * The Slider dictionary carries sixty-one resources; these are the ones not here:
  *
- * - **`Orientation="Vertical"`** and the three vertical-template keys
- *   (`SliderVerticalWidth`, `SliderVerticalThumbWidth`, `SliderVerticalThumbHeight`).
- *   The vertical template is not built in this unit.
- * - **Tick marks** — `TickPlacement`, `TickFrequency`, and the four `TickBar`s in the
- *   template, plus the four tick brushes (`SliderTickBarFill`,
- *   `SliderTickBarFillDisabled`, `SliderInlineTickBarFill`, `SliderOutsideTickBarThemeHeight`).
- *   Tick marks are not built in this unit.
  * - **The border** — `SliderBorderThemeThickness`. The `DefaultSliderStyle` sets it to
  *   `0` and the template never paints it.
  * - **The header's own margin** — `SliderHeaderThemeMargin`. The template applies it but
@@ -1296,18 +1288,24 @@ export const TOGGLESWITCH_KEYS = {
  *   ToggleSwitch's twenty-three.
  */
 export const SLIDER_KEYS = {
-	// The horizontal track row's height, the four margins around the row, and the four
-	// metrics that size the thumb itself: its box, its two painted circles, and its corner.
+	// The horizontal and vertical track metrics, plus the thumb box, painted circles, and corner.
 	SliderHorizontalHeight: 'Slider, the horizontal track row',
+	SliderVerticalWidth: 'Slider, the vertical track column',
 	SliderTrackThemeHeight: 'Slider track, at rest',
 	SliderTrackCornerRadius: 'Slider track, its corner radius',
 	SliderHorizontalThumbWidth: 'Slider thumb, its box',
 	SliderHorizontalThumbHeight: 'Slider thumb, its box',
+	SliderVerticalThumbWidth: 'Slider thumb, its box when vertical',
+	SliderVerticalThumbHeight: 'Slider thumb, its box when vertical',
 	SliderThumbCornerRadius: 'Slider thumb, its corner radius',
 	SliderInnerThumbWidth: 'Slider thumb, the accent circle',
 	SliderInnerThumbHeight: 'Slider thumb, the accent circle',
 	SliderTopHeaderMargin: 'Slider header, the gap below it',
 	SliderHeaderThemeFontWeight: 'Slider header, its weight',
+	SliderTickBarFill: 'Slider tick marks outside the track',
+	SliderTickBarFillDisabled: 'Slider tick marks outside the track, disabled',
+	SliderInlineTickBarFill: 'Slider tick marks inside the track',
+	SliderOutsideTickBarThemeHeight: 'Slider tick marks outside the track, their thickness',
 
 	// The container background in all four states — all four alias a transparent brush
 	// at this pin, but they are read so a re-pin that gives them a value is not silently
@@ -2486,11 +2484,15 @@ export const DOUBLE_LENGTHS = {
 	ToggleSwitchThemeMinWidth: 'the width a ToggleSwitch reserves',
 
 	SliderHorizontalHeight: 'the horizontal track row',
+	SliderVerticalWidth: 'the vertical track column',
 	SliderTrackThemeHeight: 'the bar a Slider track draws',
 	SliderHorizontalThumbWidth: 'a Slider thumb box',
 	SliderHorizontalThumbHeight: 'a Slider thumb box',
+	SliderVerticalThumbWidth: 'a vertical Slider thumb box',
+	SliderVerticalThumbHeight: 'a vertical Slider thumb box',
 	SliderInnerThumbWidth: 'the accent circle inside a Slider thumb',
 	SliderInnerThumbHeight: 'the accent circle inside a Slider thumb',
+	SliderOutsideTickBarThemeHeight: 'the thickness of a Slider outside tick bar',
 
 	ComboBoxItemPillWidth: 'the selection pill width inside a ComboBox item',
 	ComboBoxItemPillHeight: 'the selection pill height inside a ComboBox item',
