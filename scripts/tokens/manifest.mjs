@@ -2672,6 +2672,14 @@ export const TYPE_RAMP = {
  * these gets the inputs rather than the answer.
  */
 export const DOUBLE_LENGTHS = {
+	ScrollBarTrackBorderThemeThickness: 'ScrollBar track border width',
+	ScrollBarThumbOffset: 'ScrollBar collapsed thumb offset',
+	ScrollBarSize: 'ScrollBar rail thickness and arrow button size',
+	ScrollBarVerticalThumbMinHeight: 'ScrollBar vertical thumb minimum length',
+	ScrollBarVerticalThumbMinWidth: 'ScrollBar vertical thumb collapsed width',
+	ScrollBarHorizontalThumbMinWidth: 'ScrollBar horizontal thumb minimum length',
+	ScrollBarHorizontalThumbMinHeight: 'ScrollBar horizontal thumb collapsed height',
+	ScrollBarThumbStrokeThickness: 'ScrollBar thumb transparent stroke width',
 	DatePickerFlyoutPresenterAcceptDismissHostGridHeight: 'DatePicker flyout action bar height',
 	DatePickerFlyoutPresenterHighlightHeight: 'DatePicker flyout selected-row height',
 	DatePickerFlyoutPresenterItemHeight: 'DatePicker flyout item height',
@@ -2848,6 +2856,7 @@ export const DOUBLE_LENGTHS = {
  * place.
  */
 export const DOUBLE_RATIOS = {
+	ScrollBarButtonArrowScalePressed: "the ScrollBar arrow glyph's 0.875 pressed scale",
 	SelectorBarItemIconScale: "the SelectorBarItem icon's 0.8 scale",
 	ComboBoxItemPillMinScale: "the selection pill's pressed scale, 0.625",
 	ItemContainerDisabledOpacity: "the disabled ItemContainer's 0.3 opacity",
@@ -4260,6 +4269,71 @@ export const FLIPVIEW_KEYS = {
 	FlipViewNextPreviousArrowForeground: 'FlipView flip button arrow, at rest',
 	FlipViewNextPreviousArrowForegroundPointerOver: 'FlipView flip button arrow under the pointer',
 	FlipViewNextPreviousArrowForegroundPressed: 'FlipView flip button arrow while pressed'
+};
+
+/**
+ * Keys `controls/dev/CommonStyles/ScrollBar_themeresources.xaml` defines for the `ScrollBar`
+ * template. `ScrollView`, `ScrollViewer`, and every scrolling region in this library put that
+ * template inside themselves.
+ *
+ * `ScrollBarSize` is 12 in the control pin's themeless block while the framework pin's themed
+ * blocks retain an older 16. D23's per-key-and-theme merge already selects 12 because the control
+ * pin defines the key without a theme, so this set needs no exception.
+ *
+ * Collapse is timed by `ScrollBarContractBeginTime` (500ms), not `ScrollBarContractDelay` (2s):
+ * the latter belongs to ScrollView's indicator transitions and is deliberately absent. Also absent
+ * are `ScrollBarButtonBorderBrush*`, which the template binds but every theme resolves to a
+ * transparent brush and this implementation's arrows do not draw, and the pre-Fluent legacy
+ * `ScrollBar*ThemeBrush` family (`ScrollBarThumbBackgroundThemeBrush`,
+ * `ScrollBarTrackBackgroundThemeBrush`, and siblings), which the WinUI 11 template does not read.
+ */
+export const SCROLLBAR_KEYS = {
+	ScrollBarSize: 'ScrollBar rail thickness and arrow button box size',
+	ScrollBarCornerRadius: 'ScrollBar track and thumb corner radius',
+	ScrollBarThumbOffset: 'Collapsed thumb offset from the rail edge',
+	ScrollBarThumbStrokeThickness: 'Transparent stroke that insets the thumb fill',
+	ScrollBarVerticalThumbMinWidth: 'Collapsed vertical thumb width',
+	ScrollBarVerticalThumbMinHeight: 'Minimum vertical thumb length',
+	ScrollBarHorizontalThumbMinHeight: 'Collapsed horizontal thumb height',
+	ScrollBarHorizontalThumbMinWidth: 'Minimum horizontal thumb length',
+	ScrollBarVerticalDecreaseMargin: 'Vertical leading arrow padding',
+	ScrollBarVerticalIncreaseMargin: 'Vertical trailing arrow padding',
+	ScrollBarHorizontalDecreaseMargin: 'Horizontal leading arrow padding',
+	ScrollBarHorizontalIncreaseMargin: 'Horizontal trailing arrow padding',
+	ScrollBarButtonArrowIconFontSize: 'Arrow glyph size',
+	ScrollBarButtonArrowScalePressed: 'Arrow glyph scale while pressed',
+	ScrollBarTrackBorderThemeThickness: 'Track border width',
+	ScrollBarExpandBeginTime: 'Expanded-state transition delay',
+	ScrollBarExpandDuration: 'Expanded-state transition duration',
+	ScrollBarContractBeginTime: 'Collapsed-state transition delay',
+	ScrollBarContractDuration: 'Collapsed-state transition duration',
+	ScrollBarOpacityChangeDuration: 'Rail opacity transition duration',
+	ScrollBarColorChangeDuration: 'Thumb colour transition duration',
+	ScrollBarBackground: 'ScrollBar root background at rest',
+	ScrollBarBackgroundPointerOver: 'ScrollBar root background under the pointer',
+	ScrollBarBackgroundDisabled: 'ScrollBar root background while disabled',
+	ScrollBarBorderBrush: 'ScrollBar root border at rest',
+	ScrollBarBorderBrushPointerOver: 'ScrollBar root border under the pointer',
+	ScrollBarBorderBrushDisabled: 'ScrollBar root border while disabled',
+	ScrollBarTrackFill: 'Track fill at rest',
+	ScrollBarTrackFillPointerOver: 'Track fill under the pointer',
+	ScrollBarTrackFillDisabled: 'Track fill while disabled',
+	ScrollBarTrackStroke: 'Track stroke at rest',
+	ScrollBarTrackStrokePointerOver: 'Track stroke under the pointer',
+	ScrollBarTrackStrokeDisabled: 'Track stroke while disabled',
+	ScrollBarButtonBackground: 'Arrow button background at rest',
+	ScrollBarButtonBackgroundPointerOver: 'Arrow button background under the pointer',
+	ScrollBarButtonBackgroundPressed: 'Arrow button background while pressed',
+	ScrollBarButtonBackgroundDisabled: 'Arrow button background while disabled',
+	ScrollBarButtonArrowForeground: 'Arrow glyph foreground at rest',
+	ScrollBarButtonArrowForegroundPointerOver: 'Arrow glyph foreground under the pointer',
+	ScrollBarButtonArrowForegroundPressed: 'Arrow glyph foreground while pressed',
+	ScrollBarButtonArrowForegroundDisabled: 'Arrow glyph foreground while disabled',
+	ScrollBarThumbBackground: 'Expanded thumb fill',
+	ScrollBarThumbBorderBrush: 'Transparent thumb border brush',
+	ScrollBarThumbFillDisabled: 'Thumb fill while disabled',
+	ScrollBarPanningThumbBackground: 'Collapsed and touch thumb fill',
+	ScrollBarPanningThumbBackgroundDisabled: 'Collapsed and touch thumb fill while disabled'
 };
 
 /**
