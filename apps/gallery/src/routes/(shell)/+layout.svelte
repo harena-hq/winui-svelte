@@ -182,4 +182,11 @@
 		/* c1-allow: ItemPage.xaml:39 and :48, the Gallery's page gutter */
 		padding: 24px 36px 36px;
 	}
+
+	/* Except where the page is an `ItemPage`, which carries those same margins itself — the
+	   gutter above is v2's interim stand-in for a frame that now exists, and two of them
+	   would be 72 a side. The pages still without a frame keep it until their own unit. */
+	.page:has(> :global([data-item-page])) {
+		padding: 0;
+	}
 </style>

@@ -4,6 +4,8 @@
 		text: string;
 		/** CopiedMessage. Announced to assistive technology after a successful copy. */
 		copiedMessage?: string;
+		/** Content. The glyph shown before a successful copy. */
+		glyph?: string;
 		class?: string;
 		style?: string;
 		ref?: HTMLDivElement | null;
@@ -24,6 +26,7 @@
 	let {
 		text,
 		copiedMessage = 'Copied to clipboard',
+		glyph = COPY_GLYPH,
 		class: className,
 		style,
 		ref = $bindable(null),
@@ -82,7 +85,7 @@
 		title="Copy to clipboard"
 		onclick={copy}
 	>
-		<span class="glyph content" class:copied>{COPY_GLYPH}</span>
+		<span class="glyph content" class:copied>{glyph}</span>
 		<span class="glyph success" class:copied>{SUCCESS_GLYPH}</span>
 		<span class="announcement" aria-live="polite">{copied ? copiedMessage : ''}</span>
 	</Button>
