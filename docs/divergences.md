@@ -743,3 +743,23 @@ gate does.
 - **Would reconsider if**: the assets become redistributable and their annotation coordinates
   are recorded as data. The renderer is the cheap half; a tracked image and a list of tip
   positions is what does not exist.
+
+### WD-030 — a Viewbox sized on one axis does not follow its scale on the other
+
+- **Control**: Viewbox.
+- **WinUI does**: measure the child unconstrained and, when only one axis of the box is
+  constrained, take that axis's scale for both and report the scaled size on the free axis —
+  `CViewbox::ComputeScaleFactor` in `dxaml/xcp/core/core/elements/Viewbox.cpp:99-108` at the
+  pin's commit, outside the sparse checkout. A Viewbox with `Width="200"` and no `Height` is
+  therefore 200 wide and as tall as the child scaled to 200.
+- **We do**: scale from whatever box CSS gives the root. With both axes given by the caller the
+  scale is the original's; with neither the box is the child's natural size at scale 1; with one
+  axis the child is scaled by that axis and the other axis keeps the child's own size, so the box
+  is the wrong height (or width) by the scale.
+- **Why accepted**: the component would have to know which axis the caller left free, and CSS
+  reports a resolved length for both; the Gallery's page and every sample this library shows
+  size both axes. Setting the free axis from the measurement is a feedback loop through the
+  `ResizeObserver` that this version did not want to build blind.
+- **Would reconsider if**: a consumer sizes one axis, or the page does. The mechanism is to
+  observe the child's natural size and set the root's free axis to it times the scale, breaking
+  the loop by writing only when the value changes.
