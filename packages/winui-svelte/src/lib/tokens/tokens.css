@@ -821,6 +821,42 @@
 	--winui-ContentDialogSeparatorThickness: 0px 0px 1px 0px;
 	--winui-ControlCornerRadius: 4px;
 	--winui-OverlayCornerRadius: 8px;
+	--winui-DatePickerSpacerThemeWidth: 1px;
+	--winui-DatePickerSpacerFill: var(--winui-ControlStrokeColorDefaultBrush);
+	--winui-DatePickerSpacerFillDisabled: var(--winui-ControlStrokeColorDefaultBrush);
+	--winui-DatePickerHeaderForeground: var(--winui-TextFillColorPrimaryBrush);
+	--winui-DatePickerHeaderForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+	--winui-DatePickerButtonBorderBrush: var(--winui-ControlElevationBorderBrush);
+	--winui-DatePickerButtonBorderBrushPointerOver: var(--winui-ControlElevationBorderBrush);
+	--winui-DatePickerButtonBorderBrushPressed: var(--winui-ControlStrokeColorDefaultBrush);
+	--winui-DatePickerButtonBorderBrushDisabled: var(--winui-ControlStrokeColorDefaultBrush);
+	--winui-DatePickerButtonBackground: var(--winui-ControlFillColorDefaultBrush);
+	--winui-DatePickerButtonBackgroundPointerOver: var(--winui-ControlFillColorSecondaryBrush);
+	--winui-DatePickerButtonBackgroundPressed: var(--winui-ControlFillColorTertiaryBrush);
+	--winui-DatePickerButtonBackgroundDisabled: var(--winui-ControlFillColorDisabledBrush);
+	--winui-DatePickerButtonForeground: var(--winui-TextFillColorPrimaryBrush);
+	--winui-DatePickerButtonForegroundDefault: var(--winui-TextFillColorSecondaryBrush);
+	--winui-DatePickerButtonForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
+	--winui-DatePickerButtonForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
+	--winui-DatePickerButtonForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+	--winui-DatePickerFlyoutPresenterBackground: var(--winui-AcrylicBackgroundFillColorDefaultBrush);
+	--winui-DatePickerFlyoutPresenterBorderBrush: var(--winui-SurfaceStrokeColorFlyoutBrush);
+	--winui-DatePickerFlyoutPresenterSpacerFill: var(--winui-DividerStrokeColorDefaultBrush);
+	--winui-DatePickerBorderThemeThickness: 1px;
+	--winui-DatePickerFlyoutPresenterHighlightFill: var(--winui-AccentAAFillColorDefaultBrush);
+	--winui-DatePickerFlyoutPresenterHighlightForegroundColor: var(
+		--winui-TextOnAccentAAFillColorPrimary
+	);
+	--winui-DatePickerTopHeaderMargin: 0px 0px 4px 0px;
+	--winui-DatePickerFlyoutPresenterHighlightHeight: 40px;
+	--winui-DatePickerFlyoutPresenterItemHeight: 40px;
+	--winui-DatePickerFlyoutPresenterAcceptDismissHostGridHeight: 41px;
+	--winui-DatePickerThemeMinWidth: 296px;
+	--winui-DatePickerThemeMaxWidth: 456px;
+	--winui-DatePickerHostPadding: 3px 0px 6px 0px;
+	--winui-DatePickerHostMonthPadding: 3px 0px 6px 9px;
+	--winui-DatePickerFlyoutPresenterAcceptMargin: 4px 2px 4px 4px;
+	--winui-DatePickerFlyoutPresenterDismissMargin: 4px 4px 4px 2px;
 	--winui-DateTimePickerFlyoutButtonBackground: var(--winui-SubtleFillColorTransparentBrush);
 	--winui-DateTimePickerFlyoutButtonBackgroundPointerOver: var(
 		--winui-SubtleFillColorSecondaryBrush
@@ -857,8 +893,10 @@
 	--winui-LoopingSelectorUpDownButtonHeight: 34px;
 	--winui-LoopingSelectorUpDownButtonScalePressed: 0.875;
 	--winui-TextOnAccentFillColorDefault: #ffffff;
+	--winui-TextOnAccentAAFillColorPrimary: #ffffff;
 	--winui-ControlAAStrokeColorDefault: #00000072;
 	--winui-TextOnAccentFillColorDefaultBrush: var(--winui-TextOnAccentFillColorDefault);
+	--winui-AccentAAFillColorDefaultBrush: var(--winui-SystemAccentColorDark1);
 	--winui-FlipViewItemBackground: var(--winui-SubtleFillColorTransparentBrush);
 	--winui-FlipViewButtonBorderThemeThickness: 0px;
 	--winui-FlipViewBackground: var(--winui-SolidBackgroundFillColorBaseBrush);
@@ -1829,6 +1867,7 @@
 	--winui-AutoSuggestListBorderThemeThickness: 1px;
 	--winui-AutoSuggestListMargin: 2px 0px 2px 0px;
 	--winui-AutoSuggestListPadding: 0px -1px 0px -1px;
+	--winui-DateTimeFlyoutBorderThickness: 1px;
 	--winui-HelperButtonThemePadding: 0px -2px 0px 0px;
 	--winui-SystemAltMediumColor: #ffffff99;
 	--winui-SystemAltMediumLowColor: #ffffff66;
@@ -2635,6 +2674,32 @@
 	--winui-ContentDialogSeparatorThickness: 0px 0px 1px 0px;
 	--winui-ControlCornerRadius: 4px;
 	--winui-OverlayCornerRadius: 8px;
+	--winui-DatePickerSpacerThemeWidth: 1px;
+	--winui-DatePickerSpacerFill: var(--winui-ControlStrokeColorDefaultBrush);
+	--winui-DatePickerSpacerFillDisabled: var(--winui-ControlStrokeColorDefaultBrush);
+	--winui-DatePickerHeaderForeground: var(--winui-TextFillColorPrimaryBrush);
+	--winui-DatePickerHeaderForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+	--winui-DatePickerButtonBorderBrush: var(--winui-ControlElevationBorderBrush);
+	--winui-DatePickerButtonBorderBrushPointerOver: var(--winui-ControlElevationBorderBrush);
+	--winui-DatePickerButtonBorderBrushPressed: var(--winui-ControlStrokeColorDefaultBrush);
+	--winui-DatePickerButtonBorderBrushDisabled: var(--winui-ControlStrokeColorDefaultBrush);
+	--winui-DatePickerButtonBackground: var(--winui-ControlFillColorDefaultBrush);
+	--winui-DatePickerButtonBackgroundPointerOver: var(--winui-ControlFillColorSecondaryBrush);
+	--winui-DatePickerButtonBackgroundPressed: var(--winui-ControlFillColorTertiaryBrush);
+	--winui-DatePickerButtonBackgroundDisabled: var(--winui-ControlFillColorDisabledBrush);
+	--winui-DatePickerButtonForeground: var(--winui-TextFillColorPrimaryBrush);
+	--winui-DatePickerButtonForegroundDefault: var(--winui-TextFillColorSecondaryBrush);
+	--winui-DatePickerButtonForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
+	--winui-DatePickerButtonForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
+	--winui-DatePickerButtonForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+	--winui-DatePickerFlyoutPresenterBackground: var(--winui-AcrylicBackgroundFillColorDefaultBrush);
+	--winui-DatePickerFlyoutPresenterBorderBrush: var(--winui-SurfaceStrokeColorFlyoutBrush);
+	--winui-DatePickerFlyoutPresenterSpacerFill: var(--winui-DividerStrokeColorDefaultBrush);
+	--winui-DatePickerFlyoutPresenterHighlightFill: var(--winui-AccentAAFillColorDefaultBrush);
+	--winui-DatePickerFlyoutPresenterHighlightForegroundColor: var(
+		--winui-TextOnAccentAAFillColorPrimary
+	);
+	--winui-DatePickerBorderThemeThickness: 1px;
 	--winui-DateTimePickerFlyoutButtonBackground: var(--winui-SubtleFillColorTransparentBrush);
 	--winui-DateTimePickerFlyoutButtonBackgroundPointerOver: var(
 		--winui-SubtleFillColorSecondaryBrush
@@ -2667,8 +2732,10 @@
 	--winui-LoopingSelectorItemBackgroundPointerOver: var(--winui-SubtleFillColorSecondaryBrush);
 	--winui-LoopingSelectorItemBackgroundPressed: var(--winui-SubtleFillColorTertiaryBrush);
 	--winui-TextOnAccentFillColorDefault: #ffffff;
+	--winui-TextOnAccentAAFillColorPrimary: #000000;
 	--winui-ControlAAStrokeColorDefault: #ffffff8b;
 	--winui-TextOnAccentFillColorDefaultBrush: var(--winui-TextOnAccentFillColorDefault);
+	--winui-AccentAAFillColorDefaultBrush: var(--winui-SystemAccentColorLight2);
 	--winui-FlipViewItemBackground: var(--winui-SubtleFillColorTransparentBrush);
 	--winui-FlipViewButtonBorderThemeThickness: 0px;
 	--winui-FlipViewBackground: var(--winui-SolidBackgroundFillColorBaseBrush);
@@ -3430,6 +3497,7 @@
 	--winui-AutoSuggestListBorderThemeThickness: 1px;
 	--winui-AutoSuggestListMargin: 2px 0px 2px 0px;
 	--winui-AutoSuggestListPadding: 0px -1px 0px -1px;
+	--winui-DateTimeFlyoutBorderThickness: 1px;
 	--winui-HelperButtonThemePadding: 0px -2px 0px 0px;
 	--winui-SystemAltMediumColor: #00000099;
 	--winui-SystemAltMediumLowColor: #00000066;
@@ -4271,6 +4339,34 @@
 		--winui-ContentDialogSeparatorThickness: 0px 0px 1px 0px;
 		--winui-ControlCornerRadius: 4px;
 		--winui-OverlayCornerRadius: 8px;
+		--winui-DatePickerSpacerThemeWidth: 1px;
+		--winui-DatePickerSpacerFill: var(--winui-ControlStrokeColorDefaultBrush);
+		--winui-DatePickerSpacerFillDisabled: var(--winui-ControlStrokeColorDefaultBrush);
+		--winui-DatePickerHeaderForeground: var(--winui-TextFillColorPrimaryBrush);
+		--winui-DatePickerHeaderForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+		--winui-DatePickerButtonBorderBrush: var(--winui-ControlElevationBorderBrush);
+		--winui-DatePickerButtonBorderBrushPointerOver: var(--winui-ControlElevationBorderBrush);
+		--winui-DatePickerButtonBorderBrushPressed: var(--winui-ControlStrokeColorDefaultBrush);
+		--winui-DatePickerButtonBorderBrushDisabled: var(--winui-ControlStrokeColorDefaultBrush);
+		--winui-DatePickerButtonBackground: var(--winui-ControlFillColorDefaultBrush);
+		--winui-DatePickerButtonBackgroundPointerOver: var(--winui-ControlFillColorSecondaryBrush);
+		--winui-DatePickerButtonBackgroundPressed: var(--winui-ControlFillColorTertiaryBrush);
+		--winui-DatePickerButtonBackgroundDisabled: var(--winui-ControlFillColorDisabledBrush);
+		--winui-DatePickerButtonForeground: var(--winui-TextFillColorPrimaryBrush);
+		--winui-DatePickerButtonForegroundDefault: var(--winui-TextFillColorSecondaryBrush);
+		--winui-DatePickerButtonForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
+		--winui-DatePickerButtonForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
+		--winui-DatePickerButtonForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+		--winui-DatePickerFlyoutPresenterBackground: var(
+			--winui-AcrylicBackgroundFillColorDefaultBrush
+		);
+		--winui-DatePickerFlyoutPresenterBorderBrush: var(--winui-SurfaceStrokeColorFlyoutBrush);
+		--winui-DatePickerFlyoutPresenterSpacerFill: var(--winui-DividerStrokeColorDefaultBrush);
+		--winui-DatePickerFlyoutPresenterHighlightFill: var(--winui-AccentAAFillColorDefaultBrush);
+		--winui-DatePickerFlyoutPresenterHighlightForegroundColor: var(
+			--winui-TextOnAccentAAFillColorPrimary
+		);
+		--winui-DatePickerBorderThemeThickness: 1px;
 		--winui-DateTimePickerFlyoutButtonBackground: var(--winui-SubtleFillColorTransparentBrush);
 		--winui-DateTimePickerFlyoutButtonBackgroundPointerOver: var(
 			--winui-SubtleFillColorSecondaryBrush
@@ -4307,8 +4403,10 @@
 		--winui-LoopingSelectorItemBackgroundPointerOver: var(--winui-SubtleFillColorSecondaryBrush);
 		--winui-LoopingSelectorItemBackgroundPressed: var(--winui-SubtleFillColorTertiaryBrush);
 		--winui-TextOnAccentFillColorDefault: #ffffff;
+		--winui-TextOnAccentAAFillColorPrimary: #000000;
 		--winui-ControlAAStrokeColorDefault: #ffffff8b;
 		--winui-TextOnAccentFillColorDefaultBrush: var(--winui-TextOnAccentFillColorDefault);
+		--winui-AccentAAFillColorDefaultBrush: var(--winui-SystemAccentColorLight2);
 		--winui-FlipViewItemBackground: var(--winui-SubtleFillColorTransparentBrush);
 		--winui-FlipViewButtonBorderThemeThickness: 0px;
 		--winui-FlipViewBackground: var(--winui-SolidBackgroundFillColorBaseBrush);
@@ -5124,6 +5222,7 @@
 		--winui-AutoSuggestListBorderThemeThickness: 1px;
 		--winui-AutoSuggestListMargin: 2px 0px 2px 0px;
 		--winui-AutoSuggestListPadding: 0px -1px 0px -1px;
+		--winui-DateTimeFlyoutBorderThickness: 1px;
 		--winui-HelperButtonThemePadding: 0px -2px 0px 0px;
 		--winui-SystemAltMediumColor: #00000099;
 		--winui-SystemAltMediumLowColor: #00000066;
@@ -5927,6 +6026,30 @@
 	--winui-ContentDialogSeparatorThickness: 0px 0px 1px 0px;
 	--winui-ControlCornerRadius: 4px;
 	--winui-OverlayCornerRadius: 8px;
+	--winui-DatePickerSpacerFill: var(--winui-SystemColorButtonTextColorBrush);
+	--winui-DatePickerSpacerFillDisabled: var(--winui-SystemColorGrayTextColorBrush);
+	--winui-DatePickerHeaderForeground: var(--winui-SystemColorButtonTextColorBrush);
+	--winui-DatePickerHeaderForegroundDisabled: var(--winui-SystemColorGrayTextColorBrush);
+	--winui-DatePickerButtonBorderBrush: var(--winui-SystemColorButtonTextColorBrush);
+	--winui-DatePickerButtonBorderBrushPointerOver: var(--winui-SystemColorHighlightColorBrush);
+	--winui-DatePickerButtonBorderBrushPressed: var(--winui-SystemColorHighlightColorBrush);
+	--winui-DatePickerButtonBorderBrushDisabled: var(--winui-SystemColorGrayTextColorBrush);
+	--winui-DatePickerButtonBackground: var(--winui-SystemColorButtonFaceColorBrush);
+	--winui-DatePickerButtonBackgroundPointerOver: var(--winui-SystemColorHighlightTextColorBrush);
+	--winui-DatePickerButtonBackgroundPressed: var(--winui-SystemColorWindowColorBrush);
+	--winui-DatePickerButtonBackgroundDisabled: var(--winui-SystemColorWindowColorBrush);
+	--winui-DatePickerButtonForeground: var(--winui-SystemColorButtonTextColorBrush);
+	--winui-DatePickerButtonForegroundDefault: var(--winui-SystemColorButtonTextColorBrush);
+	--winui-DatePickerButtonForegroundPointerOver: var(--winui-SystemColorHighlightColorBrush);
+	--winui-DatePickerButtonForegroundPressed: var(--winui-SystemColorHighlightColorBrush);
+	--winui-DatePickerButtonForegroundDisabled: var(--winui-SystemColorGrayTextColorBrush);
+	--winui-DatePickerFlyoutPresenterBackground: var(--winui-SystemColorWindowColorBrush);
+	--winui-DatePickerFlyoutPresenterBorderBrush: var(--winui-SystemColorWindowTextColorBrush);
+	--winui-DatePickerFlyoutPresenterSpacerFill: var(--winui-SystemColorWindowTextColorBrush);
+	--winui-DatePickerFlyoutPresenterHighlightFill: var(--winui-SystemColorHighlightColorBrush);
+	--winui-DatePickerFlyoutPresenterHighlightForegroundColor: transparent;
+	--winui-DatePickerSpacerThemeWidth: 1px;
+	--winui-DatePickerBorderThemeThickness: 1px;
 	--winui-DateTimePickerFlyoutButtonBackground: var(--winui-SystemColorWindowColorBrush);
 	--winui-DateTimePickerFlyoutButtonBackgroundPointerOver: var(
 		--winui-SystemColorHighlightTextColorBrush
@@ -5959,8 +6082,10 @@
 	--winui-LoopingSelectorItemBackgroundPointerOver: var(--winui-SystemColorHighlightColorBrush);
 	--winui-LoopingSelectorItemBackgroundPressed: var(--winui-SystemColorWindowColorBrush);
 	--winui-TextOnAccentFillColorDefault: #ffffff;
+	--winui-TextOnAccentAAFillColorPrimary: #000000;
 	--winui-ControlAAStrokeColorDefault: #ffffff8b;
 	--winui-TextOnAccentFillColorDefaultBrush: var(--winui-SystemColorWindowTextColor);
+	--winui-AccentAAFillColorDefaultBrush: var(--winui-SystemColorWindowColor);
 	--winui-FlipViewItemBackground: var(--winui-SystemControlTransparentBrush);
 	--winui-FlipViewButtonBorderThemeThickness: 1px;
 	--winui-FlipViewBackground: var(--winui-SystemColorButtonFaceColorBrush);
@@ -6846,6 +6971,7 @@
 	--winui-AutoSuggestListBorderThemeThickness: 1px;
 	--winui-AutoSuggestListMargin: 2px 0px 2px 0px;
 	--winui-AutoSuggestListPadding: 0px -1px 0px -1px;
+	--winui-DateTimeFlyoutBorderThickness: 1px;
 	--winui-HelperButtonThemePadding: 0px -2px 0px 0px;
 	--winui-PopupShadow: none;
 	--winui-DialogShadow: none;
