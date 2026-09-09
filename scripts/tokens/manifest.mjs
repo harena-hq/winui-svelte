@@ -2842,7 +2842,13 @@ export const DOUBLE_LENGTHS = {
 	TeachingTipBorderThickness: "the tail's stroke width",
 	TeachingTipAlternateCloseButtonSize: 'the tip header close button box',
 	TeachingTipAlternateCloseButtonGlyphSize: 'the tip header close button glyph',
-	LoopingSelectorUpDownButtonHeight: 'the LoopingSelector navigation button height'
+	LoopingSelectorUpDownButtonHeight: 'the LoopingSelector navigation button height',
+	PipsPagerHorizontalOrientationButtonWidth: 'the pip box width in horizontal orientation',
+	PipsPagerHorizontalOrientationButtonHeight: 'the pip box height in horizontal orientation',
+	PipsPagerVerticalOrientationButtonWidth: 'the pip box width in vertical orientation',
+	PipsPagerVerticalOrientationButtonHeight: 'the pip box height in vertical orientation',
+	PipsPagerNavigationButtonWidth: 'the PipsPager navigation button width',
+	PipsPagerNavigationButtonHeight: 'the PipsPager navigation button height'
 };
 
 /**
@@ -2865,7 +2871,25 @@ export const DOUBLE_RATIOS = {
 		"the pressed CalendarView navigation button's 0.875 scale",
 	LoopingSelectorUpDownButtonScalePressed:
 		"the pressed LoopingSelector navigation button's 0.875 scale",
-	ListViewItemDisabledThemeOpacity: "the disabled ListViewItem's 0.3 opacity"
+	ListViewItemDisabledThemeOpacity: "the disabled ListViewItem's 0.3 opacity",
+	PipsPagerNavigationButtonScalePressed: "the pressed PipsPager navigation button's 0.875 scale"
+};
+
+/**
+ * `x:String` keys whose value is a font size, emitted as `px` the way an `x:Double` one is.
+ *
+ * Upstream declares every other font size in both pins as an `x:Double`; these two are
+ * `x:String` (`PipsPager_themeresources.xaml:107-108`) and are read as sizes all the same —
+ * `PipsPagerButtonBaseStyle` sets `FontSize` from `PipsPagerNormalGlyphFontSize` at `:209`
+ * and `PipsPagerSelectedPipButtonStyle` from `PipsPagerSelectedGlyphFontSize` at `:282`, and
+ * both pip states animate that property between the two (`:229-231`, `:245-247`).
+ *
+ * Named rather than matched on the `FontSize` suffix, for the reason `GLYPHS` gives below:
+ * an `x:String` this file has not read is a value the generator should stop on.
+ */
+export const STRING_FONT_SIZES = {
+	PipsPagerSelectedGlyphFontSize: 'the selected pip glyph size, 6',
+	PipsPagerNormalGlyphFontSize: 'the unselected pip glyph size, 4'
 };
 
 /**
@@ -2889,7 +2913,14 @@ export const GLYPHS = {
 	InfoBarSuccessIconGlyph: 'the InfoBar success icon',
 	ExpanderChevronUpGlyph: "the Expander chevron's up form",
 	ExpanderChevronDownGlyph: "the Expander chevron's down form",
-	BreadcrumbBarChevronLeftToRight: 'the BreadcrumbBar chevron pointing left to right'
+	BreadcrumbBarChevronLeftToRight: 'the BreadcrumbBar chevron pointing left to right',
+	// PipsPager_themeresources.xaml:100-101 gives the selected and the unselected pip the same
+	// code point; only the font size and the brush differ between them. Both keys are kept
+	// because the template reads both names and a consumer overriding one expects the other.
+	PipsPagerSelectedGlyph: 'the selected pip',
+	PipsPagerNormalGlyph: 'an unselected pip',
+	PipsPagerPreviousPageButtonGlyph: "the previous-page button's chevron",
+	PipsPagerNextPageButtonGlyph: "the next-page button's chevron"
 };
 
 /**
@@ -4344,6 +4375,70 @@ export const SCROLLBAR_KEYS = {
 export const SCROLLVIEW_KEYS = {
 	ScrollViewScrollBarsMargin: 'Inset around each ScrollView scrollbar',
 	ScrollViewScrollBarsSeparatorBackground: 'Corner between two visible ScrollView scrollbars'
+};
+
+/**
+ * Keys `controls/dev/PipsPager/PipsPager_themeresources.xaml` defines for the PipsPager
+ * template: the twenty-seven brushes of its three theme dictionaries and the twelve themeless
+ * values the two button styles read.
+ *
+ * `PipsPagerButtonWidth` (20) and `PipsPagerButtonHeight` (12) are defined at `:92-93` and
+ * deliberately absent. `PipsPagerButtonBaseStyle`'s template sizes its root from
+ * `PipsPagerHorizontalOrientationButton{Width,Height}` (`:214`) and its vertical state swaps in
+ * the two `PipsPagerVerticalOrientationButton…` twins (`:268-269`); nothing in either pin reads
+ * the unqualified pair. This selection records what a control reads rather than what its
+ * dictionary defines.
+ *
+ * `PipsPagerSelectedGlyphFontSize` and `PipsPagerNormalGlyphFontSize` are declared `x:String`
+ * upstream (`:107-108`) where every other font size in the pins is an `x:Double`. They are sizes
+ * all the same — `PipsPagerButtonBaseStyle` sets `FontSize` from them at `:209` and `:282` — so
+ * `scalar()` reads a `FontSize`-suffixed `x:String` as one, and the two keys are the only
+ * records that take that branch.
+ */
+export const PIPSPAGER_KEYS = {
+	PipsPagerSelectionIndicatorBackground: 'Pip background, at rest',
+	PipsPagerSelectionIndicatorBackgroundPointerOver: 'Pip background under the pointer',
+	PipsPagerSelectionIndicatorBackgroundPressed: 'Pip background while pressed',
+	PipsPagerSelectionIndicatorBackgroundSelected: 'Pip background while selected',
+	PipsPagerSelectionIndicatorBackgroundDisabled: 'Pip background while disabled',
+	PipsPagerSelectionIndicatorBorderBrush: 'Pip border, at rest',
+	PipsPagerSelectionIndicatorBorderBrushPointerOver: 'Pip border under the pointer',
+	PipsPagerSelectionIndicatorBorderBrushPressed: 'Pip border while pressed',
+	PipsPagerSelectionIndicatorBorderBrushSelected: 'Pip border while selected',
+	PipsPagerSelectionIndicatorBorderBrushDisabled: 'Pip border while disabled',
+	PipsPagerSelectionIndicatorForeground: 'Pip glyph, at rest',
+	PipsPagerSelectionIndicatorForegroundPointerOver: 'Pip glyph under the pointer',
+	PipsPagerSelectionIndicatorForegroundPressed: 'Pip glyph while pressed',
+	PipsPagerSelectionIndicatorForegroundSelected: 'Pip glyph while selected',
+	PipsPagerSelectionIndicatorForegroundDisabled: 'Pip glyph while disabled',
+	PipsPagerNavigationButtonBackground: 'Navigation button background, at rest',
+	PipsPagerNavigationButtonBackgroundPointerOver: 'Navigation button background under the pointer',
+	PipsPagerNavigationButtonBackgroundPressed: 'Navigation button background while pressed',
+	PipsPagerNavigationButtonBackgroundDisabled: 'Navigation button background while disabled',
+	PipsPagerNavigationButtonBorderBrush: 'Navigation button border, at rest',
+	PipsPagerNavigationButtonBorderBrushPointerOver: 'Navigation button border under the pointer',
+	PipsPagerNavigationButtonBorderBrushPressed: 'Navigation button border while pressed',
+	PipsPagerNavigationButtonBorderBrushDisabled: 'Navigation button border while disabled',
+	PipsPagerNavigationButtonForeground: 'Navigation button chevron, at rest',
+	PipsPagerNavigationButtonForegroundPointerOver: 'Navigation button chevron under the pointer',
+	PipsPagerNavigationButtonForegroundPressed: 'Navigation button chevron while pressed',
+	PipsPagerNavigationButtonForegroundDisabled: 'Navigation button chevron while disabled',
+	PipsPagerHorizontalOrientationButtonWidth: 'Pip box width in horizontal orientation',
+	PipsPagerHorizontalOrientationButtonHeight: 'Pip box height in horizontal orientation',
+	PipsPagerVerticalOrientationButtonWidth: 'Pip box width in vertical orientation',
+	PipsPagerVerticalOrientationButtonHeight: 'Pip box height in vertical orientation',
+	PipsPagerButtonBorderThickness: 'Pip border width',
+	PipsPagerNavigationButtonBorderThickness: 'Navigation button border width',
+	PipsPagerNavigationButtonHeight: 'Navigation button box height',
+	PipsPagerNavigationButtonWidth: 'Navigation button box width',
+	PipsPagerNavigationButtonFontSize: 'Navigation button chevron size',
+	PipsPagerSelectedGlyphFontSize: 'Pip glyph size while selected',
+	PipsPagerNormalGlyphFontSize: 'Pip glyph size at rest',
+	PipsPagerNavigationButtonScalePressed: 'Navigation button chevron scale while pressed',
+	PipsPagerSelectedGlyph: 'the selected pip glyph',
+	PipsPagerNormalGlyph: 'the unselected pip glyph',
+	PipsPagerPreviousPageButtonGlyph: 'the previous-page chevron',
+	PipsPagerNextPageButtonGlyph: 'the next-page chevron'
 };
 
 /**
