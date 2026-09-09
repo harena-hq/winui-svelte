@@ -72,6 +72,7 @@ pnpm workspace. The library is publishable and imposes no build tooling on its c
 | D33 | A scrollbar is elements rather than `::-webkit-scrollbar`, and its viewport is not bits-ui's           | this file, "Roadmap → v13"        |
 | D34 | Roadmap item 14 becomes two versions: Styles is photographable at rest and Motion is not               | this file, "Roadmap → v14"        |
 | D35 | A shape is a component and a brush or a shadow is a value; the Gallery record's base class decides     | this file, "Roadmap → v14"        |
+| D36 | The `Symbol` name-to-glyph table is a record generated from the control pin, never transcribed         | ADR 0012, "The amendment"         |
 
 ## Verification
 

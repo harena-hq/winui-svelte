@@ -60,10 +60,12 @@ sites are fields on a data object — `MenuFlyout`'s five entry types and
 icon is, and a rule that held for `AppBarButton` but not for the menu that `AppBarButton` opens
 would be worse than either rule alone.
 
-**`Symbol` is not carried.** Its name-to-code-point pairs are in the Windows SDK and in none of
-the three pinned upstreams, so shipping them would be a transcription of the kind ADR 0001 and
-ADR 0007 exist to refuse — and a wrong pair would be invisible, because a wrong glyph is still
-a glyph. A symbol name is written as the code point it names, read from the reference.
+**`Symbol` is not carried.** ~~Its name-to-code-point pairs are in the Windows SDK and in none
+of the three pinned upstreams, so shipping them would be a transcription of the kind ADR 0001
+and ADR 0007 exist to refuse — and a wrong pair would be invisible, because a wrong glyph is
+still a glyph. A symbol name is written as the code point it names, read from the reference.~~
+**Amended while planning v14 — see "The amendment" below.** The premise is false: the pairs are
+in the control pin.
 
 ## Status
 
@@ -84,7 +86,10 @@ recorded in the plan's v7 entry rather than left to be rediscovered.
 - **A component family — `FontIcon`, `SymbolIcon`, `PathIcon`, `BitmapIcon`, `ImageIcon`.**
   The faithful reproduction, and it closes the Gallery's own `IconElement` page. Rejected for
   `SymbolIcon`, which cannot be built honestly without the enum, and because a snippet already
-  admits every one of these shapes without the library owning any of them.
+  admits every one of these shapes without the library owning any of them. **Half of that
+  reason has since gone** — the enum's contents are in the pin — and the other half has not: a
+  snippet still admits every shape. The family stays rejected on the surviving half, and the
+  amendment below says what changes instead.
 - **Dropping `glyph` and making every icon a snippet.** Internally consistent and needs no
   amendment to ADR 0009. Rejected on the call site: `MenuFlyout` alone would turn five entry
   types' one-string field into a snippet per row, and the strings it replaces are what the
@@ -108,3 +113,75 @@ that stops rendering fails a baseline.
 Two new components take both props in v7. Three sealed ones take `icon` on the schedule above.
 Every later control with an `IconElement` member — `BreadcrumbBar`, `TabView`, the Collections
 tranche's item templates — is written to this rule rather than deciding it again.
+
+---
+
+## The amendment — `Symbol` is carried, as a record generated from the pin
+
+Added while planning v14, whose `IconElement` page writes `<SymbolIcon Symbol="Accept"/>` and
+whose `AnimatedIcon` page writes `<SymbolIconSource Symbol="Find"/>`.
+
+### What was wrong
+
+The decision above rests on one factual claim — that the name-to-code-point pairs "are in the
+Windows SDK and in none of the three pinned upstreams". They are in the control pin.
+`CSymbolIcon::ConvertSymbolValueToGlyph`, at
+`.upstream/microsoft-ui-xaml/dxaml/xcp/core/core/elements/icon.cpp:461-667`, is a switch of
+**197 cases**. Each maps a legacy Segoe UI Symbol code point — the enum's own numeric value —
+to the Segoe Fluent Icons code point WinUI actually renders, and carries the member's name in
+a trailing comment:
+
+```cpp
+case 0xE10B: return static_cast<WCHAR>(0xE8FB); // Accept
+```
+
+The comment above the switch gives the reason for the remapping: the E0 to E5 prefix range
+"collides" with characters some font sets program there, so the enum's own values are marked
+legacy and the recommended points live at E7 and above. That remapping is itself something a
+reproduction needs and could not have invented — writing `Symbol="Accept"` as `0xE10B`, the
+enum's literal value, would draw the wrong glyph or none.
+
+Two pairs collide by design: `Favorite` (`0xE113`) and `OutlineStar` (`0xE1CE`) both render
+`0xE734`. One case returns its own value unchanged, `Placeholder`. Anything not in the switch
+falls through unchanged, which is the enum's escape hatch for a raw code point.
+
+### What changes
+
+**The table is carried, and it is generated, not transcribed.** A script under `scripts/`
+parses the switch out of the pinned `icon.cpp` and writes `data/` a record of name to rendered
+code point, the way `scripts/tokens/` writes `tokens.css` and `scripts/gallery/` writes the
+shell and samples records. C8 re-derives it from the pin and fails if it drifts, so it can
+never be hand-edited — which is the whole of what ADR 0001 and ADR 0007 were protecting, and
+they protect it here by the same mechanism rather than by refusal.
+
+The original objection — "a wrong pair would be invisible, because a wrong glyph is still a
+glyph" — is met by the same mechanism and is why generation rather than transcription is the
+condition of carrying it at all.
+
+**No prop is added, and ADR 0009's exception set stays closed at `glyph`.** The record is
+exported as a lookup, so a call site writes `glyph={Symbol.Accept}` and hands `glyph` the same
+uppercase-hex string it has always taken. This is deliberate: `glyph` taking either a name or a
+code point would put two grammars under one prop, which is exactly what v11's `Thickness` rule
+refuses, and a member name that happened to be four hex characters would be ambiguous with no
+way to tell.
+
+**`icon` and `glyph` are unchanged**, and so is the precedence between them.
+
+### Why this is an amendment and not a reinterpretation
+
+The rejected alternative above was rejected on this ground, in these words. A reader who found
+the pin's switch and then found this ADR would have to decide whether the decision survived its
+reason, and that is the question an ADR exists to have already answered.
+
+**And the lesson is not this ADR's.** This is the third claim of the form "not in any pin" that
+this project has recorded about something a pin holds — after the two resources v13 found in
+the framework dictionary, and the drop-shadow recipe v14's planning found one directory outside
+the sparse checkout. Each time the claim was written from a search narrower than the claim, and
+each time nothing in the artifact recorded how wide the search had been. **A negative finding
+about a pin is worth only as much as the search behind it, so record the search.**
+
+### Status of the amendment
+
+Accepted. `Symbol` is carried as a generated record in v14's unit 7; the IconElement page is
+unit 8 and consumes it. D25's row is unchanged — an icon is still a snippet with a code point
+as its shorthand — and D36 records the table.
