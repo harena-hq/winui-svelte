@@ -45,9 +45,12 @@
 		[key: string]: unknown;
 	}
 
-	/* CalendarDatePickerHeaderPlacement="Left" is owed rather than declined: its two template
-	   resources, CalendarDatePickerLeftHeaderMargin and CalendarDatePickerLeftHeaderMaxWidth,
-	   are referenced but defined in neither pin, so that state cannot be transcribed. The default
+	/* CalendarDatePickerHeaderPlacement="Left" is owed rather than declined. Its two template
+	   resources, CalendarDatePickerLeftHeaderMargin and CalendarDatePickerLeftHeaderMaxWidth, are
+	   defined in the framework pin's generic.xaml (D23) — a search of controls/dev alone reports
+	   them missing, which is what an earlier version of this comment said. What is missing is an
+	   original: no Gallery sample sets HeaderPlacement, so a transcription of the LeftHeader state
+	   could not be compared against anything. The default
 	   PlaceholderText is `select a date`, read from the English Windows platform resource rather
 	   than the pin (which names only TEXT_CALENDARDATEPICKER_DEFAULT_PLACEHOLDER_TEXT).
 	   CalendarViewStyle is absent under ADR 0002: styling belongs to the token cascade. */

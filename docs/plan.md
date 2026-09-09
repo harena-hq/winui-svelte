@@ -2392,7 +2392,7 @@ controls/dev -name 'AppBar*'` matches three `*_themeresources.xaml` files and no
     | CalendarView's blackout dates and density bars                        | a property surface WinUI does not have either — both are set through `CalendarViewDayItemChanging`, which this library has no analogue for |
     | `DatePicker.CalendarIdentifier`                                       | the three columns in the identifier's own calendar; no Gallery sample sets it                                                              |
     | TimePicker's right-to-left column correction                          | `GetOrder`'s swap of hour and minute under RTL, and a locale to test it against                                                            |
-    | CalendarDatePicker's `HeaderPlacement="Left"`                         | two resources referenced by the template and defined in neither pin                                                                        |
+    | CalendarDatePicker's `HeaderPlacement="Left"`                         | an original to compare against; no Gallery sample sets it. Its two resources are defined, in the framework pin rather than the control's   |
     | the four pages' narrow adaptive states                                | v10's owed row, unchanged                                                                                                                  |
 
     **What this version declined.** WD-031, two of the ten calendar identifiers render a Gregorian

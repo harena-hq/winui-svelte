@@ -1240,8 +1240,11 @@ export const CALENDARVIEW_KEYS = {
  * Keys the closed CalendarDatePicker template paints. CalendarDatePickerBackgroundFocused is
  * deliberately excluded: every theme defines it, but the FocusStates group's three states are
  * empty (CalendarDatePicker_themeresources.xaml:155-159), so no template declaration reads it.
- * CalendarDatePickerLeftHeaderMargin and CalendarDatePickerLeftHeaderMaxWidth are also absent:
- * the template references them but neither pin defines them, leaving HeaderPlacement="Left" owed.
+ * CalendarDatePickerLeftHeaderMargin and CalendarDatePickerLeftHeaderMaxWidth are also absent,
+ * but not for that reason: both are defined, in the framework pin's generic.xaml (D23) rather
+ * than in this control's dictionary, which is where a search of controls/dev stops. What keeps
+ * HeaderPlacement="Left" owed is that no Gallery sample sets it, so there is no original render
+ * to compare a transcription against.
  */
 export const CALENDARDATEPICKER_KEYS = {
 	CalendarDatePickerBorderThemeThickness: 'CalendarDatePicker button border thickness',
