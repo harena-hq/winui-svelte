@@ -177,10 +177,32 @@
 		onOffsetChange?.({ horizontal: scrollLeft, vertical: scrollTop });
 	}
 
+	// Upstream's ZoomTo takes a centre point and the Gallery passes null, which means the centre of
+	// the viewport (ScrollView.idl:104). So a zoom keeps whatever is in the middle of the box in the
+	// middle of the box; anchoring at the top-left instead shows a different part of the content at
+	// every factor, which is what a side-by-side against the original's own page showed.
+	function reanchor(from: number, to: number) {
+		if (!viewport || from === to || from === 0) return;
+		const scale = to / from;
+		const left =
+			(viewport.scrollLeft + viewport.clientWidth / 2) * scale - viewport.clientWidth / 2;
+		const top =
+			(viewport.scrollTop + viewport.clientHeight / 2) * scale - viewport.clientHeight / 2;
+		// After the frame in which the zoom box takes its new size, or the scroll offsets are
+		// clamped against the old extent.
+		requestAnimationFrame(() => {
+			if (!viewport) return;
+			viewport.scrollLeft = Math.max(0, left);
+			viewport.scrollTop = Math.max(0, top);
+		});
+	}
+
 	function setZoomFactor(next: number) {
 		const factor = Math.max(minZoomFactor, Math.min(maxZoomFactor, next));
 		if (factor === zoomFactor) return;
+		const previous = constrainedZoomFactor;
 		zoomFactor = factor;
+		reanchor(previous, factor);
 		onZoomFactorChange?.(factor);
 	}
 
@@ -210,8 +232,16 @@
 		return () => observer.disconnect();
 	});
 
+	// One, not the initial factor: a ScrollView mounted at a factor above one is upstream's
+	// `ZoomTo(factor, null)` from one, so it centres the same way a later change does.
+	let lastFactor = 1;
 	$effect(() => {
 		if (zoomFactor !== constrainedZoomFactor) zoomFactor = constrainedZoomFactor;
+		if (constrainedZoomFactor !== lastFactor) {
+			// A factor written from outside re-anchors on the same rule as one the wheel changed.
+			reanchor(lastFactor, constrainedZoomFactor);
+			lastFactor = constrainedZoomFactor;
+		}
 	});
 
 	$effect(() => {
