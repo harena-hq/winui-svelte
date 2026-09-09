@@ -1926,6 +1926,7 @@
 	--winui-AutoSuggestListMargin: 2px 0px 2px 0px;
 	--winui-AutoSuggestListPadding: 0px -1px 0px -1px;
 	--winui-DateTimeFlyoutBorderThickness: 1px;
+	--winui-DateTimeFlyoutButtonBorderThickness: 0px;
 	--winui-HelperButtonThemePadding: 0px -2px 0px 0px;
 	--winui-SystemAltMediumColor: #ffffff99;
 	--winui-SystemAltMediumLowColor: #ffffff66;
@@ -3606,6 +3607,7 @@
 	--winui-AutoSuggestListMargin: 2px 0px 2px 0px;
 	--winui-AutoSuggestListPadding: 0px -1px 0px -1px;
 	--winui-DateTimeFlyoutBorderThickness: 1px;
+	--winui-DateTimeFlyoutButtonBorderThickness: 0px;
 	--winui-HelperButtonThemePadding: 0px -2px 0px 0px;
 	--winui-SystemAltMediumColor: #00000099;
 	--winui-SystemAltMediumLowColor: #00000066;
@@ -5383,6 +5385,7 @@
 		--winui-AutoSuggestListMargin: 2px 0px 2px 0px;
 		--winui-AutoSuggestListPadding: 0px -1px 0px -1px;
 		--winui-DateTimeFlyoutBorderThickness: 1px;
+		--winui-DateTimeFlyoutButtonBorderThickness: 0px;
 		--winui-HelperButtonThemePadding: 0px -2px 0px 0px;
 		--winui-SystemAltMediumColor: #00000099;
 		--winui-SystemAltMediumLowColor: #00000066;
@@ -7180,6 +7183,7 @@
 	--winui-AutoSuggestListMargin: 2px 0px 2px 0px;
 	--winui-AutoSuggestListPadding: 0px -1px 0px -1px;
 	--winui-DateTimeFlyoutBorderThickness: 1px;
+	--winui-DateTimeFlyoutButtonBorderThickness: 1px;
 	--winui-HelperButtonThemePadding: 0px -2px 0px 0px;
 	--winui-PopupShadow: none;
 	--winui-DialogShadow: none;

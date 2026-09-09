@@ -529,11 +529,14 @@
 	.accept,
 	.dismiss {
 		z-index: 1;
-		/* No border. `DateTimePickerFlyoutButtonStyle` puts `DateTimePickerFlyoutButtonBorderBrush`
-		   on its presenter with `BorderThickness="{ThemeResource DateTimeFlyoutButtonBorderThickness}"`,
-		   and that thickness is defined in neither pin — measured on the reference guest, the two
-		   buttons show no border at rest, under the pointer or pressed. */
-		border: 0;
+		/* `DateTimePickerFlyoutButtonStyle` puts `DateTimePickerFlyoutButtonBorderBrush` on its
+		   presenter with `BorderThickness="{ThemeResource DateTimeFlyoutButtonBorderThickness}"`.
+		   That key is in neither control dictionary and *is* in the framework pin, where it is 0
+		   in Default and Light and 1 under HighContrast — so the buttons show no border in the
+		   themes the original was photographed in, which is what the guest shows, and a one-pixel
+		   one in high contrast, which a hard-coded zero would have lost. */
+		border: var(--winui-DateTimeFlyoutButtonBorderThickness) solid
+			var(--winui-DateTimePickerFlyoutButtonBorderBrush);
 		padding: 4px;
 		background: var(--winui-DateTimePickerFlyoutButtonBackground);
 		color: inherit;
@@ -550,11 +553,13 @@
 	}
 	.accept:hover,
 	.dismiss:hover {
+		border-color: var(--winui-DateTimePickerFlyoutButtonBorderBrushPointerOver);
 		background: var(--winui-DateTimePickerFlyoutButtonBackgroundPointerOver);
 		color: var(--winui-DateTimePickerFlyoutButtonForegroundPointerOver);
 	}
 	.accept:active,
 	.dismiss:active {
+		border-color: var(--winui-DateTimePickerFlyoutButtonBorderBrushPressed);
 		background: var(--winui-DateTimePickerFlyoutButtonBackgroundPressed);
 		color: var(--winui-DateTimePickerFlyoutButtonForegroundPressed);
 	}

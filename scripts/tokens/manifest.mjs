@@ -1311,9 +1311,19 @@ export const DATETIMEPICKERFLYOUT_KEYS = {
 	LoopingSelectorUpDownButtonScalePressed: 'LoopingSelector navigation button pressed scale'
 };
 
-/** Every resource DatePicker_themeresources.xaml defines for DatePicker and its presenter. */
+/**
+ * Every resource DatePicker_themeresources.xaml defines for DatePicker and its presenter, plus
+ * the two `DateTimeFlyout*Thickness` keys its template names.
+ *
+ * Those two are defined in **neither** control dictionary — they come from the framework pin's
+ * `generic.xaml` (D23), which is why a search of `controls/dev` reports them missing. The button
+ * one is the reason to seed it rather than write a literal: it is `0` in Default and Light and
+ * `1` under HighContrast, so the accept and dismiss buttons have no border in the themes the
+ * original was photographed in and a one-pixel one in the theme it was not.
+ */
 export const DATEPICKER_KEYS = {
 	DateTimeFlyoutBorderThickness: 'DatePicker flyout border thickness',
+	DateTimeFlyoutButtonBorderThickness: 'DatePicker flyout accept and dismiss button border',
 	DatePickerBorderThemeThickness: 'DatePicker button border thickness',
 	DatePickerButtonBackground: 'DatePicker button background',
 	DatePickerButtonBackgroundDisabled: 'DatePicker disabled button background',
