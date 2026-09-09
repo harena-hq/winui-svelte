@@ -122,7 +122,12 @@
 </div>
 
 <style>
+	/* `Margin="0,16,0,0"` on the control (ControlExample.xaml:10) and `Margin="0,12"` on its
+	   header (`:71`) add up in XAML. In CSS the header's top margin would collapse through
+	   this root's and the 12 would vanish — measured on the Border page, the header sat 12px
+	   too high — so the root is a formatting-context root and the two margins stack. */
 	.root {
+		display: flow-root;
 		margin: 16px 0 0;
 	}
 

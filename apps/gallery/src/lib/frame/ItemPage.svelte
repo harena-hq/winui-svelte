@@ -51,7 +51,12 @@
 	.header-slot {
 		margin: 24px 36px 0;
 	}
+	/* A formatting-context root, so the description's `Margin="0,4,24,0"` adds to the 12 the
+	   page header's button row carries below itself (PageHeader.xaml, the row 1 Grid's
+	   `Margin="0,12,0,12"`) the way XAML margins add. As plain blocks the two collapsed to 12
+	   and the description sat 4px too high — measured on the Border page. */
 	.content-root {
+		display: flow-root;
 		padding: 0 36px 36px;
 	}
 	.description {
