@@ -262,6 +262,7 @@ export const BUILT_PAGES = [
 	'/layout/stackpanel',
 	'/layout/viewbox',
 	'/dateandtime/calendarview',
+	'/dateandtime/calendardatepicker',
 	'/dateandtime/datepicker',
 	'/dateandtime/timepicker'
 ] as const;

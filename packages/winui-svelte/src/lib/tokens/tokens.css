@@ -326,6 +326,33 @@
 	--winui-ButtonBorderBrushPressed: var(--winui-ControlStrokeColorDefaultBrush);
 	--winui-ButtonBorderBrushDisabled: var(--winui-ControlStrokeColorDefaultBrush);
 	--winui-ButtonPadding: 5px 11px 6px 11px;
+	--winui-CalendarDatePickerBorderThemeThickness: 1px;
+	--winui-CalendarDatePickerCalendarGlyphForeground: var(--winui-TextFillColorSecondaryBrush);
+	--winui-CalendarDatePickerCalendarGlyphForegroundPointerOver: var(
+		--winui-TextFillColorSecondaryBrush
+	);
+	--winui-CalendarDatePickerCalendarGlyphForegroundPressed: var(
+		--winui-TextFillColorSecondaryBrush
+	);
+	--winui-CalendarDatePickerCalendarGlyphForegroundDisabled: var(
+		--winui-TextFillColorDisabledBrush
+	);
+	--winui-CalendarDatePickerTextForeground: var(--winui-TextFillColorPrimaryBrush);
+	--winui-CalendarDatePickerTextForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
+	--winui-CalendarDatePickerTextForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
+	--winui-CalendarDatePickerTextForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+	--winui-CalendarDatePickerTextForegroundSelected: var(--winui-TextFillColorPrimaryBrush);
+	--winui-CalendarDatePickerHeaderForeground: var(--winui-TextFillColorPrimaryBrush);
+	--winui-CalendarDatePickerHeaderForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+	--winui-CalendarDatePickerBackground: var(--winui-ControlFillColorDefaultBrush);
+	--winui-CalendarDatePickerBackgroundPointerOver: var(--winui-ControlFillColorSecondaryBrush);
+	--winui-CalendarDatePickerBackgroundPressed: var(--winui-ControlFillColorTertiaryBrush);
+	--winui-CalendarDatePickerBackgroundDisabled: var(--winui-ControlFillColorDisabledBrush);
+	--winui-CalendarDatePickerBorderBrush: var(--winui-ControlElevationBorderBrush);
+	--winui-CalendarDatePickerBorderBrushPointerOver: var(--winui-ControlElevationBorderBrush);
+	--winui-CalendarDatePickerBorderBrushPressed: var(--winui-ControlStrokeColorDefaultBrush);
+	--winui-CalendarDatePickerBorderBrushDisabled: var(--winui-ControlStrokeColorDefaultBrush);
+	--winui-CalendarDatePickerTopHeaderMargin: 0px 0px 8px 0px;
 	--winui-CalendarViewSelectedHoverBorderBrush: var(--winui-AccentFillColorSecondaryBrush);
 	--winui-CalendarViewSelectedPressedBorderBrush: var(--winui-SubtleFillColorTertiaryBrush);
 	--winui-CalendarViewSelectedBorderBrush: var(--winui-AccentFillColorDefaultBrush);
@@ -2231,6 +2258,32 @@
 	--winui-ButtonBorderBrushPointerOver: var(--winui-ControlElevationBorderBrush);
 	--winui-ButtonBorderBrushPressed: var(--winui-ControlStrokeColorDefaultBrush);
 	--winui-ButtonBorderBrushDisabled: var(--winui-ControlStrokeColorDefaultBrush);
+	--winui-CalendarDatePickerBorderThemeThickness: 1px;
+	--winui-CalendarDatePickerCalendarGlyphForeground: var(--winui-TextFillColorSecondaryBrush);
+	--winui-CalendarDatePickerCalendarGlyphForegroundPointerOver: var(
+		--winui-TextFillColorSecondaryBrush
+	);
+	--winui-CalendarDatePickerCalendarGlyphForegroundPressed: var(
+		--winui-TextFillColorSecondaryBrush
+	);
+	--winui-CalendarDatePickerCalendarGlyphForegroundDisabled: var(
+		--winui-TextFillColorDisabledBrush
+	);
+	--winui-CalendarDatePickerTextForeground: var(--winui-TextFillColorPrimaryBrush);
+	--winui-CalendarDatePickerTextForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
+	--winui-CalendarDatePickerTextForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
+	--winui-CalendarDatePickerTextForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+	--winui-CalendarDatePickerTextForegroundSelected: var(--winui-TextFillColorPrimaryBrush);
+	--winui-CalendarDatePickerHeaderForeground: var(--winui-TextFillColorPrimaryBrush);
+	--winui-CalendarDatePickerHeaderForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+	--winui-CalendarDatePickerBackground: var(--winui-ControlFillColorDefaultBrush);
+	--winui-CalendarDatePickerBackgroundPointerOver: var(--winui-ControlFillColorSecondaryBrush);
+	--winui-CalendarDatePickerBackgroundPressed: var(--winui-ControlFillColorTertiaryBrush);
+	--winui-CalendarDatePickerBackgroundDisabled: var(--winui-ControlFillColorDisabledBrush);
+	--winui-CalendarDatePickerBorderBrush: var(--winui-ControlElevationBorderBrush);
+	--winui-CalendarDatePickerBorderBrushPointerOver: var(--winui-ControlElevationBorderBrush);
+	--winui-CalendarDatePickerBorderBrushPressed: var(--winui-ControlStrokeColorDefaultBrush);
+	--winui-CalendarDatePickerBorderBrushDisabled: var(--winui-ControlStrokeColorDefaultBrush);
 	--winui-CalendarViewSelectedHoverBorderBrush: var(--winui-AccentFillColorSecondaryBrush);
 	--winui-CalendarViewSelectedPressedBorderBrush: var(--winui-SubtleFillColorTertiaryBrush);
 	--winui-CalendarViewSelectedBorderBrush: var(--winui-AccentFillColorDefaultBrush);
@@ -3894,6 +3947,32 @@
 		--winui-ButtonBorderBrushPointerOver: var(--winui-ControlElevationBorderBrush);
 		--winui-ButtonBorderBrushPressed: var(--winui-ControlStrokeColorDefaultBrush);
 		--winui-ButtonBorderBrushDisabled: var(--winui-ControlStrokeColorDefaultBrush);
+		--winui-CalendarDatePickerBorderThemeThickness: 1px;
+		--winui-CalendarDatePickerCalendarGlyphForeground: var(--winui-TextFillColorSecondaryBrush);
+		--winui-CalendarDatePickerCalendarGlyphForegroundPointerOver: var(
+			--winui-TextFillColorSecondaryBrush
+		);
+		--winui-CalendarDatePickerCalendarGlyphForegroundPressed: var(
+			--winui-TextFillColorSecondaryBrush
+		);
+		--winui-CalendarDatePickerCalendarGlyphForegroundDisabled: var(
+			--winui-TextFillColorDisabledBrush
+		);
+		--winui-CalendarDatePickerTextForeground: var(--winui-TextFillColorPrimaryBrush);
+		--winui-CalendarDatePickerTextForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
+		--winui-CalendarDatePickerTextForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
+		--winui-CalendarDatePickerTextForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+		--winui-CalendarDatePickerTextForegroundSelected: var(--winui-TextFillColorPrimaryBrush);
+		--winui-CalendarDatePickerHeaderForeground: var(--winui-TextFillColorPrimaryBrush);
+		--winui-CalendarDatePickerHeaderForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+		--winui-CalendarDatePickerBackground: var(--winui-ControlFillColorDefaultBrush);
+		--winui-CalendarDatePickerBackgroundPointerOver: var(--winui-ControlFillColorSecondaryBrush);
+		--winui-CalendarDatePickerBackgroundPressed: var(--winui-ControlFillColorTertiaryBrush);
+		--winui-CalendarDatePickerBackgroundDisabled: var(--winui-ControlFillColorDisabledBrush);
+		--winui-CalendarDatePickerBorderBrush: var(--winui-ControlElevationBorderBrush);
+		--winui-CalendarDatePickerBorderBrushPointerOver: var(--winui-ControlElevationBorderBrush);
+		--winui-CalendarDatePickerBorderBrushPressed: var(--winui-ControlStrokeColorDefaultBrush);
+		--winui-CalendarDatePickerBorderBrushDisabled: var(--winui-ControlStrokeColorDefaultBrush);
 		--winui-CalendarViewSelectedHoverBorderBrush: var(--winui-AccentFillColorSecondaryBrush);
 		--winui-CalendarViewSelectedPressedBorderBrush: var(--winui-SubtleFillColorTertiaryBrush);
 		--winui-CalendarViewSelectedBorderBrush: var(--winui-AccentFillColorDefaultBrush);
@@ -5665,6 +5744,32 @@
 	--winui-ButtonBorderBrushPressed: var(--winui-SystemColorHighlightTextColorBrush);
 	--winui-ButtonBorderBrushDisabled: var(--winui-SystemColorGrayTextColor);
 	--winui-ButtonBorderThemeThickness: 1px;
+	--winui-CalendarDatePickerCalendarGlyphForeground: var(--winui-SystemColorButtonTextColorBrush);
+	--winui-CalendarDatePickerCalendarGlyphForegroundPointerOver: var(
+		--winui-SystemColorHighlightColorBrush
+	);
+	--winui-CalendarDatePickerCalendarGlyphForegroundPressed: var(
+		--winui-SystemColorHighlightColorBrush
+	);
+	--winui-CalendarDatePickerCalendarGlyphForegroundDisabled: var(
+		--winui-SystemColorGrayTextColorBrush
+	);
+	--winui-CalendarDatePickerTextForeground: var(--winui-SystemColorButtonTextColorBrush);
+	--winui-CalendarDatePickerTextForegroundPointerOver: var(--winui-SystemColorHighlightColorBrush);
+	--winui-CalendarDatePickerTextForegroundPressed: var(--winui-SystemColorHighlightColorBrush);
+	--winui-CalendarDatePickerTextForegroundDisabled: var(--winui-SystemColorGrayTextColorBrush);
+	--winui-CalendarDatePickerTextForegroundSelected: var(--winui-SystemColorHighlightColorBrush);
+	--winui-CalendarDatePickerHeaderForeground: var(--winui-SystemColorButtonTextColorBrush);
+	--winui-CalendarDatePickerHeaderForegroundDisabled: var(--winui-SystemColorGrayTextColorBrush);
+	--winui-CalendarDatePickerBackground: var(--winui-SystemColorButtonFaceColorBrush);
+	--winui-CalendarDatePickerBackgroundPointerOver: var(--winui-SystemColorHighlightTextColorBrush);
+	--winui-CalendarDatePickerBackgroundPressed: var(--winui-SystemColorWindowColorBrush);
+	--winui-CalendarDatePickerBackgroundDisabled: var(--winui-SystemColorWindowColorBrush);
+	--winui-CalendarDatePickerBorderBrush: var(--winui-SystemColorButtonTextColorBrush);
+	--winui-CalendarDatePickerBorderBrushPointerOver: var(--winui-SystemColorHighlightColorBrush);
+	--winui-CalendarDatePickerBorderBrushPressed: var(--winui-SystemColorHighlightColorBrush);
+	--winui-CalendarDatePickerBorderBrushDisabled: var(--winui-SystemColorGrayTextColorBrush);
+	--winui-CalendarDatePickerBorderThemeThickness: 1px;
 	--winui-CalendarViewSelectedHoverBorderBrush: var(
 		--winui-SystemControlHighlightListAccentMediumBrush
 	);

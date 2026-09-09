@@ -1237,6 +1237,38 @@ export const CALENDARVIEW_KEYS = {
 };
 
 /**
+ * Keys the closed CalendarDatePicker template paints. CalendarDatePickerBackgroundFocused is
+ * deliberately excluded: every theme defines it, but the FocusStates group's three states are
+ * empty (CalendarDatePicker_themeresources.xaml:155-159), so no template declaration reads it.
+ * CalendarDatePickerLeftHeaderMargin and CalendarDatePickerLeftHeaderMaxWidth are also absent:
+ * the template references them but neither pin defines them, leaving HeaderPlacement="Left" owed.
+ */
+export const CALENDARDATEPICKER_KEYS = {
+	CalendarDatePickerBorderThemeThickness: 'CalendarDatePicker button border thickness',
+	CalendarDatePickerBackground: 'CalendarDatePicker button background',
+	CalendarDatePickerBackgroundPointerOver: 'CalendarDatePicker button pointer-over background',
+	CalendarDatePickerBackgroundPressed: 'CalendarDatePicker button pressed background',
+	CalendarDatePickerBackgroundDisabled: 'CalendarDatePicker disabled button background',
+	CalendarDatePickerBorderBrush: 'CalendarDatePicker button border',
+	CalendarDatePickerBorderBrushPointerOver: 'CalendarDatePicker button pointer-over border',
+	CalendarDatePickerBorderBrushPressed: 'CalendarDatePicker button pressed border',
+	CalendarDatePickerBorderBrushDisabled: 'CalendarDatePicker disabled button border',
+	CalendarDatePickerTextForeground: 'CalendarDatePicker date text',
+	CalendarDatePickerTextForegroundPointerOver: 'CalendarDatePicker date text, pointer over',
+	CalendarDatePickerTextForegroundPressed: 'CalendarDatePicker date text, pressed',
+	CalendarDatePickerTextForegroundDisabled: 'CalendarDatePicker disabled date text',
+	CalendarDatePickerTextForegroundSelected: 'CalendarDatePicker selected date text and glyph',
+	CalendarDatePickerCalendarGlyphForeground: 'CalendarDatePicker calendar glyph',
+	CalendarDatePickerCalendarGlyphForegroundPointerOver:
+		'CalendarDatePicker calendar glyph, pointer over',
+	CalendarDatePickerCalendarGlyphForegroundPressed: 'CalendarDatePicker calendar glyph, pressed',
+	CalendarDatePickerCalendarGlyphForegroundDisabled: 'CalendarDatePicker disabled calendar glyph',
+	CalendarDatePickerHeaderForeground: 'CalendarDatePicker header',
+	CalendarDatePickerHeaderForegroundDisabled: 'CalendarDatePicker disabled header',
+	CalendarDatePickerTopHeaderMargin: 'CalendarDatePicker header margin'
+};
+
+/**
  * Every resource DateTimePickerFlyout_themeresources.xaml defines. The accept and dismiss
  * button family arrives with the dictionary rather than with the unit that first draws it;
  * a token set is seeded by key, not by the first control to consume that key (D15).
