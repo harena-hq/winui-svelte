@@ -15,8 +15,10 @@ export const UPSTREAM = {
 export const ROOT = fileURLToPath(new URL('../../', import.meta.url)).replace(/[\\/]$/, '');
 export const CHECKOUT = join(ROOT, '.upstream', 'microsoft-ui-xaml');
 
-// The upstream repository is large, so the working copy is narrowed to three file types
-// under `controls/dev`, each holding one kind of value a control is reproduced from:
+// The upstream repository is large, so the working copy is narrowed to the file types a
+// control is reproduced from, in the two trees that hold them.
+//
+// `controls/dev` is the WinUI 3 controls:
 //
 //   *.xaml   theme dictionaries, which the extractor reads, and control templates, which
 //            it does not — the structure.
@@ -24,15 +26,30 @@ export const CHECKOUT = join(ROOT, '.upstream', 'microsoft-ui-xaml');
 //            `NavigationView`'s display-mode thresholds, 641 and 1008.
 //   *.h      the layout constants a template refers to by name and never spells out —
 //            for example `c_itemIndentation`, the 31 pixels a child menu item is inset by.
+//   *.cpp    what the template leaves to code: a value the control computes rather than
+//            declares, and the condition a visual state is entered under.
 //
-// All three are here for a reader rather than for a program: a control reproduced from
-// scratch is reproduced from its `ControlTemplate`, its declared defaults and its declared
-// constants, and guessing at any of them when the source states it is the failure this
-// checkout exists to prevent.
+// All of it is here for a reader rather than for a program: a control reproduced from
+// scratch is reproduced from its `ControlTemplate`, its declared defaults, its declared
+// constants and the code that decides between them, and guessing at any of them when the
+// source states it is the failure this checkout exists to prevent.
 //
-// The per-control test pages are excluded; they are app markup, not the control. The
-// `.cpp` is not here: it is where behaviour lives, and behavioural fidelity is not this
-// project's bar. A constant is a value; a method is not.
+// `dxaml` is the framework underneath, and it is here because most of the Gallery's
+// controls are not in `controls/dev` at all. WinUI 3 restyles a `Windows.UI.Xaml` control
+// by shipping a dictionary for it and nothing else, so for Slider, SplitView, Viewbox,
+// CalendarView, DatePicker and the rest, `controls/dev` answers "no implementation" and the
+// repository holds one two directories over. v11 read five such files by fetching raw URLs
+// at the pin's commit; v12 needs a dozen more, and a file fetched by URL is not greppable,
+// which is what a sweep of a control actually needs. Four trees, ~4.7k files and ~42 MB
+// against `controls/dev`'s 104 MB:
+//
+//   dxaml/xcp/dxaml/lib          `<Control>_Partial.cpp` — the control's own code-behind.
+//   dxaml/xcp/core/core/elements the native element and the chrome it paints, where a
+//                                control's template is empty because C++ draws it.
+//   dxaml/xcp/core/inc           the constants those two refer to.
+//   dxaml/phone/lib              the picker flyouts and `LoopingSelector`.
+//
+// The per-control test pages are excluded; they are app markup, not the control.
 //
 // `--no-cone` because cone mode can express neither a `**`-and-suffix pattern nor the
 // exclusion.
@@ -43,7 +60,14 @@ const SPARSE = [
 	'/controls/dev/**/*.cpp',
 	'/controls/dev/**/Strings/en-us/Resources.resw',
 	'/controls/dev/**/Strings/en-US/Resources.resw',
-	'!/controls/dev/**/TestUI/**'
+	'!/controls/dev/**/TestUI/**',
+	'/dxaml/xcp/dxaml/lib/**/*.h',
+	'/dxaml/xcp/dxaml/lib/**/*.cpp',
+	'/dxaml/xcp/core/core/elements/**/*.h',
+	'/dxaml/xcp/core/core/elements/**/*.cpp',
+	'/dxaml/xcp/core/inc/**/*.h',
+	'/dxaml/phone/lib/**/*.h',
+	'/dxaml/phone/lib/**/*.cpp'
 ];
 
 const git = (args) =>
