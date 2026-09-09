@@ -1473,6 +1473,12 @@
 	--winui-SplitButtonPrimaryButtonSize: 35px;
 	--winui-SplitButtonSecondaryButtonSize: 35px;
 	--winui-SplitButtonPadding: 6px 11px 7px 11px;
+	--winui-SplitViewOpenPaneThemeLength: 320px;
+	--winui-SplitViewCompactPaneThemeLength: 48px;
+	--winui-SplitViewLeftBorderThemeThickness: 0px 1px 0px 0px;
+	--winui-SplitViewPaneAnimationOpenDuration: 200ms;
+	--winui-SplitViewPaneAnimationCloseDuration: 100ms;
+	--winui-SplitViewPaneRootCornerRadius: 0px;
 	--winui-TabViewBackground: var(--winui-SubtleFillColorTransparentBrush);
 	--winui-TabViewItemHeaderBackground: var(--winui-LayerOnMicaBaseAltFillColorTransparentBrush);
 	--winui-TabViewItemHeaderBackgroundSelected: var(--winui-SolidBackgroundFillColorTertiaryBrush);
@@ -1711,6 +1717,7 @@
 	--winui-SystemChromeDisabledHighColor: #ccccccff;
 	--winui-SystemChromeDisabledLowColor: #7a7a7aff;
 	--winui-SystemChromeHighColor: #ccccccff;
+	--winui-SystemChromeLowColor: #f2f2f2ff;
 	--winui-SystemChromeMediumColor: #e6e6e6ff;
 	--winui-SystemChromeMediumLowColor: #f2f2f2ff;
 	--winui-SystemChromeWhiteColor: #ffffffff;
@@ -1729,6 +1736,7 @@
 	--winui-SystemControlForegroundBaseHighBrush: var(--winui-SystemBaseHighColor);
 	--winui-SystemControlForegroundBaseMediumBrush: var(--winui-SystemBaseMediumColor);
 	--winui-SystemControlForegroundChromeHighBrush: var(--winui-SystemChromeHighColor);
+	--winui-SystemControlForegroundTransparentBrush: transparent;
 	--winui-SystemControlHighlightAltBaseHighBrush: var(--winui-SystemBaseHighColor);
 	--winui-SystemControlHighlightAltBaseMediumBrush: var(--winui-SystemBaseMediumColor);
 	--winui-SystemControlHighlightAltBaseMediumHighBrush: var(--winui-SystemBaseMediumHighColor);
@@ -1754,6 +1762,7 @@
 	--winui-SystemControlHyperlinkTextBrush: var(--winui-SystemAccentColor);
 	--winui-SystemControlPageBackgroundAltMediumBrush: var(--winui-SystemAltMediumColor);
 	--winui-SystemControlPageBackgroundMediumAltMediumBrush: var(--winui-SystemAltMediumColor);
+	--winui-SystemControlPageBackgroundChromeLowBrush: var(--winui-SystemChromeLowColor);
 	--winui-SystemControlPageBackgroundTransparentBrush: transparent;
 	--winui-SystemControlPageTextBaseMediumBrush: var(--winui-SystemBaseMediumColor);
 	--winui-SystemControlDescriptionTextForegroundBrush: var(
@@ -2997,6 +3006,12 @@
 		--winui-ControlStrokeColorOnAccentTertiaryBrush
 	);
 	--winui-SplitButtonBorderThemeThickness: 1px;
+	--winui-SplitViewOpenPaneThemeLength: 320px;
+	--winui-SplitViewCompactPaneThemeLength: 48px;
+	--winui-SplitViewLeftBorderThemeThickness: 0px 1px 0px 0px;
+	--winui-SplitViewPaneAnimationOpenDuration: 200ms;
+	--winui-SplitViewPaneAnimationCloseDuration: 100ms;
+	--winui-SplitViewPaneRootCornerRadius: 0px;
 	--winui-TabViewBackground: var(--winui-SubtleFillColorTransparentBrush);
 	--winui-TabViewItemHeaderBackground: var(--winui-LayerOnMicaBaseAltFillColorTransparentBrush);
 	--winui-TabViewItemHeaderBackgroundSelected: var(--winui-SolidBackgroundFillColorTertiaryBrush);
@@ -3181,6 +3196,7 @@
 	--winui-SystemChromeDisabledHighColor: #333333ff;
 	--winui-SystemChromeDisabledLowColor: #858585ff;
 	--winui-SystemChromeHighColor: #767676ff;
+	--winui-SystemChromeLowColor: #171717ff;
 	--winui-SystemChromeMediumColor: #1f1f1fff;
 	--winui-SystemChromeMediumLowColor: #2b2b2bff;
 	--winui-SystemChromeWhiteColor: #ffffffff;
@@ -3199,6 +3215,7 @@
 	--winui-SystemControlForegroundBaseHighBrush: var(--winui-SystemBaseHighColor);
 	--winui-SystemControlForegroundBaseMediumBrush: var(--winui-SystemBaseMediumColor);
 	--winui-SystemControlForegroundChromeHighBrush: var(--winui-SystemChromeHighColor);
+	--winui-SystemControlForegroundTransparentBrush: transparent;
 	--winui-SystemControlHighlightAltBaseHighBrush: var(--winui-SystemBaseHighColor);
 	--winui-SystemControlHighlightAltBaseMediumBrush: var(--winui-SystemBaseMediumColor);
 	--winui-SystemControlHighlightAltBaseMediumHighBrush: var(--winui-SystemBaseMediumHighColor);
@@ -3224,6 +3241,7 @@
 	--winui-SystemControlHyperlinkTextBrush: var(--winui-SystemAccentColor);
 	--winui-SystemControlPageBackgroundAltMediumBrush: var(--winui-SystemAltMediumColor);
 	--winui-SystemControlPageBackgroundMediumAltMediumBrush: var(--winui-SystemAltMediumColor);
+	--winui-SystemControlPageBackgroundChromeLowBrush: var(--winui-SystemChromeLowColor);
 	--winui-SystemControlPageBackgroundTransparentBrush: transparent;
 	--winui-SystemControlPageTextBaseMediumBrush: var(--winui-SystemBaseMediumColor);
 	--winui-SystemControlDescriptionTextForegroundBrush: var(
@@ -4530,6 +4548,12 @@
 			--winui-ControlStrokeColorOnAccentTertiaryBrush
 		);
 		--winui-SplitButtonBorderThemeThickness: 1px;
+		--winui-SplitViewOpenPaneThemeLength: 320px;
+		--winui-SplitViewCompactPaneThemeLength: 48px;
+		--winui-SplitViewLeftBorderThemeThickness: 0px 1px 0px 0px;
+		--winui-SplitViewPaneAnimationOpenDuration: 200ms;
+		--winui-SplitViewPaneAnimationCloseDuration: 100ms;
+		--winui-SplitViewPaneRootCornerRadius: 0px;
 		--winui-TabViewBackground: var(--winui-SubtleFillColorTransparentBrush);
 		--winui-TabViewItemHeaderBackground: var(--winui-LayerOnMicaBaseAltFillColorTransparentBrush);
 		--winui-TabViewItemHeaderBackgroundSelected: var(--winui-SolidBackgroundFillColorTertiaryBrush);
@@ -4732,6 +4756,7 @@
 		--winui-SystemChromeDisabledHighColor: #333333ff;
 		--winui-SystemChromeDisabledLowColor: #858585ff;
 		--winui-SystemChromeHighColor: #767676ff;
+		--winui-SystemChromeLowColor: #171717ff;
 		--winui-SystemChromeMediumColor: #1f1f1fff;
 		--winui-SystemChromeMediumLowColor: #2b2b2bff;
 		--winui-SystemChromeWhiteColor: #ffffffff;
@@ -4752,6 +4777,7 @@
 		--winui-SystemControlForegroundBaseHighBrush: var(--winui-SystemBaseHighColor);
 		--winui-SystemControlForegroundBaseMediumBrush: var(--winui-SystemBaseMediumColor);
 		--winui-SystemControlForegroundChromeHighBrush: var(--winui-SystemChromeHighColor);
+		--winui-SystemControlForegroundTransparentBrush: transparent;
 		--winui-SystemControlHighlightAltBaseHighBrush: var(--winui-SystemBaseHighColor);
 		--winui-SystemControlHighlightAltBaseMediumBrush: var(--winui-SystemBaseMediumColor);
 		--winui-SystemControlHighlightAltBaseMediumHighBrush: var(--winui-SystemBaseMediumHighColor);
@@ -4777,6 +4803,7 @@
 		--winui-SystemControlHyperlinkTextBrush: var(--winui-SystemAccentColor);
 		--winui-SystemControlPageBackgroundAltMediumBrush: var(--winui-SystemAltMediumColor);
 		--winui-SystemControlPageBackgroundMediumAltMediumBrush: var(--winui-SystemAltMediumColor);
+		--winui-SystemControlPageBackgroundChromeLowBrush: var(--winui-SystemChromeLowColor);
 		--winui-SystemControlPageBackgroundTransparentBrush: transparent;
 		--winui-SystemControlPageTextBaseMediumBrush: var(--winui-SystemBaseMediumColor);
 		--winui-SystemControlDescriptionTextForegroundBrush: var(
@@ -6020,6 +6047,12 @@
 	--winui-SplitButtonBorderBrushCheckedPressed: var(--winui-SystemColorButtonFaceColorBrush);
 	--winui-SplitButtonBorderBrushCheckedDivider: var(--winui-SystemColorHighlightTextColorBrush);
 	--winui-SplitButtonBorderThemeThickness: 1px;
+	--winui-SplitViewOpenPaneThemeLength: 320px;
+	--winui-SplitViewCompactPaneThemeLength: 48px;
+	--winui-SplitViewLeftBorderThemeThickness: 0px 1px 0px 0px;
+	--winui-SplitViewPaneAnimationOpenDuration: 200ms;
+	--winui-SplitViewPaneAnimationCloseDuration: 100ms;
+	--winui-SplitViewPaneRootCornerRadius: 0px;
 	--winui-TabViewBackground: var(--winui-SystemColorButtonFaceColorBrush);
 	--winui-TabViewItemHeaderBackground: var(--winui-SystemColorButtonFaceColorBrush);
 	--winui-TabViewItemHeaderBackgroundSelected: var(--winui-SystemColorWindowColorBrush);
@@ -6212,6 +6245,7 @@
 	--winui-SystemChromeDisabledHighColor: #333333ff;
 	--winui-SystemChromeDisabledLowColor: #7a7a7aff;
 	--winui-SystemChromeHighColor: #767676ff;
+	--winui-SystemChromeLowColor: #1f1f1fff;
 	--winui-SystemChromeMediumColor: #393939ff;
 	--winui-SystemChromeMediumLowColor: #2b2b2bff;
 	--winui-SystemChromeWhiteColor: #ffffffff;
@@ -6230,6 +6264,7 @@
 	--winui-SystemControlForegroundBaseHighBrush: var(--winui-SystemColorButtonTextColor);
 	--winui-SystemControlForegroundBaseMediumBrush: var(--winui-SystemColorButtonTextColor);
 	--winui-SystemControlForegroundChromeHighBrush: var(--winui-SystemColorButtonTextColor);
+	--winui-SystemControlForegroundTransparentBrush: var(--winui-SystemColorButtonTextColor);
 	--winui-SystemControlHighlightAltBaseHighBrush: var(--winui-SystemColorHighlightTextColor);
 	--winui-SystemControlHighlightAltBaseMediumBrush: var(--winui-SystemColorHighlightTextColor);
 	--winui-SystemControlHighlightAltBaseMediumHighBrush: var(--winui-SystemColorHighlightTextColor);
@@ -6247,6 +6282,7 @@
 		var(--winui-SystemColorWindowColor) 60%,
 		transparent
 	);
+	--winui-SystemControlPageBackgroundChromeLowBrush: var(--winui-SystemColorWindowColor);
 	--winui-SystemControlPageBackgroundTransparentBrush: var(--winui-SystemColorWindowColor);
 	--winui-SystemControlPageTextBaseMediumBrush: var(--winui-SystemColorWindowTextColor);
 	--winui-SystemControlDescriptionTextForegroundBrush: var(
