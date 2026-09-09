@@ -142,7 +142,7 @@
 		</div>
 		<div class="right-actions">
 			<!-- Upstream copies a `winui3gallery://` activation URL; the web equivalent is this address-bar URL. -->
-			<CopyButton text={pageUrl} glyph={COPY_LINK_GLYPH} />
+			<CopyButton text={pageUrl} glyph={COPY_LINK_GLYPH} label="Copy link" />
 			<ToggleButton
 				checked={favorite}
 				onCheckedChange={setFavorite}
