@@ -69,6 +69,7 @@ pnpm workspace. The library is publishable and imposes no build tooling on its c
 | D30 | Grid and StackPanel are Gallery pages drawn in CSS, not components; Border stays a component           | this file, "Roadmap → v11"        |
 | D31 | CalendarView's month grid is bits-ui's `Calendar`; its year and decade grids are ours                  | this file, "Roadmap → v12"        |
 | D32 | A date-valued prop is a native `Date`; the arithmetic is `@internationalized/date`, the strings `Intl` | this file, "Roadmap → v12"        |
+| D33 | A scrollbar is elements rather than `::-webkit-scrollbar`; `ScrollView` is bits-ui's `ScrollArea`      | this file, "Roadmap → v13"        |
 
 ## Verification
 
@@ -2424,10 +2425,164 @@ generics="T">` component through `pnpm --filter winui-svelte build` reaches `dis
       `tp-page-guest.mjs`, `cdp-page-guest.mjs`, `clock-check.mjs`, and the three prototypes
       `proto-calendar.mjs`, `loop-proto.mjs`, `proto-flyout.mjs`.
 
-13. **Scrolling** — ScrollView, PipsPager, AnnotatedScrollBar, SemanticZoom, and
+13. **Scrolling** — ScrollView, ScrollViewer, PipsPager, AnnotatedScrollBar, SemanticZoom, and
     **PullToRefresh**, moved here from Collections by v9 for the reasons its entry gives:
     the control draws nothing at rest, everything it does draw is code rather than template,
     and the surface it attaches to is a scroll viewport this tranche is already building.
+
+    **The goal, in one line: the Scrolling group's five pages and PullToRefresh's render on the
+    frame, and the controls they demonstrate exist in the library.** Six pages, not five: the
+    roadmap's own unscheduled table lists `ScrollViewer` under this group, and building the group
+    around it would leave a page nothing schedules inside the version that schedules the group.
+
+    **The six pages, read on the reference guest before anything was decided.** Captures in
+    `.private/captures/069-scrolling/`.
+
+    | page               | display pane                                                                                                                     | options pane                                                                                                                       |
+    | ------------------ | -------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+    | ScrollView         | one `ScrollView` 400 by 266 over one image, then two 400 by 300 over a column of four (`ScrollViewPage.xaml:24`, `:183`, `:250`) | ZoomMode, ZoomFactor, two ScrollModes, two ScrollbarVisibilities; then a velocity; then an animation type, a duration and a button |
+    | ScrollViewer       | one example, the same box over the same image (`ScrollViewerPage.xaml`)                                                          | ZoomMode, a Zoom `Slider`, two ScrollModes, two ScrollBarVisibilities                                                              |
+    | PipsPager          | a `FlipView` 400 by 270 with a pager under it, then a bare ten-page pager (`PipsPagerPage.xaml:14`, `:38`)                       | Orientation, Previous button visibility, Next button visibility                                                                    |
+    | AnnotatedScrollBar | a `ScrollView` 800 by 500 over 250 tiles with the bar beside it (`AnnotatedScrollBarPage.xaml:21-53`)                            | a paragraph and a `Slider` for the bar's maximum height                                                                            |
+    | SemanticZoom       | one `SemanticZoom` 500 tall over a grouped `GridView` and a `ListView` of the group titles (`SemanticZoomPage.xaml:59-80`)       | none                                                                                                                               |
+    | PullToRefresh      | two examples, each a `RefreshContainer` around a bordered `ListView` 200 tall (`PullToRefreshPage.xaml:13-24`)                   | none                                                                                                                               |
+
+    **This tranche is the one whose subject the acceptance harness cannot photograph, and that is
+    written down already.** v9's closing entry says it: the reference guest drives a headless
+    Edge, headless Chromium uses overlay scrollbars on every platform, and `::-webkit-scrollbar`
+    rules do not paint them. Six components carry the same block of those rules today —
+    `ListView`, `GridView`, `ItemsView`, `TreeView`, `NavigationView`'s pane and the Gallery
+    shell's page area — and three of them carry a comment naming this tranche as where the copying
+    stops. None of the six appears in any baseline.
+
+    **D33 — the scrollbar is elements, not `::-webkit-scrollbar`, and `ScrollView` is bits-ui's
+    `ScrollArea` under it.** A pseudo-element scrollbar cannot express what the original draws
+    and cannot be seen by what judges it. It cannot: hold the two arrow buttons the expanded bar
+    has, carry the four `ConsciousStates` (`ScrollBar_themeresources.xaml:528-671`), or animate
+    between them on the pin's own timings; and in the browser that takes the baselines it paints
+    nothing at all. Elements can do all of it, and a `div` photographs like any other content.
+    The primitive underneath is bits-ui's `ScrollArea` — `Root`, `Viewport`, `Scrollbar`, `Thumb`
+    and `Corner`, already a dependency at 2.19.0 — which hides the native bars, keeps the
+    viewport at full width the way WinUI's overlaying `PART_ScrollPresenter` does, and carries
+    the thumb's drag. Its `type` maps onto `ScrollingScrollBarVisibility` and everything above
+    the thumb is ours: the track, the two `RepeatButton` arrows, the mini and expanded states, and
+    their timings, which are not the primitive's `scrollHideDelay` of 600ms.
+
+    **The scrollbar, measured on the original before any of that was decided.** On the ScrollView
+    page's first example, whose content ends at x=769:
+
+    | state                                    | what is drawn                                                                                                    |
+    | ---------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+    | pointer inside the viewport, off the bar | a 2px thumb at x=764..765 and nothing else, over the content and darkening it                                    |
+    | pointer on the bar                       | a 12px track at x=757..768 in `#f9f9f9`, an arrow at each end, and a rounded grey thumb `rgb(150,150,150)` in it |
+
+    Neither state narrows the viewport. The framework pin agrees with the ruler: `ScrollBarSize`
+    12, `ScrollBarVerticalThumbMinWidth` 8, `ScrollBarThumbStrokeThickness` 6,
+    `ScrollBarCornerRadius` 3, `ScrollBarButtonArrowIconFontSize` 8, expand and contract 167ms
+    each, the expand beginning 400ms after the pointer arrives and the collapse 500ms after it
+    leaves, and 4px of margin at the leading and trailing end.
+
+    Two of those numbers are the pin disagreeing with itself, and both times the themeless block
+    is the one the guest draws. Its themed blocks carry an older `ScrollBarSize` of 16 against the
+    12 that is measured. And the collapse is governed by `ScrollBarContractBeginTime`, 500ms in
+    the themeless block against 2s in the themed ones — **not** by the key called
+    `ScrollBarContractDelay`, whose 2s belongs to the indicator transitions in `ScrollView`'s own
+    template. A key named for the thing you are looking for is not evidence that it is the one
+    applied, which is `a-key-can-name-a-role-nothing-fills` arriving by a third route.
+
+    **`ScrollingScrollBarVisibility` is not the conscious state.** Driven on the guest: setting
+    the vertical bar to `Visible` leaves the mini 2px thumb exactly where `Auto` left it. The
+    enum decides whether the bar exists; the pointer decides which of its two shapes is drawn.
+
+    **A visibility property is not the last word on the second page either.** PipsPager's
+    navigation buttons have an edge rule above their visibility: at the first page the previous
+    button goes to `PreviousPageButtonHidden` however `PreviousButtonVisibility` is set, and that
+    state sets `Opacity` to 0 rather than `Visibility` to `Collapsed`, so the button keeps its
+    24 by 24 box and the pips do not move when it appears. Measured on the guest's second
+    example, whose options pane says `Visible`: nothing at all is painted left of the first pip,
+    and the first pip is where it is with the arrow shown or hidden.
+
+    **What the library does not have.** Six controls and one internal. `ScrollView` and the older
+    `ScrollViewer` are the same box over the same content with different property names —
+    `ScrollView` is the modern pin's own (`controls/dev/ScrollView/ScrollView.xaml`), `ScrollViewer`
+    a `Windows.UI.Xaml` control WinUI 3 restyles (`CommonStyles/ScrollViewer_themeresources.xaml`,
+    implemented in `dxaml/xcp/dxaml/lib/ScrollViewer_Partial.cpp`), and both put the same
+    `ScrollBar` inside. That `ScrollBar` is the internal: WinUI publishes it, the Gallery gives it
+    no page, and every one of its appearances in this tranche is as a template part, so it is
+    built as `internal/ScrollBar.svelte` and exported by nothing. `PipsPager` is a repeater of
+    glyph buttons between two navigation buttons. `AnnotatedScrollBar` is a rail of labels that
+    drives a `ScrollView` through what upstream calls an `IScrollController`. `SemanticZoom` lives
+    only in `dxaml` and swaps two views in the same bounds. `RefreshContainer` and
+    `RefreshVisualizer` are the modern pin's own, and the visualizer's template is an empty `Grid`
+    100 tall whose entire content is a `SymbolIcon(Symbol::Refresh)` inserted from C++
+    (`RefreshVisualizer.cpp:61-65`, `:229-231`) and rotated by state.
+
+    **`ScrollViewer` is built rather than deferred, and the reason is that it costs a rename.**
+    Its page is in this group, its template draws the same box and the same bar, and the two
+    controls differ in their property names and in nothing the eye can find. The one difference
+    that reaches a page is the visibility enum: `ScrollBarVisibility` has a fourth member,
+    `Disabled`, and `ScrollingScrollBarVisibility` has three (`ScrollViewerPage.xaml:145-148`
+    against `ScrollViewPage.xaml`'s three-row combo), and the older page spends a `Slider` on the
+    zoom where the newer spends a `NumberBox`. Rejected: a placeholder page, which would leave the
+    version's own group incomplete; and folding the page onto `ScrollView`, which would render a
+    page the acceptance gate compares against a different original.
+
+    **The page's grouping is the page's, not the control's.** SemanticZoom's zoomed-in view is a
+    `GridView` with a `GroupStyle` and a `CollectionViewSource`; this library's `GridView` has no
+    grouping and this version does not add it. `SemanticZoom` takes two snippets and swaps them,
+    which is what the control does; the page draws its own headings above its own tiles, the way
+    v11's Grid and StackPanel pages draw layouts D30 says are not components.
+
+    **PullToRefresh can be drawn and cannot be provoked.** Both examples draw nothing of the
+    control at rest, so both compare clean at rest against the original; neither page offers a
+    button, and the reference host has no touch digitiser, so no capture of the original's
+    visualizer in any state can be taken from here. The control is built, its states are
+    exercised on a dev route rather than on the page, and the gesture that reaches them is a
+    pointer drag — which the original does not accept. That is a divergence in the direction this
+    project rarely records, and it is recorded rather than quietly enjoyed.
+
+    **A resource key can be too generic to be a token, and five of them are.**
+    `AnnotatedScrollBar_themeresources.xaml` names `ThumbHeight` 3, `ThumbWidth` 30,
+    `LabelsGridMinWidth` 44, `ScrollButtonFontSize` 8 and `ThumbCornerRadius` 1.5 — unprefixed,
+    and D11 emits a token as `--winui-` plus the key unchanged. No other dictionary in either pin
+    defines any of them, so nothing collides and the rule stands as written; the risk is that
+    `--winui-ThumbHeight` reads like Slider's and is AnnotatedScrollBar's, so the manifest's
+    comment says which control owns them.
+
+    **The units.**
+
+    | #   | unit                                                                                                                    |
+    | --- | ----------------------------------------------------------------------------------------------------------------------- |
+    | 0   | a prototype: a DOM scrollbar drawn on a scratch page and photographed on the guest, proving the baselines can see it    |
+    | 1   | `internal/ScrollBar.svelte` — the track, the two arrows, the thumb, and the four conscious states on the pin's timings  |
+    | 2   | `ScrollView` — the viewport over bits-ui's `ScrollArea`, the two bars, the corner, and the scroll and visibility modes  |
+    | 3   | the six copies retired: `ListView`, `GridView`, `ItemsView`, `TreeView`, `NavigationView`'s pane, the shell's page area |
+    | 4   | `ScrollViewer`, and its page                                                                                            |
+    | 5   | the ScrollView page — three examples, and the options that move them                                                    |
+    | 6   | `PipsPager`, and its two examples                                                                                       |
+    | 7   | `AnnotatedScrollBar` — the rail, the labels, the detail tooltip — and its page                                          |
+    | 8   | `SemanticZoom`, and its page                                                                                            |
+    | 9   | `RefreshContainer` and `RefreshVisualizer`, and their page                                                              |
+
+    Unit 0 is a prototype before a spec, which is v10's lesson: the mechanism this whole version
+    turns on is whether an element-drawn scrollbar survives the round trip to a baseline, and no
+    document settles it. Unit 3 is the debt four components' comments already name, and it is
+    sealed inside this version rather than after it, because a `ScrollView` nothing consumes has
+    not been tried against two children — v10's lesson again.
+
+    Done-when: each of the six routes renders the frame rather than the placeholder, and each
+    compares clean against the original on the reference guest as a page; a `ScrollView`'s bar
+    draws 2px at rest and a 12px track with two arrows under the pointer, in a baseline rather
+    than only in a live browser; the ScrollView page's six options each move the sample and its
+    substitution, including a `ScrollbarVisibility` of `Hidden` that removes the bar and a
+    `ZoomMode` of `Enabled` that zooms; the PipsPager page's three options each move it, and its
+    pips measure 6 selected and 4 unselected at a 12px pitch; the AnnotatedScrollBar's rail
+    carries the five labels at the offsets the original puts them and raises a tooltip on hover;
+    SemanticZoom swaps its two views in the same bounds on a click of a group heading; the two
+    PullToRefresh examples draw nothing at rest and their visualizer runs through its states on a
+    dev route; the six components render in the three themes in the snapshot suite; and the nine
+    gates stay green.
+
 14. **Styles** (10) and **Motion** (7) — AcrylicBrush, AnimatedIcon, ThemeShadow, System
     Backdrops, transitions, easing, connected animation. WD-006 closes here.
 15. **Media / Windowing / System / Shell** (18) — see open question O2.
@@ -2450,7 +2605,7 @@ who builds it or when, and the acceptance gate walks the navigation tree page by
 | Menus & toolbars | CommandBarFlyout, SwipeControl, StandardUICommand, XamlUICommand |
 | Basic input      | ColorPicker, RatingControl                                       |
 | Collections      | ~~PullToRefresh~~ — item 13 takes it, decided in v9's entry      |
-| Scrolling        | ScrollViewer                                                     |
+| Scrolling        | ~~ScrollViewer~~ — item 13 takes it, decided in v13's entry      |
 | Layout           | Canvas, RelativePanel, VariableSizedWrapGrid                     |
 | Text             | RichEditBox, RichTextBlock, TextBlock                            |
 
@@ -2470,10 +2625,14 @@ page that says so, decided when the group is reached rather than now. What the l
 that this gap was found by planning one tranche carefully, three tranches later than it could
 have been, and it would be found the same way again if it were not written down.
 
-**One row has been struck, and striking it is what the list is for.** Planning v9 read the
+**Two rows have been struck, and striking them is what the list is for.** Planning v9 read the
 Collections group as seven pages rather than the six its roadmap line named, found
 PullToRefresh sitting in this table, and moved it to item 13 with a reason rather than leaving
-it where it was. Twenty-three pages remain unscheduled.
+it where it was. Planning v13 read this table before writing its entry and found `ScrollViewer`
+sitting in the group that entry is about — a page the version would have built the whole of
+Scrolling around and left behind. It goes to item 13 for the reason that entry gives, which is
+that its page draws the same box as `ScrollView`'s and differs from it in property names.
+Twenty-two pages remain unscheduled.
 
 **A release becomes possible from v3 onward, and is deliberately taken after `Final`.** The
 capability and the decision are different questions: a release is technically possible now, and
