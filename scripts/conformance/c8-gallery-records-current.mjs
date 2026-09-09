@@ -67,7 +67,19 @@ function counted(design, shell, colorcode) {
 			menuItemsTotal: menuTotal(shell.menu),
 			groups: shell.groups.length,
 			specialSections: shell.groups.filter((group) => group.isSpecialSection).length,
-			groupItems: shell.groups.reduce((n, group) => n + group.items.length, 0)
+			groupItems: shell.groups.reduce((n, group) => n + group.items.length, 0),
+			itemsWithDocs: shell.groups.reduce(
+				(n, group) => n + group.items.filter((item) => item.docs.length > 0).length,
+				0
+			),
+			itemsWithApi: shell.groups.reduce(
+				(n, group) => n + group.items.filter((item) => item.apiNamespace !== null).length,
+				0
+			),
+			itemsWithSamplePage: shell.groups.reduce(
+				(n, group) => n + group.items.filter((item) => item.samplePagePath !== null).length,
+				0
+			)
 		},
 		[COLORCODE]: {
 			scopeNames: Object.keys(colorcode.scopeNames).length,

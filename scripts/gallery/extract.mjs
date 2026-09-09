@@ -27,6 +27,7 @@ const TYPOGRAPHY_PAGE = 'WinUIGallery/Samples/Typography/TypographyPage.xaml';
 const ICONS_DATA = 'WinUIGallery/Samples/Iconography/IconsData.json';
 const CONTROL_INFO = 'WinUIGallery/SampleSupport/Data/ControlInfoData.json';
 const MAIN_WINDOW = 'WinUIGallery/MainWindow.xaml';
+const SAMPLES_DIR = 'WinUIGallery/Samples';
 
 // One list per record, holding the files that record is derived from — not one shared
 // list both draw on. A provenance block answers "what was read to produce this file",
@@ -483,7 +484,20 @@ function groups(json) {
 			title: g.Title,
 			iconGlyph,
 			isSpecialSection,
-			items: g.Items.map((it) => ({ uniqueId: it.UniqueId, title: it.Title }))
+			items: g.Items.map((it) => {
+				const samplePagePath = `${SAMPLES_DIR}/${it.UniqueId}/${it.UniqueId}Page.xaml`;
+				return {
+					uniqueId: it.UniqueId,
+					title: it.Title,
+					subtitle: it.Subtitle ?? null,
+					description: it.Description ?? null,
+					apiNamespace: it.ApiNamespace ?? null,
+					baseClasses: it.BaseClasses ?? [],
+					docs: (it.Docs ?? []).map((doc) => ({ title: doc.Title, uri: doc.Uri })),
+					sourcePath: it.SourcePath ?? null,
+					samplePagePath: existsSync(join(CHECKOUT, samplePagePath)) ? samplePagePath : null
+				};
+			})
 		});
 	}
 	if (totalItems !== 120) {
@@ -511,7 +525,19 @@ function buildShell(mainWindowRoot, controlInfo) {
 			menuItemsTotal: all.length,
 			groups: groupData.groups.length,
 			specialSections: groupData.specials,
-			groupItems: groupData.groups.reduce((n, g) => n + g.items.length, 0)
+			groupItems: groupData.groups.reduce((n, g) => n + g.items.length, 0),
+			itemsWithDocs: groupData.groups.reduce(
+				(n, g) => n + g.items.filter((item) => item.docs.length > 0).length,
+				0
+			),
+			itemsWithApi: groupData.groups.reduce(
+				(n, g) => n + g.items.filter((item) => item.apiNamespace !== null).length,
+				0
+			),
+			itemsWithSamplePage: groupData.groups.reduce(
+				(n, g) => n + g.items.filter((item) => item.samplePagePath !== null).length,
+				0
+			)
 		}
 	};
 }
@@ -642,7 +668,8 @@ const censusShell = (doc) => {
 	return [
 		`files             ${c.files} read`,
 		`menu              ${c.menuItems} top-level, ${c.menuItemsTotal} total`,
-		`groups            ${c.groups} (${c.specialSections} special), ${c.groupItems} items`
+		`groups            ${c.groups} (${c.specialSections} special), ${c.groupItems} items`,
+		`page details      ${c.itemsWithDocs} docs, ${c.itemsWithApi} API, ${c.itemsWithSamplePage} sample pages`
 	].join('\n');
 };
 
