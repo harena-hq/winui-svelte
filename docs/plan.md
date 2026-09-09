@@ -70,6 +70,8 @@ pnpm workspace. The library is publishable and imposes no build tooling on its c
 | D31 | CalendarView's month grid is bits-ui's `Calendar`; its year and decade grids are ours                  | this file, "Roadmap → v12"        |
 | D32 | A date-valued prop is a native `Date`; the arithmetic is `@internationalized/date`, the strings `Intl` | this file, "Roadmap → v12"        |
 | D33 | A scrollbar is elements rather than `::-webkit-scrollbar`, and its viewport is not bits-ui's           | this file, "Roadmap → v13"        |
+| D34 | Roadmap item 14 becomes two versions: Styles is photographable at rest and Motion is not               | this file, "Roadmap → v14"        |
+| D35 | A shape is a component and a brush or a shadow is a value; the Gallery record's base class decides     | this file, "Roadmap → v14"        |
 
 ## Verification
 
@@ -2671,13 +2673,31 @@ generics="T">` component through `pnpm --filter winui-svelte build` reaches `dis
 
     **What this version owes.**
 
-    | owed                                                                             | what it needs                                                                                                      |
-    | -------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
-    | `NumberBox` is 240 wide where the original is about 120                          | a reading of `NumberBoxMinWidth` against what the original's own box measures; it moves two pages' panes           |
-    | the AnnotatedScrollBar page's tile grid is six columns, not five                 | the same question, from the other end: what the sample ScrollView's width should be when the pane is content-sized |
-    | `ScrollView`'s programmatic scroll — `ScrollTo`, `ScrollBy`, `AddScrollVelocity` | two of the ScrollView page's three examples render fully and do nothing, which is what those members are for       |
-    | `ContentOrientation="None"` with content that cannot shrink                      | a rule this project has not needed: the Gallery's own use of that value is an image that fits                      |
-    | the six pages' narrow adaptive states                                            | v10's owed row, unchanged                                                                                          |
+    | owed                                                                                      | what it needs                                                                                                      |
+    | ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+    | ~~`NumberBox` is 240 wide where the original is about 120~~ — **read while planning v14** | one line, and the reading is below                                                                                 |
+    | the AnnotatedScrollBar page's tile grid is six columns, not five                          | the same question, from the other end: what the sample ScrollView's width should be when the pane is content-sized |
+    | `ScrollView`'s programmatic scroll — `ScrollTo`, `ScrollBy`, `AddScrollVelocity`          | two of the ScrollView page's three examples render fully and do nothing, which is what those members are for       |
+    | `ContentOrientation="None"` with content that cannot shrink                               | a rule this project has not needed: the Gallery's own use of that value is an image that fits                      |
+    | the six pages' narrow adaptive states                                                     | v10's owed row, unchanged                                                                                          |
+
+    **The `NumberBox` row, read while planning v14, and it is one line.**
+    `NumberBox.xaml:114` gives the inner `InputBox` the `NumberBoxTextBoxStyle`, which is
+    `BasedOn="{StaticResource DefaultTextBoxStyle}"` and overrides only `Template` — so the
+    InputBox inherits `MinWidth = TextControlThemeMinWidth`, the 318 every text box has. The
+    `SpinButtonsVisible` state at `NumberBox.xaml:33` then **lowers** it to `NumberBoxMinWidth`,
+    120 (`NumberBox_themeresources.xaml:34`), and because `InputBox` is `Grid.ColumnSpan="3"`
+    that minimum is the whole control's.
+
+    Ours puts the 318 on the outer box (`NumberBox.svelte:244`) and the 120 on the inner input
+    (`:353`), where the outer minimum dominates and the state setter can never take effect. The
+    comment above it reads the setter backwards — it says the 120 is there so the box is wide
+    _enough_, where upstream's purpose is to let a NumberBox be narrower than a text box.
+
+    **A state setter that lowers a minimum is invisible behind an outer minimum transcribed from
+    the same resource**, and nothing catches it: both numbers are cited, both citations are
+    correct, and the control renders. The fix is a unit of v14, and the AnnotatedScrollBar row
+    above is the same question from the other end.
 
     **What this version declined.** WD-035, a pull is a pointer drag where the original takes only
     touch — a divergence in the direction this project rarely records, because the alternative is a
@@ -2704,9 +2724,319 @@ generics="T">` component through `pnpm --filter winui-svelte build` reaches `dis
       `pips-flip2.mjs`, `pips-options.mjs`, `asb-page-guest.mjs`, `asb-page2.mjs`,
       `sz-page-guest.mjs`, `sz-drive.mjs`.
 
-14. **Styles** (10) and **Motion** (7) — AcrylicBrush, AnimatedIcon, ThemeShadow, System
-    Backdrops, transitions, easing, connected animation. WD-006 closes here.
-15. **Media / Windowing / System / Shell** (18) — see open question O2.
+14. **Styles** (10) — the drawing vocabulary WinUI has and this library has never built: shapes,
+    icons, two brushes, a density axis, and a shadow the pin states as a formula.
+
+    **The goal, in one line: the Styles group's ten pages render on the frame, and the drawing
+    primitives they demonstrate exist in the library.**
+
+    **The ten pages, read on the reference guest before anything was decided.** Captures in
+    `.private/captures/070-styles-motion/`.
+
+    | page                  | examples                                                         | display pane                                                                                            | options pane                                                                                                 |
+    | --------------------- | ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+    | AcrylicBrush          | 3 (`AcrylicPage.xaml:48`, `:78`, `:156`)                         | three coloured shapes under a rectangle filled with an acrylic brush                                    | none; then a tint opacity, a tint colour and a fallback colour; then a tint opacity and a luminosity opacity |
+    | AnimatedIcon          | 2 (`AnimatedIconPage.xaml:14`, `:60`)                            | a button carrying an animated icon, then a `NavigationView` whose settings item carries one             | a `Kind` ComboBox; then none                                                                                 |
+    | Compact Sizing        | 1 (`CompactSizingPage.xaml:57`)                                  | a form of nine controls at one density                                                                  | a Standard/Compact radio pair                                                                                |
+    | IconElement           | 6 (`IconElementPage.xaml:11`, `:39`, `:54`, `:72`, `:81`, `:96`) | six buttons — a bitmap icon, a font icon in a text font, two image icons, a path icon and a symbol icon | a Monochrome check box on the first                                                                          |
+    | Line                  | 4 (`LinePage.xaml:25`, `:95`, `:159`, `:227`)                    | a line, a polyline, a path and a geometry group                                                         | end points and stroke thickness; a show-points toggle; and so on                                             |
+    | Shape                 | 3 (`ShapePage.xaml:23`, `:68`, `:134`)                           | an ellipse, a rectangle and a polygon                                                                   | height, width, stroke thickness, and the rectangle's two radii                                               |
+    | RadialGradientBrush   | 1 (`RadialGradientBrushPage.xaml:19`)                            | one filled rectangle                                                                                    | mapping mode, centre, two radii, gradient origin, spread method                                              |
+    | System Backdrops      | 3 (`SystemBackdropsPage.xaml:24`, `:44`, `:56`)                  | running prose and a `Show window` button                                                                | none on the first                                                                                            |
+    | SystemBackdropElement | 1 (`SystemBackdropElementPage.xaml:11`)                          | a rounded rectangle carrying a backdrop material, and a button                                          | a backdrop type and a corner radius                                                                          |
+    | ThemeShadow           | 1 (`ThemeShadowPage.xaml:11`)                                    | one 200 by 200 card casting a shadow                                                                    | a Z-translation `Slider`, 0 to 64, initial 32                                                                |
+
+    Twenty-five examples over ten pages, which is what the version is sized against rather than
+    the page count.
+
+    **D34 — item 14 becomes two versions, and Motion is the second.** As written it was
+    seventeen pages against a tranche average of five, which alone would only be an argument
+    about size. What decides it is that the two halves have different acceptance problems.
+    Every page in Styles shows its whole subject in a still frame. **No page in Motion shows
+    any of its subject in a still frame**: photographed at rest, Easing Functions is three
+    Animate buttons and three identical blue squares, and Theme Transitions is five pale
+    squares, three coloured ones and a row of buttons. A baseline of our reproduction would
+    match the original's whether the motion were right, wrong or absent.
+
+    So Motion needs an instrument before it needs a control, which is principle 2's "sequence
+    foundations" applied to a verification method rather than to a feature. Splitting gives
+    each half one goal line and lets that instrument be v15's first unit. `Media / Windowing /
+System / Shell` moves to item 16; `item 15` occurs once in the whole of `docs/`, in the
+    roadmap line itself, so the renumbering costs one edit.
+
+    **The version's find is that WinUI states its drop shadow as a formula, and this project
+    fitted it by eye instead.** `scripts/tokens/manifest.mjs` says so in as many words above
+    `PLATFORM_SHADOWS`: "No pinned dictionary states this recipe: it was measured on the
+    reference guest and fitted against the browser's own blur." One does. It was outside the
+    control pin's sparse checkout, which carried `controls/dev`, `dxaml/xcp/dxaml/lib`,
+    `dxaml/xcp/core/core/elements` and `dxaml/xcp/core/inc` and not
+    `dxaml/xcp/components`. Adding the last of those — 17 MB — brings in
+    `graphics/inc/DropShadowRecipe.h`, whose `GetDropShadowRecipe(translationZ, theme)` is the
+    whole recipe, taken, its own comment says, "from the shell team implementation of the
+    ThemeNineGridShadowBrush":
+
+    ```
+    Elevation = min(64, Z / 2)
+    Elevation < 2         ambient 0,  directional 0
+    2 <= Elevation <= 16  ambient 0,  directional light min(Elevation/100 + 0.06, 0.14), dark 0.26
+    Elevation > 16        ambient light 0.15 dark 0.37, directional light 0.19 dark 0.37,
+                          ambient blur Elevation/3, ambient Y offset 2
+    directional blur = Elevation, directional Y offset = Elevation / 2, both black
+    ```
+
+    and `graphics/ThemeShadow.cpp:190`, whose hand-tuned tight insets are 4/1/4/8 for a
+    ToolTip's depth and 10/2/10/18 for everything else's. The three depths the platform
+    actually uses are `ToolTip_Partial.cpp:647` (Z 16), `ElevationHelper.cpp:19` (Z 32, the
+    base for every other elevated control) and `ContentDialog_Partial.cpp:1165` (Z 128).
+
+    **The fit and the formula agree on the shadow's extent and disagree on its shape.** The
+    measured `PopupShadow` reaches 8 pixels to each side and 18 below, against the pin's
+    10/2/10/18 — a cross-check, not a contradiction. But it is two layers where the recipe
+    says a popup casts one, because a popup sits at Elevation 16, the last value before the
+    ambient layer switches on.
+
+    **The ThemeShadow page is the instrument that settles the one number the source does not
+    give**, which is what a composition `BlurRadius` is in CSS pixels of `box-shadow` blur.
+    Two depths are photographed on the guest, light theme, a 200 by 200 card of `#fbfbfb` on a
+    `#f3f3f3` ground:
+
+    | slider | Elevation | bottom peak | right peak | top peak | extents (b/r/t) |
+    | ------ | --------- | ----------- | ---------- | -------- | --------------- |
+    | 32     | 16        | 0.1235      | 0.0494     | 0.0082   | 19 / 11 / 3     |
+    | 64     | 32        | 0.2346      | 0.1276     | 0.0412   | 39 / 23 / 7     |
+
+    The top edge is the row that proves the formula rather than merely fitting it. At Elevation
+    16 the single directional layer is offset 8 pixels down and almost nothing shows above the
+    card. At Elevation 32 the ambient layer switches on with an offset of 2, and the peak above
+    the card is five times larger. Nothing else in the recipe produces that jump, and no fit
+    taken at one depth could have found it.
+
+    **WD-012 closes here, and its own condition was met by accident.** The entry says it would
+    be reconsidered "if a ToolTip can be raised and photographed on the guest", after four ways
+    of raising one produced nothing. One is stuck on the reference guest's screen through all
+    seventeen captures — an orphaned popup the ScrollView page left behind — sitting over a
+    `#f9f9f9` page, and its shadow reads 0.078 at the peak and dies in seven rows against the
+    tight bottom inset of 8. The condition is now beside the point either way: a ToolTip is
+    `DropShadowDepthClass::Small` at Z 16, and the recipe gives its shadow without a photograph.
+
+    **The reference draws every backdrop material as its fallback colour, and two pages say
+    so.** On the AcrylicBrush page the default in-app rectangle is opaque near-white and the
+    custom one is solid `Green`, its declared `FallbackColor`; the magenta ellipse behind both
+    is entirely hidden. On the SystemBackdropElement page, with `Acrylic` selected, the element
+    is a plain near-white rounded rectangle. The page's own text warns that this happens.
+
+    That is not a problem to solve but a bar to state. Fidelity here is against the original as
+    the reference renders it, and the reference renders a solid fill — which is what this
+    library already emits for `AcrylicInAppFillColorDefaultBrush` and its family, because the
+    Fluent palette defines those as solids. What is not reproduced is the material on a machine
+    with a compositor, and that becomes a divergence with the reference's own rendering as its
+    evidence.
+
+    **WD-006 does not close here, and the roadmap line saying it would is the second thing this
+    planning pass corrected.** The entry's own condition names "the Styles tranche lands
+    `AnimatedIcon` with a motion vocabulary these three can be expressed in", and the motion
+    vocabulary is v15's by D34. What this version owes it is smaller and overdue: **its stated
+    reason is not true.** WD-006 says the motion "exists here only as a compiled Composition
+    graph, which is not a format CSS can read and not one this repository can re-derive a
+    keyframe list from." The pin carries the LottieGen output as C++ that spells the keyframe
+    list out — `AnimatedChevronUpDownSmallVisualSource.cpp` has a duration of 43,333,333 ticks
+    (4.3333s) at `:104`, four cubic Bézier easings with their control points at `:352-367`, an
+    `InsertKeyFrame` per keyframe with its progress and its value from `:428`, and a `Markers()`
+    map at `:784` that names each state transition's start and end as a fraction of the
+    timeline. `NormalOnToPointerOverOn` runs 0.1156 to 0.1502, which is 150ms.
+
+    That does not make the animation cheap — the same file carries path morphs, expression
+    animators and geometry that a keyframe list alone does not describe — but "cannot be read"
+    and "is expensive to reproduce" are different claims, and the entry makes the first one. It
+    is corrected in this version and decided in the next.
+
+    **Compact Sizing is a density scope, and the first draft of this entry overstated it.** It
+    was written as "a second set of resource values across eleven controls" and named a version
+    of its own, on the assumption that the dictionary was large and not in the checkout. It is
+    `controls/dev/dll/DensityStyles/Compact.xaml`, twenty-three lines, and it has been in the
+    checkout all along: one implicit `TextBlock` style at font size 14 and sixteen keys, of
+    which **eleven are already emitted** by the token layer and five are not
+    (`ControlContentThemeFontSize`, `ContentControlFontSize`, `TextControlThemeMinHeight`,
+    `TreeViewItemMultiSelectCheckBoxMinHeight`, `ComboBoxEditableTextPadding`).
+
+    What that costs is small precisely because of the token architecture: a density is a scoped
+    block redefining the same custom properties, so **no component changes at all** — a
+    `[data-density='compact']` block is to density what the theme blocks are to theme. What it
+    does cost is the five missing keys and, more interestingly, the hardcodes that stand where
+    two of them belong. `TextBox`'s `height: 32px` and `min-width: 318px` carry a `c1-allow`
+    saying `controls/dev` "defines only for compact density" — and this file is where. Those
+    become tokens, which is the same defect family as unit 1's.
+
+    **What the library does not have, and what it turns out it does not need.** Shapes and
+    lines are genuinely absent — `Rectangle`, `Ellipse`, `Polygon`, `Line`, `Polyline`, `Path`
+    and a geometry group, which are seven of the version's twenty-five examples between them.
+    They are also what the AcrylicBrush page draws under its brush, so Shape comes before
+    Acrylic and not after it. `RadialGradientBrush` is absent. `ParallaxView` is filed under
+    Motion by the Gallery and goes to item 15 with it.
+
+    **Canvas is scheduled by no tranche and five of this version's examples need it.** The
+    roadmap's own unscheduled table lists it under Layout, and the Line page draws all four of
+    its examples inside one — `Canvas.Left`, `Canvas.Top` and `Canvas.ZIndex` on labelled
+    points — as does the Shape page's polygon. This is the shape v13 hit with `ScrollViewer`:
+    a page nothing schedules, inside a version that needs it. D30 answers what it is without a
+    new decision, because a `Canvas` is absolute positioning and its whole body would be one
+    CSS declaration per prop; it is drawn in the page like Grid and StackPanel, and its row is
+    struck with the reason written down. Its own Gallery page stays unscheduled.
+
+    **The icon family is the one that looks absent and is not.** ADR 0012 already decided this
+    and already rejected building it: `icon` is a `Snippet` and `glyph` is a recorded shorthand,
+    and the ADR's rejected alternative is named, in those words, "a component family — `FontIcon`,
+    `SymbolIcon`, `PathIcon`, `BitmapIcon`, `ImageIcon`", rejected because "a snippet already
+    admits every one of these shapes without the library owning any of them". The IconElement
+    page is six buttons over five icon kinds, and a snippet draws every one of them. So it is a
+    page unit and not a component unit, and the only thing it needs that the library lacks is
+    the code point behind `<SymbolIcon Symbol="Accept"/>`, read from the reference — which is
+    exactly the procedure ADR 0012 prescribes for a symbol name.
+
+    **And the procedure ADR 0012 prescribes rests on a claim that is false.** The ADR says
+    `Symbol` "is not carried" because "its name-to-code-point pairs are in the Windows SDK and
+    in none of the three pinned upstreams, so shipping them would be a transcription of the
+    kind ADR 0001 and ADR 0007 exist to refuse." They are in the control pin, and have been:
+    `CSymbolIcon::ConvertSymbolValueToGlyph` at
+    `dxaml/xcp/core/core/elements/icon.cpp:461-667` is a switch of **197 cases**, each mapping
+    a legacy Segoe UI Symbol code point to the recommended Segoe Fluent Icons one and carrying
+    the member's name in a trailing comment. The header comment above it explains the
+    remapping: the E0 to E5 range collides with characters some font sets program there.
+
+    That is the third time this project has recorded "not in any pin" about something a pin
+    holds — after the two keys v13 found and the shadow recipe above — and each time the search
+    was narrower than the claim. The disposition changes with the reason: a table _generated_
+    from the pin by a script in `scripts/` and re-derived by C8 is not a transcription at all,
+    it is the pipeline `tokens.css` and the Gallery records already use. ADR 0012 is amended
+    rather than reinterpreted, because its rejected alternative was rejected on this ground.
+
+    **D35 — a shape is a component; a brush and a shadow are values.** D30 settled the same
+    question for Grid and StackPanel and left a test behind: not a component where "a component
+    whose whole body is one CSS declaration per prop would give a consumer a worse grid than the
+    one the browser already has"; a component where it "is a `FrameworkElement` with its own
+    `Thickness` grammar, its page names it as a control, and a consumer porting XAML reaches for
+    it by name". The Gallery's own record answers the first clause without argument, because it
+    carries each page's base classes: `Shape` and `Line` derive from `FrameworkElement`, and
+    `AcrylicBrush`, `RadialGradientBrush` and `ThemeShadow` derive from `Brush`, `Brush` and
+    `Shadow`. **An element a consumer places is a component; a value it assigns is a token or a
+    string.**
+
+    The second clause decides it the same way. A `Path` takes `Data="F1 M 16,12 20,2L 20,16
+1,16"` (`IconElementPathiconButton.txt`) — XAML's path grammar, whose `F0`/`F1` prefix names
+    a fill rule that SVG spells as an attribute instead. That is a grammar under a member's
+    name, which is exactly what made `Thickness` library code in v11 rather than a string handed
+    to CSS, and the reader belongs beside `internal/thickness.ts` for the same reason.
+
+    So this version adds six components and no brush: `Rectangle`, `Ellipse`, `Polygon`,
+    `Line`, `Polyline` and `Path` are six names over two families, `RadialGradientBrush` is a
+    `radial-gradient` in a page's own CSS, and `ThemeShadow` is what unit 0 puts in the token
+    layer.
+
+    **The units.**
+
+    0. **The drop-shadow recipe becomes the token layer's, and WD-012 closes.**
+       `GetDropShadowRecipe` transcribed into the manifest as a function of Z and theme, the
+       three depths emitted from it, and the one free parameter — a composition `BlurRadius` in
+       CSS pixels of blur — fitted against the two photographed depths and stated as a number
+       with its residual. `ToolTip` gains the shadow it has been missing since v6.
+    1. **`NumberBox`'s minimum is the state setter's, not the text box's.** v13's owed row, one
+       line and a corrected comment, with the two pages whose panes move re-photographed.
+    2. **The shape family** — `Rectangle`, `Ellipse`, `Polygon`, and the geometry reader that
+       `Data` needs.
+    3. **The Shape page**, three examples.
+    4. **The line family** — `Line`, `Polyline`, `Path`, and a geometry group.
+    5. **The Line page**, four examples.
+    6. **The ThemeShadow page**, one example, driven by unit 0's function rather than by a
+       second transcription of it.
+    7. **The `Symbol` table, generated from the pin**, and ADR 0012 amended on the ground its
+       rejected alternative was rejected on.
+    8. **The IconElement page**, six examples, drawn with snippets under ADR 0012.
+    9. **The AnimatedIcon page**, two examples at their resting frames, and WD-006's stated
+       reason corrected.
+    10. **The RadialGradientBrush page**, one example, the brush in the page's own CSS.
+    11. **The AcrylicBrush page**, three examples over the shapes unit 2 builds, and the
+        divergence that says what a fallback colour is and is not.
+    12. **The two backdrop pages**, read against D16 and WD-003, which already say the window's
+        material is not approximated.
+    13. **The compact density**, as a scoped block over the five keys the layer does not yet
+        emit and the two `TextBox` hardcodes that stand where two of them belong.
+    14. **The Compact Sizing page**, one example, which is a frame the density radio swaps.
+
+    **Four traps the upstream survey found, recorded here so no unit spec has to rediscover
+    them.**
+
+    - **Every slider on the Shape and Line pages starts at its `Minimum`**, because not one of
+      them authors a `Value`, and several minima are not zero — the line's end point X starts at
+      200, its stroke thickness at 5, the geometry group's two radii at 30. A reproduction that
+      starts a slider at zero or at the middle is wrong before it is touched.
+    - **RadialGradientBrush is the opposite case.** Its markup says `Center="0.25,0.25"` and
+      `GradientOrigin="0.5,.25"`, and `InitializeSliders()` overwrites all six to 0.5 on load
+      (`RadialGradientBrushPage.xaml.cs:48-73`). What the page shows at rest is the slider state,
+      not the markup state. Its `GradientOrigin` is also a focal point, which CSS's
+      `radial-gradient` has no expression for, and `SpreadMethod` `Reflect` and `Repeat` are
+      `Mirror` and `Wrap` in Composition.
+    - **Two of AcrylicBrush's own constants are dead.** `sc_saturation` 1.25 and
+      `sc_exclusionColor` are declared at `AcrylicBrush.h:64-67` and referenced nowhere in the
+      checkout; the shipping graph is a blur at radius 30, a luminosity blend, a tint blend and
+      a 2% noise layer. A spec that asks for a saturation step is describing the pre-19H1 recipe.
+      The noise texture is a 256x256 PNG the checkout does not contain.
+    - **The IconElement page's fourth example loads an image over the network** — a raw
+      githubusercontent URL, not a local asset (`IconElementPage.xaml:75`). Its only local asset
+      is `Assets/SampleMedia/Slices.png`, 90 by 90, used three times.
+
+    **Done-when.**
+
+    - The ten routes render `ItemPage` from the record rather than the placeholder, and each of
+      the twenty-five examples shows its header, its source and its options pane where the
+      original has one.
+    - Six new components are exported, each with a dev route and a visual spec, each passed to
+      `snapshotAllThemes` by literal name, and each compared against the original on the guest.
+    - The shadow recipe reproduces both photographed depths — all four ramps at each — within a
+      tolerance this version states before it fits, and the two existing shadow tokens change or
+      do not change with the reason recorded either way.
+    - WD-012 is deleted, WD-006's reason is corrected, and every new declaration is cited in
+      code.
+    - The `Symbol` record is generated from `icon.cpp` and re-derived by C8, never hand-edited,
+      and ADR 0012 carries the amendment rather than a reinterpretation.
+    - The compact density is a scoped block, and adding it changes no component's code — if a
+      component has to change, a value it hardcodes should have been a token and that is the
+      finding.
+    - Nine gates green, `check` clean, both builds succeeding, every baseline photographed on
+      the reference guest.
+
+    Planned. The closing entry follows when the units are sealed.
+
+15. **Motion** (7) — Animation interop, Connected Animation, Easing Functions, Implicit
+    Transitions, Page Transitions, Theme Transitions, and **ParallaxView**, which the Gallery
+    files under Motion and which is the group's one ordinary control.
+
+    **The goal, in one line: the Motion group's seven pages render on the frame, and the
+    animations they demonstrate can be judged by something.**
+
+    The second clause is the version, and D34 is why it is a clause at all. This tranche's
+    acceptance problem is v13's one level further out. There, the harness could not photograph
+    the subject because headless Chromium paints no `::-webkit-scrollbar`; the answer was to
+    make the scrollbar out of elements, and a `div` photographs. Here the subject is not a thing
+    but an interval, and no still frame of any of these pages contains it.
+
+    The instrument is v15's first unit and the rest of the version waits on it. What it has to
+    do is turn an interval into a still: a page that renders a fixed set of samples of an
+    animation's own curve, so that a baseline compares the curve rather than the resting frame.
+    CSS gives two handles for that — a paused animation with a negative delay names one frame
+    exactly, and `linear()` expresses any closed-form easing to whatever precision the sampling
+    asks for — and XAML's easing functions are closed forms rather than compiled data, which is
+    the difference between this tranche and WD-006's Lottie sources.
+
+    The framework's own motion vocabulary is four durations and one spline, and this library
+    already emits four of the five: `ControlNormalAnimationDuration` 250ms,
+    `ControlFastAnimationDuration` 167ms, `ControlFasterAnimationDuration` 83ms and
+    `ControlFastOutSlowInKeySpline` `0,0,0,1` (`generic.xaml:23271-23275`).
+    `ControlFastAnimationAfterDuration`, 168ms, is defined there and emitted by nothing.
+
+    Not planned in detail. The page table, the units and the decisions are written when the
+    version is planned, after v14 closes.
+
+16. **Media / Windowing / System / Shell** (18) — see open question O2.
 
 **Twenty-four Gallery pages are scheduled by no tranche, and planning v7 is what found
 them.** The roadmap enumerates by name where a tranche schedules controls, and by count where
@@ -2721,14 +3051,14 @@ who builds it or when, and the acceptance gate walks the navigation tree page by
 
 **And fourteen individual pages sit inside groups the roadmap does enumerate by name.**
 
-| group            | scheduled by no tranche                                          |
-| ---------------- | ---------------------------------------------------------------- |
-| Menus & toolbars | CommandBarFlyout, SwipeControl, StandardUICommand, XamlUICommand |
-| Basic input      | ColorPicker, RatingControl                                       |
-| Collections      | ~~PullToRefresh~~ — item 13 takes it, decided in v9's entry      |
-| Scrolling        | ~~ScrollViewer~~ — item 13 takes it, decided in v13's entry      |
-| Layout           | Canvas, RelativePanel, VariableSizedWrapGrid                     |
-| Text             | RichEditBox, RichTextBlock, TextBlock                            |
+| group            | scheduled by no tranche                                                               |
+| ---------------- | ------------------------------------------------------------------------------------- |
+| Menus & toolbars | CommandBarFlyout, SwipeControl, StandardUICommand, XamlUICommand                      |
+| Basic input      | ColorPicker, RatingControl                                                            |
+| Collections      | ~~PullToRefresh~~ — item 13 takes it, decided in v9's entry                           |
+| Scrolling        | ~~ScrollViewer~~ — item 13 takes it, decided in v13's entry                           |
+| Layout           | ~~Canvas~~ — v14 draws it in the page under D30, RelativePanel, VariableSizedWrapGrid |
+| Text             | RichEditBox, RichTextBlock, TextBlock                                                 |
 
 Two of those look scheduled and are not, which is why the count was wrong the first time it was
 taken. **ColorPicker** occurs in this file exactly once, in D9's row: the plan has decided
