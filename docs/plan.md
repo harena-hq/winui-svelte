@@ -2597,6 +2597,113 @@ generics="T">` component through `pnpm --filter winui-svelte build` reaches `dis
     dev route; the six components render in the three themes in the snapshot suite; and the nine
     gates stay green.
 
+    **Closed.** Eleven commits. Six controls — `ScrollView`, `ScrollViewer`, `PipsPager`,
+    `AnnotatedScrollBar`, `SemanticZoom`, and the `RefreshContainer`/`RefreshVisualizer` pair — the
+    internal `ScrollBar` all of them are made of, and five of the six pages on the frame. WD-035 and
+    WD-036. 76 tests green on the guest, nine gates green.
+
+    **Its Done-when, met, and one clause it could not meet.** Five routes render the frame:
+    `/scrolling/scrollview`, `/scrolling/scrollviewer`, `/scrolling/pipspager`,
+    `/scrolling/annotatedscrollbar`, `/scrolling/semanticzoom`, and `/collections/pulltorefresh` is
+    the sixth. A `ScrollView`'s bar draws 2 pixels at rest and a 12-pixel track with two arrows
+    under the pointer, in a baseline rather than only in a live browser. The ScrollView page's six
+    ComboBoxes each move the sample and its substitution and the ZoomFactor NumberBox moves the
+    sample alone, which is what its record declares. PipsPager's pips measure 6 selected and 4
+    unselected at a 12-pixel pitch, and its four options move both. AnnotatedScrollBar's rail
+    carries five labels, drops two of them at a rail of 140, and raises a tooltip naming the colour
+    under the pointer. SemanticZoom swaps its two views in a box that measures 1181 by 500 in
+    either. The two PullToRefresh examples draw nothing at rest.
+
+    **The clause it could not meet is "compares clean as a page", and twice for one reason.** Our
+    ScrollView page's options pane is 37 pixels wider than the original's, because our `NumberBox`
+    measures 240 against about 120; and our AnnotatedScrollBar page lays its tiles out in six
+    columns against the original's five, because the sample ScrollView is 758 wide against about 604. Both frames cap the options pane at the 320 upstream sets, so what differs is the width
+    the pane's own content asks for — and that is a question about controls four versions old
+    rather than about either page, which may not override a control's width.
+
+    **What the version was really about.** The scrollbar, and the fact that **the acceptance
+    harness cannot photograph one**. v9 recorded it and nothing had acted on it: the guest drives a
+    headless Edge, headless Chromium uses overlay scrollbars, and `::-webkit-scrollbar` rules paint
+    nothing there. Six components carried a copy of those rules and none of it appeared in any
+    baseline. Unit 0 measured both halves of that side by side before unit 1 was specified — the
+    pseudo-element box reserved no gutter and drew nothing; the element box drew a 12-pixel track,
+    both arrow glyphs and the thumb — and unit 3 retired all six copies into one control.
+
+    **D33 was decided, then half of it was struck, and reading the primitive is what struck it.**
+    bits-ui's `ScrollArea` floors its thumb at a hard-coded 18 where WinUI floors it at 30, divides
+    by a different length, has none of WinUI's three conditions for drawing no thumb, and writes the
+    thumb's position into `style.transform` on every scroll — the channel the collapsed offset
+    needs. The cost of not catching it would have been a thumb of the wrong length in every
+    scrolling region in the library, largest where it shows most, and no gate would have seen it.
+    ADR 0004 gained the category: a primitive that exists and computes something else.
+
+    **The measurements that stand.** The rail is 12 wide; the collapsed thumb paints 2 pixels at
+    rail-relative 7..9 and the expanded one 6 at 3..9, against the original's 764..766 and 760..766
+    in a rail ending at 769. The track is `#f9f9f9` and the thumb `rgb(138,138,138)` over it, which
+    is `ControlStrongFillColorDefault` at 0.447 on that ground to the digit. PipsPager's selected
+    pip is 6 and its unselected 4 at a 12-pixel pitch. `interacting` at a ratio of 0.4 gives opacity
+    0.4, half a turn and five pixels of parallax.
+
+    **Three transcriptions that look like mistakes and are not.** PipsPager's selected and normal
+    glyphs are the same code point and differ only in size. RefreshVisualizer holds its opacity at
+    0.4 through the whole pull because upstream builds the ramp and then does not start it — the
+    line is commented out. And AnnotatedScrollBar's label template carries a negative margin that
+    subtracts seven pixels from every measured label height, which loosens every collision
+    comparison by the same amount: the margin is layout, not decoration.
+
+    **What the pin says twice and differently.** `ScrollBarSize` is 12 in the themeless block and 16
+    in the themed ones, and the guest draws 12. The collapse is timed by `ScrollBarContractBeginTime`
+    at 500ms, not by the key actually named `ScrollBarContractDelay`, whose 2 seconds belong to a
+    different template. Both times the themeless block is the one that renders, and both times the
+    name was the misleading evidence.
+
+    **Four defects a green battery hid, and what saw each.**
+
+    - A `background` shorthand resets `background-clip`, so the disabled thumb painted its whole
+      eight-pixel box where the original paints two. Seen by reading the baseline image.
+    - A XAML stroke straddles the edge, so a border-box border of the whole thickness consumed the
+      thumb entirely. Seen by measuring the rendered thumb against the original's own pixels.
+    - The zoom anchored at the top left where upstream anchors at the centre of the viewport — its
+      `ZoomTo` takes a centre point and the Gallery passes null. Ours showed the sky above a bay
+      where the original showed the bay. Seen by putting the two pages side by side.
+    - `--update-snapshots` re-photographed a fixed render and wrote the old pixels. v10 recorded
+      this and it was paid again; the file changed only after the PNGs were deleted.
+
+    **What this version owes.**
+
+    | owed                                                                             | what it needs                                                                                                      |
+    | -------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+    | `NumberBox` is 240 wide where the original is about 120                          | a reading of `NumberBoxMinWidth` against what the original's own box measures; it moves two pages' panes           |
+    | the AnnotatedScrollBar page's tile grid is six columns, not five                 | the same question, from the other end: what the sample ScrollView's width should be when the pane is content-sized |
+    | `ScrollView`'s programmatic scroll — `ScrollTo`, `ScrollBy`, `AddScrollVelocity` | two of the ScrollView page's three examples render fully and do nothing, which is what those members are for       |
+    | `ContentOrientation="None"` with content that cannot shrink                      | a rule this project has not needed: the Gallery's own use of that value is an image that fits                      |
+    | the six pages' narrow adaptive states                                            | v10's owed row, unchanged                                                                                          |
+
+    **What this version declined.** WD-035, a pull is a pointer drag where the original takes only
+    touch — a divergence in the direction this project rarely records, because the alternative is a
+    control no reachable input can reach. WD-036, a wheel over a scrollbar scrolls nothing, because
+    the bar is a sibling of the viewport rather than a child of it.
+
+    **What v13 leaves for whoever picks this up.**
+
+    - **Read a primitive's shipped arithmetic before adopting it.** Its documentation says what it
+      is for, not what it computes, and D33's second clause survived a plan, a review and a seal on
+      the strength of the former.
+    - **A spec line is wrong more often than an author is.** Three units running, the author stopped
+      or corrected against the source and was right each time: a substitution the record does not
+      declare, a button in the wrong corner with the wrong glyph, a translation the source gives a
+      value for. Ask what the file says before writing what it should say.
+    - **The author lane can be a subagent.** Both external lanes were unavailable for four of the
+      nine units, and a context-free Claude subagent given the spec and nothing else satisfied what
+      the loop actually requires, which is that the agent that writes is not the agent that reads.
+    - Captures: `.private/captures/069-scrolling/` — the six originals, the scrollbar in both
+      conscious states with a crop beside each, and unit 0's two-box prototype. Probes added:
+      `proto-scrollbar.mjs`, `scrollbar-measure.mjs`, `scrollview-measure.mjs`,
+      `scrollview-unsized.mjs`, `scrollview-none.mjs`, `scrollviewer-measure.mjs`, `zoom-drive.mjs`,
+      `sv-page-guest.mjs`, `sv-page-measure.mjs`, `pips-measure.mjs`, `pips-page-guest.mjs`,
+      `pips-flip2.mjs`, `pips-options.mjs`, `asb-page-guest.mjs`, `asb-page2.mjs`,
+      `sz-page-guest.mjs`, `sz-drive.mjs`.
+
 14. **Styles** (10) and **Motion** (7) — AcrylicBrush, AnimatedIcon, ThemeShadow, System
     Backdrops, transitions, easing, connected animation. WD-006 closes here.
 15. **Media / Windowing / System / Shell** (18) — see open question O2.

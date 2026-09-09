@@ -276,6 +276,10 @@
      `role="presentation"` because the root is a template part carrying pointer handlers rather
      than a control with semantics of its own; a `div` has none to suppress and its content keeps
      what it has. -->
+<!-- WD-035: the gesture below is a pointer drag, and the original accepts only touch or a
+     precision touchpad — its adapter redirects to the interaction tracker for a touch pointer alone
+     (`ScrollViewerIRefreshInfoProviderAdapter.cpp:159`, `:311`), so on a mouse-only desktop the
+     original's own page cannot be provoked at all. -->
 <div
 	bind:this={ref}
 	class={['root', className]}
