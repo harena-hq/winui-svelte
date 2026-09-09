@@ -1686,6 +1686,8 @@
 	--winui-RadioButtonsColumnSpacing: 7px;
 	--winui-RadioButtonsRowSpacing: 8px;
 	--winui-RadioButtonsTopHeaderMargin: 0px 0px 8px 0px;
+	--winui-ScrollViewScrollBarsSeparatorBackground: var(--winui-ControlFillColorTransparentBrush);
+	--winui-ScrollViewScrollBarsMargin: 1px;
 	--winui-SelectorBarItemPillFill: var(--winui-AccentFillColorDefaultBrush);
 	--winui-SelectorBarItemDisabledPillFill: var(--winui-AccentFillColorDisabledBrush);
 	--winui-SelectorBarItemForeground: var(--winui-TextFillColorPrimaryBrush);
@@ -3458,6 +3460,7 @@
 	--winui-ProgressRingBackgroundThemeBrush: var(--winui-ControlFillColorTransparentBrush);
 	--winui-RadioButtonsHeaderForeground: var(--winui-TextFillColorPrimaryBrush);
 	--winui-RadioButtonsHeaderForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+	--winui-ScrollViewScrollBarsSeparatorBackground: var(--winui-ControlFillColorTransparentBrush);
 	--winui-SelectorBarItemPillFill: var(--winui-AccentFillColorDefaultBrush);
 	--winui-SelectorBarItemDisabledPillFill: var(--winui-AccentFillColorDisabledBrush);
 	--winui-SelectorBarItemForeground: var(--winui-TextFillColorPrimaryBrush);
@@ -5252,6 +5255,7 @@
 		--winui-ProgressRingBackgroundThemeBrush: var(--winui-ControlFillColorTransparentBrush);
 		--winui-RadioButtonsHeaderForeground: var(--winui-TextFillColorPrimaryBrush);
 		--winui-RadioButtonsHeaderForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+		--winui-ScrollViewScrollBarsSeparatorBackground: var(--winui-ControlFillColorTransparentBrush);
 		--winui-SelectorBarItemPillFill: var(--winui-AccentFillColorDefaultBrush);
 		--winui-SelectorBarItemDisabledPillFill: var(--winui-AccentFillColorDisabledBrush);
 		--winui-SelectorBarItemForeground: var(--winui-TextFillColorPrimaryBrush);
@@ -6999,6 +7003,7 @@
 	--winui-RadioButtonsHeaderForegroundDisabled: var(
 		--winui-SystemControlDisabledBaseMediumLowBrush
 	);
+	--winui-ScrollViewScrollBarsSeparatorBackground: var(--winui-SystemControlTransparentBrush);
 	--winui-SelectorBarItemPillFill: var(--winui-SystemColorHighlightColor);
 	--winui-SelectorBarItemDisabledPillFill: var(--winui-AccentFillColorDisabledBrush);
 	--winui-SelectorBarItemForeground: var(--winui-SystemControlForegroundBaseHighBrush);

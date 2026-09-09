@@ -62,6 +62,7 @@ import {
 	TREEVIEWITEM_KEYS,
 	FLIPVIEW_KEYS,
 	SCROLLBAR_KEYS,
+	SCROLLVIEW_KEYS,
 	DEFINED_BY,
 	TYPE_RAMP
 } from './manifest.mjs';
@@ -873,7 +874,8 @@ function select(resources, framework) {
 		['GRIDVIEWITEM_KEYS', GRIDVIEWITEM_KEYS],
 		['TREEVIEWITEM_KEYS', TREEVIEWITEM_KEYS],
 		['FLIPVIEW_KEYS', FLIPVIEW_KEYS],
-		['SCROLLBAR_KEYS', SCROLLBAR_KEYS]
+		['SCROLLBAR_KEYS', SCROLLBAR_KEYS],
+		['SCROLLVIEW_KEYS', SCROLLVIEW_KEYS]
 	];
 	for (let i = 0; i < SEED_SETS.length; i++)
 		for (let j = i + 1; j < SEED_SETS.length; j++) {
