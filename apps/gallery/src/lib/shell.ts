@@ -262,7 +262,8 @@ export const BUILT_PAGES = [
 	'/layout/stackpanel',
 	'/layout/viewbox',
 	'/dateandtime/calendarview',
-	'/dateandtime/datepicker'
+	'/dateandtime/datepicker',
+	'/dateandtime/timepicker'
 ] as const;
 
 function collectPlaceholder(entries: NavigationViewEntry[], into: string[]): void {

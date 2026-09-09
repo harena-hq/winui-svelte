@@ -1226,6 +1226,37 @@
 	--winui-TextBoxTopHeaderMargin: 0px 0px 8px 0px;
 	--winui-TextBoxInnerButtonMargin: 4px 4px 4px 0px;
 	--winui-TextBoxIconFontSize: 12px;
+	--winui-TimePickerSpacerFill: var(--winui-ControlStrokeColorDefaultBrush);
+	--winui-TimePickerSpacerFillDisabled: var(--winui-ControlStrokeColorDefaultBrush);
+	--winui-TimePickerHeaderForeground: var(--winui-TextFillColorPrimaryBrush);
+	--winui-TimePickerHeaderForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+	--winui-TimePickerButtonBorderBrush: var(--winui-ControlElevationBorderBrush);
+	--winui-TimePickerButtonBorderBrushPointerOver: var(--winui-ControlElevationBorderBrush);
+	--winui-TimePickerButtonBorderBrushPressed: var(--winui-ControlStrokeColorDefaultBrush);
+	--winui-TimePickerButtonBorderBrushDisabled: var(--winui-ControlStrokeColorDefaultBrush);
+	--winui-TimePickerButtonBackgroundPointerOver: var(--winui-ControlFillColorSecondaryBrush);
+	--winui-TimePickerButtonBackgroundPressed: var(--winui-ControlFillColorTertiaryBrush);
+	--winui-TimePickerButtonBackgroundDisabled: var(--winui-ControlFillColorDisabledBrush);
+	--winui-TimePickerButtonForeground: var(--winui-TextFillColorPrimaryBrush);
+	--winui-TimePickerButtonForegroundDefault: var(--winui-TextFillColorSecondaryBrush);
+	--winui-TimePickerButtonForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
+	--winui-TimePickerButtonForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
+	--winui-TimePickerButtonForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+	--winui-TimePickerFlyoutPresenterBackground: var(--winui-AcrylicBackgroundFillColorDefaultBrush);
+	--winui-TimePickerFlyoutPresenterBorderBrush: var(--winui-SurfaceStrokeColorFlyoutBrush);
+	--winui-TimePickerFlyoutPresenterSpacerFill: var(--winui-DividerStrokeColorDefaultBrush);
+	--winui-TimePickerFlyoutPresenterHighlightFill: var(--winui-AccentAAFillColorDefaultBrush);
+	--winui-TimePickerFlyoutPresenterHighlightForegroundColor: var(
+		--winui-TextOnAccentAAFillColorPrimary
+	);
+	--winui-TimePickerSpacerThemeWidth: 1px;
+	--winui-TimePickerTopHeaderMargin: 0px 0px 4px 0px;
+	--winui-TimePickerFlyoutPresenterHighlightHeight: 40px;
+	--winui-TimePickerFlyoutPresenterAcceptDismissHostGridHeight: 41px;
+	--winui-TimePickerThemeMinWidth: 242px;
+	--winui-TimePickerThemeMaxWidth: 456px;
+	--winui-TimePickerFlyoutPresenterItemHeight: 40px;
+	--winui-TimePickerHostPadding: 3px 0px 6px 0px;
 	--winui-ToggleButtonBorderThemeThickness: 1px;
 	--winui-ToggleButtonBackground: var(--winui-ControlFillColorDefaultBrush);
 	--winui-ToggleButtonBackgroundPointerOver: var(--winui-ControlFillColorSecondaryBrush);
@@ -3026,6 +3057,30 @@
 		var(--winui-SystemAccentColorLight2) 2px,
 		var(--winui-ControlStrokeColorDefault) 2px
 	);
+	--winui-TimePickerSpacerFill: var(--winui-ControlStrokeColorDefaultBrush);
+	--winui-TimePickerSpacerFillDisabled: var(--winui-ControlStrokeColorDefaultBrush);
+	--winui-TimePickerHeaderForeground: var(--winui-TextFillColorPrimaryBrush);
+	--winui-TimePickerHeaderForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+	--winui-TimePickerButtonBorderBrush: var(--winui-ControlElevationBorderBrush);
+	--winui-TimePickerButtonBorderBrushPointerOver: var(--winui-ControlElevationBorderBrush);
+	--winui-TimePickerButtonBorderBrushPressed: var(--winui-ControlStrokeColorDefaultBrush);
+	--winui-TimePickerButtonBorderBrushDisabled: var(--winui-ControlStrokeColorDefaultBrush);
+	--winui-TimePickerButtonBackgroundPointerOver: var(--winui-ControlFillColorSecondaryBrush);
+	--winui-TimePickerButtonBackgroundPressed: var(--winui-ControlFillColorTertiaryBrush);
+	--winui-TimePickerButtonBackgroundDisabled: var(--winui-ControlFillColorDisabledBrush);
+	--winui-TimePickerButtonForeground: var(--winui-TextFillColorPrimaryBrush);
+	--winui-TimePickerButtonForegroundDefault: var(--winui-TextFillColorSecondaryBrush);
+	--winui-TimePickerButtonForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
+	--winui-TimePickerButtonForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
+	--winui-TimePickerButtonForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+	--winui-TimePickerFlyoutPresenterBackground: var(--winui-AcrylicBackgroundFillColorDefaultBrush);
+	--winui-TimePickerFlyoutPresenterBorderBrush: var(--winui-SurfaceStrokeColorFlyoutBrush);
+	--winui-TimePickerFlyoutPresenterSpacerFill: var(--winui-DividerStrokeColorDefaultBrush);
+	--winui-TimePickerFlyoutPresenterHighlightFill: var(--winui-AccentAAFillColorDefaultBrush);
+	--winui-TimePickerFlyoutPresenterHighlightForegroundColor: var(
+		--winui-TextOnAccentAAFillColorPrimary
+	);
+	--winui-TimePickerSpacerThemeWidth: 1px;
 	--winui-ToggleButtonBorderThemeThickness: 1px;
 	--winui-ToggleButtonBackground: var(--winui-ControlFillColorDefaultBrush);
 	--winui-ToggleButtonBackgroundPointerOver: var(--winui-ControlFillColorSecondaryBrush);
@@ -4713,6 +4768,32 @@
 			var(--winui-SystemAccentColorLight2) 2px,
 			var(--winui-ControlStrokeColorDefault) 2px
 		);
+		--winui-TimePickerSpacerFill: var(--winui-ControlStrokeColorDefaultBrush);
+		--winui-TimePickerSpacerFillDisabled: var(--winui-ControlStrokeColorDefaultBrush);
+		--winui-TimePickerHeaderForeground: var(--winui-TextFillColorPrimaryBrush);
+		--winui-TimePickerHeaderForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+		--winui-TimePickerButtonBorderBrush: var(--winui-ControlElevationBorderBrush);
+		--winui-TimePickerButtonBorderBrushPointerOver: var(--winui-ControlElevationBorderBrush);
+		--winui-TimePickerButtonBorderBrushPressed: var(--winui-ControlStrokeColorDefaultBrush);
+		--winui-TimePickerButtonBorderBrushDisabled: var(--winui-ControlStrokeColorDefaultBrush);
+		--winui-TimePickerButtonBackgroundPointerOver: var(--winui-ControlFillColorSecondaryBrush);
+		--winui-TimePickerButtonBackgroundPressed: var(--winui-ControlFillColorTertiaryBrush);
+		--winui-TimePickerButtonBackgroundDisabled: var(--winui-ControlFillColorDisabledBrush);
+		--winui-TimePickerButtonForeground: var(--winui-TextFillColorPrimaryBrush);
+		--winui-TimePickerButtonForegroundDefault: var(--winui-TextFillColorSecondaryBrush);
+		--winui-TimePickerButtonForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
+		--winui-TimePickerButtonForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
+		--winui-TimePickerButtonForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+		--winui-TimePickerFlyoutPresenterBackground: var(
+			--winui-AcrylicBackgroundFillColorDefaultBrush
+		);
+		--winui-TimePickerFlyoutPresenterBorderBrush: var(--winui-SurfaceStrokeColorFlyoutBrush);
+		--winui-TimePickerFlyoutPresenterSpacerFill: var(--winui-DividerStrokeColorDefaultBrush);
+		--winui-TimePickerFlyoutPresenterHighlightFill: var(--winui-AccentAAFillColorDefaultBrush);
+		--winui-TimePickerFlyoutPresenterHighlightForegroundColor: var(
+			--winui-TextOnAccentAAFillColorPrimary
+		);
+		--winui-TimePickerSpacerThemeWidth: 1px;
 		--winui-ToggleButtonBorderThemeThickness: 1px;
 		--winui-ToggleButtonBackground: var(--winui-ControlFillColorDefaultBrush);
 		--winui-ToggleButtonBackgroundPointerOver: var(--winui-ControlFillColorSecondaryBrush);
@@ -6369,6 +6450,28 @@
 		var(--winui-SystemAccentColorLight2) 2px,
 		var(--winui-ControlStrokeColorDefault) 2px
 	);
+	--winui-TimePickerSpacerFill: var(--winui-SystemColorButtonTextColorBrush);
+	--winui-TimePickerSpacerFillDisabled: var(--winui-SystemColorGrayTextColorBrush);
+	--winui-TimePickerHeaderForeground: var(--winui-SystemColorButtonTextColorBrush);
+	--winui-TimePickerHeaderForegroundDisabled: var(--winui-SystemColorGrayTextColorBrush);
+	--winui-TimePickerButtonBorderBrush: var(--winui-SystemColorButtonTextColorBrush);
+	--winui-TimePickerButtonBorderBrushPointerOver: var(--winui-SystemColorHighlightColorBrush);
+	--winui-TimePickerButtonBorderBrushPressed: var(--winui-SystemColorHighlightColorBrush);
+	--winui-TimePickerButtonBorderBrushDisabled: var(--winui-SystemColorGrayTextColorBrush);
+	--winui-TimePickerButtonBackgroundPointerOver: var(--winui-SystemColorHighlightTextColorBrush);
+	--winui-TimePickerButtonBackgroundPressed: var(--winui-SystemColorWindowColorBrush);
+	--winui-TimePickerButtonBackgroundDisabled: var(--winui-SystemColorWindowColorBrush);
+	--winui-TimePickerButtonForeground: var(--winui-SystemColorButtonTextColorBrush);
+	--winui-TimePickerButtonForegroundDefault: var(--winui-SystemColorButtonTextColorBrush);
+	--winui-TimePickerButtonForegroundPointerOver: var(--winui-SystemColorHighlightColorBrush);
+	--winui-TimePickerButtonForegroundPressed: var(--winui-SystemColorHighlightColorBrush);
+	--winui-TimePickerButtonForegroundDisabled: var(--winui-SystemColorGrayTextColorBrush);
+	--winui-TimePickerFlyoutPresenterBackground: var(--winui-SystemColorWindowColorBrush);
+	--winui-TimePickerFlyoutPresenterBorderBrush: var(--winui-SystemColorWindowTextColorBrush);
+	--winui-TimePickerFlyoutPresenterSpacerFill: var(--winui-SystemColorWindowTextColorBrush);
+	--winui-TimePickerFlyoutPresenterHighlightFill: var(--winui-SystemColorHighlightColorBrush);
+	--winui-TimePickerFlyoutPresenterHighlightForegroundColor: transparent;
+	--winui-TimePickerSpacerThemeWidth: 1px;
 	--winui-ToggleButtonBorderThemeThickness: 1px;
 	--winui-ToggleButtonBackground: var(--winui-SystemColorButtonFaceColor);
 	--winui-ToggleButtonBackgroundPointerOver: var(--winui-SystemColorHighlightTextColorBrush);
