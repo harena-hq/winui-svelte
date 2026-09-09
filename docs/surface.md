@@ -15,24 +15,29 @@ control from needing one.
 
 ## Where the second half lives
 
-Three sources, and which controls each one can answer for:
+Four sources, and which controls each one can answer for:
 
-| source                                                 | covers                                                                         |
-| ------------------------------------------------------ | ------------------------------------------------------------------------------ |
-| the control pin's C++ (`controls/dev/<Control>/*.cpp`) | AutoSuggestBox, ComboBox, NavigationView, NumberBox, TitleBar — five of twelve |
-| the Gallery's sample page (`Samples/<C>/<C>Page.xaml`) | all twelve                                                                     |
-| Microsoft's published API reference                    | all twelve, and the only source for behaviour in neither of the above          |
+| source                                                   | covers                                                                         |
+| -------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| the control pin's C++ (`controls/dev/<Control>/*.cpp`)   | AutoSuggestBox, ComboBox, NavigationView, NumberBox, TitleBar — five of twelve |
+| the framework's C++ (`dxaml/xcp/…`, `dxaml/phone/lib/…`) | the controls WinUI only restyles, which is most of the Gallery                 |
+| the Gallery's sample page (`Samples/<C>/<C>Page.xaml`)   | all twelve                                                                     |
+| Microsoft's published API reference                      | all twelve, and the only source for behaviour in none of the above             |
 
-**Seven of the twelve controls have no implementation in the pin at all.** Button,
-CheckBox, RadioButton, ToggleSwitch, TextBox, PasswordBox and Slider are
-`Windows.UI.Xaml` controls that WinUI 3 restyles; `microsoft-ui-xaml` carries their
-`*_themeresources.xaml` and nothing else. This is not the sparse checkout narrowing the
-tree — it already takes every `.cpp`, `.h` and `.idl` under `controls/dev` — it is what
-the repository contains. For those seven the template is the whole of what the pin can
-say, and the other two sources are the only way to see the rest.
+**The second row is v12's, and it corrects what the first three said before it.** This
+section used to end by saying that seven of the twelve controls have "no implementation in
+the pin at all" — Button, CheckBox, RadioButton, ToggleSwitch, TextBox, PasswordBox and
+Slider are `Windows.UI.Xaml` controls WinUI 3 restyles, and `controls/dev` carries their
+`*_themeresources.xaml` and nothing else — and then that this was "what the repository
+contains" rather than the checkout narrowing the tree. **The first half is true and the
+second was wrong.** The repository carries `dxaml/`, the framework those controls are
+implemented in: `Slider_Partial.cpp`, `ToolTip_Partial.cpp`, `ListViewItem_Partial.cpp`,
+`Popup_Partial.cpp` and the rest all exist at the pin's commit. v11 read five of them by
+fetching raw URLs; since v12 the sparse checkout takes four `dxaml` directories and they
+are on disk, so the sweep greps for them like any other file.
 
-Two of the five that do have code have only a **helper**: `AutoSuggestBoxHelper` and
-`ComboBoxHelper` are attached properties WinUI adds to controls it cannot edit, and each
+Two of the five that do have control-pin code have only a **helper**: `AutoSuggestBoxHelper`
+and `ComboBoxHelper` are attached properties WinUI adds to controls it cannot edit, and each
 carries exactly one behaviour. The remaining three — NavigationView, NumberBox, TitleBar —
 are full implementations.
 
@@ -45,9 +50,22 @@ them: one `ControlExample` per feature, each with the properties it sets.
 
 Do this **before** sealing a control, from now on. It costs minutes.
 
-1. `find .upstream/microsoft-ui-xaml/controls/dev -name '<Control>.cpp'` — if it finds
-   nothing, the pin has no second half for this control and steps 2 and 3 do not apply.
-   Say so in the unit rather than leaving the absence unexplained.
+1. `find .upstream/microsoft-ui-xaml -iname '<Control>*.cpp' -o -iname '<Control>*.h'` — the
+   whole checkout, case-insensitively, because the framework's files are not all named the
+   way the control is (`calendardatepicker_partial.cpp` is lower case, `Flyout_partial.cpp`
+   is mixed). Only if that finds nothing does the pin have no second half for this control,
+   and then steps 2 and 3 do not apply. Say so in the unit rather than leaving the absence
+   unexplained.
+
+   **Search the whole checkout, not `controls/dev`.** This step used to search only the
+   control pin's own tree, on the belief that a control absent from it is a control the
+   repository does not implement. It is not: a `Windows.UI.Xaml` control WinUI 3 restyles is
+   implemented in `dxaml/`, in the same repository at the same commit, and since v12 the
+   sparse checkout takes it. Every "no second half" verdict recorded in this file below was
+   reached under the narrower search and none has been re-taken — **treat them as open, not
+   as findings**, and re-run this step before relying on one. Slider is the clearest case:
+   the tooltip that started this document is in `dxaml/xcp/dxaml/lib/Slider_Partial.cpp`,
+   which was on disk in neither the sweep that missed it nor the sweep that followed.
 
    **Search for the file, not for a directory of that name.** This step used to read
    `ls controls/dev/<Control>/`, and a control that lives in a sibling's directory has no
@@ -60,24 +78,26 @@ Do this **before** sealing a control, from now on. It costs minutes.
    swept alongside the control it is named after.
 
    **A "no second half" verdict is where the sweep is most useful, not least.** Pivot has no
-   `.cpp` in the pin — WinUI 3 restyles a control the closed-source XAML framework implements —
-   and its template writes the title part as `Visibility="Collapsed"` with nothing in the file
-   reversing it. The original renders the title. The code that shows it is in the framework, so
-   the pin cannot be read for it and step 1 cannot end the sweep: **a part a template collapses
-   is not therefore an absent part**, and where the pin has no code the picture is the only
-   place the rest of the control is written down. Step 4 and the reference machine are the whole
-   sweep for those controls, and they are the ones where skipping it costs most.
+   `.cpp` in `controls/dev` — WinUI 3 restyles a control the XAML framework implements — and its
+   template writes the title part as `Visibility="Collapsed"` with nothing in the file reversing
+   it. The original renders the title. **A part a template collapses is not therefore an absent
+   part**, and where no code can be read the picture is the only place the rest of the control is
+   written down: step 4 and the reference machine were the whole sweep for Pivot, which is why
+   skipping it would have cost most there. What has changed since is where the code is —
+   `dxaml/phone/lib/Pivot_Partial.*` is in the checkout as of v12 and Pivot has not been re-swept.
 
    **And a control can have no first half either.** This step assumes the template is the
    half that is readable and the code the half that is not. `ListViewItem` breaks the
-   assumption: it has no `.cpp` in the pin, and its template
+   assumption: it has no `.cpp` in `controls/dev`, and its template
    (`generic.xaml:27524`) contains exactly one element — a `ListViewItemPresenter` set up
    through fifty-odd properties, with no `ControlTemplate` of its own anywhere in either pin,
-   because the framework draws it in C++ this project cannot read. The brushes are resources
-   and the geometry is nowhere. When step 1 finds no code **and** the template bottoms out in
-   a presenter, both of the sweep's readable sources are gone at once and step 4 is not a
-   supplement to the reading — it is the reading. Say so in the unit, and measure before
-   writing the spec rather than after the diff.
+   because the framework draws it in C++. The brushes are resources and the geometry is
+   nowhere. When step 1 finds no code **and** the template bottoms out in a presenter, both of
+   the sweep's readable sources are gone at once and step 4 is not a supplement to the reading —
+   it is the reading. That was the position when v9 built the control. It is not the position
+   now: `ListViewItem_Partial.cpp` and `ListViewItemPresenter_Partial.cpp` are both in the
+   checkout as of v12, so the geometry is somewhere after all, and the control has not been
+   re-swept.
 
 2. Grep the implementation for the ways code changes what is drawn:
    `GoToState` (a visual state the template defines but the code decides),
