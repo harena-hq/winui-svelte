@@ -1669,6 +1669,83 @@
 	--winui-NavigationViewItemExpandedGlyph: '\00e70d';
 	--winui-NumberBoxSpinButtonBorderThickness: 1px 1px 1px 0px;
 	--winui-NumberBoxMinWidth: 120px;
+	--winui-PipsPagerSelectionIndicatorBackground: var(--winui-ControlFillColorTransparentBrush);
+	--winui-PipsPagerSelectionIndicatorBackgroundPointerOver: var(
+		--winui-ControlFillColorTransparentBrush
+	);
+	--winui-PipsPagerSelectionIndicatorBackgroundPressed: var(
+		--winui-ControlFillColorTransparentBrush
+	);
+	--winui-PipsPagerSelectionIndicatorBackgroundSelected: var(
+		--winui-ControlFillColorTransparentBrush
+	);
+	--winui-PipsPagerSelectionIndicatorBackgroundDisabled: var(
+		--winui-ControlFillColorTransparentBrush
+	);
+	--winui-PipsPagerSelectionIndicatorBorderBrush: var(--winui-ControlFillColorTransparentBrush);
+	--winui-PipsPagerSelectionIndicatorBorderBrushPointerOver: var(
+		--winui-ControlFillColorTransparentBrush
+	);
+	--winui-PipsPagerSelectionIndicatorBorderBrushPressed: var(
+		--winui-ControlFillColorTransparentBrush
+	);
+	--winui-PipsPagerSelectionIndicatorBorderBrushSelected: var(
+		--winui-ControlFillColorTransparentBrush
+	);
+	--winui-PipsPagerSelectionIndicatorBorderBrushDisabled: var(
+		--winui-ControlFillColorTransparentBrush
+	);
+	--winui-PipsPagerSelectionIndicatorForeground: var(--winui-ControlStrongFillColorDefaultBrush);
+	--winui-PipsPagerSelectionIndicatorForegroundPointerOver: var(
+		--winui-TextFillColorSecondaryBrush
+	);
+	--winui-PipsPagerSelectionIndicatorForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
+	--winui-PipsPagerSelectionIndicatorForegroundSelected: var(
+		--winui-ControlStrongFillColorDefaultBrush
+	);
+	--winui-PipsPagerSelectionIndicatorForegroundDisabled: var(
+		--winui-ControlStrongFillColorDisabledBrush
+	);
+	--winui-PipsPagerNavigationButtonBackground: var(--winui-ControlFillColorTransparentBrush);
+	--winui-PipsPagerNavigationButtonBackgroundPointerOver: var(
+		--winui-ControlFillColorTransparentBrush
+	);
+	--winui-PipsPagerNavigationButtonBackgroundPressed: var(--winui-ControlFillColorTransparentBrush);
+	--winui-PipsPagerNavigationButtonBackgroundDisabled: var(
+		--winui-ControlFillColorTransparentBrush
+	);
+	--winui-PipsPagerNavigationButtonBorderBrush: var(--winui-ControlFillColorTransparentBrush);
+	--winui-PipsPagerNavigationButtonBorderBrushPointerOver: var(
+		--winui-ControlFillColorTransparentBrush
+	);
+	--winui-PipsPagerNavigationButtonBorderBrushPressed: var(
+		--winui-ControlFillColorTransparentBrush
+	);
+	--winui-PipsPagerNavigationButtonBorderBrushDisabled: var(
+		--winui-ControlFillColorTransparentBrush
+	);
+	--winui-PipsPagerNavigationButtonForeground: var(--winui-ControlStrongFillColorDefaultBrush);
+	--winui-PipsPagerNavigationButtonForegroundPointerOver: var(--winui-TextFillColorSecondaryBrush);
+	--winui-PipsPagerNavigationButtonForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
+	--winui-PipsPagerNavigationButtonForegroundDisabled: var(
+		--winui-ControlStrongFillColorDisabledBrush
+	);
+	--winui-PipsPagerHorizontalOrientationButtonWidth: 12px;
+	--winui-PipsPagerHorizontalOrientationButtonHeight: 24px;
+	--winui-PipsPagerVerticalOrientationButtonWidth: 24px;
+	--winui-PipsPagerVerticalOrientationButtonHeight: 12px;
+	--winui-PipsPagerButtonBorderThickness: 1px;
+	--winui-PipsPagerNavigationButtonBorderThickness: 1px;
+	--winui-PipsPagerSelectedGlyph: '\00ea3b';
+	--winui-PipsPagerNormalGlyph: '\00ea3b';
+	--winui-PipsPagerPreviousPageButtonGlyph: '\00eddb';
+	--winui-PipsPagerNextPageButtonGlyph: '\00eddc';
+	--winui-PipsPagerNavigationButtonHeight: 24px;
+	--winui-PipsPagerNavigationButtonWidth: 24px;
+	--winui-PipsPagerNavigationButtonFontSize: 8px;
+	--winui-PipsPagerSelectedGlyphFontSize: 6px;
+	--winui-PipsPagerNormalGlyphFontSize: 4px;
+	--winui-PipsPagerNavigationButtonScalePressed: 0.875;
 	--winui-ProgressBarBorderThemeThickness: 0px;
 	--winui-ProgressBarForeground: var(--winui-AccentFillColorDefaultBrush);
 	--winui-ProgressBarBackground: var(--winui-ControlStrongStrokeColorDefault);
@@ -3450,6 +3527,67 @@
 	--winui-NavigationViewButtonForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
 	--winui-NavigationViewButtonForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
 	--winui-NavigationViewButtonForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+	--winui-PipsPagerSelectionIndicatorBackground: var(--winui-ControlFillColorTransparentBrush);
+	--winui-PipsPagerSelectionIndicatorBackgroundPointerOver: var(
+		--winui-ControlFillColorTransparentBrush
+	);
+	--winui-PipsPagerSelectionIndicatorBackgroundPressed: var(
+		--winui-ControlFillColorTransparentBrush
+	);
+	--winui-PipsPagerSelectionIndicatorBackgroundSelected: var(
+		--winui-ControlFillColorTransparentBrush
+	);
+	--winui-PipsPagerSelectionIndicatorBackgroundDisabled: var(
+		--winui-ControlFillColorTransparentBrush
+	);
+	--winui-PipsPagerSelectionIndicatorBorderBrush: var(--winui-ControlFillColorTransparentBrush);
+	--winui-PipsPagerSelectionIndicatorBorderBrushPointerOver: var(
+		--winui-ControlFillColorTransparentBrush
+	);
+	--winui-PipsPagerSelectionIndicatorBorderBrushPressed: var(
+		--winui-ControlFillColorTransparentBrush
+	);
+	--winui-PipsPagerSelectionIndicatorBorderBrushSelected: var(
+		--winui-ControlFillColorTransparentBrush
+	);
+	--winui-PipsPagerSelectionIndicatorBorderBrushDisabled: var(
+		--winui-ControlFillColorTransparentBrush
+	);
+	--winui-PipsPagerSelectionIndicatorForeground: var(--winui-ControlStrongFillColorDefaultBrush);
+	--winui-PipsPagerSelectionIndicatorForegroundPointerOver: var(
+		--winui-TextFillColorSecondaryBrush
+	);
+	--winui-PipsPagerSelectionIndicatorForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
+	--winui-PipsPagerSelectionIndicatorForegroundSelected: var(
+		--winui-ControlStrongFillColorDefaultBrush
+	);
+	--winui-PipsPagerSelectionIndicatorForegroundDisabled: var(
+		--winui-ControlStrongFillColorDisabledBrush
+	);
+	--winui-PipsPagerNavigationButtonBackground: var(--winui-ControlFillColorTransparentBrush);
+	--winui-PipsPagerNavigationButtonBackgroundPointerOver: var(
+		--winui-ControlFillColorTransparentBrush
+	);
+	--winui-PipsPagerNavigationButtonBackgroundPressed: var(--winui-ControlFillColorTransparentBrush);
+	--winui-PipsPagerNavigationButtonBackgroundDisabled: var(
+		--winui-ControlFillColorTransparentBrush
+	);
+	--winui-PipsPagerNavigationButtonBorderBrush: var(--winui-ControlFillColorTransparentBrush);
+	--winui-PipsPagerNavigationButtonBorderBrushPointerOver: var(
+		--winui-ControlFillColorTransparentBrush
+	);
+	--winui-PipsPagerNavigationButtonBorderBrushPressed: var(
+		--winui-ControlFillColorTransparentBrush
+	);
+	--winui-PipsPagerNavigationButtonBorderBrushDisabled: var(
+		--winui-ControlFillColorTransparentBrush
+	);
+	--winui-PipsPagerNavigationButtonForeground: var(--winui-ControlStrongFillColorDefaultBrush);
+	--winui-PipsPagerNavigationButtonForegroundPointerOver: var(--winui-TextFillColorSecondaryBrush);
+	--winui-PipsPagerNavigationButtonForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
+	--winui-PipsPagerNavigationButtonForegroundDisabled: var(
+		--winui-ControlStrongFillColorDisabledBrush
+	);
 	--winui-ProgressBarBorderThemeThickness: 0px;
 	--winui-ProgressBarForeground: var(--winui-AccentFillColorDefaultBrush);
 	--winui-ProgressBarBackground: var(--winui-ControlStrongStrokeColorDefault);
@@ -5245,6 +5383,71 @@
 		--winui-NavigationViewButtonForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
 		--winui-NavigationViewButtonForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
 		--winui-NavigationViewButtonForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+		--winui-PipsPagerSelectionIndicatorBackground: var(--winui-ControlFillColorTransparentBrush);
+		--winui-PipsPagerSelectionIndicatorBackgroundPointerOver: var(
+			--winui-ControlFillColorTransparentBrush
+		);
+		--winui-PipsPagerSelectionIndicatorBackgroundPressed: var(
+			--winui-ControlFillColorTransparentBrush
+		);
+		--winui-PipsPagerSelectionIndicatorBackgroundSelected: var(
+			--winui-ControlFillColorTransparentBrush
+		);
+		--winui-PipsPagerSelectionIndicatorBackgroundDisabled: var(
+			--winui-ControlFillColorTransparentBrush
+		);
+		--winui-PipsPagerSelectionIndicatorBorderBrush: var(--winui-ControlFillColorTransparentBrush);
+		--winui-PipsPagerSelectionIndicatorBorderBrushPointerOver: var(
+			--winui-ControlFillColorTransparentBrush
+		);
+		--winui-PipsPagerSelectionIndicatorBorderBrushPressed: var(
+			--winui-ControlFillColorTransparentBrush
+		);
+		--winui-PipsPagerSelectionIndicatorBorderBrushSelected: var(
+			--winui-ControlFillColorTransparentBrush
+		);
+		--winui-PipsPagerSelectionIndicatorBorderBrushDisabled: var(
+			--winui-ControlFillColorTransparentBrush
+		);
+		--winui-PipsPagerSelectionIndicatorForeground: var(--winui-ControlStrongFillColorDefaultBrush);
+		--winui-PipsPagerSelectionIndicatorForegroundPointerOver: var(
+			--winui-TextFillColorSecondaryBrush
+		);
+		--winui-PipsPagerSelectionIndicatorForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
+		--winui-PipsPagerSelectionIndicatorForegroundSelected: var(
+			--winui-ControlStrongFillColorDefaultBrush
+		);
+		--winui-PipsPagerSelectionIndicatorForegroundDisabled: var(
+			--winui-ControlStrongFillColorDisabledBrush
+		);
+		--winui-PipsPagerNavigationButtonBackground: var(--winui-ControlFillColorTransparentBrush);
+		--winui-PipsPagerNavigationButtonBackgroundPointerOver: var(
+			--winui-ControlFillColorTransparentBrush
+		);
+		--winui-PipsPagerNavigationButtonBackgroundPressed: var(
+			--winui-ControlFillColorTransparentBrush
+		);
+		--winui-PipsPagerNavigationButtonBackgroundDisabled: var(
+			--winui-ControlFillColorTransparentBrush
+		);
+		--winui-PipsPagerNavigationButtonBorderBrush: var(--winui-ControlFillColorTransparentBrush);
+		--winui-PipsPagerNavigationButtonBorderBrushPointerOver: var(
+			--winui-ControlFillColorTransparentBrush
+		);
+		--winui-PipsPagerNavigationButtonBorderBrushPressed: var(
+			--winui-ControlFillColorTransparentBrush
+		);
+		--winui-PipsPagerNavigationButtonBorderBrushDisabled: var(
+			--winui-ControlFillColorTransparentBrush
+		);
+		--winui-PipsPagerNavigationButtonForeground: var(--winui-ControlStrongFillColorDefaultBrush);
+		--winui-PipsPagerNavigationButtonForegroundPointerOver: var(
+			--winui-TextFillColorSecondaryBrush
+		);
+		--winui-PipsPagerNavigationButtonForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
+		--winui-PipsPagerNavigationButtonForegroundDisabled: var(
+			--winui-ControlStrongFillColorDisabledBrush
+		);
 		--winui-ProgressBarBorderThemeThickness: 0px;
 		--winui-ProgressBarForeground: var(--winui-AccentFillColorDefaultBrush);
 		--winui-ProgressBarBackground: var(--winui-ControlStrongStrokeColorDefault);
@@ -6991,6 +7194,61 @@
 	--winui-NavigationViewButtonForegroundDisabled: var(
 		--winui-SystemControlDisabledBaseMediumLowBrush
 	);
+	--winui-PipsPagerSelectionIndicatorBackground: var(--winui-SystemColorButtonFaceColorBrush);
+	--winui-PipsPagerSelectionIndicatorBackgroundPointerOver: var(
+		--winui-SystemColorHighlightColorBrush
+	);
+	--winui-PipsPagerSelectionIndicatorBackgroundPressed: var(--winui-SystemColorHighlightColorBrush);
+	--winui-PipsPagerSelectionIndicatorBackgroundSelected: var(
+		--winui-SystemColorHighlightColorBrush
+	);
+	--winui-PipsPagerSelectionIndicatorBackgroundDisabled: var(
+		--winui-SystemColorButtonFaceColorBrush
+	);
+	--winui-PipsPagerSelectionIndicatorBorderBrush: var(--winui-SystemColorButtonFaceColorBrush);
+	--winui-PipsPagerSelectionIndicatorBorderBrushPointerOver: var(
+		--winui-SystemColorHighlightColorBrush
+	);
+	--winui-PipsPagerSelectionIndicatorBorderBrushPressed: var(
+		--winui-SystemColorHighlightColorBrush
+	);
+	--winui-PipsPagerSelectionIndicatorBorderBrushSelected: var(
+		--winui-SystemColorHighlightColorBrush
+	);
+	--winui-PipsPagerSelectionIndicatorBorderBrushDisabled: var(
+		--winui-SystemColorButtonFaceColorBrush
+	);
+	--winui-PipsPagerSelectionIndicatorForeground: var(--winui-SystemColorButtonTextColorBrush);
+	--winui-PipsPagerSelectionIndicatorForegroundPointerOver: var(
+		--winui-SystemColorHighlightTextColorBrush
+	);
+	--winui-PipsPagerSelectionIndicatorForegroundPressed: var(
+		--winui-SystemColorHighlightTextColorBrush
+	);
+	--winui-PipsPagerSelectionIndicatorForegroundSelected: var(
+		--winui-SystemColorHighlightTextColorBrush
+	);
+	--winui-PipsPagerSelectionIndicatorForegroundDisabled: var(--winui-SystemColorGrayTextColorBrush);
+	--winui-PipsPagerNavigationButtonBackground: var(--winui-SystemColorButtonFaceColorBrush);
+	--winui-PipsPagerNavigationButtonBackgroundPointerOver: var(
+		--winui-SystemColorButtonFaceColorBrush
+	);
+	--winui-PipsPagerNavigationButtonBackgroundPressed: var(--winui-SystemColorButtonFaceColorBrush);
+	--winui-PipsPagerNavigationButtonBackgroundDisabled: var(--winui-SystemColorButtonFaceColorBrush);
+	--winui-PipsPagerNavigationButtonBorderBrush: var(--winui-SystemColorButtonFaceColorBrush);
+	--winui-PipsPagerNavigationButtonBorderBrushPointerOver: var(
+		--winui-SystemColorHighlightColorBrush
+	);
+	--winui-PipsPagerNavigationButtonBorderBrushPressed: var(--winui-SystemColorHighlightColorBrush);
+	--winui-PipsPagerNavigationButtonBorderBrushDisabled: var(
+		--winui-SystemColorButtonFaceColorBrush
+	);
+	--winui-PipsPagerNavigationButtonForeground: var(--winui-SystemColorButtonTextColorBrush);
+	--winui-PipsPagerNavigationButtonForegroundPointerOver: var(
+		--winui-SystemColorHighlightColorBrush
+	);
+	--winui-PipsPagerNavigationButtonForegroundPressed: var(--winui-SystemColorHighlightColorBrush);
+	--winui-PipsPagerNavigationButtonForegroundDisabled: var(--winui-SystemColorGrayTextColorBrush);
 	--winui-ProgressBarBorderThemeThickness: 1px;
 	--winui-ProgressBarForeground: var(--winui-SystemColorHighlightColor);
 	--winui-ProgressBarBackground: var(--winui-SystemColorWindowColor);

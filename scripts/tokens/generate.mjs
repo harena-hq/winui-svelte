@@ -20,6 +20,7 @@ import {
 	DOUBLE_LENGTHS,
 	DOUBLE_RATIOS,
 	GLYPHS,
+	STRING_FONT_SIZES,
 	SHELL_KEYS,
 	PLATFORM_BRUSHES,
 	SYSTEM_COLORS,
@@ -63,6 +64,7 @@ import {
 	FLIPVIEW_KEYS,
 	SCROLLBAR_KEYS,
 	SCROLLVIEW_KEYS,
+	PIPSPAGER_KEYS,
 	DEFINED_BY,
 	TYPE_RAMP
 } from './manifest.mjs';
@@ -351,8 +353,12 @@ function scalar(record) {
 				return duration(value, where);
 			if (record.key.endsWith('KeySpline')) return keySpline(value, where);
 			if (record.key in GLYPHS) return glyph(value, where);
+			// A font size upstream spelled as a string. `STRING_FONT_SIZES` names the two,
+			// and they emit `px` the way the `x:Double` arm's FontSize suffix does.
+			if (record.key in STRING_FONT_SIZES) return `${number(value, where)}px`;
 			return fail(
-				`${where}: x:String that is neither a Duration, a BeginTime, a Delay, a KeySpline nor a glyph`
+				`${where}: x:String that is neither a Duration, a BeginTime, a Delay, a KeySpline, ` +
+					'a glyph nor a STRING_FONT_SIZES font size'
 			);
 
 		default:
@@ -875,7 +881,8 @@ function select(resources, framework) {
 		['TREEVIEWITEM_KEYS', TREEVIEWITEM_KEYS],
 		['FLIPVIEW_KEYS', FLIPVIEW_KEYS],
 		['SCROLLBAR_KEYS', SCROLLBAR_KEYS],
-		['SCROLLVIEW_KEYS', SCROLLVIEW_KEYS]
+		['SCROLLVIEW_KEYS', SCROLLVIEW_KEYS],
+		['PIPSPAGER_KEYS', PIPSPAGER_KEYS]
 	];
 	for (let i = 0; i < SEED_SETS.length; i++)
 		for (let j = i + 1; j < SEED_SETS.length; j++) {
