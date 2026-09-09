@@ -1829,6 +1829,84 @@ generics="T">` component through `pnpm --filter winui-svelte build` reaches `dis
     clipboard where the browser allows it and says what it did where it does not; the search box
     opens the page a suggestion names; and the nine gates stay green with C8 covering three records.
 
+    **Closed.** Eleven commits. Five Gallery components in `apps/gallery/src/lib/frame/` —
+    `CopyButton`, `SampleCodePresenter`, `ControlExample`, `PageHeader`, `ItemPage` — plus the
+    highlighter in `$lib/highlight/`, a fourth pinned upstream, two more generated records, and
+    the Typography and Geometry pages rendering the way the original renders them. 57 spec
+    files, 58 tests green on the guest, nine gates green with C8 now covering four records.
+
+    **Its Done-when, met, and the two clauses that changed on contact.** The two design pages
+    render the frame and compare clean against the original as pages. The colouring was checked
+    against the original's own pane rather than against itself: the Gallery's FlipView page on
+    the reference guest paints `#0000FF` delimiters, `#A31515` tag names, `#FF0000` attribute
+    names, `#0000FF` values and `#000000` quotes on a `#F7F7F7` pane, and ours emits the same
+    five. The search opens the page a suggestion names, driven through the real control.
+    Two clauses read differently at the end than at the start. "C8 covering three records" is
+    four — the samples record was the third and the ColorCode record the fourth. And the copy
+    button's clause asked what it does where the clipboard is refused: the answer is that the
+    reference harness is served over `http://10.0.2.2:4173`, which is not a secure context, so
+    `navigator.clipboard` is undefined on the one machine this project measures itself on, and
+    the button writes through `execCommand` there and plays its success animation only when a
+    write reported success.
+
+    **What the version cost that its goal did not predict.** The plan said this version had "no
+    measuring in its critical path" because every piece of the frame is written down. Four of
+    the seven units still ended up measured on the guest, and three defects came out of it that
+    nothing else would have caught: the sample control stretched to the height of its pane where
+    the original centres it, the page gutter was applied twice once `ItemPage` brought its own,
+    and the display pane laid several roots side by side. The frame being written down settles
+    what to build; it does not settle what it looks like next to the original.
+
+    **The two channels, and the class that is neither.** A `class` handed to a component lands
+    on that component's root without the caller's scope hash, so a rule written for it matches
+    nothing and no gate says so — `pnpm check` reports an unused selector only when the compiler
+    can see the element, which it cannot across a component boundary. Styling a library control
+    from outside it therefore has exactly two channels: its `style` prop, and the tokens it
+    reads, declared on a wrapper and inherited. `ControlExample` restyles the `Expander` through
+    both, and the one value that needs neither — the Expander's own `--corner`, declared on its
+    root where an inherited value cannot reach — needs a rule that outranks that declaration.
+
+    **What this version owes.** None of it is declined; each is a later unit.
+
+    | owed                                                     | what it needs                                                                                                                                                                           |
+    | -------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    | the page header's theme button                           | the token layer emitting its theme blocks for any `[data-theme]` subtree, including a light one — today light is the bare `:root` default, and the file is 400 KB before duplicating it |
+    | `SearchResultsPage`, which submitted text opens upstream | a page of the Gallery, and a decision about what it lists                                                                                                                               |
+    | the Source drop-down when an item has neither source     | upstream always renders the button; ours renders it only when a section has content, and every one of the 120 items has one, so the branch never shows                                  |
+    | Color, Iconography and Spacing on the frame              | nothing new — they were not in this version's scope                                                                                                                                     |
+    | the narrow states of `ControlExample` and `ItemPage`     | a viewport the snapshot suite does not photograph at                                                                                                                                    |
+
+    **What this version declined.** WD-029, the annotated image above each design table. The
+    entry is worth reading for how it was written rather than for what it says: the markup made
+    it look as though our table stood in for the image, and the original on screen showed the
+    image _and_ the same table below it. The table is the original's own rows; what is absent is
+    the image and the tips pinned to its pixels.
+
+    **What v10 leaves for whoever picks this up.**
+
+    - **Prototype the mechanism the spec is about.** The highlighter's spec asks for one check
+      that no other check implies — that a tag with four attributes colours four — and it exists
+      because a throwaway prototype of the algorithm, written before the spec, coloured only the
+      last attribute of every tag and produced output that reads as correct. .NET keeps a capture
+      per iteration of a group inside a quantifier and JavaScript keeps the last.
+    - **Measure the baseline you just wrote.** A fix landed, the photograph after it still showed
+      the old render, and the file only changed once the baselines were deleted and re-taken.
+      `--update-snapshots` does overwrite a changed baseline — verified by moving a padding and
+      watching the pixels move — so what went stale was the build behind it.
+    - **The reference machine runs the shipped Gallery and the pin is a commit.** They are not
+      the same app: the guest's pane lists a ListBox page the pin does not have, and its search
+      does not reach tags where the pinned code does. Check the pin before chasing a difference.
+    - **A private-use code point is written as an escape.** Two glyphs arrived as literal
+      U+E8C8 and U+E73E, which grep, the diff and the review all read as an empty span.
+    - **A container built for one child has not been tried with two.** Every harness row passed
+      a single control into the display pane, so every branch of the component was covered and
+      the defect was not.
+    - Captures: `.private/captures/066-frame/` — the original's FlipView page with its source
+      pane open, its Button page, its Typography page, and its search box answering three
+      queries; ours beside them. Probes added: `.private/probes/control-example-measure.mjs`,
+      `control-example-shot.mjs`, `control-example-theme.mjs`, `design-page-shot.mjs`,
+      `flipview-page-shot.mjs`, `search-drive.mjs`.
+
 11. **Layout** — Border, SplitView, Viewbox, and the Gallery's Grid and StackPanel pages, which
     are mostly documentation of CSS this library does not need to reimplement.
 12. **Date and time** — CalendarView, CalendarDatePicker, DatePicker, TimePicker.
