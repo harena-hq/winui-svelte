@@ -5,6 +5,7 @@ export const title = 'the generated records match their source and their own cou
 
 const DESIGN = 'data/winui-gallery-design.json';
 const SHELL = 'data/winui-gallery-shell.json';
+const SAMPLES = 'data/winui-gallery-samples.json';
 const COLORCODE = 'data/colorcode.json';
 
 /**
@@ -18,7 +19,7 @@ const COLORCODE = 'data/colorcode.json';
  * `.upstream/WinUI-Gallery`, which are deliberately not committed and are absent from a
  * fresh clone. So the gate always checks
  * what a fresh clone can check — the pin the records name, and each record's census
- * against its own contents — and additionally re-derives all three records when both
+ * against its own contents — and additionally re-derives all four records when both
  * checkouts happen to be present at their pins.
  *
  * The weaker half is not a formality. Hand-editing a record is the failure that actually
@@ -43,7 +44,7 @@ function byAlias(colorcode, alias) {
 	return found[0];
 }
 
-function counted(design, shell, colorcode) {
+function counted(design, shell, samples, colorcode) {
 	const tiles = design.color.items.filter((item) => item.kind === 'tiles');
 	const bySection = {};
 	for (const grid of tiles) {
@@ -81,6 +82,21 @@ function counted(design, shell, colorcode) {
 				0
 			)
 		},
+		[SAMPLES]: {
+			files: Object.keys(samples.samples).length,
+			sectioned: Object.values(samples.samples).filter((sample) => sample.kind === 'sections')
+				.length,
+			plain: Object.values(samples.samples).filter((sample) => sample.kind === 'text').length,
+			withHeader: Object.values(samples.samples).filter(
+				(sample) => sample.kind === 'sections' && sample.header !== null
+			).length,
+			withXaml: Object.values(samples.samples).filter(
+				(sample) => sample.kind === 'sections' && sample.xaml !== null
+			).length,
+			withCSharp: Object.values(samples.samples).filter(
+				(sample) => sample.kind === 'sections' && sample.csharp !== null
+			).length
+		},
 		[COLORCODE]: {
 			scopeNames: Object.keys(colorcode.scopeNames).length,
 			colorConstants: Object.keys(colorcode.colorConstants).length,
@@ -107,7 +123,7 @@ function counted(design, shell, colorcode) {
 
 export async function run() {
 	const records = {};
-	for (const path of [DESIGN, SHELL, COLORCODE]) {
+	for (const path of [DESIGN, SHELL, SAMPLES, COLORCODE]) {
 		let text;
 		try {
 			text = await read(path);
@@ -152,7 +168,7 @@ export async function run() {
 		);
 	}
 
-	const expected = counted(records[DESIGN], records[SHELL], records[COLORCODE]);
+	const expected = counted(records[DESIGN], records[SHELL], records[SAMPLES], records[COLORCODE]);
 	for (const [path, counts] of Object.entries(expected)) {
 		for (const [key, value] of Object.entries(counts)) {
 			const claimed = records[path].census?.[key];
@@ -183,7 +199,7 @@ export async function run() {
 				`.upstream/ColorCode-Universal is ${colorcodeAt === null ? 'absent' : `at ${colorcodeAt}`}`
 			);
 		}
-		return pass(`3 record(s) consistent; not re-derived — ${missing.join('; ')}`);
+		return pass(`4 record(s) consistent; not re-derived — ${missing.join('; ')}`);
 	}
 
 	const { records: derive } = await import('../gallery/extract.mjs');
@@ -200,6 +216,7 @@ export async function run() {
 	for (const [path, record] of [
 		[DESIGN, fresh.design],
 		[SHELL, fresh.shell],
+		[SAMPLES, fresh.samples],
 		[COLORCODE, fresh.colorcode]
 	]) {
 		if (JSON.stringify(strip(records[path])) !== JSON.stringify(strip(record))) stale.push(path);
@@ -207,5 +224,5 @@ export async function run() {
 
 	return stale.length
 		? fail('a committed generated record is stale; rerun its extractor', stale)
-		: pass('3 record(s) consistent and re-derived from the pinned checkouts');
+		: pass('4 record(s) consistent and re-derived from the pinned checkouts');
 }

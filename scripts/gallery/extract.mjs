@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto';
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { CHECKOUT, head, ROOT, UPSTREAM } from './fetch.mjs';
@@ -7,6 +7,7 @@ import { parse } from '../tokens/xaml.mjs';
 
 const OUTPUT = join(ROOT, 'data', 'winui-gallery-design.json');
 const OUTPUT_SHELL = join(ROOT, 'data', 'winui-gallery-shell.json');
+const OUTPUT_SAMPLES = join(ROOT, 'data', 'winui-gallery-samples.json');
 
 // The five Design pages — Color, Typography, Iconography, Geometry, Spacing —
 // are written against two upstream shapes that this script treats differently:
@@ -28,6 +29,100 @@ const ICONS_DATA = 'WinUIGallery/Samples/Iconography/IconsData.json';
 const CONTROL_INFO = 'WinUIGallery/SampleSupport/Data/ControlInfoData.json';
 const MAIN_WINDOW = 'WinUIGallery/MainWindow.xaml';
 const SAMPLES_DIR = 'WinUIGallery/Samples';
+
+// This record's body is the files' own contents, so a hash beside each path would be a
+// second statement of the same bytes. The other records need hashes because their bodies
+// are transformed views of their sources.
+
+/** The `.txt` paths below `WinUIGallery/Samples`, independent of filesystem order. */
+function samplePaths() {
+	const root = join(CHECKOUT, SAMPLES_DIR);
+	const paths = [];
+	const visit = (directory) => {
+		for (const entry of readdirSync(directory, { withFileTypes: true })) {
+			const fullPath = join(directory, entry.name);
+			if (entry.isDirectory()) visit(fullPath);
+			else if (entry.isFile() && entry.name.endsWith('.txt')) {
+				paths.push(relative(root, fullPath).replaceAll('\\', '/'));
+			}
+		}
+	};
+	visit(root);
+	return paths.sort((a, b) => a.localeCompare(b));
+}
+
+/**
+ * `ControlExample.ParseSampleCodeSections`, including its deliberate treatment of unknown
+ * section names: parse them so boundaries remain correct, then do not retain their content.
+ */
+function sampleSections(content) {
+	let currentSection = null;
+	let currentLines = [];
+	const sections = { header: null, xaml: null, csharp: null };
+	const save = () => {
+		if (currentSection === null) return;
+		const value = currentLines.join('\n').trim();
+		const name = currentSection.toLowerCase();
+		if (name === 'header') sections.header = value;
+		else if (name === 'xaml') sections.xaml = value;
+		else if (name === 'c#') sections.csharp = value;
+	};
+
+	for (const rawLine of content.split('\n')) {
+		const line = rawLine.replace(/\r$/, '');
+		if (line.startsWith('--- ')) {
+			save();
+			currentSection = line.slice(4).trim();
+			currentLines = [];
+		} else {
+			currentLines.push(line);
+		}
+	}
+	save();
+	return sections;
+}
+
+function extractSamples() {
+	const files = samplePaths();
+	const samples = {};
+	let sectioned = 0;
+	let withHeader = 0;
+	let withXaml = 0;
+	let withCSharp = 0;
+	for (const path of files) {
+		const text = readFileSync(join(CHECKOUT, SAMPLES_DIR, path), 'utf8');
+		if (!text.split('\n').some((line) => line.replace(/\r$/, '').startsWith('--- '))) {
+			samples[path] = { kind: 'text', text };
+			continue;
+		}
+		const sections = sampleSections(text);
+		sectioned++;
+		if (sections.header !== null) withHeader++;
+		if (sections.xaml !== null) withXaml++;
+		if (sections.csharp !== null) withCSharp++;
+		samples[path] = { kind: 'sections', ...sections };
+	}
+	return {
+		source: {
+			repository: 'microsoft/WinUI-Gallery',
+			url: UPSTREAM.url,
+			ref: UPSTREAM.ref,
+			commit: UPSTREAM.commit,
+			extractedAt: new Date().toISOString().slice(0, 10),
+			fileCount: files.length,
+			files
+		},
+		census: {
+			files: files.length,
+			sectioned,
+			plain: files.length - sectioned,
+			withHeader,
+			withXaml,
+			withCSharp
+		},
+		samples
+	};
+}
 
 // One list per record, holding the files that record is derived from — not one shared
 // list both draw on. A provenance block answers "what was read to produce this file",
@@ -673,6 +768,15 @@ const censusShell = (doc) => {
 	].join('\n');
 };
 
+const censusSamples = (doc) => {
+	const c = doc.census;
+	return [
+		`files             ${c.files} read`,
+		`sections          ${c.sectioned} sectioned, ${c.plain} plain`,
+		`definitions       ${c.withHeader} headers, ${c.withXaml} XAML, ${c.withCSharp} C#`
+	].join('\n');
+};
+
 /**
  * The first place `a` and `b` disagree, named by path, or `null`.
  *
@@ -731,10 +835,12 @@ function main(argv) {
 
 	const design = extractDesign();
 	const shell = extractShell();
+	const samples = extractSamples();
 
 	if (argv.includes('--check')) {
 		checkOne(OUTPUT, design);
 		checkOne(OUTPUT_SHELL, shell);
+		checkOne(OUTPUT_SAMPLES, samples);
 
 		console.log(
 			`${relative(ROOT, OUTPUT)} matches the extractor (${design.census.colorTiles} tiles, ${design.census.icons} icons).`
@@ -742,16 +848,22 @@ function main(argv) {
 		console.log(
 			`${relative(ROOT, OUTPUT_SHELL)} matches the extractor (${shell.census.menuItems} menu entries, ${shell.census.groups} groups).`
 		);
+		console.log(
+			`${relative(ROOT, OUTPUT_SAMPLES)} matches the extractor (${samples.census.files} files, ${samples.census.sectioned} sectioned).`
+		);
 		return;
 	}
 
 	mkdirSync(dirname(OUTPUT), { recursive: true });
 	writeFileSync(OUTPUT, `${JSON.stringify(design, null, '\t')}\n`);
 	writeFileSync(OUTPUT_SHELL, `${JSON.stringify(shell, null, '\t')}\n`);
+	writeFileSync(OUTPUT_SAMPLES, `${JSON.stringify(samples, null, '\t')}\n`);
 	console.log(censusDesign(design));
 	console.log(`written           ${relative(ROOT, OUTPUT)}`);
 	console.log(censusShell(shell));
 	console.log(`written           ${relative(ROOT, OUTPUT_SHELL)}`);
+	console.log(censusSamples(samples));
+	console.log(`written           ${relative(ROOT, OUTPUT_SAMPLES)}`);
 }
 
 /**
@@ -769,7 +881,7 @@ export function records() {
 			`.upstream/WinUI-Gallery ${state}, not ${UPSTREAM.commit}. Run \`pnpm gallery:fetch\`.`
 		);
 	}
-	return { design: extractDesign(), shell: extractShell() };
+	return { design: extractDesign(), shell: extractShell(), samples: extractSamples() };
 }
 
 // Importing this module must not write files or exit: C8 wants `records()`, not the side
