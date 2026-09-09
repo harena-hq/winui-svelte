@@ -4,6 +4,12 @@
 		text: string;
 		/** CopiedMessage. Announced to assistive technology after a successful copy. */
 		copiedMessage?: string;
+		/**
+		 * `AutomationProperties.Name` and `ToolTipService.ToolTip`, which the style sets to
+		 * `Copy to clipboard` and every consumer but one leaves there — the page header's
+		 * copy-link button carries `Copy link` (PageHeader.xaml:240-242).
+		 */
+		label?: string;
 		/** Content. The glyph shown before a successful copy. */
 		glyph?: string;
 		class?: string;
@@ -26,6 +32,7 @@
 	let {
 		text,
 		copiedMessage = 'Copied to clipboard',
+		label = 'Copy to clipboard',
 		glyph = COPY_GLYPH,
 		class: className,
 		style,
@@ -79,12 +86,7 @@
 </script>
 
 <div bind:this={ref} class={['root', className]} {style} {...rest}>
-	<Button
-		class="copy-button"
-		aria-label="Copy to clipboard"
-		title="Copy to clipboard"
-		onclick={copy}
-	>
+	<Button class="copy-button" aria-label={label} title={label} onclick={copy}>
 		<span class="glyph content" class:copied>{glyph}</span>
 		<span class="glyph success" class:copied>{SUCCESS_GLYPH}</span>
 		<span class="announcement" aria-live="polite">{copied ? copiedMessage : ''}</span>
