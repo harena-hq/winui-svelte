@@ -144,18 +144,25 @@
 	}
 
 	/* One column, not one row. A `ContentPresenter` upstream holds a single element; a snippet
-	   here can emit several roots, and as flex items they came out side by side — the type
-	   ramp's nine rows ran off the right edge of the pane. A grid with one auto column stacks
-	   them the way a reader expects and says the alignment properties more directly than flex
-	   did: `justify-items` is HorizontalContentAlignment, `stretch` included.
+	   here can emit several roots, and side by side they ran the type ramp's nine rows off the
+	   right edge of the pane. A flex column stacks them, and `align-items` is
+	   HorizontalContentAlignment, `stretch` included.
 	   Measured on the original's Button page: the sample keeps its own height and sits in the
 	   middle of a pane whose height the tallest column decides — a 32px button centred in a
 	   94px pane, and a 48px one centred in a 99px pane. The template says only
-	   `VerticalAlignment="Stretch"` on the presenter, which is the pane rather than its
-	   content, and `align-content` is where that lands on a grid. */
+	   `VerticalAlignment="Stretch"` on the presenter (ControlExample.xaml:117), which is the
+	   pane rather than its content; a XAML child with a fixed height and the default
+	   `Stretch` lands in the middle, and `justify-content: center` is where that lands here.
+	   A child that says otherwise — `VerticalAlignment="Top"` on the Border page's sample,
+	   BorderPage.xaml:24 — says it through `data-vertical-alignment` on itself. In XAML the
+	   alignment is the child's property and in CSS it is the container's; an auto margin is
+	   the one thing a flex item can set that the algorithm resolves before `justify-content`,
+	   so the attribute below maps onto one. It is read on direct children only, and a child
+	   after a `top` one is pushed to the bottom by the same margin. */
 	.example {
-		display: grid;
-		align-content: center;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
 		padding: 12px;
 		background: var(--winui-SolidBackgroundFillColorBaseBrush);
 		border-color: var(--winui-CardStrokeColorDefaultBrush);
@@ -166,16 +173,29 @@
 	}
 
 	.example[data-horizontal-content-alignment='left'] {
-		justify-items: start;
+		align-items: flex-start;
 	}
 	.example[data-horizontal-content-alignment='center'] {
-		justify-items: center;
+		align-items: center;
 	}
 	.example[data-horizontal-content-alignment='right'] {
-		justify-items: end;
+		align-items: flex-end;
 	}
 	.example[data-horizontal-content-alignment='stretch'] {
-		justify-items: stretch;
+		align-items: stretch;
+	}
+
+	/* The sample's own `VerticalAlignment`, stated on the sample. The selector crosses the
+	   snippet boundary on purpose: the child is the page's element, and `:global` closes the
+	   sequence rather than sitting inside it. */
+	.example > :global([data-vertical-alignment='top']) {
+		margin-bottom: auto;
+	}
+	.example > :global([data-vertical-alignment='bottom']) {
+		margin-top: auto;
+	}
+	.example > :global([data-vertical-alignment='stretch']) {
+		flex: 1 1 auto;
 	}
 
 	/* High contrast already maps SolidBackgroundFillColorBaseBrush to SystemColorWindowColor. */

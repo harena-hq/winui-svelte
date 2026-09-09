@@ -63,6 +63,22 @@ private void OnClick(object sender, RoutedEventArgs e)
 	<Button>Sample button</Button>
 </ControlExample>
 
+<!-- The sample says where it sits: `VerticalAlignment="Top"` on the Border page's sample
+     (BorderPage.xaml:24) is `data-vertical-alignment="top"` on the pane's direct child. The
+     options pane is tall so the pane has room to show the difference. -->
+<h2 class="winui-SubtitleTextBlockStyle">a sample aligned to the top</h2>
+<ControlExample headerText="Aligned to the top" {xaml}>
+	<div data-vertical-alignment="top"><Button>Sample button</Button></div>
+	{#snippet options()}
+		<div class="option-stack">
+			<ToggleSwitch>Enable feature</ToggleSwitch>
+			<CheckBox>Show details</CheckBox>
+			<CheckBox>Show more details</CheckBox>
+			<CheckBox>Show every detail</CheckBox>
+		</div>
+	{/snippet}
+</ControlExample>
+
 <style>
 	.option-stack {
 		display: flex;
