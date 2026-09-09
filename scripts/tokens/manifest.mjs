@@ -1136,6 +1136,107 @@ export const RADIOBUTTONS_KEYS = {
 };
 
 /**
+ * Keys CalendarView reads from DefaultCalendarViewStyle and its rounded item chrome. The three
+ * Reveal-only brushes (CalendarViewCalendarItemRevealBackground,
+ * CalendarViewCalendarItemRevealBorderBrush, and CalendarViewFocusBorderBrush) are excluded:
+ * CalendarViewRevealStyle is not applied. CalendarViewBaseItemRoundedChromeEnabled is also
+ * excluded because it is a native x:Boolean feature flag, not a value a CSS declaration accepts.
+ *
+ * Two more are excluded for v11's `SplitViewRightBorderThemeThickness` reason — defined by the
+ * pin and applied by nothing in it. Neither `HeaderNavigationButtonStyle` nor
+ * `NavigationButtonStyle` carries a `Foreground` setter, and neither template binds one, so
+ * `CalendarViewHeaderNavigationButtonForeground` and `CalendarViewNavigationButtonForeground`
+ * are read by no resting state: the header button takes the control's own
+ * `CalendarViewForeground` through `{TemplateBinding Foreground}`, and the two arrow buttons
+ * take the ordinary `ButtonForeground`. Measured on the reference guest, where the arrows are
+ * the same (27, 27, 27) as the title rather than that key's grey. The three pointer-state
+ * variants of each are kept, because the visual states do set those.
+ */
+export const CALENDARVIEW_KEYS = {
+	CalendarViewBackground: 'CalendarView frame background',
+	CalendarViewBlackoutBackground: 'CalendarView blackout day background',
+	CalendarViewBlackoutForeground: 'CalendarView blackout day foreground',
+	CalendarViewBlackoutStrikethroughBrush: 'CalendarView blackout day strikethrough',
+	CalendarViewBorderBrush: 'CalendarView frame border and divider',
+	CalendarViewCalendarItemBackground: 'CalendarView day background, at rest',
+	CalendarViewCalendarItemBorderBrush: 'CalendarView day border, at rest',
+	CalendarViewCalendarItemDisabledBackground: 'CalendarView disabled day background',
+	CalendarViewCalendarItemForeground: 'CalendarView day foreground, at rest',
+	CalendarViewCalendarItemHoverBackground: 'CalendarView day background, pointer over',
+	CalendarViewCalendarItemPressedBackground: 'CalendarView day background, pressed',
+	CalendarViewDisabledForeground: 'CalendarView disabled day foreground',
+	CalendarViewFocusVisualPrimaryBrush: 'CalendarView focus visual outer stroke',
+	CalendarViewFocusVisualSecondaryBrush: 'CalendarView focus visual inner stroke',
+	CalendarViewForeground: 'CalendarView default foreground',
+	CalendarViewHeaderNavigationButtonForegroundDisabled:
+		'CalendarView disabled header button foreground',
+	CalendarViewHeaderNavigationButtonForegroundPointerOver:
+		'CalendarView header button foreground, pointer over',
+	CalendarViewHeaderNavigationButtonForegroundPressed:
+		'CalendarView header button foreground, pressed',
+	CalendarViewHoverBorderBrush: 'CalendarView day border, pointer over',
+	CalendarViewNavigationButtonBackground: 'CalendarView navigation button background',
+	CalendarViewNavigationButtonBackgroundPointerOver:
+		'CalendarView navigation button background, pointer over',
+	CalendarViewNavigationButtonBackgroundPressed:
+		'CalendarView navigation button background, pressed',
+	CalendarViewNavigationButtonBorderBrush: 'CalendarView navigation button border',
+	CalendarViewNavigationButtonBorderBrushPointerOver:
+		'CalendarView navigation button border, pointer over',
+	CalendarViewNavigationButtonForegroundDisabled:
+		'CalendarView disabled navigation button foreground',
+	CalendarViewNavigationButtonForegroundPointerOver:
+		'CalendarView navigation button foreground, pointer over',
+	CalendarViewNavigationButtonForegroundPressed:
+		'CalendarView navigation button foreground, pressed',
+	CalendarViewOutOfScopeBackground: 'CalendarView out-of-scope day background',
+	CalendarViewOutOfScopeForeground: 'CalendarView out-of-scope day foreground',
+	CalendarViewOutOfScopeHoverForeground: 'CalendarView out-of-scope day foreground, pointer over',
+	CalendarViewOutOfScopePressedForeground: 'CalendarView out-of-scope day foreground, pressed',
+	CalendarViewPressedBorderBrush: 'CalendarView day border, pressed',
+	CalendarViewPressedForeground: 'CalendarView day foreground, pressed',
+	CalendarViewSelectedBorderBrush: 'CalendarView selected day border',
+	CalendarViewSelectedDisabledBorderBrush: 'CalendarView disabled selected day border',
+	CalendarViewSelectedDisabledForeground: 'CalendarView disabled selected day foreground',
+	CalendarViewSelectedForeground: 'CalendarView selected day foreground',
+	CalendarViewSelectedHoverBorderBrush: 'CalendarView selected day border, pointer over',
+	CalendarViewSelectedHoverForeground: 'CalendarView selected day foreground, pointer over',
+	CalendarViewSelectedPressedBorderBrush: 'CalendarView selected day border, pressed',
+	CalendarViewSelectedPressedForeground: 'CalendarView selected day foreground, pressed',
+	CalendarViewTodayBackground: 'CalendarView today background',
+	CalendarViewTodayBlackoutBackground: 'CalendarView blackout today background',
+	CalendarViewTodayBlackoutForeground: 'CalendarView blackout today foreground',
+	CalendarViewTodayDisabledBackground: 'CalendarView disabled today background',
+	CalendarViewTodayForeground: 'CalendarView today foreground',
+	CalendarViewTodayHoverBackground: 'CalendarView today background, pointer over',
+	CalendarViewTodayPressedBackground: 'CalendarView today background, pressed',
+	CalendarViewTodaySelectedInnerBorderBrush: 'CalendarView selected today inner border',
+	CalendarViewWeekDayForegroundDisabled: 'CalendarView disabled weekday foreground',
+	CalendarViewDayItemFontSize: 'CalendarView day number font size',
+	CalendarViewFirstOfMonthLabelFontSize: 'CalendarView first-of-month label font size',
+	CalendarViewFirstOfYearDecadeLabelFontSize: 'CalendarView first-of-year decade label font size',
+	CalendarViewHeaderNavigationButtonFontSize: 'CalendarView header button font size',
+	CalendarViewMonthYearItemFontSize: 'CalendarView month-year item font size',
+	CalendarViewNavigationButtonFontSize: 'CalendarView navigation button font size',
+	CalendarViewDayItemMargin: 'CalendarView day number margin',
+	CalendarViewFirstOfMonthLabelMargin: 'CalendarView first-of-month label margin',
+	CalendarViewFirstOfYearDecadeLabelMargin: 'CalendarView first-of-year decade label margin',
+	CalendarViewHeaderNavigationButtonMargin: 'CalendarView header button margin',
+	CalendarViewHeaderNavigationButtonPadding: 'CalendarView header button padding',
+	CalendarViewMonthYearItemMargin: 'CalendarView month-year item margin',
+	CalendarViewNavigationButtonFocusVisualMargin: 'CalendarView navigation focus visual margin',
+	CalendarViewNavigationButtonPadding: 'CalendarView navigation button padding',
+	CalendarViewNavigationNextButtonMargin: 'CalendarView next button margin',
+	CalendarViewNavigationPreviousButtonMargin: 'CalendarView previous button margin',
+	CalendarViewWeekDayMargin: 'CalendarView weekday margin',
+	CalendarViewWeekDayPadding: 'CalendarView weekday padding',
+	CalendarViewHeaderNavigationFontWeight: 'CalendarView header button font weight',
+	CalendarViewTodayFontWeight: 'CalendarView today font weight',
+	CalendarViewWeekDayFontWeight: 'CalendarView weekday font weight',
+	CalendarViewNavigationButtonScalePressed: 'CalendarView navigation button pressed scale'
+};
+
+/**
  * Keys SplitView reads from its template: its lengths, border, corner, inline motion, and
  * framework brushes. `SplitViewLightDismissOverlayBackground` is absent because desktop Auto
  * light dismiss remains transparent; `SplitViewPaneAnimationOpenPreDuration` times a content
@@ -2578,6 +2679,8 @@ export const DOUBLE_RATIOS = {
 	ComboBoxItemPillMinScale: "the selection pill's pressed scale, 0.625",
 	ItemContainerDisabledOpacity: "the disabled ItemContainer's 0.3 opacity",
 	FlipViewButtonScalePressed: "the pressed flip button's 0.875 scale",
+	CalendarViewNavigationButtonScalePressed:
+		"the pressed CalendarView navigation button's 0.875 scale",
 	ListViewItemDisabledThemeOpacity: "the disabled ListViewItem's 0.3 opacity"
 };
 
