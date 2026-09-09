@@ -69,7 +69,7 @@ pnpm workspace. The library is publishable and imposes no build tooling on its c
 | D30 | Grid and StackPanel are Gallery pages drawn in CSS, not components; Border stays a component           | this file, "Roadmap → v11"        |
 | D31 | CalendarView's month grid is bits-ui's `Calendar`; its year and decade grids are ours                  | this file, "Roadmap → v12"        |
 | D32 | A date-valued prop is a native `Date`; the arithmetic is `@internationalized/date`, the strings `Intl` | this file, "Roadmap → v12"        |
-| D33 | A scrollbar is elements rather than `::-webkit-scrollbar`; `ScrollView` is bits-ui's `ScrollArea`      | this file, "Roadmap → v13"        |
+| D33 | A scrollbar is elements rather than `::-webkit-scrollbar`, and its viewport is not bits-ui's           | this file, "Roadmap → v13"        |
 
 ## Verification
 
@@ -2455,18 +2455,32 @@ controls/dev -name 'AppBar*'` matches three `*_themeresources.xaml` files and no
     shell's page area — and three of them carry a comment naming this tranche as where the copying
     stops. None of the six appears in any baseline.
 
-    **D33 — the scrollbar is elements, not `::-webkit-scrollbar`, and `ScrollView` is bits-ui's
-    `ScrollArea` under it.** A pseudo-element scrollbar cannot express what the original draws
-    and cannot be seen by what judges it. It cannot: hold the two arrow buttons the expanded bar
-    has, carry the four `ConsciousStates` (`ScrollBar_themeresources.xaml:528-671`), or animate
-    between them on the pin's own timings; and in the browser that takes the baselines it paints
-    nothing at all. Elements can do all of it, and a `div` photographs like any other content.
-    The primitive underneath is bits-ui's `ScrollArea` — `Root`, `Viewport`, `Scrollbar`, `Thumb`
-    and `Corner`, already a dependency at 2.19.0 — which hides the native bars, keeps the
-    viewport at full width the way WinUI's overlaying `PART_ScrollPresenter` does, and carries
-    the thumb's drag. Its `type` maps onto `ScrollingScrollBarVisibility` and everything above
-    the thumb is ours: the track, the two `RepeatButton` arrows, the mini and expanded states, and
-    their timings, which are not the primitive's `scrollHideDelay` of 600ms.
+    **D33 — the scrollbar is elements, not `::-webkit-scrollbar`.** A pseudo-element scrollbar
+    cannot express what the original draws and cannot be seen by what judges it. It cannot: hold
+    the two arrow buttons the expanded bar has, carry the four `ConsciousStates`
+    (`ScrollBar_themeresources.xaml:528-670`), or animate between them on the pin's own timings;
+    and in the browser that takes the baselines it paints nothing at all. Elements can do all of
+    it, and a `div` photographs like any other content. Unit 0 measured both halves of that on the
+    guest before unit 1 was specified.
+
+    **D33's second clause was that bits-ui's `ScrollArea` would be the primitive underneath, and
+    it was struck before unit 2 was written.** Reading the installed package rather than its
+    documentation is what struck it. `getThumbSize` floors the thumb at a hard-coded 18
+    (`bits-ui@2.19.0`, `dist/bits/scroll-area/scroll-area.svelte.js:742-747`) where WinUI floors
+    it at 30; it divides by the scrollbar box less its padding where WinUI divides by the rail's
+    own length; it has none of WinUI's three conditions for drawing no thumb at all; and it writes
+    the thumb's position into `style.transform` on every scroll (`:335-337`), which is the same
+    channel the collapsed state's `ScrollBarThumbOffset` needs. None of the three is reachable
+    from outside the primitive.
+
+    What that would have cost is a thumb of the wrong length in every scrolling region in the
+    library, largest exactly where it shows most — a long list gives 18 where the original gives
+    30 — and no gate would have seen it. So the viewport is an ordinary `overflow: auto` box with
+    `scrollbar-width: none`, which unit 0 showed is the whole of what the primitive was wanted
+    for, and the bar beside it is this version's own `ScrollBar` driven from the viewport's
+    `scrollTop` and `scrollHeight`. ADR 0004 already allows this shape: it names bits-ui the base
+    and names the controls that get their own machine instead. Its test is whether the primitive
+    computes what the control needs, and here it computes something else.
 
     **The scrollbar, measured on the original before any of that was decided.** On the ScrollView
     page's first example, whose content ends at x=769:
