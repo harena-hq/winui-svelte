@@ -2697,6 +2697,13 @@ controls/dev -name 'AppBar*'` matches three `*_themeresources.xaml` files and no
     comment above it reads the setter backwards — it says the 120 is there so the box is wide
     _enough_, where upstream's purpose is to let a NumberBox be narrower than a text box.
 
+    **Two sentences of the paragraph above are wrong, and v14's closing entry corrects them.**
+    `TextControlThemeMinWidth` is 64, not 318 — the 318 was this reproduction's own hardcode,
+    read back as though it were the resource's value — so the `SpinButtonsVisible` setter
+    raises the InputBox's floor to 120 rather than lowering it to it. Everything else here
+    holds, including that our outer minimum keeps the setter from ever taking effect. See
+    WD-042 and v14 below; the unit that removes the 318 settles this row with it.
+
     **A state setter that lowers a minimum is invisible behind an outer minimum transcribed from
     the same resource**, and nothing catches it: both numbers are cited, both citations are
     correct, and the control renders. The fix is a unit of v14, and the AnnotatedScrollBar row
@@ -3021,7 +3028,73 @@ System / Shell` moves to item 16; `item 15` occurs once in the whole of `docs/`,
     - Nine gates green, `check` clean, both builds succeeding, every baseline photographed on
       the reference guest.
 
-    Planned. The closing entry follows when the units are sealed.
+    **Closed.** Fifteen units, plus two out-of-band commits. Ten pages, seven components, one
+    density.
+
+    **What the version cost that its plan did not price.** Three of the fifteen units were
+    larger than their line said, and all three for the same reason: the line described the
+    artifact and not the path the values reach it by.
+
+    - **Unit 12 was two units**, because `SystemBackdropElement` turned out to be a control in
+      the pin rather than markup on a page — the paragraph above unit 12's line records that.
+    - **Unit 13 was not "a scoped block".** The block is nine lines. What was not priced is that
+      `DensityStyles/Compact.xaml` is not a theme dictionary, so the extractor could not see it
+      at all, and the density values had to reach the record before a block could emit them.
+      Two of the five keys the line names do not vary by density, and one is in neither pin's
+      reachable set.
+    - **Unit 14's page transcribes two upstream Pages into one.** `Frame.Navigate` destroys the
+      page it leaves, which is why upstream needs `CopyState`; a Svelte component that is never
+      unmounted needs nothing, so the mechanism vanishes rather than being reproduced.
+
+    **The trap unit 13 nearly walked into, recorded because it would have passed every gate.**
+    The token layer emits five scopes, and the strongest of their selectors —
+    `:root:not([data-theme='light']):not([data-theme='high-contrast'])`, inside the
+    preference media query — is (0,3,0). Five of the compact keys are declared in four of those
+    scopes. A density block written the obvious way, `:root[data-density='compact']`, is
+    (0,2,0) and would have been overridden in the dark and high-contrast themes only, silently,
+    with nine gates green and every visual baseline unmoved, because no baseline holds a
+    density. The rule that shipped is a four-selector list, each selector carrying one more
+    attribute than the theme scope it mirrors, and the emitted comment says why so that nobody
+    simplifies it back. It was verified by measurement in all four scopes on the guest, with
+    the preference scope emulated rather than assumed and proved live by reading the palette
+    back as `#202020`.
+
+    **What this version owes.**
+
+    | owed                                                                                                     | what it needs                                                                                                            |
+    | -------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+    | the body line height is 19px where the reference's is 18.25px                                            | a derived value, not a measured one, and it moves every baseline in the suite                                            |
+    | WD-042 — four text controls floor at 318 where WinUI floors at 64                                        | the four declarations, and the dev-route baselines that a 64-pixel floor would collapse                                  |
+    | C9 does not follow a token whose value is a bare `var()`                                                 | one resolution step in the gate; three declarations were invalid for four versions and nothing noticed                   |
+    | the ComboBox chevron column is fixed at 38 upstream, ours is 12 plus 14                                  | the same measurement pass as its trigger height, 34 against WinUI's 32                                                   |
+    | `ControlExample`'s options pane is 233 wide at x 1330 against 232 at x 1331, `#fcfcfc` against `#fbfbfb` | `.options` is content-box with `border-width: 0 0 0 1px`; three baselines move, and it does not show at every pane width |
+    | unstyled text is the browser's 16px in both densities                                                    | XAML's own TextBlock default, which is in neither pin                                                                    |
+
+    **The line height is the version's one unexplained geometry, and two explanations were
+    ruled out rather than argued away.** Measured on the System Backdrops page: reference line
+    tops 304, 322, 340, 359, 377 against ours 303, 322, 341, 360, 379, so 18.25 against 19, and
+    over that example's twelve lines its pane comes out 353 tall against 348. It is why every
+    other geometry on both backdrop pages matched to the pixel and that one did not. It is
+    **not font fallback** — the computed family on the guest is
+    `"Segoe UI Variable Text", "Segoe UI", sans-serif` and `document.fonts.check` returns true
+    for the first name — and it is not a rounding of one number, because 1.357 against 1.304 of
+    the font size is far more than a rounding. The pin sets no `LineHeight` on any ramp style:
+    `TextBlock_themeresources.xaml:10-18` gives `BaseTextBlockStyle`
+    `LineStackingStrategy="MaxHeight"` and `TextLineBounds="Full"`, so XAML derives the line box
+    from the font's metrics and so does CSS's `normal`. What is left is that the two read
+    different metric tables for the same font, which is a mechanism a fix can be derived from
+    rather than a number to copy.
+
+    **A correction to v13's closing entry.** That entry's `NumberBox` row calls
+    `TextControlThemeMinWidth` "the 318 every text box has". It is **64**, defined only in the
+    framework dictionary (`generic.xaml:100`, `:3727`, `:5709`); the control pin references the
+    key in six templates and defines it nowhere, and the token layer has emitted 64 all along.
+    The 318 was this reproduction's own hardcode, read back as though it were the resource's
+    value. The consequence inverts the row's reading: `NumberBoxMinWidth` is 120, so the
+    `SpinButtonsVisible` setter **raises** the InputBox's floor rather than lowering it, and its
+    purpose is that a NumberBox showing two spin buttons needs a wider floor than a plain text
+    box — not, as the row says, that a NumberBox may be narrower than one. WD-042 carries the
+    evidence, and the unit that removes the 318 settles both rows at once.
 
 15. **Motion** (7) — Animation interop, Connected Animation, Easing Functions, Implicit
     Transitions, Page Transitions, Theme Transitions, and **ParallaxView**, which the Gallery
