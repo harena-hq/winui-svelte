@@ -20,6 +20,15 @@
 	// right and bottom edges (shape.cpp:597-600), including any offset from the origin. Unlike
 	// Fill shapes, it does not inset its coordinates; its size includes the stroke's right/bottom
 	// overhang so the painted extent is preserved.
+	//
+	// **A `Stretch="None"` shape paints outside its own box on the top and the left, and XAML
+	// does not clip it.** `ApplyContentStretch` gives the box `geometry.right + thickness/2` by
+	// `geometry.bottom + thickness/2` (shape.cpp:1297-1298) while `GenerateGeometryBounds` puts
+	// the render bounds' origin at `geometry.left - thickness/2`, `geometry.top - thickness/2`
+	// — negative — and its own comment says layout clipping happens only where the geometry
+	// passes the layout bounds *in positive space*. An `<svg>` root is `overflow: hidden` by
+	// default, so the rule has to be written down here or a mitre over the origin is sliced
+	// flat; it was, on this harness's own apex at `points="0,100 50,0 100,100"`.
 </script>
 
 <script lang="ts">
@@ -78,7 +87,20 @@
 </svg>
 
 <style>
+	svg {
+		/* The module comment's rule: the box is the geometry's positive extent and the paint is
+		   allowed past it. A UA gives an outermost `<svg>` `overflow: hidden`. */
+		overflow: visible;
+	}
+
 	.geometry {
 		stroke-width: var(--shape-stroke-thickness);
+		/* `Shape.StrokeMiterLimit` defaults to 10 — `DependencyProperty.cpp:722-725` — where
+		   SVG's `stroke-miterlimit` defaults to 4. `StrokeLineJoin` and the two line caps need
+		   no such line: XAML's defaults are Miter (`rendertypes.h:44`) and Flat, which are
+		   already `miter` and `butt` in SVG. The limit is the one of the four that differs, and
+		   it decides whether a join sharper than about 29 degrees comes to a point or is cut
+		   square. */
+		stroke-miterlimit: 10;
 	}
 </style>
