@@ -138,6 +138,8 @@ export { default as SplitButton } from './components/SplitButton.svelte';
 export type { SplitButtonProps } from './components/SplitButton.svelte';
 export { default as SplitView } from './components/SplitView.svelte';
 export type { SplitViewProps } from './components/SplitView.svelte';
+export { default as SystemBackdropElement } from './components/SystemBackdropElement.svelte';
+export type { SystemBackdropElementProps } from './components/SystemBackdropElement.svelte';
 export { default as TeachingTip } from './components/TeachingTip.svelte';
 export type {
 	TeachingTipHeroContentPlacementMode,

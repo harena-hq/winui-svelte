@@ -2935,6 +2935,17 @@ System / Shell` moves to item 16; `item 15` occurs once in the whole of `docs/`,
     `radial-gradient` in a page's own CSS, and `ThemeShadow` is what unit 0 puts in the token
     layer.
 
+    **Seven, and the seventh was missed by this survey rather than added to it.** Unit 12 found
+    `SystemBackdropElement` in the control pin — `controls/dev/SystemBackdropElement/`, a
+    `FrameworkElement` with two properties and no template — and D35's own test returns
+    _component_ on four clauses: it is a `FrameworkElement`, `CornerRadius` is a grammar under a
+    member's name, its page names it as a control, and a consumer porting XAML reaches for it by
+    name. Its negative clause does not fire, because what a page would otherwise hardcode is a
+    mapping from a backdrop kind to a fallback colour, which is knowledge rather than markup.
+    The survey above missed it because the two backdrop pages were read as pages about a
+    material this project has already declined, and D16 declines the material without saying
+    anything about the element that hosts it.
+
     **The units.**
 
     0. **The drop-shadow recipe becomes the token layer's, and WD-012 closes.**
@@ -2960,7 +2971,8 @@ System / Shell` moves to item 16; `item 15` occurs once in the whole of `docs/`,
     11. **The AcrylicBrush page**, three examples over the shapes unit 2 builds, and the
         divergence that says what a fallback colour is and is not.
     12. **The two backdrop pages**, read against D16 and WD-003, which already say the window's
-        material is not approximated.
+        material is not approximated. Split, as unit 11 was: **12a** the
+        `SystemBackdropElement` component the pages need, **12b** the pages themselves.
     13. **The compact density**, as a scoped block over the five keys the layer does not yet
         emit and the two `TextBox` hardcodes that stand where two of them belong.
     14. **The Compact Sizing page**, one example, which is a frame the density radio swaps.
@@ -2992,8 +3004,10 @@ System / Shell` moves to item 16; `item 15` occurs once in the whole of `docs/`,
     - The ten routes render `ItemPage` from the record rather than the placeholder, and each of
       the twenty-five examples shows its header, its source and its options pane where the
       original has one.
-    - Six new components are exported, each with a dev route and a visual spec, each passed to
-      `snapshotAllThemes` by literal name, and each compared against the original on the guest.
+    - Seven new components are exported, each with a dev route and a visual spec, each passed
+      to `snapshotAllThemes` by literal name, and each compared against the original on the
+      guest. Six were surveyed before the version opened; `SystemBackdropElement` is the
+      seventh, and the paragraph above says why the survey missed it.
     - The shadow recipe reproduces both photographed depths — all four ramps at each — within a
       tolerance this version states before it fits, and the two existing shadow tokens change or
       do not change with the reason recorded either way.
