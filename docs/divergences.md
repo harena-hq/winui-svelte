@@ -177,7 +177,8 @@ exactly the reason above.
 
 - **Control**: `NavigationView`'s settings item, `TitleBar`'s back and pane-toggle buttons,
   `CheckBox`'s check glyph, `ItemContainer`'s multi-select check glyph, `Expander`'s chevron,
-  and `DropDownButton`'s and `SplitButton`'s chevrons.
+  and `DropDownButton`'s and `SplitButton`'s chevrons, and the AnimatedIcon page's two
+  examples.
 - **WinUI does**: give each of them an `AnimatedIcon` with a `FallbackIconSource` — the
   settings item in `CreateAndHookEventsToSettings`, `NavigationView.cpp:1319`; the two title
   bar buttons in their styles, `TitleBar_themeresources.xaml:160` and `:230`. The buttons'
@@ -214,18 +215,52 @@ exactly the reason above.
   glyph when unchecked, and the four
   `CheckBoxCheckGlyphForegroundUnchecked*` brushes are not emitted.
 
-- **Why accepted**: `AnimatedIcon` is a control in the Styles group and arrives with that
-  tranche, so the animation has no home yet. The gap is not one of effort but of input: the
-  motion exists here only as a compiled Composition graph, which is not a format CSS can
-  read and not one this repository can re-derive a keyframe list from. Reproducing it means
-  re-authoring the motion by eye against a running copy of Windows, which is a different
-  activity from reproducing a template, and a scale-on-press written from memory of what it
-  looked like is exactly the invention this registry exists to avoid. Meanwhile the glyph we
-  render is not an approximation — it is the icon WinUI itself paints, through
-  `FallbackIconSource`, wherever the animated source cannot run.
-- **Would reconsider if**: the Styles tranche lands `AnimatedIcon` with a motion vocabulary
-  these three can be expressed in. The entry is deleted rather than amended, because by then
-  each of them animates the way the original does.
+  **The AnimatedIcon page is where the difference is largest, because there the icon is the
+  subject rather than a detail of a control.** `AnimatedIconPage.xaml:30` puts an
+  `AnimatedIcon` alone in a `Button` of width 75. `AnimatedIcon::MeasureOverride`
+  (`AnimatedIcon.cpp:112`) measures the running composition — every one of these sources
+  reports a `Size()` of 48 by 48, as at
+  `AnimatedIcon/AnimatedVisuals/AnimatedFindVisualSource.cpp:607` — and falls through to the
+  base measure only when there is no visual (`:148-152`), which is the fallback icon at its
+  own size. Measured on the reference machine at the reference window width, the original's
+  button is **75 by 64** around **38 by 38** of ink; ours is **75 by 33** around a 20 by 20
+  glyph, because `g_ClientCoreFontSize` is 20 (`icon.cpp:13`, applied to `SymbolIcon` at
+  `:318`). The two buttons' top edges agree to a pixel and the whole difference is height.
+  It cascades: the second example sits 30 pixels higher than the original's for this reason
+  alone, and nothing else on the page moves.
+
+  A 20-pixel glyph centred in a 48 by 48 box would close that gap and is not written, because
+  it is a state WinUI never renders — with a visual the fallback is removed from the root
+  panel (`AnimatedIcon.cpp:546`), and without one there is no 48 by 48 box.
+
+  **The page's `Kind` combo box changes the sample source and nothing on screen.** All seven
+  visual sources share one `FallbackIconSource` (`AnimatedIconPage.xaml:31-33`), so the icon
+  it selects between is the same Find symbol every time.
+
+- **Why accepted**: not because the motion cannot be read. **That was this entry's stated
+  reason, and it was false** — correcting it is what v14 owes this entry. The pin ships
+  LottieGen's output as C++ that spells the timeline out. In
+  `AnimatedIcon/AnimatedVisuals/AnimatedChevronUpDownSmallVisualSource.cpp`, `:104` declares
+  `c_durationTicks{ 43333333L }` — 4.3333 seconds; `:352`, `:357`, `:362` and `:367` create
+  four cubic Bézier easing functions with their control points written out; an
+  `InsertKeyFrame` carries each keyframe's progress and value from `:428`; and `:784` returns
+  a `Markers()` map naming every state transition's start and end as a fraction of that
+  timeline, of which `NormalOnToPointerOverOn` runs 0.115577 to 0.150192 — 150 milliseconds.
+  None of that needs re-authoring by eye against a running copy of Windows.
+
+  What is true is the cost, and the ordering. The same file carries path morphs, expression
+  animators and geometry that a keyframe list alone does not describe, so reproducing one of
+  these is a transcription of a scene graph rather than of a timeline — and this library has
+  no motion vocabulary to transcribe it into. **D34 splits roadmap item 14 for that reason**:
+  Styles is v14, Motion is v15, and the easing set, the transition primitives and the
+  connected-animation machinery all arrive there. Meanwhile the glyph we render is not an
+  approximation — it is the icon WinUI itself paints, through `FallbackIconSource`, wherever
+  the animated source cannot run.
+
+- **Would reconsider if**: v15 lands the motion vocabulary these can be expressed in. The
+  entry is deleted rather than amended, because by then each of them animates the way the
+  original does. This bullet used to name the Styles tranche, which is the second thing it
+  had wrong: Styles is where the page lands, not where the motion does.
 
 ---
 
@@ -829,3 +864,37 @@ Recorded here once the control is built and the behaviour is observed rather tha
 - **Would reconsider if**: the cost of a wheel handler that forwards to the viewport is ever
   weighed against a reader who notices. It is three lines; what stopped it here is that no unit
   of this version had it in scope.
+
+---
+
+### WD-037 — a NavigationView draws no back button
+
+- **Control**: `NavigationView`.
+- **WinUI does**: default `IsBackButtonVisible` to `NavigationViewBackButtonVisible::Auto` —
+  the `MUX_DEFAULT_VALUE` at `NavigationView.idl:244`, above the property at `:245` — so a
+  `NavigationView` that says nothing about it renders a back button in its own pane, above the
+  pane toggle. The button is disabled while `IsBackEnabled` is false, which is that property's
+  own default (`:246` carries no `MUX_DEFAULT_VALUE`, so a `Boolean`'s zero), and activating it
+  raises `BackRequested` (`:248`).
+- **We do**: render no back button, and take no prop for one. The pane opens at the toggle, so
+  every row below moves up one place. Measured on the reference machine at the reference window
+  width, against the original rendered on the same screen: the control is **94 pixels tall
+  against the original's 133**; our pane toggle's row is centred 25 pixels below the control's
+  top, where the original's back chevron is centred 23.5 and its toggle 63.5; and our one menu
+  item is centred 67 below the top against the original's 104. The remaining two or three
+  pixels — by which 39, 37 and the back button's own 40 fail to agree — are margin, not a
+  second missing element: our pane toggle's row measures 36, which is what
+  `PaneToggleButtonHeight` (`NavigationView_themeresources.xaml:205`) says it should be.
+- **Why accepted**: the Gallery's own window has never shown it, so the gap has been invisible
+  rather than absent. `MainWindow.xaml:142` sets `IsBackButtonVisible="Collapsed"` on the
+  `NavigationView` and puts the back button in the title bar instead, bound to the frame's
+  `CanGoBack` at `MainWindow.xaml:27` — and this library's `TitleBar` already draws that one.
+  The AnimatedIcon page is the first place in the reproduction where a `NavigationView` appears
+  with the member left at its default. Adding it is a component change — a visibility prop
+  whose XAML type is a three-member enum rather than a boolean, an enabled prop, a
+  `BackRequested` equivalent, the button's own template region, and a baseline for each — which
+  is its own unit and not a page's.
+- **Would reconsider if**: a page or a consumer needs a `NavigationView` that navigates back.
+  Nothing was decided against here; this is a member the control has not been given yet, and
+  the entry exists so that the next reader finds that written down rather than inferring a
+  decision from an absence.
