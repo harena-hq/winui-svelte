@@ -69,6 +69,16 @@
 <h2 class="winui-SubtitleTextBlockStyle">empty points</h2>
 <div class="row"><Polygon fill={SAMPLE_FILL} stroke={SAMPLE_STROKE} points="" /></div>
 
+<!-- The wedge's right-hand vertex closes at about 13 degrees, whose mitre is 8.6 times the
+     half-thickness: past SVG's default limit of 4 and inside XAML's 10, so the two disagree
+     here and nowhere else on this page. It is also the one apex that reaches the box's own
+     right edge, so a clipping root cuts the point off rather than merely blunting it. Every
+     other row's sharpest join is about 53 degrees, which both limits mitre. -->
+<h2 class="winui-SubtitleTextBlockStyle">sharp join, past SVG's mitre limit</h2>
+<div class="row">
+	<Polygon fill={SAMPLE_FILL} stroke={SAMPLE_STROKE} strokeThickness={4} points="0,0 120,14 0,28" />
+</div>
+
 <style>
 	/* c1-allow: harness layout, not a WinUI value. */
 	.row {
