@@ -1,3 +1,5 @@
+import { dropShadowRecipe } from './drop-shadow-recipe.mjs';
+
 /**
  * The v1 token selection, as data.
  *
@@ -3025,42 +3027,9 @@ export const PLATFORM_METRICS = {
 	FocusVisualSecondaryThickness: '1px'
 };
 
-export function dropShadowRecipe(translationZ, theme) {
-	if (theme !== 'light' && theme !== 'dark') {
-		throw new Error(`Unsupported drop-shadow theme: ${theme}`);
-	}
-
-	const elevation = Math.min(64, translationZ / 2);
-	const format = (value) => value.toFixed(3).replace(/\.?0+$/, '');
-	const layer = (yOffset, blurRadius, opacity) => {
-		if (opacity === 0) return null;
-		const alpha = Math.trunc(opacity * 255) / 255;
-		return `0 ${format(yOffset)}px ${format((2 / 3) * blurRadius)}px rgba(0, 0, 0, ${format(alpha)})`;
-	};
-
-	let ambientOpacity = 0;
-	let ambientBlurRadius = 2;
-	let ambientYOffset = 0;
-	let directionalOpacity = 0;
-
-	if (elevation >= 2 && elevation <= 16) {
-		directionalOpacity = theme === 'light' ? Math.min(elevation / 100 + 0.06, 0.14) : 0.26;
-	} else if (elevation > 16) {
-		ambientBlurRadius = elevation / 3;
-		ambientYOffset = 2;
-		ambientOpacity = theme === 'light' ? 0.15 : 0.37;
-		directionalOpacity = theme === 'light' ? 0.19 : 0.37;
-	}
-
-	return (
-		[
-			layer(ambientYOffset, ambientBlurRadius, ambientOpacity),
-			layer(elevation * 0.5, elevation, directionalOpacity)
-		]
-			.filter(Boolean)
-			.join(', ') || 'none'
-	);
-}
+// The recipe moved so the Gallery's page can drive it continuously; it is re-exported here
+// because this manifest is where a reader looks for it.
+export { dropShadowRecipe };
 
 /**
  * The drop-shadow recipe is `GetDropShadowRecipe` in the pinned
