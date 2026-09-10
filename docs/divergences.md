@@ -1017,3 +1017,30 @@ Examples 3 and 4 are this entry's.
   expanders retain the code that performs the original action, which is what the examples are for.
 - **Would reconsider if**: this reproduction gains a real window shell; then a second window
   would be real and its backdrop would be whatever D16 says.
+
+---
+
+### WD-042 — four text controls floor at 318 pixels, where WinUI floors at 64
+
+- **Control**: `TextBox`, `AutoSuggestBox`, `PasswordBox`, `NumberBox`.
+- **WinUI does**: bind `MinWidth` to `TextControlThemeMinWidth`
+  (`TextBox_themeresources.xaml:193`, `PasswordBox_themeresources.xaml:190`), which the
+  framework dictionary defines as **64** in all three themes (`generic.xaml:100`, `:3727`,
+  `:5709`). A text control narrower than 64 is what upstream refuses; anything above it is
+  the container's business, because the default style sets no `Width` and leaves
+  `HorizontalAlignment` at Stretch.
+- **We do**: write `min-width: 318px`, so none of the four can be narrower than 318 whatever
+  its container says.
+- **Why accepted**: only until the unit that removes it. This is a defect rather than a
+  choice, and it is recorded here rather than fixed in place because the fix moves the four
+  controls' baselines in three themes each and wants its own measurement pass.
+- **Where 318 came from**: it is the width the Gallery's title-bar `AutoSuggestBox` has at
+  the reference window size. That control is `HorizontalAlignment="Stretch"` with
+  `MaxWidth="580"` (`MainWindow.xaml:42-45`), so 318 is the space it was given, not a floor it
+  asserts — the two were conflated when the value was first measured. The comments that
+  carried that measurement also cited a file which no longer exists: the Gallery's own
+  `SearchBox` component, deleted when the title bar started using the published control.
+- **Would reconsider if**: nothing — the direction is settled. The open question is only what
+  the four `min-width` declarations become. `var(--winui-TextControlThemeMinWidth)` is the
+  obvious answer and is already emitted; what needs measuring is whether any Gallery page
+  depended on the 318 to lay out.

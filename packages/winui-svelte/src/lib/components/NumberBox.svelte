@@ -241,10 +241,9 @@
 		position: relative;
 		display: flex;
 		align-items: stretch;
-		/* c1-allow: TextBox_themeresources.xaml:193 binds MinWidth to TextControlThemeMinWidth,
-		   defined at 64px. This reproduction uses 318px instead, measured on the reference guest and
-		   recorded by apps/gallery/src/lib/SearchBox.svelte; which of the two is right is a
-		   measurement no unit has made yet. */
+		/* c1-allow: WD-042 — TextBox_themeresources.xaml:193 binds MinWidth to
+		   TextControlThemeMinWidth, which generic.xaml:100 defines as 64. 318 is not that floor
+		   and is kept only until the unit that removes it; see docs/divergences.md. */
 		min-width: 318px;
 		/* TextBox_themeresources.xaml:192 binds MinHeight to this token. */
 		height: var(--winui-TextControlThemeMinHeight);
