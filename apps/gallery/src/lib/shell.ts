@@ -274,29 +274,45 @@ export const titleBar = {
 // XAML wrote; the mapping is here, where it can be seen.
 export const QUERY_GLYPH = 'E721';
 
-export const BUILT_PAGES = [
-	'/',
-	'/settings',
-	'/design/color',
-	'/design/geometry',
-	'/design/iconography',
-	'/design/spacing',
-	'/design/typography',
-	'/layout/border',
-	'/layout/grid',
-	'/layout/splitview',
-	'/layout/stackpanel',
-	'/layout/viewbox',
-	'/dateandtime/calendarview',
-	'/dateandtime/calendardatepicker',
-	'/dateandtime/datepicker',
-	'/dateandtime/timepicker'
-] as const;
+/**
+ * The routes that have a page of their own, read from the routes themselves.
+ *
+ * This was a hand-written list of paths, and a hand-written list of what exists is a
+ * second copy of something the tree already says. It went stale the first time it was
+ * not updated: v13 added six pages and v14 a seventh without touching it, so seven
+ * routes that exist were still being declared as prerender entries for the placeholder
+ * below. Nothing failed, because a concrete route wins over `[...path]` at every layer
+ * — which is exactly why nobody noticed for two versions.
+ *
+ * `import.meta.glob` runs at build time and its keys are the files Vite found, so the
+ * copy is gone rather than corrected. `eager: false` because only the keys are wanted;
+ * importing the modules here would pull every page into the shell's chunk.
+ *
+ * `[...path]` is excluded by name: it is the placeholder itself, and a placeholder that
+ * counted as a built page would empty the list it exists to fill.
+ */
+const PAGE_MODULES = import.meta.glob('/src/routes/(shell)/**/+page.svelte');
+
+export const BUILT_PAGES: readonly string[] = Object.keys(PAGE_MODULES)
+	.map((file) => file.slice('/src/routes/(shell)'.length, -'/+page.svelte'.length))
+	.filter((path) => !path.includes('['))
+	.map((path) => (path === '' ? '/' : path))
+	.sort();
+
+// A glob that matches nothing is the one way this can go wrong and say nothing: every route
+// would be declared a placeholder, every page would still render, because a concrete route
+// wins over `[...path]` — and the list would be as wrong as the hand-written one was, in the
+// other direction. There is always at least the shell's own `/`.
+if (BUILT_PAGES.length === 0) {
+	throw new Error(
+		'shell: no (shell) route matched, so BUILT_PAGES would declare every page a placeholder'
+	);
+}
 
 function collectPlaceholder(entries: NavigationViewEntry[], into: string[]): void {
 	for (const e of entries) {
 		if ('header' in e) continue;
-		if (!(BUILT_PAGES as readonly string[]).includes(e.id)) {
+		if (!BUILT_PAGES.includes(e.id)) {
 			into.push(e.id);
 		}
 		if (e.children) collectPlaceholder(e.children, into);
