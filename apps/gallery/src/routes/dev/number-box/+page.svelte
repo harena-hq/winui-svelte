@@ -7,7 +7,8 @@
 	 * each control gets a page to be photographed on, and nothing links to it. The eight
 	 * rows below exercise the surface the unit names: empty, with a value, spin buttons
 	 * inline, spin buttons inline and disabled, a range with a value, a range sitting on
-	 * each of its two bounds, a header and a description, and disabled.
+	 * each of its two bounds, a header and a description, disabled, and one content-sized
+	 * row — see the comment on that row for why it is not redundant with the others.
 	 */
 
 	let empty: NumberBoxProps['value'] = $state(null);
@@ -20,15 +21,17 @@
 	let withHeaderDescription: NumberBoxProps['value'] = $state(3);
 	let withHeaderDescriptionDisabled: NumberBoxProps['value'] = $state(7);
 	let disabled: NumberBoxProps['value'] = $state(99);
+	let contentSized: NumberBoxProps['value'] = $state(1);
+	let contentSizedNoSpin: NumberBoxProps['value'] = $state(1);
 </script>
 
 <svelte:head><title>NumberBox — harness</title></svelte:head>
 
 <h1 class="winui-TitleTextBlockStyle">NumberBox</h1>
 <p class="winui-BodyTextBlockStyle">
-	Eight rows, in the order the unit names them: empty with a placeholder, with a value, with spin
+	Nine rows, in the order the unit names them: empty with a placeholder, with a value, with spin
 	buttons inline, with spin buttons inline and disabled, a range with a value, a range sitting on
-	each of its two bounds, a header and a description, and disabled.
+	each of its two bounds, a header and a description, disabled, and content-sized.
 </p>
 
 <h2 class="winui-SubtitleTextBlockStyle">empty</h2>
@@ -88,6 +91,17 @@
 	<NumberBox bind:value={disabled} disabled />
 </div>
 
+<h2 class="winui-SubtitleTextBlockStyle">content-sized</h2>
+<div class="row start">
+	<!-- Every row above stretches to the container, which is what a photographed row must not
+	     do here: `NumberBox.xaml:33` lowers the control's minimum from a text box's 318 to
+	     `NumberBoxMinWidth`'s 120 when the spin buttons are inline, and a stretched row renders
+	     that setter and its absence identically. This row is content-sized, so the first box
+	     below is 120 wide and the second is 318, and a baseline can tell them apart. -->
+	<NumberBox bind:value={contentSized} spinButtonPlacementMode="inline" />
+	<NumberBox bind:value={contentSizedNoSpin} />
+</div>
+
 <style>
 	.row {
 		display: flex;
@@ -95,5 +109,9 @@
 		gap: 12px;
 		margin-bottom: 24px;
 		max-width: 580px;
+	}
+
+	.row.start {
+		align-items: flex-start;
 	}
 </style>
