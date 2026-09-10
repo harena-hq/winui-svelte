@@ -59,7 +59,7 @@ worth closing. "Would be hard" is not a reason — the reason is always a specif
 
 ### WD-002 — AcrylicBrush emits its FallbackColor rather than the material it cannot compose
 
-- **Control**: the token layer, the four `*AcrylicBackgroundFillColor*Brush` keys.
+- **Control**: the token layer, the four `*AcrylicBackgroundFillColor*Brush` keys, and `AcrylicInAppFillColorDefaultBrush`.
 - **WinUI does**: composes a material — a blurred, tinted, noise-textured sample of whatever
   is behind the element — and falls back to a flat `FallbackColor` when it cannot, which
   happens under transparency-disabled, battery saver, and a remote session, among others.
@@ -933,3 +933,39 @@ Recorded here once the control is built and the behaviour is observed rather tha
 - **Would reconsider if**: a second surface needs a focal gradient — another page, or a token.
   One call site is a page's own stylesheet; two is a paint server that has earned its defs, and
   at that point the focal point arrives with it at no extra cost.
+
+---
+
+### WD-039 — the tint controls change the sample code and not the rectangle
+
+- **Control**: the AcrylicBrush page's three examples, and `AcrylicBrush` wherever a page
+  declares one of its own rather than reading a token.
+- **WinUI does**: compose a material — the backdrop behind the element, blurred, luminosity-
+  blended, tint-blended and covered with a noise layer — and paint a flat `FallbackColor`
+  instead whenever it cannot, which transparency-disabled, battery saver and a remote session
+  each cause. `TintColor`, `TintOpacity` and `TintLuminosityOpacity` are the material's
+  parameters and have no effect once it is falling back.
+- **We do**: paint the `FallbackColor`, always. Example 1 reads it from the token layer, where
+  `AcrylicInAppFillColorDefaultBrush` already emits the `FallbackColor` of the `AcrylicBrush`
+  that key names; Examples 3 and 4 paint the colour their page-declared brush names. So the
+  Tint Opacity, Tint Color and Tint Luminosity Opacity controls change the sample code the
+  Source code expander shows and nothing in the rectangle, while the Fallback Color control
+  changes the rectangle, because a fallback colour is what the rectangle is.
+- **Why accepted**: the reference machine paints the fallback too, and this is measured rather
+  than assumed — all three rectangles are one colour with zero pixel variance, the magenta
+  ellipse behind them entirely hidden, Example 3 reading `#008000` and Example 1 `#f9f9f9`.
+  So the reproduction and the original agree to the pixel. The web's nearest equivalent is
+  `backdrop-filter`, and what it samples is whatever the browser has painted under the element
+  — here, the three shapes. A `backdrop-filter` recipe would therefore show the shapes through
+  the panel, and the original as photographed shows none of them, so it would move this page
+  away from the reference rather than towards it.
+- **Would reconsider if**: the reference machine composes the material — at which point the
+  original's own rendering changes, this entry's evidence changes with it, and there is
+  something to measure a `backdrop-filter` recipe against.
+
+WD-002 is the same mechanism one layer down, and the two divide by who declares the brush.
+That entry's subject is the token layer — the four `*AcrylicBackgroundFillColor*Brush` keys and
+`AcrylicInAppFillColorDefaultBrush`, whose emitted value is each `AcrylicBrush`'s own
+`FallbackColor`. This one's subject is a brush a page declares for itself, and the controls a
+page gives it to drive: Example 1 above is WD-002's territory reached through a page, and
+Examples 3 and 4 are this entry's.
