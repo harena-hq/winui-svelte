@@ -1040,7 +1040,17 @@ Examples 3 and 4 are this entry's.
   asserts — the two were conflated when the value was first measured. The comments that
   carried that measurement also cited a file which no longer exists: the Gallery's own
   `SearchBox` component, deleted when the title bar started using the published control.
-- **Would reconsider if**: nothing — the direction is settled. The open question is only what
-  the four `min-width` declarations become. `var(--winui-TextControlThemeMinWidth)` is the
-  obvious answer and is already emitted; what needs measuring is whether any Gallery page
-  depended on the 318 to lay out.
+- **What it costs, measured**: the Compact Sizing page shows it. Upstream that page's form is
+  296 wide, because `ControlExample`'s presenter aligns its content left, the StackPanel is
+  therefore content-sized, and the widest child asking for a width is the DatePicker at 296 —
+  the first TextBox runs x370 to x666 on the reference. Ours comes out 318, and the DatePicker
+  beside those text boxes, still at 296, is the proof that 318 is the intruder. Every other
+  geometry on that page matches: the same x370 origin, the same 75-pixel field pitch, the same
+  32-pixel control height.
+- **Would reconsider if**: nothing — the direction is settled, and the question of whether any
+  Gallery page laid itself out around the 318 is answered: none does, and one is laid out
+  wrongly by it. `var(--winui-TextControlThemeMinWidth)` is what the four declarations become.
+  What the unit that makes that change still owes is the dev-route baselines — twelve move, and
+  an unconstrained `TextBox` at a 64-pixel floor may leave a harness route no longer catching
+  what it was built to catch, so those routes may need an explicit width first. That is why
+  this is a unit and not a one-line edit.
