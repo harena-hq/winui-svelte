@@ -150,18 +150,21 @@
 			{#if typeof header === 'string'}{header}{:else}{@render header()}{/if}
 		</span>
 	{/if}
-	<div class="box">
+	<div class={['box', showSpin && 'inline']}>
 		<!-- The `<input>` is the control; the two spin buttons are its siblings in the
 		     box's flex row, matching upstream's `Grid` where the input spans all three
 		     columns and the buttons sit on top in columns 1 and 2 (`NumberBox.xaml:174`
-		     and `:175`). Upstream's `SpinButtonsVisible` state at `NumberBox.xaml:33` sets
-		     `InputBox.MinWidth` to `NumberBoxMinWidth` (120), so the box is wide enough to
-		     hold a placeholder without the buttons taking more than their share. The
-		     `inline` class switches the input's `min-width` between `NumberBoxMinWidth`
-		     and `0`, the same way `SpinButtonsVisible` switches it upstream. -->
+		     and `:175`). Upstream's `SpinButtonsVisible` state at `NumberBox.xaml:33`
+		     *lowers* `InputBox.MinWidth` to `NumberBoxMinWidth` (120) from the 318 the
+		     InputBox inherits through `NumberBoxTextBoxStyle`, which is
+		     `BasedOn="{StaticResource DefaultTextBoxStyle}"` and overrides only
+		     `Template` (`NumberBox.xaml:114`). A NumberBox with spin buttons is allowed
+		     to be *narrower* than a text box, not wider. `InputBox` is
+		     `Grid.ColumnSpan="3"`, so that minimum is the whole control's — which is why
+		     the class goes on the box and the input keeps its `min-width: 0`. -->
 		<input
 			bind:this={ref}
-			class={['input', showSpin && 'inline']}
+			class="input"
 			value={api.value}
 			{...api.getInputProps()}
 			{placeholder}
@@ -261,6 +264,14 @@
 		color: var(--winui-TextControlForeground);
 	}
 
+	/* `NumberBox.xaml:33` — the `SpinButtonsVisible` state lowers the control's minimum
+	   from a text box's 318 to `NumberBoxMinWidth`'s 120. It is a floor coming *down*,
+	   and it has to sit on the same element as the 318 it replaces or it never applies.
+	   `SpinButtonsCollapsed` and `SpinButtonsPopup` both keep the 318. */
+	.box.inline {
+		min-width: var(--winui-NumberBoxMinWidth);
+	}
+
 	.box::after {
 		content: '';
 		position: absolute;
@@ -332,6 +343,15 @@
 	.input {
 		padding: var(--winui-TextControlThemePadding);
 		flex: 1 1 auto;
+		/* An `<input>` carries an intrinsic width — its `size` attribute's worth of
+		   characters, twenty by default — and a XAML `TextBox` carries none. Left at
+		   `auto` that intrinsic width becomes the box's content width, and the box comes
+		   out 179 where upstream's is 120: the minimum `SpinButtonsVisible` sets is a
+		   floor the control never reaches, so lowering it changes nothing. `width: 0`
+		   with `flex-grow: 1` is what makes the input size to its box instead of the
+		   other way round. `flex-basis: 0` is not enough — a flex item still offers its
+		   own max-content to an intrinsically sized container. */
+		width: 0;
 		min-width: 0;
 		min-height: 0;
 		max-height: 100%;
@@ -347,10 +367,6 @@
 		   it, and this is what says so. ADR 0011. */
 		line-height: normal;
 		box-sizing: border-box;
-	}
-
-	.input.inline {
-		min-width: var(--winui-NumberBoxMinWidth);
 	}
 
 	.input::placeholder {
