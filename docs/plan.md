@@ -73,6 +73,8 @@ pnpm workspace. The library is publishable and imposes no build tooling on its c
 | D34 | Roadmap item 14 becomes two versions: Styles is photographable at rest and Motion is not               | this file, "Roadmap → v14"        |
 | D35 | A shape is a component and a brush or a shadow is a value; the Gallery record's base class decides     | this file, "Roadmap → v14"        |
 | D36 | The `Symbol` name-to-glyph table is a record generated from the control pin, never transcribed         | ADR 0012, "The amendment"         |
+| D37 | The release object is the library, cut after v18; the Gallery's page-by-page gate follows it           | this file, "Roadmap → v17, v18"   |
+| D38 | A WinUI control this library claims is a component, `TextBlock` included; a ramp class is its output   | this file, "Roadmap → v17"        |
 
 ## Verification
 
@@ -3039,6 +3041,40 @@ System / Shell` moves to item 16; `item 15` occurs once in the whole of `docs/`,
 
 16. **Media / Windowing / System / Shell** (18) — see open question O2.
 
+17. **The components a 1.0 owes** (4) — `TextBlock` and the `Inlines` model under it,
+    `RichTextBlock`, `CommandBarFlyout`, `ColorPicker`. Its **first unit builds nothing**: it
+    dispositions the eighteen pages still scheduled by no tranche, in or out of the 1.0 surface,
+    with the reason recorded. Deciding late is what makes that expensive, and a public API is
+    where it is most expensive — `CLAUDE.md` makes the same argument about git history.
+
+    `Hyperlink` arrives with `TextBlock` rather than on its own. It is not a Gallery page; it is
+    an inline, and three sites already carry a comment saying this library has no control for it
+    — `design/typography/+page.svelte:14`, `styles/animatedicon/+page.svelte:183`, and the two
+    anchors on `styles/acrylic/+page.svelte`. `TextBlock`'s `Inlines` is where it belongs.
+
+    **`TextBlock` is a component, and that is D38.** The library already emits the type ramp as
+    classes — `winui-BodyTextBlockStyle` and its siblings — and every page in this reproduction
+    puts one on a plain `<p>` or `<span>`. That was never a decision that `TextBlock` is a class
+    rather than a control; it is what the ramp needed and nothing more was asked. Read as an
+    API it says _for this one control, add a class instead_ — a rule with exactly one member,
+    which is the shape of a hole rather than of a design.
+
+    So the component wraps the class rather than replacing it: `TextBlock` renders the ramp
+    class its style names, the classes stay public and documented as what it emits, and a
+    consumer who wants the class alone still has it. The members that make it more than a
+    `<span>` are the ones with no CSS one-liner — `TextTrimming`, `MaxLines`, `TextWrapping`,
+    `IsTextSelectionEnabled` — and `Inlines`, which is where `Hyperlink`, `Run`, `Bold` and
+    `LineBreak` live. The last of those has already cost this project a fix twice: XAML's
+    trailing `LineBreak` makes an empty line and CSS's `<br>` makes none, and two pages carry a
+    `::after` rule to put it back.
+
+18. **What the versions owe** — the punch list, drained. Every `what this version still owes`
+    table from v4 onward, and `docs/surface.md`, which is the sweep of the half of each control
+    that is in its code-behind rather than in its template. This version's own goal line is that
+    no sealed control has an unbuilt second half.
+
+    **Its last unit is the library gate below**, which is the release bar.
+
 **Twenty-four Gallery pages are scheduled by no tranche, and planning v7 is what found
 them.** The roadmap enumerates by name where a tranche schedules controls, and by count where
 it takes a whole group at once — Styles's ten, Motion's seven, and the eighteen O2 resolves.
@@ -3084,13 +3120,46 @@ it where it was. Planning v13 read this table before writing its entry and found
 sitting in the group that entry is about — a page the version would have built the whole of
 Scrolling around and left behind. It goes to item 13 for the reason that entry gives, which is
 that its page draws the same box as `ScrollView`'s and differs from it in property names.
-Twenty-two pages remain unscheduled.
+Twenty-two pages remained unscheduled until item 17 took four of them — `TextBlock`,
+`RichTextBlock`, `CommandBarFlyout` and `ColorPicker`. **Eighteen remain, and item 17's first
+unit is what dispositions them.**
 
-**A release becomes possible from v3 onward, and is deliberately taken after `Final`.** The
-capability and the decision are different questions: a release is technically possible now, and
-the bar chosen for it is the acceptance gate below rather than any version number. Locked after
-weighing the alternative of cutting at v14, which would ship before the Motion tranche's
-deferrals close.
+**A release becomes possible from v3 onward, and is cut after v18.** The capability and the
+decision are different questions: a release is technically possible now, and the bar chosen for
+it is a gate rather than a version number. This paragraph used to name `Final` as that gate and
+it no longer does — the change is D37 and the reason is that `Final` had come to gate the wrong
+artifact.
+
+**What is released is the library, and `Final` is a gate on the Gallery.** Those were the same
+thing while the roadmap read as one project; they are not the same thing now. `Final` is an
+observed side-by-side of the **full** Gallery, and the Gallery is at 26 of its 120 item pages —
+`apps/gallery/build/basicinput/button.html` is still a placeholder, three versions after the
+`Button` component was sealed, because v4 through v9 built controls and the pages began landing
+only in v13. Nothing in the remaining roadmap closes that gap: v15, v16 and v17 add 40-odd
+pages between them and leave the Basic input, Menus & toolbars, Collections, Status & info,
+Dialogs & flyouts and Navigation groups — whose components all exist — still on placeholders.
+
+So the gate splits, and the two halves are below. The **library gate** is the release bar and
+v18's last unit runs it. **`Final` keeps its own bar unchanged and moves after the release**,
+which makes the Gallery's remaining pages the next gate rather than an unfinished part of this
+one.
+
+**What this costs is a claim, and the claim is worth stating exactly.** A release cut here says
+_this library matches WinUI on the surfaces that were photographed against it_, not _this
+library matches WinUI_. The evidence for the first is real and already written down: every
+component was compared against the original on the reference guest inside its own unit, and the
+`Reviewed:` trailer of its commit says what was measured. The evidence for the second is
+`Final`, and `Final` has not run.
+
+**A Gallery page is not redundant with a dev route, and v14 paid to learn it.** The `ComboBox`
+defects sealed in v14 — a chevron column fixed at 38 where this library reserves 26, and a
+trigger that stacks its border where WinUI's does not — were both invisible on
+`dev/combo-box`, whose rows sit in a 320-wide column, and both obvious on the Gallery pages
+that let a `ComboBox` size to its content. `IsThumbToolTipEnabled` was found the same way, by
+using the control rather than by photographing it. **v18's last unit therefore lists every
+exported component against the evidence that sealed it and re-photographs the ones whose only
+evidence is a dev route.** That is a sweep of commit trailers plus a handful of captures, not
+120 pages.
 
 One thing has to be built before a release, and it is not scheduled with it. C6 as implemented
 reads the shipped `dist` for preprocessor and Tailwind markers, which proves the package needs
@@ -3121,9 +3190,17 @@ Windows** — ADR 0003's type ramp and every icon in the library assume them. A 
 faithful on Windows and degrades off it, and that degradation is out of scope here rather than a
 divergence this registry owes an entry for.
 
+### The library gate — the release bar
+
+Every exported component named against the evidence that sealed it, and any whose only evidence
+is a dev route re-photographed against the original on the reference guest. v18's last unit runs
+it; a release is cut when it passes. D37.
+
 ### Final — the acceptance gate
 
-An observed, time-boxed side-by-side of the full Gallery against Windows 11, page by page.
+An observed, time-boxed side-by-side of the full Gallery against Windows 11, page by page. The
+bar is unchanged; what changed is where it sits. It is the Gallery's gate, it needs all 120
+pages, and under D37 it follows the release rather than blocking it.
 
 ## Conformance gates
 
