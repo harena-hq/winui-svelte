@@ -898,3 +898,38 @@ Recorded here once the control is built and the behaviour is observed rather tha
   Nothing was decided against here; this is a member the control has not been given yet, and
   the entry exists so that the next reader finds that written down rather than inferring a
   decision from an absence.
+
+---
+
+### WD-038 — the gradient origin is inert, because a CSS gradient has no focal point
+
+- **Control**: `RadialGradientBrush`, on the Gallery's RadialGradientBrush page.
+- **WinUI does**: give the brush a `GradientOrigin` distinct from its `Center` — the point the
+  first gradient stop is drawn at, from which the ramp runs outward to the ellipse that
+  `Center`, `RadiusX` and `RadiusY` describe. It reaches Composition as a
+  `GradientOriginOffset`, the vector from the centre to the origin
+  (`RadialGradientBrush.cpp:180`), and the page's own two sliders drive it
+  (`RadialGradientBrushPage.xaml:90-102` and `RadialGradientBrushPage.xaml.cs:80`). Moving it
+  pulls the yellow core off centre while the blue rim stays where it is.
+- **We do**: paint the sample with a CSS `radial-gradient`, which has one centre and no second
+  point. The GradientOrigin.X and GradientOrigin.Y sliders move, and the XAML in the Source
+  code expander follows them, because the two substitutions are live — but nothing in the
+  painted rectangle changes. At rest the gap is invisible and the page is exact: the load-time
+  reset at `RadialGradientBrushPage.xaml.cs:64-71` puts all six numbers at 0.5, so the origin
+  sits on the centre. Every other member is reproduced. `Center` and the two radii are the
+  gradient's position and its two radii; `MappingMode` is the unit those numbers carry, a
+  percentage of the box or a pixel; and `SpreadMethod` is a plain gradient for Pad, a repeating
+  one over the ellipse for Repeat, and a repeating one over twice the ellipse with the stops run
+  back again for Reflect — which are the three extend modes `RadialGradientBrush.cpp:211-230`
+  maps them to.
+- **Why accepted**: the alternative is not a CSS one, so the trade is not between two ways of
+  writing this page. SVG's own `radialGradient` does carry a focal point, and a spread method,
+  and a choice of units, and it would answer this brush member for member. What it costs is a
+  paint server: a defs subtree carrying a document-global id, referenced out of a fill by that
+  id, which is a shape of markup this tree has nowhere else and which exactly one page would
+  use. D35 has already settled what a brush is here — a value, not a component — and a CSS
+  gradient is a value. Weighed against that, what is given up is two controls out of eight, on a
+  page whose rest state, which is the state this project is judged in, is identical either way.
+- **Would reconsider if**: a second surface needs a focal gradient — another page, or a token.
+  One call site is a page's own stylesheet; two is a paint server that has earned its defs, and
+  at that point the focal point arrives with it at no extra cost.
