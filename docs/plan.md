@@ -3104,6 +3104,23 @@ unchangeable once shipped as ADR 0006's token names, and ADR 0009 says so — is
 step with no consumer having exercised it. The smoke app is that consumer, and it can exist
 from any version onward.
 
+**The Gallery is not built to be reused as an app.** `apps/gallery` is a judgement instrument,
+and its only reason to exist is being compared with the original page by page. An app carries
+the opposite obligation — to be good — and the first change made for an app's sake that the
+original does not have would cost this project its one bar. Its pages also reach
+`$lib/frame/ItemPage`, `$lib/shell` and `$lib/samples`, all app-local, so an app built from them
+would take that frame as a second published package or write the pages again; the choice is
+cheap while the pages are few. `packages/winui-svelte` is the published part, and the smoke app
+above is what proves it.
+
+**The Windows-only limitation is accepted rather than solved.** Chromium on Windows, as Edge or
+WebView2, is the engine this project's baselines are photographed in, so the fidelity carries
+there.
+Elsewhere, and more decisively, **Segoe UI Variable and Segoe Fluent Icons exist only on
+Windows** — ADR 0003's type ramp and every icon in the library assume them. A consumer is
+faithful on Windows and degrades off it, and that degradation is out of scope here rather than a
+divergence this registry owes an entry for.
+
 ### Final — the acceptance gate
 
 An observed, time-boxed side-by-side of the full Gallery against Windows 11, page by page.
