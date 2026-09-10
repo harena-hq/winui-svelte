@@ -314,10 +314,12 @@
 	   no `BackgroundSizing`, so the default `OuterBorderEdge` is what upstream draws and CSS's
 	   default `border-box` is already it.
 
-	   The drop shadow WinUI's popup host casts at popup depth. No dictionary states the recipe;
-	   `PLATFORM_SHADOWS` in scripts/tokens/manifest.mjs carries the value, measured on the
-	   reference guest and fitted against the browser's own blur, and records how.
-	   `TeachingTip.h:231` puts the tail's elevation at 0 against the card's 32, so upstream's
+	   The popup host casts this shadow at the card's `Translation.Z` 32, which this control sets
+	   itself — `TeachingTip.h:229` — rather than taking `ElevationHelper.cpp:19`'s default of the
+	   same value. `GetDropShadowRecipe` in dxaml/xcp/components/graphics/inc/DropShadowRecipe.h
+	   defines the shadow; `PLATFORM_SHADOWS` derives the value and records the one
+	   composition-to-CSS blur constant.
+	   `TeachingTip.h:230` puts the tail's elevation at 0 against the card's 32, so upstream's
 	   tail casts nothing of its own — and the tail is a child of this box, so it needs no rule
 	   to keep it that way. */
 	.card {

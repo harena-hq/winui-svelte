@@ -141,9 +141,9 @@
 </Popover.Root>
 
 <style>
-	/* The drop shadow WinUI's popup host casts at popup depth. No dictionary states the
-	   recipe; `PLATFORM_SHADOWS` in scripts/tokens/manifest.mjs carries the value, measured on
-	   the reference guest and fitted against the browser's own blur, and records how. */
+	/* The popup host casts this shadow at `Translation.Z` 32 (`ElevationHelper.cpp:19`).
+	   `GetDropShadowRecipe` in dxaml/xcp/components/graphics/inc/DropShadowRecipe.h defines it;
+	   `PLATFORM_SHADOWS` derives the value and records the one composition-to-CSS blur constant. */
 	.presenter {
 		box-sizing: border-box;
 		/* The focus scope focuses this element from script when the flyout opens, and Chromium

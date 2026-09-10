@@ -831,6 +831,12 @@ second time in two units that a real visual change has been invisible to the gat
 the strongest argument yet that a green suite means _no pixel moved by more than the threshold_
 and nothing else.
 
+**Amended in v14 unit 0 — the pin does state the recipe.** `GetDropShadowRecipe` in
+`dxaml/xcp/components/graphics/inc/DropShadowRecipe.h` became available when v14 widened the
+sparse checkout to include `dxaml/xcp/components`, and all three depths are now derived rather
+than fitted. The only measured quantity left is the composition-blur-to-CSS-blur constant,
+`2 / 3`, with RMS alpha residual 0.0016 and worst residual 1.74 levels.
+
 ## An unspent measurement — the Design pages' Typography rows
 
 Measuring the ramp for ADR 0011 produced a number the Gallery has not been given. The reference

@@ -3025,45 +3025,93 @@ export const PLATFORM_METRICS = {
 	FocusVisualSecondaryThickness: '1px'
 };
 
+export function dropShadowRecipe(translationZ, theme) {
+	if (theme !== 'light' && theme !== 'dark') {
+		throw new Error(`Unsupported drop-shadow theme: ${theme}`);
+	}
+
+	const elevation = Math.min(64, translationZ / 2);
+	const format = (value) => value.toFixed(3).replace(/\.?0+$/, '');
+	const layer = (yOffset, blurRadius, opacity) => {
+		if (opacity === 0) return null;
+		const alpha = Math.trunc(opacity * 255) / 255;
+		return `0 ${format(yOffset)}px ${format((2 / 3) * blurRadius)}px rgba(0, 0, 0, ${format(alpha)})`;
+	};
+
+	let ambientOpacity = 0;
+	let ambientBlurRadius = 2;
+	let ambientYOffset = 0;
+	let directionalOpacity = 0;
+
+	if (elevation >= 2 && elevation <= 16) {
+		directionalOpacity = theme === 'light' ? Math.min(elevation / 100 + 0.06, 0.14) : 0.26;
+	} else if (elevation > 16) {
+		ambientBlurRadius = elevation / 3;
+		ambientYOffset = 2;
+		ambientOpacity = theme === 'light' ? 0.15 : 0.37;
+		directionalOpacity = theme === 'light' ? 0.19 : 0.37;
+	}
+
+	return (
+		[
+			layer(ambientYOffset, ambientBlurRadius, ambientOpacity),
+			layer(elevation * 0.5, elevation, directionalOpacity)
+		]
+			.filter(Boolean)
+			.join(', ') || 'none'
+	);
+}
+
 /**
- * The drop shadow WinUI's popup host casts at popup depth. No pinned dictionary states this
- * recipe: it was measured on the reference guest and fitted against the browser's own blur.
+ * The drop-shadow recipe is `GetDropShadowRecipe` in the pinned
+ * `dxaml/xcp/components/graphics/inc/DropShadowRecipe.h`. `Translation.Z` selects its depth:
+ * ToolTip uses 16 at `ToolTip_Partial.cpp:647`, the default elevated control uses 32 at
+ * `ElevationHelper.cpp:19`, and ContentDialog uses 128 at `ContentDialog_Partial.cpp:1165`.
+ * The alpha emitted here is the source's own `uint8` truncation, not its float opacity.
+ *
+ * These values were previously fitted by eye, and this manifest recorded "No pinned dictionary
+ * states this recipe" while the recipe was in the control pin, one directory outside the sparse
+ * checkout. The one quantity the recipe does not give is what a composition `BlurRadius` is in
+ * CSS pixels of `box-shadow` blur. It was fitted against two photographs of the Gallery's own
+ * ThemeShadow page — a 200x200 card at `Translation.Z` 32 and at 64, light theme, sampled 45
+ * pixels along each of the bottom, right and top ramps. CSS blur radius is
+ * `(2 / 3) * composition BlurRadius`, which is the same as saying the composition states its
+ * blur as three standard deviations; against the recipe's own opacities and with no free scale
+ * factor, the residual over those 270 samples is 0.0016 in alpha — 0.40 of one level of the
+ * card's 243-level background, and 1.74 levels at the worst single pixel.
+ *
  * `Common_themeresources.xaml:48` sets `ThemeShadowIsUsingDropShadows` to `True`, so the
  * right primitive is CSS `box-shadow`, not an approximation of a different composition effect.
  *
- * `PopupShadow` is not a WinUI resource name because there is no resource to name it after.
- * This is the same situation as `PLATFORM_METRICS` and its `FocusVisualPrimaryThickness`:
- * the value has nowhere to be read from, so the manifest records the platform-supplied value.
- * Unlike `PLATFORM_METRICS` and `ACCENT_COLORS`, this family is per theme: the measured dark
- * shadow is 1.78x the light one, and reusing the light value was visibly wrong.
+ * `PopupShadow`, `DialogShadow`, and `ToolTipShadow` are not WinUI resource names because there
+ * is no resource to name them after. This is the same situation as `PLATFORM_METRICS` and its
+ * `FocusVisualPrimaryThickness`: the values have nowhere to be read from, so the manifest
+ * records the platform-supplied values. Unlike `PLATFORM_METRICS` and `ACCENT_COLORS`, this
+ * family is per theme.
  *
- * `highContrast` is `none` by decision, not by measurement. Dark was measured by changing the
- * Gallery's own App theme setting and putting it back; high contrast is a *Windows* theme, and
- * the reference machine's Windows theme is one of the four parameters that must stay stock, so
- * there is no way to read it without spending the thing being measured against. ADR 0005 makes
- * high contrast a remapping onto eight system colours, and a black drop shadow has no system
- * colour to be remapped from.
+ * `highContrast` is `none` by decision, not by measurement. The recipe has no high-contrast
+ * branch, but ADR 0005 makes high contrast a remapping onto eight system colours, and a black
+ * drop shadow has no system colour to be remapped from.
+ *
+ * `MenuFlyoutPresenter` calls `ApplyElevationEffect(this, GetDepth())` at
+ * `MenuFlyoutPresenter_Partial.cpp:483`, so a submenu at nesting depth 1 is `Translation.Z` 40
+ * and Elevation 20, past the boundary where the ambient layer switches on. No token is emitted
+ * for it and no component is changed for it.
  */
 export const PLATFORM_SHADOWS = {
-	PopupShadow: {
-		light: '0 3px 2px rgba(0, 0, 0, 0.035), 0 10px 8px rgba(0, 0, 0, 0.09)',
-		dark: '0 3px 2px rgba(0, 0, 0, 0.062), 0 10px 8px rgba(0, 0, 0, 0.16)',
+	ToolTipShadow: {
+		light: dropShadowRecipe(16, 'light'),
+		dark: dropShadowRecipe(16, 'dark'),
 		highContrast: 'none'
 	},
-	// The dialog depth, measured and fitted the same way. Two things differ from the popup's.
-	// It darkens the pixels *above* the card by about two levels over eight, where a popup
-	// darkens none, so this recipe carries a real ambient layer. And its dark multiplier is
-	// 2.36 rather than the popup's 1.78.
-	//
-	// That multiplier was read off the first rows out and not off the whole curve, which is
-	// the opposite of the rule the popup depth followed, and deliberately. A dialog's ramp is
-	// long enough to cross onto whatever the Gallery page has underneath it, so its tail is
-	// measuring two things at once; the light fit, taken against a clean 170 backdrop, lands
-	// within 0.013 alpha end to end, while the dark tail disagrees with itself. The first rows
-	// are both the least contaminated and the ones anyone sees.
+	PopupShadow: {
+		light: dropShadowRecipe(32, 'light'),
+		dark: dropShadowRecipe(32, 'dark'),
+		highContrast: 'none'
+	},
 	DialogShadow: {
-		light: '0 4px 6px rgba(0, 0, 0, 0.04), 0 24px 32px rgba(0, 0, 0, 0.18)',
-		dark: '0 4px 6px rgba(0, 0, 0, 0.094), 0 24px 32px rgba(0, 0, 0, 0.425)',
+		light: dropShadowRecipe(128, 'light'),
+		dark: dropShadowRecipe(128, 'dark'),
 		highContrast: 'none'
 	}
 };
