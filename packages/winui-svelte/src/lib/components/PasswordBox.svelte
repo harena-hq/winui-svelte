@@ -181,10 +181,9 @@
 		position: relative;
 		display: flex;
 		align-items: stretch;
-		/* c1-allow: PasswordBox_themeresources.xaml:190 binds MinWidth to TextControlThemeMinWidth,
-		   defined at 64px. This reproduction uses 318px instead, measured on the reference guest and
-		   recorded by apps/gallery/src/lib/SearchBox.svelte; which of the two is right is a
-		   measurement no unit has made yet. */
+		/* c1-allow: WD-042 — PasswordBox_themeresources.xaml:190 binds MinWidth to
+		   TextControlThemeMinWidth, which generic.xaml:100 defines as 64. 318 is not that floor
+		   and is kept only until the unit that removes it; see docs/divergences.md. */
 		min-width: 318px;
 		/* PasswordBox_themeresources.xaml:190 binds MinHeight to this token. */
 		min-height: var(--winui-TextControlThemeMinHeight);
