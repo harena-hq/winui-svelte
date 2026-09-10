@@ -4,7 +4,10 @@
 	export interface ComboBoxItemData {
 		/** SelectedValue. Also the key the list is rendered by. */
 		value: string;
-		/** The item's content, when it is text. */
+		/**
+		 * The item's content, when it is text, and its accessible name and typeahead key
+		 * whether it is or not — `itemTemplate` replaces an item's appearance, not its text.
+		 */
 		label: string;
 		/** IsEnabled on the item, inverted — ADR 0009. */
 		disabled?: boolean;
@@ -16,6 +19,11 @@
 		/** SelectedValue. */
 		value?: string;
 		onValueChange?: (value: string) => void;
+		/**
+		 * ItemTemplate. Renders one item's content, in the trigger and in every list row.
+		 * Absent, an item renders as its `label`.
+		 */
+		itemTemplate?: Snippet<[ComboBoxItemData, number]>;
 		/** IsDropDownOpen. */
 		open?: boolean;
 		onOpenChange?: (open: boolean) => void;
@@ -40,15 +48,12 @@
 		[key: string]: unknown;
 	}
 
-	// Two WinUI members are deliberately absent, and a plain comment says so rather than
+	// One WinUI member is deliberately absent, and a plain comment says so rather than
 	// a `/** */` one: a doc comment here would attach itself to `disabled` below and a
-	// consumer hovering that prop would be told about one of them.
+	// consumer hovering that prop would be told about it.
 	//
 	// `IsEditable="True"` and the `EditableModeStates` group. The editable variant is a
 	// separate unit; this control renders the non-editable one only.
-	//
-	// Items are text-only in this unit. A non-text `ComboBoxItem` template is its own
-	// arrangement of brushes and metrics; the `items` prop above is the text-only narrowing.
 </script>
 
 <script lang="ts">
@@ -58,6 +63,7 @@
 		items = [],
 		value = $bindable(''),
 		onValueChange,
+		itemTemplate,
 		open = $bindable(false),
 		onOpenChange,
 		placeholder,
@@ -125,7 +131,13 @@
 						{#snippet child({ props, selection })}
 							<span {...props} class="value">
 								{#if selection.type === 'single' && selection.selected}
-									{selection.selected.label}
+									{@const selectedValue = selection.selected.value}
+									{@const index = items.findIndex((item) => item.value === selectedValue)}
+									{#if itemTemplate && index !== -1}
+										{@render itemTemplate(items[index], index)}
+									{:else}
+										{selection.selected.label}
+									{/if}
 								{:else}
 									<span class="placeholder">{placeholder ?? ''}</span>
 								{/if}
@@ -158,7 +170,7 @@
 							<Select.Viewport>
 								{#snippet child({ props })}
 									<div {...props} class="list">
-										{#each items as item (item.value)}
+										{#each items as item, index (item.value)}
 											<Select.Item
 												value={item.value}
 												label={item.label}
@@ -170,7 +182,12 @@
 													     adds the element and the class. -->
 													<div {...props} class="item">
 														<span class="pill" aria-hidden="true"></span>
-														<span class="item-content">{item.label}</span>
+														<span class="item-content">
+															{#if itemTemplate}{@render itemTemplate(
+																	item,
+																	index
+																)}{:else}{item.label}{/if}
+														</span>
 													</div>
 												{/snippet}
 											</Select.Item>
