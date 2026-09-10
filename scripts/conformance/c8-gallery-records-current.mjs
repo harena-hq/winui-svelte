@@ -8,6 +8,7 @@ const SHELL = 'data/winui-gallery-shell.json';
 const SAMPLES = 'data/winui-gallery-samples.json';
 const LANGUAGES = 'data/winui-gallery-languages.json';
 const COLORCODE = 'data/colorcode.json';
+const SYMBOL = 'data/winui-symbol.json';
 
 /**
  * C2's sibling, for the other generated records. It answers the same question —
@@ -17,10 +18,10 @@ const COLORCODE = 'data/colorcode.json';
  * C2's input is `data/winui-tokens.json`, which is committed, so C2 can always re-run the
  * generator. The Gallery records are derived from `.upstream/WinUI-Gallery`, and the
  * ColorCode record is derived from both `.upstream/ColorCode-Universal` and
- * `.upstream/WinUI-Gallery`, which are deliberately not committed and are absent from a
- * fresh clone. So the gate always checks
+ * `.upstream/WinUI-Gallery`, and the Symbol record from `.upstream/microsoft-ui-xaml`; all
+ * three checkouts are deliberately not committed and are absent from a fresh clone. So the gate always checks
  * what a fresh clone can check — the pin the records name, and each record's census
- * against its own contents — and additionally re-derives all five records when both
+ * against its own contents — and additionally re-derives all six records when all three
  * checkouts happen to be present at their pins.
  *
  * The weaker half is not a formality. Hand-editing a record is the failure that actually
@@ -45,7 +46,13 @@ function byAlias(colorcode, alias) {
 	return found[0];
 }
 
-function counted(design, shell, samples, languages, colorcode) {
+function sharedGlyphs(symbol) {
+	const uses = new Map();
+	for (const entry of symbol.symbols) uses.set(entry.glyph, (uses.get(entry.glyph) ?? 0) + 1);
+	return [...uses.values()].filter((count) => count > 1).length;
+}
+
+function counted(design, shell, samples, languages, colorcode, symbol) {
 	const tiles = design.color.items.filter((item) => item.kind === 'tiles');
 	const bySection = {};
 	for (const grid of tiles) {
@@ -125,13 +132,20 @@ function counted(design, shell, samples, languages, colorcode) {
 					language.rules.flatMap((rule) => Object.values(rule.captures))
 				)
 			]).size
+		},
+		[SYMBOL]: {
+			symbols: symbol.symbols.length,
+			remapped: symbol.symbols.filter((entry) => entry.legacy !== entry.glyph).length,
+			unchanged: symbol.symbols.filter((entry) => entry.legacy === entry.glyph).length,
+			sharedGlyphs: sharedGlyphs(symbol)
 		}
 	};
 }
 
 export async function run() {
 	const records = {};
-	for (const path of [DESIGN, SHELL, SAMPLES, LANGUAGES, COLORCODE]) {
+	const paths = [DESIGN, SHELL, SAMPLES, LANGUAGES, COLORCODE, SYMBOL];
+	for (const path of paths) {
 		let text;
 		try {
 			text = await read(path);
@@ -139,7 +153,13 @@ export async function run() {
 			// Not `pending`: all records are committed, and one going missing is the
 			// tree losing an artifact rather than a version not having arrived.
 			return fail(
-				`${path} is missing; run \`${path === COLORCODE ? 'pnpm colorcode:extract' : 'pnpm gallery:extract'}\``
+				`${path} is missing; run \`${
+					path === COLORCODE
+						? 'pnpm colorcode:extract'
+						: path === SYMBOL
+							? 'pnpm symbol:extract'
+							: 'pnpm gallery:extract'
+				}\``
 			);
 		}
 		try {
@@ -154,8 +174,17 @@ export async function run() {
 	const { UPSTREAM: GALLERY_UPSTREAM, head: galleryHead } = await import('../gallery/fetch.mjs');
 	const { UPSTREAM: COLORCODE_UPSTREAM, head: colorcodeHead } =
 		await import('../colorcode/fetch.mjs');
+	const { UPSTREAM: CONTROL_UPSTREAM, head: controlHead } = await import('../tokens/fetch.mjs');
+	const pins = {
+		[DESIGN]: GALLERY_UPSTREAM.commit,
+		[SHELL]: GALLERY_UPSTREAM.commit,
+		[SAMPLES]: GALLERY_UPSTREAM.commit,
+		[LANGUAGES]: GALLERY_UPSTREAM.commit,
+		[COLORCODE]: COLORCODE_UPSTREAM.commit,
+		[SYMBOL]: CONTROL_UPSTREAM.commit
+	};
 	for (const [path, record] of Object.entries(records)) {
-		const pinned = path === COLORCODE ? COLORCODE_UPSTREAM.commit : GALLERY_UPSTREAM.commit;
+		const pinned = pins[path];
 		if (record.source?.commit !== pinned) {
 			sites.push(`${path}: extracted from ${record.source?.commit}, pinned at ${pinned}`);
 		}
@@ -181,7 +210,8 @@ export async function run() {
 		records[SHELL],
 		records[SAMPLES],
 		records[LANGUAGES],
-		records[COLORCODE]
+		records[COLORCODE],
+		records[SYMBOL]
 	);
 	for (const [path, counts] of Object.entries(expected)) {
 		for (const [key, value] of Object.entries(counts)) {
@@ -198,10 +228,15 @@ export async function run() {
 		return fail('a generated record disagrees with its own pin or its own contents', sites);
 	}
 
-	// The stronger half, when both checkouts are there to compare against.
+	// The stronger half, when all three checkouts are there to compare against.
 	const galleryAt = await galleryHead();
 	const colorcodeAt = await colorcodeHead();
-	if (galleryAt !== GALLERY_UPSTREAM.commit || colorcodeAt !== COLORCODE_UPSTREAM.commit) {
+	const controlAt = await controlHead();
+	if (
+		galleryAt !== GALLERY_UPSTREAM.commit ||
+		colorcodeAt !== COLORCODE_UPSTREAM.commit ||
+		controlAt !== CONTROL_UPSTREAM.commit
+	) {
 		const missing = [];
 		if (galleryAt !== GALLERY_UPSTREAM.commit) {
 			missing.push(
@@ -213,12 +248,18 @@ export async function run() {
 				`.upstream/ColorCode-Universal is ${colorcodeAt === null ? 'absent' : `at ${colorcodeAt}`}`
 			);
 		}
-		return pass(`5 record(s) consistent; not re-derived — ${missing.join('; ')}`);
+		if (controlAt !== CONTROL_UPSTREAM.commit) {
+			missing.push(
+				`.upstream/microsoft-ui-xaml is ${controlAt === null ? 'absent' : `at ${controlAt}`}`
+			);
+		}
+		return pass(`${paths.length} record(s) consistent; not re-derived — ${missing.join('; ')}`);
 	}
 
 	const { records: derive } = await import('../gallery/extract.mjs');
 	const { record: deriveColorCode } = await import('../colorcode/extract.mjs');
-	const fresh = { ...derive(), colorcode: deriveColorCode() };
+	const { record: deriveSymbol } = await import('../symbol/extract.mjs');
+	const fresh = { ...derive(), colorcode: deriveColorCode(), symbol: deriveSymbol() };
 	// `extractedAt` is the day the record was written, not part of what it says: a
 	// re-run tomorrow would differ in that one field and in nothing else.
 	const strip = (record) => {
@@ -232,12 +273,13 @@ export async function run() {
 		[SHELL, fresh.shell],
 		[SAMPLES, fresh.samples],
 		[LANGUAGES, fresh.languages],
-		[COLORCODE, fresh.colorcode]
+		[COLORCODE, fresh.colorcode],
+		[SYMBOL, fresh.symbol]
 	]) {
 		if (JSON.stringify(strip(records[path])) !== JSON.stringify(strip(record))) stale.push(path);
 	}
 
 	return stale.length
 		? fail('a committed generated record is stale; rerun its extractor', stale)
-		: pass('5 record(s) consistent and re-derived from the pinned checkouts');
+		: pass(`${paths.length} record(s) consistent and re-derived from the pinned checkouts`);
 }

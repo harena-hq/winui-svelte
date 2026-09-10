@@ -78,7 +78,12 @@ const SPARSE = [
 	'/dxaml/phone/lib/**/*.h',
 	'/dxaml/phone/lib/**/*.cpp',
 	'/dxaml/xcp/components/**/*.h',
-	'/dxaml/xcp/components/**/*.cpp'
+	'/dxaml/xcp/components/**/*.cpp',
+	// Not control source: the design note for the `Symbol` enum, which is the only second
+	// witness to the *rendered* code point that `icon.cpp`'s switch returns. The extractor
+	// under `scripts/symbol/` refuses to emit a table the note and the switch disagree on,
+	// so the file is a check rather than a convenience.
+	'/docs/design-notes/symbol-enum-spec.md'
 ];
 
 const git = (args) =>

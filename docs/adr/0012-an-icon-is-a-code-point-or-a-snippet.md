@@ -142,8 +142,14 @@ reproduction needs and could not have invented — writing `Symbol="Accept"` as 
 enum's literal value, would draw the wrong glyph or none.
 
 Two pairs collide by design: `Favorite` (`0xE113`) and `OutlineStar` (`0xE1CE`) both render
-`0xE734`. One case returns its own value unchanged, `Placeholder`. Anything not in the switch
-falls through unchanged, which is the enum's escape hatch for a raw code point.
+`0xE734`. **Five** cases return their own value unchanged, and they are not one thing:
+`GlobalNavigationButton` (`0xE700`), `Share` (`0xE72D`), `Print` (`0xE749`) and
+`XboxOneConsole` (`0xE990`) already sit at or above E7 and so have nothing to remap, while
+`Placeholder` (`0xE18A`) is a legacy point the switch deliberately leaves where it is.
+Anything not in the switch falls through unchanged, which is the enum's escape hatch for a
+raw code point. **The "one case" this paragraph used to claim was itself a read narrower
+than the claim** — the same failure the lesson below is about, committed inside the
+correction of it.
 
 ### What changes
 
@@ -157,6 +163,15 @@ they protect it here by the same mechanism rather than by refusal.
 The original objection — "a wrong pair would be invisible, because a wrong glyph is still a
 glyph" — is met by the same mechanism and is why generation rather than transcription is the
 condition of carrying it at all.
+
+The pin contains three statements of this table: the switch in `icon.cpp`, `enum class Symbol`
+in `dxaml/xcp/components/metadata/inc/EnumDefs.g.h`, and the design note at
+`docs/design-notes/symbol-enum-spec.md`. The extractor reads all three and emits nothing when
+they disagree, so a wrong pair is a failed extraction rather than an invisible glyph. The switch
+is authoritative because it is the rendering code; the other two are witnesses, and the design
+note is the only second witness to the rendered point, which is why the sparse checkout includes
+it. Order is intentionally not compared: the enum is ordered by value while the switch and note
+are alphabetical.
 
 **No prop is added, and ADR 0009's exception set stays closed at `glyph`.** The record is
 exported as a lookup, so a call site writes `glyph={Symbol.Accept}` and hands `glyph` the same
