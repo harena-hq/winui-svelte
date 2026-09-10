@@ -205,11 +205,12 @@
 		border-width: var(--winui-ContentDialogBorderWidth);
 		border-color: var(--winui-ContentDialogBorderBrush);
 		border-radius: var(--winui-OverlayCornerRadius);
-		/* The drop shadow WinUI's dialog host casts onto the smoke layer. No dictionary states
-		   the recipe; `PLATFORM_SHADOWS` in scripts/tokens/manifest.mjs carries the value,
-		   measured on the reference guest and fitted against the browser's own blur. It is a
-		   depth of its own: a dialog's ramp runs past forty pixels where a popup's closes in
-		   nineteen, and a dialog darkens the pixels above it where a popup darkens none.
+		/* The dialog host casts this shadow at `Translation.Z` 128
+		   (`ContentDialog_Partial.cpp:1165`). `GetDropShadowRecipe` in
+		   dxaml/xcp/components/graphics/inc/DropShadowRecipe.h defines it; `PLATFORM_SHADOWS`
+		   derives the value and records the one composition-to-CSS blur constant. It is a depth of
+		   its own: a dialog's ramp runs past forty pixels where a popup's closes in nineteen, and
+		   a dialog darkens the pixels above it where a popup darkens none.
 
 		   `padding-box` is `BackgroundSizing="InnerBorderEdge"` on `BackgroundElement`
 		   (ContentDialog_themeresources.xaml:223). It matters here rather than being a

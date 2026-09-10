@@ -330,38 +330,6 @@ Recorded here once the control is built and the behaviour is observed rather tha
 
 ---
 
-### WD-012 — a ToolTip casts no drop shadow
-
-- **Control**: `ToolTip` alone. `Flyout`, `MenuFlyout` and `TeachingTip` left this entry when
-  the popup depth was measured and fitted, and `ContentDialog` left it when the dialog depth
-  was. `Popup` was never in it: it positions a surface the consumer supplies and paints
-  nothing, so there is no card of its own to cast a shadow from.
-- **WinUI does**: give the popup a `ThemeShadow`, cast onto whatever is under it. Two of its
-  three depths are now reproduced from measured profiles — nineteen pixels of ramp for a popup
-  and past forty for a dialog. A ToolTip's is the third and the shortest: read once at one
-  significant figure, it starts near `#CC` and closes in about eight. The shadow is in none of
-  the presenters' templates — `FlyoutPresenter_themeresources.xaml:43` draws one `Border` with
-  a background, a border and a corner radius and nothing else — because it is cast by the
-  popup host rather than by the presenter.
-- **We do**: draw no shadow on a ToolTip.
-- **Why accepted**: not a judgement — a capture. A ToolTip has to be raised by hovering, and
-  four ways of doing that on the reference guest produced nothing: a direct pointer move onto
-  the target, a two-step approach, bringing the window to the front first, and an eight-step
-  motion path. No ToolTip capture is stored from the unit that built the control either, and
-  the one prose reading that exists is a single theme at one significant figure, which is not
-  enough to fit against. The other two depths each needed a four-curve profile in two themes.
-- **Would reconsider if**: a ToolTip can be raised and photographed on the guest. The
-  measurement and the fit are then the same pass the other two depths went through, and this
-  entry closes.
-
-**This entry exists because a citation was pointing at the wrong one.** `ToolTip.svelte`
-recorded the missing shadow against WD-006, which is about animated icons and names neither
-ToolTip nor shadows. Gate C5 could not see it: it checks that a cited id has an entry and that
-an entry is cited, and both were true. Reading the entry a citation points at is the part no
-gate does.
-
----
-
 ### WD-013 — a menu item's padding never widens for touch
 
 - **Control**: `MenuFlyout`, and every item in it.

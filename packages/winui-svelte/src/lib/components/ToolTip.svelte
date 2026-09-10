@@ -224,11 +224,6 @@
 				     of the ToolTip's template, so `FontFamily` and `FontSize` reach it by
 				     property inheritance from `DefaultToolTipStyle`. -->
 				{#snippet child({ props, wrapperProps })}
-					<!-- WD-012: the popup is measured to cast a drop shadow onto what is
-					     under it — the rows below its bottom edge darken from `#CC` back
-					     up to the page over about eight pixels. That is `ThemeShadow`,
-					     which no pinned dictionary states a depth for. The lack of a
-					     `box-shadow` here is the deliberate absence, not an oversight. -->
 					<div {...wrapperProps}>
 						<div {...props} class={['popup', className]} {style} {...rest}>
 							{#if typeof content === 'string'}{content}{:else if content}{@render content()}{/if}
@@ -272,6 +267,10 @@
 		border-color: var(--winui-ToolTipBorderBrush);
 		padding: var(--winui-ToolTipBorderPadding);
 		border-radius: var(--winui-ControlCornerRadius);
+		/* The popup host casts this shadow rather than the template. ToolTip alone has
+		   `Translation.Z` 16 at ToolTip_Partial.cpp:647 against every other elevated control's 32;
+		   the value comes from the recipe in scripts/tokens/manifest.mjs. */
+		box-shadow: var(--winui-ToolTipShadow);
 		max-width: var(--winui-ToolTipMaxWidth);
 		font-family: var(--winui-ContentControlThemeFontFamily);
 		font-size: var(--winui-ToolTipContentThemeFontSize);
