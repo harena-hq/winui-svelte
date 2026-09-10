@@ -2060,10 +2060,12 @@
 	--winui-AppBarExpandButtonThemeWidth: 48px;
 	--winui-AppBarExpandButtonCircleDiameter: 3px;
 	--winui-AutoSuggestListMaxHeight: 374px;
+	--winui-ControlContentThemeFontSize: 14px;
 	--winui-FlyoutThemeMaxHeight: 758px;
 	--winui-FlyoutThemeMaxWidth: 456px;
 	--winui-FlyoutThemeMinHeight: 40px;
 	--winui-FlyoutThemeMinWidth: 96px;
+	--winui-TextControlThemeMinHeight: 32px;
 	--winui-TextControlThemeMinWidth: 64px;
 	--winui-GridViewItemMinWidth: 44px;
 	--winui-GridViewItemMinHeight: 44px;
@@ -3845,10 +3847,12 @@
 	--winui-AppBarExpandButtonThemeWidth: 48px;
 	--winui-AppBarExpandButtonCircleDiameter: 3px;
 	--winui-AutoSuggestListMaxHeight: 374px;
+	--winui-ControlContentThemeFontSize: 14px;
 	--winui-FlyoutThemeMaxHeight: 758px;
 	--winui-FlyoutThemeMaxWidth: 456px;
 	--winui-FlyoutThemeMinHeight: 40px;
 	--winui-FlyoutThemeMinWidth: 96px;
+	--winui-TextControlThemeMinHeight: 32px;
 	--winui-TextControlThemeMinWidth: 64px;
 	--winui-GridViewItemMinWidth: 44px;
 	--winui-GridViewItemMinHeight: 44px;
@@ -5736,10 +5740,12 @@
 		--winui-AppBarExpandButtonThemeWidth: 48px;
 		--winui-AppBarExpandButtonCircleDiameter: 3px;
 		--winui-AutoSuggestListMaxHeight: 374px;
+		--winui-ControlContentThemeFontSize: 14px;
 		--winui-FlyoutThemeMaxHeight: 758px;
 		--winui-FlyoutThemeMaxWidth: 456px;
 		--winui-FlyoutThemeMinHeight: 40px;
 		--winui-FlyoutThemeMinWidth: 96px;
+		--winui-TextControlThemeMinHeight: 32px;
 		--winui-TextControlThemeMinWidth: 64px;
 		--winui-GridViewItemMinWidth: 44px;
 		--winui-GridViewItemMinHeight: 44px;
@@ -7643,10 +7649,12 @@
 	--winui-AppBarExpandButtonThemeWidth: 48px;
 	--winui-AppBarExpandButtonCircleDiameter: 3px;
 	--winui-AutoSuggestListMaxHeight: 374px;
+	--winui-ControlContentThemeFontSize: 14px;
 	--winui-FlyoutThemeMaxHeight: 758px;
 	--winui-FlyoutThemeMaxWidth: 456px;
 	--winui-FlyoutThemeMinHeight: 40px;
 	--winui-FlyoutThemeMinWidth: 96px;
+	--winui-TextControlThemeMinHeight: 32px;
 	--winui-TextControlThemeMinWidth: 64px;
 	--winui-GridViewItemMinWidth: 44px;
 	--winui-GridViewItemMinHeight: 44px;
@@ -7674,4 +7682,35 @@
 		--winui-SystemColorHighlightTextColor: HighlightText;
 		--winui-SystemColorHotlightColor: LinkText;
 	}
+}
+
+/* The compact density, as DensityStyles/Compact.xaml declares it, scoped to a subtree
+   the way a merged ResourceDictionary is. Four selectors and not one: five of these
+   keys are declared in four theme scopes above, and the strongest of those,
+   `:root:not([data-theme=...]):not([data-theme=...])`, is (0,3,0). A lone
+   `:root[data-density=...]` is (0,2,0) and would lose to it under a system dark
+   preference — silently, and in two themes of three. Each selector here carries one
+   more attribute than the theme scope it mirrors.
+
+   Written outside the preference media query on purpose: the third selector matches
+   more broadly than that query does, which is harmless only because every value below
+   is a size rather than a colour. A density key that is a colour must not use this
+   rule. */
+:root [data-density='compact'],
+:root[data-theme='dark'] [data-density='compact'],
+:root:not([data-theme='light']):not([data-theme='high-contrast']) [data-density='compact'],
+:root[data-theme='high-contrast'] [data-density='compact'] {
+	--winui-ControlContentThemeFontSize: 14px;
+	--winui-TextControlThemeMinHeight: 24px;
+	--winui-TextControlThemePadding: 2px 6px 1px 2px;
+	--winui-ListViewItemMinHeight: 32px;
+	--winui-TreeViewItemMinHeight: 24px;
+	--winui-TreeViewItemPresenterMargin: 0px;
+	--winui-TreeViewItemPresenterPadding: 0px;
+	--winui-TimePickerHostPadding: 1px 0px 2px 0px;
+	--winui-DatePickerHostPadding: 1px 0px 2px 0px;
+	--winui-DatePickerHostMonthPadding: 0px 0px 1px 9px;
+	--winui-ComboBoxMinHeight: 24px;
+	--winui-ComboBoxPadding: 1px 0px 3px 12px;
+	--winui-NavigationViewItemOnLeftMinHeight: 32px;
 }
