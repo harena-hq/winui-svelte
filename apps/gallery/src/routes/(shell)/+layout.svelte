@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { untrack } from 'svelte';
 	import { afterNavigate, goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import { resolve } from '$app/paths';
@@ -63,12 +64,26 @@
 	// Add only, never remove: a user who has collapsed a branch has said something, and
 	// an effect that also removed would undo it on the next navigation.
 	//
-	// The `includes` guard is not optional: assigning unconditionally inside an effect
-	// that reads `expandedItems` makes the effect re-run on its own write.
+	// **This effect must depend on the path and on nothing else**, which is what the
+	// `untrack` is for. Reading `expandedItems` reactively made it re-run on its own
+	// subject: `OnNavigationViewItemInvoked` toggles expansion unconditionally
+	// (NavigationView.cpp:1062), so invoking `Design` while a Design page is open
+	// collapsed the branch, the write woke this effect, the current path's ancestors
+	// still named `Design`, and it was expanded again inside the same tick. The branch
+	// could not be collapsed at all from a page inside it, however many times it was
+	// clicked. For a section that also has a page of its own the same re-seed made one
+	// click do half the work — navigate, stay open — where the original navigates and
+	// collapses together.
+	//
+	// The `includes` guard stays, but it is now only a needless write avoided rather
+	// than the thing that stops a loop.
 	let expandedItems = $state<string[]>([]);
 	$effect(() => {
-		const add = ancestorsOf(page.url.pathname).filter((id) => !expandedItems.includes(id));
-		if (add.length > 0) expandedItems = [...expandedItems, ...add];
+		const path = page.url.pathname;
+		untrack(() => {
+			const add = ancestorsOf(path).filter((id) => !expandedItems.includes(id));
+			if (add.length > 0) expandedItems = [...expandedItems, ...add];
+		});
 	});
 
 	// `paneOpen` is bound so the control can close it itself on entering a narrower
