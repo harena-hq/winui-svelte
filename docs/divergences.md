@@ -997,3 +997,23 @@ Examples 3 and 4 are this entry's.
 - **Would reconsider if**: the Windows App SDK enters the pin set, or a pinned source states the
   three controllers' default `FallbackColor`s. All three could then become cited token values,
   and this entry would be deleted rather than amended.
+
+---
+
+### WD-041 — the three Show window buttons open nothing
+
+- **Control**: the three `Show window` buttons on the System Backdrops page.
+- **WinUI does**: open a second window with the chosen backdrop. The first opens
+  `SampleBuiltInSystemBackdropsWindow` set to Mica; the second and third open
+  `SampleSystemBackdropsWindow` with Mica/Mica Alt/None and Acrylic/Acrylic Thin/None,
+  respectively (`SystemBackdropsPage.xaml.cs:17-48`). Each new window is the demonstration;
+  the page itself shows no material.
+- **We do**: render all three buttons and take no action when they are pressed.
+- **Why accepted**: a web page has no second window in the sense a WinRT `Window` is one:
+  `window.open` creates a browser-chrome window that can be blocked as a popup, a different
+  object rather than a smaller version of the same one. D16 also decides not to approximate the
+  window material. A second window whose entire content is that material would paint the same
+  solid the first page already paints, so a popup would demonstrate nothing new. The three source
+  expanders retain the code that performs the original action, which is what the examples are for.
+- **Would reconsider if**: this reproduction gains a real window shell; then a second window
+  would be real and its backdrop would be whatever D16 says.
