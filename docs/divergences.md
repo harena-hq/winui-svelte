@@ -969,3 +969,31 @@ That entry's subject is the token layer — the four `*AcrylicBackgroundFillColo
 `FallbackColor`. This one's subject is a brush a page declares for itself, and the controls a
 page gives it to drive: Example 1 above is WD-002's territory reached through a page, and
 Examples 3 and 4 are this entry's.
+
+---
+
+### WD-040 — Mica Alt falls back to the solid Base Alt, which is not the colour the reference shows
+
+- **Control**: `SystemBackdropElement` with `systemBackdrop="micaAlt"`, one of the three
+  choices on the Gallery's SystemBackdropElement page.
+- **WinUI does**: compose the Mica Alt material — a once-sampled desktop wallpaper tinted more
+  strongly than Mica Base — and paint a flat fallback whenever composition is unavailable. The
+  reference guest measures that light-theme fallback as `#e8e8e8`.
+- **We do**: paint `SolidBackgroundFillColorBaseAltBrush`, `#dadada` in the light theme, fourteen
+  levels darker than the reference. The other choices are exact: Acrylic reads
+  `AcrylicBackgroundFillColorDefaultBrush`, whose `#f9f9f9` is the measurement, and Mica reads
+  `SolidBackgroundFillColorBaseBrush`, whose `#f3f3f3` is the measurement and D16's choice.
+- **Why accepted**: no pinned source states Mica Alt's fallback. `MicaBackdrop.cpp:8-17` only
+  constructs a `MicaController` and sets its `Kind`; that controller is a
+  `Microsoft.UI.Composition.SystemBackdrops` Windows App SDK type, in none of the three pins.
+  `grep -rni e8e8e8 .upstream/` matches no pin. D16's evidence does not extend to this pair:
+  the Gallery Color page gives Mica Background / Base and Solid Background / Base the same
+  caption, while the Base Alt captions differ — "Default tab band background color" and "Used
+  for the bottom most layer of an experience". `SolidBackgroundFillColorBaseAlt` is instead the
+  only pinned solid that stands to Base as Mica Alt stands to Mica Base: darker in both themes.
+  This extends D16's shape without borrowing its evidence. A measured literal would be
+  light-theme-only: the guest theme is a fixed reference parameter, so neither dark nor high
+  contrast can be measured, and a one-theme colour cannot enter a component.
+- **Would reconsider if**: the Windows App SDK enters the pin set, or a pinned source states the
+  three controllers' default `FallbackColor`s. All three could then become cited token values,
+  and this entry would be deleted rather than amended.
