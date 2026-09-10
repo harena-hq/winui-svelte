@@ -3,8 +3,8 @@
 		"url": "https://github.com/microsoft/microsoft-ui-xaml",
 		"ref": "main",
 		"commit": "79646b4e5d4d85355f7478e0e0149b31e57d85f0",
-		"extractedAt": "2026-09-03",
-		"fileCount": 85,
+		"extractedAt": "2026-09-10",
+		"fileCount": 86,
 		"files": [
 			{
 				"path": "controls/dev/AnnotatedScrollBar/AnnotatedScrollBar_themeresources.xaml",
@@ -345,23 +345,27 @@
 			{
 				"path": "controls/dev/TreeView/TreeView_themeresources.xaml",
 				"sha256": "594c6aaef90d4c5de900ea8119ccc78d2431dfe115143b0613cba00df89937e8"
+			},
+			{
+				"path": "controls/dev/dll/DensityStyles/Compact.xaml",
+				"sha256": "1dbc9363ddda6cf11966e1cc26f396bc01c219b818768e3e7e8e06ad1af5b6f0"
 			}
 		]
 	},
 	"census": {
-		"files": 85,
+		"files": 86,
 		"filesWithThemeDictionaries": 78,
-		"filesWithout": 7,
+		"filesWithout": 8,
 		"themes": {
 			"Default": 78,
 			"HighContrast": 78,
 			"Light": 78
 		},
-		"records": 7908,
+		"records": 7924,
 		"byKind": {
 			"alias": 4433,
 			"brush": 1517,
-			"scalar": 1285,
+			"scalar": 1301,
 			"color": 368,
 			"style": 166,
 			"acrylic": 90,
@@ -378,7 +382,7 @@
 			"controls:TextCommandBarFlyout": 2,
 			"ThemeShadow": 1
 		},
-		"distinctKeys": 3074
+		"distinctKeys": 3077
 	},
 	"resources": [
 		{
@@ -71462,6 +71466,150 @@
 			"line": 125,
 			"type": "x:Double",
 			"value": "20"
+		},
+		{
+			"key": "ControlContentThemeFontSize",
+			"theme": null,
+			"kind": "scalar",
+			"file": "controls/dev/dll/DensityStyles/Compact.xaml",
+			"line": 8,
+			"type": "x:Double",
+			"value": "14"
+		},
+		{
+			"key": "ContentControlFontSize",
+			"theme": null,
+			"kind": "scalar",
+			"file": "controls/dev/dll/DensityStyles/Compact.xaml",
+			"line": 9,
+			"type": "x:Double",
+			"value": "14"
+		},
+		{
+			"key": "TextControlThemeMinHeight",
+			"theme": null,
+			"kind": "scalar",
+			"file": "controls/dev/dll/DensityStyles/Compact.xaml",
+			"line": 10,
+			"type": "x:Double",
+			"value": "24"
+		},
+		{
+			"key": "TextControlThemePadding",
+			"theme": null,
+			"kind": "scalar",
+			"file": "controls/dev/dll/DensityStyles/Compact.xaml",
+			"line": 11,
+			"type": "Thickness",
+			"value": "2,2,6,1"
+		},
+		{
+			"key": "ListViewItemMinHeight",
+			"theme": null,
+			"kind": "scalar",
+			"file": "controls/dev/dll/DensityStyles/Compact.xaml",
+			"line": 12,
+			"type": "x:Double",
+			"value": "32"
+		},
+		{
+			"key": "TreeViewItemMinHeight",
+			"theme": null,
+			"kind": "scalar",
+			"file": "controls/dev/dll/DensityStyles/Compact.xaml",
+			"line": 13,
+			"type": "x:Double",
+			"value": "24"
+		},
+		{
+			"key": "TreeViewItemMultiSelectCheckBoxMinHeight",
+			"theme": null,
+			"kind": "scalar",
+			"file": "controls/dev/dll/DensityStyles/Compact.xaml",
+			"line": 14,
+			"type": "x:Double",
+			"value": "24"
+		},
+		{
+			"key": "TreeViewItemPresenterMargin",
+			"theme": null,
+			"kind": "scalar",
+			"file": "controls/dev/dll/DensityStyles/Compact.xaml",
+			"line": 15,
+			"type": "x:Double",
+			"value": "0"
+		},
+		{
+			"key": "TreeViewItemPresenterPadding",
+			"theme": null,
+			"kind": "scalar",
+			"file": "controls/dev/dll/DensityStyles/Compact.xaml",
+			"line": 16,
+			"type": "x:Double",
+			"value": "0"
+		},
+		{
+			"key": "TimePickerHostPadding",
+			"theme": null,
+			"kind": "scalar",
+			"file": "controls/dev/dll/DensityStyles/Compact.xaml",
+			"line": 17,
+			"type": "Thickness",
+			"value": "0,1,0,2"
+		},
+		{
+			"key": "DatePickerHostPadding",
+			"theme": null,
+			"kind": "scalar",
+			"file": "controls/dev/dll/DensityStyles/Compact.xaml",
+			"line": 18,
+			"type": "Thickness",
+			"value": "0,1,0,2"
+		},
+		{
+			"key": "DatePickerHostMonthPadding",
+			"theme": null,
+			"kind": "scalar",
+			"file": "controls/dev/dll/DensityStyles/Compact.xaml",
+			"line": 19,
+			"type": "Thickness",
+			"value": "9,0,0,1"
+		},
+		{
+			"key": "ComboBoxEditableTextPadding",
+			"theme": null,
+			"kind": "scalar",
+			"file": "controls/dev/dll/DensityStyles/Compact.xaml",
+			"line": 20,
+			"type": "Thickness",
+			"value": "10,0,30,0"
+		},
+		{
+			"key": "ComboBoxMinHeight",
+			"theme": null,
+			"kind": "scalar",
+			"file": "controls/dev/dll/DensityStyles/Compact.xaml",
+			"line": 21,
+			"type": "x:Double",
+			"value": "24"
+		},
+		{
+			"key": "ComboBoxPadding",
+			"theme": null,
+			"kind": "scalar",
+			"file": "controls/dev/dll/DensityStyles/Compact.xaml",
+			"line": 22,
+			"type": "Thickness",
+			"value": "12,1,0,3"
+		},
+		{
+			"key": "NavigationViewItemOnLeftMinHeight",
+			"theme": null,
+			"kind": "scalar",
+			"file": "controls/dev/dll/DensityStyles/Compact.xaml",
+			"line": 23,
+			"type": "x:Double",
+			"value": "32"
 		}
 	]
 }

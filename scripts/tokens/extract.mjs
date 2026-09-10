@@ -10,8 +10,12 @@ const OUTPUT = join(ROOT, 'data', 'winui-tokens.json');
 // The parallel `*_perf2026*` set rewrites visual-state mechanics and changes no token
 // value — ADR 0001. Reading both would give every key an identical twin.
 const SOURCE = (name) => /_themeresources.*\.xaml$/.test(name) && !name.includes('perf2026');
+// Density dictionaries, which the walk below cannot find: they are not `*_themeresources*`
+// and they do not sit under a control's own directory. Named one at a time rather than by
+// widening `SOURCE`, because `dll/` holds build inputs that are not resource dictionaries.
+const EXTRA_SOURCES = ['controls/dev/dll/DensityStyles/Compact.xaml'];
 
-/** Every `*_themeresources*.xaml` under `controls/dev/`, checkout-relative and sorted. */
+/** Every `*_themeresources*.xaml` under `controls/dev/` plus `EXTRA_SOURCES`, checkout-relative and sorted. */
 function sources() {
 	const out = [];
 	const walk = (dir) => {
@@ -22,6 +26,14 @@ function sources() {
 		}
 	};
 	walk(join(CHECKOUT, 'controls', 'dev'));
+	// The walk cannot produce a path that does not exist; a named one can. A re-pin that moved
+	// or renamed this file would otherwise surface as a read failure several frames away, on a
+	// path nothing in the stack trace explains.
+	for (const path of EXTRA_SOURCES) {
+		if (!existsSync(join(CHECKOUT, path)))
+			throw new Error(`EXTRA_SOURCES names ${path}, which the pinned checkout does not contain`);
+		out.push(path);
+	}
 	// POSIX separators before sorting, so the order does not depend on which platform
 	// produced the committed file.
 	return out.sort();

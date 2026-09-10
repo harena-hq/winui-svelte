@@ -181,15 +181,13 @@
 		position: relative;
 		display: flex;
 		align-items: stretch;
-		/* c1-allow: PasswordBox_themeresources.xaml:190 binds MinWidth to
-		   TextControlThemeMinWidth, which controls/dev defines nowhere. Measured 318px
-		   on the same reference guest apps/gallery/src/lib/SearchBox.svelte records. */
+		/* c1-allow: PasswordBox_themeresources.xaml:190 binds MinWidth to TextControlThemeMinWidth,
+		   defined at 64px. This reproduction uses 318px instead, measured on the reference guest and
+		   recorded by apps/gallery/src/lib/SearchBox.svelte; which of the two is right is a
+		   measurement no unit has made yet. */
 		min-width: 318px;
-		/* c1-allow: PasswordBox_themeresources.xaml:190 binds MinHeight to
-		   TextControlThemeMinHeight, which controls/dev defines only for compact
-		   density. Measured 32px on the same reference guest
-		   apps/gallery/src/lib/SearchBox.svelte records. */
-		min-height: 32px;
+		/* PasswordBox_themeresources.xaml:190 binds MinHeight to this token. */
+		min-height: var(--winui-TextControlThemeMinHeight);
 		padding: var(--winui-TextControlThemePadding);
 		border-style: solid;
 		/* `TextControlBorderBrush` is a gradient (an alias onto

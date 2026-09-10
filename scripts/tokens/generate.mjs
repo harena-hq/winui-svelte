@@ -93,6 +93,7 @@ const RECORD = 'data/winui-tokens.json';
 const FRAMEWORK_RECORD = 'data/winui-framework.json';
 const OUTPUT = 'packages/winui-svelte/src/lib/tokens/tokens.css';
 const RAMP_OUTPUT = 'packages/winui-svelte/src/lib/tokens/type-ramp.css';
+const COMPACT_DENSITY_FILE = 'controls/dev/dll/DensityStyles/Compact.xaml';
 
 const fail = (message) => {
 	throw new Error(message);
@@ -783,6 +784,20 @@ function references(record) {
  * this file relies on already asserted.
  */
 function select(resources, framework) {
+	// Compact.xaml redefines standard resources for a merged subtree. Its records cannot enter
+	// `byKey`: they share the theme-independent scope with the standard records, and the
+	// selection's duplicate check correctly refuses to choose between those two definitions.
+	const densityRecords = resources.filter((record) => record.file === COMPACT_DENSITY_FILE);
+	const standardResources = resources.filter((record) => record.file !== COMPACT_DENSITY_FILE);
+	const compactByKey = new Map();
+	for (const record of densityRecords) {
+		if (compactByKey.has(record.key)) fail(`${at(record)}: compact density defines this key twice`);
+		compactByKey.set(record.key, record);
+	}
+
+	// Compact.xaml:5 is an implicit TextBlock Style, which has no x:Key and therefore no
+	// record. That is intentional: this reproduction has no equivalent unstyled TextBlock
+	// population, and its ramp classes already set font-size in both densities.
 	const files = new Set(SOURCE_FILES);
 
 	// D23: on a key both dictionaries define, the control pin wins. The framework
@@ -808,8 +823,8 @@ function select(resources, framework) {
 		// held for named keys only would let a duplicate back in through the walk.
 		const chosen = DEFINED_BY[key];
 		const kept = chosen
-			? resources.filter((record) => record.key !== key || record.file === chosen)
-			: resources;
+			? standardResources.filter((record) => record.key !== key || record.file === chosen)
+			: standardResources;
 		if (chosen && !kept.some((record) => record.key === key))
 			fail(`DEFINED_BY reads \`${key}\` from ${chosen}, which defines no record of it`);
 		const own = kept.filter((record) => record.key === key);
@@ -905,7 +920,7 @@ function select(resources, framework) {
 	// file-based filter is what the closure then extends through — a reference to a
 	// key the seeds do not define lands on a record in the full `resources` array, and
 	// that record joins the selection on its own merits.
-	const initial = resources.filter((record) => files.has(record.file));
+	const initial = standardResources.filter((record) => files.has(record.file));
 	for (const key of seeds)
 		if (!definitionsOf(key).length)
 			fail(`${seedMap(key)} lists \`${key}\`, which neither record file contains`);
@@ -1035,11 +1050,11 @@ function select(resources, framework) {
 	// A framework-sourced key emits after every pin key, in framework document order.
 	// Pinning a fallback after the cascade means a key the pin does not define cannot
 	// reorder one the pin already emits.
-	const records = [...resources, ...framework].filter(
+	const records = [...standardResources, ...framework].filter(
 		(record) => byKey.get(record.key)?.get(record.theme) === record
 	);
 
-	return { records, byKey, external: reached.size - byKey.size };
+	return { records, byKey, compactByKey, external: reached.size - byKey.size };
 }
 
 /* --------------------------------------------------------------------------------- emission */
@@ -1100,7 +1115,7 @@ function topLevelParts(args) {
 }
 
 function stylesheet(doc, framework, selection, extraEmitted) {
-	const { records, byKey, external } = selection;
+	const { records, byKey, compactByKey, external } = selection;
 
 	// The HighContrast dictionary, keyed by resource name, for the palette resolution
 	// WD-001 describes.
@@ -1181,6 +1196,15 @@ function stylesheet(doc, framework, selection, extraEmitted) {
 	];
 
 	const forcedColors = systemColors(2, (entry) => entry.keyword);
+	const compact = [];
+	const compactSkipped = [];
+	for (const [key, record] of compactByKey) {
+		if (!byKey.has(key)) {
+			compactSkipped.push(`${key}: standard key not in the selection`);
+			continue;
+		}
+		compact.push(...declaration(key, convert(record, siblings), 1));
+	}
 
 	// Built before the completeness check below, so that every block has had its say
 	// about which keys it emitted. A lazily built block would make the check pass by
@@ -1228,6 +1252,25 @@ function stylesheet(doc, framework, selection, extraEmitted) {
 		'\t:root {',
 		...forcedColors,
 		'\t}',
+		'}',
+		'',
+		'/* The compact density, as DensityStyles/Compact.xaml declares it, scoped to a subtree',
+		'   the way a merged ResourceDictionary is. Four selectors and not one: five of these',
+		'   keys are declared in four theme scopes above, and the strongest of those,',
+		'   `:root:not([data-theme=...]):not([data-theme=...])`, is (0,3,0). A lone',
+		'   `:root[data-density=...]` is (0,2,0) and would lose to it under a system dark',
+		'   preference — silently, and in two themes of three. Each selector here carries one',
+		'   more attribute than the theme scope it mirrors.',
+		'',
+		'   Written outside the preference media query on purpose: the third selector matches',
+		'   more broadly than that query does, which is harmless only because every value below',
+		'   is a size rather than a colour. A density key that is a colour must not use this',
+		'   rule. */',
+		":root [data-density='compact'],",
+		":root[data-theme='dark'] [data-density='compact'],",
+		":root:not([data-theme='light']):not([data-theme='high-contrast']) [data-density='compact'],",
+		":root[data-theme='high-contrast'] [data-density='compact'] {",
+		...compact,
 		'}'
 	];
 
@@ -1242,6 +1285,8 @@ function stylesheet(doc, framework, selection, extraEmitted) {
 			dark: declared(darkRoot),
 			highContrast: declared(highContrast),
 			forcedColors: declared(forcedColors),
+			compact: declared(compact),
+			compactSkipped,
 			lines: lines.length
 		}
 	};
@@ -1289,6 +1334,8 @@ async function main() {
 			`emitted           ${stats.emitted} keys`,
 			`excluded          ${stats.excluded} keys`,
 			`declarations      light ${stats.light}, dark ${stats.dark}, high contrast ${stats.highContrast}, forced-colors ${stats.forcedColors}`,
+			`compact density   ${stats.compact} declarations`,
+			...stats.compactSkipped.map((entry) => `compact skipped   ${entry}`),
 			`written           ${OUTPUT} (${stats.lines} lines)`,
 			`written           ${RAMP_OUTPUT} (${stats.rampLines} lines)`
 		].join('\n')

@@ -403,7 +403,25 @@ export const APPBARBUTTON_KEYS = {
 	AppBarThemeMinHeight: 'AppBar content minimum height',
 	AppBarThemeCompactHeight: 'AppBar compact content height',
 	AppBarButtonContentHeight: 'AppBarButton icon height',
-	ControlContentThemeFontSize: "the overflow row's label size, listed for EXCLUDED"
+	// This key was EXCLUDED for four versions and the reason was sound as far as it went.
+	// Three templates bind a font size to it — both overflow labels
+	// (AppBarButton_themeresources.xaml:373, AppBarToggleButton_themeresources.xaml:488) and
+	// SelectorBarItem (SelectorBar.xaml:60) — the value is 14, which is Body's size, and each
+	// of those three elements carries `winui-BodyTextBlockStyle` instead, so a second name for
+	// one number would give the two somewhere to drift apart. The v8 SelectorBar unit
+	// re-opened it and re-closed it the same way.
+	//
+	// What that reasoning did not cover is three keys whose whole value is a reference to
+	// this one: `BreadcrumbBarItemThemeFontSize`, `CalendarViewDayItemFontSize` and
+	// `CalendarViewMonthYearItemFontSize`. While it was excluded, all three held the
+	// guaranteed-invalid value, so `BreadcrumbBar.svelte:216` and `:251` and
+	// `CalendarView.svelte:875` each read a font size that was invalid at computed-value time
+	// and fell back to `inherit`. Measured on the reference guest: the property came back
+	// empty and the rendered size was 14px by inheritance, which is the right number by luck
+	// rather than by the declaration. C9 does not catch it, because the name each component
+	// reads *is* emitted and C9 does not follow a token into its own value.
+	ControlContentThemeFontSize:
+		"the overflow row's label size, and what three FontSize aliases resolve through"
 };
 
 /**
@@ -617,6 +635,8 @@ export const TEXTBOX_KEYS = {
 	// The two layout keys the delete button needs.
 	TextBoxInnerButtonMargin: 'TextBox delete button, the inset of its fill',
 	TextBoxIconFontSize: 'TextBox delete button, the glyph inside it',
+	TextControlThemeMinHeight:
+		'the height an editable text box floors at, and the one key compact changes',
 
 	// The four brushes each state reaches, plus the placeholder and the selection.
 	TextControlBackground: 'TextBox background, at rest',
@@ -2116,15 +2136,6 @@ export const EXCLUDED = {
 		'Visibility enum has no scalar conversion; the flyout state renders the chevron',
 	CommandBarMoreButtonMargin:
 		'EllipsisButton\'s ContentPresenter writes Padding="0" literally at :1021 rather than template-binding the Button padding, so nothing reads this value; its only definition in the extracted record is RevealBrush_themeresources.xaml:562',
-	// Three templates bind a font size to this key: both overflow labels
-	// (AppBarButton_themeresources.xaml:373, AppBarToggleButton_themeresources.xaml:488) and
-	// SelectorBarItem (SelectorBar.xaml:60). The value is 14, which is Body's size, and each of
-	// those three elements carries `winui-BodyTextBlockStyle` instead — so emitting a second
-	// name for one number would give the two somewhere to drift apart. The v8 SelectorBar unit
-	// re-opened this and it is re-closed the same way: a control that names this key wears the
-	// ramp class rather than reading a duplicate token.
-	ControlContentThemeFontSize:
-		'14, which the elements that name it already take from the Body ramp class they carry',
 	AppBarButtonOverflowTextTouchMargin:
 		'WD-020: touch and game-controller overflow padding is not reproduced',
 	AppBarToggleButtonOverflowTextTouchMargin:
@@ -2697,6 +2708,9 @@ export const DOUBLE_LENGTHS = {
 	SplitViewOpenPaneThemeLength: 'SplitView open pane length',
 	SplitViewCompactPaneThemeLength: 'SplitView compact pane length',
 	TreeViewItemMinHeight: 'TreeViewItem minimum height',
+	TreeViewItemPresenterMargin: 'TreeViewItem presenter outer inset',
+	TreeViewItemPresenterPadding: 'TreeViewItem presenter inner inset',
+	TextControlThemeMinHeight: 'the height an editable text box floors at',
 	TreeViewItemContentHeight: 'TreeViewItem content minimum height',
 	ListViewItemMinWidth: 'ListViewItem minimum width',
 	ListViewItemMinHeight: 'ListViewItem minimum height',
