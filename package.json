@@ -17,6 +17,8 @@
 		"tokens:fetch": "node scripts/tokens/fetch.mjs",
 		"tokens:extract": "node scripts/tokens/extract.mjs",
 		"tokens:build": "node scripts/tokens/generate.mjs",
+		"symbol:extract": "node scripts/symbol/extract.mjs",
+		"symbol:build": "node scripts/symbol/generate.mjs",
 		"gallery:fetch": "node scripts/gallery/fetch.mjs",
 		"gallery:extract": "node scripts/gallery/extract.mjs",
 		"colorcode:fetch": "node scripts/colorcode/fetch.mjs",

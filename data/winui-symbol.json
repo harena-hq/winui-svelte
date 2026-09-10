@@ -1,0 +1,1006 @@
+{
+	"source": {
+		"repo": "https://github.com/microsoft/microsoft-ui-xaml",
+		"commit": "79646b4e5d4d85355f7478e0e0149b31e57d85f0",
+		"files": [
+			"dxaml/xcp/core/core/elements/icon.cpp",
+			"dxaml/xcp/components/metadata/inc/EnumDefs.g.h",
+			"docs/design-notes/symbol-enum-spec.md"
+		],
+		"fileCount": 3,
+		"extractedAt": "2026-09-10"
+	},
+	"census": {
+		"symbols": 197,
+		"remapped": 192,
+		"unchanged": 5,
+		"sharedGlyphs": 1
+	},
+	"symbols": [
+		{
+			"name": "Accept",
+			"legacy": "E10B",
+			"glyph": "E8FB"
+		},
+		{
+			"name": "Account",
+			"legacy": "E168",
+			"glyph": "E910"
+		},
+		{
+			"name": "Add",
+			"legacy": "E109",
+			"glyph": "E710"
+		},
+		{
+			"name": "AddFriend",
+			"legacy": "E1E2",
+			"glyph": "E8FA"
+		},
+		{
+			"name": "Admin",
+			"legacy": "E1A7",
+			"glyph": "E7EF"
+		},
+		{
+			"name": "AlignCenter",
+			"legacy": "E1A1",
+			"glyph": "E8E3"
+		},
+		{
+			"name": "AlignLeft",
+			"legacy": "E1A2",
+			"glyph": "E8E4"
+		},
+		{
+			"name": "AlignRight",
+			"legacy": "E1A0",
+			"glyph": "E8E2"
+		},
+		{
+			"name": "AllApps",
+			"legacy": "E179",
+			"glyph": "E71D"
+		},
+		{
+			"name": "Attach",
+			"legacy": "E16C",
+			"glyph": "E723"
+		},
+		{
+			"name": "AttachCamera",
+			"legacy": "E12D",
+			"glyph": "E8A2"
+		},
+		{
+			"name": "Audio",
+			"legacy": "E189",
+			"glyph": "E8D6"
+		},
+		{
+			"name": "Back",
+			"legacy": "E112",
+			"glyph": "E72B"
+		},
+		{
+			"name": "BackToWindow",
+			"legacy": "E1D8",
+			"glyph": "E73F"
+		},
+		{
+			"name": "BlockContact",
+			"legacy": "E1E0",
+			"glyph": "E8F8"
+		},
+		{
+			"name": "Bold",
+			"legacy": "E19B",
+			"glyph": "E8DD"
+		},
+		{
+			"name": "Bookmarks",
+			"legacy": "E12F",
+			"glyph": "E8A4"
+		},
+		{
+			"name": "BrowsePhotos",
+			"legacy": "E155",
+			"glyph": "E7C5"
+		},
+		{
+			"name": "Bullets",
+			"legacy": "E133",
+			"glyph": "E8FD"
+		},
+		{
+			"name": "Calculator",
+			"legacy": "E1D0",
+			"glyph": "E8EF"
+		},
+		{
+			"name": "Calendar",
+			"legacy": "E163",
+			"glyph": "E787"
+		},
+		{
+			"name": "CalendarDay",
+			"legacy": "E161",
+			"glyph": "E8BF"
+		},
+		{
+			"name": "CalendarReply",
+			"legacy": "E1DB",
+			"glyph": "E8F5"
+		},
+		{
+			"name": "CalendarWeek",
+			"legacy": "E162",
+			"glyph": "E8C0"
+		},
+		{
+			"name": "Camera",
+			"legacy": "E114",
+			"glyph": "E722"
+		},
+		{
+			"name": "Cancel",
+			"legacy": "E10A",
+			"glyph": "E711"
+		},
+		{
+			"name": "Caption",
+			"legacy": "E15A",
+			"glyph": "E8BA"
+		},
+		{
+			"name": "CellPhone",
+			"legacy": "E1C9",
+			"glyph": "E8EA"
+		},
+		{
+			"name": "Character",
+			"legacy": "E164",
+			"glyph": "E8C1"
+		},
+		{
+			"name": "Clear",
+			"legacy": "E106",
+			"glyph": "E894"
+		},
+		{
+			"name": "ClearSelection",
+			"legacy": "E1C5",
+			"glyph": "E8E6"
+		},
+		{
+			"name": "Clock",
+			"legacy": "E121",
+			"glyph": "E823"
+		},
+		{
+			"name": "ClosedCaption",
+			"legacy": "E190",
+			"glyph": "E7F0"
+		},
+		{
+			"name": "ClosePane",
+			"legacy": "E127",
+			"glyph": "E89F"
+		},
+		{
+			"name": "Comment",
+			"legacy": "E134",
+			"glyph": "E90A"
+		},
+		{
+			"name": "Contact",
+			"legacy": "E13D",
+			"glyph": "E77B"
+		},
+		{
+			"name": "Contact2",
+			"legacy": "E187",
+			"glyph": "E8D4"
+		},
+		{
+			"name": "ContactInfo",
+			"legacy": "E136",
+			"glyph": "E779"
+		},
+		{
+			"name": "ContactPresence",
+			"legacy": "E181",
+			"glyph": "E8CF"
+		},
+		{
+			"name": "Copy",
+			"legacy": "E16F",
+			"glyph": "E8C8"
+		},
+		{
+			"name": "Crop",
+			"legacy": "E123",
+			"glyph": "E7A8"
+		},
+		{
+			"name": "Cut",
+			"legacy": "E16B",
+			"glyph": "E8C6"
+		},
+		{
+			"name": "Delete",
+			"legacy": "E107",
+			"glyph": "E74D"
+		},
+		{
+			"name": "Directions",
+			"legacy": "E1D1",
+			"glyph": "E8F0"
+		},
+		{
+			"name": "DisableUpdates",
+			"legacy": "E194",
+			"glyph": "E8D8"
+		},
+		{
+			"name": "DisconnectDrive",
+			"legacy": "E17A",
+			"glyph": "E8CD"
+		},
+		{
+			"name": "Dislike",
+			"legacy": "E19E",
+			"glyph": "E8E0"
+		},
+		{
+			"name": "DockBottom",
+			"legacy": "E147",
+			"glyph": "E90E"
+		},
+		{
+			"name": "DockLeft",
+			"legacy": "E145",
+			"glyph": "E90C"
+		},
+		{
+			"name": "DockRight",
+			"legacy": "E146",
+			"glyph": "E90D"
+		},
+		{
+			"name": "Document",
+			"legacy": "E130",
+			"glyph": "E8A5"
+		},
+		{
+			"name": "Download",
+			"legacy": "E118",
+			"glyph": "E896"
+		},
+		{
+			"name": "Edit",
+			"legacy": "E104",
+			"glyph": "E70F"
+		},
+		{
+			"name": "Emoji",
+			"legacy": "E11D",
+			"glyph": "E899"
+		},
+		{
+			"name": "Emoji2",
+			"legacy": "E170",
+			"glyph": "E76E"
+		},
+		{
+			"name": "Favorite",
+			"legacy": "E113",
+			"glyph": "E734"
+		},
+		{
+			"name": "Filter",
+			"legacy": "E16E",
+			"glyph": "E71C"
+		},
+		{
+			"name": "Find",
+			"legacy": "E11A",
+			"glyph": "E721"
+		},
+		{
+			"name": "Flag",
+			"legacy": "E129",
+			"glyph": "E7C1"
+		},
+		{
+			"name": "Folder",
+			"legacy": "E188",
+			"glyph": "E8B7"
+		},
+		{
+			"name": "Font",
+			"legacy": "E185",
+			"glyph": "E8D2"
+		},
+		{
+			"name": "FontColor",
+			"legacy": "E186",
+			"glyph": "E8D3"
+		},
+		{
+			"name": "FontDecrease",
+			"legacy": "E1C6",
+			"glyph": "E8E7"
+		},
+		{
+			"name": "FontIncrease",
+			"legacy": "E1C7",
+			"glyph": "E8E8"
+		},
+		{
+			"name": "FontSize",
+			"legacy": "E1C8",
+			"glyph": "E8E9"
+		},
+		{
+			"name": "Forward",
+			"legacy": "E111",
+			"glyph": "E72A"
+		},
+		{
+			"name": "FourBars",
+			"legacy": "E1E9",
+			"glyph": "E908"
+		},
+		{
+			"name": "FullScreen",
+			"legacy": "E1D9",
+			"glyph": "E740"
+		},
+		{
+			"name": "GlobalNavigationButton",
+			"legacy": "E700",
+			"glyph": "E700"
+		},
+		{
+			"name": "Globe",
+			"legacy": "E12B",
+			"glyph": "E774"
+		},
+		{
+			"name": "Go",
+			"legacy": "E143",
+			"glyph": "E8AD"
+		},
+		{
+			"name": "GoToStart",
+			"legacy": "E1E4",
+			"glyph": "E8FC"
+		},
+		{
+			"name": "GoToToday",
+			"legacy": "E184",
+			"glyph": "E8D1"
+		},
+		{
+			"name": "HangUp",
+			"legacy": "E137",
+			"glyph": "E778"
+		},
+		{
+			"name": "Help",
+			"legacy": "E11B",
+			"glyph": "E897"
+		},
+		{
+			"name": "HideBcc",
+			"legacy": "E16A",
+			"glyph": "E8C5"
+		},
+		{
+			"name": "Highlight",
+			"legacy": "E193",
+			"glyph": "E7E6"
+		},
+		{
+			"name": "Home",
+			"legacy": "E10F",
+			"glyph": "E80F"
+		},
+		{
+			"name": "Import",
+			"legacy": "E150",
+			"glyph": "E8B5"
+		},
+		{
+			"name": "ImportAll",
+			"legacy": "E151",
+			"glyph": "E8B6"
+		},
+		{
+			"name": "Important",
+			"legacy": "E171",
+			"glyph": "E8C9"
+		},
+		{
+			"name": "Italic",
+			"legacy": "E199",
+			"glyph": "E8DB"
+		},
+		{
+			"name": "Keyboard",
+			"legacy": "E144",
+			"glyph": "E765"
+		},
+		{
+			"name": "LeaveChat",
+			"legacy": "E11F",
+			"glyph": "E89B"
+		},
+		{
+			"name": "Library",
+			"legacy": "E1D3",
+			"glyph": "E8F1"
+		},
+		{
+			"name": "Like",
+			"legacy": "E19F",
+			"glyph": "E8E1"
+		},
+		{
+			"name": "LikeDislike",
+			"legacy": "E19D",
+			"glyph": "E8DF"
+		},
+		{
+			"name": "Link",
+			"legacy": "E167",
+			"glyph": "E71B"
+		},
+		{
+			"name": "List",
+			"legacy": "E14C",
+			"glyph": "EA37"
+		},
+		{
+			"name": "Mail",
+			"legacy": "E119",
+			"glyph": "E715"
+		},
+		{
+			"name": "MailFilled",
+			"legacy": "E135",
+			"glyph": "E8A8"
+		},
+		{
+			"name": "MailForward",
+			"legacy": "E120",
+			"glyph": "E89C"
+		},
+		{
+			"name": "MailReply",
+			"legacy": "E172",
+			"glyph": "E8CA"
+		},
+		{
+			"name": "MailReplyAll",
+			"legacy": "E165",
+			"glyph": "E8C2"
+		},
+		{
+			"name": "Manage",
+			"legacy": "E178",
+			"glyph": "E912"
+		},
+		{
+			"name": "Map",
+			"legacy": "E1C4",
+			"glyph": "E707"
+		},
+		{
+			"name": "MapDrive",
+			"legacy": "E17B",
+			"glyph": "E8CE"
+		},
+		{
+			"name": "MapPin",
+			"legacy": "E139",
+			"glyph": "E7B7"
+		},
+		{
+			"name": "Memo",
+			"legacy": "E1D5",
+			"glyph": "E77C"
+		},
+		{
+			"name": "Message",
+			"legacy": "E15F",
+			"glyph": "E8BD"
+		},
+		{
+			"name": "Microphone",
+			"legacy": "E1D6",
+			"glyph": "E720"
+		},
+		{
+			"name": "More",
+			"legacy": "E10C",
+			"glyph": "E712"
+		},
+		{
+			"name": "MoveToFolder",
+			"legacy": "E19C",
+			"glyph": "E8DE"
+		},
+		{
+			"name": "MusicInfo",
+			"legacy": "E142",
+			"glyph": "E90B"
+		},
+		{
+			"name": "Mute",
+			"legacy": "E198",
+			"glyph": "E74F"
+		},
+		{
+			"name": "NewFolder",
+			"legacy": "E1DA",
+			"glyph": "E8F4"
+		},
+		{
+			"name": "NewWindow",
+			"legacy": "E17C",
+			"glyph": "E78B"
+		},
+		{
+			"name": "Next",
+			"legacy": "E101",
+			"glyph": "E893"
+		},
+		{
+			"name": "OneBar",
+			"legacy": "E1E6",
+			"glyph": "E905"
+		},
+		{
+			"name": "OpenFile",
+			"legacy": "E1A5",
+			"glyph": "E8E5"
+		},
+		{
+			"name": "OpenLocal",
+			"legacy": "E197",
+			"glyph": "E8DA"
+		},
+		{
+			"name": "OpenPane",
+			"legacy": "E126",
+			"glyph": "E8A0"
+		},
+		{
+			"name": "OpenWith",
+			"legacy": "E17D",
+			"glyph": "E7AC"
+		},
+		{
+			"name": "Orientation",
+			"legacy": "E14F",
+			"glyph": "E8B4"
+		},
+		{
+			"name": "OtherUser",
+			"legacy": "E1A6",
+			"glyph": "E7EE"
+		},
+		{
+			"name": "OutlineStar",
+			"legacy": "E1CE",
+			"glyph": "E734"
+		},
+		{
+			"name": "Page",
+			"legacy": "E132",
+			"glyph": "E729"
+		},
+		{
+			"name": "Page2",
+			"legacy": "E160",
+			"glyph": "E7C3"
+		},
+		{
+			"name": "Paste",
+			"legacy": "E16D",
+			"glyph": "E77F"
+		},
+		{
+			"name": "Pause",
+			"legacy": "E103",
+			"glyph": "E769"
+		},
+		{
+			"name": "People",
+			"legacy": "E125",
+			"glyph": "E716"
+		},
+		{
+			"name": "Permissions",
+			"legacy": "E192",
+			"glyph": "E8D7"
+		},
+		{
+			"name": "Phone",
+			"legacy": "E13A",
+			"glyph": "E717"
+		},
+		{
+			"name": "PhoneBook",
+			"legacy": "E1D4",
+			"glyph": "E780"
+		},
+		{
+			"name": "Pictures",
+			"legacy": "E158",
+			"glyph": "E8B9"
+		},
+		{
+			"name": "Pin",
+			"legacy": "E141",
+			"glyph": "E718"
+		},
+		{
+			"name": "Placeholder",
+			"legacy": "E18A",
+			"glyph": "E18A"
+		},
+		{
+			"name": "Play",
+			"legacy": "E102",
+			"glyph": "E768"
+		},
+		{
+			"name": "PostUpdate",
+			"legacy": "E1D7",
+			"glyph": "E8F3"
+		},
+		{
+			"name": "Preview",
+			"legacy": "E295",
+			"glyph": "E8FF"
+		},
+		{
+			"name": "PreviewLink",
+			"legacy": "E12A",
+			"glyph": "E8A1"
+		},
+		{
+			"name": "Previous",
+			"legacy": "E100",
+			"glyph": "E892"
+		},
+		{
+			"name": "Print",
+			"legacy": "E749",
+			"glyph": "E749"
+		},
+		{
+			"name": "Priority",
+			"legacy": "E182",
+			"glyph": "E8D0"
+		},
+		{
+			"name": "ProtectedDocument",
+			"legacy": "E131",
+			"glyph": "E8A6"
+		},
+		{
+			"name": "Read",
+			"legacy": "E166",
+			"glyph": "E8C3"
+		},
+		{
+			"name": "Redo",
+			"legacy": "E10D",
+			"glyph": "E7A6"
+		},
+		{
+			"name": "Refresh",
+			"legacy": "E149",
+			"glyph": "E72C"
+		},
+		{
+			"name": "Remote",
+			"legacy": "E148",
+			"glyph": "E8AF"
+		},
+		{
+			"name": "Remove",
+			"legacy": "E108",
+			"glyph": "E738"
+		},
+		{
+			"name": "Rename",
+			"legacy": "E13E",
+			"glyph": "E8AC"
+		},
+		{
+			"name": "Repair",
+			"legacy": "E15E",
+			"glyph": "E90F"
+		},
+		{
+			"name": "RepeatAll",
+			"legacy": "E1CD",
+			"glyph": "E8EE"
+		},
+		{
+			"name": "RepeatOne",
+			"legacy": "E1CC",
+			"glyph": "E8ED"
+		},
+		{
+			"name": "ReportHacked",
+			"legacy": "E1DE",
+			"glyph": "E730"
+		},
+		{
+			"name": "ReShare",
+			"legacy": "E1CA",
+			"glyph": "E8EB"
+		},
+		{
+			"name": "Rotate",
+			"legacy": "E14A",
+			"glyph": "E7AD"
+		},
+		{
+			"name": "RotateCamera",
+			"legacy": "E124",
+			"glyph": "E89E"
+		},
+		{
+			"name": "Save",
+			"legacy": "E105",
+			"glyph": "E74E"
+		},
+		{
+			"name": "SaveLocal",
+			"legacy": "E159",
+			"glyph": "E78C"
+		},
+		{
+			"name": "Scan",
+			"legacy": "E294",
+			"glyph": "E8FE"
+		},
+		{
+			"name": "SelectAll",
+			"legacy": "E14E",
+			"glyph": "E8B3"
+		},
+		{
+			"name": "Send",
+			"legacy": "E122",
+			"glyph": "E724"
+		},
+		{
+			"name": "SetLockScreen",
+			"legacy": "E18C",
+			"glyph": "E7B5"
+		},
+		{
+			"name": "SetTile",
+			"legacy": "E18D",
+			"glyph": "E97B"
+		},
+		{
+			"name": "Setting",
+			"legacy": "E115",
+			"glyph": "E713"
+		},
+		{
+			"name": "Share",
+			"legacy": "E72D",
+			"glyph": "E72D"
+		},
+		{
+			"name": "Shop",
+			"legacy": "E14D",
+			"glyph": "E719"
+		},
+		{
+			"name": "ShowBcc",
+			"legacy": "E169",
+			"glyph": "E8C4"
+		},
+		{
+			"name": "ShowResults",
+			"legacy": "E15C",
+			"glyph": "E8BC"
+		},
+		{
+			"name": "Shuffle",
+			"legacy": "E14B",
+			"glyph": "E8B1"
+		},
+		{
+			"name": "SlideShow",
+			"legacy": "E173",
+			"glyph": "E786"
+		},
+		{
+			"name": "SolidStar",
+			"legacy": "E1CF",
+			"glyph": "E735"
+		},
+		{
+			"name": "Sort",
+			"legacy": "E174",
+			"glyph": "E8CB"
+		},
+		{
+			"name": "Stop",
+			"legacy": "E15B",
+			"glyph": "E71A"
+		},
+		{
+			"name": "StopSlideShow",
+			"legacy": "E191",
+			"glyph": "E620"
+		},
+		{
+			"name": "Street",
+			"legacy": "E1C3",
+			"glyph": "E913"
+		},
+		{
+			"name": "Switch",
+			"legacy": "E13C",
+			"glyph": "E8AB"
+		},
+		{
+			"name": "SwitchApps",
+			"legacy": "E1E1",
+			"glyph": "E8F9"
+		},
+		{
+			"name": "Sync",
+			"legacy": "E117",
+			"glyph": "E895"
+		},
+		{
+			"name": "SyncFolder",
+			"legacy": "E1DF",
+			"glyph": "E8F7"
+		},
+		{
+			"name": "Tag",
+			"legacy": "E1CB",
+			"glyph": "E8EC"
+		},
+		{
+			"name": "Target",
+			"legacy": "E1D2",
+			"glyph": "F5F0"
+		},
+		{
+			"name": "ThreeBars",
+			"legacy": "E1E8",
+			"glyph": "E907"
+		},
+		{
+			"name": "TouchPointer",
+			"legacy": "E1E3",
+			"glyph": "E7C9"
+		},
+		{
+			"name": "Trim",
+			"legacy": "E12C",
+			"glyph": "E78A"
+		},
+		{
+			"name": "TwoBars",
+			"legacy": "E1E7",
+			"glyph": "E906"
+		},
+		{
+			"name": "TwoPage",
+			"legacy": "E11E",
+			"glyph": "E89A"
+		},
+		{
+			"name": "Underline",
+			"legacy": "E19A",
+			"glyph": "E8DC"
+		},
+		{
+			"name": "Undo",
+			"legacy": "E10E",
+			"glyph": "E7A7"
+		},
+		{
+			"name": "UnFavorite",
+			"legacy": "E195",
+			"glyph": "E8D9"
+		},
+		{
+			"name": "UnPin",
+			"legacy": "E196",
+			"glyph": "E77A"
+		},
+		{
+			"name": "UnSyncFolder",
+			"legacy": "E1DD",
+			"glyph": "E8F6"
+		},
+		{
+			"name": "Up",
+			"legacy": "E110",
+			"glyph": "E74A"
+		},
+		{
+			"name": "Upload",
+			"legacy": "E11C",
+			"glyph": "E898"
+		},
+		{
+			"name": "Video",
+			"legacy": "E116",
+			"glyph": "E714"
+		},
+		{
+			"name": "VideoChat",
+			"legacy": "E13B",
+			"glyph": "E8AA"
+		},
+		{
+			"name": "View",
+			"legacy": "E18B",
+			"glyph": "E890"
+		},
+		{
+			"name": "ViewAll",
+			"legacy": "E138",
+			"glyph": "E8A9"
+		},
+		{
+			"name": "Volume",
+			"legacy": "E15D",
+			"glyph": "E767"
+		},
+		{
+			"name": "WebCam",
+			"legacy": "E156",
+			"glyph": "E8B8"
+		},
+		{
+			"name": "World",
+			"legacy": "E128",
+			"glyph": "E909"
+		},
+		{
+			"name": "XboxOneConsole",
+			"legacy": "E990",
+			"glyph": "E990"
+		},
+		{
+			"name": "ZeroBars",
+			"legacy": "E1E5",
+			"glyph": "E904"
+		},
+		{
+			"name": "Zoom",
+			"legacy": "E1A3",
+			"glyph": "E71E"
+		},
+		{
+			"name": "ZoomIn",
+			"legacy": "E12E",
+			"glyph": "E8A3"
+		},
+		{
+			"name": "ZoomOut",
+			"legacy": "E1A4",
+			"glyph": "E71F"
+		}
+	]
+}

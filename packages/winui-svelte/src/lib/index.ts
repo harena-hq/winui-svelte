@@ -178,3 +178,7 @@ export type {
 } from './components/NavigationView.svelte';
 export { default as TitleBar } from './components/TitleBar.svelte';
 export type { TitleBarProps } from './components/TitleBar.svelte';
+// Not a component: WinUI's `Symbol` enum as the code points `glyph` takes. ADR 0012's
+// amendment. Generated — see `scripts/symbol/`.
+export { Symbol } from './symbol';
+export type { SymbolName } from './symbol';
