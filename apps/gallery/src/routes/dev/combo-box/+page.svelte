@@ -4,10 +4,10 @@
 
 	/*
 	 * The component's own harness, not part of the Gallery reproduction: `/dev/` is where
-	 * each control gets a page to be photographed on, and nothing links to it. The six
+	 * each control gets a page to be photographed on, and nothing links to it. The eight
 	 * rows below exercise the surface the unit names: nothing selected, a selection,
 	 * a header and a description, a disabled item, disabled, and an open popup so the
-	 * list reaches the snapshot.
+	 * list reaches the snapshot, an item template, and an item template, open.
 	 */
 
 	const colours: ComboBoxProps['items'] = [
@@ -24,6 +24,17 @@
 		{ value: 'display', label: 'Segoe UI Display' }
 	];
 
+	/*
+	 * The templated rows' data. `label` is what a template-less ComboBox would show and what
+	 * the primitive matches typeahead against; the swatch beside it is drawn from the same
+	 * string, which is the shape the Gallery's own colour combos have.
+	 */
+	const swatches: ComboBoxProps['items'] = [
+		{ value: 'aqua', label: 'Aqua' },
+		{ value: 'magenta', label: 'Magenta' },
+		{ value: 'yellow', label: 'Yellow' }
+	];
+
 	let placeholder: ComboBoxProps['value'] = $state('');
 	let selected: ComboBoxProps['value'] = $state('green');
 	let headerDescription: ComboBoxProps['value'] = $state('');
@@ -31,15 +42,18 @@
 	let disabledControl: ComboBoxProps['value'] = $state('blue');
 	let openSelection: ComboBoxProps['value'] = $state('');
 	let open = $state(true);
+	let templated: ComboBoxProps['value'] = $state('magenta');
+	let templatedOpen: ComboBoxProps['value'] = $state('');
+	let openTemplated = $state(true);
 </script>
 
 <svelte:head><title>ComboBox — harness</title></svelte:head>
 
 <h1 class="winui-TitleTextBlockStyle">ComboBox</h1>
 <p class="winui-BodyTextBlockStyle">
-	Six rows, in the order the unit names them: placeholder, a selection, a header and a description,
-	an item that is itself disabled, the control as a whole disabled, and the popup open so the list
-	reaches the snapshot.
+	Eight rows, in the order the unit names them: placeholder, a selection, a header and a
+	description, an item that is itself disabled, the control as a whole disabled, and the popup open
+	so the list reaches the snapshot, an item template, and an item template, open.
 </p>
 
 <h2 class="winui-SubtitleTextBlockStyle">placeholder</h2>
@@ -80,9 +94,38 @@
 
 <div class="tail"></div>
 
+<h2 class="winui-SubtitleTextBlockStyle">an item template</h2>
+<div class="row">
+	<ComboBox items={swatches} bind:value={templated} {itemTemplate} />
+</div>
+
+<h2 class="winui-SubtitleTextBlockStyle">an item template, open</h2>
+<div class="row">
+	<ComboBox
+		items={swatches}
+		placeholder="Pick a colour"
+		bind:value={templatedOpen}
+		bind:open={openTemplated}
+		{itemTemplate}
+	/>
+</div>
+
+{#snippet itemTemplate(item: NonNullable<ComboBoxProps['items']>[number])}
+	<span class="swatch-item">
+		<span class="swatch" data-colour={item.value}></span>
+		{item.label}
+	</span>
+{/snippet}
+
+<div class="tail"></div>
+
 <style>
-	/* The last row's popup is open in the snapshot; without room below it Floating UI
-	   flips it upward over the row above, which would hide that row from the baseline. */
+	/* Two rows hold an open popup in the snapshot, and each needs 220 of clearance under it
+	   for a different reason. Under the last one, without room below it Floating UI flips the
+	   popup upward over the row above and hides that row from the baseline. Under the `open`
+	   row, the popup does not flip — it opens downward across the two rows that follow, and
+	   measured before this spacer it covered the `an item template` heading and the whole of
+	   its trigger, which is the one row that shows a template reaching the trigger. */
 	.tail {
 		height: 220px;
 	}
@@ -93,5 +136,34 @@
 		gap: 12px;
 		margin-bottom: 24px;
 		max-width: 320px;
+	}
+
+	/* The harness's own template: a square of colour beside the label. The three colours are
+	   the harness's subject rather than a theme value, and a data attribute is what keeps them
+	   in the stylesheet instead of in an inline style. */
+	.swatch-item {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		min-width: 0;
+	}
+
+	.swatch {
+		width: 16px;
+		height: 16px;
+		flex: none;
+	}
+
+	.swatch[data-colour='aqua'] {
+		/* c1-allow: the harness's three sample colours, which are what these rows exist to show. */
+		background: #00ffff;
+	}
+	.swatch[data-colour='magenta'] {
+		/* c1-allow: the harness's three sample colours, which are what these rows exist to show. */
+		background: #ff00ff;
+	}
+	.swatch[data-colour='yellow'] {
+		/* c1-allow: the harness's three sample colours, which are what these rows exist to show. */
+		background: #ffff00;
 	}
 </style>
