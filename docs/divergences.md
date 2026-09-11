@@ -1047,6 +1047,14 @@ Examples 3 and 4 are this entry's.
   beside those text boxes, still at 296, is the proof that 318 is the intruder. Every other
   geometry on that page matches: the same x370 origin, the same 75-pixel field pitch, the same
   32-pixel control height.
+
+  The Easing Functions page is a second witness, and a wider one. There the two `NumberBox`es
+  live in `ControlExample`'s options pane, whose width is its content's, so the 318 does not
+  merely widen a form — it widens the pane and takes the space out of the example beside it.
+  Upstream's exponent box is about 62 pixels; ours is 316, and the pane grows from roughly 95
+  to 334. The unit that removes the floor therefore has two kinds of site to measure, not one:
+  a control inside a content-sized panel, and a control that is itself sizing its container.
+
 - **Would reconsider if**: nothing — the direction is settled, and the question of whether any
   Gallery page laid itself out around the 318 is answered: none does, and one is laid out
   wrongly by it. `var(--winui-TextControlThemeMinWidth)` is what the four declarations become.
