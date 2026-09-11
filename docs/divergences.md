@@ -1217,3 +1217,38 @@ changes`.
   configuration reads as.
 - **Would reconsider if**: a projected-shadow treatment lands in the library, or a page measures
   the Z dip against a reference frame.
+
+---
+
+### WD-050 — the spring's curve is a model, not a transcription
+
+- **Control**: the first three examples on the Animation interop Gallery page.
+- **WinUI does**: drive them with a `SpringVector3NaturalMotionAnimation`
+  (`XamlCompInteropPage.xaml.cs:24`, `:35`), whose `DampingRatio` and `Period` the page's own
+  options set.
+- **We do**: sample the standard damped-harmonic-oscillator step response — natural frequency
+  `2*pi/Period`, the given damping ratio, zero initial velocity — into a `linear()` easing, and
+  run it for as long as the envelope takes to fall to a thousandth of the displacement.
+- **Why accepted**: the compositor's natural-motion implementation is in neither pinned
+  checkout. Searched for `SpringVector3`, `SpringScalar`, `DampingRatio`, `NaturalMotion` and
+  `CreateSpringVector3Animation` across `.upstream/microsoft-ui-xaml` and
+  `.upstream/windows-app-sdk`: zero files each. The only occurrence anywhere under `.upstream/`
+  is the Gallery's own call site. So there is no value to transcribe, and the page's three
+  options remain live rather than inert.
+- **Would reconsider if**: a pin ever carries the composition animation's own solver.
+
+---
+
+### WD-051 — two brushes the token layer does not emit
+
+- **Control**: the fifth example on the Animation interop Gallery page, the popup.
+- **WinUI does**: paint it `FlyoutBackgroundThemeBrush` over a 2px
+  `SystemControlForegroundChromeGrayBrush` border (`XamlCompInteropPage.xaml:172-173`).
+- **We do**: use `FlyoutPresenterBackground` and `FlyoutBorderThemeBrush`.
+- **Why accepted**: both of upstream's keys are defined only in
+  `.upstream/windows-app-sdk/generic.xaml` (`:1113`, `:3927`, `:6723` and `:276`, `:2903`,
+  `:5887`), and the token extractor reads only
+  `microsoft-ui-xaml/controls/dev/**/*_themeresources*.xaml` — `scripts/tokens/extract.mjs:12`.
+  Widening that source set is a change to the token layer, not to a page. The two substitutes
+  are the modern flyout pair, defined in all three themes.
+- **Would reconsider if**: the token layer grows a source for the app SDK's own dictionary.
