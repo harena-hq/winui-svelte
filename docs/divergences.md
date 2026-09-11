@@ -1149,3 +1149,35 @@ changes`.
   is a transition system on `ListView`, not a prop; adding it is a separate library unit and no
   other Gallery page needs it.
 - **Would reconsider if**: a second page needs container-level item transitions.
+
+---
+
+### WD-047 — the turnstile's perspective distance is derived from the projection's parameters, not transcribed from it
+
+- **Control**: the Common `NavigationTransitionInfo` mode on the Page Transitions page.
+- **WinUI does**: project the rotating page through `CPlaneProjection`'s fixed perspective
+  matrix, built by `CMILMatrix4x4::SetToPerspective` from a near plane of 1, a far plane of
+  1001, a 57° field of view, a unit aspect ratio and a right-handed convention, then normalised
+  and moved back by a z-offset of −999
+  (`dxaml/xcp/components/transforms/PlaneProjection.cpp:16-40`,
+  `dxaml/xcp/core/inc/PlaneProjection.h:139-143`).
+- **We do**: give the frame `perspective: 999px`, derived from that z-offset — the plane at z=0
+  sits 999 units from the eye, and the normalising scale at `PlaneProjection.cpp:30-34` cancels
+  the field of view so that plane renders 1:1.
+- **Why accepted**: `SetToPerspective` is used and never defined in any of the three pins — it
+  is called at `PlaneProjection.cpp:22` and named in a comment at
+  `dxaml/xcp/core/core/elements/perspectiveplane.cpp:451`, and nothing in the checkouts defines
+  it — so the matrix cannot be read, only reconstructed from the arguments. Everything else
+  about this mode is transcribed: the rotation angles, the times, the easing and the centre of
+  rotation are all literals.
+- **What survives**: the −80°/50° turnstile, the 128ms hold and the 556ms rotation under
+  `ExponentialEase(6)`, and the rotation centre at `-10% 50% -100px`.
+- **What the reconstruction costs, measured**: upstream's projection carries a near plane at 1
+  against an object plane at 999, and CSS `perspective` has no near plane at all. Measured on the
+  reference guest, the incoming page's projected box is 62287px wide at the −80° pose it holds
+  until 128ms, against 1235px at −25°; the pose is on screen for roughly one frame, because
+  `ExponentialEase(6) EaseOut` has already carried the rotation to −55° by 135ms and to −14° by
+  180ms. What is visible in that frame is an empty clip rather than a smear, since the frame
+  clips and the magnified content falls outside it.
+- **Would reconsider if**: a pin carries the matrix builder, or the projected page is measured
+  against a reference frame.
