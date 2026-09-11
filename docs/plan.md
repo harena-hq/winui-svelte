@@ -3242,9 +3242,13 @@ System / Shell` moves to item 16; `item 15` occurs once in the whole of `docs/`,
     transition — which `animation-play-state` cannot pause, and which Implicit Transitions is six
     examples of — is reached instead through `getAnimations()`, paused and seeked by
     `currentTime`, with an error and a drift of exactly zero. `linear()` carries XAML's
-    non-bezier easings to whatever precision is asked: against QuinticEase's closed form
-    `1 − (1 − t)⁵`, eight stops err by 6.7px over 200px of travel, sixteen by 1.6px and
-    thirty-two by 0.17px.
+    non-bezier easings to whatever precision is asked, and **how much is asked is decided by the
+    worst curve rather than by a typical one**. Unit 1's figure — thirty-two stops erring by
+    0.17px over 200px of travel — is `QuinticEase` sampled at eleven points, which is the
+    easiest of the eleven easings read at the coarsest useful grid. Measured across all thirty-
+    three curves at forty-one sample points, thirty-two stops err by **14.2px**, and the binding
+    curve is `BounceEase` rather than any polynomial. The count that puts every curve inside a
+    quarter of a pixel is **256**, where the worst is 0.187px and `ElasticEase` decides it.
 
     **The instrument is blind to duration, and this is structural.** It samples at `k / n` of the
     animation's own duration, so that duration cancels and a strip photographed at 250ms is
