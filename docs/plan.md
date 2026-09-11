@@ -3144,15 +3144,15 @@ System / Shell` moves to item 16; `item 15` occurs once in the whole of `docs/`,
 
     **The seven pages, read in the pinned Gallery before anything was decided.**
 
-    | page                 | examples                          | what it shows                                                                | what actually moves                               |
-    | -------------------- | --------------------------------- | ---------------------------------------------------------------------------- | ------------------------------------------------- |
-    | Animation interop    | 5 (`XamlCompInteropPage.xaml`)    | a natural-motion animation and four `ExpressionAnimation`s                   | composition expressions, re-evaluated every frame |
+    | page                 | examples                          | what it shows                                                                    | what actually moves                               |
+    | -------------------- | --------------------------------- | -------------------------------------------------------------------------------- | ------------------------------------------------- |
+    | Animation interop    | 5 (`XamlCompInteropPage.xaml`)    | a natural-motion animation and four `ExpressionAnimation`s                       | composition expressions, re-evaluated every frame |
     | Connected Animation  | 4 (`ConnectedAnimationPage.xaml`) | one element travelling between two layouts, three times across a page navigation | that element's position and size                  |
-    | Easing Functions     | 4 (`EasingFunctionPage.xaml`)     | three Animate buttons and three squares, then a gallery of XAML's own curves | one translation, under each curve in turn         |
-    | Implicit Transitions | 6 (`ImplicitTransitionPage.xaml`) | a square whose opacity, rotation, scale, translation or background you set   | whichever property was just set                   |
-    | Page Transitions     | 1 (`PageTransitionPage.xaml`)     | a `Frame` and eight radio-selected `NavigationTransitionInfo` modes          | a page entering and the one before it leaving     |
-    | Theme Transitions    | 5 (`ThemeTransitionPage.xaml`)    | items added, repositioned, refreshed and deleted, and a popup opening        | the platform's own five classic transitions       |
-    | ParallaxView         | 2 (`ParallaxViewPage.xaml`)       | an image behind a `ListView`, then behind a `ScrollView`                     | the image, at a fraction of the scroller's offset |
+    | Easing Functions     | 4 (`EasingFunctionPage.xaml`)     | three Animate buttons and three squares, then a gallery of XAML's own curves     | one translation, under each curve in turn         |
+    | Implicit Transitions | 6 (`ImplicitTransitionPage.xaml`) | a square whose opacity, rotation, scale, translation or background you set       | whichever property was just set                   |
+    | Page Transitions     | 1 (`PageTransitionPage.xaml`)     | a `Frame` and eight radio-selected `NavigationTransitionInfo` modes              | a page entering and the one before it leaving     |
+    | Theme Transitions    | 5 (`ThemeTransitionPage.xaml`)    | items added, repositioned, refreshed and deleted, and a popup opening            | the platform's own five classic transitions       |
+    | ParallaxView         | 2 (`ParallaxViewPage.xaml`)       | an image behind a `ListView`, then behind a `ScrollView`                         | the image, at a fraction of the scroller's offset |
 
     Twenty-seven examples over seven pages, which is what the version is sized against rather
     than the page count.
