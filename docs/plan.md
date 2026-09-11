@@ -3161,15 +3161,15 @@ System / Shell` moves to item 16; `item 15` occurs once in the whole of `docs/`,
     the units were written, because the tranche's acceptance problem made it look uniform and it
     is not.
 
-    | page                 | the numbers                                                                                                                                                                                                                            |
-    | -------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-    | Easing Functions     | XAML's easing classes are closed forms, so the curve is the definition                                                                                                                                                                 |
-    | Connected Animation  | `ConnectedAnimationService.cpp:26-28` — 300ms and `cubic-bezier(0.8, 0, 0.2, 1)`, literal                                                                                                                                              |
-    | Page Transitions     | `dxaml/phone/lib/ThemeTransitions.cpp:1545-1552` — offsets 150 and −200, two control-point pairs, 150ms and 300ms                                                                                                                      |
-    | ParallaxView         | `controls/dev/ParallaxView/` — a control with a real source, and `ScrollInputHelper.cpp` beside it                                                                                                                                     |
-    | Implicit Transitions | the page sets none, so the defaults are the numbers: 300ms (`SimplePropertiesMetadata.g.h:370`, 3000000 ticks) under `cubic-bezier(0.8, 0, 0.2, 1)` for scalar and vector, `linear` for brush (`SharedTransitionAnimations.cpp:15-24`) |
-    | Theme Transitions    | **in no pin.** See D40                                                                                                                                                                                                                 |
-    | Animation interop    | not a number problem. See D41                                                                                                                                                                                                          |
+    | page                 | the numbers                                                                                                                                                                                                                                                                                                                                                   |
+    | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    | Easing Functions     | XAML's easing classes are closed forms, so the curve is the definition                                                                                                                                                                                                                                                                                        |
+    | Connected Animation  | `ConnectedAnimationService.cpp:26-28` — 300ms and `cubic-bezier(0.8, 0, 0.2, 1)`, literal                                                                                                                                                                                                                                                                     |
+    | Page Transitions     | `dxaml/phone/lib/ThemeTransitions.cpp:1545-1552` — offsets 150 and −200, two control-point pairs, 150ms and 300ms                                                                                                                                                                                                                                             |
+    | ParallaxView         | `controls/dev/ParallaxView/` — a control with a real source, and `ScrollInputHelper.cpp` beside it                                                                                                                                                                                                                                                            |
+    | Implicit Transitions | the page sets none, so the defaults are the numbers, and they are not one number: `ScalarTransition` and `Vector3Transition` are 3000000 ticks = 300ms (`SimplePropertiesMetadata.g.h:370`, `:426`) under `cubic-bezier(0.8, 0, 0.2, 1)`, and `BrushTransition` is 1500000 ticks = **150ms** (`:363`) under `linear` (`SharedTransitionAnimations.cpp:15-24`) |
+    | Theme Transitions    | **in no pin.** See D40                                                                                                                                                                                                                                                                                                                                        |
+    | Animation interop    | not a number problem. See D41                                                                                                                                                                                                                                                                                                                                 |
 
     **Theme Transitions' five are in Windows, not in the pin, and here is the search behind that
     negative.** `LayoutTransition_partial.cpp:1443` calls
@@ -3222,10 +3222,12 @@ System / Shell` moves to item 16; `item 15` occurs once in the whole of `docs/`,
     2. **Easing Functions** (4). The instrument's own subject, so it goes first among the pages.
     3. **Implicit Transitions** (6). The most CSS-native page of the seven: `ScalarTransition`,
        `Vector3Transition` and `BrushTransition` at their defaults are a `transition` with one
-       duration and one curve. Note that those defaults — 300ms under
+       duration and one curve. The scalar and vector defaults — 300ms under
        `cubic-bezier(0.8, 0, 0.2, 1)` — are the same numbers Connected Animation's service
-       carries. The two pages demonstrate one platform curve, and a divergence in either would
-       have to be a divergence in both.
+       carries, so the two pages demonstrate one platform curve and a divergence in either would
+       have to be a divergence in both. `BrushTransition` is not on that pair: it is **150ms**
+       and `linear`, which the table above now states separately because reading the row as one
+       duration with two curves is the mistake it invited.
     4. **Theme Transitions** (5), under D40.
     5. **Page Transitions** (1 example, 8 modes).
     6. **Connected Animation** (4). Two of the four cross a page navigation, so the unit owes a
