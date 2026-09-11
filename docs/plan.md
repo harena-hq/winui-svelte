@@ -75,6 +75,9 @@ pnpm workspace. The library is publishable and imposes no build tooling on its c
 | D36 | The `Symbol` name-to-glyph table is a record generated from the control pin, never transcribed         | ADR 0012, "The amendment"         |
 | D37 | The release object is the library, cut after v18; the Gallery's page-by-page gate follows it           | this file, "Roadmap → v17, v18"   |
 | D38 | A WinUI control this library claims is a component, `TextBlock` included; a ramp class is its output   | this file, "Roadmap → v17"        |
+| D39 | A motion value transcribed from a source site is a `c1-allow`'d literal citing it, not a token         | this file, "Roadmap → v15"        |
+| D40 | Theme Transitions takes its shape from the pin's nearest modern relative; the numbers are approximate  | this file, "Roadmap → v15"        |
+| D41 | Animation interop reproduces what reduces to CSS; a per-frame expression evaluator is declined         | this file, "Roadmap → v15"        |
 
 ## Verification
 
@@ -3131,14 +3134,138 @@ System / Shell` moves to item 16; `item 15` occurs once in the whole of `docs/`,
     asks for — and XAML's easing functions are closed forms rather than compiled data, which is
     the difference between this tranche and WD-006's Lottie sources.
 
-    The framework's own motion vocabulary is four durations and one spline, and this library
-    already emits four of the five: `ControlNormalAnimationDuration` 250ms,
-    `ControlFastAnimationDuration` 167ms, `ControlFasterAnimationDuration` 83ms and
-    `ControlFastOutSlowInKeySpline` `0,0,0,1` (`generic.xaml:23271-23275`).
-    `ControlFastAnimationAfterDuration`, 168ms, is defined there and emitted by nothing.
+    The framework's own motion vocabulary is four durations and one spline
+    (`generic.xaml:23271-23275`), and the token layer emits all five:
+    `ControlNormalAnimationDuration` 250ms, `ControlFastAnimationDuration` 167ms,
+    `ControlFastAnimationAfterDuration` 168ms, `ControlFasterAnimationDuration` 83ms and
+    `ControlFastOutSlowInKeySpline` as `cubic-bezier(0, 0, 0, 1)`. An earlier draft of this
+    entry said the After duration was emitted by nothing; `tokens.css:849` has it, and the
+    claim was stale rather than wrong when written.
 
-    Not planned in detail. The page table, the units and the decisions are written when the
-    version is planned, after v14 closes.
+    **The seven pages, read in the pinned Gallery before anything was decided.**
+
+    | page                 | examples                          | what it shows                                                                | what actually moves                               |
+    | -------------------- | --------------------------------- | ---------------------------------------------------------------------------- | ------------------------------------------------- |
+    | Animation interop    | 5 (`XamlCompInteropPage.xaml`)    | a natural-motion animation and four `ExpressionAnimation`s                   | composition expressions, re-evaluated every frame |
+    | Connected Animation  | 4 (`ConnectedAnimationPage.xaml`) | one element travelling between two layouts, twice across a page navigation   | that element's position and size                  |
+    | Easing Functions     | 4 (`EasingFunctionPage.xaml`)     | three Animate buttons and three squares, then a gallery of XAML's own curves | one translation, under each curve in turn         |
+    | Implicit Transitions | 6 (`ImplicitTransitionPage.xaml`) | a square whose opacity, rotation, scale, translation or background you set   | whichever property was just set                   |
+    | Page Transitions     | 1 (`PageTransitionPage.xaml`)     | a `Frame` and eight radio-selected `NavigationTransitionInfo` modes          | a page entering and the one before it leaving     |
+    | Theme Transitions    | 5 (`ThemeTransitionPage.xaml`)    | items added, repositioned, refreshed and deleted, and a popup opening        | the platform's own five classic transitions       |
+    | ParallaxView         | 2 (`ParallaxViewPage.xaml`)       | an image behind a `ListView`, then behind a `ScrollView`                     | the image, at a fraction of the scroller's offset |
+
+    Twenty-seven examples over seven pages, which is what the version is sized against rather
+    than the page count.
+
+    **Where the numbers are, and it is not one answer for all seven.** This was searched before
+    the units were written, because the tranche's acceptance problem made it look uniform and it
+    is not.
+
+    | page                 | the numbers                                                                                                                                                                                                                            |
+    | -------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    | Easing Functions     | XAML's easing classes are closed forms, so the curve is the definition                                                                                                                                                                 |
+    | Connected Animation  | `ConnectedAnimationService.cpp:26-28` — 300ms and `cubic-bezier(0.8, 0, 0.2, 1)`, literal                                                                                                                                              |
+    | Page Transitions     | `dxaml/phone/lib/ThemeTransitions.cpp:1545-1552` — offsets 150 and −200, two control-point pairs, 150ms and 300ms                                                                                                                      |
+    | ParallaxView         | `controls/dev/ParallaxView/` — a control with a real source, and `ScrollInputHelper.cpp` beside it                                                                                                                                     |
+    | Implicit Transitions | the page sets none, so the defaults are the numbers: 300ms (`SimplePropertiesMetadata.g.h:370`, 3000000 ticks) under `cubic-bezier(0.8, 0, 0.2, 1)` for scalar and vector, `linear` for brush (`SharedTransitionAnimations.cpp:15-24`) |
+    | Theme Transitions    | **in no pin.** See D40                                                                                                                                                                                                                 |
+    | Animation interop    | not a number problem. See D41                                                                                                                                                                                                          |
+
+    **Theme Transitions' five are in Windows, not in the pin, and here is the search behind that
+    negative.** `LayoutTransition_partial.cpp:1443` calls
+    `ThemeGenerator::AddTimelinesForThemeAnimation(TAS_ENTERPAGE, TA_ENTERPAGE_TARGET, …)`, and
+    `ThemeGenerator.cpp:742` implements that by calling `OpenThemeData(NULL, L"Animations")` and
+    `GetThemeAnimationProperty` — the Windows visual-theme system, reading keyframes out of the
+    running theme at runtime. Across all three pins the `TAS_*` and `TA_*` constants and
+    `GetThemeAnimationProperty` are **used and never defined**, and neither `uxtheme.h` nor
+    `vssym32.h` is present. This is a different gap from WD-006's: there the numbers are in the
+    pin and expensive to transcribe; here they are not in the pin at all.
+
+    The newer transitions are the opposite. `DrillInThemeAnimation` carries
+    `Cubic-Bezier (0.1, 0.9, 0.2, 1.0)` for scale and `(0.17, 0.17, 0.0, 1.0)` for opacity as
+    literals with those comments (`ThemeAnimations.cpp:1091-1099`), and
+    `MenuPopupThemeTransition`, `SplitOpen/CloseThemeAnimation`, `PickerFlyoutThemeTransition`
+    and `ContentDialogOpenCloseThemeTransition` each carry `s_OpenDuration` 250,
+    `s_CloseDuration` 167 and `s_OpacityChangeDuration` 83 as named constants. Those three
+    numbers are the motion vocabulary this library already emits, which is the strongest
+    evidence yet that the vocabulary is the right one.
+
+    **D39 — a motion value transcribed from a source site is a `c1-allow`'d literal citing that
+    site, not a token.** Tokens come from dictionaries (ADR 0001) and these come from `.cpp`
+    files, so a token would be inventing a resource upstream does not have. The precedent is
+    already in the library: `Button.svelte:83` writes `transition: background 83ms` under a
+    `c1-allow` naming `Button_themeresources.xaml:174`, rather than reading
+    `ControlFasterAnimationDuration`, because the XAML binds a duration and not the resource.
+
+    **D40 — Theme Transitions takes its shape from the pin's nearest modern relative, and the
+    numbers are declared approximate.** Measuring the five off the reference guest would mean
+    fitting a curve to a frame sequence, which is an instrument this project does not have and
+    which the version's goal does not need. Each of the five has a counterpart in the newer
+    family whose control points and durations are literal, and that counterpart's shape is what
+    the page transcribes. A WD row records that the numbers are the relative's and not the
+    transition's, with this search as its evidence.
+
+    **D41 — Animation interop reproduces what reduces to CSS and declines the rest.** Two of the
+    five reference `ActualSize` and `ActualOffset` to position one element against another,
+    which is a layout statement CSS makes directly. The other three are a spring and two
+    expression-driven compositions, and a per-frame expression evaluator is a mechanism nothing
+    else in this library needs. WD rows carry the three, cited from the page.
+
+    **The units.**
+
+    1. **The instrument**, and the rest of the version waits on it. A `dev/motion` route that
+       renders an animation as a strip of frames — one element per sample, each
+       `animation-play-state: paused` with `animation-delay` at `−k × duration / n` — so that a
+       baseline compares the curve rather than the resting frame. Verified available on the
+       reference guest (Edge 151): `linear()`, `animation-timeline: scroll()` and `view()`, a
+       paused animation at a negative delay, and `document.getAnimations()`.
+    2. **Easing Functions** (4). The instrument's own subject, so it goes first among the pages.
+    3. **Implicit Transitions** (6). The most CSS-native page of the seven: `ScalarTransition`,
+       `Vector3Transition` and `BrushTransition` at their defaults are a `transition` with one
+       duration and one curve. Note that those defaults — 300ms under
+       `cubic-bezier(0.8, 0, 0.2, 1)` — are the same numbers Connected Animation's service
+       carries. The two pages demonstrate one platform curve, and a divergence in either would
+       have to be a divergence in both.
+    4. **Theme Transitions** (5), under D40.
+    5. **Page Transitions** (1 example, 8 modes).
+    6. **Connected Animation** (4). Two of the four cross a page navigation, so the unit owes a
+       decision about what "a page" is in the Gallery shell before it owes any motion.
+    7. **Animation interop** (5), under D41.
+    8. **`ParallaxView`**, the group's one ordinary control: a component and its page (2).
+       `animation-timeline: scroll()` is supported on the guest, so this is CSS rather than a
+       scroll listener.
+
+    **What the instrument photographs, and what it cannot.** Prototyped on the reference guest
+    before this entry was written, both halves exact and both drift-free. A declared animation
+    paused at a negative delay names one frame to within 0.0004px of the numerically solved
+    curve, and re-reading it across 300ms and a forced paint moves it not at all. A CSS
+    transition — which `animation-play-state` cannot pause, and which Implicit Transitions is six
+    examples of — is reached instead through `getAnimations()`, paused and seeked by
+    `currentTime`, with an error and a drift of exactly zero. `linear()` carries XAML's
+    non-bezier easings to whatever precision is asked: against QuinticEase's closed form
+    `1 − (1 − t)⁵`, eight stops err by 6.7px over 200px of travel, sixteen by 1.6px and
+    thirty-two by 0.17px.
+
+    **The instrument is blind to duration, and this is structural.** It samples at `k / n` of the
+    animation's own duration, so that duration cancels and a strip photographed at 250ms is
+    identical to one at 2500ms. The curve is judged by the picture; the duration has to be judged
+    by a number, read off `getAnimations()[0].effect.getTiming()` in the spec beside the
+    snapshot. Neither substitutes for the other, and a unit that ships only the strip has
+    verified half of what it claims.
+
+    **A conformance change considered and declined.** C1's `SIZED_PROPS` covers `transition`,
+    `transition-duration`, `animation` and `animation-duration` and not
+    `animation-timing-function` or `transition-timing-function`, which is why
+    `ProgressBar.svelte:222` writes a `cubic-bezier` with no exemption — twenty-one such
+    declarations stand across the library and the Gallery frame. Extending the gate would mean
+    retrofitting twenty-one citations, and what it buys is bookkeeping: C1 asks whether a literal
+    carries a comment, not whether it is right. For this one class of value the instrument above
+    is the stronger check, because it photographs the curve and a wrong one fails a baseline.
+    Reopen if v15 finishes and the timing functions have proved hard to keep cited.
+
+    **Done-when.** Seven routes exist and are registered; twenty-seven examples render; the
+    instrument photographs every curve the version claims; the nine gates pass; and every
+    declined behaviour is a WD row cited from the page that declines it.
 
 16. **Media / Windowing / System / Shell** (18) — see open question O2.
 
