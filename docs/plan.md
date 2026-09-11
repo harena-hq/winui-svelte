@@ -3253,6 +3253,24 @@ System / Shell` moves to item 16; `item 15` occurs once in the whole of `docs/`,
     snapshot. Neither substitutes for the other, and a unit that ships only the strip has
     verified half of what it claims.
 
+    **The harness finishes animations before it photographs them, and unit 1 found out the
+    expensive way.** `toHaveScreenshot` defaults to `animations: 'disabled'`, which does not
+    freeze a running animation but seeks it to its **end** and leaves it there. The instrument's
+    eleven paused frames were all sent to the end frame and stacked, so six different curves
+    photographed as six identical single squares — with every gate green, because the DOM
+    assertions beside the snapshot read the page rather than the picture, and a _first_ baseline
+    written from a wrong render agrees with itself forever after. `snapshotAllThemes` now takes
+    the setting as a fourth argument and `/dev/motion` passes `'allow'`; the default stays
+    `disabled`, which is right for every route photographing a control at rest.
+
+    Two things follow that later units should use. Every animated control already in the
+    library — `ProgressBar`, `ProgressRing`, `RefreshVisualizer` — has been photographed at its
+    animation's **last frame** for fourteen versions, so their motion has never been
+    photographed at all and the instrument is now the thing that could. And Svelte scopes a
+    `@keyframes` name to `svelte-<content-hash>-<name>`, so a test collects animations from the
+    elements rather than filtering `document.getAnimations()` by a name that changes whenever a
+    word in the component does.
+
     **A conformance change considered and declined.** C1's `SIZED_PROPS` covers `transition`,
     `transition-duration`, `animation` and `animation-duration` and not
     `animation-timing-function` or `transition-timing-function`, which is why
