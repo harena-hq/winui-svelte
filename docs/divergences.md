@@ -1062,3 +1062,31 @@ Examples 3 and 4 are this entry's.
   an unconstrained `TextBox` at a 64-pixel floor may leave a harness route no longer catching
   what it was built to catch, so those routes may need an explicit width first. That is why
   this is a unit and not a one-line edit.
+
+---
+
+### WD-043 — the local theme example changes the whole page's theme
+
+- **Control**: the Implicit Transitions Gallery page, `Implicitly animate when the Grid's theme
+changes`.
+- **WinUI does**: set `RequestedTheme="Light"` on one `Grid`
+  (`ImplicitTransitionPage.xaml:253`) and flip it between Light and Dark from the button
+  (`ImplicitTransitionPage.xaml.cs:179`). A XAML element themes its own subtree, so that card is
+  light against a dark app and dark against a light one, and only it moves.
+- **We do**: flip the app's theme. The Grid reads
+  `var(--winui-SolidBackgroundFillColorBaseBrush)` like every other themed surface, so at rest it
+  matches the page instead of contrasting with it.
+- **Why accepted**: the token layer scopes a theme to `:root` — `:root[data-theme='dark']` and
+  its siblings — and nothing addresses a subtree. Giving one to a single Gallery example means
+  re-emitting the whole token set under a descendant selector in three themes, which is a
+  token-layer unit with its own cascade problem (a scoped block has to out-specify every theme
+  block or it loses silently) and its own measurement pass. `RequestedTheme` appears ten times
+  in the whole pinned Gallery and nine of them are window- or dialog-level; this example is the
+  only page subtree that uses it.
+- **What survives**: the animation, which is what the example demonstrates and what its own
+  caption names. The `BrushTransition` runs on the Grid's background at its 150ms default while
+  the card behind it snaps. Measured on the reference machine 75ms after the button: the Grid is
+  `rgb(126, 126, 126)` and the card behind it is already `rgb(32, 32, 32)`, both `rgb(243, 243,
+243)` a moment earlier.
+- **Would reconsider if**: a second page needs a subtree theme, or the token layer grows a
+  scoped theme for another reason. Then this becomes one attribute on the Grid.
