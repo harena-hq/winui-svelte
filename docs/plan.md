@@ -3169,7 +3169,7 @@ System / Shell` moves to item 16; `item 15` occurs once in the whole of `docs/`,
     | ParallaxView         | `controls/dev/ParallaxView/` — a control with a real source, and `ScrollInputHelper.cpp` beside it                                                                                                                                                                                                                                                            |
     | Implicit Transitions | the page sets none, so the defaults are the numbers, and they are not one number: `ScalarTransition` and `Vector3Transition` are 3000000 ticks = 300ms (`SimplePropertiesMetadata.g.h:370`, `:426`) under `cubic-bezier(0.8, 0, 0.2, 1)`, and `BrushTransition` is 1500000 ticks = **150ms** (`:363`) under `linear` (`SharedTransitionAnimations.cpp:15-24`) |
     | Theme Transitions    | **in no pin.** See D40                                                                                                                                                                                                                                                                                                                                        |
-    | Animation interop    | not a number problem. See D41                                                                                                                                                                                                                                                                                                                                 |
+    | Animation interop    | the four expressions are literals in the page's own code-behind; the spring's curve is in **no pin**. See D41                                                                                                                                                                                                                                                 |
 
     **Theme Transitions' five are in Windows, not in the pin, and here is the search behind that
     negative.** `LayoutTransition_partial.cpp:1443` calls
@@ -3205,11 +3205,28 @@ System / Shell` moves to item 16; `item 15` occurs once in the whole of `docs/`,
     the page transcribes. A WD row records that the numbers are the relative's and not the
     transition's, with this search as its evidence.
 
-    **D41 — Animation interop reproduces what reduces to CSS and declines the rest.** Two of the
-    five reference `ActualSize` and `ActualOffset` to position one element against another,
-    which is a layout statement CSS makes directly. The other three are a spring and two
-    expression-driven compositions, and a per-frame expression evaluator is a mechanism nothing
-    else in this library needs. WD rows carry the three, cited from the page.
+    **D41 — Animation interop reproduces all five of its expressions and declines only the
+    spring's curve.** Two of the five reference `ActualSize` and `ActualOffset` to position one
+    element against another, which is a layout statement CSS makes directly. This entry used to
+    decline the other three, on the grounds that a composition `ExpressionAnimation` is a
+    per-frame evaluator and nothing else in this library needs one. **That was a claim about
+    CSS, written without testing it, and it is wrong.** A registered custom property
+    transitioned on a common ancestor _is_ the evaluator: every descendant that reads it through
+    `calc()` is re-resolved on each of those frames. Prototyped on the reference guest before
+    the unit's spec was written — with the ancestor's property at 1.27772 mid-transition, the
+    sibling computing `calc(1 / var(...))` gave 0.782644; the four-button chain's `rem()`
+    arithmetic reproduced, on all three followers, the +25px the reference guest itself moved
+    them by; and the circle's `cos()`, `sin()` and `pi` agreed with the closed form to four
+    decimal places across sixteen positions at two radii. So the page demonstrates what its own
+    headers say it demonstrates, rather than showing three inert examples beside a row
+    explaining why.
+
+    What is left is the spring itself. `SpringVector3NaturalMotionAnimation` is in neither pin —
+    five of its names searched across both, zero files each, the Gallery's own call site the
+    only occurrence anywhere under `.upstream/` — so its curve is a sampled model of the
+    standard damped-oscillator step response rather than a transcription, and one WD row carries
+    that with the search behind it. A second carries two brushes the token extractor's source
+    set does not reach.
 
     **The units.**
 
@@ -3234,7 +3251,9 @@ System / Shell` moves to item 16; `item 15` occurs once in the whole of `docs/`,
        two, which was read off the page listing before the sample pages were; only the card
        example (`CardPage.xaml`) travels within one page, over a smoke layer. So the unit owes a
        decision about what "a page" is in the Gallery shell before it owes any motion.
-    7. **Animation interop** (5), under D41.
+    7. **Animation interop** (5), under D41 — which this unit rewrote. All five examples are
+       live, because a registered custom property is the per-frame evaluator the entry had said
+       CSS does not have.
     8. **`ParallaxView`**, the group's one ordinary control: a component and its page (2).
        `animation-timeline: scroll()` is supported on the guest, so this is CSS rather than a
        scroll listener.
