@@ -1090,3 +1090,62 @@ changes`.
 243)` a moment earlier.
 - **Would reconsider if**: a second page needs a subtree theme, or the token layer grows a
   scoped theme for another reason. Then this becomes one attribute on the Grid.
+
+---
+
+### WD-044 — this page's five transitions are the modern relative's shape, not their own
+
+- **Control**: the five examples on the Theme Transitions Gallery page.
+- **WinUI does**: route Entrance, Reposition, Content, Add/Delete, and Popup through
+  `ThemeGenerator::AddTimelinesForThemeAnimation` (`LayoutTransition_partial.cpp:353`, `:748`,
+  `:758`, `:1067`, `:1072`, `:1443`, `:1552`, `:1666`), which opens Windows theme animation
+  data (`ThemeGenerator.cpp:727-728`) and reads keyframes with `GetThemeAnimationProperty`
+  (`:742`).
+- **We do**: use the modern `LinedFlowLayoutItemCollectionTransitionProvider` shape for Entrance,
+  Reposition, Content, and Add/Delete, and `ContentDialogOpenCloseThemeTransition` for Popup.
+  Entrance's visible per-item 83ms stagger has no counterpart even in that relative: the provider
+  delays a whole batch (`LinedFlowLayoutItemCollectionTransitionProvider.cpp:79`, `:84`) and never
+  one item against the next, so the 83 is borrowed from
+  `ContentDialogOpenCloseThemeTransition_Partial.h:31` as the smallest unit in the vocabulary.
+  `IsStaggeringEnabled="True"` (`ThemeTransitionPage.xaml:15`) is the XAML's one explicit setting
+  on any of the five, so the stagger has to be visible; its size is the least-supported number on
+  the page.
+- **Why accepted**: the `TAS_*`/`TA_*` constants and `GetThemeAnimationProperty` are used but not
+  defined in any of the three pins; `uxtheme.h`, `vssym32.h`, and `vsstyle.h` are absent. Offsets
+  do not fill the gap: `DefaultValues.cpp:14-17` leaves them at zero and the Gallery sets none.
+  The nearest modern relatives supply an explicit shape and the library's existing 167/250/83ms
+  vocabulary without inventing a Windows resource.
+- **What survives**: slide-in, scale-in/out, translation, and surface open/close all retain the
+  pinned modern relatives' durations and curves, explicitly declared as approximate.
+- **Would reconsider if**: the pin carries the animation table, or a reference frame sequence is
+  measured with an instrument this project does not yet have.
+
+---
+
+### WD-045 — a deleted row's neighbours jump rather than sliding up
+
+- **Control**: the Add/Delete Theme Transition example.
+- **WinUI does**: use `AddDeleteThemeTransition` to reposition the rows that remain after one is
+  deleted.
+- **We do**: scale the departing row out in place and close the remaining gap in one frame when
+  that row leaves the array.
+- **Why accepted**: CSS cannot transition an arbitrary layout change. Example 2 spends the known
+  85px delta on one element; an n-row list has n non-constant deltas and would need a page-owned
+  FLIP pass.
+- **What survives**: scale-out at 167ms under the ease-out curve, plus the delete-then-add
+  ordering of `Add and Del`.
+- **Would reconsider if**: a reusable container-level FLIP transition is needed by another page.
+
+---
+
+### WD-046 — the animated visual in the two list examples is the row's content, not its container
+
+- **Control**: the Content Refresh and Add/Delete Theme Transition examples.
+- **WinUI does**: attach transitions to `ListView.ItemContainerTransitions`
+  (`ThemeTransitionPage.xaml:111-115`, `:130-134`), so the `ListViewItem` and its chrome animate.
+- **We do**: animate the element supplied as the item template, leaving the generated container's
+  padding and background still.
+- **Why accepted**: a page cannot address a container `ListView` builds. `ItemContainerTransitions`
+  is a transition system on `ListView`, not a prop; adding it is a separate library unit and no
+  other Gallery page needs it.
+- **Would reconsider if**: a second page needs container-level item transitions.
