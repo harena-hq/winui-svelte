@@ -3147,7 +3147,7 @@ System / Shell` moves to item 16; `item 15` occurs once in the whole of `docs/`,
     | page                 | examples                          | what it shows                                                                | what actually moves                               |
     | -------------------- | --------------------------------- | ---------------------------------------------------------------------------- | ------------------------------------------------- |
     | Animation interop    | 5 (`XamlCompInteropPage.xaml`)    | a natural-motion animation and four `ExpressionAnimation`s                   | composition expressions, re-evaluated every frame |
-    | Connected Animation  | 4 (`ConnectedAnimationPage.xaml`) | one element travelling between two layouts, twice across a page navigation   | that element's position and size                  |
+    | Connected Animation  | 4 (`ConnectedAnimationPage.xaml`) | one element travelling between two layouts, three times across a page navigation | that element's position and size                  |
     | Easing Functions     | 4 (`EasingFunctionPage.xaml`)     | three Animate buttons and three squares, then a gallery of XAML's own curves | one translation, under each curve in turn         |
     | Implicit Transitions | 6 (`ImplicitTransitionPage.xaml`) | a square whose opacity, rotation, scale, translation or background you set   | whichever property was just set                   |
     | Page Transitions     | 1 (`PageTransitionPage.xaml`)     | a `Frame` and eight radio-selected `NavigationTransitionInfo` modes          | a page entering and the one before it leaving     |
@@ -3230,7 +3230,9 @@ System / Shell` moves to item 16; `item 15` occurs once in the whole of `docs/`,
        duration with two curves is the mistake it invited.
     4. **Theme Transitions** (5), under D40.
     5. **Page Transitions** (1 example, 8 modes).
-    6. **Connected Animation** (4). Two of the four cross a page navigation, so the unit owes a
+    6. **Connected Animation** (4). Three of the four cross a page navigation — this entry said
+       two, which was read off the page listing before the sample pages were; only the card
+       example (`CardPage.xaml`) travels within one page, over a smoke layer. So the unit owes a
        decision about what "a page" is in the Gallery shell before it owes any motion.
     7. **Animation interop** (5), under D41.
     8. **`ParallaxView`**, the group's one ordinary control: a component and its page (2).
