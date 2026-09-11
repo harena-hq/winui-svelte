@@ -10,7 +10,12 @@ export const THEMES = ['light', 'dark', 'high-contrast'] as const;
  * makes that check mean something: a gate that only looked for the words "dark" and
  * "light" somewhere in the suite would be satisfied by a comment.
  */
-export async function snapshotAllThemes(page: Page, component: string, path: string) {
+export async function snapshotAllThemes(
+	page: Page,
+	component: string,
+	path: string,
+	options?: { animations?: 'allow' | 'disabled' }
+) {
 	for (const theme of THEMES) {
 		await page.goto(path);
 		// Set the theme through the channel the app owns as well as the one the screenshot
@@ -43,6 +48,19 @@ export async function snapshotAllThemes(page: Page, component: string, path: str
 		const { width } = page.viewportSize()!;
 		const height = await page.locator('.dev').evaluate((el) => el.scrollHeight);
 		await page.setViewportSize({ width, height });
-		await expect(page.locator('body')).toHaveScreenshot(`${component}-${theme}.png`);
+		// `options` reaches `toHaveScreenshot` for one setting, `animations`, and the default is
+		// Playwright's: `disabled`, which does not merely freeze an animation but **finishes**
+		// it — every running animation is seeked to its end and left there, permanently, before
+		// the capture. That is the right default for every route photographing a control at
+		// rest, and it is why the baselines of the animated controls show their last frame.
+		//
+		// It is wrong for exactly one kind of page. `/dev/motion` renders a curve as eleven
+		// copies of one animation paused at eleven negative delays; under `disabled` all eleven
+		// are sent to the end frame and stack into a single marker, and the strip photographs as
+		// one square. Nothing catches that on its own: the DOM assertions beside it read the
+		// page rather than the picture and pass, and a first baseline written from the wrong
+		// render agrees with itself forever after — the same trap the theme comment above
+		// describes, reached by a different road. Found by opening the PNG.
+		await expect(page.locator('body')).toHaveScreenshot(`${component}-${theme}.png`, options);
 	}
 }
