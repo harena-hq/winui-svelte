@@ -1181,3 +1181,39 @@ changes`.
   clips and the magnified content falls outside it.
 - **Would reconsider if**: a pin carries the matrix builder, or the projected page is measured
   against a reference frame.
+
+---
+
+### WD-048 — the travelling element is live markup, where WinUI travels a rasterised snapshot
+
+- **Control**: all four examples on the Connected Animation page.
+- **WinUI does**: capture the source and destination as composition surface brushes
+  (`ConnectedAnimation.cpp:787-1044`), put both in one `CrossFadeEffect` brush on one host
+  visual, and scale that visual, so the images stretch as pixels.
+- **We do**: travel a live DOM subtree holding stacked source and destination markup, and scale
+  its box.
+- **Why accepted**: CSS cannot rasterise an element. The closest mechanisms — `element-capture`
+  and a canvas redraw — are unavailable in a stylesheet and would need a per-example screenshot
+  path.
+- **What this costs**: text inside the travelling box reflows as it scales where upstream's
+  stretches. This is visible in example 1's detail panel and example 2's card, and invisible in
+  example 3's flat accent fills.
+- **Would reconsider if**: a capture API lands that a stylesheet can reach.
+
+---
+
+### WD-049 — Gravity's depth is not reproduced: neither the Z dip nor the cast shadow
+
+- **Control**: the Default and Gravity configurations, on all four examples.
+- **WinUI does**: dip the travelling visual by 32 units in **Z** as well as 80 in Y
+  (`GravityConnectedAnimationConfiguration_partial.cpp:10-11`, `:66`) and make it a
+  `CThemeShadow` caster throughout the flight
+  (`GravityConnectedAnimationConfiguration_partial.h:15`, `:21`; `ConnectedAnimation.cpp:678-693`).
+- **We do**: animate the Y dip alone, with no Z component and no shadow.
+- **Why accepted**: the Z dip needs `perspective` on every travel frame, and the shadow needs a
+  projected-shadow treatment this library does not have. Its three shadow tokens name ToolTip,
+  Popup, and Dialog roles, so borrowing one would invent a resource upstream does not have.
+- **What survives**: the 80px dip, its 0.66 peak, and its two splines, which are what the
+  configuration reads as.
+- **Would reconsider if**: a projected-shadow treatment lands in the library, or a page measures
+  the Z dip against a reference frame.
