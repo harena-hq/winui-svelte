@@ -3061,29 +3061,43 @@ System / Shell` moves to item 16; `item 15` occurs once in the whole of `docs/`,
 
     **What this version owes.**
 
-    | owed                                                                                                     | what it needs                                                                                                            |
-    | -------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-    | the body line height is 19px where the reference's is 18.25px                                            | a derived value, not a measured one, and it moves every baseline in the suite                                            |
-    | WD-042 — four text controls floor at 318 where WinUI floors at 64                                        | the four declarations, and the dev-route baselines that a 64-pixel floor would collapse                                  |
-    | C9 does not follow a token whose value is a bare `var()`                                                 | one resolution step in the gate; three declarations were invalid for four versions and nothing noticed                   |
-    | the ComboBox chevron column is fixed at 38 upstream, ours is 12 plus 14                                  | the same measurement pass as its trigger height, 34 against WinUI's 32                                                   |
-    | `ControlExample`'s options pane is 233 wide at x 1330 against 232 at x 1331, `#fcfcfc` against `#fbfbfb` | `.options` is content-box with `border-width: 0 0 0 1px`; three baselines move, and it does not show at every pane width |
-    | unstyled text is the browser's 16px in both densities                                                    | XAML's own TextBlock default, which is in neither pin                                                                    |
+    | owed                                                                                                      | what it needs                                                                                                            |
+    | --------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+    | the System Backdrops prose runs 0.379px per line below the reference's, 353 against 348 over twelve lines | WD-018's own remedy — a local `line-height` on that one element — and that page's baseline                               |
+    | WD-042 — four text controls floor at 318 where WinUI floors at 64                                         | the four declarations, and the dev-route baselines that a 64-pixel floor would collapse                                  |
+    | C9 does not follow a token whose value is a bare `var()`                                                  | one resolution step in the gate; three declarations were invalid for four versions and nothing noticed                   |
+    | the ComboBox chevron column is fixed at 38 upstream, ours is 12 plus 14                                   | the same measurement pass as its trigger height, 34 against WinUI's 32                                                   |
+    | `ControlExample`'s options pane is 233 wide at x 1330 against 232 at x 1331, `#fcfcfc` against `#fbfbfb`  | `.options` is content-box with `border-width: 0 0 0 1px`; three baselines move, and it does not show at every pane width |
+    | unstyled text is the browser's 16px in both densities                                                     | XAML's own TextBlock default, which is in neither pin                                                                    |
 
-    **The line height is the version's one unexplained geometry, and two explanations were
-    ruled out rather than argued away.** Measured on the System Backdrops page: reference line
-    tops 304, 322, 340, 359, 377 against ours 303, 322, 341, 360, 379, so 18.25 against 19, and
-    over that example's twelve lines its pane comes out 353 tall against 348. It is why every
-    other geometry on both backdrop pages matched to the pixel and that one did not. It is
-    **not font fallback** — the computed family on the guest is
-    `"Segoe UI Variable Text", "Segoe UI", sans-serif` and `document.fonts.check` returns true
-    for the first name — and it is not a rounding of one number, because 1.357 against 1.304 of
-    the font size is far more than a rounding. The pin sets no `LineHeight` on any ramp style:
-    `TextBlock_themeresources.xaml:10-18` gives `BaseTextBlockStyle`
-    `LineStackingStrategy="MaxHeight"` and `TextLineBounds="Full"`, so XAML derives the line box
-    from the font's metrics and so does CSS's `normal`. What is left is that the two read
-    different metric tables for the same font, which is a mechanism a fix can be derived from
-    rather than a number to copy.
+    **A correction to this entry's own first reading of the line height.** It called the line
+    height "the version's one unexplained geometry" and put it in the table above as a fix still
+    to be derived. It is neither unexplained nor owed: **ADR 0011 decided it and WD-018 records
+    it**, both of them before this version opened, and this entry cited neither. XAML advances a
+    baseline within one `TextBlock` by the font's unrounded spacing, `(2210 + 514 + 0) / 2048` =
+    1.330078125 of the font size, 18.621px at Body; Chromium's `normal` is
+    `round(ascent_px) + round(descent_px)`, an integer 19. The ADR chose `normal` knowing it
+    loses the within-block advance, because the alternative — a unitless ratio — takes the same
+    0.379px off every **single-line** box instead, and those sum inside a container that measures
+    them: TeachingTip's card comes out 310.469 with `normal` against the original's 310, and
+    309.297 with the ratio. A library made almost entirely of stacked single-line boxes puts the
+    error where there is less of it.
+
+    **The number this entry reported was read off the wrong feature.** It gives the reference
+    advancing 18.25px against the ADR's derived 18.621. The two disagree because this version
+    measured **ink tops** from a capture — which move with whether a line happens to carry a
+    capital or an ascender — where ADR 0011 measured **baselines**, and said in as many words why
+    a single wrapped block cannot settle the question on its own. 18.25 is not a competing value
+    for the font's spacing. It is the same spacing read off a feature that does not track it.
+
+    **What is actually owed is small, and WD-018 already names it.** That entry's "would
+    reconsider if" clause anticipates this page exactly — "a control whose reproduction turns on a
+    wrapped paragraph of four or more lines, where the drift reaches a pixel and a half and a
+    local `line-height` on that one element becomes worth its cost". The System Backdrops prose is
+    twelve lines and its first example's pane comes out 353 tall against 348, which is why every
+    other geometry on both backdrop pages matched to the pixel and that one did not. The remedy is
+    one declaration on one element and that page's baseline — not a change to the ramp, and not a
+    version of its own.
 
     **A correction to v13's closing entry.** That entry's `NumberBox` row calls
     `TextControlThemeMinWidth` "the 318 every text box has". It is **64**, defined only in the
