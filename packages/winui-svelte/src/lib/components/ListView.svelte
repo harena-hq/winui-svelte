@@ -108,7 +108,7 @@
 	<!-- The ScrollViewer at generic.xaml:9002-9021 disables horizontal scrolling and leaves vertical
 	     scrolling on Auto. This region is now a ScrollView, which supplies that scrolling. -->
 	<ScrollView
-		class="viewport"
+		data-scroll-input="scroll-viewer"
 		style="flex: 1 1 auto; min-height: 0"
 		role="listbox"
 		tabindex="-1"

@@ -145,7 +145,6 @@
 	<!-- PART_ScrollView (ItemsView.xaml:19-27). This region is now a ScrollView and inherits the
 	     control's corner radius. -->
 	<ScrollView
-		class="viewport"
 		style="height: 100%; border-radius: inherit"
 		role="listbox"
 		tabindex="-1"

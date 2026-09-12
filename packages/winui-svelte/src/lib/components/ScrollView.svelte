@@ -323,7 +323,13 @@
 		border-radius: var(--winui-ControlCornerRadius);
 	}
 	.viewport {
-		/* `min-*: 0`, because a grid item's automatic minimum size is its content and would stop the
+		/* This class is this component's own, and a `class` a caller passes lands on the root
+		   *without* a scope hash — so a caller that passes `class="viewport"` is styled by this
+		   rule as well, and its root stops being `overflow: hidden`. Four controls did exactly
+		   that; ParallaxView found it, because the first overflow box under a ListView was then
+		   the ScrollView's root rather than the box that scrolls.
+
+		   `min-*: 0`, because a grid item's automatic minimum size is its content and would stop the
 		   viewport from ever being smaller than what it scrolls. */
 		min-width: 0;
 		min-height: 0;
