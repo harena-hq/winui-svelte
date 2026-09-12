@@ -102,6 +102,8 @@ export { default as PasswordBox } from './components/PasswordBox.svelte';
 export type { PasswordBoxProps } from './components/PasswordBox.svelte';
 export { default as Path } from './components/Path.svelte';
 export type { PathProps } from './components/Path.svelte';
+export { default as PersonPicture } from './components/PersonPicture.svelte';
+export type { PersonPictureProps } from './components/PersonPicture.svelte';
 export { default as PipsPager } from './components/PipsPager.svelte';
 export type { PipsPagerProps } from './components/PipsPager.svelte';
 export { default as Polygon } from './components/Polygon.svelte';
