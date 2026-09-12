@@ -250,6 +250,8 @@
 	});
 </script>
 
+<!-- ScrollInputHelper::UpdateOutOfBoundsPanSize (ScrollInputHelper.cpp:307) branches on the
+     source's effective zoom mode; ParallaxView reads the source through the DOM. -->
 <div
 	bind:this={ref}
 	class={['scroll-view', className]}
@@ -257,6 +259,7 @@
 	{style}
 	data-horizontal-scroll-mode={horizontalScrollMode}
 	data-vertical-scroll-mode={verticalScrollMode}
+	data-zoom-mode={zoomMode}
 	{...rest}
 >
 	<div bind:this={viewport} class="viewport" onscroll={onScroll} onwheel={onWheel}>
