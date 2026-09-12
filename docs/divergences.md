@@ -1273,3 +1273,82 @@ changes`.
   measurement path would be an approximation rather than the scalar the browser does not expose.
 - **Would reconsider if**: a browser exposes the source zoom factor to a scroll timeline or a
   future ScrollView implementation supplies that scalar without a per-frame listener.
+
+---
+
+### WD-053 — an animated GIF plays, and cannot be paused
+
+- **Control**: `Image`, and the Gallery's Image page, example 6.
+- **WinUI does**: put playback on the source rather than the element. `BitmapImage` carries
+  `AutoPlay`, `Play()` and `Stop()`, and `IsAnimatedBitmap` once `ImageOpened` has fired; the
+  Gallery's example renders one auto-playing image, one with `AutoPlay="False"`, and one driven
+  by two buttons (`AnimatedGif.txt`, `ImagePage.xaml:92-123`).
+- **We do**: render all three as `<img>` elements, which play their GIF from the first frame and
+  offer no way to stop. The two buttons are rendered, because they are part of what the original
+  draws, and are disabled.
+- **Why accepted**: an `<img>` gives a page no control over GIF playback at all — there is no
+  property, method or CSS for it, and the only way to hold a frame is to decode the file and paint
+  it to a canvas, which is a GIF decoder this library would own.
+- **Would reconsider if**: the platform exposes animation control on `HTMLImageElement`, or a
+  page in this reproduction needs a still frame of an animated source for a reason other than this
+  one example.
+
+---
+
+### WD-054 — the decode size is the browser's
+
+- **Control**: `Image`, and the Gallery's Image page, example 2.
+- **WinUI does**: let a `BitmapImage` say what size to decode to. `DecodePixelWidth` and
+  `DecodePixelHeight` set the decoded surface's dimensions, so a large file drawn small costs the
+  memory of the small one; the Gallery's example sets `DecodePixelHeight="100"` on an image it
+  draws 100 tall (`ImageDecodedRenderingSize.txt`).
+- **We do**: take the URI alone and let the browser decide. The page's second example is therefore
+  the same markup as its first, and a comment on it says so.
+- **Why accepted**: the property has no rendered consequence to diverge on — measured on the
+  reference guest, the original's two examples differ by a mean absolute 0.14 over their 151x100
+  boxes, which is noise. What it controls is decode memory, which no web API exposes: `decoding`
+  and `fetchPriority` schedule the decode, and `sizes` picks among sources, but nothing states a
+  decode size for a single source.
+- **Would reconsider if**: the platform exposes a decode size for `HTMLImageElement`, or this
+  library grows a reason to care about decode memory rather than about pixels.
+
+---
+
+### WD-055 — `Stretch="None"` anchors an image at the start even when the element is larger
+
+- **Control**: `Image`.
+- **WinUI does**: switch alignment on which is bigger. `mediabase.cpp:497-504` — "There is an
+  odd behavior with Stretch=NONE. If the element is smaller than the image natural dimensions,
+  then use Top/Left alignment. If it is larger use Center/Center." — so an unscaled image smaller
+  than its element is centred in it.
+- **We do**: write `object-position: left top` for `none`, which anchors at the start in both
+  directions. The overflow half is exact, measured against the original at a mean absolute
+  difference of 0; the underflow half diverges, and an unscaled image smaller than its element
+  sits at its top-left rather than in its middle.
+- **Why accepted**: `object-position` is one value and this rule needs two, chosen per axis from
+  a comparison CSS cannot make. Reproducing it means measuring the element and the source in
+  script and toggling the property, which is a `ResizeObserver` per image for a case no page in
+  this reproduction has: every `Stretch="None"` in the pinned Gallery is smaller than its source.
+- **Would reconsider if**: a page needs `Stretch="None"` with an element larger than its source,
+  or CSS grows a positioning keyword that behaves like `safe` alignment for replaced content.
+
+---
+
+### WD-056 — a nine grid is painted Uniform, whatever the stretch mode says
+
+- **Control**: `Image`, when `nineGrid` is set.
+- **WinUI does**: compose the two. `Stretch` decides the rectangle the brush paints into —
+  `CMediaBase::ComputeScaleFactor`, `mediabase.cpp:124-170` — and `NineGrid` decides how the
+  source maps onto that rectangle, through the four insets at `WUCBrushManager.cpp:319-326`. All
+  four stretch modes are available to a nine-grid image.
+- **We do**: paint the nine grid into a box whose width comes from the source's ratio against the
+  element's height, which is `Uniform` and nothing else. `nineGrid` and `stretch` therefore do
+  not compose: setting both uses the nine grid and ignores the mode.
+- **Why accepted**: the nine grid is a `border-image`, which only a non-replaced box can carry, and
+  `object-fit` — the one declaration that expresses all four modes — applies to replaced content
+  only. Expressing `Uniform` for a non-replaced box is `aspect-ratio` against one definite axis;
+  expressing the other three as well means measuring the element against the source in script and
+  choosing a rule per frame. Nothing needs it: `NineGrid` appears on three images in the pinned
+  Gallery and all three take the default `Uniform`.
+- **Would reconsider if**: a page needs a nine grid under `Fill`, `None` or `UniformToFill`, or CSS
+  grows an `object-fit` that applies to a border image.
