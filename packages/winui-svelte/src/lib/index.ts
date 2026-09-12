@@ -94,6 +94,8 @@ export type { MenuBarItemProps } from './components/MenuBarItem.svelte';
 export { default as NavigationView } from './components/NavigationView.svelte';
 export { default as NumberBox } from './components/NumberBox.svelte';
 export type { NumberBoxProps } from './components/NumberBox.svelte';
+export { default as ParallaxView } from './components/ParallaxView.svelte';
+export type { ParallaxViewProps } from './components/ParallaxView.svelte';
 export { default as PasswordBox } from './components/PasswordBox.svelte';
 export type { PasswordBoxProps } from './components/PasswordBox.svelte';
 export { default as Path } from './components/Path.svelte';

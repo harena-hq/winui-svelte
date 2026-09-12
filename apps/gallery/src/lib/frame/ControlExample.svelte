@@ -20,6 +20,8 @@
 		sourceCodeVisible?: boolean;
 		/** HorizontalContentAlignment on the example presenter. Upstream's default is Left. */
 		horizontalContentAlignment?: 'left' | 'center' | 'right' | 'stretch';
+		/** FrameworkElement.Height on the control, in pixels. Absent means auto. */
+		height?: number;
 		class?: string;
 		style?: string;
 		ref?: HTMLElement | null;
@@ -47,11 +49,16 @@
 		substitutions,
 		sourceCodeVisible = true,
 		horizontalContentAlignment = 'left',
+		height,
 		class: className,
 		style,
 		ref = $bindable(null),
 		...rest
 	}: ControlExampleProps = $props();
+
+	let rootStyle = $derived(
+		height === undefined ? style : `${style ? `${style}; ` : ''}height: ${height}px`
+	);
 
 	const sourceItems = $derived.by<SelectorBarItemData[]>(() => {
 		const items: SelectorBarItemData[] = [];
@@ -68,7 +75,13 @@
 	});
 </script>
 
-<div bind:this={ref} class={['root', className]} {style} {...rest}>
+<div
+	bind:this={ref}
+	class={['root', className]}
+	class:sized={height !== undefined}
+	style={rootStyle}
+	{...rest}
+>
 	{#if headerText}
 		<h3 class="winui-BodyStrongTextBlockStyle">{headerText}</h3>
 	{/if}
@@ -125,7 +138,8 @@
 	/* `Margin="0,16,0,0"` on the control (ControlExample.xaml:10) and `Margin="0,12"` on its
 	   header (`:71`) add up in XAML. In CSS the header's top margin would collapse through
 	   this root's and the 12 would vanish — measured on the Border page, the header sat 12px
-	   too high — so the root is a formatting-context root and the two margins stack. */
+	   too high — so the root is a formatting-context root and the two margins stack. Sized roots
+	   use grid instead; grid items' margins do not collapse either, so that guarantee remains. */
 	.root {
 		display: flow-root;
 		margin: 16px 0 0;
@@ -137,6 +151,17 @@
 
 	.card {
 		display: grid;
+	}
+	.root.sized {
+		display: grid;
+		grid-template-rows: auto minmax(0, 1fr);
+	}
+	.root.sized .card {
+		min-height: 0;
+		grid-template-rows: minmax(0, 1fr) auto;
+	}
+	.root.sized .example-container {
+		min-height: 0;
 	}
 
 	.example-container {

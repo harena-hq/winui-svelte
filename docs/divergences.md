@@ -1239,16 +1239,37 @@ changes`.
 
 ---
 
-### WD-051 — two brushes the token layer does not emit
+### WD-051 — three brushes the token layer does not emit
 
-- **Control**: the fifth example on the Animation interop Gallery page, the popup.
+- **Control**: the fifth example on the Animation interop Gallery page, the popup, and the
+  ParallaxView Gallery page's ListView rows.
 - **WinUI does**: paint it `FlyoutBackgroundThemeBrush` over a 2px
   `SystemControlForegroundChromeGrayBrush` border (`XamlCompInteropPage.xaml:172-173`).
-- **We do**: use `FlyoutPresenterBackground` and `FlyoutBorderThemeBrush`.
+- **We do**: use `FlyoutPresenterBackground` and `FlyoutBorderThemeBrush`. For
+  `SystemControlForegroundAltHighBrush`, use `TextOnAccentFillColorPrimaryBrush`: it is the same
+  `#ffffff` in Light and `#000000` in Dark, differing only in High Contrast where upstream uses
+  `SystemColorButtonTextColor` and this token uses `SystemColorWindowTextColor`.
 - **Why accepted**: both of upstream's keys are defined only in
-  `.upstream/windows-app-sdk/generic.xaml` (`:1113`, `:3927`, `:6723` and `:276`, `:2903`,
-  `:5887`), and the token extractor reads only
+  `.upstream/windows-app-sdk/generic.xaml` (`:1113`, `:3927`, `:6723`; `:276`, `:2903`, `:5887`;
+  and `:264`, `:2889`, `:5873` respectively), and the token extractor reads only
   `microsoft-ui-xaml/controls/dev/**/*_themeresources*.xaml` — `scripts/tokens/extract.mjs:12`.
   Widening that source set is a change to the token layer, not to a page. The two substitutes
   are the modern flyout pair, defined in all three themes.
 - **Would reconsider if**: the token layer grows a source for the app SDK's own dictionary.
+
+---
+
+### WD-052 — ParallaxView takes the source zoom factor as one
+
+- **Control**: `ParallaxView`.
+- **WinUI does**: multiply its source-offset expressions by `source.<scale>`
+  (`ParallaxView.cpp:383`, `:393`, `:407`, `:475`, `:487`, `:513`, `:517`, `:526`, `:530`), read
+  from the scroller's property set and re-evaluated as the source zooms.
+- **We do**: measure source and target offsets in CSS pixels and compute them at scale one. A
+  `ParallaxView` over a `ScrollView` whose `zoomFactor` is not one therefore parallaxes as though
+  it were unzoomed. Neither Gallery example zooms its source.
+- **Why accepted**: CSS scroll timelines expose scroll offsets but no source zoom factor. The
+  library's parallax interpolation remains compositor-driven, while a second per-frame
+  measurement path would be an approximation rather than the scalar the browser does not expose.
+- **Would reconsider if**: a browser exposes the source zoom factor to a scroll timeline or a
+  future ScrollView implementation supplies that scalar without a per-frame listener.

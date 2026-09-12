@@ -95,8 +95,11 @@
 	let scrollViewVerticalMode = $derived(verticalConstrained ? 'disabled' : verticalScrollMode);
 </script>
 
+<!-- ScrollViewer is the FxScrollViewer that ScrollInputHelper.cpp:307-311 gives a 10% overpan
+     allowance, unlike the full-viewport ScrollPresenter allowance at :313-323. -->
 <ScrollView
 	bind:ref
+	data-scroll-input="scroll-viewer"
 	{children}
 	horizontalScrollBarVisibility={scrollViewHorizontalVisibility}
 	verticalScrollBarVisibility={scrollViewVerticalVisibility}
