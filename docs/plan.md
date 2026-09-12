@@ -79,7 +79,7 @@ pnpm workspace. The library is publishable and imposes no build tooling on its c
 | D40 | Theme Transitions takes its shape from the pin's nearest modern relative; the numbers are approximate  | this file, "Roadmap → v15"        |
 | D41 | Animation interop reproduces all five of its expressions; only the spring's curve is declined          | this file, "Roadmap → v15"        |
 | D42 | A capability the web has and this harness withholds is a different WD row from one the web lacks       | this file, "Roadmap → v16"        |
-| D43 | The not-applicable panel is one frame component, citing the WD row that decides its page               | this file, "Roadmap → v16"        |
+| D43 | The not-applicable panel is a stand-in for a declined element, built when one is first needed          | this file, "Roadmap → v16"        |
 | D44 | The pinned sample video is re-encoded to H.264; WMV is the one asset no browser plays                  | this file, "Roadmap → v16"        |
 | D45 | AnimatedVisualPlayer ships whole and its Gallery page renders upstream's own fallback path             | this file, "Roadmap → v16"        |
 
@@ -3460,16 +3460,38 @@ System / Shell` moves to item 16; `item 15` occurs once in the whole of `docs/`,
     which is false, and would make the row unfixable by anything except a rewrite. The rows that
     turn on the serving origin say so and cite this reading.
 
-    **D43 — the not-applicable panel is one frame component, and it cites the `WD` row that
-    decides its page.** O2 called for "an honest panel" and left its shape open. **It replaces an
-    example's example pane, not a page**, which is the finer grain of the two and the one the
-    pages actually need: a page whose five examples include two the web can run declines those
-    three and runs the two. So it is written once, in `apps/gallery/src/lib/frame/`, beside
-    `ControlExample` rather than inside it, and the header, the description and the original's
-    XAML go on rendering around it. It carries the reason and the row number and nothing else;
-    a panel that argues in prose is a second copy of `docs/divergences.md` that nothing keeps in
-    step. How many examples take it is a per-page reading each unit makes, not a number this
-    entry can state.
+    **D43 — the not-applicable panel is a stand-in for a declined element, and the unit that
+    first needs one builds it.** O2 called for "an honest panel" and left its shape open. An
+    earlier draft of this entry made it the replacement for an example's example pane and made
+    building it the version's first unit; reading the twelve pages' resting states corrected
+    both halves.
+
+    **At rest these pages are ordinary XAML.** Clipboard is thirteen `StackPanel`s of
+    `TextBlock`, `Button`, `ToggleSwitch`, `TextBox` and `Image`; Storage pickers is eleven
+    `ComboBox`es, seven `TextBox`es and six `Button`s; AppWindow is seventeen `TextBlock`s,
+    eight `NumberBox`es and seven `Button`s; JumpList is two `Button`s and a paragraph under a
+    warning `InfoBar` the page itself carries (`JumpListPage.xaml:12-14`), which is upstream's
+    own vocabulary for "this does not work here"; and ContentIsland at rest is a `Button` and
+    six 400-square card `Rectangle`s, because the islands appear only once "Load model" is
+    pressed. Every one of those controls exists in this library. **What these pages decline is
+    almost never a pane — it is what happens after a click**, and a declined behaviour is a `WD`
+    row, which this project has had since v4.
+
+    So the panel's real users are the few examples where a control this reproduction does not
+    have would occupy a box: MapControl's map behind its token, and whatever of Media's five
+    survives its own unit. It is one component in `apps/gallery/src/lib/frame/`, it carries the
+    reason and the row number and nothing else, and it is built when the first such box appears
+    rather than in advance — a component whose users are hypothetical is designed against
+    hypothetical users. A panel that argues in prose would be a second copy of
+    `docs/divergences.md` that nothing keeps in step.
+
+    **Two page-level dependencies the same reading found.** `AppWindowTitleBarPage.xaml` uses
+    twelve `ColorSelector`s, which is the Gallery's own control (`WinUIGallery/Controls/`) and
+    not WinUI's, so Windowing's unit builds it the way v10 built `ControlExample`. And four of
+    these pages write their prose as `RichTextBlock` with `Paragraph`, `Run`, `Hyperlink` and
+    `Underline` — item 17's components, which this version does not wait for: `styles/acrylic`,
+    `styles/compactsizing` and `motion/easingfunction` already reproduce exactly that shape as
+    HTML under a citing comment, and these pages follow the precedent.
 
     **D44 — the sample video is re-encoded, and it is the only asset in the pinned set that has
     to be.** `Assets/SampleMedia` carries `fishes.wmv` and `ladybug.wmv`, and WMV is the one
@@ -3489,35 +3511,30 @@ System / Shell` moves to item 16; `item 15` occurs once in the whole of `docs/`,
     and the page shows the state the original itself documents rather than a composition this
     project invented. A `WD` row carries the substitution with the size of the source behind it.
 
-    **Nine units, and the control work comes first.** The Goal's third paragraph schedules
+    **Eight units, and the control work comes first.** The Goal's third paragraph schedules
     work that leaves something in `packages/winui-svelte` ahead of work that only improves the
     harness, and this tranche splits along that line more sharply than any before it: six pages
     need a control and twelve need none. So Media is built first and its five units carry every
     component the version adds, and the twelve pages that are pages follow.
 
-    1. **The panel, and the two kinds of absence.** The frame component of D43 and the `WD` rows
-       the readings above have already earned, including the origin one. Builds no Gallery page;
-       it earns a `/dev/` route with one row per branch, because a component with no page has no
-       other way to be photographed. What it has to get right is that a declined example still
-       renders its header, its description and its XAML, and only the example pane is replaced.
-    2. **Image** — the control and its six examples. `Stretch`'s four modes, `NineGrid` as
+    1. **Image** — the control and its six examples. `Stretch`'s four modes, `NineGrid` as
        `border-image-slice`, `DecodePixelWidth`/`Height`, an SVG source and an animated GIF. The
        one page in the tranche that is an ordinary control unit from end to end.
-    3. **PersonPicture** — the control and its page: initials derived from a display name, a
+    2. **PersonPicture** — the control and its page: initials derived from a display name, a
        profile picture, the badge in its three forms, and the eleven option toggles the single
        example carries.
-    4. **AnimatedVisualPlayer**, under D45, **and the Sound page**, which is buttons around
+    3. **AnimatedVisualPlayer**, under D45, **and the Sound page**, which is buttons around
        `AudioContext` and `PannerNode` and the one Media page asking for no control this library
        lacks.
-    5. **MediaPlayerElement**, under D44, with `MediaTransportControls` — a template, not a
+    4. **MediaPlayerElement**, under D44, with `MediaTransportControls` — a template, not a
        `<video controls>` attribute, and the unit's real work.
-    6. **WebView2, Capture Element and MapControl.** Media closes. Two of the three are one HTML
+    5. **WebView2, Capture Element and MapControl.** Media closes. Two of the three are one HTML
        element with a WinUI surface on it; MapControl is a page whose default state is a
        screenshot, which makes it the tranche's cheapest page rather than its most declined.
-    7. **Windowing's four.** `TitleBar`'s page is a page for a control v2 already built, which no
+    6. **Windowing's four.** `TitleBar`'s page is a page for a control v2 already built, which no
        other page in this tranche is.
-    8. **System's three.**
-    9. **Shell's three.**
+    7. **System's three.**
+    8. **Shell's three.**
 
     **Done-when.** Eighteen routes exist and are registered; no page in the four groups still
     resolves to the catch-all placeholder; fifty-one examples render; the nine gates pass; and
