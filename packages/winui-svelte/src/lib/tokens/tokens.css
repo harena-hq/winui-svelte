@@ -1685,6 +1685,17 @@
 	--winui-NavigationViewItemExpandedGlyph: '\00e70d';
 	--winui-NumberBoxSpinButtonBorderThickness: 1px 1px 1px 0px;
 	--winui-NumberBoxMinWidth: 120px;
+	--winui-PersonPictureForegroundThemeBrush: var(--winui-TextFillColorPrimaryBrush);
+	--winui-PersonPictureEllipseBadgeForegroundThemeBrush: var(
+		--winui-TextOnAccentFillColorPrimaryBrush
+	);
+	--winui-PersonPictureEllipseBadgeFillThemeBrush: var(--winui-AccentFillColorDefaultBrush);
+	--winui-PersonPictureEllipseBadgeStrokeThemeBrush: var(--winui-ControlFillColorTransparentBrush);
+	--winui-PersonPictureEllipseFillThemeBrush: var(--winui-ControlAltFillColorQuarternary);
+	--winui-PersonPictureEllipseFillStrokeBrush: var(--winui-CardStrokeColorDefaultBrush);
+	--winui-PersonPictureEllipseStrokeThickness: 1px;
+	--winui-PersonPictureEllipseBadgeStrokeThickness: 2px;
+	--winui-PersonPictureBadgeGridMargin: -4px -4px 0px 0px;
 	--winui-PipsPagerSelectionIndicatorBackground: var(--winui-ControlFillColorTransparentBrush);
 	--winui-PipsPagerSelectionIndicatorBackgroundPointerOver: var(
 		--winui-ControlFillColorTransparentBrush
@@ -3557,6 +3568,17 @@
 	--winui-NavigationViewButtonForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
 	--winui-NavigationViewButtonForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
 	--winui-NavigationViewButtonForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+	--winui-PersonPictureForegroundThemeBrush: var(--winui-TextFillColorPrimaryBrush);
+	--winui-PersonPictureEllipseBadgeForegroundThemeBrush: var(
+		--winui-TextOnAccentFillColorPrimaryBrush
+	);
+	--winui-PersonPictureEllipseBadgeFillThemeBrush: var(--winui-AccentFillColorDefaultBrush);
+	--winui-PersonPictureEllipseBadgeStrokeThemeBrush: var(--winui-ControlFillColorTransparentBrush);
+	--winui-PersonPictureEllipseFillThemeBrush: var(--winui-ControlAltFillColorQuarternary);
+	--winui-PersonPictureEllipseFillStrokeBrush: var(--winui-CardStrokeColorDefaultBrush);
+	--winui-PersonPictureEllipseStrokeThickness: 1px;
+	--winui-PersonPictureEllipseBadgeStrokeThickness: 2px;
+	--winui-PersonPictureBadgeGridMargin: -4px -4px 0px 0px;
 	--winui-PipsPagerSelectionIndicatorBackground: var(--winui-ControlFillColorTransparentBrush);
 	--winui-PipsPagerSelectionIndicatorBackgroundPointerOver: var(
 		--winui-ControlFillColorTransparentBrush
@@ -5428,6 +5450,19 @@
 		--winui-NavigationViewButtonForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
 		--winui-NavigationViewButtonForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
 		--winui-NavigationViewButtonForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+		--winui-PersonPictureForegroundThemeBrush: var(--winui-TextFillColorPrimaryBrush);
+		--winui-PersonPictureEllipseBadgeForegroundThemeBrush: var(
+			--winui-TextOnAccentFillColorPrimaryBrush
+		);
+		--winui-PersonPictureEllipseBadgeFillThemeBrush: var(--winui-AccentFillColorDefaultBrush);
+		--winui-PersonPictureEllipseBadgeStrokeThemeBrush: var(
+			--winui-ControlFillColorTransparentBrush
+		);
+		--winui-PersonPictureEllipseFillThemeBrush: var(--winui-ControlAltFillColorQuarternary);
+		--winui-PersonPictureEllipseFillStrokeBrush: var(--winui-CardStrokeColorDefaultBrush);
+		--winui-PersonPictureEllipseStrokeThickness: 1px;
+		--winui-PersonPictureEllipseBadgeStrokeThickness: 2px;
+		--winui-PersonPictureBadgeGridMargin: -4px -4px 0px 0px;
 		--winui-PipsPagerSelectionIndicatorBackground: var(--winui-ControlFillColorTransparentBrush);
 		--winui-PipsPagerSelectionIndicatorBackgroundPointerOver: var(
 			--winui-ControlFillColorTransparentBrush
@@ -7254,6 +7289,15 @@
 	--winui-NavigationViewButtonForegroundDisabled: var(
 		--winui-SystemControlDisabledBaseMediumLowBrush
 	);
+	--winui-PersonPictureForegroundThemeBrush: var(--winui-SystemControlForegroundBaseHighBrush);
+	--winui-PersonPictureEllipseBadgeForegroundThemeBrush: var(--winui-SystemColorButtonTextColor);
+	--winui-PersonPictureEllipseBadgeFillThemeBrush: var(--winui-SystemColorButtonFaceColor);
+	--winui-PersonPictureEllipseBadgeStrokeThemeBrush: var(--winui-SystemColorButtonTextColor);
+	--winui-PersonPictureEllipseFillThemeBrush: var(--winui-SystemColorHighlightTextColorBrush);
+	--winui-PersonPictureEllipseFillStrokeBrush: var(--winui-CardStrokeColorDefaultBrush);
+	--winui-PersonPictureEllipseStrokeThickness: 1px;
+	--winui-PersonPictureEllipseBadgeStrokeThickness: 2px;
+	--winui-PersonPictureBadgeGridMargin: -4px -4px 0px 0px;
 	--winui-PipsPagerSelectionIndicatorBackground: var(--winui-SystemColorButtonFaceColorBrush);
 	--winui-PipsPagerSelectionIndicatorBackgroundPointerOver: var(
 		--winui-SystemColorHighlightColorBrush

@@ -2870,7 +2870,9 @@ export const DOUBLE_LENGTHS = {
 	ThumbWidth: "the AnnotatedScrollBar thumb's width",
 	LabelsGridMinWidth: "the AnnotatedScrollBar label column's minimum width",
 	AnnotatedScrollBarTooltipMaxWidth: 'the width the detail-label tooltip never exceeds',
-	AnnotatedScrollBarTooltipMinHeight: 'the height the detail-label tooltip never goes under'
+	AnnotatedScrollBarTooltipMinHeight: 'the height the detail-label tooltip never goes under',
+	PersonPictureEllipseStrokeThickness: 'PersonPicture ellipse border width',
+	PersonPictureEllipseBadgeStrokeThickness: 'PersonPicture badge border width'
 };
 
 /**
@@ -4527,6 +4529,23 @@ export const PULLTOREFRESH_KEYS = {
 	RefreshVisualizerBackground: 'The area the indicator is revealed in',
 	RefreshContainerForegroundBrush: 'The container, inherited by its content',
 	RefreshContainerBackgroundBrush: 'The container behind its content and its visualizer'
+};
+
+/**
+ * Keys `controls/dev/PersonPicture/PersonPicture_themeresources.xaml` defines for the
+ * PersonPicture template. The two badge stroke opacity keys are absent: both are `1` in all
+ * three themes, and the component renders badge forms conditionally rather than toggling them.
+ */
+export const PERSONPICTURE_KEYS = {
+	PersonPictureForegroundThemeBrush: 'PersonPicture content foreground',
+	PersonPictureEllipseFillThemeBrush: 'PersonPicture ellipse fill',
+	PersonPictureEllipseFillStrokeBrush: 'PersonPicture ellipse border',
+	PersonPictureEllipseStrokeThickness: 'PersonPicture ellipse border width',
+	PersonPictureEllipseBadgeForegroundThemeBrush: 'PersonPicture badge content foreground',
+	PersonPictureEllipseBadgeFillThemeBrush: 'PersonPicture badge fill',
+	PersonPictureEllipseBadgeStrokeThemeBrush: 'PersonPicture badge border',
+	PersonPictureEllipseBadgeStrokeThickness: 'PersonPicture badge border width',
+	PersonPictureBadgeGridMargin: 'PersonPicture badge overhang margin'
 };
 
 /**
