@@ -77,7 +77,7 @@ pnpm workspace. The library is publishable and imposes no build tooling on its c
 | D38 | A WinUI control this library claims is a component, `TextBlock` included; a ramp class is its output   | this file, "Roadmap → v17"        |
 | D39 | A motion value transcribed from a source site is a `c1-allow`'d literal citing it, not a token         | this file, "Roadmap → v15"        |
 | D40 | Theme Transitions takes its shape from the pin's nearest modern relative; the numbers are approximate  | this file, "Roadmap → v15"        |
-| D41 | Animation interop reproduces what reduces to CSS; a per-frame expression evaluator is declined         | this file, "Roadmap → v15"        |
+| D41 | Animation interop reproduces all five of its expressions; only the spring's curve is declined          | this file, "Roadmap → v15"        |
 
 ## Verification
 
