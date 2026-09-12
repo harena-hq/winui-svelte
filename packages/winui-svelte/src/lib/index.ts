@@ -55,6 +55,8 @@ export { default as GridView } from './components/GridView.svelte';
 export type { GridViewProps } from './components/GridView.svelte';
 export { default as GridViewItem } from './components/GridViewItem.svelte';
 export type { GridViewItemProps } from './components/GridViewItem.svelte';
+export { default as Image } from './components/Image.svelte';
+export type { ImageProps } from './components/Image.svelte';
 export { default as InfoBadge } from './components/InfoBadge.svelte';
 export type { InfoBadgeProps } from './components/InfoBadge.svelte';
 export { default as InfoBar } from './components/InfoBar.svelte';
