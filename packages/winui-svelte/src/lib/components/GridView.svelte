@@ -113,7 +113,6 @@
 	     scrolling on Auto. This region is now a ScrollView, which supplies that scrolling. -->
 	<!-- generic.xaml:9032 — Padding 0,0,0,10, which is ten pixels under the last row. -->
 	<ScrollView
-		class="viewport"
 		style="flex: 1 1 auto; min-height: 0; padding-bottom: 10px"
 		role="listbox"
 		tabindex="-1"

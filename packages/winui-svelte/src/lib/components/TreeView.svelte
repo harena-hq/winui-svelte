@@ -108,7 +108,7 @@
 <div bind:this={ref} class={['root', className]} {style} {...rest}>
 	<!-- TreeView.xaml:8-28 is one TreeViewList, a ListView subclass. This region is now a
 	     ScrollView with vertical content orientation. -->
-	<ScrollView class="viewport" style="flex: 1 1 auto; min-height: 0" role="tree" tabindex="-1">
+	<ScrollView style="flex: 1 1 auto; min-height: 0" role="tree" tabindex="-1">
 		{#each rows as row (row.id)}
 			<TreeViewItem
 				depth={row.depth}
