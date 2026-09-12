@@ -3312,6 +3312,59 @@ System / Shell` moves to item 16; `item 15` occurs once in the whole of `docs/`,
     instrument photographs every curve the version claims; the nine gates pass; and every
     declined behaviour is a WD row cited from the page that declines it.
 
+    **v15 closes.** Its eight units are sealed in ten commits — the instrument, the eleven-easing
+    library, seven pages and one control, plus one that is none of those and is the most useful
+    thing the version found — beside five that correct the plan rather than add to it.
+    Twenty-seven examples render on the frame and every one of them can be judged by something,
+    which was the version's second clause and the reason it was a version at all.
+
+    **What the plan priced wrongly, three times, and each time in the same direction.** Every
+    one of the three was a claim about what CSS can do, written without running CSS.
+
+    - **D41 declined three of Animation interop's five examples** because a composition
+      `ExpressionAnimation` is a per-frame evaluator "and nothing else in this library needs
+      one". A registered custom property transitioned on a common ancestor _is_ that evaluator.
+      One prototype turned three dead examples into three live ones and left only the spring's
+      curve, which is in neither pin, as a real divergence. The entry is rewritten at its own
+      site.
+    - **Unit 1's instrument was right and the harness undid it.** `toHaveScreenshot` does not
+      freeze a running animation, it seeks it to its end — so eleven frames of one curve stacked
+      into one square, with every gate green and a first baseline agreeing with itself forever
+      after.
+    - **"`animation-timeline: scroll()` is supported on the guest, so this is CSS rather than a
+      scroll listener"** is true and was read as more than it says. `ParallaxView`'s own source
+      is a layout pass that measures five scalars and an expression the compositor evaluates
+      from them (`ParallaxView.cpp:483-489`), and the reproduction has to split at the same
+      seam: TypeScript measures on resize, the timeline evaluates per frame. A reading that
+      hears "no JavaScript" builds the wrong control.
+
+    The common shape is that a planning sentence about a capability is a hypothesis, and the
+    cheapest moment to run it is before the spec that inherits it. This version ran it three
+    times and the sentence was incomplete three times.
+
+    **The version's most useful finding is not motion.** `ListView`, `GridView`, `TreeView` and
+    `ItemsView` each passed `class="viewport"` to the `ScrollView` they render, and a class
+    handed to a component lands on its root without the caller's scope hash — so `ScrollView`'s
+    own `.viewport` rule matched that root and four controls shipped a scroller whose root was
+    `overflow: auto` where their own stylesheet said `hidden`. Nothing moved when it was
+    removed, because the root never actually scrolls; what made it visible was the first control
+    that had to _find_ somebody else's scroll box.
+
+    **What v15 owes.** Ten `WD` rows, WD-043 to WD-052, each cited from the page that declines
+    it. Two of them are the same sentence about the same limit, and it is worth naming once:
+    **CSS has no length for the width a wrapped box actually used.** A `TextBlock` with
+    `MaxWidth` and `TextWrapping` reports the widest line it wrapped to; `width: max-content`
+    under a `max-width` reports the cap. Animation interop's popup came out 200 where upstream
+    draws 185, and ParallaxView's two captions sit eighteen pixels left of where Windows draws
+    them. No third mechanism was found; both pages state the reading at their own site.
+
+    Three things this version measured and did not act on. `text-box-trim` is available on the
+    reference guest, which is the clause WD-018 said it would reconsider on. The library's
+    `ScrollViewer` reserves no layout width for its always-visible bar where upstream reserves
+    fourteen. And the library's `Slider` gives its control no accessible name from its `header`,
+    so a probe cannot address one by role — filed for the driving session rather than for a unit
+    loop, along with the rest of D5's lane.
+
 16. **Media / Windowing / System / Shell** (18) — see open question O2.
 
 17. **The components a 1.0 owes** (4) — `TextBlock` and the `Inlines` model under it,
