@@ -78,6 +78,10 @@ pnpm workspace. The library is publishable and imposes no build tooling on its c
 | D39 | A motion value transcribed from a source site is a `c1-allow`'d literal citing it, not a token         | this file, "Roadmap → v15"        |
 | D40 | Theme Transitions takes its shape from the pin's nearest modern relative; the numbers are approximate  | this file, "Roadmap → v15"        |
 | D41 | Animation interop reproduces all five of its expressions; only the spring's curve is declined          | this file, "Roadmap → v15"        |
+| D42 | A capability the web has and this harness withholds is a different WD row from one the web lacks       | this file, "Roadmap → v16"        |
+| D43 | The not-applicable panel is one frame component, citing the WD row that decides its page               | this file, "Roadmap → v16"        |
+| D44 | The pinned sample video is re-encoded to H.264; WMV is the one asset no browser plays                  | this file, "Roadmap → v16"        |
+| D45 | AnimatedVisualPlayer ships whole and its Gallery page renders upstream's own fallback path             | this file, "Roadmap → v16"        |
 
 ## Verification
 
@@ -3365,7 +3369,160 @@ System / Shell` moves to item 16; `item 15` occurs once in the whole of `docs/`,
     so a probe cannot address one by role — filed for the driving session rather than for a unit
     loop, along with the rest of D5's lane.
 
-16. **Media / Windowing / System / Shell** (18) — see open question O2.
+16. **Media / Windowing / System / Shell** (18) — the four groups the roadmap took by count
+    rather than by name. Every other tranche reproduces chrome around a control; these pages are
+    chrome around an operating system, and that is the whole of the version's difficulty.
+
+    **The goal, in one line: the four groups' eighteen pages render on the frame, and where the
+    web will not do what a page demonstrates, the page says so at its own site.**
+
+    O2 resolved the disposition long before there was a page to apply it to — keep every page in
+    the navigation tree, implement what the web can actually do, and render the rest as an honest
+    panel in the original's slot. What O2 did not say is which pages are which, and answering
+    that is what this entry had to do before it could size anything.
+
+    **The eighteen pages, read in the pinned Gallery before anything was decided.** Fifty-one
+    examples, one `ControlExample` per sample file on every one of the eighteen, which is what
+    the version is sized against rather than the page count.
+
+    | group     | page                             | ex. | what it demonstrates                                                          | what this library lacks                               |
+    | --------- | -------------------------------- | --- | ----------------------------------------------------------------------------- | ----------------------------------------------------- |
+    | Media     | Image                            | 6   | a local file, stretching, nine-grid, decode-to-render-size, SVG, animated GIF | the control                                           |
+    | Media     | PersonPicture                    | 1   | initials, display name, picture and badge, under eleven option toggles        | the control                                           |
+    | Media     | AnimatedVisualPlayer             | 1   | playback of a Lottie animation                                                | the control, and the composition it plays             |
+    | Media     | MediaPlayerElement               | 2   | a video that autoplays, and one with transport controls                       | the control, and `MediaTransportControls`             |
+    | Media     | WebView2                         | 1   | a page hosted inside the app                                                  | the control                                           |
+    | Media     | Capture Element / Camera Preview | 1   | a `MediaCapture` preview displayed through a `MediaPlayerElement`             | the control, and a camera                             |
+    | Media     | Sound                            | 3   | element sound on and off, spatial audio, one named system sound               | nothing structural — the sounds themselves            |
+    | Media     | MapControl                       | 1   | a pin on a map, behind a service token the reader supplies                    | nothing: the page's own default state is a screenshot |
+    | Windowing | AppWindow                        | 7   | three presenters, size limits, centring, creation from a `Window`, a modal    | a second window                                       |
+    | Windowing | AppWindowTitleBar                | 3   | colour customisation, preferred theme and height, extending content           | a title bar that belongs to the system                |
+    | Windowing | TitleBar                         | 3   | the end-to-end sample, configuration, drag regions                            | nothing — `TitleBar` is v2's and the shell draws it   |
+    | Windowing | Multiple windows                 | 1   | a second single-threaded top-level window                                     | a second window                                       |
+    | System    | Clipboard                        | 6   | copy and paste text, an image and files; history and roaming; the rest        | the clipboard                                         |
+    | System    | Storage pickers                  | 5   | pick one file, many, a folder; save; a file's thumbnail                       | the picker                                            |
+    | System    | ContentIsland                    | 1   | a 3D model island clipping and scrolling inside a `ScrollViewer`              | the island                                            |
+    | Shell     | App notifications                | 5   | basic, logo and custom audio, a progress bar, a hero image, controls          | the toast                                             |
+    | Shell     | Badge notifications              | 2   | a count, and a glyph                                                          | the badge                                             |
+    | Shell     | JumpList                         | 2   | tasks, and a custom group                                                     | the jump list                                         |
+
+    **The last column is not the disposition, and reading it as one would size this version at
+    four times what it is.** The Goal's second paragraph makes visual fidelity the bar and
+    behavioural fidelity explicitly not it. Most of these pages are a `StackPanel` of buttons,
+    text boxes, radio buttons and an `InfoBar` around one API call, and all of that reproduces at
+    full fidelity with no capability whatsoever — what the missing capability decides is whether
+    pressing the button does anything, which is the half this project does not chase. Six pages
+    need a control that does not exist and are ordinary control work; the other twelve are
+    ordinary page work with a behavioural hole, and the hole is a `WD` row.
+
+    **The capability readings, measured on the reference guest rather than asserted.** v15 closed
+    on the finding that a planning sentence about a capability is a hypothesis in both
+    directions; this tranche is made of such sentences, so they were run first. Both columns were
+    read in the same browser in the same session — the left at a trusted origin, the right at the
+    Gallery's own.
+
+    | what four of these pages turn on                                  | a secure origin                      | the Gallery as we serve it |
+    | ----------------------------------------------------------------- | ------------------------------------ | -------------------------- |
+    | `window.isSecureContext`                                          | `true`                               | `false`                    |
+    | `navigator.clipboard`                                             | present, `read` a function           | the property is absent     |
+    | `showOpenFilePicker`, `showSaveFilePicker`, `showDirectoryPicker` | three functions                      | three `undefined`          |
+    | `navigator.setAppBadge`                                           | a function                           | `undefined`                |
+    | `navigator.mediaDevices`                                          | an object, `getUserMedia` a function | `undefined`                |
+    | `window.documentPictureInPicture`                                 | an object with `requestWindow`       | `undefined`                |
+    | `Notification.permission`                                         | `default`                            | `denied`                   |
+
+    **Every capability that would decide four of the eighteen pages is present in Edge 151 and
+    absent from our harness, and the difference is the origin and not the browser.** The Gallery
+    is served to the guest over plain HTTP at a gateway address, which is not a secure context;
+    a secure context is the precondition on all of them. Had the split been read off the Gallery
+    origin — the obvious place to read it, and the one a probe lands on by default — Clipboard,
+    Storage pickers, Badge notifications and the camera page would each have been declined on
+    evidence that measured our own serving script. This is the v15 lesson recurring with the
+    trap moved: the measurement was the hypothesis this time, not the prose.
+
+    What is present regardless of origin, and therefore genuinely available: `Notification` as a
+    constructor with `maxActions` 2 and `image` on its prototype; `requestFullscreen` with
+    `document.fullscreenEnabled` true; `window.open`; `AudioContext` and `PannerNode`;
+    `navigator.windowControlsOverlay`; H.264, VP9, AAC and MP3 all `probably`; and
+    `border-image-slice: 5 fill`, `object-fit` and `aspect-ratio` all supported — which is
+    Image's nine-grid, its stretching, and MediaPlayerElement's video, whole.
+
+    And one reading that belongs to this VM rather than to the web: `enumerateDevices()` returns
+    an **empty array**. The guest has no camera and no microphone, so Capture Element has nothing
+    to preview even from a secure origin, and no still frame of that page can show it working.
+    That is the same shape of acceptance problem as v13's scrollbar and v15's interval, and it
+    is the only page in the tranche that has it.
+
+    **D42 — a capability the web has and this harness withholds is a different record from one
+    the web does not have.** Both end as a `WD` row and the two say different things: one
+    declines a behaviour, the other declines a demonstration and names the condition under which
+    it would work. Collapsing them would put "the web cannot read the clipboard" into the record,
+    which is false, and would make the row unfixable by anything except a rewrite. The rows that
+    turn on the serving origin say so and cite this reading.
+
+    **D43 — the not-applicable panel is one frame component, and it cites the `WD` row that
+    decides its page.** O2 called for "an honest panel" and left its shape open. **It replaces an
+    example's example pane, not a page**, which is the finer grain of the two and the one the
+    pages actually need: a page whose five examples include two the web can run declines those
+    three and runs the two. So it is written once, in `apps/gallery/src/lib/frame/`, beside
+    `ControlExample` rather than inside it, and the header, the description and the original's
+    XAML go on rendering around it. It carries the reason and the row number and nothing else;
+    a panel that argues in prose is a second copy of `docs/divergences.md` that nothing keeps in
+    step. How many examples take it is a per-page reading each unit makes, not a number this
+    entry can state.
+
+    **D44 — the sample video is re-encoded, and it is the only asset in the pinned set that has
+    to be.** `Assets/SampleMedia` carries `fishes.wmv` and `ladybug.wmv`, and WMV is the one
+    container no browser plays; the images these pages draw are JPEG, PNG, GIF and SVG, which
+    Edge decodes as they are. H.264 in MP4 reads `probably` on the guest, so the transcode is
+    to that, and a `WD` row records that the bytes are not the pin's while the frames are.
+
+    **D45 — AnimatedVisualPlayer ships, and what it plays on the Gallery's page is the fallback
+    upstream designed for exactly this.** The page's source is `LottieLogo1.cs`, 236KB of
+    LottieGen-generated Composition calls, and transcribing it is WD-006's problem at full scale
+    — WD-006 declined 63 `CompositionObject`s for one settings gear. But the control's own
+    contract has the answer: `FallbackContent` (`AnimatedVisualPlayer.idl:86`) and
+    `IsAnimatedVisualLoaded` (`:91`) are the path upstream takes when a source cannot be created,
+    and the Gallery's page teaches that path in its own prose — `AnimatedVisualPlayerPage.xaml:26`
+    says the player "falls back to an Image when its Source is unavailable". So the control is
+    built whole, `Source` takes a Svelte component the way `IAnimatedVisualSource` takes a class,
+    and the page shows the state the original itself documents rather than a composition this
+    project invented. A `WD` row carries the substitution with the size of the source behind it.
+
+    **Nine units, and the control work comes first.** The Goal's third paragraph schedules
+    work that leaves something in `packages/winui-svelte` ahead of work that only improves the
+    harness, and this tranche splits along that line more sharply than any before it: six pages
+    need a control and twelve need none. So Media is built first and its five units carry every
+    component the version adds, and the twelve pages that are pages follow.
+
+    1. **The panel, and the two kinds of absence.** The frame component of D43 and the `WD` rows
+       the readings above have already earned, including the origin one. Builds no Gallery page;
+       it earns a `/dev/` route with one row per branch, because a component with no page has no
+       other way to be photographed. What it has to get right is that a declined example still
+       renders its header, its description and its XAML, and only the example pane is replaced.
+    2. **Image** — the control and its six examples. `Stretch`'s four modes, `NineGrid` as
+       `border-image-slice`, `DecodePixelWidth`/`Height`, an SVG source and an animated GIF. The
+       one page in the tranche that is an ordinary control unit from end to end.
+    3. **PersonPicture** — the control and its page: initials derived from a display name, a
+       profile picture, the badge in its three forms, and the eleven option toggles the single
+       example carries.
+    4. **AnimatedVisualPlayer**, under D45, **and the Sound page**, which is buttons around
+       `AudioContext` and `PannerNode` and the one Media page asking for no control this library
+       lacks.
+    5. **MediaPlayerElement**, under D44, with `MediaTransportControls` — a template, not a
+       `<video controls>` attribute, and the unit's real work.
+    6. **WebView2, Capture Element and MapControl.** Media closes. Two of the three are one HTML
+       element with a WinUI surface on it; MapControl is a page whose default state is a
+       screenshot, which makes it the tranche's cheapest page rather than its most declined.
+    7. **Windowing's four.** `TitleBar`'s page is a page for a control v2 already built, which no
+       other page in this tranche is.
+    8. **System's three.**
+    9. **Shell's three.**
+
+    **Done-when.** Eighteen routes exist and are registered; no page in the four groups still
+    resolves to the catch-all placeholder; fifty-one examples render; the nine gates pass; and
+    every declined behaviour is a `WD` row cited from the page that declines it, with the rows
+    that turn on the serving origin saying so.
 
 17. **The components a 1.0 owes** (4) — `TextBlock` and the `Inlines` model under it,
     `RichTextBlock`, `CommandBarFlyout`, `ColorPicker`. Its **first unit builds nothing**: it
