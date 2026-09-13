@@ -1536,3 +1536,99 @@ changes`.
   substituted sample code shows those constants either way.
 - **Would reconsider if**: item 17 ships `ColorPicker` and `SplitButton` grows a content flyout. The entry is
   deleted then, because the control it names is upstream's and reachable.
+
+---
+
+### WD-067 — the Clipboard page copies and pastes nothing at this origin
+
+- **Control**: the Gallery's Clipboard page.
+- **WinUI does**: read or write the system clipboard from nine handlers —
+  `CopyText_Click` (`ClipboardPage.xaml.cs:30`), `PasteText_Click` (`:59`), `CopyImage_Click`
+  (`:77`), `PasteImage_Click` (`:101`), `CopyFiles_Click` (`:139`), `PasteFiles_Click` (`:174`),
+  `CopyWithOptions_Click` (`:219`), `ShowFormats_Click` (`:271`) and `ClearClipboard_Click`
+  (`:292`).
+- **We do**: render their resting controls and leave their buttons inert.
+- **Why accepted**: this is D42's origin-gated kind. The Gallery is served over plain HTTP at a
+  gateway address, not a secure context: `navigator.clipboard` is absent there although it is
+  present at a secure origin in the same browser session.
+- **Would reconsider if**: the Gallery is served from a secure origin, where the Clipboard API
+  is exposed and user-gesture clipboard operations can be implemented.
+
+---
+
+### WD-068 — clipboard history, roaming and content-change monitoring have no web analogue
+
+- **Control**: the Gallery's Clipboard page.
+- **WinUI does**: query `Clipboard.IsHistoryEnabled()` and `IsRoamingEnabled()`
+  (`ClipboardPage.xaml.cs:260-263`), set a `DataPackage`'s history and roaming options
+  (`:219-254`), and subscribe to `Clipboard.ContentChanged` (`:305`).
+- **We do**: render empty history and roaming status lines, and leave the monitoring switch
+  inert. The empty lines follow upstream's unavailable-API path: its catch at
+  `ClipboardPage.xaml.cs:265-268` leaves both `TextBlock`s empty. The reference guest has the
+  API and consequently shows its two disabled lines.
+- **Why accepted**: browser clipboard access has no equivalent for OS clipboard history,
+  cross-device roaming, or system-wide content-change observation at any origin.
+- **Would reconsider if**: browsers expose equivalents for those OS clipboard services.
+
+---
+
+### WD-069 — the Clipboard page's editor is a `TextBox`, not a `RichEditBox`
+
+- **Control**: the Gallery's Clipboard page editor.
+- **WinUI does**: use a `RichEditBox` (`ClipboardPage.xaml:38-42`) and drive its
+  `ITextDocument` through `richEditBox.Document` (`ClipboardPage.xaml.cs:26`, `:37`).
+- **We do**: render the resting editor with `TextBox`.
+- **Why accepted**: the two default styles carry the same resting foreground, background,
+  border, thickness, font family, font size, padding, corner-radius, and minimum-size setters.
+  The only resting-visible template difference is TextBox's DeleteButton, collapsed unless the
+  box is focused and non-empty. Rich text formatting and the `ITextDocument` surface belong to
+  the Text-group control roadmap item 17, not this page.
+- **Would reconsider if**: roadmap item 17 supplies `RichEditBox` with its rich-text document
+  surface.
+
+---
+
+### WD-070 — the Storage pickers page opens no picker at this origin
+
+- **Control**: the Gallery's Storage pickers page.
+- **WinUI does**: open Windows storage pickers from five handlers —
+  `PickSingleFileButton_Click` (`StoragePickersPage.xaml.cs:27`),
+  `PickMultipleFilesButton_Click` (`:76`), `SaveFileButton_Click` (`:147`),
+  `PickFolderButton_Click` (`:214`) and `SelectSuggestedFolderButton_Click` (`:313`).
+- **We do**: render their controls and live source substitutions, with inert picker buttons.
+- **Why accepted**: this is D42's origin-gated kind. At the Gallery's plain-HTTP gateway origin
+  the three File System Access picker functions are `undefined`; in the same browser they are
+  functions at a secure origin.
+- **Would reconsider if**: the Gallery is served from a secure origin where the File System
+  Access picker APIs are available.
+
+---
+
+### WD-071 — a shell thumbnail has no web analogue
+
+- **Control**: the Storage pickers page's File thumbnail example.
+- **WinUI does**: call `StorageFile.GetThumbnailAsync` (`StoragePickersPage.xaml.cs:276`, from
+  `PickFileForThumbnailButton_Click` at `:243`) to ask the Windows shell for a rendered
+  thumbnail in one of six `ThumbnailMode`s at a requested pixel size, and draw it into the
+  example's `Image` (`StoragePickersPage.xaml:171`).
+- **We do**: render the pin's source-less thumbnail slot empty. This is the post-v2.9.3 example
+  the reference guest does not ship, so its resting render follows the pinned source.
+- **Why accepted**: browsers do not offer an API that asks the operating system shell to render a
+  file thumbnail in a chosen shell mode, at any origin.
+- **Would reconsider if**: the web platform exposes a shell-thumbnail primitive with comparable
+  mode and size inputs.
+
+---
+
+### WD-072 — ContentIsland hosts no island
+
+- **Control**: the Gallery's ContentIsland page.
+- **WinUI does**: create a `ChildSiteLink` for its `XamlRoot.ContentIsland`
+  (`ContentIslandPage.xaml.cs:70`), keep its transform in sync with the host rectangle's
+  (`:76-88`), and connect the 3D helmet `ContentIsland` returned by
+  `HelmetScenario.CreateIsland` (`:100`), one per press of Load model (`:40-44`).
+- **We do**: render the six host rectangles and leave Load model inert.
+- **Why accepted**: `ContentIsland`, `ChildSiteLink`, and their composition connection have no
+  browser analogue at any origin.
+- **Would reconsider if**: the web platform provides a composited child-island API with the same
+  cross-surface hosting and transform relationship.
