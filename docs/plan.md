@@ -81,7 +81,7 @@ pnpm workspace. The library is publishable and imposes no build tooling on its c
 | D42 | A capability the web has and this harness withholds is a different WD row from one the web lacks       | this file, "Roadmap → v16"        |
 | D43 | The not-applicable panel is a stand-in for a declined element, built when one is first needed          | this file, "Roadmap → v16"        |
 | D44 | The pinned sample video is re-encoded to H.264; WMV is the one asset no browser plays                  | this file, "Roadmap → v16"        |
-| D45 | AnimatedVisualPlayer ships whole and its Gallery page renders upstream's own fallback path             | this file, "Roadmap → v16"        |
+| D45 | AnimatedVisualPlayer ships whole and its Gallery page draws the composition's resting frame            | this file, "Roadmap → v16"        |
 
 ## Verification
 
@@ -3499,17 +3499,26 @@ System / Shell` moves to item 16; `item 15` occurs once in the whole of `docs/`,
     Edge decodes as they are. H.264 in MP4 reads `probably` on the guest, so the transcode is
     to that, and a `WD` row records that the bytes are not the pin's while the frames are.
 
-    **D45 — AnimatedVisualPlayer ships, and what it plays on the Gallery's page is the fallback
-    upstream designed for exactly this.** The page's source is `LottieLogo1.cs`, 236KB of
+    **D45 — AnimatedVisualPlayer ships, and what its Gallery page draws is the pinned
+    composition's own resting frame.** The page's source is `LottieLogo1.cs`, 236KB of
     LottieGen-generated Composition calls, and transcribing it is WD-006's problem at full scale
-    — WD-006 declined 63 `CompositionObject`s for one settings gear. But the control's own
-    contract has the answer: `FallbackContent` (`AnimatedVisualPlayer.idl:86`) and
-    `IsAnimatedVisualLoaded` (`:91`) are the path upstream takes when a source cannot be created,
-    and the Gallery's page teaches that path in its own prose — `AnimatedVisualPlayerPage.xaml:26`
-    says the player "falls back to an Image when its Source is unavailable". So the control is
-    built whole, `Source` takes a Svelte component the way `IAnimatedVisualSource` takes a class,
-    and the page shows the state the original itself documents rather than a composition this
-    project invented. A `WD` row carries the substitution with the size of the source behind it.
+    — WD-006 declined 63 `CompositionObject`s for one settings gear. An earlier draft of this
+    entry read the page's prose as a description of what it renders:
+    `AnimatedVisualPlayerPage.xaml:26` says the player "falls back to an Image when its Source is
+    unavailable", so the plan was to render `FallbackContent` (`AnimatedVisualPlayer.idl:86`) and
+    leave `IsAnimatedVisualLoaded` (`:91`) false. Photographed on the reference guest, that is not
+    what the page shows. The composition loads, and `AutoPlay="False"` holds it at progress 0 — a
+    flat #00D1C1 rectangle, the visual's 375x667 scaled Uniform to 223.8x398 and centred in the
+    example's 400x400 card. The page sets no `FallbackContent` at all, so upstream's fallback
+    path would draw nothing there. That sentence in the prose is a condition the reference guest
+    never meets, and it is the sentence this entry mistook for a measurement.
+
+    So the control is built whole — `Stretch`, the transport methods, `FallbackContent` and
+    `IsAnimatedVisualLoaded` included — `Source` takes an object carrying the visual's size, its
+    duration and a progress-indexed snippet, the way `IAnimatedVisualSource` creates an
+    `IAnimatedVisual`, and the Gallery page's source draws the one frame the original rests on. A
+    `WD` row carries what that declines: the 5.967-second wordmark the transport buttons reveal,
+    with the size of the codegen behind it.
 
     **Eight units, and the control work comes first.** The Goal's third paragraph schedules
     work that leaves something in `packages/winui-svelte` ahead of work that only improves the
@@ -3523,9 +3532,13 @@ System / Shell` moves to item 16; `item 15` occurs once in the whole of `docs/`,
     2. **PersonPicture** — the control and its page: initials derived from a display name, a
        profile picture, the badge in its three forms, and the eleven option toggles the single
        example carries.
-    3. **AnimatedVisualPlayer**, under D45, **and the Sound page**, which is buttons around
-       `AudioContext` and `PannerNode` and the one Media page asking for no control this library
-       lacks.
+    3. **AnimatedVisualPlayer**, under D45, **and the Sound page**, the one Media page asking
+       for no control this library lacks. Sound's three examples are a `ToggleSwitch`, a
+       `CheckBox` and seven `Button`s around `ElementSoundPlayer`, and what they play is not
+       reproducible from what is pinned: neither pin carries a single `.wav`, because the sounds
+       are the shipped framework's own resources. `AudioContext` and `PannerNode` are present on
+       the guest and have nothing to play through them, so the page reproduces whole and a `WD`
+       row declines the audio.
     4. **MediaPlayerElement**, under D44, with `MediaTransportControls` — a template, not a
        `<video controls>` attribute, and the unit's real work.
     5. **WebView2, Capture Element and MapControl.** Media closes. Two of the three are one HTML
