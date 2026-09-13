@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Button, Image, PasswordBox } from 'winui-svelte';
+	import { Button, Hyperlink, Image, PasswordBox } from 'winui-svelte';
 	import ControlExample from '$lib/frame/ControlExample.svelte';
 	import ItemPage from '$lib/frame/ItemPage.svelte';
 	import NotApplicablePanel from '$lib/frame/NotApplicablePanel.svelte';
@@ -21,15 +21,15 @@
 </script>
 
 <ItemPage {item}>
-	<!-- MapControlPage.xaml:21-24. WinUI's inline Hyperlink has no control in this library, so
-	     the anchor takes the accent text token, the way the Typography and Acrylic pages do.
+	<!-- MapControlPage.xaml:21-24. The XAML <Hyperlink> is reproduced by Hyperlink.
 	     The doubled space before the link is not a typo: `xml:space="preserve"` on the Span
 	     keeps both the space ending the Run and the one between the tags, and the gap measures
 	     8px on the reference guest against 5-6px for an ordinary word gap. -->
 	<p class="prose winui-BodyTextBlockStyle">
 		Follow instructions&nbsp;
-		<a href="https://learn.microsoft.com/azure/azure-maps/how-to-manage-account-keys">here</a> to obtain
-		your MapServiceToken.
+		<Hyperlink navigateUri="https://learn.microsoft.com/azure/azure-maps/how-to-manage-account-keys"
+			>here</Hyperlink
+		> to obtain your MapServiceToken.
 	</p>
 
 	<!-- MapControlPage.xaml:25-29 — Height 320, left-aligned, AccessibilityView="Raw", which is
@@ -79,10 +79,6 @@
 <style>
 	.prose {
 		margin: 0 0 12px;
-	}
-	.prose a {
-		/* MapControlPage.xaml:22 — an inline Hyperlink, which this library has no control for. */
-		color: var(--winui-AccentTextFillColorPrimaryBrush);
 	}
 	.example {
 		/* MapControlPage.xaml:35 — a StackPanel of Spacing 12. */

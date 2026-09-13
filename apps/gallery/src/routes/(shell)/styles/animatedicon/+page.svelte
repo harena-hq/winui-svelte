@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Button, ComboBox, NavigationView, Symbol } from 'winui-svelte';
+	import { Button, ComboBox, Hyperlink, NavigationView, Symbol } from 'winui-svelte';
 	import type { ComboBoxProps, NavigationViewEntry } from 'winui-svelte';
 	import ControlExample from '$lib/frame/ControlExample.svelte';
 	import ItemPage from '$lib/frame/ItemPage.svelte';
@@ -84,10 +84,13 @@
 	>
 		<!-- AnimatedIconPage.xaml:16-36 — the StackPanel, its paragraph, and the Button. -->
 		<div class="stack">
+			<!-- AnimatedIconPage.xaml:19-21 — the Hyperlink and its NavigateUri. -->
 			<p class="lead winui-BodyTextBlockStyle">
 				The following example is a button that the user clicks to load a search experience. The
 				AnimatedIcon consumes the animation created using Adobe AfterEffects and translated into
-				Microsoft.UI.Composition objects using <a href="https://aka.ms/lottie">Lottie-Windows</a>
+				Microsoft.UI.Composition objects using <Hyperlink navigateUri="https://aka.ms/lottie"
+					>Lottie-Windows</Hyperlink
+				>
 				. For guidance on how to properly structure your animation file see the AnimatedIcon Guidance
 				page.<br />
 			</p>
@@ -178,14 +181,6 @@
 	.lead::after {
 		content: '';
 		display: inline-block;
-	}
-
-	/* WinUI's inline Hyperlink has no control in this library yet — the same call
-	   `design/typography/+page.svelte:14` made. `HyperlinkForeground` is an alias of
-	   `AccentTextFillColorPrimaryBrush` — Hyperlink_themeresources.xaml:5 — and the underline
-	   is the default UnderlineStyle, which is also the browser's. */
-	.lead a {
-		color: var(--winui-AccentTextFillColorPrimaryBrush);
 	}
 
 	/* CSymbolIcon::ApplyTemplate, icon.cpp:323-395 — the same five declarations

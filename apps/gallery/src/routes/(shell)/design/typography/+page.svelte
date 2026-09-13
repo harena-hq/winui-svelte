@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { Hyperlink } from 'winui-svelte';
 	import { typographyRows } from '$lib/design';
 	import ControlExample from '$lib/frame/ControlExample.svelte';
 	import ItemPage from '$lib/frame/ItemPage.svelte';
@@ -11,11 +12,12 @@
 </script>
 
 <ItemPage {item}>
-	<!-- WinUI's inline Hyperlink has no control in this library yet. -->
+	<!-- TypographyPage.xaml:44 — the Hyperlink and its NavigateUri. -->
 	<!-- This top margin prevents the Hyperlink focus rectangle from being clipped. -->
 	<p class="prose winui-BodyTextBlockStyle">
 		Typography helps provide structure and hierarchy to UI. The default font for Windows is
-		<a href="https://learn.microsoft.com/windows/apps/design/downloads/#fonts">Segoe UI Variable</a
+		<Hyperlink navigateUri="https://learn.microsoft.com/windows/apps/design/downloads/#fonts"
+			>Segoe UI Variable</Hyperlink
 		>. Best practice is to use Regular weight for most text, use Semibold for titles. The minimum
 		values should be 12px Regular, 14px Semibold.
 	</p>
@@ -61,10 +63,6 @@
 
 	.prose {
 		margin: 4px 0 0;
-	}
-
-	.prose a {
-		color: var(--winui-AccentTextFillColorPrimaryBrush);
 	}
 
 	.example {
