@@ -1352,3 +1352,41 @@ changes`.
   Gallery and all three take the default `Uniform`.
 - **Would reconsider if**: a page needs a nine grid under `Fill`, `None` or `UniformToFill`, or CSS
   grows an `object-fit` that applies to a border image.
+
+---
+
+### WD-057 — the Lottie composition is one frame, and the transport buttons move nothing
+
+- **Control**: `AnimatedVisualPlayer`, and the Gallery's AnimatedVisualPlayer page.
+- **WinUI does**: play `LottieLogo1`, an After Effects animation translated by LottieGen into
+  Composition calls — `Assets/AnimatedVisuals/LottieLogo1.cs`, 236KB, `IAnimatedVisual.Size`
+  375x667 at `:5042` and `c_durationTicks` 59,670,000 at `:27`, which is 5.967 seconds.
+  `AutoPlay="False"` holds it at progress 0 and the four transport buttons play, pause, stop and
+  reverse it.
+- **We do**: build the player whole — progress advances, `playing` goes true, the four buttons do
+  what their handlers say — and give the page a source that draws the frame the original rests on
+  at every progress: the composition's own `#00D1C1` filling its 375x667. What the buttons do not
+  change is the picture.
+- **Why accepted**: the generated source is 236KB, the same decline as WD-006 at a different
+  scale. Neither pin carries the Lottie JSON a runtime could play, and the one frame the page is
+  judged against is the one this source draws exactly.
+- **Would reconsider if**: the pinned Gallery ships the composition's source JSON, or a page in
+  this reproduction needs more than one frame of a Lottie animation.
+
+---
+
+### WD-058 — element sounds do not play
+
+- **Control**: the Gallery's Sound page.
+- **WinUI does**: use `ElementSoundPlayer.State`, `SpatialAudioMode` and
+  `Play(ElementSoundKind)` over seven kinds; with the player On every control sounds on focus and
+  invoke.
+- **We do**: render all three examples whole and reproduce the page's own UI state — the toggle
+  enables the checkbox and turning sound off clears it — while nothing makes a sound.
+- **Why accepted**: the sounds are the shipped framework's own resources and neither pin carries
+  one; searches for `.wav`, `.mp3`, `.m4a` and `.ogg` returned nothing. This is not D42's case:
+  `AudioContext` and `PannerNode` are available on the guest, so what is missing is the audio
+  rather than a web capability, and nothing here turns on the serving origin. Synthesising seven
+  sounds would put this project's invention where the original's assets are.
+- **Would reconsider if**: the pinned sources carry the element sounds, or this reproduction
+  gains a sound set it can cite.

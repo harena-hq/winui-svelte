@@ -5,6 +5,11 @@
  */
 export const VERSION = '0.0.0';
 
+export { default as AnimatedVisualPlayer } from './components/AnimatedVisualPlayer.svelte';
+export type {
+	AnimatedVisual,
+	AnimatedVisualPlayerProps
+} from './components/AnimatedVisualPlayer.svelte';
 export { default as AnnotatedScrollBar } from './components/AnnotatedScrollBar.svelte';
 export type { AnnotatedScrollBarProps } from './components/AnnotatedScrollBar.svelte';
 export { default as AppBarButton } from './components/AppBarButton.svelte';
