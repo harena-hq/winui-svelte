@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { AppBarSeparator, Button, CheckBox, ComboBox } from 'winui-svelte';
+	import { AppBarSeparator, Button, CheckBox, ComboBox, Hyperlink } from 'winui-svelte';
 	import { resolve } from '$app/paths';
 	import ColorSelector from '$lib/controls/ColorSelector.svelte';
 	import ControlExample from '$lib/frame/ControlExample.svelte';
@@ -85,11 +85,10 @@
 </script>
 
 <ItemPage {item}>
-	<!-- AppWindowTitleBarPage.xaml:12-18. WinUI's inline Hyperlink has no control in this
-	     library; item 17 supplies it, so the anchor carries the accent text token directly. -->
+	<!-- AppWindowTitleBarPage.xaml:12-18. The XAML <Hyperlink> is reproduced by Hyperlink. -->
 	<p class="lead winui-BodyTextBlockStyle">
 		For the default title bar and basic scenarios, use the
-		<a href={resolve('/multiplewindows/titlebar')}>TitleBar</a> control.
+		<Hyperlink navigateUri={resolve('/multiplewindows/titlebar')}>TitleBar</Hyperlink> control.
 	</p>
 
 	<ControlExample
@@ -180,9 +179,6 @@
 	.lead {
 		/* AppWindowTitleBarPage.xaml:12 — Margin="0,8,0,0". */
 		margin: 8px 0 0;
-	}
-	.lead a {
-		color: var(--winui-AccentTextFillColorPrimaryBrush);
 	}
 	.color-grid {
 		display: grid;

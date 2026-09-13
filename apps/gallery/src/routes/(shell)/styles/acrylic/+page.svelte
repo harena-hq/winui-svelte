@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { ComboBox, Ellipse, Rectangle, Slider } from 'winui-svelte';
+	import { ComboBox, Ellipse, Hyperlink, Rectangle, Slider } from 'winui-svelte';
 	import type { ComboBoxItemData, ComboBoxProps } from 'winui-svelte';
 	import { resolve } from '$app/paths';
 	import ControlExample from '$lib/frame/ControlExample.svelte';
@@ -100,17 +100,18 @@
 		Acrylic Brush might fall back to SolidColorbrush in certain scenarios. If you can't see the
 		Acrylic effect, please refer to
 		<!-- AcrylicPage.xaml:43 — the external NavigateUri is kept verbatim. -->
-		<a
-			href="https://learn.microsoft.com/windows/apps/design/style/acrylic#usability-and-adaptability"
-			>Acrylic brush adaptability documentation</a
+		<Hyperlink
+			navigateUri="https://learn.microsoft.com/windows/apps/design/style/acrylic#usability-and-adaptability"
+			>Acrylic brush adaptability documentation</Hyperlink
 		>. Acrylic Brush uses in-app acrylic. See
 		<!-- AcrylicPage.xaml:45 and AcrylicPage.xaml.cs:58-61 — a Click handler rather than a
 		     NavigateUri, and what it navigates to is the SystemBackdrops item. The cast is the
 		     one the shell's own layout makes at (shell)/+layout.svelte:29: an item id is a path
 		     the record produces, not a route literal the compiler knows, and today this one is
 		     still served by the [...path] placeholder route. -->
-		<a href={resolve('/styles/systembackdrops' as `/${string}`)}>SystemBackdrops (Mica/Acrylic)</a> for
-		background acrylic.
+		<Hyperlink navigateUri={resolve('/styles/systembackdrops' as `/${string}`)}
+			>SystemBackdrops (Mica/Acrylic)</Hyperlink
+		> for background acrylic.
 	</p>
 
 	<!-- AcrylicPage.xaml:48-77 — Example1 uses the default in-app brush and has no options pane
@@ -227,12 +228,6 @@
 	   rule for the blocks that do, and this page is not one of them. */
 	.lead {
 		margin: 0;
-	}
-
-	/* AcrylicPage.xaml:43 and :45 — WinUI's inline Hyperlink has no control in this library,
-	   so both anchors use the same accent text token as the AnimatedIcon page. */
-	.lead a {
-		color: var(--winui-AccentTextFillColorPrimaryBrush);
 	}
 
 	/* AcrylicPage.xaml:50-53 and :247-248 — Example1Grid, given Width 400 and Height 252 by

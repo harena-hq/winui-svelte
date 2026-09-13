@@ -2,6 +2,7 @@
 	import {
 		AutoSuggestBox,
 		Button,
+		Hyperlink,
 		PersonPicture,
 		TextBox,
 		TitleBar,
@@ -28,11 +29,12 @@
 
 <ItemPage {item}>
 	<div class="page-content">
-		<!-- TitleBarPage.xaml:23-29. WinUI's inline Hyperlink has no control in this library;
-		     item 17 supplies it, so the anchor carries the accent text token directly. -->
+		<!-- TitleBarPage.xaml:23-29. The XAML <Hyperlink> is reproduced by Hyperlink. -->
 		<p class="lead winui-BodyTextBlockStyle">
 			For full title bar customization without using the TitleBar control, see the
-			<a href={resolve('/multiplewindows/appwindowtitlebar')}>AppWindowTitleBar</a> sample
+			<Hyperlink navigateUri={resolve('/multiplewindows/appwindowtitlebar')}
+				>AppWindowTitleBar</Hyperlink
+			> sample
 		</p>
 
 		<ControlExample
@@ -133,9 +135,6 @@
 	}
 	.lead {
 		margin: 0;
-	}
-	.lead a {
-		color: var(--winui-AccentTextFillColorPrimaryBrush);
 	}
 	.title-bar-card {
 		display: grid;
