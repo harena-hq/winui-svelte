@@ -76,6 +76,10 @@ export { default as ListView } from './components/ListView.svelte';
 export type { ListViewProps } from './components/ListView.svelte';
 export { default as ListViewItem } from './components/ListViewItem.svelte';
 export type { ListViewItemProps } from './components/ListViewItem.svelte';
+export { default as MediaPlayerElement } from './components/MediaPlayerElement.svelte';
+export type { MediaPlayerElementProps } from './components/MediaPlayerElement.svelte';
+export { default as MediaTransportControls } from './components/MediaTransportControls.svelte';
+export type { MediaTransportControlsProps } from './components/MediaTransportControls.svelte';
 export { default as ItemsRepeater } from './components/ItemsRepeater.svelte';
 export type {
 	ItemsRepeaterLayout,
