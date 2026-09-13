@@ -1439,3 +1439,55 @@ changes`.
   backwards would require decoding and presenting frames in reverse by hand.
 - **Would reconsider if**: Chromium supports negative playback rates, or a browser supplies a
   native reverse-playback primitive.
+
+---
+
+### WD-062 — the page WebView2's example hosts refuses this origin
+
+- **Control**: `WebView2`, and the Gallery's WebView2 page.
+- **WinUI does**: host `https://learn.microsoft.com/windows/apps/winui/winui3/` inside the app
+  through a `WebView2`, which is a browser in its own right and not a frame in another page.
+- **We do**: render the not-applicable panel in that slot. The control ships — `WebView2.svelte`
+  is an `<iframe>` — and frames any document whose host permits it.
+- **Why accepted**: measured on the reference guest. That URL answers `x-frame-options: SAMEORIGIN`
+  and a `content-security-policy` whose `frame-ancestors` names Microsoft's own hosts and
+  `localhost:3000`; framed from this origin the `load` event fires, `contentDocument` is `null`,
+  and the frame paints the browser's refusal page. This is a third thing from either half of D42:
+  the web has the capability, this harness permits it, and the particular resource the original
+  names declines it.
+- **Would reconsider if**: the example's URL starts permitting arbitrary `frame-ancestors`, or the
+  page is pointed at one that does.
+
+---
+
+### WD-063 — MapControl draws no map
+
+- **Control**: the Gallery's MapControl page.
+- **WinUI does**: render an Azure Maps surface, and with no `MapServiceToken` set draws a white
+  rectangle carrying the Azure wordmark — measured on the reference guest, 1181 × 400.
+  `MapControlPage.xaml.cs:48-51` writes the token from the `PasswordBox` onto the control.
+- **We do**: render the not-applicable panel at the slot's 400px height, and the "Set token"
+  button takes the value and does nothing with it.
+- **Why accepted**: the map is a paid hosted tile service reached with a key the reader supplies,
+  not a control's own drawing. The page's `MapExample.png` — its own screenshot of a map — is
+  reproduced exactly, and it is what the page actually shows a reader.
+- **Would reconsider if**: this project acquires a tile source it may redistribute.
+
+---
+
+### WD-064 — Capture Element previews no camera
+
+- **Control**: the Gallery's Capture Element / Camera Preview page.
+- **WinUI does**: enumerate `MediaFrameSourceGroup`s, initialise a `MediaCapture` over the chosen
+  one, and show its frames through a `MediaPlayerElement`
+  (`CaptureElementPreviewPage.xaml.cs:88-124`).
+- **We do**: the same, through `navigator.mediaDevices.enumerateDevices()` and `getUserMedia`,
+  with the frames written onto the video element's `srcObject`. Where `navigator.mediaDevices` is
+  absent the page writes the original's own "No camera devices found." message.
+- **Why accepted**: **this is D42's second kind — a demonstration declined by the harness, not a
+  capability the web lacks.** `navigator.mediaDevices` is gated on a secure context and this
+  Gallery is served over plain HTTP, so on the reference guest it is absent entirely; separately,
+  that guest has no camera and no microphone, which is why the original reaches its own
+  empty-enumeration branch there. Served over HTTPS or from `localhost`, on a machine with a
+  camera, this page previews and captures.
+- **Would reconsider if**: nothing — the condition is the serving origin, and the row names it.
