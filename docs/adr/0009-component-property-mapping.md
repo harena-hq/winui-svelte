@@ -101,6 +101,39 @@ components had already shipped it unrecorded when that was noticed. The naming r
 otherwise unchanged, and the `icon` prop ADR 0012 introduces follows this ADR rather than
 excepting itself from it.
 
+**Amended by v17's `TextBlock`, for a collision the rule did not anticipate.**
+`FrameworkElement.Style` camelCases to `style`, which is the attribute this ADR already
+destructures out of the rest props and merges onto every component's root. The two halves of
+the naming rule meet head-on and neither yields: dropping the member loses the type ramp that
+D38 exists to expose, and displacing the attribute takes away the escape hatch. So the member
+is **renamed**, and the rule for a rename is to prefix it with its control's own noun —
+`Style` on `TextBlock` is `textStyle`. That is a rename and not a new reserved name; the
+exception set above is untouched, and no existing prop changes.
+
+`TextBlock` is the only control that exposes `Style` at all, which is a scope decision rather
+than a naming one. A `Style` is an entry in a XAML resource dictionary, this library has no
+equivalent of one, and the ten `*TextBlockStyle` keys are the single family it already emits as
+CSS classes. A control that later needs its own takes its own noun by the same rule.
+`styleKey` was the alternative and names the value more exactly — it is a resource key — but it
+promises a generality nothing backs: there is no dictionary to key into, and the ten names are
+the whole vocabulary.
+
+**The same unit declares `dir`, and that is a second, narrower exception.** The rule above admits
+a declared HTML prop only for a name in the closed reserved set that belongs on an **inner**
+element; `dir` is in neither category — it is not reserved, and it lands on the root, where the
+rest spread already delivers it. It is declared anyway because `TextBlock` has to be able to
+override it: XAML's `TextAlignment="DetectFromContent"` resolves the direction from the element's
+own content, whose CSS equivalent is `dir="auto"`, so that one alignment value writes the
+attribute and every other leaves the consumer's alone. The cost is stated rather than hidden —
+under `detectFromContent` a consumer's `dir` is discarded, which is the "two names for one state"
+hazard this ADR's own reasoning is about, and the prop's TSDoc says so at the site.
+
+**The rule that follows from both**: a component may declare a non-reserved HTML attribute as a
+prop **only when it must conditionally override it**, and the ADR records each such case by name.
+Two exist: `dir` on `TextBlock`, and nothing else. The alternative — leaving `dir` to the rest
+spread and emitting `dir="auto"` after it — discards the consumer's value in exactly the same
+case while making the prop invisible, so it hides the cost instead of removing it.
+
 ## Alternatives rejected
 
 - **Keep the WinUI name verbatim, as ADR 0006 does for tokens.** The symmetry is false. A token

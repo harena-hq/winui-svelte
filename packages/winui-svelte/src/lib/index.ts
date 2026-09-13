@@ -171,6 +171,8 @@ export type {
 } from './components/TabView.svelte';
 export { default as TextBox } from './components/TextBox.svelte';
 export type { TextBoxProps } from './components/TextBox.svelte';
+export { default as TextBlock } from './components/TextBlock.svelte';
+export type { TextBlockProps, TextBlockStyleName } from './components/TextBlock.svelte';
 export { default as TreeView } from './components/TreeView.svelte';
 export type { TreeViewProps } from './components/TreeView.svelte';
 export { default as TreeViewItem } from './components/TreeViewItem.svelte';
