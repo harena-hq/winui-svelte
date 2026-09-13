@@ -36,13 +36,12 @@
 	// `RequestRefresh()` (`:26`) is absent for ADR 0009's rule about imperative members: it is a
 	// method where `refreshing` is a bindable prop. Writing `refreshing` is the same request.
 	//
-	// **The gesture is not upstream's.** `ScrollViewerIRefreshInfoProviderAdapter` redirects a
-	// pointer to its interaction tracker only when `PointerDeviceType()` is `Touch`
-	// (`ScrollViewerIRefreshInfoProviderAdapter.cpp:159`), and the source it builds is
-	// `CapableTouchpadOnly` (`:311`), so a mouse never manipulates and the original's visualizer
-	// never leaves `Idle` on a mouse-only desktop. What this implementation accepts is a **pointer
-	// drag** at the start of the scrolled content, which the original does not accept. It is
-	// deliberate and it is a divergence in the direction of doing more, not less.
+	// **The gesture is upstream's input, and not all of it.** `ScrollViewerIRefreshInfoProviderAdapter`
+	// redirects a pointer to its interaction tracker only when `PointerDeviceType()` is `Touch`
+	// (`ScrollViewerIRefreshInfoProviderAdapter.cpp:159`), and the source it builds carries
+	// `CapableTouchpadOnly` (`:311`), which takes a precision touchpad's pan as well. This
+	// implementation accepts the touch pointer and has nothing to accept for the touchpad: that
+	// pan reaches a web page as a `wheel` event and never as a pointer. See WD-035.
 
 	/** `DEFAULT_PULL_DIMENSION_SIZE` — `RefreshContainer.cpp:17`, the size the container gives its
 	 *  own visualizer on the pull axis (`:173`, `:184`, `:194`, `:203`). */
@@ -56,6 +55,13 @@
 	 * while the refresh runs (`ScrollViewerIRefreshInfoProviderDefaultAnimationHandler.cpp:136-137`).
 	 */
 	const EXECUTION_RATIO = 0.8;
+
+	/** `MAX_BFS_DEPTH` — `RefreshContainer.cpp:16`, how deep the search for the scrolled region goes. */
+	const MAX_BFS_DEPTH = 10;
+
+	/** `INITIAL_OFFSET_THRESHOLD` — `ScrollViewerIRefreshInfoProviderAdapter.cpp:14`. How close to
+	 *  the end the pull starts from the region has to already be, in pixels. */
+	const INITIAL_OFFSET_THRESHOLD = 1;
 
 	/** Whether an element scrolls on the given axis, which is what makes it the one to ask. */
 	function scrollsOn(element: Element, vertical: boolean): boolean {
@@ -146,6 +152,28 @@
 		return () => observer.disconnect();
 	});
 
+	/**
+	 * While a pull is in progress the browser must not read the same finger as a scroll. Measured on
+	 * `/dev/pull-to-refresh` without it: the browser cancels the pointer stream after three moves —
+	 * eighteen pixels of a hundred-pixel visualizer — and the pull dies on `pointercancel`, even
+	 * though neither the region nor the page scrolls anywhere. With it the same drag delivers
+	 * sixteen moves and the full reveal.
+	 *
+	 * `addEventListener` with `{ passive: false }` spelled out, rather than an `ontouchmove`
+	 * attribute: Svelte marks `touchstart` and `touchmove` passive by default
+	 * (svelte 5.57, `src/utils.js:261`), and a passive listener's `preventDefault()` is
+	 * ignored — the attribute form compiles to the exact listener that does not work here.
+	 */
+	$effect(() => {
+		const element = ref;
+		if (!element) return;
+		const onTouchMove = (event: TouchEvent) => {
+			if (dragging) event.preventDefault();
+		};
+		element.addEventListener('touchmove', onTouchMove, { passive: false });
+		return () => element.removeEventListener('touchmove', onTouchMove);
+	});
+
 	// `refreshing` written from outside is `RequestRefresh()` (`RefreshContainer.cpp:100-107`),
 	// which puts the visualizer into `Refreshing` with no gesture at all. Watched for a *change*
 	// rather than for its value, so that the write this component makes when a refresh settles is
@@ -189,33 +217,47 @@
 	}
 
 	/**
-	 * `AdaptFromTree` / `SearchTreeForIRefreshInfoProvider` (`RefreshContainer.cpp:224-312`) in the
-	 * shape this library has: the element the pointer went down on decides which scrolled region
-	 * the pull belongs to, and the pull only starts when that region is already at its start on the
-	 * pull axis. Upstream searches the content's tree for a `ScrollViewer` to adapt; here the search
-	 * runs upwards from the target, which finds the same box and finds the *nearest* one when a page
-	 * nests two.
+	 * `RefreshContainer::SearchTreeForIRefreshInfoProvider` (`RefreshContainer.cpp:253-311`): a
+	 * breadth-first walk of the content's own tree, depth-limited, for the one scrolled region the
+	 * pull belongs to. Upstream looks for an `IRefreshInfoProvider`, which in practice is a
+	 * `ScrollViewer`; the question here is whether an element scrolls on the pull axis, which is the
+	 * same question asked of the shape this library has.
+	 *
+	 * It searches **downward**. An upward walk from the pressed element cannot answer it: this
+	 * library's scrollbar is a sibling of the region it scrolls (`ScrollView.svelte:265,280`), so a
+	 * press on the thumb never crosses the scroller on its way up, and the walk reached its
+	 * "nothing here scrolls, so nothing holds the pull back" fallback and armed a pull. Measured
+	 * before this change: a 64px drag of the first example's thumb on `/collections/pulltorefresh`
+	 * scrolled the list by 20 and revealed the visualizer by 64, both at once.
 	 */
-	function atStart(target: EventTarget | null): boolean {
-		if (!(target instanceof Element) || !contentBox) return true;
-		for (
-			let node: Element | null = target;
-			node && node !== contentBox;
-			node = node.parentElement
-		) {
-			if (!scrollsOn(node, isVertical)) continue;
-			if (isVertical) {
-				return isFar
-					? node.scrollTop + node.clientHeight >= node.scrollHeight - 1
-					: node.scrollTop <= 0;
+	function findScroller(): Element | null {
+		if (!contentBox) return null;
+		let level: Element[] = [contentBox];
+		for (let depth = 0; depth <= MAX_BFS_DEPTH && level.length > 0; depth++) {
+			const next: Element[] = [];
+			for (const node of level) {
+				if (scrollsOn(node, isVertical)) return node;
+				next.push(...node.children);
 			}
-			return isFar
-				? node.scrollLeft + node.clientWidth >= node.scrollWidth - 1
-				: node.scrollLeft <= 0;
+			level = next;
 		}
-		// Nothing in the content scrolls, so nothing holds the pull back — which is what upstream's
-		// `AdaptFromTree` returning nothing leaves behind too.
-		return true;
+		return null;
+	}
+
+	/**
+	 * `IsWithinOffsetThreshold` (`ScrollViewerIRefreshInfoProviderAdapter.cpp:397-412`): whether the
+	 * region is already at the end the pull starts from, within `INITIAL_OFFSET_THRESHOLD`.
+	 */
+	function atStart(scroller: Element): boolean {
+		if (isVertical) {
+			return isFar
+				? scroller.scrollTop >
+						scroller.scrollHeight - scroller.clientHeight - INITIAL_OFFSET_THRESHOLD
+				: scroller.scrollTop < INITIAL_OFFSET_THRESHOLD;
+		}
+		return isFar
+			? scroller.scrollLeft > scroller.scrollWidth - scroller.clientWidth - INITIAL_OFFSET_THRESHOLD
+			: scroller.scrollLeft < INITIAL_OFFSET_THRESHOLD;
 	}
 
 	let originX = 0;
@@ -223,7 +265,20 @@
 
 	function onPointerDown(event: PointerEvent) {
 		if (visualizerState === 'refreshing' || refreshing) return;
-		if (!atStart(event.target)) return;
+		// `ScrollViewerIRefreshInfoProviderAdapter.cpp:155-159` — the adapter's own PointerPressed
+		// handler calls `TryRedirectForManipulation` for a touch pointer and for nothing else, so a
+		// mouse never manipulates the tracker and the original's visualizer never leaves `Idle` on a
+		// mouse-only desktop. WD-035 records what this still does not reach.
+		if (event.pointerType !== 'touch') return;
+		const scroller = findScroller();
+		// No region to adapt is `InfoProvider(nullptr)` (`RefreshContainer.cpp:247`): the visualizer
+		// is handed no provider and no gesture reaches it at all.
+		if (scroller === null) return;
+		// Upstream adds that handler to the ScrollViewer itself (`:199`), so a press outside the
+		// scrolled region is not a pull — and a press on this library's overlay scrollbar is outside
+		// it, because the bar is the scroller's sibling rather than its child.
+		if (!(event.target instanceof Node) || !scroller.contains(event.target)) return;
+		if (!atStart(scroller)) return;
 		dragging = true;
 		originX = event.clientX;
 		originY = event.clientY;
@@ -276,10 +331,9 @@
      `role="presentation"` because the root is a template part carrying pointer handlers rather
      than a control with semantics of its own; a `div` has none to suppress and its content keeps
      what it has. -->
-<!-- WD-035: the gesture below is a pointer drag, and the original accepts only touch or a
-     precision touchpad — its adapter redirects to the interaction tracker for a touch pointer alone
-     (`ScrollViewerIRefreshInfoProviderAdapter.cpp:159`, `:311`), so on a mouse-only desktop the
-     original's own page cannot be provoked at all. -->
+<!-- WD-035: the two inputs upstream's adapter takes are a touch pointer
+     (`ScrollViewerIRefreshInfoProviderAdapter.cpp:159`) and a precision touchpad's pan
+     (`:311`, `CapableTouchpadOnly`). This takes the first and cannot be handed the second. -->
 <div
 	bind:this={ref}
 	class={['root', className]}
@@ -352,6 +406,14 @@
 
 	.presenter {
 		grid-area: 1 / 1;
+		/* `<Grid x:Name="RefreshVisualizerPresenter" />` (`RefreshContainer.xaml:13`) carries no
+		   Background, and a XAML Panel without one does not hit-test; a `div` without one still
+		   does. The presenter shares the content's grid cell and is the later child, so without
+		   this it is what a pointer finds wherever the two overlap — which is every frame before
+		   the visualizer has been measured, when `visualizerLength` is still 0 and the offset below
+		   is therefore 0 rather than the visualizer's length outside the box. Nothing the
+		   visualizer draws is interactive, so it gives up nothing. */
+		pointer-events: none;
 		/* A grid of its own, so that a visualizer whose size on the cross axis is `NaN` — auto —
 		   fills the presenter the way a stretched XAML child does. */
 		display: grid;

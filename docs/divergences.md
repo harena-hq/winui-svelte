@@ -836,21 +836,24 @@ Recorded here once the control is built and the behaviour is observed rather tha
   project can read it.
 - **Would reconsider if**: the Windows rule becomes available, or a consumer needs it.
 
-### WD-035 — a pull is a pointer drag, where the original takes only touch
+### WD-035 — a precision touchpad's pan does not pull
 
 - **Control**: RefreshContainer.
-- **WinUI does**: redirect to its interaction tracker only for a touch pointer
-  (`ScrollViewerIRefreshInfoProviderAdapter.cpp:159`) with a redirection mode of
-  `CapableTouchpadOnly` (`:311`). A mouse never manipulates, so the visualizer never leaves
-  `Idle`. The Gallery's page offers no button and the control has no automation peer, so on a
-  mouse-only desktop the original's page cannot be provoked at all.
-- **We do**: accept a pointer drag at the start of the scrolled content, which a mouse
-  satisfies.
-- **Why accepted**: this is a divergence in the direction the project rarely takes — ours does
-  more rather than less — and the alternative is a control no reachable input can reach. At rest
-  the two agree exactly, which is what the page compares.
-- **Would reconsider if**: a touch-capable reference host makes the original's own gesture
-  observable, at which point the two can be compared rather than only ours described.
+- **WinUI does**: take two inputs. Its adapter's `PointerPressed` handler calls
+  `TryRedirectForManipulation` when the pointer's device type is `Touch`
+  (`ScrollViewerIRefreshInfoProviderAdapter.cpp:155-159`), and the visual interaction source it
+  builds carries `ManipulationRedirectionMode::CapableTouchpadOnly` (`:311`), which hands the
+  tracker a precision touchpad's pan as well. A mouse drives neither, so on a mouse-only desktop
+  the original's page cannot be provoked at all.
+- **We do**: take the touch pointer, and nothing else. There is no second gesture to take: a
+  precision touchpad's two-finger pan reaches a web page as a `wheel` event and never as a
+  pointer, so no handler of pointers can see it.
+- **Why accepted**: reaching it would mean taking the wheel over at the start of the scrolled
+  region and driving both the pull and the scroll by hand from there, which is a scroller of our
+  own — a large piece of work for an input the original's own page is not documented for. At
+  rest the two agree exactly, which is what the page compares.
+- **Would reconsider if**: a wheel-driven overscroll is ever wanted for its own sake, at which
+  point this comes with it rather than justifying it.
 
 ### WD-036 — a wheel over a scrollbar does not scroll what it belongs to
 

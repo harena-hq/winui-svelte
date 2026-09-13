@@ -2,7 +2,8 @@
 	import { RefreshContainer, RefreshVisualizer } from 'winui-svelte';
 
 	// The list row 7 puts inside the container, long enough that the region it scrolls actually
-	// scrolls — a container over content with nothing to scroll accepts the pull from anywhere.
+	// scrolls — a container whose content holds no scrolled region takes no pull at all, which is
+	// what `InfoProvider(nullptr)` (`RefreshContainer.cpp:247`) leaves upstream.
 	const ITEMS = [
 		'Azure',
 		'Crimson',
@@ -34,9 +35,9 @@
 <h1 class="winui-TitleTextBlockStyle">PullToRefresh</h1>
 <p class="winui-BodyTextBlockStyle">
 	A refresh indicator that fades, turns, pops and spins through five states, and the container that
-	reveals it. The states are driven directly here: the gesture that reaches them is a pointer drag
-	at the start of the scrolled content, and neither the original's touch pull nor a button exists to
-	provoke them from a page.
+	reveals it. The states are driven directly here: the gesture that reaches them is a touch pull at
+	the start of the scrolled content, as it is upstream, and no button exists to provoke them from a
+	page.
 </p>
 
 <h2 class="winui-SubtitleTextBlockStyle">idle — opacity 0.4 at the starting angle</h2>
@@ -74,7 +75,7 @@
 </div>
 
 <h2 class="winui-SubtitleTextBlockStyle">
-	a container at rest — it draws nothing of the control, and a downward drag reveals it
+	a container at rest — it draws nothing of the control, and a downward touch pull reveals it
 </h2>
 <div class="box container-box">
 	<RefreshContainer class="container" onRefreshRequested={settleAfterASecond}>
