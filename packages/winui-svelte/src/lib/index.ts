@@ -203,6 +203,8 @@ export { default as Bold } from './components/Bold.svelte';
 export type { BoldProps } from './components/Bold.svelte';
 export { default as Hyperlink } from './components/Hyperlink.svelte';
 export type { HyperlinkProps } from './components/Hyperlink.svelte';
+export { default as RatingControl } from './components/RatingControl.svelte';
+export type { RatingControlProps } from './components/RatingControl.svelte';
 export { default as Italic } from './components/Italic.svelte';
 export type { ItalicProps } from './components/Italic.svelte';
 export { default as LineBreak } from './components/LineBreak.svelte';

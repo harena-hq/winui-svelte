@@ -1863,3 +1863,22 @@ changes`.
   which point the fix is the attribute **and** the handler together and it is worth its own pass.
   Not "a page uses the Click-only shape" — six already do, and the trade is taken with them
   there.
+
+---
+
+### WD-082 — the stars do not swell under the pointer
+
+- **Control**: `RatingControl`.
+- **WinUI does**: scale each star by a Composition expression animation driven by the pointer's
+  horizontal distance from that star's centre — `max(-0.0005 · p · (starCenterX − focal)² + p, 0.5)`
+  at `RatingControl.cpp:380-388`, with `p` 0.8 for a mouse (`c_mouseOverScale`, `:19`) and 1.0
+  for touch (`:20`). The star under the pointer grows and its neighbours grow less, continuously.
+- **We do**: keep every star at the resting size and change only the colours the template's visual
+  states change.
+- **Why accepted**: the expression is a function of a live pointer coordinate, evaluated per star
+  per frame by the composition engine. CSS has no expression of that shape; reproducing it means a
+  pointermove handler writing a transform on each of `maxRating` elements, which is a behavioural
+  mechanism rather than a transcription. The resting scale of 0.5 — the expression's own floor —
+  **is** reproduced, and it is what every baseline photographs.
+- **Would reconsider if**: a side-by-side against the original shows the hover state mattering to
+  the page's read, rather than to a pointer that is not in the picture.
