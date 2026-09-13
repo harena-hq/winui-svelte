@@ -3628,8 +3628,10 @@ System / Shell` moves to item 16; `item 15` occurs once in the whole of `docs/`,
     **The paragraph above was not true when it was written, and the disposition is what made it
     true.** Menus & toolbars held `SwipeControl` and Basic input held `RatingControl`, neither of
     which this library has, so a version that does not invent components could not have built
-    either page. D47 owns both: item 17 builds `RatingControl`, and `SwipeControl` is declined,
-    which makes its page a `NotApplicablePanel` under D43 and needs no control at all.
+    either page. D47 owns both: item 17 builds `RatingControl`, and `SwipeControl` is declined —
+    which declines the control and not the page, since at rest its five examples are `Border`s
+    and a `ListView` around a `TextBlock`. What that page files is a `WD` row for the gesture,
+    and it needs no `SwipeControl` component at all.
 
 **Twenty-four Gallery pages are scheduled by no tranche, and planning v7 is what found
 them.** The roadmap enumerates by name where a tranche schedules controls, and by count where
