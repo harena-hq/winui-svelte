@@ -1,5 +1,14 @@
 <script lang="ts">
-	import { TextBlock, type TextBlockStyleName } from 'winui-svelte';
+	import {
+		Bold,
+		Italic,
+		LineBreak,
+		Run,
+		Span,
+		TextBlock,
+		type TextBlockStyleName,
+		Underline
+	} from 'winui-svelte';
 
 	const textStyles: TextBlockStyleName[] = [
 		'BaseTextBlockStyle',
@@ -133,10 +142,17 @@
 </div>
 
 <h2 class="winui-SubtitleTextBlockStyle">inline children</h2>
-<!-- Inline components are the next unit; plain markup is their placeholder here. -->
-<TextBlock data-testid="inline-children"
-	>Text can be <b>bold</b>, <i>italic</i>, or <u>underlined</u>.</TextBlock
->
+<!-- TextBlockPage.xaml:51-57 — the Gallery's fourth example, whole: a Run with its own family
+     and foreground, a LineBreak, and a Span carrying Bold, Italic and Underline. -->
+<TextBlock data-testid="inline-children">
+	<Run fontFamily="Times New Roman" foreground="darkgray"
+		>Text in a TextBlock doesn't have to be a simple string.</Run
+	>
+	<LineBreak />
+	<Span>
+		Text can be <Bold>bold</Bold>, <Italic>italic</Italic>, or <Underline>underlined</Underline>.
+	</Span>
+</TextBlock>
 
 <style>
 	/* c1-allow: harness layout, not a WinUI value */

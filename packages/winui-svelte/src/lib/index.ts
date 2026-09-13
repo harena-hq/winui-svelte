@@ -199,6 +199,18 @@ export type {
 } from './components/NavigationView.svelte';
 export { default as TitleBar } from './components/TitleBar.svelte';
 export type { TitleBarProps } from './components/TitleBar.svelte';
+export { default as Bold } from './components/Bold.svelte';
+export type { BoldProps } from './components/Bold.svelte';
+export { default as Italic } from './components/Italic.svelte';
+export type { ItalicProps } from './components/Italic.svelte';
+export { default as LineBreak } from './components/LineBreak.svelte';
+export type { LineBreakProps } from './components/LineBreak.svelte';
+export { default as Run } from './components/Run.svelte';
+export type { RunProps } from './components/Run.svelte';
+export { default as Span } from './components/Span.svelte';
+export type { SpanProps } from './components/Span.svelte';
+export { default as Underline } from './components/Underline.svelte';
+export type { UnderlineProps } from './components/Underline.svelte';
 // Not a component: WinUI's `Symbol` enum as the code points `glyph` takes. ADR 0012's
 // amendment. Generated — see `scripts/symbol/`.
 export { Symbol } from './symbol';

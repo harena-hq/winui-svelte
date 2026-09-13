@@ -1782,3 +1782,42 @@ changes`.
   `Samples/ConnectedAnimation/ConnectedAnimationElementsSame.txt:49-52` are both `MaxLines` with
   `TextWrapping="Wrap"` and no trimming, and so is WinUI's own ContentDialog title
   (`ContentDialog_themeresources.xaml:241`).
+
+---
+
+### WD-080 — `FlowDirection` on a `Run` is always an embedding, where WinUI picks between an embedding and a mark
+
+- **Control**: `Run`.
+- **WinUI does**: turn `Run.FlowDirection` into a Unicode directional control character emitted at
+  the run's edges, and **choose between two of them by comparing the run's direction with its
+  parent's**. `ParagraphTextSource.cpp:508` is the comparison. Different from the parent, and it
+  pushes `LeftToRightEmbedding` or `RightToLeftEmbedding` (`:514-521`) and pops with
+  `PopDirectionalFormatting` (`:510-512`) — U+202A, U+202B and U+202C, per
+  `TextSegment.cpp:20-22` and the switch at `TextSegment.cpp:1074-1093`. **The same as the
+  parent, and it pushes a mark instead** — `LeftToRightMark` or `RightToLeftMark` (`:525-532`),
+  U+200E or U+200F, which is one character before the content and no closing character at all.
+  Unset, it emits nothing: `:474` is `DirectionalControl::None` and `:478-479` is the test that
+  gets there.
+- **We do**: emit `dir` together with `unicode-bidi: embed` whenever `flowDirection` is set, and
+  nothing when it is not. That reproduces the embedding exactly — measured against the pin's own
+  characters on the browser that writes this repository's baselines, `Label: <run rtl>שלום
+עולם</run> (123)` renders the parenthesised digits to the left of the Hebrew under both, and to
+  the right under `dir` alone, which is HTML's `unicode-bidi: isolate` default for any element
+  carrying a valid `dir`. It does not reproduce the mark: where the pin would emit one, this
+  emits an embedding whose direction happens to match its surroundings.
+- **Why accepted**: the pin makes the choice by reading the **parent** `TextElement`'s
+  `m_nFlowDirection` (`ParagraphTextSource.cpp:496-506`, falling back to the owning control's
+  direction when the run is top-level). A component renders without knowing the resolved
+  `direction` of the element it is about to be inserted into; getting it would mean a DOM read
+  and a second pass, on every Run, to choose between two mechanisms whose difference is confined
+  to how the neutral characters immediately outside the run resolve. The mark is expressible —
+  it is a literal U+200E or U+200F before the content — so what is missing is the condition, not
+  the mechanism.
+- **What this costs in this Gallery**: nothing. The pinned Gallery writes `FlowDirection` twice,
+  both times on a `GridView` (`Samples/GridView/GridViewPage.xaml:230` and its code-behind at
+  `GridViewPage.xaml.cs:153-161`), and on no `Run` anywhere. The prop is built from the pin
+  rather than from a site.
+- **Would reconsider if**: a page sets `flowDirection` on a `Run` whose container already has
+  that direction and a side-by-side against the original shows the neutrals beside it resolving
+  differently — at which point the fix is the literal mark character and a way to know the
+  parent's direction, not a different CSS property.
