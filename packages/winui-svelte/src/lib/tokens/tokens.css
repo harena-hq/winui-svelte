@@ -2024,6 +2024,7 @@
 	--winui-TeachingTipContentMargin: 12px;
 	--winui-TeachingTipBorderThickness: 1px;
 	--winui-TitleBarForegroundBrush: var(--winui-TextFillColorPrimaryBrush);
+	--winui-TitleBarSubtitleForegroundBrush: var(--winui-TextFillColorSecondaryBrush);
 	--winui-TitleBarBackButtonBackground: var(--winui-SubtleFillColorTransparentBrush);
 	--winui-TitleBarBackButtonBackgroundPointerOver: var(--winui-SubtleFillColorSecondaryBrush);
 	--winui-TitleBarBackButtonBackgroundPressed: var(--winui-SubtleFillColorTertiaryBrush);
@@ -2052,8 +2053,10 @@
 	--winui-TitleBarIconMaxWidth: 16px;
 	--winui-TitleBarIconMaxHeight: 16px;
 	--winui-TitleBarTitleMinWidth: 0px;
+	--winui-TitleBarSubtitleMinWidth: 0px;
 	--winui-TitleBarIconMargin: 0px 16px 0px 0px;
 	--winui-TitleBarTitleMargin: 0px 8px 0px 0px;
+	--winui-TitleBarSubtitleMargin: 0px 16px 0px 0px;
 	--winui-TreeViewItemBackground: var(--winui-SubtleFillColorTransparentBrush);
 	--winui-TreeViewItemBackgroundPointerOver: var(--winui-SubtleFillColorSecondaryBrush);
 	--winui-TreeViewItemBackgroundPressed: var(--winui-SubtleFillColorTertiaryBrush);
@@ -3857,6 +3860,7 @@
 	);
 	--winui-TeachingTipAlternateCloseButtonBorderThickness: 1px;
 	--winui-TitleBarForegroundBrush: var(--winui-TextFillColorPrimaryBrush);
+	--winui-TitleBarSubtitleForegroundBrush: var(--winui-TextFillColorSecondaryBrush);
 	--winui-TitleBarBackButtonBackground: var(--winui-SubtleFillColorTransparentBrush);
 	--winui-TitleBarBackButtonBackgroundPointerOver: var(--winui-SubtleFillColorSecondaryBrush);
 	--winui-TitleBarBackButtonBackgroundPressed: var(--winui-SubtleFillColorTertiaryBrush);
@@ -5776,6 +5780,7 @@
 		);
 		--winui-TeachingTipAlternateCloseButtonBorderThickness: 1px;
 		--winui-TitleBarForegroundBrush: var(--winui-TextFillColorPrimaryBrush);
+		--winui-TitleBarSubtitleForegroundBrush: var(--winui-TextFillColorSecondaryBrush);
 		--winui-TitleBarBackButtonBackground: var(--winui-SubtleFillColorTransparentBrush);
 		--winui-TitleBarBackButtonBackgroundPointerOver: var(--winui-SubtleFillColorSecondaryBrush);
 		--winui-TitleBarBackButtonBackgroundPressed: var(--winui-SubtleFillColorTertiaryBrush);
@@ -7624,6 +7629,7 @@
 	);
 	--winui-TeachingTipAlternateCloseButtonBorderThickness: 1px;
 	--winui-TitleBarForegroundBrush: var(--winui-SystemControlForegroundBaseHighBrush);
+	--winui-TitleBarSubtitleForegroundBrush: var(--winui-SystemControlHighlightAltBaseHighBrush);
 	--winui-TitleBarBackButtonBackground: var(--winui-SystemColorButtonFaceColor);
 	--winui-TitleBarBackButtonBackgroundPointerOver: var(--winui-SystemColorHighlightColor);
 	--winui-TitleBarBackButtonBackgroundPressed: var(--winui-SystemColorHighlightColor);

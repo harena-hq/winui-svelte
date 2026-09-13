@@ -2057,6 +2057,9 @@ export const SHELL_KEYS = {
 	TitleBarIconMargin: 'TitleBar, the app icon',
 	TitleBarTitleMargin: 'TitleBar, the title text',
 	TitleBarTitleMinWidth: 'TitleBar, the title text',
+	TitleBarSubtitleForegroundBrush: 'TitleBar, the subtitle text',
+	TitleBarSubtitleMargin: 'TitleBar, the subtitle text',
+	TitleBarSubtitleMinWidth: 'TitleBar, the subtitle text',
 	TitleBarBackButtonWidth: 'TitleBar, its two buttons',
 	TitleBarPaneToggleButtonWidth: 'TitleBar, its two buttons',
 	TitleBarBackButtonBackground: 'TitleBar back button background, at rest',
@@ -2772,6 +2775,7 @@ export const DOUBLE_LENGTHS = {
 	TitleBarLeftPaddingWidth: 'the inset the window controls reserve',
 	TitleBarPaneToggleButtonWidth: 'the title bar pane toggle button',
 	TitleBarRightPaddingWidth: 'the inset the window controls reserve',
+	TitleBarSubtitleMinWidth: 'the subtitle text',
 	TitleBarTitleMinWidth: 'the title text',
 
 	FlyoutThemeMaxWidth: 'the widest a flyout-sized surface gets',
