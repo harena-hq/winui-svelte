@@ -1724,3 +1724,61 @@ changes`.
   not a runtime API a page can call.
 - **Would reconsider if**: browsers expose a runtime jump-list API with add, clear, and grouped
   item operations.
+
+---
+
+### WD-078 — `TextTrimming` reaches unwrapped text only, and has one ellipsis for XAML's two
+
+- **Control**: `TextBlock`.
+- **WinUI does**: two things this row collapses into one. It trims wrapping text as well as
+  unwrapped text — a `TextBlock` with `TextWrapping="Wrap"` fills the height it is given and
+  ellipsizes the last line that fits — and it distinguishes `CharacterEllipsis`, which cuts at
+  whatever character the line ends on, from `WordEllipsis`, which backs up to the last whole word
+  so that no partial word precedes the ellipsis.
+- **We do**: implement all four modes with `overflow: hidden` and `text-overflow`, which trims a
+  **line box** that overflows its own width. Under `textWrapping="wrap"` no line box ever
+  overflows, so nothing is trimmed and the whole text renders; measured in Chromium at a 220px
+  width, the same string is 48px tall and untrimmed under `wrap` and 16px tall with an ellipsis
+  under `noWrap`. And both ellipsis modes compile to one rule, so `wordEllipsis` shows the
+  partial word `WordEllipsis` would have dropped.
+- **Why accepted**: CSS trims a line, not a block. What WinUI does under `Wrap` is trim the last
+  line that fits in the available **height**, and CSS has no height-driven ellipsis — the only
+  mechanism that ellipsizes a block is a line **clamp**, which takes a count rather than a
+  height. So reproducing it means measuring: resolving the element's content height and its line
+  height on every resize and every font load, dividing, and feeding the quotient to the clamp.
+  The escape is that the count is usually known to the caller — `maxLines` reaches the clamp
+  directly, and that is WD-079. The word-versus-character half is the same shape of cost at a
+  smaller scale: a binary search over substring widths, per element, for one partial word.
+- **What this costs in this Gallery**: the pin sets `TextTrimming="WordEllipsis"` in three
+  templates, and two of them pair it with `TextWrapping="Wrap"` —
+  `Samples/GridView/GridViewPage.xaml:55-56` and `Samples/ItemsView/ItemsViewPage.xaml:98-99`.
+  Those two reproduce untrimmed unless their page also passes `maxLines`, which is what the unit
+  that builds them should do. The third, `Styles/ItemTemplates.xaml:55`, sets no `TextWrapping`,
+  so it takes XAML's `NoWrap` default and trims here exactly as it does upstream — apart from the
+  word boundary.
+- **Would reconsider if**: a height-driven block ellipsis reaches CSS, or a side-by-side against
+  the original shows the difference at one of the three sites above.
+
+---
+
+### WD-079 — `MaxLines` ellipsizes its last line, because the clamp that counts lines is the one that draws it
+
+- **Control**: `TextBlock`.
+- **WinUI does**: treat `MaxLines` and `TextTrimming` as two properties. `MaxLines` limits the
+  line count and cuts the rest off; whether the last line ends in an ellipsis is
+  `TextTrimming`'s answer, and its default is `None`.
+- **We do**: implement `MaxLines` with `-webkit-line-clamp`, which always draws an ellipsis on
+  the clamped line. A `maxLines` `TextBlock` with no `textTrimming` therefore ends in an
+  ellipsis WinUI would not draw.
+- **Why accepted**: the alternative is `max-height` at `maxLines × line-height`, which needs a
+  resolved line height — and `LineHeight`'s own default is `0`, meaning "from the font", so the
+  number is not available without measuring. `-webkit-line-clamp` counts the lines the browser
+  actually laid out, which is the property XAML is expressing; the ellipsis is the cost of
+  having the count.
+- **Would reconsider if**: a standard line clamp ships that separates the count from the
+  ellipsis, which is the shape CSS Overflow has been drafting. Not "a page sets `MaxLines`
+  without a trimming mode" — that condition is already met and the trade is taken with it met.
+  `SampleSupport/SamplePages/CardPage.xaml:86-92` and
+  `Samples/ConnectedAnimation/ConnectedAnimationElementsSame.txt:49-52` are both `MaxLines` with
+  `TextWrapping="Wrap"` and no trimming, and so is WinUI's own ContentDialog title
+  (`ContentDialog_themeresources.xaml:241`).
