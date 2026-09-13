@@ -4,6 +4,8 @@
 	export interface TitleBarProps {
 		/** Title — the window title, rendered left of the content slot. */
 		title?: string;
+		/** Subtitle — TitleBar.idl:14, drawn in column 7 right of the title. */
+		subtitle?: string;
 		/**
 		 * No direct WinUI member; narrows `IconSource` to a Segoe Fluent Icons code point
 		 * as uppercase hex, e.g. `'E790'`.
@@ -35,6 +37,7 @@
 
 	let {
 		title,
+		subtitle,
 		iconGlyph,
 		backButtonVisible = false,
 		backButtonEnabled = true,
@@ -134,6 +137,10 @@
 
 	{#if title}
 		<span class="title winui-CaptionTextBlockStyle">{title}</span>
+	{/if}
+
+	{#if subtitle}
+		<span class="subtitle winui-CaptionTextBlockStyle">{subtitle}</span>
 	{/if}
 
 	{#if content}
@@ -298,6 +305,29 @@
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
+	}
+
+	/* TitleBar.xaml:247-260 — column 7, CaptionTextBlockStyle, left-aligned and vertically
+	   centred, `TextTrimming="CharacterEllipsis"` with `TextWrapping="NoWrap"`, and its own
+	   foreground rather than the control's. The title beside it takes the control's
+	   `Foreground`; this one is always the secondary brush.
+
+	   In high contrast the subtitle is hard to read, and that is upstream's choice reproduced
+	   rather than a defect to fix. `TitleBar_themeresources.xaml:54` gives the title
+	   `SystemControlForegroundBaseHighBrush` and `:56` gives the subtitle
+	   `SystemControlHighlightAltBaseHighBrush` — the `HighlightAlt*` family is text *on a
+	   highlighted background*, which a real Windows title bar has when active and a page
+	   background does not. Raising the contrast here would be this library inventing a value
+	   the resource dictionary does not have. */
+	.subtitle {
+		flex: 0 1 auto;
+		min-width: var(--winui-TitleBarSubtitleMinWidth);
+		margin: var(--winui-TitleBarSubtitleMargin);
+		align-self: center;
+		overflow: hidden;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+		color: var(--winui-TitleBarSubtitleForegroundBrush);
 	}
 
 	.content-presenter {

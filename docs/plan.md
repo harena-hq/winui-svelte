@@ -3487,7 +3487,15 @@ System / Shell` moves to item 16; `item 15` occurs once in the whole of `docs/`,
 
     **Two page-level dependencies the same reading found.** `AppWindowTitleBarPage.xaml` uses
     twelve `ColorSelector`s, which is the Gallery's own control (`WinUIGallery/Controls/`) and
-    not WinUI's, so Windowing's unit builds it the way v10 built `ControlExample`. And four of
+    not WinUI's, so Windowing's unit builds it the way v10 built `ControlExample`. **That
+    sentence was written without opening the control, and it is half wrong.** Building
+    `ColorSelector` is not self-contained: `ColorSelector.xaml:19-32` puts a `ColorPicker` in
+    the `SplitButton`'s flyout, and `ColorPicker` is one of the four components item 17 owes.
+    Measured in the unit rather than argued: at rest the control is a 64x32 swatch and a
+    chevron half, 100x33 together, and that reproduces exactly — so the page cost nothing extra
+    and the flyout became WD-066. What the miss would have cost is the estimate, not the work,
+    and the lesson is about API surfaces: a planning sentence naming a dependency is a claim
+    about a file, and reading the file is cheaper than any of its consequences. And four of
     these pages write their prose as `RichTextBlock` with `Paragraph`, `Run`, `Hyperlink` and
     `Underline` — item 17's components, which this version does not wait for: `styles/acrylic`,
     `styles/compactsizing` and `motion/easingfunction` already reproduce exactly that shape as

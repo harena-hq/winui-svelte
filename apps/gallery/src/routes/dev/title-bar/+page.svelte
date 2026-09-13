@@ -5,8 +5,8 @@
 	 * The component's own harness, not part of the Gallery reproduction: `/dev/` is where
 	 * each control gets a page to be photographed on, and nothing links to it. The four
 	 * rows below exercise the conditional parts of the template: the back button's
-	 * enabled-vs-disabled pair, the compact-vs-expanded height, and the case where only
-	 * the wide content slot is present.
+	 * enabled-vs-disabled pair, title and subtitle, the compact-vs-expanded height, and the
+	 * case where only the wide content slot is present.
 	 */
 
 	let events = $state<string[]>([]);
@@ -29,7 +29,7 @@
 <h1 class="winui-TitleTextBlockStyle">TitleBar</h1>
 <p class="winui-BodyTextBlockStyle">
 	One row each, in the same order the unit names them: the back button enabled and disabled, then
-	the compact-height case (no content, no right header), then content alone.
+	title and subtitle, the compact-height case (no content, no right header), then content alone.
 </p>
 
 <h2 class="winui-SubtitleTextBlockStyle">everything on</h2>
@@ -59,6 +59,15 @@
 		onBackRequested={back('row 2')}
 		onPaneToggleRequested={paneToggle('row 2')}
 	>
+		{#snippet content()}
+			<input type="search" placeholder="Search" />
+		{/snippet}
+	</TitleBar>
+</div>
+
+<h2 class="winui-SubtitleTextBlockStyle">title and subtitle</h2>
+<div class="frame">
+	<TitleBar title="WinUI Gallery" subtitle="Preview" iconGlyph="E790">
 		{#snippet content()}
 			<input type="search" placeholder="Search" />
 		{/snippet}

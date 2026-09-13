@@ -1491,3 +1491,48 @@ changes`.
   empty-enumeration branch there. Served over HTTPS or from `localhost`, on a machine with a
   camera, this page previews and captures.
 - **Would reconsider if**: nothing — the condition is the serving origin, and the row names it.
+
+---
+
+### WD-065 — Windowing's pages open no second window
+
+- **Control**: the Gallery's AppWindow, AppWindowTitleBar, TitleBar and Multiple windows pages.
+- **WinUI does**: open a real top-level window from each of thirteen buttons — AppWindow's seven
+  (`AppWindowPage.xaml.cs:17-39`, `:59-75`), AppWindowTitleBar's three
+  (`AppWindowTitleBarPage.xaml.cs:31-49`, `:159-167`, `:201-207`), TitleBar's two
+  (`TitleBarPage.xaml.cs:19-29`) and Multiple windows' one (`CreateMultipleWindowsPage.xaml.cs:19-44`) —
+  and configures it through `Microsoft.UI.Windowing`: three presenters, `OverlappedPresenter`'s six
+  switches, preferred minimum and maximum size, a position, modality, and the title bar's twelve colours.
+- **We do**: render every one of those pages whole, and leave every button inert.
+- **Why accepted**: this is **D42's first kind**, and the row has to be careful about which.
+  `window.open` is present and works — measured on the reference guest, at the Gallery's own plain-HTTP
+  origin, returning a live window even without a user gesture — so "the web cannot open a second window"
+  is false and is not what this row says. What has no web analogue is `AppWindow` itself: a browser window
+  carries the browser's chrome, takes no presenter, has no modality against its opener, and exposes no title
+  bar to colour. The one page whose whole demonstration is just _opening_ a window, Multiple windows, opens
+  one that `ExtendsContentIntoTitleBar` over a `MicaBackdrop` at a 500 × 500 client size, and none of those
+  three is reachable either. So what every one of the thirteen declines is the demonstration, not the act.
+- **Would reconsider if**: a page in this group gains something a popup can actually show. The row is then
+  narrowed to the buttons that still decline, rather than deleted.
+
+---
+
+### WD-066 — ColorSelector's flyout holds no colour picker
+
+- **Control**: the Gallery's own `ColorSelector` (`WinUIGallery/Controls/ColorSelector.xaml`), used twelve
+  times by the AppWindowTitleBar page.
+- **WinUI does**: put a `ColorPicker` in the `SplitButton`'s flyout — ring spectrum, a colour slider, alpha
+  enabled with its slider, and no hex or channel text input (`ColorSelector.xaml:19-32`) — and write the
+  chosen colour back onto the swatch (`ColorSelector.xaml.cs:47-63`).
+- **We do**: render the swatch and the chevron half exactly, and open nothing. The chevron is left in its
+  normal state rather than disabled, because a disabled half is a different visual state and the resting state
+  is this project's bar.
+- **Why accepted**: `ColorPicker` is one of the four controls roadmap item 17 owes, and D9 schedules it as
+  its own Zag machine rather than a bits-ui primitive. Separately, this library's `SplitButton` narrows WinUI's
+  `Flyout` to a menu (`SplitButton.svelte`'s `items`, after `SplitButton.cpp:79` and `:221` which give the
+  control its own flyout and placement), so arbitrary flyout content is not something a consumer can pass today.
+  Neither is difficulty; together they are the mechanism. Nothing on the page moves in consequence: the twelve
+  colours are the page's own constants, the `AppWindowTitleBar` they would have coloured is WD-065's, and the
+  substituted sample code shows those constants either way.
+- **Would reconsider if**: item 17 ships `ColorPicker` and `SplitButton` grows a content flyout. The entry is
+  deleted then, because the control it names is upstream's and reachable.
