@@ -61,9 +61,9 @@
 
 	     **At rest this draws two bordered lists and nothing else**, on this page and on the
 	     original's. The visualizer sits its own length outside the container and the container
-	     clips; the original reveals it on a touch pull, which the reference machine has no
-	     digitiser for. Here it is a pointer drag at the top of the list — see the note on
-	     `RefreshContainer` itself. -->
+	     clips; the original reveals it on a touch pull, and so does this — which the reference
+	     machine, having no digitiser, performs on neither. See the note on `RefreshContainer`
+	     itself. -->
 	<ControlExample
 		headerText={basicSample.header ?? undefined}
 		xaml={basicSample.xaml ?? undefined}
