@@ -74,15 +74,17 @@
 		[key: string]: unknown;
 	}
 
-	// Not built here, each for its own reason. `Inlines` is the next unit — Run, Span, Bold,
-	// Italic, Underline, LineBreak — and `Hyperlink` the one after; they land in the `children`
-	// snippet and need no change to this surface to arrive. `TextDecorations` and `FontStretch`
-	// are one CSS declaration each and wait for the first unit that needs one. `TextLineBounds`
-	// deliberately does not: its four enumerants (`EnumDefs.g.h:1894-1900` — Full,
-	// TrimToCapHeight, TrimToBaseline, Tight) each want a different `text-box`, the Gallery uses
-	// one of them (`Styles/ItemTemplates.xaml:45`), and the only measured precedent in this
-	// library is PersonPicture's single `Tight` (`PersonPicture.svelte:182-188`) — so it gets a
-	// pass of its own rather than three mappings derived beside it.
+	// `Inlines` is built: Run, Span, Bold, Italic, Underline and LineBreak are their own
+	// components, and they land in the `children` snippet with no change to this surface.
+	// `Hyperlink` is the unit after.
+	//
+	// Not built here, each for its own reason. `TextDecorations` and `FontStretch` are one CSS
+	// declaration each and wait for the first unit that needs one. `TextLineBounds` deliberately
+	// does not: its four enumerants (`EnumDefs.g.h:1895-1900` — Full, TrimToCapHeight,
+	// TrimToBaseline, Tight) each want a different `text-box`, the Gallery uses one of them
+	// (`Styles/ItemTemplates.xaml:45`), and the only measured precedent in this library is
+	// PersonPicture's single `Tight` (`PersonPicture.svelte:182-188`) — so it gets a pass of its
+	// own rather than three mappings derived beside it.
 </script>
 
 <script lang="ts">
@@ -119,7 +121,7 @@
      Two of the directives below are worth a word.
 
      `text-align` is emitted even for its own default. `TextAlignment` is not inherited text
-     formatting — `corep.h:487-500` is the whole inherited set, and FontFamily, Foreground,
+     formatting — `corep.h:487-499` is the whole inherited set, and FontFamily, Foreground,
      FontSize, CharacterSpacing, FontWeight, FontStyle, FontStretch, TextDecorations and
      FlowDirection are in it while TextAlignment is not — so XAML gives every TextBlock `Left`
      rather than letting it take an ancestor's alignment, and emitting the default is what
@@ -225,6 +227,27 @@
 		display: -webkit-box;
 		-webkit-box-orient: vertical;
 		overflow: hidden;
+	}
+
+	/* The empty final line XAML's trailing `LineBreak` makes and CSS's trailing `<br>` does not.
+	   Measured on the browser that writes this repository's baselines: `one<br>two<br>` in a
+	   `nowrap` block is 38px, the same as `one<br>two`, where one line is 19px. With this box it
+	   is 57px.
+
+	   Unconditional, because a component cannot know that a break is the last thing in it — and
+	   it does not need to. The box is zero-width and generates no line of its own: `one` measures
+	   19px with it and without, a shrink-to-fit block is 70.14px either way, and every member
+	   this rule could collide with was measured rather than reasoned about — a `maxLines` clamp
+	   (38px box and 76px scroll height, identical), `textTrimming` under `nowrap` (19px, 220px),
+	   and a centred line (unchanged). It is on the block rather than on the break because a box
+	   at the *start* of a line stops the whitespace after it from being first on that line, which
+	   indented the Gallery's own fourth example by 3.84px when the break carried it.
+
+	   `RichTextBlock` and `Paragraph` will each need their own copy: what makes the line is the
+	   layout of the text, and every container that lays out inlines answers for its own. */
+	.root::after {
+		content: '';
+		display: inline-block;
 	}
 
 	/* TextBlock's selection default is false; this opt-in restores browser text selection. */

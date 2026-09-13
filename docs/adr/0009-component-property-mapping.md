@@ -130,9 +130,25 @@ hazard this ADR's own reasoning is about, and the prop's TSDoc says so at the si
 
 **The rule that follows from both**: a component may declare a non-reserved HTML attribute as a
 prop **only when it must conditionally override it**, and the ADR records each such case by name.
-Two exist: `dir` on `TextBlock`, and nothing else. The alternative — leaving `dir` to the rest
-spread and emitting `dir="auto"` after it — discards the consumer's value in exactly the same
-case while making the prop invisible, so it hides the cost instead of removing it.
+The alternative — leaving `dir` to the rest spread and emitting `dir="auto"` after it — discards
+the consumer's value in exactly the same case while making the prop invisible, so it hides the
+cost instead of removing it.
+
+**The cases, by name. Two, both `dir`:**
+
+- **`TextBlock`**, for `TextAlignment="DetectFromContent"`, as above.
+- **`Run`**, for `FlowDirection`. `Run_FlowDirection` (`Indexes.g.h:2082`) is a real XAML member
+  with no name of its own in HTML — `dir` is what expresses it — so the component has to write
+  `dir` whenever `flowDirection` is set and leave the consumer's alone otherwise. Added by the
+  unit that built the `Inlines` model.
+
+**And the reason this rule is about declaring rather than re-reading.** An attribute written
+after a spread overrides that spread's value **even when what it writes is `undefined`**, so
+`dir={flowDirection === undefined ? undefined : …}` after `{...rest}` erases a consumer's `dir` on
+every element that sets no `flowDirection`. Reading the value back out of the rest props and
+re-emitting it fixes the erasure and costs a runtime narrowing of an `unknown`, a `$derived`, and
+a prop that does not appear in the component's own type — which is the invisibility this rule
+exists to prevent. Destructuring is the same fix written where a reader finds it.
 
 ## Alternatives rejected
 
