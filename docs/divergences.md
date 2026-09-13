@@ -1632,3 +1632,89 @@ changes`.
   browser analogue at any origin.
 - **Would reconsider if**: the web platform provides a composited child-island API with the same
   cross-surface hosting and transform relationship.
+
+---
+
+### WD-073 — the App notifications page shows no notification at this origin
+
+- **Control**: the Gallery's App notifications page.
+- **WinUI does**: call `AppNotificationManager.Default.Show(...)` from all five handlers —
+  `ShowInformationalNotificationWithLogoButton_Click` (`AppNotificationPage.xaml.cs:41`),
+  `ShowVisualNotificationWithHeroImageButton_Click` (`:53`), `ShowNotificationButton_Click`
+  (`:63`), `ShowNotificationWithControlsButton_Click` (`:83`) and
+  `ShowNotificationWithProgressBarButton_Click` (`:100`).
+- **We do**: render the five buttons wired to nothing.
+- **Why accepted**: this is D42's origin-gated kind. At the Gallery's plain-HTTP gateway origin
+  `Notification.permission` is `denied`: the constructor is present and refused, which is a
+  property of how the Gallery is served rather than of this page. In the same browser it reads
+  `default` at a secure origin.
+- **Would reconsider if**: the Gallery is served from a secure origin. Example 1 could then be
+  shown after a permission grant; examples 2–5 would still be WD-074.
+
+---
+
+### WD-074 — a toast's logo crop, sound event, timestamp, hero image, attribution, inputs and progress bar have no web analogue
+
+- **Control**: the App notifications page's four non-basic notification examples.
+- **WinUI does**: crop the logo to a circle with `SetAppLogoOverride`
+  (`AppNotificationPage.xaml.cs:36`), name a system sound with `SetAudioEvent` (`:37`), and
+  stamp a time with `SetTimeStamp` (`:38`); set a hero image with `SetHeroImage` (`:49`) and
+  an attribution line with `SetAttributionText` (`:50`); add a combo box, a text box and a
+  button with `AddComboBox`/`AddTextBox`/`AddButton` (`:71-80`); and add a progress bar with
+  `AddProgressBar` (`:91-97`).
+- **We do**: render each example's button, the one options pane the four carry between them,
+  and the live source substitution — and no notification.
+- **Why accepted**: this is D42's second kind. The web `Notification` carries `icon`, `image`,
+  and `badge`, but has no crop, named system sound, attribution line, input controls, or
+  progress bar. Its actions are honoured only from `ServiceWorkerRegistration.showNotification`
+  and cap at `maxActions` 2.
+- **Would reconsider if**: the web notification surface grows any of those counterparts.
+
+---
+
+### WD-075 — the Badge notifications page sets no badge at this origin
+
+- **Control**: the Gallery's Badge notifications page.
+- **WinUI does**: set or clear the badge from `SetBadgeCountButton_Click`
+  (`BadgeNotificationManagerPage.xaml.cs:24`), `ClearBadgeButton_Click` (`:33`),
+  `SetBadgeGlyphButton_Click` (`:41`), `BadgeCountBox_ValueChanged` (`:50`), and
+  `BadgeNotificationGlyphsCombo_SelectionChanged` (`:61`). Each is already guarded by
+  `NativeMethods.IsAppPackaged` upstream (`:26`, `:35`, `:43`, `:52`, `:63`).
+- **We do**: render the controls, live substitutions, and inert buttons.
+- **Why accepted**: this is D42's origin-gated kind. At the Gallery's plain-HTTP gateway origin
+  `navigator.setAppBadge` and `navigator.clearAppBadge` are `undefined`; in the same browser
+  `setAppBadge` is a function at a secure origin. The original likewise declines the effect
+  when it is not packaged.
+- **Would reconsider if**: the Gallery is served from a secure origin where the Badging API is
+  available.
+
+---
+
+### WD-076 — a badge glyph has no web analogue
+
+- **Control**: the Badge notifications page's glyph example.
+- **WinUI does**: call `SetBadgeAsGlyph` (`BadgeNotificationManagerPage.xaml.cs:45`) with one of
+  thirteen `BadgeNotificationGlyph` values.
+- **We do**: render the thirteen glyph names in the options pane and the live source
+  substitution, but no badge effect.
+- **Why accepted**: this is D42's second kind. The web Badging API takes
+  `setAppBadge(contents?: number)` and nothing else; the selector is visual, while the effect
+  has no counterpart.
+- **Would reconsider if**: the Badging API accepts named glyphs or an equivalent badge visual.
+
+---
+
+### WD-077 — the JumpList page changes no jump list, at any origin
+
+- **Control**: the Gallery's JumpList page.
+- **WinUI does**: change the jump list from `AddTasksButton_Click` (`JumpListPage.xaml.cs:19`),
+  `ClearTasksButton_Click` (`:42`), and `AddCustomGroupButton_Click` (`:54`). Each returns early
+  when `!NativeMethods.IsAppPackaged` (`:21-24`, `:44-47`, `:56-59`), and the page carries its
+  own warning `InfoBar` (`JumpListPage.xaml:12-14`).
+- **We do**: reproduce that warning and render inert buttons.
+- **Why accepted**: this is D42's second kind. There is no `navigator.jumpList`,
+  `navigator.shortcuts`, or `navigator.getInstalledRelatedApps`. The nearest web relative is
+  the Web App Manifest's static `shortcuts` member, which an installed PWA's user agent reads,
+  not a runtime API a page can call.
+- **Would reconsider if**: browsers expose a runtime jump-list API with add, clear, and grouped
+  item operations.
