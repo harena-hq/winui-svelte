@@ -277,6 +277,12 @@ export const TOGGLEBUTTON_KEYS = {
 		'Pre-Fluent ToggleButton *ThemeBrush family, listed for EXCLUDED'
 };
 
+export const HYPERLINK_KEYS = {
+	HyperlinkForeground: 'Hyperlink foreground, at rest',
+	HyperlinkForegroundPointerOver: 'Hyperlink foreground, pointer over',
+	HyperlinkForegroundPressed: 'Hyperlink foreground, pressed'
+};
+
 export const HYPERLINKBUTTON_KEYS = {
 	HyperlinkButtonBorderThemeThickness: 'HyperlinkButton, the border width',
 	HyperlinkButtonBackground: 'HyperlinkButton background, at rest',

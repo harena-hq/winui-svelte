@@ -996,6 +996,9 @@
 	--winui-HyperlinkButtonBorderBrushPressed: var(--winui-SubtleFillColorTransparentBrush);
 	--winui-HyperlinkButtonBorderBrushDisabled: var(--winui-SubtleFillColorTransparentBrush);
 	--winui-HyperlinkButtonBorderThemeThickness: 1px;
+	--winui-HyperlinkForeground: var(--winui-AccentTextFillColorPrimaryBrush);
+	--winui-HyperlinkForegroundPointerOver: var(--winui-AccentTextFillColorSecondaryBrush);
+	--winui-HyperlinkForegroundPressed: var(--winui-AccentTextFillColorTertiaryBrush);
 	--winui-ListViewItemDisabledThemeOpacity: 0.3;
 	--winui-ListViewItemMinWidth: 88px;
 	--winui-ListViewItemMinHeight: 40px;
@@ -3068,6 +3071,9 @@
 	--winui-HyperlinkButtonBorderBrushPressed: var(--winui-SubtleFillColorTransparentBrush);
 	--winui-HyperlinkButtonBorderBrushDisabled: var(--winui-SubtleFillColorTransparentBrush);
 	--winui-HyperlinkButtonBorderThemeThickness: 1px;
+	--winui-HyperlinkForeground: var(--winui-AccentTextFillColorPrimaryBrush);
+	--winui-HyperlinkForegroundPointerOver: var(--winui-AccentTextFillColorSecondaryBrush);
+	--winui-HyperlinkForegroundPressed: var(--winui-AccentTextFillColorTertiaryBrush);
 	--winui-ListViewItemDisabledThemeOpacity: 0.3;
 	--winui-ListViewItemMinWidth: 88px;
 	--winui-ListViewItemMinHeight: 40px;
@@ -4934,6 +4940,9 @@
 		--winui-HyperlinkButtonBorderBrushPressed: var(--winui-SubtleFillColorTransparentBrush);
 		--winui-HyperlinkButtonBorderBrushDisabled: var(--winui-SubtleFillColorTransparentBrush);
 		--winui-HyperlinkButtonBorderThemeThickness: 1px;
+		--winui-HyperlinkForeground: var(--winui-AccentTextFillColorPrimaryBrush);
+		--winui-HyperlinkForegroundPointerOver: var(--winui-AccentTextFillColorSecondaryBrush);
+		--winui-HyperlinkForegroundPressed: var(--winui-AccentTextFillColorTertiaryBrush);
 		--winui-ListViewItemDisabledThemeOpacity: 0.3;
 		--winui-ListViewItemMinWidth: 88px;
 		--winui-ListViewItemMinHeight: 40px;
@@ -6824,6 +6833,9 @@
 	--winui-HyperlinkButtonBorderBrushPressed: var(--winui-SystemControlTransparentBrush);
 	--winui-HyperlinkButtonBorderBrushDisabled: var(--winui-SystemControlTransparentBrush);
 	--winui-HyperlinkButtonBorderThemeThickness: 1px;
+	--winui-HyperlinkForeground: var(--winui-SystemControlHyperlinkTextBrush);
+	--winui-HyperlinkForegroundPointerOver: var(--winui-SystemControlPageTextBaseMediumBrush);
+	--winui-HyperlinkForegroundPressed: var(--winui-SystemColorHighlightColor);
 	--winui-ListViewItemBackground: var(--winui-SystemColorWindowColor);
 	--winui-ListViewItemBackgroundPointerOver: var(--winui-SystemColorHighlightColor);
 	--winui-ListViewItemBackgroundPressed: var(--winui-SystemColorHighlightColor);

@@ -134,13 +134,19 @@ The alternative — leaving `dir` to the rest spread and emitting `dir="auto"` a
 the consumer's value in exactly the same case while making the prop invisible, so it hides the
 cost instead of removing it.
 
-**The cases, by name. Two, both `dir`:**
+**The cases, by name:**
 
 - **`TextBlock`**, for `TextAlignment="DetectFromContent"`, as above.
 - **`Run`**, for `FlowDirection`. `Run_FlowDirection` (`Indexes.g.h:2082`) is a real XAML member
   with no name of its own in HTML — `dir` is what expresses it — so the component has to write
   `dir` whenever `flowDirection` is set and leave the consumer's alone otherwise. Added by the
   unit that built the `Inlines` model.
+- **`Hyperlink`**, for `tabindex`. `IsTabStop` and `TabIndex` are two XAML members that HTML
+  spells with one attribute, so `tabStop === false` has to write `-1` over whatever `tabindex`
+  the consumer passed, and `tabStop === true` has to hand that value back untouched. Added by the
+  unit that built `Hyperlink`, after the independent review found the first draft erasing a
+  consumer's `tabindex` on every link that was a tab stop — which is the same defect the rule
+  below describes, reached by a different member.
 
 **And the reason this rule is about declaring rather than re-reading.** An attribute written
 after a spread overrides that spread's value **even when what it writes is `undefined`**, so
