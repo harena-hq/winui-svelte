@@ -1821,3 +1821,45 @@ changes`.
   that direction and a side-by-side against the original shows the neutrals beside it resolving
   differently — at which point the fix is the literal mark character and a way to know the
   parent's direction, not a different CSS property.
+
+---
+
+### WD-081 — a Hyperlink with no NavigateUri can be clicked but not reached
+
+- **Control**: `Hyperlink`.
+- **WinUI does**: make every `Hyperlink` focusable and keyboard-invokable, whether or not it has
+  a `NavigateUri`. `CHyperlink::IsFocusable` (`Hyperlink.h:81-89`) tests `m_isTabStop` and
+  nothing else, and `m_isTabStop` defaults to true (`:118`). `IsLinkNavigationKey`
+  (`Hyperlink.cpp:416-418`) is `VK_RETURN || VK_SPACE`; the keydown listener (`:369-384`) puts
+  the link into `HYPERLINK_PRESSED` while the key is held, and the keyup listener (`:343-364`)
+  returns it to normal and calls `Navigate()`. `Navigate()` (`:543-581`) raises the `Click` event
+  without consulting `m_strNavigateUri` at all, which is why the Click-only shape works upstream.
+- **We do**: render it as an `<a>` with no `href`, which the browser does not put in the tab
+  order. Measured on the reference guest, tabbing through `/dev/hyperlink` reaches every
+  specimen except that one. A pointer click still works, because `onclick` reaches the element
+  through the rest props.
+- **Why accepted**: the attribute half is one line and it is the wrong half to ship alone.
+  Measured: adding `tabindex="0"` to the href-less anchor restores focus and `:focus-visible`,
+  and **Enter fires no click and neither does Space**, while the same key on a link with an
+  `href` does. It would produce a stop in the tab order that does nothing, which is worse for a
+  keyboard user than not being in it. Parity needs three more pieces — a keydown/keyup pair for
+  both keys synthesising the click, a pressed colour the keyboard can reach (CSS `:active` does
+  not fire from the keyboard on an hrefless anchor; measured, the colour never moved), and
+  `role="link"`, since an `<a>` without `href` carries no implicit role. The first two are a
+  keyboard-activation mechanism rather than a transcription, and this project's bar is the
+  visual one.
+- **What this costs in this Gallery**: eight sites, which is every `<Hyperlink>` in the pinned
+  checkout that writes `Click` and no `NavigateUri` —
+  `Controls/DesignGuidance/ColorSections/BackgroundSection.xaml:362`, `:363`, `:375`, `:376`,
+  `Samples/XamlResources/XamlResourcesPage.xaml:108`,
+  `Samples/AppWindowTitleBar/AppWindowTitleBarPage.xaml:14`, `Samples/Acrylic/AcrylicPage.xaml:45`
+  and `Samples/TitleBar/TitleBarPage.xaml:26`. Seven of the eight are on pages this reproduction
+  has not built. The eighth is built and costs nothing: `AcrylicPage.xaml:45` navigates to
+  another Gallery item, so `styles/acrylic` reproduces it as an anchor with a real `href`, and an
+  anchor with an `href` is a tab stop. That is the shape of the escape — a `Click` whose handler
+  navigates is a `NavigateUri` in this reproduction, and only a `Click` that does something else
+  lands in this row.
+- **Would reconsider if**: the unit that builds any of those pages needs its links reachable, at
+  which point the fix is the attribute **and** the handler together and it is worth its own pass.
+  Not "a page uses the Click-only shape" — six already do, and the trade is taken with them
+  there.

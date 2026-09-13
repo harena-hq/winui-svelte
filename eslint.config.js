@@ -39,5 +39,20 @@ export default ts.config(
 				parser: ts.parser
 			}
 		}
+	},
+	// `svelte/no-navigation-without-resolve` asks that every `href` go through SvelteKit's
+	// `resolve()`, so an app served under a base path still links correctly. That is right for
+	// the Gallery and inapplicable to the library, which is not a SvelteKit app and must not
+	// import from `$app/*` — C3 and C6 both exist to keep it free of the consumer's framework.
+	// Every `href` a library component renders arrives as a prop, and resolving it is the
+	// consumer's job; there is nothing here for the rule to protect.
+	//
+	// Scoped to the package rather than disabled in the one file that tripped it. A per-file
+	// comment reads as "this component is an exception", and it is not: no component in this
+	// package can satisfy the rule, and `HyperlinkButton` only avoids it by rendering its anchor
+	// through `<svelte:element>`, which the rule does not inspect.
+	{
+		files: ['packages/winui-svelte/**/*.svelte'],
+		rules: { 'svelte/no-navigation-without-resolve': 'off' }
 	}
 );
