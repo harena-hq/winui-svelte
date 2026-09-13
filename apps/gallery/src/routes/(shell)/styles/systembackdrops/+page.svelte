@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Button } from 'winui-svelte';
+	import { Button, LineBreak, Run, TextBlock } from 'winui-svelte';
 	import ControlExample from '$lib/frame/ControlExample.svelte';
 	import ItemPage from '$lib/frame/ItemPage.svelte';
 	import { sampleOf } from '$lib/samples';
@@ -27,31 +27,32 @@
 	>
 		<!-- SystemBackdropsPage.xaml:25-41 — StackPanel containing the TextBlock and Button. -->
 		<div class="sample">
-			<!-- SystemBackdropsPage.xaml:26-39 — TextBlock with its inline LineBreak and bold Run
-			     children transcribed as HTML. -->
-			<p class="prose winui-BodyTextBlockStyle">
-				A window can use one of the following system backdrops:<br />
-				1. <strong>Mica</strong> — An opaque material that samples the desktop wallpaper once to
-				tint the window background. Best for main app windows.<br />
-				2. <strong>Mica Alt</strong> — A variant of Mica with stronger tinting. Recommended for apps
-				with a tabbed title bar.<br />
-				3. <strong>Desktop Acrylic (Base)</strong> — A semi-transparent material that shows a
-				blurred view of the content behind the window.<br />
-				4. <strong>Desktop Acrylic (Thin)</strong> — A lighter variant of Desktop Acrylic with more
-				transparency.<br /><br />
-				<strong>Mica vs. Acrylic:</strong> Mica is opaque and renders the desktop wallpaper within
-				the window background. Desktop Acrylic is semi-transparent and reveals a blurred view of
-				what is behind the window in real-time. Mica is more performant because it captures the
-				wallpaper only once, while Acrylic updates continuously.<br /><br />
-				There are three backdrop types in the API:<br />
-				• <strong>SystemBackdrop</strong> — The base class of every backdrop type.<br />
-				• <strong>MicaBackdrop</strong> — Applies the Mica material. Set the Kind property to switch
-				between Base and Alt.<br />
-				• <strong>DesktopAcrylicBackdrop</strong> — Applies the Desktop Acrylic material (Base type
-				only).<br /><br />
+			<!-- SystemBackdropsPage.xaml:26-39 — TextBlock with LineBreak and bold Run component
+			     children of the same names. -->
+			<TextBlock textStyle="BodyTextBlockStyle" textWrapping="wrapWholeWords">
+				A window can use one of the following system backdrops:<LineBreak />
+				1. <Run fontWeight={700}>Mica</Run> — An opaque material that samples the desktop wallpaper once
+				to tint the window background. Best for main app windows.<LineBreak />
+				2. <Run fontWeight={700}>Mica Alt</Run> — A variant of Mica with stronger tinting. Recommended
+				for apps with a tabbed title bar.<LineBreak />
+				3. <Run fontWeight={700}>Desktop Acrylic (Base)</Run> — A semi-transparent material that shows
+				a blurred view of the content behind the window.<LineBreak />
+				4. <Run fontWeight={700}>Desktop Acrylic (Thin)</Run> — A lighter variant of Desktop Acrylic with
+				more transparency.<LineBreak /><LineBreak />
+				<Run fontWeight={700}>Mica vs. Acrylic:</Run> Mica is opaque and renders the desktop wallpaper
+				within the window background. Desktop Acrylic is semi-transparent and reveals a blurred view of
+				what is behind the window in real-time. Mica is more performant because it captures the wallpaper
+				only once, while Acrylic updates continuously.<LineBreak /><LineBreak />
+				There are three backdrop types in the API:<LineBreak />
+				• <Run fontWeight={700}>SystemBackdrop</Run> — The base class of every backdrop type.<LineBreak
+				/>
+				• <Run fontWeight={700}>MicaBackdrop</Run> — Applies the Mica material. Set the Kind property
+				to switch between Base and Alt.<LineBreak />
+				• <Run fontWeight={700}>DesktopAcrylicBackdrop</Run> — Applies the Desktop Acrylic material (Base
+				type only).<LineBreak /><LineBreak />
 				All Mica variants require Windows 11 build 22000 or later. In-app acrylic (AcrylicBrush) is a
 				separate XAML brush used within UI elements, not a window backdrop.
-			</p>
+			</TextBlock>
 			<!-- SystemBackdropsPage.xaml:40 — Button with a 10-pixel top margin.
 			     WD-041: this click handler deliberately has no web equivalent; see docs/divergences.md. -->
 			<Button class="show-window">Show window</Button>
@@ -66,15 +67,17 @@
 	>
 		<!-- SystemBackdropsPage.xaml:45-53 — StackPanel containing the TextBlock and Button. -->
 		<div class="sample">
-			<!-- SystemBackdropsPage.xaml:46-51 — TextBlock with its trailing LineBreak. -->
-			<p class="prose prose-trailing-break winui-BodyTextBlockStyle">
+			<!-- SystemBackdropsPage.xaml:46-51 — TextBlock with LineBreak and bold Run component
+			     children of the same names. -->
+			<TextBlock textStyle="BodyTextBlockStyle" textWrapping="wrapWholeWords">
 				MicaController provides a customizable way to apply the Mica material. You can modify:
-				FallbackColor, Kind, LuminosityOpacity, TintColor, and TintOpacity.<br /><br />
-				There are 2 kinds of Mica:<br />
-				1. <strong>Base</strong> — The default, lighter appearance.<br />
-				2. <strong>Alt</strong> — A darker appearance with stronger tinting of the desktop
-				wallpaper.<br />
-			</p>
+				FallbackColor, Kind, LuminosityOpacity, TintColor, and TintOpacity.<LineBreak /><LineBreak
+				/>
+				There are 2 kinds of Mica:<LineBreak />
+				1. <Run fontWeight={700}>Base</Run> — The default, lighter appearance.<LineBreak />
+				2. <Run fontWeight={700}>Alt</Run> — A darker appearance with stronger tinting of the desktop
+				wallpaper.<LineBreak />
+			</TextBlock>
 			<!-- SystemBackdropsPage.xaml:52 — Button with a 10-pixel top margin.
 			     WD-041: this click handler deliberately has no web equivalent; see docs/divergences.md. -->
 			<Button class="show-window">Show window</Button>
@@ -90,17 +93,19 @@
 	>
 		<!-- SystemBackdropsPage.xaml:57-65 — StackPanel containing the TextBlock and Button. -->
 		<div class="sample">
-			<!-- SystemBackdropsPage.xaml:58-63 — TextBlock with its inline LineBreak and bold Run
-			     children transcribed as HTML. -->
-			<p class="prose winui-BodyTextBlockStyle">
+			<!-- SystemBackdropsPage.xaml:58-63 — TextBlock with LineBreak and bold Run component
+			     children of the same names. -->
+			<TextBlock textStyle="BodyTextBlockStyle" textWrapping="wrapWholeWords">
 				DesktopAcrylicController provides a customizable way to apply the Desktop Acrylic material.
-				It supports the same customization properties as MicaController.<br /><br />
-				There are 2 kinds of Desktop Acrylic:<br />
-				1. <strong>Base</strong> — The default, darker appearance with less transparency.<br />
-				2. <strong>Thin</strong> — A lighter appearance with more transparency.<br /><br />
+				It supports the same customization properties as MicaController.<LineBreak /><LineBreak />
+				There are 2 kinds of Desktop Acrylic:<LineBreak />
+				1. <Run fontWeight={700}>Base</Run> — The default, darker appearance with less transparency.<LineBreak
+				/>
+				2. <Run fontWeight={700}>Thin</Run> — A lighter appearance with more transparency.<LineBreak
+				/><LineBreak />
 				Note: DesktopAcrylicBackdrop always uses the Base kind. To use the Thin kind, you must use DesktopAcrylicController
 				directly.
-			</p>
+			</TextBlock>
 			<!-- SystemBackdropsPage.xaml:64 — Button with a 10-pixel top margin.
 			     WD-041: this click handler deliberately has no web equivalent; see docs/divergences.md. -->
 			<Button class="show-window">Show window</Button>
@@ -109,19 +114,6 @@
 </ItemPage>
 
 <style>
-	/* SystemBackdropsPage.xaml:26-39, :46-51 and :58-63 — TextBlock has no browser-default
-	   paragraph margin. */
-	.prose {
-		margin: 0;
-	}
-
-	/* SystemBackdropsPage.xaml:50 — the trailing LineBreak needs an inline box after it because
-	   CSS's trailing br alone does not create XAML's empty final line. */
-	.prose-trailing-break::after {
-		content: '';
-		display: inline-block;
-	}
-
 	/* SystemBackdropsPage.xaml:40, :52 and :64 — each Button has Margin="0,10,0,0". */
 	.sample :global(.show-window) {
 		/* c1-allow: SystemBackdropsPage.xaml:40, :52 and :64 — Button top margin. */

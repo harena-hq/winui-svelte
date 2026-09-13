@@ -92,8 +92,10 @@
 <!-- AcrylicPage.xaml:38-258 — the page's root StackPanel is supplied by ItemPage's content
      frame, while this component supplies the page content and the Gallery item header. -->
 <ItemPage {item}>
-	<!-- AcrylicPage.xaml:39-47 — the page's RichTextBlock and Paragraph. The paragraph has no
-	     trailing LineBreak, so this page deliberately has no lead::after rule. -->
+	<!-- AcrylicPage.xaml:39-47 — the page's RichTextBlock and Paragraph. It stays plain HTML
+	     because that is what it reproduces: a RichTextBlock holding a Paragraph, and neither is a
+	     component yet. The paragraph ends in text rather than a LineBreak, so there is no empty
+	     final line to reproduce either — which is what TextBlock's own `::after` rule is for. -->
 	<p class="lead winui-BodyTextBlockStyle">
 		Acrylic Brush might fall back to SolidColorbrush in certain scenarios. If you can't see the
 		Acrylic effect, please refer to
@@ -220,8 +222,9 @@
 </ItemPage>
 
 <style>
-	/* AcrylicPage.xaml:39-47 — Paragraph has no own margin in the source, and its missing
-	   trailing LineBreak is why no lead::after rule exists. */
+	/* AcrylicPage.xaml:39-47 — Paragraph has no own margin in the source. It has no trailing
+	   LineBreak either, so nothing here reproduces an empty final line; TextBlock carries that
+	   rule for the blocks that do, and this page is not one of them. */
 	.lead {
 		margin: 0;
 	}
