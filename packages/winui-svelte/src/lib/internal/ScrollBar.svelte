@@ -369,6 +369,16 @@
 			width var(--winui-ScrollBarContractDuration) cubic-bezier(0, 0, 0, 1),
 			transform var(--winui-ScrollBarContractDuration) cubic-bezier(0, 0, 0, 1),
 			background-color var(--winui-ScrollBarColorChangeDuration) linear;
+		/* The same two keyframes carry `BeginTime="{StaticResource ScrollBarContractBeginTime}"`,
+		   and the whole Expanded-to-Collapsed storyboard (ScrollBar_themeresources.xaml:530-555)
+		   begins there — the arrows' and the track's opacity on the same tick as the thumb's
+		   width. Without this the thumb starts shrinking the instant the pointer leaves and the
+		   arrows still wait half a second, so the two come apart. The colour keeps a delay of
+		   none: it is a `VisualState.Setter` (`:557-561`), which XAML applies on entering the
+		   state rather than through the storyboard. This longhand has to follow the shorthand
+		   above, which resets it. */
+		transition-delay:
+			var(--winui-ScrollBarContractBeginTime), var(--winui-ScrollBarContractBeginTime), 0s;
 	}
 
 	.scroll-bar[data-orientation='horizontal'] .thumb {
@@ -380,7 +390,10 @@
 		transition-property: height, transform, background-color;
 	}
 
-	/* ScrollBar_themeresources.xaml:528-670 delays only the rail, never the thumb geometry. */
+	/* ScrollBar_themeresources.xaml:563-598 — the Expanded state's whole storyboard begins at
+	   ScrollBarExpandBeginTime, the thumb's width and offset (`:586`, `:589`) included. The rail's
+	   own brushes are Setters (`:564-573`) and land at once, which is why nothing here is
+	   delayed and the two rules below are. */
 	.scroll-bar:hover {
 		background: var(--winui-ScrollBarBackgroundPointerOver);
 		border-color: var(--winui-ScrollBarBorderBrushPointerOver);
@@ -404,6 +417,8 @@
 		transition-duration:
 			var(--winui-ScrollBarExpandDuration), var(--winui-ScrollBarExpandDuration),
 			var(--winui-ScrollBarColorChangeDuration);
+		transition-delay:
+			var(--winui-ScrollBarExpandBeginTime), var(--winui-ScrollBarExpandBeginTime), 0s;
 	}
 
 	.scroll-bar[data-orientation='horizontal']:hover .thumb {
@@ -413,6 +428,8 @@
 		transition-duration:
 			var(--winui-ScrollBarExpandDuration), var(--winui-ScrollBarExpandDuration),
 			var(--winui-ScrollBarColorChangeDuration);
+		transition-delay:
+			var(--winui-ScrollBarExpandBeginTime), var(--winui-ScrollBarExpandBeginTime), 0s;
 	}
 
 	.panning-thumb {
