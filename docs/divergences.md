@@ -1390,3 +1390,52 @@ changes`.
   sounds would put this project's invention where the original's assets are.
 - **Would reconsider if**: the pinned sources carry the element sounds, or this reproduction
   gains a sound set it can cite.
+
+---
+
+### WD-059 — the sample videos are re-encoded
+
+- **Control**: the Gallery's MediaPlayerElement page.
+- **WinUI does**: play `Assets/SampleMedia/ladybug.wmv` and `fishes.wmv` — VC-1 video at
+  512x288 with WMA Pro audio in an ASF container, 12.144 s and 12.480 s of playable content
+  behind a 5.000 s preroll.
+- **We do**: serve the same frames at the same 512x288 as H.264 in MP4 with AAC audio,
+  `apps/gallery/static/ladybug.mp4` and `fishes.mp4`. Ladybug reads 12.19 s, which the panel's
+  whole-second display renders identically.
+- **Why accepted**: no browser plays VC-1 in ASF, and WMV is the only asset in the pinned
+  Gallery that has to be converted — its images are JPEG, PNG, GIF and SVG, which Edge decodes
+  unchanged. The bytes are not the pin's; the pixels and the timing are.
+- **Would reconsider if**: a browser ships VC-1, or the pinned Gallery replaces its sample media
+  with a web codec.
+
+---
+
+### WD-060 — cast, captions, audio tracks and track navigation do nothing
+
+- **Control**: `MediaTransportControls`.
+- **WinUI does**: `CastButton` opens the system's Miracast picker; `CCSelectionButton` and
+  `AudioTracksSelectionButton` list the source's closed-caption and audio tracks and switch
+  between them; `PreviousTrackButton` and `NextTrackButton` move through a `MediaPlaybackList`.
+- **We do**: render all five buttons, give them their glyphs, labels and focus behaviour, and
+  have them change nothing.
+- **Why accepted**: one HTML video element has one source rather than a `MediaPlaybackList`; the
+  Remote Playback API is the nearest cast equivalent and is unavailable on the reference origin;
+  and the two sample sources carry neither a caption track nor a second audio track, so every
+  track list this reproduction renders is empty.
+- **Would reconsider if**: the library adds a browser-backed playlist or text/audio-track source,
+  or the reference origin exposes Remote Playback.
+
+---
+
+### WD-061 — rewind steps the rate down, it does not play backwards
+
+- **Control**: `MediaTransportControls`.
+- **WinUI does**: `RewindButton` plays the source backwards, stepping through negative playback
+  rates.
+- **We do**: step the rate one place down `AvailablePlaybackRateList`
+  (`MediaTransportControls_partial.cpp:63`), the mirror of what fast forward does upward, and
+  stop at 0.25.
+- **Why accepted**: Chromium rejects a negative `HTMLMediaElement.playbackRate`; playing
+  backwards would require decoding and presenting frames in reverse by hand.
+- **Would reconsider if**: Chromium supports negative playback rates, or a browser supplies a
+  native reverse-playback primitive.

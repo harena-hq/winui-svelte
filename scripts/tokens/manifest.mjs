@@ -2872,7 +2872,14 @@ export const DOUBLE_LENGTHS = {
 	AnnotatedScrollBarTooltipMaxWidth: 'the width the detail-label tooltip never exceeds',
 	AnnotatedScrollBarTooltipMinHeight: 'the height the detail-label tooltip never goes under',
 	PersonPictureEllipseStrokeThickness: 'PersonPicture ellipse border width',
-	PersonPictureEllipseBadgeStrokeThickness: 'PersonPicture badge border width'
+	PersonPictureEllipseBadgeStrokeThickness: 'PersonPicture badge border width',
+	MediaTransportControlsBorderThickness: 'MediaTransportControls panel border width',
+	MediaTransportControlsAppBarButtonHeight: 'MediaTransportControls command button height',
+	MediaTransportControlsAppBarButtonWidth: 'MediaTransportControls command button width',
+	MediaTransportControlsSliderHeight: 'MediaTransportControls slider height',
+	MediaTransportControlsSliderWidth: 'MediaTransportControls volume slider width',
+	MediaTransportControlsMinWidth: 'MediaTransportControls minimum width',
+	MediaTransportControlsMaxWidth: 'MediaTransportControls maximum width'
 };
 
 /**
@@ -4546,6 +4553,40 @@ export const PERSONPICTURE_KEYS = {
 	PersonPictureEllipseBadgeStrokeThemeBrush: 'PersonPicture badge border',
 	PersonPictureEllipseBadgeStrokeThickness: 'PersonPicture badge border width',
 	PersonPictureBadgeGridMargin: 'PersonPicture badge overhang margin'
+};
+
+/**
+ * `MediaTransportControls_themeresources.xaml`'s dictionary, whole. The three
+ * `MediaTransportControls*` entries the template overrides inside a resource scope —
+ * `AppBarButtonInnerBorderMargin`, `AppBarButtonContentViewboxCollapsedMargin` and
+ * `AppBarThemeCompactHeight` at `:311`-`:313` — are not here: they are AppBarButton's own
+ * keys, already emitted, and the panel re-declares them locally the way the template does.
+ *
+ * `MTCMediaFontSize` and `MTCMediaFontFamily` are read by `MediaTextBlockStyle` at `:99`
+ * and `:100`, and are defined in the framework pin rather than this one (`generic.xaml:66`
+ * and `:18`). They are not here either: the same style sets
+ * `Style="{ThemeResource CaptionTextBlockStyle}"`, whose ramp already carries the 12px this
+ * reproduction emits, so the volume readout takes the Caption class and needs neither key.
+ */
+export const MEDIATRANSPORTCONTROLS_KEYS = {
+	MediaTransportControlsTitleSafeBounds: 'MediaTransportControls title-safe bounds',
+	MediaTransportControlsPanelBackground: 'MediaTransportControls panel fill',
+	MediaTransportControlsFlyoutBackground: 'MediaTransportControls flyout fill',
+	MediaTransportControlsThumbBorderBackground: 'MediaTransportControls slider thumb border',
+	MediaTransportControlsFillTimeElapsedText: 'MediaTransportControls elapsed time foreground',
+	MediaTransportControlsFillMediaText: 'MediaTransportControls media text foreground',
+	MediaTransportControlsBorderBrush: 'MediaTransportControls panel border',
+	MediaTransportControlsMargin: 'MediaTransportControls inset inside the player',
+	MediaTransportControlsProgressSliderMargin: 'MediaTransportControls progress slider margin',
+	MediaTransportControlsProgressSliderCompactMargin:
+		'MediaTransportControls progress slider margin, compact',
+	MediaTransportControlsBorderThickness: 'MediaTransportControls panel border width',
+	MediaTransportControlsAppBarButtonHeight: 'MediaTransportControls command button height',
+	MediaTransportControlsAppBarButtonWidth: 'MediaTransportControls command button width',
+	MediaTransportControlsSliderHeight: 'MediaTransportControls slider height',
+	MediaTransportControlsSliderWidth: 'MediaTransportControls volume slider width',
+	MediaTransportControlsMinWidth: 'MediaTransportControls minimum width',
+	MediaTransportControlsMaxWidth: 'MediaTransportControls maximum width'
 };
 
 /**

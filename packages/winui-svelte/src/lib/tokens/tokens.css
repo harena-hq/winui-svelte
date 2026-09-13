@@ -1020,6 +1020,27 @@
 	--winui-ListViewItemSelectionIndicatorPointerOverBrush: var(--winui-AccentFillColorDefaultBrush);
 	--winui-ListViewItemSelectionIndicatorPressedBrush: var(--winui-AccentFillColorDefaultBrush);
 	--winui-ListViewItemSelectionIndicatorDisabledBrush: var(--winui-AccentFillColorDisabledBrush);
+	--winui-MediaTransportControlsTitleSafeBounds: 0px 48px 27px 48px;
+	--winui-MediaTransportControlsPanelBackground: var(--winui-AcrylicInAppFillColorDefaultBrush);
+	--winui-MediaTransportControlsFlyoutBackground: var(
+		--winui-AcrylicBackgroundFillColorDefaultBrush
+	);
+	--winui-MediaTransportControlsThumbBorderBackground: var(
+		--winui-ControlStrongFillColorDefaultBrush
+	);
+	--winui-MediaTransportControlsFillTimeElapsedText: var(--winui-TextFillColorSecondaryBrush);
+	--winui-MediaTransportControlsFillMediaText: var(--winui-TextFillColorPrimaryBrush);
+	--winui-MediaTransportControlsBorderBrush: var(--winui-SurfaceStrokeColorFlyoutBrush);
+	--winui-MediaTransportControlsMargin: 12px;
+	--winui-MediaTransportControlsProgressSliderMargin: 2px 7px 1px 7px;
+	--winui-MediaTransportControlsProgressSliderCompactMargin: -1px 8px 1px 12px;
+	--winui-MediaTransportControlsBorderThickness: 1px;
+	--winui-MediaTransportControlsAppBarButtonHeight: 40px;
+	--winui-MediaTransportControlsAppBarButtonWidth: 40px;
+	--winui-MediaTransportControlsSliderHeight: 32px;
+	--winui-MediaTransportControlsSliderWidth: 190px;
+	--winui-MediaTransportControlsMinWidth: 296px;
+	--winui-MediaTransportControlsMaxWidth: 720px;
 	--winui-MenuFlyoutSeparatorBackground: var(--winui-DividerStrokeColorDefaultBrush);
 	--winui-MenuFlyoutItemBackground: var(--winui-SubtleFillColorTransparentBrush);
 	--winui-MenuFlyoutItemBackgroundPointerOver: var(--winui-SubtleFillColorSecondaryBrush);
@@ -3068,6 +3089,27 @@
 	--winui-ListViewItemSelectionIndicatorPointerOverBrush: var(--winui-AccentFillColorDefaultBrush);
 	--winui-ListViewItemSelectionIndicatorPressedBrush: var(--winui-AccentFillColorDefaultBrush);
 	--winui-ListViewItemSelectionIndicatorDisabledBrush: var(--winui-AccentFillColorDisabledBrush);
+	--winui-MediaTransportControlsTitleSafeBounds: 0px 48px 27px 48px;
+	--winui-MediaTransportControlsPanelBackground: var(--winui-AcrylicInAppFillColorDefaultBrush);
+	--winui-MediaTransportControlsFlyoutBackground: var(
+		--winui-AcrylicBackgroundFillColorDefaultBrush
+	);
+	--winui-MediaTransportControlsThumbBorderBackground: var(
+		--winui-ControlStrongFillColorDefaultBrush
+	);
+	--winui-MediaTransportControlsFillTimeElapsedText: var(--winui-TextFillColorSecondaryBrush);
+	--winui-MediaTransportControlsFillMediaText: var(--winui-TextFillColorPrimaryBrush);
+	--winui-MediaTransportControlsBorderBrush: var(--winui-SurfaceStrokeColorFlyoutBrush);
+	--winui-MediaTransportControlsMargin: 12px;
+	--winui-MediaTransportControlsProgressSliderMargin: 2px 7px 1px 7px;
+	--winui-MediaTransportControlsProgressSliderCompactMargin: -1px 8px 1px 12px;
+	--winui-MediaTransportControlsBorderThickness: 1px;
+	--winui-MediaTransportControlsAppBarButtonHeight: 40px;
+	--winui-MediaTransportControlsAppBarButtonWidth: 40px;
+	--winui-MediaTransportControlsSliderHeight: 32px;
+	--winui-MediaTransportControlsSliderWidth: 190px;
+	--winui-MediaTransportControlsMinWidth: 296px;
+	--winui-MediaTransportControlsMaxWidth: 720px;
 	--winui-MenuFlyoutSeparatorBackground: var(--winui-DividerStrokeColorDefaultBrush);
 	--winui-MenuFlyoutItemBackground: var(--winui-SubtleFillColorTransparentBrush);
 	--winui-MenuFlyoutItemBackgroundPointerOver: var(--winui-SubtleFillColorSecondaryBrush);
@@ -4914,6 +4956,27 @@
 		);
 		--winui-ListViewItemSelectionIndicatorPressedBrush: var(--winui-AccentFillColorDefaultBrush);
 		--winui-ListViewItemSelectionIndicatorDisabledBrush: var(--winui-AccentFillColorDisabledBrush);
+		--winui-MediaTransportControlsTitleSafeBounds: 0px 48px 27px 48px;
+		--winui-MediaTransportControlsPanelBackground: var(--winui-AcrylicInAppFillColorDefaultBrush);
+		--winui-MediaTransportControlsFlyoutBackground: var(
+			--winui-AcrylicBackgroundFillColorDefaultBrush
+		);
+		--winui-MediaTransportControlsThumbBorderBackground: var(
+			--winui-ControlStrongFillColorDefaultBrush
+		);
+		--winui-MediaTransportControlsFillTimeElapsedText: var(--winui-TextFillColorSecondaryBrush);
+		--winui-MediaTransportControlsFillMediaText: var(--winui-TextFillColorPrimaryBrush);
+		--winui-MediaTransportControlsBorderBrush: var(--winui-SurfaceStrokeColorFlyoutBrush);
+		--winui-MediaTransportControlsMargin: 12px;
+		--winui-MediaTransportControlsProgressSliderMargin: 2px 7px 1px 7px;
+		--winui-MediaTransportControlsProgressSliderCompactMargin: -1px 8px 1px 12px;
+		--winui-MediaTransportControlsBorderThickness: 1px;
+		--winui-MediaTransportControlsAppBarButtonHeight: 40px;
+		--winui-MediaTransportControlsAppBarButtonWidth: 40px;
+		--winui-MediaTransportControlsSliderHeight: 32px;
+		--winui-MediaTransportControlsSliderWidth: 190px;
+		--winui-MediaTransportControlsMinWidth: 296px;
+		--winui-MediaTransportControlsMaxWidth: 720px;
 		--winui-MenuFlyoutSeparatorBackground: var(--winui-DividerStrokeColorDefaultBrush);
 		--winui-MenuFlyoutItemBackground: var(--winui-SubtleFillColorTransparentBrush);
 		--winui-MenuFlyoutItemBackgroundPointerOver: var(--winui-SubtleFillColorSecondaryBrush);
@@ -6782,6 +6845,31 @@
 	);
 	--winui-ListViewItemSelectionIndicatorPressedBrush: var(--winui-SystemColorHighlightTextColor);
 	--winui-ListViewItemSelectionIndicatorDisabledBrush: var(--winui-SystemColorGrayTextColor);
+	--winui-MediaTransportControlsTitleSafeBounds: 0px 48px 27px 48px;
+	--winui-MediaTransportControlsPanelBackground: var(
+		--winui-SystemControlPageBackgroundAltMediumBrush
+	);
+	--winui-MediaTransportControlsFlyoutBackground: var(
+		--winui-SystemControlPageBackgroundAltMediumBrush
+	);
+	--winui-MediaTransportControlsThumbBorderBackground: var(
+		--winui-SystemControlBackgroundBaseMediumBrush
+	);
+	--winui-MediaTransportControlsFillTimeElapsedText: var(
+		--winui-SystemControlPageTextBaseMediumBrush
+	);
+	--winui-MediaTransportControlsFillMediaText: var(--winui-SystemControlForegroundBaseHighBrush);
+	--winui-MediaTransportControlsBorderBrush: var(--winui-SurfaceStrokeColorFlyoutBrush);
+	--winui-MediaTransportControlsMargin: 12px;
+	--winui-MediaTransportControlsProgressSliderMargin: 2px 7px 1px 7px;
+	--winui-MediaTransportControlsProgressSliderCompactMargin: -1px 8px 1px 12px;
+	--winui-MediaTransportControlsBorderThickness: 1px;
+	--winui-MediaTransportControlsAppBarButtonHeight: 40px;
+	--winui-MediaTransportControlsAppBarButtonWidth: 40px;
+	--winui-MediaTransportControlsSliderHeight: 32px;
+	--winui-MediaTransportControlsSliderWidth: 190px;
+	--winui-MediaTransportControlsMinWidth: 296px;
+	--winui-MediaTransportControlsMaxWidth: 720px;
 	--winui-MenuFlyoutSeparatorBackground: var(--winui-SystemColorWindowTextColorBrush);
 	--winui-MenuFlyoutItemBackground: var(--winui-SystemControlTransparentBrush);
 	--winui-MenuFlyoutItemBackgroundPointerOver: var(--winui-SystemColorHighlightColorBrush);
