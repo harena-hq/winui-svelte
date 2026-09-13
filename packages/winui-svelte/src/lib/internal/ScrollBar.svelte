@@ -349,7 +349,19 @@
 		   twelve, both measured on the guest. The whole thickness would consume the box. */
 		border: calc(var(--winui-ScrollBarThumbStrokeThickness) / 2) solid
 			var(--winui-ScrollBarThumbBorderBrush);
-		border-radius: var(--winui-ScrollBarCornerRadius);
+		/* The radius belongs to the fill, and the fill is the padding box — CSS gives a padding box
+		   the border box's radius less the border width, so a bare 3 here leaves the visible strip
+		   with none. `VerticalThumbTemplate` (ScrollBar_themeresources.xaml:394-395) is a Rectangle
+		   whose RadiusX/Y is ScrollBarCornerRadius and whose StrokeThickness is
+		   ScrollBarThumbStrokeThickness; a XAML Shape insets its path by half the stroke, so the
+		   path upstream rounds *is* the strip this border-clip leaves, and it rounds it by 3.
+		   Adding half the stroke back makes the padding box's radius 3 again, and CSS's own clamp to
+		   half the shorter side then reproduces XAML's: 1 across the resting 2, 3 across the
+		   hovered 6. Measured on the guest — the original's hovered fill widens 2, 4, 5, 6 over its
+		   first four rows and ours went to 6 on the first. */
+		border-radius: calc(
+			var(--winui-ScrollBarCornerRadius) + var(--winui-ScrollBarThumbStrokeThickness) / 2
+		);
 		background-clip: padding-box;
 		transform: translateX(calc(50% + var(--winui-ScrollBarThumbOffset)));
 		/* ScrollBar_themeresources.xaml:542-553, 586-597 sets KeySpline="0,0,0,1". */
