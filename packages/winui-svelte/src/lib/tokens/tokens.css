@@ -1818,6 +1818,20 @@
 	--winui-RadioButtonsColumnSpacing: 7px;
 	--winui-RadioButtonsRowSpacing: 8px;
 	--winui-RadioButtonsTopHeaderMargin: 0px 0px 8px 0px;
+	--winui-RatingControlUnselectedForeground: var(--winui-TextFillColorSecondaryBrush);
+	--winui-RatingControlSelectedForeground: var(--winui-AccentFillColorDefaultBrush);
+	--winui-RatingControlPlaceholderForeground: var(--winui-TextFillColorPrimaryBrush);
+	--winui-RatingControlPointerOverPlaceholderForeground: var(
+		--winui-ControlAltFillColorTertiaryBrush
+	);
+	--winui-RatingControlPointerOverUnselectedForeground: var(
+		--winui-ControlAltFillColorTertiaryBrush
+	);
+	--winui-RatingControlPointerOverSelectedForeground: var(--winui-AccentFillColorDefaultBrush);
+	--winui-RatingControlDisabledSelectedForeground: var(--winui-TextFillColorDisabledBrush);
+	--winui-RatingControlCaptionForeground: var(--winui-TextFillColorSecondaryBrush);
+	--winui-RatingControlFontSizeForRendering: 32px;
+	--winui-RatingControlItemSpacing: 8px;
 	--winui-ScrollViewScrollBarsSeparatorBackground: var(--winui-ControlFillColorTransparentBrush);
 	--winui-ScrollViewScrollBarsMargin: 1px;
 	--winui-SelectorBarItemPillFill: var(--winui-AccentFillColorDefaultBrush);
@@ -2144,6 +2158,7 @@
 	--winui-SystemControlDisabledChromeHighBrush: var(--winui-SystemChromeHighColor);
 	--winui-SystemControlDisabledChromeMediumLowBrush: var(--winui-SystemChromeMediumLowColor);
 	--winui-SystemControlForegroundBaseHighBrush: var(--winui-SystemBaseHighColor);
+	--winui-SystemControlForegroundBaseLowBrush: var(--winui-SystemBaseLowColor);
 	--winui-SystemControlForegroundBaseMediumBrush: var(--winui-SystemBaseMediumColor);
 	--winui-SystemControlForegroundChromeHighBrush: var(--winui-SystemChromeHighColor);
 	--winui-SystemControlForegroundChromeMediumBrush: var(--winui-SystemChromeMediumColor);
@@ -3705,6 +3720,18 @@
 	--winui-RefreshVisualizerBackground: transparent;
 	--winui-RadioButtonsHeaderForeground: var(--winui-TextFillColorPrimaryBrush);
 	--winui-RadioButtonsHeaderForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+	--winui-RatingControlUnselectedForeground: var(--winui-TextFillColorSecondaryBrush);
+	--winui-RatingControlSelectedForeground: var(--winui-AccentFillColorDefaultBrush);
+	--winui-RatingControlPlaceholderForeground: var(--winui-TextFillColorPrimaryBrush);
+	--winui-RatingControlPointerOverPlaceholderForeground: var(
+		--winui-ControlAltFillColorTertiaryBrush
+	);
+	--winui-RatingControlPointerOverUnselectedForeground: var(
+		--winui-ControlAltFillColorTertiaryBrush
+	);
+	--winui-RatingControlPointerOverSelectedForeground: var(--winui-AccentFillColorDefaultBrush);
+	--winui-RatingControlDisabledSelectedForeground: var(--winui-TextFillColorDisabledBrush);
+	--winui-RatingControlCaptionForeground: var(--winui-TextFillColorSecondaryBrush);
 	--winui-ScrollViewScrollBarsSeparatorBackground: var(--winui-ControlFillColorTransparentBrush);
 	--winui-SelectorBarItemPillFill: var(--winui-AccentFillColorDefaultBrush);
 	--winui-SelectorBarItemDisabledPillFill: var(--winui-AccentFillColorDisabledBrush);
@@ -3967,6 +3994,7 @@
 	--winui-SystemControlDisabledChromeHighBrush: var(--winui-SystemChromeHighColor);
 	--winui-SystemControlDisabledChromeMediumLowBrush: var(--winui-SystemChromeMediumLowColor);
 	--winui-SystemControlForegroundBaseHighBrush: var(--winui-SystemBaseHighColor);
+	--winui-SystemControlForegroundBaseLowBrush: var(--winui-SystemBaseLowColor);
 	--winui-SystemControlForegroundBaseMediumBrush: var(--winui-SystemBaseMediumColor);
 	--winui-SystemControlForegroundChromeHighBrush: var(--winui-SystemChromeHighColor);
 	--winui-SystemControlForegroundChromeMediumBrush: var(--winui-SystemChromeMediumColor);
@@ -5618,6 +5646,18 @@
 		--winui-RefreshVisualizerBackground: transparent;
 		--winui-RadioButtonsHeaderForeground: var(--winui-TextFillColorPrimaryBrush);
 		--winui-RadioButtonsHeaderForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+		--winui-RatingControlUnselectedForeground: var(--winui-TextFillColorSecondaryBrush);
+		--winui-RatingControlSelectedForeground: var(--winui-AccentFillColorDefaultBrush);
+		--winui-RatingControlPlaceholderForeground: var(--winui-TextFillColorPrimaryBrush);
+		--winui-RatingControlPointerOverPlaceholderForeground: var(
+			--winui-ControlAltFillColorTertiaryBrush
+		);
+		--winui-RatingControlPointerOverUnselectedForeground: var(
+			--winui-ControlAltFillColorTertiaryBrush
+		);
+		--winui-RatingControlPointerOverSelectedForeground: var(--winui-AccentFillColorDefaultBrush);
+		--winui-RatingControlDisabledSelectedForeground: var(--winui-TextFillColorDisabledBrush);
+		--winui-RatingControlCaptionForeground: var(--winui-TextFillColorSecondaryBrush);
 		--winui-ScrollViewScrollBarsSeparatorBackground: var(--winui-ControlFillColorTransparentBrush);
 		--winui-SelectorBarItemPillFill: var(--winui-AccentFillColorDefaultBrush);
 		--winui-SelectorBarItemDisabledPillFill: var(--winui-AccentFillColorDisabledBrush);
@@ -5900,6 +5940,7 @@
 		--winui-SystemControlDisabledChromeHighBrush: var(--winui-SystemChromeHighColor);
 		--winui-SystemControlDisabledChromeMediumLowBrush: var(--winui-SystemChromeMediumLowColor);
 		--winui-SystemControlForegroundBaseHighBrush: var(--winui-SystemBaseHighColor);
+		--winui-SystemControlForegroundBaseLowBrush: var(--winui-SystemBaseLowColor);
 		--winui-SystemControlForegroundBaseMediumBrush: var(--winui-SystemBaseMediumColor);
 		--winui-SystemControlForegroundChromeHighBrush: var(--winui-SystemChromeHighColor);
 		--winui-SystemControlForegroundChromeMediumBrush: var(--winui-SystemChromeMediumColor);
@@ -7474,6 +7515,18 @@
 	--winui-RadioButtonsHeaderForegroundDisabled: var(
 		--winui-SystemControlDisabledBaseMediumLowBrush
 	);
+	--winui-RatingControlUnselectedForeground: var(--winui-SystemControlForegroundBaseLowBrush);
+	--winui-RatingControlSelectedForeground: var(--winui-SystemColorHighlightColor);
+	--winui-RatingControlPlaceholderForeground: var(--winui-SystemControlForegroundBaseHighBrush);
+	--winui-RatingControlPointerOverPlaceholderForeground: var(
+		--winui-SystemControlForegroundBaseMediumBrush
+	);
+	--winui-RatingControlPointerOverUnselectedForeground: var(
+		--winui-SystemControlForegroundBaseMediumBrush
+	);
+	--winui-RatingControlPointerOverSelectedForeground: var(--winui-SystemColorHighlightColor);
+	--winui-RatingControlDisabledSelectedForeground: var(--winui-SystemColorGrayTextColor);
+	--winui-RatingControlCaptionForeground: var(--winui-TextFillColorSecondaryBrush);
 	--winui-ScrollViewScrollBarsSeparatorBackground: var(--winui-SystemControlTransparentBrush);
 	--winui-SelectorBarItemPillFill: var(--winui-SystemColorHighlightColor);
 	--winui-SelectorBarItemDisabledPillFill: var(--winui-AccentFillColorDisabledBrush);
@@ -7738,6 +7791,7 @@
 	--winui-SystemControlDisabledChromeHighBrush: var(--winui-SystemColorGrayTextColor);
 	--winui-SystemControlDisabledChromeMediumLowBrush: var(--winui-SystemColorButtonFaceColor);
 	--winui-SystemControlForegroundBaseHighBrush: var(--winui-SystemColorButtonTextColor);
+	--winui-SystemControlForegroundBaseLowBrush: var(--winui-SystemColorButtonTextColor);
 	--winui-SystemControlForegroundBaseMediumBrush: var(--winui-SystemColorButtonTextColor);
 	--winui-SystemControlForegroundChromeHighBrush: var(--winui-SystemColorButtonTextColor);
 	--winui-SystemControlForegroundChromeMediumBrush: var(--winui-SystemColorButtonTextColor);

@@ -277,6 +277,19 @@ export const TOGGLEBUTTON_KEYS = {
 		'Pre-Fluent ToggleButton *ThemeBrush family, listed for EXCLUDED'
 };
 
+export const RATINGCONTROL_KEYS = {
+	RatingControlUnselectedForeground: 'RatingControl, an unset star',
+	RatingControlSelectedForeground: 'RatingControl, a set star',
+	RatingControlPlaceholderForeground: 'RatingControl, a placeholder star',
+	RatingControlPointerOverPlaceholderForeground: 'RatingControl, a placeholder star, pointer over',
+	RatingControlPointerOverUnselectedForeground: 'RatingControl, an unset star, pointer over',
+	RatingControlPointerOverSelectedForeground: 'RatingControl, a set star, pointer over',
+	RatingControlDisabledSelectedForeground: 'RatingControl, a set star, disabled',
+	RatingControlCaptionForeground: 'RatingControl caption',
+	RatingControlItemSpacing: 'RatingControl, the gap between stars',
+	RatingControlFontSizeForRendering: 'RatingControl, the glyph size before the resting scale'
+};
+
 export const HYPERLINK_KEYS = {
 	HyperlinkForeground: 'Hyperlink foreground, at rest',
 	HyperlinkForegroundPointerOver: 'Hyperlink foreground, pointer over',
@@ -2694,6 +2707,8 @@ export const TYPE_RAMP = {
  * these gets the inputs rather than the answer.
  */
 export const DOUBLE_LENGTHS = {
+	RatingControlFontSizeForRendering: 'RatingControl glyph size before the resting scale',
+	RatingControlItemSpacing: 'RatingControl gap between stars',
 	ScrollBarTrackBorderThemeThickness: 'ScrollBar track border width',
 	ScrollBarThumbOffset: 'ScrollBar collapsed thumb offset',
 	ScrollBarSize: 'ScrollBar rail thickness and arrow button size',
