@@ -1584,10 +1584,13 @@ changes`.
 - **Why accepted**: the two default styles carry the same resting foreground, background,
   border, thickness, font family, font size, padding, corner-radius, and minimum-size setters.
   The only resting-visible template difference is TextBox's DeleteButton, collapsed unless the
-  box is focused and non-empty. Rich text formatting and the `ITextDocument` surface belong to
-  the Text-group control roadmap item 17, not this page.
-- **Would reconsider if**: roadmap item 17 supplies `RichEditBox` with its rich-text document
-  surface.
+  box is focused and non-empty. Rich text formatting and the `ITextDocument` surface are not this
+  page's to supply, and under D47 they are nobody's: roadmap item 17 declines `RichEditBox`,
+  because what is missing is a document model rather than a template. This row's own reading is
+  what makes that affordable — the same stand-in reproduces the `RichEditBox` page's editors at
+  rest.
+- **Would reconsider if**: this library ever takes on a rich-text document model. D47 declines
+  one, so the condition that used to sit here — item 17 supplying it — can no longer fire.
 
 ---
 

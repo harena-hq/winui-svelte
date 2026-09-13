@@ -35,54 +35,55 @@ pnpm workspace. The library is publishable and imposes no build tooling on its c
 
 ## Locked decisions
 
-| #   | Decision                                                                                               | Where                             |
-| --- | ------------------------------------------------------------------------------------------------------ | --------------------------------- |
-| D1  | Library + Gallery showcase, split as above                                                             | this file                         |
-| D2  | Token values are extracted from `microsoft-ui-xaml` (MIT), not from Fluent 2 web packages              | ADR 0001                          |
-| D3  | Styling is Svelte scoped CSS over a CSS custom-property token cascade. No Tailwind, no CSS-in-JS       | ADR 0002                          |
-| D4  | Fonts and icons are referenced by name from the local system, never embedded                           | ADR 0003                          |
-| D5  | Visual truth is a human side-by-side against Windows 11; automation gates regression only              | this file, "Verification"         |
-| D6  | Snapshots run on a local Windows VM runner, not on the Linux host                                      | this file, "Verification"         |
-| D7  | Out-of-scope Gallery groups keep their pages, implemented where the web allows                         | this file, "Roadmap → v4"         |
-| D8  | Accent is six tokens with a baked default, plus an optional derivation from one base                   | this file, "Accent"               |
-| D9  | bits-ui as the primitive base; individual Zag machines for TreeView, ColorPicker, NumberBox            | ADR 0004                          |
-| D10 | High contrast is generated as aliases onto eight system colors, not as a third palette                 | ADR 0005                          |
-| D11 | A token is named `--winui-` plus the WinUI resource key, unchanged                                     | ADR 0006                          |
-| D12 | The token layer is a curated closure of four base files plus what the Design pages name                | this file, "Roadmap → v1"         |
-| D13 | Gallery page structure and page data are read from the pinned `WinUI-Gallery` source                   | ADR 0007                          |
-| D14 | A composed WinUI `Style` ships as a CSS class, not as a custom property                                | this file, "Roadmap → v1"         |
-| D15 | A control tranche seeds the token selection by key, never by dictionary file                           | this file, "Roadmap → v2"         |
-| D16 | The window backdrop paints Mica's solid counterpart; the material is not approximated                  | this file, "Roadmap → v2"; WD-003 |
-| D17 | A legacy `SystemControl*Brush` resolves through a table to a system colour, and is never emitted       | ADR 0008                          |
-| D18 | Every menu entry is a route; the path is derived from the record, never hand-written                   | this file, "Roadmap → v2"         |
-| D19 | The shell is the Gallery's layout, and the selected navigation item is the URL                         | this file, "Roadmap → v2"         |
-| D20 | ~~The title bar's search box is the Gallery's own~~ — **retired in v4**, it is the published control   | this file, "Roadmap → v4"         |
-| D21 | A WinUI member becomes a Svelte prop by one stated rule, and every component takes `...rest`/`ref`     | ADR 0009                          |
-| D22 | Tranches are ordered by what an application reaches for; harness scaffolding follows the controls      | this file, "Roadmap → v3"         |
-| D23 | The XAML framework dictionary is a third pinned upstream; the control pin wins per key and theme       | ADR 0010                          |
-| D24 | The type ramp's line height is `normal`, the font's own spacing, not the published ramp's number       | ADR 0011                          |
-| D25 | An icon is a snippet the consumer draws, with a Segoe Fluent Icons code point as its shorthand         | ADR 0012                          |
-| D26 | A control's internal items host is template-private; the tranche renders its items directly            | this file, "Roadmap → v8"         |
-| D27 | A collection control is generic in its item type and draws it through a snippet the caller writes      | ADR 0013                          |
-| D28 | The sample-page frame is the Gallery's own harness around WinUI, so it is Gallery code                 | this file, "Roadmap → v10"        |
-| D29 | Syntax highlighting is ColorCode's rules and palette as data, applied by an engine of ours             | ADR 0014                          |
-| D30 | Grid and StackPanel are Gallery pages drawn in CSS, not components; Border stays a component           | this file, "Roadmap → v11"        |
-| D31 | CalendarView's month grid is bits-ui's `Calendar`; its year and decade grids are ours                  | this file, "Roadmap → v12"        |
-| D32 | A date-valued prop is a native `Date`; the arithmetic is `@internationalized/date`, the strings `Intl` | this file, "Roadmap → v12"        |
-| D33 | A scrollbar is elements rather than `::-webkit-scrollbar`, and its viewport is not bits-ui's           | this file, "Roadmap → v13"        |
-| D34 | Roadmap item 14 becomes two versions: Styles is photographable at rest and Motion is not               | this file, "Roadmap → v14"        |
-| D35 | A shape is a component and a brush or a shadow is a value; the Gallery record's base class decides     | this file, "Roadmap → v14"        |
-| D36 | The `Symbol` name-to-glyph table is a record generated from the control pin, never transcribed         | ADR 0012, "The amendment"         |
-| D37 | The release object is the library, cut after v18; the Gallery's page-by-page gate follows it           | this file, "Roadmap → v17, v18"   |
-| D38 | A WinUI control this library claims is a component, `TextBlock` included; a ramp class is its output   | this file, "Roadmap → v17"        |
-| D39 | A motion value transcribed from a source site is a `c1-allow`'d literal citing it, not a token         | this file, "Roadmap → v15"        |
-| D40 | Theme Transitions takes its shape from the pin's nearest modern relative; the numbers are approximate  | this file, "Roadmap → v15"        |
-| D41 | Animation interop reproduces all five of its expressions; only the spring's curve is declined          | this file, "Roadmap → v15"        |
-| D42 | A capability the web has and this harness withholds is a different WD row from one the web lacks       | this file, "Roadmap → v16"        |
-| D43 | The not-applicable panel is a stand-in for a declined element, built when one is first needed          | this file, "Roadmap → v16"        |
-| D44 | The pinned sample video is re-encoded to H.264; WMV is the one asset no browser plays                  | this file, "Roadmap → v16"        |
-| D45 | AnimatedVisualPlayer ships whole and its Gallery page draws the composition's resting frame            | this file, "Roadmap → v16"        |
-| D46 | The first release exports a subset of what is built; a component ships when polished, not when sealed  | this file, "The library gate"     |
+| #   | Decision                                                                                                | Where                             |
+| --- | ------------------------------------------------------------------------------------------------------- | --------------------------------- |
+| D1  | Library + Gallery showcase, split as above                                                              | this file                         |
+| D2  | Token values are extracted from `microsoft-ui-xaml` (MIT), not from Fluent 2 web packages               | ADR 0001                          |
+| D3  | Styling is Svelte scoped CSS over a CSS custom-property token cascade. No Tailwind, no CSS-in-JS        | ADR 0002                          |
+| D4  | Fonts and icons are referenced by name from the local system, never embedded                            | ADR 0003                          |
+| D5  | Visual truth is a human side-by-side against Windows 11; automation gates regression only               | this file, "Verification"         |
+| D6  | Snapshots run on a local Windows VM runner, not on the Linux host                                       | this file, "Verification"         |
+| D7  | Out-of-scope Gallery groups keep their pages, implemented where the web allows                          | this file, "Roadmap → v4"         |
+| D8  | Accent is six tokens with a baked default, plus an optional derivation from one base                    | this file, "Accent"               |
+| D9  | bits-ui as the primitive base; individual Zag machines for TreeView, ColorPicker, NumberBox             | ADR 0004                          |
+| D10 | High contrast is generated as aliases onto eight system colors, not as a third palette                  | ADR 0005                          |
+| D11 | A token is named `--winui-` plus the WinUI resource key, unchanged                                      | ADR 0006                          |
+| D12 | The token layer is a curated closure of four base files plus what the Design pages name                 | this file, "Roadmap → v1"         |
+| D13 | Gallery page structure and page data are read from the pinned `WinUI-Gallery` source                    | ADR 0007                          |
+| D14 | A composed WinUI `Style` ships as a CSS class, not as a custom property                                 | this file, "Roadmap → v1"         |
+| D15 | A control tranche seeds the token selection by key, never by dictionary file                            | this file, "Roadmap → v2"         |
+| D16 | The window backdrop paints Mica's solid counterpart; the material is not approximated                   | this file, "Roadmap → v2"; WD-003 |
+| D17 | A legacy `SystemControl*Brush` resolves through a table to a system colour, and is never emitted        | ADR 0008                          |
+| D18 | Every menu entry is a route; the path is derived from the record, never hand-written                    | this file, "Roadmap → v2"         |
+| D19 | The shell is the Gallery's layout, and the selected navigation item is the URL                          | this file, "Roadmap → v2"         |
+| D20 | ~~The title bar's search box is the Gallery's own~~ — **retired in v4**, it is the published control    | this file, "Roadmap → v4"         |
+| D21 | A WinUI member becomes a Svelte prop by one stated rule, and every component takes `...rest`/`ref`      | ADR 0009                          |
+| D22 | Tranches are ordered by what an application reaches for; harness scaffolding follows the controls       | this file, "Roadmap → v3"         |
+| D23 | The XAML framework dictionary is a third pinned upstream; the control pin wins per key and theme        | ADR 0010                          |
+| D24 | The type ramp's line height is `normal`, the font's own spacing, not the published ramp's number        | ADR 0011                          |
+| D25 | An icon is a snippet the consumer draws, with a Segoe Fluent Icons code point as its shorthand          | ADR 0012                          |
+| D26 | A control's internal items host is template-private; the tranche renders its items directly             | this file, "Roadmap → v8"         |
+| D27 | A collection control is generic in its item type and draws it through a snippet the caller writes       | ADR 0013                          |
+| D28 | The sample-page frame is the Gallery's own harness around WinUI, so it is Gallery code                  | this file, "Roadmap → v10"        |
+| D29 | Syntax highlighting is ColorCode's rules and palette as data, applied by an engine of ours              | ADR 0014                          |
+| D30 | Grid and StackPanel are Gallery pages drawn in CSS, not components; Border stays a component            | this file, "Roadmap → v11"        |
+| D31 | CalendarView's month grid is bits-ui's `Calendar`; its year and decade grids are ours                   | this file, "Roadmap → v12"        |
+| D32 | A date-valued prop is a native `Date`; the arithmetic is `@internationalized/date`, the strings `Intl`  | this file, "Roadmap → v12"        |
+| D33 | A scrollbar is elements rather than `::-webkit-scrollbar`, and its viewport is not bits-ui's            | this file, "Roadmap → v13"        |
+| D34 | Roadmap item 14 becomes two versions: Styles is photographable at rest and Motion is not                | this file, "Roadmap → v14"        |
+| D35 | A shape is a component and a brush or a shadow is a value; the Gallery record's base class decides      | this file, "Roadmap → v14"        |
+| D36 | The `Symbol` name-to-glyph table is a record generated from the control pin, never transcribed          | ADR 0012, "The amendment"         |
+| D37 | The release object is the library, cut after v18; the Gallery's page-by-page gate follows it            | this file, "Roadmap → v17, v18"   |
+| D38 | A WinUI control this library claims is a component, `TextBlock` included; a ramp class is its output    | this file, "Roadmap → v17"        |
+| D39 | A motion value transcribed from a source site is a `c1-allow`'d literal citing it, not a token          | this file, "Roadmap → v15"        |
+| D40 | Theme Transitions takes its shape from the pin's nearest modern relative; the numbers are approximate   | this file, "Roadmap → v15"        |
+| D41 | Animation interop reproduces all five of its expressions; only the spring's curve is declined           | this file, "Roadmap → v15"        |
+| D42 | A capability the web has and this harness withholds is a different WD row from one the web lacks        | this file, "Roadmap → v16"        |
+| D43 | The not-applicable panel is a stand-in for a declined element, built when one is first needed           | this file, "Roadmap → v16"        |
+| D44 | The pinned sample video is re-encoded to H.264; WMV is the one asset no browser plays                   | this file, "Roadmap → v16"        |
+| D45 | AnimatedVisualPlayer ships whole and its Gallery page draws the composition's resting frame             | this file, "Roadmap → v16"        |
+| D46 | The first release exports a subset of what is built; a component ships when polished, not when sealed   | this file, "The library gate"     |
+| D47 | The eighteen unscheduled pages are dispositioned by kind; D30 takes two more panels, D35 one rung lower | this file, "Roadmap → v17"        |
 
 ## Verification
 
@@ -3491,16 +3492,16 @@ System / Shell` moves to item 16; `item 15` occurs once in the whole of `docs/`,
     not WinUI's, so Windowing's unit builds it the way v10 built `ControlExample`. **That
     sentence was written without opening the control, and it is half wrong.** Building
     `ColorSelector` is not self-contained: `ColorSelector.xaml:19-32` puts a `ColorPicker` in
-    the `SplitButton`'s flyout, and `ColorPicker` is one of the four components item 17 owes.
+    the `SplitButton`'s flyout, and `ColorPicker` is one of the components item 17 owes.
     Measured in the unit rather than argued: at rest the control is a 64x32 swatch and a
     chevron half, 100x33 together, and that reproduces exactly — so the page cost nothing extra
-    and the flyout became WD-066. What the miss would have cost is the estimate, not the work,
-    and the lesson is about API surfaces: a planning sentence naming a dependency is a claim
-    about a file, and reading the file is cheaper than any of its consequences. And four of
-    these pages write their prose as `RichTextBlock` with `Paragraph`, `Run`, `Hyperlink` and
-    `Underline` — item 17's components, which this version does not wait for: `styles/acrylic`,
-    `styles/compactsizing` and `motion/easingfunction` already reproduce exactly that shape as
-    HTML under a citing comment, and these pages follow the precedent.
+    and the flyout became WD-066. What the miss would have cost is the estimate, not the work, and
+    the lesson is about API surfaces: a planning sentence naming a dependency is a claim about a
+    file, and reading the file is cheaper than any of its consequences. And four of these pages
+    write their prose as `RichTextBlock` with `Paragraph`, `Run`, `Hyperlink` and `Underline` —
+    item 17's components, which this version does not wait for: `styles/acrylic`,
+    `styles/compactsizing` and `motion/easingfunction` already reproduce exactly that shape as HTML
+    under a citing comment, and these pages follow them.
 
     **D44 — the sample video is re-encoded, and it is the only asset in the pinned set that has
     to be.** `Assets/SampleMedia` carries `fishes.wmv` and `ladybug.wmv`, and WMV is the one
@@ -3563,11 +3564,18 @@ System / Shell` moves to item 16; `item 15` occurs once in the whole of `docs/`,
     every declined behaviour is a `WD` row cited from the page that declines it, with the rows
     that turn on the serving origin saying so.
 
-17. **The components a 1.0 owes** (4) — `TextBlock` and the `Inlines` model under it,
-    `RichTextBlock`, `CommandBarFlyout`, `ColorPicker`. Its **first unit builds nothing**: it
-    dispositions the eighteen pages still scheduled by no tranche, in or out of the 1.0 surface,
-    with the reason recorded. Deciding late is what makes that expensive, and a public API is
-    where it is most expensive — `CLAUDE.md` makes the same argument about git history.
+17. **The components a 1.0 owes** (5) — `TextBlock` and the `Inlines` model under it,
+    `RichTextBlock`, `CommandBarFlyout`, `ColorPicker`, `RatingControl`. Its **first unit builds
+    nothing**: it dispositions the eighteen pages still scheduled by no tranche, with the reason
+    recorded. Deciding late is what makes that expensive, and a public API is where it is most
+    expensive — `CLAUDE.md` makes the same argument about git history.
+
+    **That unit has run, and "The eighteen unscheduled pages, dispositioned" below is its
+    output.** The count above was four when this entry was written; `RatingControl` is the fifth
+    and arrived from the disposition, for the reason given there. The unit also narrowed this line's own sentence,
+    which used to ask of each page "in or out of the 1.0 surface": D46 has since moved the
+    exported set to v18's naming unit, so what a disposition can decide is whether this library
+    **builds** a thing and who builds its page — never whether it ships.
 
     `Hyperlink` arrives with `TextBlock` rather than on its own. It is not a Gallery page; it is
     an inline, and three sites already carry a comment saying this library has no control for it
@@ -3613,8 +3621,15 @@ System / Shell` moves to item 16; `item 15` occurs once in the whole of `docs/`,
     group whose controls exist — which is why they are pages rather than tranches — except
     Fundamentals and Accessibility, whose ten pages are prose and samples about the platform
     rather than about a control, and whose disposition D7 already settles. Item 17's first
-    unit dispositions the eighteen unscheduled _controls_; this version builds _pages_, and
-    the two lists overlap only where a control that unit builds also owes a page.
+    unit decides who owns each of the eighteen unscheduled _pages_, and it hands seventeen of
+    them to this version — every one but `RichEditBox`'s, whose group this file has not settled.
+    What that unit builds is a component; what this version builds is a page.
+
+    **The paragraph above was not true when it was written, and the disposition is what made it
+    true.** Menus & toolbars held `SwipeControl` and Basic input held `RatingControl`, neither of
+    which this library has, so a version that does not invent components could not have built
+    either page. D47 owns both: item 17 builds `RatingControl`, and `SwipeControl` is declined,
+    which makes its page a `NotApplicablePanel` under D43 and needs no control at all.
 
 **Twenty-four Gallery pages are scheduled by no tranche, and planning v7 is what found
 them.** The roadmap enumerates by name where a tranche schedules controls, and by count where
@@ -3623,7 +3638,8 @@ Two things fall between the two habits.
 
 **Two whole groups are absent.** The words "Fundamentals" and "Accessibility" do not occur in
 this file at all. That is ten pages — the Gallery's seven Fundamentals items and its three
-Accessibility ones — with no tranche, no count and no O2 disposition. They are not controls,
+Accessibility ones — with no tranche, no count and no O2 disposition named for them. They are
+not controls,
 which is presumably why they were never listed; but D7 resolves what such a page _renders_, not
 who builds it or when, and the acceptance gate walks the navigation tree page by page.
 
@@ -3650,7 +3666,9 @@ HyperlinkButton, RepeatButton and ToggleSplitButton because they are templates i
 building, and it leaves CommandBarFlyout alone because that is a flyout of a bar which does not
 exist until this version closes. The two `*UICommand` entries may not be controls at all —
 they are command objects with no template — so their honest disposition is a `WD-` entry or a
-page that says so, decided when the group is reached rather than now. What the list is for is
+page that says so, decided when the group is reached rather than now. **The guess was right, and
+D47 settles it** on the evidence D35 already made decisive: neither has `UIElement` anywhere in
+its base chain. What the list is for is
 that this gap was found by planning one tranche carefully, three tranches later than it could
 have been, and it would be found the same way again if it were not written down.
 
@@ -3662,8 +3680,143 @@ sitting in the group that entry is about — a page the version would have built
 Scrolling around and left behind. It goes to item 13 for the reason that entry gives, which is
 that its page draws the same box as `ScrollView`'s and differs from it in property names.
 Twenty-two pages remained unscheduled until item 17 took four of them — `TextBlock`,
-`RichTextBlock`, `CommandBarFlyout` and `ColorPicker`. **Eighteen remain, and item 17's first
-unit is what dispositions them.**
+`RichTextBlock`, `CommandBarFlyout` and `ColorPicker`. **Eighteen remained, and item 17's first
+unit dispositioned them; what follows is that unit's output.** They are not the eighteen v16's
+entry counts, which are that version's four groups; these are the eight the table above still
+leaves unscheduled, plus the ten it does not list. The table is left as it stands, because a
+strike there has meant _this row moved to a tranche_ and most of these did not move — they were
+decided where they stand. **`Canvas`'s strike is the exception and reads wrongly against that
+rule**: it covers the control, which v14 took under D30, and that entry says in terms that its
+own Gallery page stays unscheduled. The page is one of the eighteen, and one of the three in the
+panel row below.
+
+**The eighteen unscheduled pages, dispositioned — D47.** Four kinds, and the kind is the reason.
+Only the last of them splits: of the three controls, one is built and two are declined. What a
+disposition decides is whether this library **builds** a thing and who builds its Gallery page;
+whether a component that gets built is _exported_ at 1.0 is D46's question, and v18's naming unit
+is where that set is chosen.
+
+| kind                      | pages | the library builds | the page belongs to   |
+| ------------------------- | ----- | ------------------ | --------------------- |
+| a page about the platform | 10    | nothing            | item 19               |
+| a command object          | 2     | nothing            | item 19               |
+| a panel                   | 3     | nothing — D30      | item 19               |
+| a control, built          | 1     | item 17            | item 19               |
+| a control, declined       | 2     | nothing            | item 19, and one open |
+
+**The ten platform pages are not controls, and D7 already said what they render.** Fundamentals
+is Resources, Style, Binding, Templates, Custom & User Controls, XAML Conditions and Scratch Pad;
+Accessibility is Color Contrast, Keyboard Navigation and Screen Reader. Between them they hold
+thirty-eight `ControlExample` blocks, and not one of those blocks is _about_ a control — they are
+pages about XAML and about assistive technology, drawing with whatever control each point needs.
+Item 19 builds them, under D7 and O2, and which controls they reach for is that version's survey
+to take rather than this one's.
+
+**One of the ten is declined rather than built, and it is Scratch Pad.** Its page is a live XAML
+editor: the text sits in a `RichEditBox`, gets syntax-coloured, and `XamlReader.Load`
+(`ScratchPadPage.xaml.cs:106`) turns it into a live element tree. The colouring is the one third
+of that this project has, from ADR 0014's engine; the control is declined below, and the parser
+is not even the hard half — `XamlReader.Load` returns a live element _tree_, so the web
+equivalent has to instantiate Svelte components from XAML type names at run time, which is a
+second framework living inside the Gallery. So the page's live-tree pane renders D43's
+`NotApplicablePanel`, and the row it carries is **neither of D42's two kinds** — a browser can
+parse a document and build a tree, and this harness is not withholding anything. It is a scope
+decline, which is not a new category either: WD-069 is one already, and reads as one without
+borrowing from D42.
+
+**The two command objects have no template, and the Gallery record's base class is what says
+so.** `StandardUICommand` and `XamlUICommand` are `Microsoft.UI.Xaml.Input`, and neither base
+chain reaches `UIElement` — `XamlUICommand`'s stops at `DependencyObject` and
+`StandardUICommand`'s at `XamlUICommand`. Either way there is nothing to render. D35 already made
+the record's base class the thing that decides, for a shape against a brush; this is that move
+again, one rung lower down — from _is this a component or a value_ to _is this a UI object at
+all_. What they express — one object supplying several controls' label, icon, accelerator and
+description — is a plain object in Svelte and needs no library code at all.
+
+**What their page owes is a table the pin half-carries.**
+`StandardUICommand_Partial.cpp:82-234` switches over all seventeen kinds — `None` populates
+nothing, and the other sixteen each name a label, a `Symbol`, a description and, where the
+command has one, an accelerator. D36's generated record already turns a `Symbol` name into a
+glyph. What the pin does not have is the text: `TEXT_COMMAND_LABEL_SAVE` and its siblings are
+resource ids that occur in that one file and in no other file in the checkout, and the pin's
+twenty-three `.resw` files all sit under
+`controls/dev/**/Strings` — the sparse checkout takes `.h` and `.cpp` from `dxaml` and no strings
+from it whatever. So "not in the pin" here means "not in this checkout", and the labels are read
+off the reference exactly the way ADR 0012 reads a code point.
+
+**The three panels are D30's family, and Canvas already went that way.** All three have `Panel`
+in their base chain. v14 took `Canvas` under D30 with no new decision — a canvas is absolute
+positioning, one CSS declaration per attached property — and `RelativePanel` and
+`VariableSizedWrapGrid` follow it for a stronger version of the same reason: their whole API _is_
+attached properties (`RelativePanel.RightOf`, `VariableSizedWrapGrid.RowSpan`), Svelte has no
+analogue of one, and a component that emulated them would be inventing a surface WinUI does not
+have. The wrap grid is `grid-auto-flow` and two spans. The pages are item 19's, drawn in CSS the
+way Grid's and StackPanel's are.
+
+**`RatingControl` is built, and item 17 takes it as its fifth.** It is a plain `Control`, its
+page is two examples, and bits-ui 2.19.0 ships a `rating-group` primitive — so D9's base covers
+it with no new Zag machine, which is the whole of the cost argument. The primitive carries
+`allowHalf`, `readonly`, `min`/`max`, `disabled` and the hover preview; what it has no channel
+for is `PlaceholderValue` as a thing distinct from the value, `Caption`, and `IsClearEnabled` —
+all three reachable through the root snippet's per-item state, so the no-new-machine claim
+survives them and the unit is told about them here rather than discovering them. It goes to item
+17 rather than to item 19 because item 19 says in its own entry that it does not invent
+components, and Basic input with one control missing is a hole nothing else closes.
+
+**`SwipeControl` is declined, and the reason is the one WD-035 has just measured.** Upstream
+redirects its manipulation for a touch pointer (`SwipeControl.cpp:667`) and sets
+`CapableTouchpadOnly` on the interaction source (`:849`) — the same pair of lines the
+`RefreshContainer` adapter carries, which WD-035 reads as two inputs rather than one: a touch
+pointer, and a precision touchpad's pan. The second is unreachable here for WD-035's own reason,
+which is that such a pan arrives at a web page as a `wheel` event and never as a pointer; the
+first is unreachable on a reference machine with no digitiser. So the same two lines are read the
+same way in both controls, and the two controls are still decided differently — what separates
+them is what each draws at rest. A `RefreshVisualizer` is a thing on the page, photographed in
+three themes, and the gesture only reveals it. A `SwipeControl` at rest is its content inside a
+border, and _everything_ that distinguishes it from that border lives inside the gesture. The bar
+here is a measurement against the original, and there is none to take.
+
+**What that does not decline is the page, and D43 is what says so.** The panel is a stand-in for
+_an element that would occupy a box_ — "almost never a pane ... it is what happens after a
+click" — and at rest a `SwipeControl` occupies no box of its own: `SwipeControl.xaml:5` sets its
+Background to Transparent and its template is a `ContentPresenter` carrying the content's own
+border. The page's five examples are four `Border`s and a `ListView` around a `TextBlock`
+(`SwipeControlPage.xaml:29-219`), all three of which this library has. So item 19 builds the page
+out of what it already has, and what it files is a `WD` row for the gesture — the same shape
+WD-035 has, not a panel.
+
+**`RichEditBox` is declined, and it is a document model rather than a template.** Its five
+examples drive the document and not the box — `TextDocument.SetMathMode`
+(`RichEditBoxPage.xaml.cs:29`), RTF in and out of a stream (`:84`, `:118`) — and the chrome
+around it is `TextBox`'s, which is built. What is missing is the document, and on the web that is
+a rich-text editor: the largest single thing this roadmap could take on, against a page of five
+examples.
+
+**Its page is buildable anyway, and the precedent is already sealed.** WD-069 renders the
+Clipboard page's editor with `TextBox` on the finding that the two default styles carry the same
+resting foreground, background, border, thickness, font family, size, padding, corner radius and
+minimum size — the only resting difference being `TextBox`'s DeleteButton, which is collapsed
+unless the box is focused and non-empty. That reading covers this page's five editors too. **What
+D47 does owe WD-069 is a correction**: that row promised the document surface to item 17, and
+item 17 is where it is declined, so its "would reconsider if" clause has been rewritten at its
+own site to name the condition that could actually fire.
+
+**Who builds that page is left open, and deliberately.** It belongs to the Text group, and this
+file disagrees with itself about who owns that group — item 19's entry counts `Text 7` among the
+eight whole-and-empty groups it takes, and the release paragraph below says v17 adds the Text
+group's pages. D47 does not settle it: the disposition is about the control, the answer changes
+nothing above, and whichever unit reaches the group first is better placed to take it than this
+one. It is written down here so that unit finds a question rather than a contradiction.
+
+**What the disposition changes, beyond recording itself.** Item 17 gains a component and its
+count goes from four to five. Item 19's "it does not invent components" becomes true rather than
+aspirational, because the two controls that made it false are now owned — one built, one
+declined. **And all eighteen pages are buildable**, which is not what this unit expected to find:
+declining a control declines the control, and of the three declined surfaces only one box goes
+to the `NotApplicablePanel` — Scratch Pad's live-tree pane. `SwipeControl`'s examples reproduce
+at rest out of `Border`, `ListView` and `TextBlock`, and `RichEditBox`'s out of `TextBox` under
+WD-069. That is D43's own rule read the way D43 writes it, and being told it in advance is what
+D43 asked for.
 
 **A release becomes possible from v3 onward, and is cut after v18.** The capability and the
 decision are different questions: a release is technically possible now, and the bar chosen for
