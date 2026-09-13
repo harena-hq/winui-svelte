@@ -3598,6 +3598,25 @@ System / Shell` moves to item 16; `item 15` occurs once in the whole of `docs/`,
 
     **Its last unit is the library gate below**, which is the release bar.
 
+19. **The Gallery's remaining pages** — every item page no version builds. This version exists
+    because `Final` needs all 120 and the roadmap stops at 55: counted when v16 closed, the
+    Gallery has **55 of its 120 item pages** and the sixty-five that remain are owned by
+    nothing. Eight groups are whole and empty — Fundamentals 7, Menus & toolbars 10, Basic
+    input 14, Status & info 5, Dialogs & flyouts 4, Navigation 5, Text 7, Accessibility 3 —
+    and two are partial, Collections with six left and Layout with four.
+
+    **It is listed as a version rather than left to `Final` because the two do different
+    work.** `Final` is an observed side-by-side that reports; this is the build that gives it
+    something to observe. Under D37 it sits after the release, which is what makes its size
+    affordable to state honestly rather than a reason to compress it.
+
+    **What it does not do is invent components.** Every one of the eight empty groups is a
+    group whose controls exist — which is why they are pages rather than tranches — except
+    Fundamentals and Accessibility, whose ten pages are prose and samples about the platform
+    rather than about a control, and whose disposition D7 already settles. Item 17's first
+    unit dispositions the eighteen unscheduled _controls_; this version builds _pages_, and
+    the two lists overlap only where a control that unit builds also owes a page.
+
 **Twenty-four Gallery pages are scheduled by no tranche, and planning v7 is what found
 them.** The roadmap enumerates by name where a tranche schedules controls, and by count where
 it takes a whole group at once — Styles's ten, Motion's seven, and the eighteen O2 resolves.
@@ -3655,12 +3674,16 @@ artifact.
 
 **What is released is the library, and `Final` is a gate on the Gallery.** Those were the same
 thing while the roadmap read as one project; they are not the same thing now. `Final` is an
-observed side-by-side of the **full** Gallery, and the Gallery is at 26 of its 120 item pages —
-`apps/gallery/build/basicinput/button.html` is still a placeholder, three versions after the
+observed side-by-side of the **full** Gallery, and the Gallery is at 55 of its 120 item pages —
+`apps/gallery/build/basicinput/button.html` is still a placeholder, thirteen versions after the
 `Button` component was sealed, because v4 through v9 built controls and the pages began landing
-only in v13. Nothing in the remaining roadmap closes that gap: v15, v16 and v17 add 40-odd
-pages between them and leave the Basic input, Menus & toolbars, Collections, Status & info,
-Dialogs & flyouts and Navigation groups — whose components all exist — still on placeholders.
+only in v13. v15 and v16 between them took that count from 26 to 55, and v17 adds the Text
+group's; what they leave behind is the Basic input, Menus & toolbars, Collections, Status &
+info, Dialogs & flyouts and Navigation groups — whose components all exist — still on
+placeholders, plus the ten Fundamentals and Accessibility pages that are about the platform
+rather than a control. **Item 19 above is where that gap is owned**; this paragraph used to end
+by saying nothing closed it, which was true when it was written and stopped being a plan the
+moment the count moved twice without the sentence moving.
 
 So the gate splits, and the two halves are below. The **library gate** is the release bar and
 v18's last unit runs it. **`Final` keeps its own bar unchanged and moves after the release**,
@@ -3752,7 +3775,8 @@ against it.
 
 An observed, time-boxed side-by-side of the full Gallery against Windows 11, page by page. The
 bar is unchanged; what changed is where it sits. It is the Gallery's gate, it needs all 120
-pages, and under D37 it follows the release rather than blocking it.
+pages, and under D37 it follows the release rather than blocking it. **Item 19 is what builds
+the sixty-five it does not yet have**; this gate observes, and needs a version that builds.
 
 ## Conformance gates
 
@@ -3918,9 +3942,19 @@ work staged, that reset discards the work.
 - **O1 — snapshot fonts.** _Resolved:_ run the snapshot suite on a local Windows VM runner.
   See "Verification".
 - **O2 — out-of-scope Gallery groups.** _Resolved:_ keep every page in the navigation tree.
-  Implement the ones the web can actually do (Clipboard, notifications in part); render the
-  rest as an honest "not applicable on the web" panel in the original's page slot. Dropping
-  the pages would change the left navigation, which is exactly what v2 is judged on.
+  Implement the ones the web can actually do; render the rest as an honest "not applicable on
+  the web" panel in the original's page slot. Dropping the pages would change the left
+  navigation, which is exactly what v2 is judged on.
+
+  **Its two examples were wrong, and D42 is what corrected them.** This entry named Clipboard
+  and notifications as the ones the web can do. Measured in v16 at the origin the Gallery is
+  actually served from, `navigator.clipboard` is absent and `Notification.permission` reads
+  `denied` — both are present at a secure origin in the same browser, so what decides them is
+  the serving script rather than the web. Neither page ended up implementing its behaviour:
+  Clipboard is WD-067 and WD-068, App notifications is WD-073 and WD-074. The resolution above
+  stands; "what the web can actually do" is a reading to take, not a list to assume, and D42 is
+  the rule that keeps the two kinds of `WD` row apart.
+
 - **O3 — accent color.** _Resolved:_ both layers. See "Accent".
 - **O4 — primitive library.** _Resolved:_ bits-ui, with individual Zag machines for the three
   primitives it lacks. See ADR 0004. The survey's headline was that the keyboard limitation
