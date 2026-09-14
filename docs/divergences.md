@@ -1900,18 +1900,23 @@ changes`.
 
 ---
 
-### WD-084 — `ColorPickerSlider` is horizontal only
+### WD-084 — the vertical thumb keeps the horizontal thumb's state colours
 
-- **Control**: `ColorPickerSlider`.
-- **WinUI does**: support horizontal and vertical orientation, although `ColorPicker` uses
-  `Orientation="Horizontal"` at both sites (`ColorPicker.xaml:244`, `:257`). Its pointer-over,
-  pressed and disabled setters name only `HorizontalThumb` (`:471`, `:458`, `:464`), so the
-  upstream vertical variant has no state colours.
-- **We do**: expose only the horizontal template and no `orientation` prop.
-- **Why accepted**: the only upstream consumer is horizontal, and the vertical variant would
-  preserve none of this template's pointer-over, pressed or disabled thumb colours.
-- **Would reconsider if**: an upstream use of the vertical variant appears with a complete set
-  of visual-state semantics to reproduce.
+- **Control**: `ColorPickerSlider`, vertical orientation.
+- **WinUI does**: give the vertical thumb no pointer-over, pressed or disabled colour at all.
+  `ColorPickerSliderStyle`'s `CommonStates` names `HorizontalThumb` and nothing else
+  (`ColorPicker.xaml:458`, `:464`, `:471`), and `ColorPicker` reaches the vertical template in
+  its own `Horizontal` orientation (`:153`, `:166`), so a vertical `ColorPickerSlider` upstream
+  is a thumb that does not react to the pointer.
+- **We do**: apply the same three state colours in both orientations. The selectors that carry
+  them are written on the container and on the root's `data-disabled`
+  (`ColorPickerSlider.svelte`), neither of which has an orientation in it.
+- **Why accepted**: reproducing the gap means adding an orientation qualifier to three
+  selectors purely to make a control stop responding to the pointer. No baseline can hold a
+  pointer, so the divergence is invisible to every gate this project has, and the behaviour we
+  would be transcribing is a template that names one thumb by hand and misses the other.
+- **Would reconsider if**: a reference capture of a hovered vertical `ColorPickerSlider` shows
+  the difference, or upstream gives the vertical thumb its own setters.
 
 ---
 

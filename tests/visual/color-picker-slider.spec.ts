@@ -34,6 +34,83 @@ test("the thumb's visible circle is its layout box", async ({ page }) => {
 	expect(geometry.backgroundColor).not.toBe('rgba(0, 0, 0, 0)');
 });
 
+test('the vertical template is 32 wide and keeps the horizontal thumb', async ({ page }) => {
+	await page.goto('/dev/color-picker-slider');
+	const geometry = await page.getByTestId('vertical').evaluate((root) => {
+		const container = root.querySelector<HTMLElement>('.container')!.getBoundingClientRect();
+		const thumb = root.querySelector<HTMLElement>('.thumb')!.getBoundingClientRect();
+		const inner = root.querySelector<HTMLElement>('.inner')!.getBoundingClientRect();
+		const track = getComputedStyle(root.querySelector<HTMLElement>('.track')!);
+		return {
+			container: container.width,
+			thumb: { width: thumb.width, height: thumb.height },
+			inner: { width: inner.width, height: inner.height },
+			track: { width: track.width, height: track.height }
+		};
+	});
+	expect(geometry.container).toBe(32);
+	expect(geometry.thumb).toEqual({ width: 18, height: 18 });
+	expect(geometry.inner).toEqual({ width: 10, height: 10 });
+	expect(geometry.track.width).toBe('4px');
+	expect(geometry.track.height).not.toBe('4px');
+
+	// A XAML Grid does not spread ColorPicker.xaml:519-521's fixed columns across a wider slot,
+	// so a header wider than 32 moves the root and leaves the track where it was. Measured with
+	// the container stretching instead: 35 wide, and the track one pixel right of every other
+	// specimen.
+	const withHeader = await page.getByTestId('vertical-header').evaluate((root) => {
+		const container = root.querySelector<HTMLElement>('.container')!.getBoundingClientRect();
+		const track = root.querySelector<HTMLElement>('.track')!.getBoundingClientRect();
+		return { container: container.width, trackLeft: Math.round(track.left) };
+	});
+	const plainTrackLeft = await page
+		.getByTestId('vertical')
+		.evaluate((root) =>
+			Math.round(root.querySelector<HTMLElement>('.track')!.getBoundingClientRect().left)
+		);
+	expect(withHeader.container).toBe(32);
+	expect(withHeader.trackLeft).toBe(plainTrackLeft);
+});
+
+test('the vertical value grows upward', async ({ page }) => {
+	await page.goto('/dev/color-picker-slider');
+	const control = page.getByTestId('vertical');
+	const thumb = control.locator('.thumb');
+	await thumb.focus();
+	await page.keyboard.press('Home');
+	await expect.poll(() => thumb.getAttribute('aria-valuenow')).toBe('0');
+	const atMin = await control.evaluate((root) => {
+		const container = root.querySelector<HTMLElement>('.container')!.getBoundingClientRect();
+		const thumb = root.querySelector<HTMLElement>('.thumb')!.getBoundingClientRect();
+		return thumb.top + thumb.height / 2 - (container.bottom - 9);
+	});
+
+	await page.keyboard.press('End');
+	await expect.poll(() => thumb.getAttribute('aria-valuenow')).toBe('100');
+	const atMax = await control.evaluate((root) => {
+		const container = root.querySelector<HTMLElement>('.container')!.getBoundingClientRect();
+		const thumb = root.querySelector<HTMLElement>('.thumb')!.getBoundingClientRect();
+		return thumb.top + thumb.height / 2 - (container.top + 9);
+	});
+
+	expect(Math.abs(atMin)).toBeLessThanOrEqual(1);
+	expect(Math.abs(atMax)).toBeLessThanOrEqual(1);
+});
+
+test('the vertical slider takes the same arrow keys', async ({ page }) => {
+	await page.goto('/dev/color-picker-slider');
+	const thumb = page.getByTestId('vertical').locator('.thumb');
+	await thumb.focus();
+	await page.keyboard.press('ArrowUp');
+	await expect.poll(() => thumb.getAttribute('aria-valuenow')).toBe('51');
+	await page.keyboard.press('ArrowDown');
+	await expect.poll(() => thumb.getAttribute('aria-valuenow')).toBe('50');
+	await page.keyboard.press('ArrowLeft');
+	await expect.poll(() => thumb.getAttribute('aria-valuenow')).toBe('49');
+	await page.keyboard.press('Control+ArrowUp');
+	await expect.poll(() => thumb.getAttribute('aria-valuenow')).toBe('59');
+});
+
 test('the value reaches both ends of the track', async ({ page }) => {
 	await page.goto('/dev/color-picker-slider');
 	const control = page.getByTestId('default');
@@ -147,6 +224,23 @@ test('the pointer and the pressed state change the inner fill', async ({ page })
 		.locator('.inner')
 		.evaluate((element) => getComputedStyle(element).backgroundColor);
 	expect(disabled).not.toBe(resting);
+
+	// WD-084: upstream's CommonStates names HorizontalThumb alone (ColorPicker.xaml:458, :464,
+	// :471), so a vertical thumb there never changes colour. Ours does, and the divergence says
+	// so; this is the assertion that keeps that sentence true.
+	const verticalInner = page.getByTestId('vertical').locator('.inner');
+	const verticalResting = await verticalInner.evaluate(
+		(element) => getComputedStyle(element).backgroundColor
+	);
+	await page.getByTestId('vertical').locator('.thumb').hover();
+	await expect
+		.poll(() => verticalInner.evaluate((element) => getComputedStyle(element).backgroundColor))
+		.not.toBe(verticalResting);
+	const verticalDisabled = await page
+		.getByTestId('vertical-disabled')
+		.locator('.inner')
+		.evaluate((element) => getComputedStyle(element).backgroundColor);
+	expect(verticalDisabled).not.toBe(verticalResting);
 });
 
 test('a disabled slider dims its header and ignores the keyboard', async ({ page }) => {
