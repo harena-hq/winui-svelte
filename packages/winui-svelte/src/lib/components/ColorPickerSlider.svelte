@@ -15,6 +15,9 @@
 		max?: number;
 		/** StepFrequency, under the name the primitive and the DOM both use. */
 		step?: number;
+		/** Orientation, from Slider. `ColorPicker.xaml:512-530` is the vertical template; the
+		 *  ColorPicker's own horizontal orientation is what sets it (`ColorPicker.xaml:153`, `:166`). */
+		orientation?: 'horizontal' | 'vertical';
 		/** ColorChannel. ColorPickerSlider.idl:10-11; the default is `Value`. */
 		colorChannel?: ColorPickerHsvChannel;
 		/** IsDirectionReversed. The value grows leftward. */
@@ -41,6 +44,7 @@
 		min = 0,
 		max = 100,
 		step = 1,
+		orientation = 'horizontal',
 		colorChannel = 'value',
 		isDirectionReversed = false,
 		disabled = false,
@@ -51,8 +55,8 @@
 		...rest
 	}: ColorPickerSliderProps = $props();
 
-	// WD-084: ColorPicker.xaml:244 and :257 use only the horizontal template; :458, :464 and
-	// :471 name HorizontalThumb alone, leaving the vertical variant without state colours.
+	// WD-084: ColorPicker.xaml:458, :464 and :471 name HorizontalThumb alone; our vertical
+	// orientation deliberately retains the same state colours.
 	// WD-085: ColorPickerSlider.cpp:145-153 opens the template ToolTip part, whose localized
 	// colour-name content needs the table this library has not built.
 	// `ColorPickerSliderTrackFillDisabled` at ColorPicker.xaml:465-466 only targets the two
@@ -99,6 +103,7 @@
 	class={['root', 'winui-BodyTextBlockStyle', className]}
 	{style}
 	data-disabled={disabled || undefined}
+	data-orientation={orientation}
 	{...rest}
 >
 	{#if header !== undefined}
@@ -119,7 +124,7 @@
 		{max}
 		{step}
 		{disabled}
-		orientation="horizontal"
+		{orientation}
 		dir={isDirectionReversed ? 'rtl' : 'ltr'}
 	>
 		{#snippet child({ props, thumbItems })}
@@ -254,7 +259,8 @@
 		pointer-events: none;
 	}
 
-	/* ColorPicker.xaml:471, PointerOver. */
+	/* WD-084: ColorPicker.xaml:471 names HorizontalThumb alone, but the shared container
+	   selector intentionally keeps the vertical thumb responsive too. */
 	.container:hover .inner {
 		background: var(--winui-ColorPickerSliderThumbBackgroundPointerOver);
 	}
@@ -279,4 +285,42 @@
 	.root[data-disabled] .container .thumb {
 		cursor: default;
 	}
+
+	/* `VerticalTemplate` at ColorPicker.xaml:512-530 turns the horizontal template a quarter turn.
+	   Its first row stretches (:514), so the container consumes the root height remaining after the
+	   header; `align-items: center` on the base rule gives the absolutely positioned thumb its
+	   horizontally centred static position.
+
+	   The width is fixed rather than floored. The three columns at :519-521 are
+	   SliderPreContentMargin, Auto and SliderPostContentMargin — 14 + 4 + 14 — which is the 32
+	   the grid's MinWidth states outright at :512, and a XAML Grid does not spread fixed columns
+	   across a wider slot. So under a header wider than 32 the track stays 14 from the left edge
+	   rather than centring in the header's width. Measured on the harness before this line: a
+	   stretched container was 35 wide and put the 4px track at 15.5, one pixel right of every
+	   other specimen. `Slider.svelte:478-489` carries the same pair for the same reason. */
+	.root[data-orientation='vertical'] .container {
+		flex: 1 1 auto;
+		flex-direction: column;
+		min-height: 0;
+		width: 32px;
+		align-self: flex-start;
+	}
+
+	/* `VerticalTrackRect`, ColorPicker.xaml:523: the width is the resource the horizontal track
+	   spends on its height. Still opacity zero, as :523 says. */
+	.root[data-orientation='vertical'] .track {
+		width: var(--winui-SliderTrackThemeHeight);
+		height: 100%;
+	}
+
+	/* `VerticalDecreaseRect`, ColorPicker.xaml:524; bits-ui supplies the inline `bottom`/`top`
+	   span, so the height is its to set. */
+	.root[data-orientation='vertical'] .fill {
+		width: var(--winui-SliderTrackThemeHeight);
+		height: auto;
+	}
+
+	/* No thumb rule. ColorPicker.xaml:525 gives VerticalThumb the horizontal thumb's
+	   SliderHorizontalThumbWidth and SliderHorizontalThumbHeight, so the base 18 by 18 is already
+	   right — unlike Slider_themeresources.xaml, which has separate vertical resources. */
 </style>
