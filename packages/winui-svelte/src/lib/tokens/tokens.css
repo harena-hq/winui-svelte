@@ -175,6 +175,22 @@
 	--winui-ComboBoxItemPillCornerRadius: 1.5px;
 	--winui-ComboBoxHeaderThemeFontWeight: 400;
 	--winui-ComboBoxPlaceholderTextThemeFontWeight: 350;
+	--winui-CommandBarFlyoutBackground: var(--winui-DesktopAcrylicTransparentBrush);
+	--winui-CommandBarFlyoutForeground: var(--winui-TextFillColorPrimaryBrush);
+	--winui-CommandBarFlyoutBorderBrush: var(--winui-ControlStrokeColorDefaultBrush);
+	--winui-CommandBarFlyoutAppBarButtonBackground: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-CommandBarFlyoutAppBarButtonBackgroundPointerOver: var(
+		--winui-SubtleFillColorSecondaryBrush
+	);
+	--winui-CommandBarFlyoutAppBarButtonBackgroundPressed: var(--winui-SubtleFillColorTertiaryBrush);
+	--winui-CommandBarFlyoutAppBarButtonBackgroundDisabled: var(--winui-SubtleFillColorDisabledBrush);
+	--winui-CommandBarFlyoutAppBarButtonForeground: var(--winui-TextFillColorPrimaryBrush);
+	--winui-CommandBarFlyoutAppBarButtonForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
+	--winui-CommandBarFlyoutAppBarButtonForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
+	--winui-CommandBarFlyoutAppBarButtonForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+	--winui-CommandBarFlyoutBorderThemeThickness: 1px;
+	--winui-CommandBarFlyoutAppBarButtonInnerBorderMargin: 2px;
+	--winui-CommandBarFlyoutAppBarEllipsisButtonInnerBorderMargin: 2px 6px 2px 2px;
 	--winui-AppBarButtonBackground: var(--winui-SubtleFillColorTransparentBrush);
 	--winui-AppBarButtonBackgroundPointerOver: var(--winui-SubtleFillColorSecondaryBrush);
 	--winui-AppBarButtonBackgroundPressed: var(--winui-SubtleFillColorTertiaryBrush);
@@ -2340,6 +2356,20 @@
 	--winui-ComboBoxDropDownBorderBrush: var(--winui-SurfaceStrokeColorFlyoutBrush);
 	--winui-ComboBoxItemPillFillBrush: var(--winui-AccentFillColorDefaultBrush);
 	--winui-ComboBoxDropdownBorderPadding: 0px;
+	--winui-CommandBarFlyoutBackground: var(--winui-DesktopAcrylicTransparentBrush);
+	--winui-CommandBarFlyoutForeground: var(--winui-TextFillColorPrimaryBrush);
+	--winui-CommandBarFlyoutBorderBrush: var(--winui-ControlStrokeColorDefaultBrush);
+	--winui-CommandBarFlyoutAppBarButtonBackground: var(--winui-SubtleFillColorTransparentBrush);
+	--winui-CommandBarFlyoutAppBarButtonBackgroundPointerOver: var(
+		--winui-SubtleFillColorSecondaryBrush
+	);
+	--winui-CommandBarFlyoutAppBarButtonBackgroundPressed: var(--winui-SubtleFillColorTertiaryBrush);
+	--winui-CommandBarFlyoutAppBarButtonBackgroundDisabled: var(--winui-SubtleFillColorDisabledBrush);
+	--winui-CommandBarFlyoutAppBarButtonForeground: var(--winui-TextFillColorPrimaryBrush);
+	--winui-CommandBarFlyoutAppBarButtonForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
+	--winui-CommandBarFlyoutAppBarButtonForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
+	--winui-CommandBarFlyoutAppBarButtonForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+	--winui-CommandBarFlyoutBorderThemeThickness: 1px;
 	--winui-AppBarButtonBackground: var(--winui-SubtleFillColorTransparentBrush);
 	--winui-AppBarButtonBackgroundPointerOver: var(--winui-SubtleFillColorSecondaryBrush);
 	--winui-AppBarButtonBackgroundPressed: var(--winui-SubtleFillColorTertiaryBrush);
@@ -4199,6 +4229,26 @@
 		--winui-ComboBoxDropDownBorderBrush: var(--winui-SurfaceStrokeColorFlyoutBrush);
 		--winui-ComboBoxItemPillFillBrush: var(--winui-AccentFillColorDefaultBrush);
 		--winui-ComboBoxDropdownBorderPadding: 0px;
+		--winui-CommandBarFlyoutBackground: var(--winui-DesktopAcrylicTransparentBrush);
+		--winui-CommandBarFlyoutForeground: var(--winui-TextFillColorPrimaryBrush);
+		--winui-CommandBarFlyoutBorderBrush: var(--winui-ControlStrokeColorDefaultBrush);
+		--winui-CommandBarFlyoutAppBarButtonBackground: var(--winui-SubtleFillColorTransparentBrush);
+		--winui-CommandBarFlyoutAppBarButtonBackgroundPointerOver: var(
+			--winui-SubtleFillColorSecondaryBrush
+		);
+		--winui-CommandBarFlyoutAppBarButtonBackgroundPressed: var(
+			--winui-SubtleFillColorTertiaryBrush
+		);
+		--winui-CommandBarFlyoutAppBarButtonBackgroundDisabled: var(
+			--winui-SubtleFillColorDisabledBrush
+		);
+		--winui-CommandBarFlyoutAppBarButtonForeground: var(--winui-TextFillColorPrimaryBrush);
+		--winui-CommandBarFlyoutAppBarButtonForegroundPointerOver: var(
+			--winui-TextFillColorPrimaryBrush
+		);
+		--winui-CommandBarFlyoutAppBarButtonForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
+		--winui-CommandBarFlyoutAppBarButtonForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+		--winui-CommandBarFlyoutBorderThemeThickness: 1px;
 		--winui-AppBarButtonBackground: var(--winui-SubtleFillColorTransparentBrush);
 		--winui-AppBarButtonBackgroundPointerOver: var(--winui-SubtleFillColorSecondaryBrush);
 		--winui-AppBarButtonBackgroundPressed: var(--winui-SubtleFillColorTertiaryBrush);
@@ -6178,6 +6228,28 @@
 	--winui-ComboBoxDropDownBorderBrush: var(--winui-SystemControlForegroundChromeHighBrush);
 	--winui-ComboBoxItemPillFillBrush: var(--winui-SystemControlHighlightListAccentLowBrush);
 	--winui-ComboBoxDropdownBorderPadding: 0px;
+	--winui-CommandBarFlyoutBackground: var(--winui-SystemColorButtonFaceColor);
+	--winui-CommandBarFlyoutForeground: var(--winui-SystemControlForegroundBaseHighBrush);
+	--winui-CommandBarFlyoutBorderBrush: var(--winui-SystemColorButtonTextColor);
+	--winui-CommandBarFlyoutAppBarButtonBackground: color-mix(
+		in srgb,
+		var(--winui-SystemColorHighlightColor) 0%,
+		transparent
+	);
+	--winui-CommandBarFlyoutAppBarButtonBackgroundPointerOver: var(--winui-SystemColorHighlightColor);
+	--winui-CommandBarFlyoutAppBarButtonBackgroundPressed: var(--winui-SystemColorHighlightColor);
+	--winui-CommandBarFlyoutAppBarButtonBackgroundDisabled: var(--winui-SystemColorButtonFaceColor);
+	--winui-CommandBarFlyoutAppBarButtonForeground: var(--winui-SystemControlForegroundBaseHighBrush);
+	--winui-CommandBarFlyoutAppBarButtonForegroundPointerOver: var(
+		--winui-SystemControlHighlightAltBaseHighBrush
+	);
+	--winui-CommandBarFlyoutAppBarButtonForegroundPressed: var(
+		--winui-SystemControlHighlightAltBaseHighBrush
+	);
+	--winui-CommandBarFlyoutAppBarButtonForegroundDisabled: var(
+		--winui-SystemControlDisabledBaseMediumLowBrush
+	);
+	--winui-CommandBarFlyoutBorderThemeThickness: 1px;
 	--winui-AppBarButtonBackground: var(--winui-SystemControlTransparentBrush);
 	--winui-AppBarButtonBackgroundPointerOver: var(--winui-SystemColorHighlightColor);
 	--winui-AppBarButtonBackgroundPressed: var(--winui-SystemColorHighlightColor);
