@@ -290,13 +290,21 @@ export const RATINGCONTROL_KEYS = {
 	RatingControlFontSizeForRendering: 'RatingControl, the glyph size before the resting scale'
 };
 
-// ColorSpectrum reads only the border member of ColorPicker's dictionary. The slider,
-// header, sizing and corner-radius entries belong to the two later ColorPicker units.
+// ColorSpectrum reads the border member of ColorPicker's dictionary. ColorPickerSlider reads
+// its thumb and header brushes plus its inner-thumb dimensions. Track-fill and strip-radius
+// entries remain excluded because they paint only ColorPicker-owned elements or invisible tracks.
 export const COLORPICKER_KEYS = {
 	ColorPickerBorderBrush: 'ColorSpectrum border, via ColorPickerBorderStyle',
 	SystemControlBackgroundChromeWhiteBrush: 'ColorSpectrum SelectionEllipse default stroke',
 	SystemControlBackgroundChromeBlackHighBrush:
-		'ColorSpectrum SelectionEllipse dark and focus stroke'
+		'ColorSpectrum SelectionEllipse dark and focus stroke',
+	ColorPickerSliderThumbBackground: 'ColorPickerSlider inner thumb, at rest',
+	ColorPickerSliderThumbBackgroundPointerOver: 'ColorPickerSlider inner thumb, pointer over',
+	ColorPickerSliderThumbBackgroundPressed: 'ColorPickerSlider inner thumb, pressed',
+	ColorPickerSliderThumbBackgroundDisabled: 'ColorPickerSlider inner thumb, disabled',
+	ColorPickerHeaderContentDisabled: 'ColorPickerSlider header, disabled',
+	ColorPickerSliderInnerThumbWidth: 'ColorPickerSlider inner thumb, its width',
+	ColorPickerSliderInnerThumbHeight: 'ColorPickerSlider inner thumb, its height'
 };
 
 export const HYPERLINK_KEYS = {
@@ -1605,14 +1613,15 @@ export const TOGGLESWITCH_KEYS = {
  * which means they resolve to transparent at this pin and the four are read anyway so a re-pin
  * that gives them a value is not silently ignored.
  *
+ * Both header margins are emitted. `Slider.svelte` reads `SliderTopHeaderMargin` from
+ * `DefaultSliderStyle`, while `ColorPickerSlider.svelte` reads `SliderHeaderThemeMargin`
+ * from the presenter in its complete replacement template.
+ *
  * What this list leaves out, so a gap reads as a decision rather than an oversight.
  * The Slider dictionary carries sixty-one resources; these are the ones not here:
  *
  * - **The border** — `SliderBorderThemeThickness`. The `DefaultSliderStyle` sets it to
  *   `0` and the template never paints it.
- * - **The header's own margin** — `SliderHeaderThemeMargin`. The template applies it but
- *   the header sits on a ContentPresenter that this component does not include, so the
- *   margin has nothing to act on; `SliderTopHeaderMargin` is what the component reads.
  * - **The twenty-two pre-Fluent `Slider*ThemeBrush` resources.** They are the `Border`,
  *   `DisabledBorder`, `HeaderForeground`, `Thumb*`, `TickMark*` and `Track*` families.
  *   The current template references none of them and their `Default` values are literal
@@ -1634,6 +1643,7 @@ export const SLIDER_KEYS = {
 	SliderInnerThumbWidth: 'Slider thumb, the accent circle',
 	SliderInnerThumbHeight: 'Slider thumb, the accent circle',
 	SliderTopHeaderMargin: 'Slider header, the gap below it',
+	SliderHeaderThemeMargin: 'Slider header, the margin the ColorPickerSlider template applies',
 	SliderHeaderThemeFontWeight: 'Slider header, its weight',
 	SliderTickBarFill: 'Slider tick marks outside the track',
 	SliderTickBarFillDisabled: 'Slider tick marks outside the track, disabled',
@@ -2718,6 +2728,8 @@ export const TYPE_RAMP = {
 export const DOUBLE_LENGTHS = {
 	RatingControlFontSizeForRendering: 'RatingControl glyph size before the resting scale',
 	RatingControlItemSpacing: 'RatingControl gap between stars',
+	ColorPickerSliderInnerThumbWidth: 'ColorPickerSlider inner thumb width',
+	ColorPickerSliderInnerThumbHeight: 'ColorPickerSlider inner thumb height',
 	ScrollBarTrackBorderThemeThickness: 'ScrollBar track border width',
 	ScrollBarThumbOffset: 'ScrollBar collapsed thumb offset',
 	ScrollBarSize: 'ScrollBar rail thickness and arrow button size',
