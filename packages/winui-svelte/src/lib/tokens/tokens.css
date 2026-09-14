@@ -117,6 +117,9 @@
 	--winui-ColorPickerSliderInnerThumbHeight: 10px;
 	--winui-ColorPickerVerticalOrientationMinWidth: 312px;
 	--winui-ColorPickerVerticalOrientationMaxWidth: 392px;
+	--winui-ColorPickerVerticalOrientationMinHeight: 312px;
+	--winui-ColorPickerVerticalOrientationMaxHeight: 392px;
+	--winui-ColorPickerTextInputHorizontalOrientationMargin: 122px;
 	--winui-ComboBoxItemForeground: var(--winui-TextFillColorPrimaryBrush);
 	--winui-ComboBoxItemForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
 	--winui-ComboBoxItemForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);

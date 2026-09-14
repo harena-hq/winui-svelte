@@ -292,12 +292,17 @@ export const RATINGCONTROL_KEYS = {
 
 // ColorSpectrum reads the border member of ColorPicker's dictionary. ColorPickerSlider reads
 // its thumb and header brushes plus its inner-thumb dimensions. ColorPicker reads its root widths
-// and its owned gradient-strip radius. Track-fill remains excluded because it paints only the
-// opacity-zero ColorPickerSlider track rectangles.
+// and heights, the label-column width its horizontal orientation uses, and its owned
+// gradient-strip radius. Track-fill remains excluded because it paints only the opacity-zero
+// ColorPickerSlider track rectangles.
 export const COLORPICKER_KEYS = {
 	ColorPickerBorderBrush: 'ColorSpectrum border, via ColorPickerBorderStyle',
 	ColorPickerVerticalOrientationMinWidth: 'ColorPicker root, its minimum width',
 	ColorPickerVerticalOrientationMaxWidth: 'ColorPicker root, its maximum width',
+	ColorPickerVerticalOrientationMinHeight: 'ColorPicker root, its minimum height',
+	ColorPickerVerticalOrientationMaxHeight: 'ColorPicker root, its maximum height',
+	ColorPickerTextInputHorizontalOrientationMargin:
+		'ColorPicker text input, its horizontal label column',
 	ColorPickerSliderCornerRadius: 'ColorPicker slider strip, its corner radius',
 	SystemControlBackgroundChromeWhiteBrush: 'ColorSpectrum SelectionEllipse default stroke',
 	SystemControlBackgroundChromeBlackHighBrush:
@@ -2736,6 +2741,9 @@ export const DOUBLE_LENGTHS = {
 	ColorPickerSliderInnerThumbHeight: 'ColorPickerSlider inner thumb height',
 	ColorPickerVerticalOrientationMinWidth: 'ColorPicker root minimum width',
 	ColorPickerVerticalOrientationMaxWidth: 'ColorPicker root maximum width',
+	ColorPickerVerticalOrientationMinHeight: 'ColorPicker root minimum height',
+	ColorPickerVerticalOrientationMaxHeight: 'ColorPicker root maximum height',
+	ColorPickerTextInputHorizontalOrientationMargin: 'ColorPicker text input horizontal label column',
 	ScrollBarTrackBorderThemeThickness: 'ScrollBar track border width',
 	ScrollBarThumbOffset: 'ScrollBar collapsed thumb offset',
 	ScrollBarSize: 'ScrollBar rail thickness and arrow button size',
