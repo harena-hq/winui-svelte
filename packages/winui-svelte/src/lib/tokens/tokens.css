@@ -102,6 +102,7 @@
 	--winui-BreadcrumbBarEllipsisFlyoutPresenterBorderThemeThickness: 1px;
 	--winui-BreadcrumbBarItemThemeFontSize: var(--winui-ControlContentThemeFontSize);
 	--winui-BreadcrumbBarChevronFontSize: 12px;
+	--winui-ColorPickerBorderBrush: var(--winui-ControlStrokeColorDefaultBrush);
 	--winui-ComboBoxItemForeground: var(--winui-TextFillColorPrimaryBrush);
 	--winui-ComboBoxItemForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
 	--winui-ComboBoxItemForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
@@ -2134,6 +2135,7 @@
 	--winui-SystemBaseMediumColor: #00000099;
 	--winui-SystemBaseMediumHighColor: #000000cc;
 	--winui-SystemBaseMediumLowColor: #00000066;
+	--winui-SystemChromeBlackHighColor: #000000ff;
 	--winui-SystemChromeDisabledHighColor: #ccccccff;
 	--winui-SystemChromeDisabledLowColor: #7a7a7aff;
 	--winui-SystemChromeHighColor: #ccccccff;
@@ -2146,8 +2148,10 @@
 	--winui-SystemControlBackgroundAltMediumBrush: var(--winui-SystemAltMediumColor);
 	--winui-SystemControlBackgroundAltMediumLowBrush: var(--winui-SystemAltMediumLowColor);
 	--winui-SystemControlBackgroundBaseMediumBrush: var(--winui-SystemBaseMediumColor);
+	--winui-SystemControlBackgroundChromeBlackHighBrush: var(--winui-SystemChromeBlackHighColor);
 	--winui-SystemControlBackgroundChromeMediumBrush: var(--winui-SystemChromeMediumColor);
 	--winui-SystemControlBackgroundChromeMediumLowBrush: var(--winui-SystemChromeMediumLowColor);
+	--winui-SystemControlBackgroundChromeWhiteBrush: var(--winui-SystemChromeWhiteColor);
 	--winui-SystemControlBackgroundListLowBrush: var(--winui-SystemListLowColor);
 	--winui-SystemControlBackgroundListMediumBrush: var(--winui-SystemListMediumColor);
 	--winui-SystemControlDisabledBaseHighBrush: var(--winui-SystemBaseHighColor);
@@ -2163,6 +2167,7 @@
 	--winui-SystemControlForegroundChromeHighBrush: var(--winui-SystemChromeHighColor);
 	--winui-SystemControlForegroundChromeMediumBrush: var(--winui-SystemChromeMediumColor);
 	--winui-SystemControlForegroundChromeDisabledLowBrush: var(--winui-SystemChromeDisabledLowColor);
+	--winui-SystemControlForegroundListLowBrush: var(--winui-SystemListLowColor);
 	--winui-SystemControlForegroundTransparentBrush: transparent;
 	--winui-SystemControlHighlightAltBaseHighBrush: var(--winui-SystemBaseHighColor);
 	--winui-SystemControlHighlightAltBaseMediumBrush: var(--winui-SystemBaseMediumColor);
@@ -2266,6 +2271,7 @@
 	--winui-BreadcrumbBarEllipsisFlyoutPresenterBorderThemeThickness: 1px;
 	--winui-BreadcrumbBarItemThemeFontSize: var(--winui-ControlContentThemeFontSize);
 	--winui-BreadcrumbBarChevronFontSize: 12px;
+	--winui-ColorPickerBorderBrush: var(--winui-ControlStrokeColorDefaultBrush);
 	--winui-ComboBoxItemForeground: var(--winui-TextFillColorPrimaryBrush);
 	--winui-ComboBoxItemForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
 	--winui-ComboBoxItemForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
@@ -3970,6 +3976,7 @@
 	--winui-SystemBaseMediumColor: #ffffff99;
 	--winui-SystemBaseMediumHighColor: #ffffffcc;
 	--winui-SystemBaseMediumLowColor: #ffffff66;
+	--winui-SystemChromeBlackHighColor: #000000ff;
 	--winui-SystemChromeDisabledHighColor: #333333ff;
 	--winui-SystemChromeDisabledLowColor: #858585ff;
 	--winui-SystemChromeHighColor: #767676ff;
@@ -3982,8 +3989,10 @@
 	--winui-SystemControlBackgroundAltMediumBrush: var(--winui-SystemAltMediumColor);
 	--winui-SystemControlBackgroundAltMediumLowBrush: var(--winui-SystemAltMediumLowColor);
 	--winui-SystemControlBackgroundBaseMediumBrush: var(--winui-SystemBaseMediumColor);
+	--winui-SystemControlBackgroundChromeBlackHighBrush: var(--winui-SystemChromeBlackHighColor);
 	--winui-SystemControlBackgroundChromeMediumBrush: var(--winui-SystemChromeMediumColor);
 	--winui-SystemControlBackgroundChromeMediumLowBrush: var(--winui-SystemChromeMediumLowColor);
+	--winui-SystemControlBackgroundChromeWhiteBrush: var(--winui-SystemChromeWhiteColor);
 	--winui-SystemControlBackgroundListLowBrush: var(--winui-SystemListLowColor);
 	--winui-SystemControlBackgroundListMediumBrush: var(--winui-SystemListMediumColor);
 	--winui-SystemControlDisabledBaseHighBrush: var(--winui-SystemBaseHighColor);
@@ -3999,6 +4008,7 @@
 	--winui-SystemControlForegroundChromeHighBrush: var(--winui-SystemChromeHighColor);
 	--winui-SystemControlForegroundChromeMediumBrush: var(--winui-SystemChromeMediumColor);
 	--winui-SystemControlForegroundChromeDisabledLowBrush: var(--winui-SystemChromeDisabledLowColor);
+	--winui-SystemControlForegroundListLowBrush: var(--winui-SystemListLowColor);
 	--winui-SystemControlForegroundTransparentBrush: transparent;
 	--winui-SystemControlHighlightAltBaseHighBrush: var(--winui-SystemBaseHighColor);
 	--winui-SystemControlHighlightAltBaseMediumBrush: var(--winui-SystemBaseMediumColor);
@@ -4108,6 +4118,7 @@
 		--winui-BreadcrumbBarEllipsisFlyoutPresenterBorderThemeThickness: 1px;
 		--winui-BreadcrumbBarItemThemeFontSize: var(--winui-ControlContentThemeFontSize);
 		--winui-BreadcrumbBarChevronFontSize: 12px;
+		--winui-ColorPickerBorderBrush: var(--winui-ControlStrokeColorDefaultBrush);
 		--winui-ComboBoxItemForeground: var(--winui-TextFillColorPrimaryBrush);
 		--winui-ComboBoxItemForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
 		--winui-ComboBoxItemForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
@@ -5914,6 +5925,7 @@
 		--winui-SystemBaseMediumColor: #ffffff99;
 		--winui-SystemBaseMediumHighColor: #ffffffcc;
 		--winui-SystemBaseMediumLowColor: #ffffff66;
+		--winui-SystemChromeBlackHighColor: #000000ff;
 		--winui-SystemChromeDisabledHighColor: #333333ff;
 		--winui-SystemChromeDisabledLowColor: #858585ff;
 		--winui-SystemChromeHighColor: #767676ff;
@@ -5926,8 +5938,10 @@
 		--winui-SystemControlBackgroundAltMediumBrush: var(--winui-SystemAltMediumColor);
 		--winui-SystemControlBackgroundAltMediumLowBrush: var(--winui-SystemAltMediumLowColor);
 		--winui-SystemControlBackgroundBaseMediumBrush: var(--winui-SystemBaseMediumColor);
+		--winui-SystemControlBackgroundChromeBlackHighBrush: var(--winui-SystemChromeBlackHighColor);
 		--winui-SystemControlBackgroundChromeMediumBrush: var(--winui-SystemChromeMediumColor);
 		--winui-SystemControlBackgroundChromeMediumLowBrush: var(--winui-SystemChromeMediumLowColor);
+		--winui-SystemControlBackgroundChromeWhiteBrush: var(--winui-SystemChromeWhiteColor);
 		--winui-SystemControlBackgroundListLowBrush: var(--winui-SystemListLowColor);
 		--winui-SystemControlBackgroundListMediumBrush: var(--winui-SystemListMediumColor);
 		--winui-SystemControlDisabledBaseHighBrush: var(--winui-SystemBaseHighColor);
@@ -5947,6 +5961,7 @@
 		--winui-SystemControlForegroundChromeDisabledLowBrush: var(
 			--winui-SystemChromeDisabledLowColor
 		);
+		--winui-SystemControlForegroundListLowBrush: var(--winui-SystemListLowColor);
 		--winui-SystemControlForegroundTransparentBrush: transparent;
 		--winui-SystemControlHighlightAltBaseHighBrush: var(--winui-SystemBaseHighColor);
 		--winui-SystemControlHighlightAltBaseMediumBrush: var(--winui-SystemBaseMediumColor);
@@ -6054,6 +6069,7 @@
 	--winui-BreadcrumbBarEllipsisFlyoutPresenterBorderThemeThickness: 2px;
 	--winui-BreadcrumbBarItemThemeFontSize: var(--winui-ControlContentThemeFontSize);
 	--winui-BreadcrumbBarChevronFontSize: 12px;
+	--winui-ColorPickerBorderBrush: var(--winui-SystemControlForegroundListLowBrush);
 	--winui-ComboBoxItemForeground: var(--winui-SystemControlForegroundBaseHighBrush);
 	--winui-ComboBoxItemForegroundPressed: var(--winui-SystemControlHighlightAltBaseHighBrush);
 	--winui-ComboBoxItemForegroundPointerOver: var(--winui-SystemControlHighlightAltBaseHighBrush);
@@ -7767,6 +7783,7 @@
 	--winui-SystemBaseMediumColor: #ffffff99;
 	--winui-SystemBaseMediumHighColor: #ffffffcc;
 	--winui-SystemBaseMediumLowColor: #ffffff66;
+	--winui-SystemChromeBlackHighColor: #000000ff;
 	--winui-SystemChromeDisabledHighColor: #333333ff;
 	--winui-SystemChromeDisabledLowColor: #7a7a7aff;
 	--winui-SystemChromeHighColor: #767676ff;
@@ -7779,8 +7796,10 @@
 	--winui-SystemControlBackgroundAltMediumBrush: var(--winui-SystemColorButtonFaceColor);
 	--winui-SystemControlBackgroundAltMediumLowBrush: var(--winui-SystemColorButtonFaceColor);
 	--winui-SystemControlBackgroundBaseMediumBrush: var(--winui-SystemColorButtonFaceColor);
+	--winui-SystemControlBackgroundChromeBlackHighBrush: var(--winui-SystemColorButtonFaceColor);
 	--winui-SystemControlBackgroundChromeMediumBrush: var(--winui-SystemColorButtonFaceColor);
 	--winui-SystemControlBackgroundChromeMediumLowBrush: var(--winui-SystemColorButtonFaceColor);
+	--winui-SystemControlBackgroundChromeWhiteBrush: var(--winui-SystemColorButtonFaceColor);
 	--winui-SystemControlBackgroundListLowBrush: var(--winui-SystemColorButtonFaceColor);
 	--winui-SystemControlBackgroundListMediumBrush: var(--winui-SystemColorButtonFaceColor);
 	--winui-SystemControlDisabledBaseHighBrush: var(--winui-SystemColorGrayTextColor);
@@ -7796,6 +7815,7 @@
 	--winui-SystemControlForegroundChromeHighBrush: var(--winui-SystemColorButtonTextColor);
 	--winui-SystemControlForegroundChromeMediumBrush: var(--winui-SystemColorButtonTextColor);
 	--winui-SystemControlForegroundChromeDisabledLowBrush: var(--winui-SystemColorButtonTextColor);
+	--winui-SystemControlForegroundListLowBrush: var(--winui-SystemColorButtonTextColor);
 	--winui-SystemControlForegroundTransparentBrush: var(--winui-SystemColorButtonTextColor);
 	--winui-SystemControlHighlightAltBaseHighBrush: var(--winui-SystemColorHighlightTextColor);
 	--winui-SystemControlHighlightAltBaseMediumBrush: var(--winui-SystemColorHighlightTextColor);

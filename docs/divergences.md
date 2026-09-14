@@ -29,6 +29,18 @@ worth closing. "Would be hard" is not a reason — the reason is always a specif
 
 ---
 
+### WD-083 — ColorSpectrum Ctrl+Arrow does not navigate named colours
+
+- **Control**: `ColorSpectrum` keyboard input.
+- **WinUI does**: sends Ctrl+Arrow through `FindNextNamedColor`, which requires the
+  `ColorDisplayNameHelper` colour-name table (`ColorHelpers.cpp:52-77`).
+- **We do**: use the documented 30-degree hue / 10-percent saturation-or-value major step.
+- **Why accepted**: the name table and colour-name tooltip are explicitly a later unit; adding a
+  private incomplete copy here would make both controls disagree.
+- **Would reconsider if**: the `ColorDisplayNameHelper` unit lands.
+
+---
+
 ### WD-001 — the two color tripwires are aliased rather than carried forward
 
 - **Control**: the token layer, all three themes.

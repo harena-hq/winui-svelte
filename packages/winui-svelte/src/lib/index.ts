@@ -205,6 +205,13 @@ export { default as Hyperlink } from './components/Hyperlink.svelte';
 export type { HyperlinkProps } from './components/Hyperlink.svelte';
 export { default as RatingControl } from './components/RatingControl.svelte';
 export type { RatingControlProps } from './components/RatingControl.svelte';
+export { default as ColorSpectrum } from './components/ColorSpectrum.svelte';
+export type {
+	ColorSpectrumComponents,
+	ColorSpectrumProps,
+	ColorSpectrumShape,
+	HsvColor
+} from './components/ColorSpectrum.svelte';
 export { default as Italic } from './components/Italic.svelte';
 export type { ItalicProps } from './components/Italic.svelte';
 export { default as LineBreak } from './components/LineBreak.svelte';
