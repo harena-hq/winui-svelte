@@ -1,20 +1,10 @@
 <script lang="ts" module>
 	import type { Snippet } from 'svelte';
 
-	export type FlyoutPlacement =
-		| 'top'
-		| 'bottom'
-		| 'left'
-		| 'right'
-		| 'topEdgeAlignedLeft'
-		| 'topEdgeAlignedRight'
-		| 'bottomEdgeAlignedLeft'
-		| 'bottomEdgeAlignedRight'
-		| 'leftEdgeAlignedTop'
-		| 'leftEdgeAlignedBottom'
-		| 'rightEdgeAlignedTop'
-		| 'rightEdgeAlignedBottom'
-		| 'auto';
+	// The placement table moved to `internal/flyout-placement.ts` when `CommandBarFlyout` needed
+	// the same one. Aliased rather than re-exported because an `import type` followed by an
+	// `export type` of the same name reads as an assignment to `no-import-assign`.
+	export type FlyoutPlacement = import('../internal/flyout-placement').FlyoutPlacement;
 
 	export interface FlyoutProps {
 		/** Content. The flyout's body, as a snippet. */
@@ -63,6 +53,7 @@
 
 <script lang="ts">
 	import { Popover } from 'bits-ui';
+	import { FLYOUT_PLACEMENTS } from '../internal/flyout-placement';
 
 	let {
 		content,
@@ -77,34 +68,9 @@
 		...rest
 	}: FlyoutProps = $props();
 
-	const placements = {
-		top: { side: 'top', align: 'center' },
-		bottom: { side: 'bottom', align: 'center' },
-		left: { side: 'left', align: 'center' },
-		right: { side: 'right', align: 'center' },
-		topEdgeAlignedLeft: { side: 'top', align: 'start' },
-		topEdgeAlignedRight: { side: 'top', align: 'end' },
-		bottomEdgeAlignedLeft: { side: 'bottom', align: 'start' },
-		bottomEdgeAlignedRight: { side: 'bottom', align: 'end' },
-		leftEdgeAlignedTop: { side: 'left', align: 'start' },
-		leftEdgeAlignedBottom: { side: 'left', align: 'end' },
-		rightEdgeAlignedTop: { side: 'right', align: 'start' },
-		rightEdgeAlignedBottom: { side: 'right', align: 'end' },
-		auto: { side: 'top', align: 'center' }
-	} as const;
+	const position = $derived(FLYOUT_PLACEMENTS[placement]);
 
-	const position = $derived(placements[placement]);
-
-	// Collisions are avoided for every placement, not only for `auto`. `FlyoutPlacementMode`
-	// is a *preferred* placement upstream, and the popup hosting a flyout has
-	// `ShouldConstrainToRootBounds` true by default, so a flyout that will not fit is moved
-	// until it does rather than drawn off the edge. Measured here with avoidance off: the
-	// Gallery's own example — a 355px flyout centred on a button 60px from the left of the
-	// dev page — rendered at x = -109, a hundred pixels outside the viewport and unreachable.
-	// The consequence is that `auto` and `top` resolve to the same behaviour in this
-	// reproduction. That is not a collapse of two different things: upstream `Auto` asks the
-	// framework to choose, and for a button flyout it chooses Top, which is also why Top is
-	// the default.
+	// `FLYOUT_PLACEMENTS` carries the collision-avoidance reasoning and the measurement behind it.
 </script>
 
 <Popover.Root

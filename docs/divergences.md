@@ -106,6 +106,13 @@ the reference guest the original's card measures a flat 249 down its middle and 
 `#f9f9f9`, so the visible result agrees to the byte; over a different backdrop it would not, for
 exactly the reason above.
 
+`CommandBarFlyout` is the third arrival and needs no argument of its own, because the two keys
+are the same two: `CommandBarFlyoutBackground` is `DesktopAcrylicTransparentBrush`
+(`CommandBarFlyout_themeresources.xaml:5`) and `CommandBarFlyoutSystemBackdrop` is
+`AcrylicBackgroundFillColorDefaultBackdrop` (`:110`, applied at `:626`). It composites the same
+way, for the same reason, and is listed here rather than opening a fourth entry so that the day
+an acrylic component lands, one deletion closes all of them.
+
 ---
 
 ### WD-003 — the two Mica Background tiles on the Color page render without a fill

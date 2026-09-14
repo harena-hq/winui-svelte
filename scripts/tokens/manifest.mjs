@@ -316,6 +316,38 @@ export const COLORPICKER_KEYS = {
 	ColorPickerSliderInnerThumbHeight: 'ColorPickerSlider inner thumb, its height'
 };
 
+// `CommandBarFlyout.svelte` reads all fourteen. The four surface keys paint the flyout itself;
+// the eight `AppBarButton` brushes are read twice over, once as the values this control
+// redefines `--winui-AppBarButton*` to for the commands it holds and once by its own ellipsis
+// button; the two margins are the inner borders, the command's own and the ellipsis's.
+// `CommandBar` reads none of them, which is why they are their own group rather than additions
+// to COMMANDBAR_KEYS.
+export const COMMANDBARFLYOUT_KEYS = {
+	CommandBarFlyoutBackground: 'CommandBarFlyout surface background',
+	CommandBarFlyoutForeground: 'CommandBarFlyout surface foreground',
+	CommandBarFlyoutBorderBrush: 'CommandBarFlyout surface border',
+	CommandBarFlyoutBorderThemeThickness: 'CommandBarFlyout surface border width',
+	CommandBarFlyoutAppBarButtonBackground:
+		'CommandBarFlyout command and ellipsis background, at rest',
+	CommandBarFlyoutAppBarButtonBackgroundPointerOver:
+		'CommandBarFlyout command and ellipsis background, pointer over',
+	CommandBarFlyoutAppBarButtonBackgroundPressed:
+		'CommandBarFlyout command and ellipsis background, pressed',
+	CommandBarFlyoutAppBarButtonBackgroundDisabled:
+		'CommandBarFlyout command and ellipsis background, disabled',
+	CommandBarFlyoutAppBarButtonForeground:
+		'CommandBarFlyout command and ellipsis foreground, at rest',
+	CommandBarFlyoutAppBarButtonForegroundPointerOver:
+		'CommandBarFlyout command and ellipsis foreground, pointer over',
+	CommandBarFlyoutAppBarButtonForegroundPressed:
+		'CommandBarFlyout command and ellipsis foreground, pressed',
+	CommandBarFlyoutAppBarButtonForegroundDisabled:
+		'CommandBarFlyout command and ellipsis foreground, disabled',
+	CommandBarFlyoutAppBarButtonInnerBorderMargin: 'CommandBarFlyout command inner-border margin',
+	CommandBarFlyoutAppBarEllipsisButtonInnerBorderMargin:
+		'CommandBarFlyout ellipsis inner-border margin'
+};
+
 export const HYPERLINK_KEYS = {
 	HyperlinkForeground: 'Hyperlink foreground, at rest',
 	HyperlinkForegroundPointerOver: 'Hyperlink foreground, pointer over',
@@ -2735,6 +2767,7 @@ export const TYPE_RAMP = {
  * these gets the inputs rather than the answer.
  */
 export const DOUBLE_LENGTHS = {
+	CommandBarFlyoutBorderThemeThickness: 'CommandBarFlyout surface border width',
 	RatingControlFontSizeForRendering: 'RatingControl glyph size before the resting scale',
 	RatingControlItemSpacing: 'RatingControl gap between stars',
 	ColorPickerSliderInnerThumbWidth: 'ColorPickerSlider inner thumb width',
