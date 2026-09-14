@@ -102,7 +102,18 @@
 	--winui-BreadcrumbBarEllipsisFlyoutPresenterBorderThemeThickness: 1px;
 	--winui-BreadcrumbBarItemThemeFontSize: var(--winui-ControlContentThemeFontSize);
 	--winui-BreadcrumbBarChevronFontSize: 12px;
+	--winui-ColorPickerSliderThumbBackground: var(--winui-TextFillColorPrimaryBrush);
+	--winui-ColorPickerSliderThumbBackgroundPointerOver: var(
+		--winui-SystemControlHighlightChromeAltLowBrush
+	);
+	--winui-ColorPickerSliderThumbBackgroundPressed: var(--winui-TextFillColorPrimaryBrush);
+	--winui-ColorPickerSliderThumbBackgroundDisabled: var(
+		--winui-ControlStrongFillColorDisabledBrush
+	);
+	--winui-ColorPickerHeaderContentDisabled: var(--winui-TextFillColorDisabledBrush);
 	--winui-ColorPickerBorderBrush: var(--winui-ControlStrokeColorDefaultBrush);
+	--winui-ColorPickerSliderInnerThumbWidth: 10px;
+	--winui-ColorPickerSliderInnerThumbHeight: 10px;
 	--winui-ComboBoxItemForeground: var(--winui-TextFillColorPrimaryBrush);
 	--winui-ComboBoxItemForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
 	--winui-ComboBoxItemForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
@@ -1259,6 +1270,7 @@
 	--winui-ScrollBarVerticalIncreaseMargin: 0px 0px 4px 0px;
 	--winui-SliderOutsideTickBarThemeHeight: 4px;
 	--winui-SliderTrackThemeHeight: 4px;
+	--winui-SliderHeaderThemeMargin: 0px 0px 4px 0px;
 	--winui-SliderHeaderThemeFontWeight: 400;
 	--winui-SliderContainerBackgroundPointerOver: var(--winui-ControlFillColorTransparentBrush);
 	--winui-SliderContainerBackgroundPressed: var(--winui-ControlFillColorTransparentBrush);
@@ -2135,6 +2147,7 @@
 	--winui-SystemBaseMediumColor: #00000099;
 	--winui-SystemBaseMediumHighColor: #000000cc;
 	--winui-SystemBaseMediumLowColor: #00000066;
+	--winui-SystemChromeAltLowColor: #171717ff;
 	--winui-SystemChromeBlackHighColor: #000000ff;
 	--winui-SystemChromeDisabledHighColor: #ccccccff;
 	--winui-SystemChromeDisabledLowColor: #7a7a7aff;
@@ -2175,6 +2188,7 @@
 	--winui-SystemControlHighlightAltChromeWhiteBrush: var(--winui-SystemChromeWhiteColor);
 	--winui-SystemControlHighlightAltTransparentBrush: transparent;
 	--winui-SystemControlHighlightBaseMediumBrush: var(--winui-SystemBaseMediumColor);
+	--winui-SystemControlHighlightChromeAltLowBrush: var(--winui-SystemChromeAltLowColor);
 	--winui-SystemControlHighlightListAccentHighBrush: color-mix(
 		in srgb,
 		var(--winui-SystemAccentColor) 70%,
@@ -2271,6 +2285,15 @@
 	--winui-BreadcrumbBarEllipsisFlyoutPresenterBorderThemeThickness: 1px;
 	--winui-BreadcrumbBarItemThemeFontSize: var(--winui-ControlContentThemeFontSize);
 	--winui-BreadcrumbBarChevronFontSize: 12px;
+	--winui-ColorPickerSliderThumbBackground: var(--winui-TextFillColorPrimaryBrush);
+	--winui-ColorPickerSliderThumbBackgroundPointerOver: var(
+		--winui-SystemControlHighlightChromeAltLowBrush
+	);
+	--winui-ColorPickerSliderThumbBackgroundPressed: var(--winui-TextFillColorPrimaryBrush);
+	--winui-ColorPickerSliderThumbBackgroundDisabled: var(
+		--winui-ControlStrongFillColorDisabledBrush
+	);
+	--winui-ColorPickerHeaderContentDisabled: var(--winui-TextFillColorDisabledBrush);
 	--winui-ColorPickerBorderBrush: var(--winui-ControlStrokeColorDefaultBrush);
 	--winui-ComboBoxItemForeground: var(--winui-TextFillColorPrimaryBrush);
 	--winui-ComboBoxItemForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
@@ -3319,6 +3342,7 @@
 	--winui-ScrollBarPanningThumbBackgroundDisabled: var(--winui-ControlStrongFillColorDisabledBrush);
 	--winui-SliderOutsideTickBarThemeHeight: 4px;
 	--winui-SliderTrackThemeHeight: 4px;
+	--winui-SliderHeaderThemeMargin: 0px 0px 4px 0px;
 	--winui-SliderHeaderThemeFontWeight: 400;
 	--winui-SliderContainerBackgroundPointerOver: var(--winui-ControlFillColorTransparentBrush);
 	--winui-SliderContainerBackgroundPressed: var(--winui-ControlFillColorTransparentBrush);
@@ -3976,6 +4000,7 @@
 	--winui-SystemBaseMediumColor: #ffffff99;
 	--winui-SystemBaseMediumHighColor: #ffffffcc;
 	--winui-SystemBaseMediumLowColor: #ffffff66;
+	--winui-SystemChromeAltLowColor: #f2f2f2ff;
 	--winui-SystemChromeBlackHighColor: #000000ff;
 	--winui-SystemChromeDisabledHighColor: #333333ff;
 	--winui-SystemChromeDisabledLowColor: #858585ff;
@@ -4016,6 +4041,7 @@
 	--winui-SystemControlHighlightAltChromeWhiteBrush: var(--winui-SystemChromeWhiteColor);
 	--winui-SystemControlHighlightAltTransparentBrush: transparent;
 	--winui-SystemControlHighlightBaseMediumBrush: var(--winui-SystemBaseMediumColor);
+	--winui-SystemControlHighlightChromeAltLowBrush: var(--winui-SystemChromeAltLowColor);
 	--winui-SystemControlHighlightListAccentHighBrush: color-mix(
 		in srgb,
 		var(--winui-SystemAccentColor) 90%,
@@ -4118,6 +4144,15 @@
 		--winui-BreadcrumbBarEllipsisFlyoutPresenterBorderThemeThickness: 1px;
 		--winui-BreadcrumbBarItemThemeFontSize: var(--winui-ControlContentThemeFontSize);
 		--winui-BreadcrumbBarChevronFontSize: 12px;
+		--winui-ColorPickerSliderThumbBackground: var(--winui-TextFillColorPrimaryBrush);
+		--winui-ColorPickerSliderThumbBackgroundPointerOver: var(
+			--winui-SystemControlHighlightChromeAltLowBrush
+		);
+		--winui-ColorPickerSliderThumbBackgroundPressed: var(--winui-TextFillColorPrimaryBrush);
+		--winui-ColorPickerSliderThumbBackgroundDisabled: var(
+			--winui-ControlStrongFillColorDisabledBrush
+		);
+		--winui-ColorPickerHeaderContentDisabled: var(--winui-TextFillColorDisabledBrush);
 		--winui-ColorPickerBorderBrush: var(--winui-ControlStrokeColorDefaultBrush);
 		--winui-ComboBoxItemForeground: var(--winui-TextFillColorPrimaryBrush);
 		--winui-ComboBoxItemForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
@@ -5222,6 +5257,7 @@
 		);
 		--winui-SliderOutsideTickBarThemeHeight: 4px;
 		--winui-SliderTrackThemeHeight: 4px;
+		--winui-SliderHeaderThemeMargin: 0px 0px 4px 0px;
 		--winui-SliderHeaderThemeFontWeight: 400;
 		--winui-SliderContainerBackgroundPointerOver: var(--winui-ControlFillColorTransparentBrush);
 		--winui-SliderContainerBackgroundPressed: var(--winui-ControlFillColorTransparentBrush);
@@ -5925,6 +5961,7 @@
 		--winui-SystemBaseMediumColor: #ffffff99;
 		--winui-SystemBaseMediumHighColor: #ffffffcc;
 		--winui-SystemBaseMediumLowColor: #ffffff66;
+		--winui-SystemChromeAltLowColor: #f2f2f2ff;
 		--winui-SystemChromeBlackHighColor: #000000ff;
 		--winui-SystemChromeDisabledHighColor: #333333ff;
 		--winui-SystemChromeDisabledLowColor: #858585ff;
@@ -5969,6 +6006,7 @@
 		--winui-SystemControlHighlightAltChromeWhiteBrush: var(--winui-SystemChromeWhiteColor);
 		--winui-SystemControlHighlightAltTransparentBrush: transparent;
 		--winui-SystemControlHighlightBaseMediumBrush: var(--winui-SystemBaseMediumColor);
+		--winui-SystemControlHighlightChromeAltLowBrush: var(--winui-SystemChromeAltLowColor);
 		--winui-SystemControlHighlightListAccentHighBrush: color-mix(
 			in srgb,
 			var(--winui-SystemAccentColor) 90%,
@@ -6069,6 +6107,17 @@
 	--winui-BreadcrumbBarEllipsisFlyoutPresenterBorderThemeThickness: 2px;
 	--winui-BreadcrumbBarItemThemeFontSize: var(--winui-ControlContentThemeFontSize);
 	--winui-BreadcrumbBarChevronFontSize: 12px;
+	--winui-ColorPickerSliderThumbBackground: var(--winui-SystemControlForegroundBaseHighBrush);
+	--winui-ColorPickerSliderThumbBackgroundPointerOver: var(
+		--winui-SystemControlHighlightChromeAltLowBrush
+	);
+	--winui-ColorPickerSliderThumbBackgroundPressed: var(
+		--winui-SystemControlForegroundBaseHighBrush
+	);
+	--winui-ColorPickerSliderThumbBackgroundDisabled: var(
+		--winui-SystemControlDisabledChromeDisabledHighBrush
+	);
+	--winui-ColorPickerHeaderContentDisabled: var(--winui-SystemControlDisabledBaseMediumLowBrush);
 	--winui-ColorPickerBorderBrush: var(--winui-SystemControlForegroundListLowBrush);
 	--winui-ComboBoxItemForeground: var(--winui-SystemControlForegroundBaseHighBrush);
 	--winui-ComboBoxItemForegroundPressed: var(--winui-SystemControlHighlightAltBaseHighBrush);
@@ -7150,6 +7199,7 @@
 	--winui-SliderInlineTickBarFill: var(--winui-SystemColorButtonFaceColor);
 	--winui-SliderOutsideTickBarThemeHeight: 4px;
 	--winui-SliderTrackThemeHeight: 2px;
+	--winui-SliderHeaderThemeMargin: 0px 0px 4px 0px;
 	--winui-SliderHeaderThemeFontWeight: 400;
 	--winui-TemporaryTextFillColorDisabled: #0101015c;
 	--winui-TextControlBackgroundFocused: var(--winui-SystemColorButtonFaceColor);
@@ -7783,6 +7833,7 @@
 	--winui-SystemBaseMediumColor: #ffffff99;
 	--winui-SystemBaseMediumHighColor: #ffffffcc;
 	--winui-SystemBaseMediumLowColor: #ffffff66;
+	--winui-SystemChromeAltLowColor: #f9f9f9ff;
 	--winui-SystemChromeBlackHighColor: #000000ff;
 	--winui-SystemChromeDisabledHighColor: #333333ff;
 	--winui-SystemChromeDisabledLowColor: #7a7a7aff;
@@ -7823,6 +7874,7 @@
 	--winui-SystemControlHighlightAltChromeWhiteBrush: var(--winui-SystemColorHighlightTextColor);
 	--winui-SystemControlHighlightAltTransparentBrush: var(--winui-SystemColorHighlightTextColor);
 	--winui-SystemControlHighlightBaseMediumBrush: var(--winui-SystemColorHighlightColor);
+	--winui-SystemControlHighlightChromeAltLowBrush: var(--winui-SystemColorHighlightColor);
 	--winui-SystemControlHighlightListAccentHighBrush: var(--winui-SystemColorHighlightColor);
 	--winui-SystemControlHighlightListAccentLowBrush: var(--winui-SystemColorHighlightColor);
 	--winui-SystemControlHighlightListAccentMediumBrush: var(--winui-SystemColorHighlightColor);

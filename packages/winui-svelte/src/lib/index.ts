@@ -212,6 +212,11 @@ export type {
 	ColorSpectrumShape,
 	HsvColor
 } from './components/ColorSpectrum.svelte';
+export { default as ColorPickerSlider } from './components/ColorPickerSlider.svelte';
+export type {
+	ColorPickerHsvChannel,
+	ColorPickerSliderProps
+} from './components/ColorPickerSlider.svelte';
 export { default as Italic } from './components/Italic.svelte';
 export type { ItalicProps } from './components/Italic.svelte';
 export { default as LineBreak } from './components/LineBreak.svelte';

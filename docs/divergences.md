@@ -31,10 +31,13 @@ worth closing. "Would be hard" is not a reason — the reason is always a specif
 
 ### WD-083 — ColorSpectrum Ctrl+Arrow does not navigate named colours
 
-- **Control**: `ColorSpectrum` keyboard input.
+- **Control**: `ColorSpectrum` and `ColorPickerSlider` keyboard input.
 - **WinUI does**: sends Ctrl+Arrow through `FindNextNamedColor`, which requires the
   `ColorDisplayNameHelper` colour-name table (`ColorHelpers.cpp:52-77`).
 - **We do**: use the documented 30-degree hue / 10-percent saturation-or-value major step.
+  `ColorPickerSlider` uses the same major steps: 30 for hue and 10 for saturation and value.
+  Alpha is unaffected because `IncrementAlphaChannel` (`ColorHelpers.cpp:308-352`) never
+  consults the name table.
 - **Why accepted**: the name table and colour-name tooltip are explicitly a later unit; adding a
   private incomplete copy here would make both controls disagree.
 - **Would reconsider if**: the `ColorDisplayNameHelper` unit lands.
@@ -1894,3 +1897,34 @@ changes`.
   **is** reproduced, and it is what every baseline photographs.
 - **Would reconsider if**: a side-by-side against the original shows the hover state mattering to
   the page's read, rather than to a pointer that is not in the picture.
+
+---
+
+### WD-084 — `ColorPickerSlider` is horizontal only
+
+- **Control**: `ColorPickerSlider`.
+- **WinUI does**: support horizontal and vertical orientation, although `ColorPicker` uses
+  `Orientation="Horizontal"` at both sites (`ColorPicker.xaml:244`, `:257`). Its pointer-over,
+  pressed and disabled setters name only `HorizontalThumb` (`:471`, `:458`, `:464`), so the
+  upstream vertical variant has no state colours.
+- **We do**: expose only the horizontal template and no `orientation` prop.
+- **Why accepted**: the only upstream consumer is horizontal, and the vertical variant would
+  preserve none of this template's pointer-over, pressed or disabled thumb colours.
+- **Would reconsider if**: an upstream use of the vertical variant appears with a complete set
+  of visual-state semantics to reproduce.
+
+---
+
+### WD-085 — the focus tooltip is not built
+
+- **Control**: `ColorPickerSlider`.
+- **WinUI does**: open the template's `ToolTip` part on focus
+  (`ColorPickerSlider.cpp:145-153`) and re-render it after value changes (`:163-173`).
+  `GetToolTipString()` (`:208-273`) produces a localized resource string that, for hue,
+  saturation and value, interpolates `ColorDisplayNameHelper::ToDisplayName(…)` (`:249`).
+- **We do**: render no tooltip and expose no `thumbToolTipEnabled` prop.
+- **Why accepted**: the tooltip needs both localized resources and the colour-name table already
+  deferred by WD-083. Showing only the number would be a different tooltip, not a partial
+  reproduction of WinUI's.
+- **Would reconsider if**: the colour-name unit lands, at which point this divergence and WD-083
+  can close together.
