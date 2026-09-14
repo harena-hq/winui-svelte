@@ -290,6 +290,15 @@ export const RATINGCONTROL_KEYS = {
 	RatingControlFontSizeForRendering: 'RatingControl, the glyph size before the resting scale'
 };
 
+// ColorSpectrum reads only the border member of ColorPicker's dictionary. The slider,
+// header, sizing and corner-radius entries belong to the two later ColorPicker units.
+export const COLORPICKER_KEYS = {
+	ColorPickerBorderBrush: 'ColorSpectrum border, via ColorPickerBorderStyle',
+	SystemControlBackgroundChromeWhiteBrush: 'ColorSpectrum SelectionEllipse default stroke',
+	SystemControlBackgroundChromeBlackHighBrush:
+		'ColorSpectrum SelectionEllipse dark and focus stroke'
+};
+
 export const HYPERLINK_KEYS = {
 	HyperlinkForeground: 'Hyperlink foreground, at rest',
 	HyperlinkForegroundPointerOver: 'Hyperlink foreground, pointer over',
@@ -3231,6 +3240,10 @@ export const PLATFORM_BRUSHES = {
 		themes: ['HighContrast']
 	},
 	SystemControlBackgroundChromeWhiteBrush: {
+		to: 'SystemColorButtonFaceColor',
+		themes: ['HighContrast']
+	},
+	SystemControlBackgroundChromeBlackHighBrush: {
 		to: 'SystemColorButtonFaceColor',
 		themes: ['HighContrast']
 	},
