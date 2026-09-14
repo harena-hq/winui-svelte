@@ -33,3 +33,24 @@ export function hsvToRgb(h: number, s: number, v: number): { r: number; g: numbe
 		b: Math.round((blue + minimum) * 255)
 	};
 }
+
+/**
+ * RGB-to-HSV conversion transcribed from
+ * `controls/dev/Common/ColorConversion.cpp:45-134` in the WinUI 3 pin.
+ *
+ * Inputs are normalised channels in the 0–1 range and hue is returned in degrees.
+ */
+export function rgbToHsv(r: number, g: number, b: number): { h: number; s: number; v: number } {
+	const maximum = Math.max(r, g, b);
+	const minimum = Math.min(r, g, b);
+	const chroma = maximum - minimum;
+	if (chroma === 0) return { h: 0, s: 0, v: maximum };
+
+	let h: number;
+	if (r === maximum) h = (60 * (g - b)) / chroma;
+	else if (g === maximum) h = 120 + (60 * (b - r)) / chroma;
+	else h = 240 + (60 * (r - g)) / chroma;
+	if (h < 0) h += 360;
+
+	return { h, s: chroma / maximum, v: maximum };
+}
