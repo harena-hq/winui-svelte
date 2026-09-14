@@ -188,7 +188,7 @@
 {#snippet sourceCode()}
 	<div class="source-list">
 		{#if item.sourcePath}
-			<section>
+			<section class="control-source">
 				<div class="source-label">
 					<span class="label winui-CaptionTextBlockStyle">Control source code</span><Button
 						variant="subtle"
@@ -213,7 +213,7 @@
 			<div class="separator"></div>
 		{/if}
 		{#if item.samplePagePath}
-			<section>
+			<section class="sample-source">
 				<div class="source-label">
 					<span class="label winui-CaptionTextBlockStyle">Sample page source code</span><Button
 						variant="subtle"
@@ -338,9 +338,18 @@
 		margin: -12px;
 	}
 
+	/* `SourcePanel Margin="0,-8,0,-12"` (PageHeader.xaml:146), and **no `Spacing`** — every gap
+	   inside this flyout is a panel's or a link's own margin, which is why there is no `gap`
+	   here. `ControlSourcePanel` carries `Margin="0,0,0,4"` (:147) and the sample-page panel
+	   `Margin="0,8,0,0"` (:179). */
 	.source-list {
 		margin: -8px 0 -12px;
-		gap: 8px;
+	}
+	.control-source {
+		margin-bottom: 4px;
+	}
+	.sample-source {
+		margin-top: 8px;
 	}
 
 	/* `Margin="-12,4,-12,0"` on each source HyperlinkButton (PageHeader.xaml:169, :204, :212).
@@ -356,14 +365,30 @@
 		margin: 4px -12px 0;
 	}
 
+	/* `MenuFlyoutSeparator Margin="-12"` (PageHeader.xaml:177) is uniform in the source, and the
+	   horizontal half is what makes the rule run past the presenter's padding to its edge. The
+	   vertical half is **not** applied here, and that is a measurement rather than a reading: in
+	   the shipped Gallery the rule sits below the hovered item, clear of its pointer-over fill,
+	   about four pixels under the link's box — which is exactly `ControlSourcePanel`'s own
+	   `Margin="0,0,0,4"` with nothing pulled up over it. Applying the -12 vertically drew the
+	   rule four pixels *inside* the link, across the fill.
+	
+	   What upstream does with the other twenty-four pixels is not settled here. A
+	   `MenuFlyoutSeparator` is a control whose template insets a 1px `Rectangle` by its own
+	   `Padding` (generic.xaml:14711-14717), and the pin defines `MenuFlyoutSeparatorThemePadding`
+	   twice — `12,4,12,4` in the theme dictionaries beside the pre-Fluent
+	   `MenuFlyoutSeparatorThemeBrush`, and `-4,1,-4,1` at :24007 beside the
+	   `MenuFlyoutSeparatorHeight` the template actually names. Neither reproduces the capture on
+	   its own arithmetic, so the capture is what this rule follows. */
 	.separator {
-		margin: -12px;
+		margin: 0 -12px;
 		height: var(--winui-MenuFlyoutSeparatorHeight);
 		background: var(--winui-MenuFlyoutSeparatorBackground);
 	}
-	.source-list section {
-		gap: 4px;
-	}
+	/* No vertical gap. `ControlSourcePanel` (PageHeader.xaml:147) and its sample-page sibling
+	   (:179) carry no `Spacing`: the four pixels between a section's label row and its link are
+	   the link's own `Margin="-12,4,-12,0"` (:169, :204, :212), which `.source-link` below
+	   already writes. A `gap` here counted them twice and the measured distance was eight. */
 	.source-label {
 		gap: 8px;
 	}
