@@ -346,12 +346,21 @@
 </div>
 
 <style>
+	/* A `Control`, so `HorizontalAlignment` defaults to `Stretch` and it takes its width from
+	   whatever holds it; `ColorPicker.xaml:218` is the only place upstream that gives it one. */
 	.root {
-		display: inline-block;
+		display: block;
 	}
+	/* `SizingGrid` is square at `min(layoutRoot.ActualWidth(), layoutRoot.ActualHeight())`
+	   (`ColorSpectrum.cpp:866-890`), and `:868` draws nothing at all when that is zero — the
+	   control never picks a size of its own. `width: 256px` here was ours, not the pin's, and it
+	   held: composed into a `ColorPicker` the surface stayed 256 inside a 336 box and left eighty
+	   pixels of blank control beside the gradient, which is what the first ColorPicker baseline
+	   photographed. The `/dev/` harness is what supplies a width now, as it does for every other
+	   control whose size is its parent's to give. */
 	.surface {
 		position: relative; /* c1-allow: ColorSpectrum's square SizingGrid has no token. */
-		width: 256px;
+		width: 100%;
 		aspect-ratio: 1;
 	}
 	canvas,

@@ -144,3 +144,26 @@ test("the ring's thumb lands back on the point that was clicked", async ({ page 
 	expect(thumb.x).toBeCloseTo(target.x - box.x, -0.5);
 	expect(thumb.y).toBeCloseTo(target.y - box.y, -0.5);
 });
+
+test('the surface fills the width it is given', async ({ page }) => {
+	await page.goto('/dev/color-spectrum');
+	// `ColorSpectrum.cpp:866-890` sizes the square at `min(ActualWidth, ActualHeight)`, and `:868`
+	// draws nothing at all when that is zero — the control never picks a size of its own. The
+	// `256px` this surface used to carry was ours rather than the pin's, and it held: composed
+	// into a `ColorPicker` that had asked for 336 it stayed 256 and left eighty pixels of blank
+	// control beside the gradient. Growing the parent is what that number could not follow.
+	const sizes = await page.getByTestId('default').evaluate((root) => {
+		const parent = root.parentElement!;
+		const measure = () => {
+			const box = root.querySelector<HTMLElement>('.surface')!.getBoundingClientRect();
+			return { width: Math.round(box.width), height: Math.round(box.height) };
+		};
+		const before = measure();
+		parent.style.width = '320px';
+		const after = measure();
+		parent.style.width = '';
+		return { before, after };
+	});
+	expect(sizes.before).toEqual({ width: 256, height: 256 });
+	expect(sizes.after).toEqual({ width: 320, height: 320 });
+});
