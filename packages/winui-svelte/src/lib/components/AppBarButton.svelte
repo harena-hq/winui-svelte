@@ -143,10 +143,14 @@
 		{#if keyboardAcceleratorTextOverride}
 			<span class="accelerator winui-CaptionTextBlockStyle">{keyboardAcceleratorTextOverride}</span>
 		{/if}
-		<!-- CommandBar_themeresources.xaml:95: a command inside a CommandBar shows no sub-item
-		     chevron, in either appearance, because the Popup that carries the overflow rows is inside
-		     the same resource scope. -->
-		{#if flyout && !bar}
+		<!-- `AppBarButtonHasFlyoutChevronVisibility` is a resource a scope sets, not a property the
+		     command carries: `CommandBar_themeresources.xaml:95` collapses it for a whole
+		     `CommandBar` including the Popup that holds its overflow rows, and
+		     `CommandBarFlyout_themeresources.xaml:649` collapses it for the flyout's bar while
+		     `:552` turns it back on inside the flyout's overflow presenter. So the chevron is
+		     absent outside any scope that speaks, present outside a bar entirely, and present in
+		     one particular overflow. -->
+		{#if flyout && (!bar || bar().subItemChevronVisible)}
 			<span class="chevron-panel" aria-hidden="true">
 				<span class="chevron"></span>
 				<span class="overflow-chevron"></span>

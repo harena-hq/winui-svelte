@@ -4,6 +4,12 @@
 	export interface CommandBarOverflowPresenterProps {
 		/** The secondary commands, as the default snippet. */
 		children?: Snippet;
+		/** No WinUI member: the `AppBarButtonHasFlyoutChevronVisibility` resource the presenter's
+		 *  own `Grid.Resources` carries. `CommandBar`'s overflow leaves it collapsed
+		 *  (`CommandBar_themeresources.xaml:95` scopes the whole control, popup included);
+		 *  `CommandBarFlyout`'s overflow sets it `Visible`
+		 *  (`CommandBarFlyout_themeresources.xaml:552`). */
+		subItemChevronVisible?: boolean;
 		class?: string;
 		style?: string;
 		ref?: HTMLDivElement | null;
@@ -20,6 +26,7 @@
 
 	let {
 		children,
+		subItemChevronVisible = false,
 		class: className,
 		style,
 		ref = $bindable(null),
@@ -40,7 +47,8 @@
 		labelPosition: 'bottom',
 		inOverflow: true,
 		overflowWithMenuIcons,
-		overflowWithToggleButtons
+		overflowWithToggleButtons,
+		subItemChevronVisible
 	}));
 </script>
 

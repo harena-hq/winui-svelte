@@ -20,6 +20,19 @@
 		open?: boolean;
 		/** No WinUI member: ADR 0009 pairs every `$bindable` prop with its own change callback. */
 		onOpenChange?: (open: boolean) => void;
+		/** SecondaryCommands — the commands the ellipsis reveals. Their presence is also what
+		 *  makes the ellipsis appear at all, under `overflowButtonVisibility`. */
+		secondaryCommands?: Snippet;
+		/** OverflowButtonVisibility, reduced to what this version builds: `'auto'` shows the
+		 *  ellipsis when there are secondary commands, which is
+		 *  `CommandBarTemplateSettings.EffectiveOverflowButtonVisibility` (`:1050`). */
+		overflowButtonVisibility?: 'auto' | 'visible' | 'collapsed';
+		/** IsOpen on the CommandBar inside the flyout — whether the overflow is showing. Named
+		 *  for what it does rather than `open`, which this control already spends on the flyout
+		 *  itself. */
+		expanded?: boolean;
+		/** No WinUI member: ADR 0009 pairs every `$bindable` prop with its own change callback. */
+		onExpandedChange?: (expanded: boolean) => void;
 		class?: string;
 		style?: string;
 		/** ADR 0009's `ref` points at the flyout presenter. */
@@ -30,6 +43,7 @@
 
 <script lang="ts">
 	import { Popover } from 'bits-ui';
+	import CommandBarOverflowPresenter from './CommandBarOverflowPresenter.svelte';
 	import { FLYOUT_PLACEMENTS } from '../internal/flyout-placement';
 	import { setCommandBarState } from '../internal/command-bar';
 
@@ -40,6 +54,10 @@
 		offset = 4,
 		open = $bindable(false),
 		onOpenChange,
+		secondaryCommands,
+		overflowButtonVisibility = 'auto',
+		expanded = $bindable(false),
+		onExpandedChange,
 		class: className,
 		style,
 		ref = $bindable(null),
@@ -47,6 +65,19 @@
 	}: CommandBarFlyoutProps = $props();
 
 	const position = $derived(FLYOUT_PLACEMENTS[placement]);
+	// CommandBar.svelte:80-83 reduces `EffectiveOverflowButtonVisibility` (`:1050`) the same way,
+	// for the same three cases.
+	const showOverflowButton = $derived(
+		overflowButtonVisibility === 'visible' ||
+			(overflowButtonVisibility === 'auto' && secondaryCommands !== undefined)
+	);
+	const overflowShown = $derived(expanded && secondaryCommands !== undefined);
+
+	function setExpanded(next: boolean) {
+		if (expanded === next) return;
+		expanded = next;
+		onExpandedChange?.(next);
+	}
 
 	// `ClosedDisplayMode="Compact"` only makes a bottom-labelled closed bar compact. This bar's
 	// `DefaultLabelPosition="Collapsed"` chooses its 40px icon row instead.
@@ -55,7 +86,8 @@
 		labelPosition: 'collapsed',
 		inOverflow: false,
 		overflowWithMenuIcons: false,
-		overflowWithToggleButtons: false
+		overflowWithToggleButtons: false,
+		subItemChevronVisible: false
 	}));
 </script>
 
@@ -71,6 +103,9 @@
 		(next) => {
 			open = next;
 			onOpenChange?.(next);
+			// `CommandBarFlyout.cpp` reopens a flyout collapsed; a closed flyout that kept its
+			// expansion would reopen showing an overflow nobody asked for.
+			if (!next) setExpanded(false);
 		}
 	}
 >
@@ -83,24 +118,39 @@
 		<Popover.Content side={position.side} align={position.align} sideOffset={offset}>
 			{#snippet child({ props, wrapperProps })}
 				<div {...wrapperProps}>
-					<!-- `OuterContentRoot`, `ContentRoot` and `PrimaryItemsRoot` (:1021, :1022, :1038)
-					     are one element here: nothing between them differs until unit 16 adds the clip
-					     and the overflow popup. -->
-					<div
-						{...props}
-						bind:this={ref}
-						class={['bar', 'winui-BodyTextBlockStyle', className]}
-						{style}
-						{...rest}
-					>
-						<div class="primary">{@render commands?.()}</div>
-						<!-- Unit 16 supplies the overflow this opens; until then its click handler is
-						     deliberately absent. -->
-						<button type="button" class="more" aria-label="See more">
-							<!-- `FontWeight="SemiBold"` (:575) styles button text, and this button's only
-							     content is a FontIcon. -->
-							<span class="ellipsis" aria-hidden="true"></span>
-						</button>
+					<!-- `OuterContentRoot` and `ContentRoot` (:1021, :1022) are one `.surface`, and
+					     `PrimaryItemsRoot` (:1038) is `.bar`. -->
+					<div class={['surface', overflowShown && 'expanded']}>
+						<div
+							{...props}
+							bind:this={ref}
+							class={['bar', 'winui-BodyTextBlockStyle', className]}
+							{style}
+							{...rest}
+						>
+							<div class="primary">{@render commands?.()}</div>
+							{#if showOverflowButton}
+								<button
+									type="button"
+									class="more"
+									aria-label="See more"
+									aria-expanded={expanded}
+									onclick={() => setExpanded(!expanded)}
+								>
+									<!-- `FontWeight="SemiBold"` (:575) styles button text, and this button's only
+									     content is a FontIcon. -->
+									<span class="ellipsis" aria-hidden="true"></span>
+								</button>
+							{/if}
+						</div>
+						{#if overflowShown}
+							<!-- `OverflowPopup` (`:1057`) and `OuterOverflowContentRootV2` (`:1063`).
+							     WD-087: the intrinsic width deliberately has no measured endpoints for the
+							     upstream expansion animation, so this version renders its final end states. -->
+							<CommandBarOverflowPresenter class="overflow" subItemChevronVisible>
+								{@render secondaryCommands?.()}
+							</CommandBarOverflowPresenter>
+						{/if}
 					</div>
 				</div>
 			{/snippet}
@@ -109,6 +159,24 @@
 </Popover.Root>
 
 <style>
+	/* `OuterContentRoot` (`:1021`) sized by `FlyoutTemplateSettings.CurrentWidth`, which
+	   `CommandBarFlyoutCommandBar.cpp:886` computes as
+	   `min(MaxWidth, max(collapsedWidth, overflowPopupSize.Width))`. A `max-content` width
+	   clamped by `max-width` over one `minmax(0, 1fr)` column is that expression: the column takes
+	   the larger max-content contribution, the clamp caps it, and both children stretch to it.
+
+	   The shadow is here rather than on either box inside. `:1007` gives
+	   `OuterOverflowContentRootV2` its own `CommandBarFlyoutOverflowShadow` while the popup host
+	   casts the bar's; they read as one shadow around one surface. */
+	.surface {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr);
+		width: max-content;
+		max-width: 440px;
+		border-radius: var(--winui-OverlayCornerRadius);
+		box-shadow: var(--winui-PopupShadow);
+	}
+
 	.bar {
 		box-sizing: border-box;
 		display: grid;
@@ -117,7 +185,6 @@
 		grid-template-columns: auto auto;
 		justify-content: start;
 		align-items: center;
-		max-width: 440px;
 		border: var(--winui-CommandBarFlyoutBorderThemeThickness) solid
 			var(--winui-CommandBarFlyoutBorderBrush);
 		border-radius: var(--winui-OverlayCornerRadius);
@@ -134,12 +201,35 @@
 				)
 				padding-box,
 			var(--winui-AcrylicBackgroundFillColorDefaultBrush) padding-box;
-		box-shadow: var(--winui-PopupShadow);
 		color: var(--winui-CommandBarFlyoutForeground);
 		/* The focus scope focuses this element from script when the flyout opens, and Chromium
 		   grants `:focus-visible` to a scripted focus on a `tabindex="-1"` element. `Flyout.svelte`
 		   and `Popup.svelte` carry the same rule for the same reason. */
 		outline: none;
+	}
+
+	/* `ExpandedUp` (`:837`) puts the overflow above the primary row and `ExpandedDown` (`:849`)
+	   below it. `bits-ui` publishes the placed side, after collision handling, as `data-side` on
+	   the props handed to this snippet. `ExpandedUpWithPrimaryCommands` (`:966`) removes the
+	   overflow's bottom edge; no setter changes the bar's four border edges. */
+	.surface.expanded:has(.bar[data-side='top']) .bar {
+		border-radius: 0 0 var(--winui-OverlayCornerRadius) var(--winui-OverlayCornerRadius);
+	}
+
+	.surface.expanded:has(.bar[data-side='top']) :global(.overflow) {
+		order: -1;
+		border-radius: var(--winui-OverlayCornerRadius) var(--winui-OverlayCornerRadius) 0 0;
+		border-width: var(--winui-CommandBarFlyoutBorderUpThemeThickness);
+	}
+
+	/* `ExpandedDownWithPrimaryCommands` (`:975`), the mirror image, removes the top edge. */
+	.surface.expanded:has(.bar[data-side='bottom']) .bar {
+		border-radius: var(--winui-OverlayCornerRadius) var(--winui-OverlayCornerRadius) 0 0;
+	}
+
+	.surface.expanded:has(.bar[data-side='bottom']) :global(.overflow) {
+		border-radius: 0 0 var(--winui-OverlayCornerRadius) var(--winui-OverlayCornerRadius);
+		border-width: var(--winui-CommandBarFlyoutBorderDownThemeThickness);
 	}
 
 	/* CommandBarFlyout_themeresources.xaml:112, :113, :188, :189, :195, :196, :202, :203, :280. */
@@ -172,6 +262,52 @@
 		justify-content: start;
 		height: 40px;
 		margin: 3px 0 3px 3px;
+	}
+
+	/* `CommandBarFlyoutCommandBarOverflowPresenterStyle` (`:527-562`) repoints named brushes and
+	   states three sizes. The compound selector out-specifies the presenter's `.root` rule, so
+	   the cascade does not depend on stylesheet emission order. */
+	.surface :global(.overflow) {
+		/* WD-002, one box over from `.bar`. `:528` points the presenter at
+		   `CommandBarFlyoutButtonBackground`, which is `SystemControlTransparentBrush` — literally
+		   `transparent` — in both light and dark, because the overflow popup carries its own
+		   backdrop link (`CommandBarFlyoutCommandBar.cpp:251-256` and `:737-741`) to the same
+		   `SystemBackdrop` the bar uses, and that is the fill the original shows. Redefining the
+		   presenter's background property to that brush alone leaves the menu see-through:
+		   measured on the built page before this rule, the overflow's `backgroundColor` was
+		   `rgba(0, 0, 0, 0)`, its `background-image` was `none`, and the page's own colour change
+		   was visible straight through the command rows. So the brush composites over the same
+		   fallback `.bar` uses, and a consumer's override still lands on top. */
+		background:
+			linear-gradient(
+					var(--winui-CommandBarFlyoutButtonBackground),
+					var(--winui-CommandBarFlyoutButtonBackground)
+				)
+				padding-box,
+			var(--winui-AcrylicBackgroundFillColorDefaultBrush) padding-box;
+		/* `:1085` binds the presenter's border thickness at its use site. */
+		--winui-CommandBarOverflowPresenterBorderThickness: var(
+			--winui-CommandBarFlyoutBorderThemeThickness
+		);
+		/* `:1085`, `BorderBrush="{TemplateBinding BorderBrush}"`. */
+		--winui-CommandBarOverflowPresenterBorderBrush: var(--winui-CommandBarFlyoutBorderBrush);
+		/* `:552` supplies the flyout's overflow-only chevron and accelerator foregrounds. */
+		--winui-AppBarButtonSubItemChevronForeground: var(
+			--winui-CommandBarFlyoutAppBarButtonSubItemChevronForeground
+		);
+		--winui-AppBarButtonKeyboardAcceleratorTextForeground: var(
+			--winui-CommandBarFlyoutAppBarButtonKeyboardTextLabelForeground
+		);
+		/* `:530`, `:531`, and `:532`; these are layout literals. */
+		min-width: 136px;
+		max-width: 440px;
+		max-height: 480px;
+		box-shadow: none;
+	}
+
+	/* `:556`, `<ItemsPresenter Margin="3" />`; `.items` is the presenter's only child. */
+	.surface :global(.overflow > *) {
+		margin: 3px;
 	}
 
 	/* `AppBarButton.svelte:162` pins a command at `AppBarButton_themeresources.xaml:136`'s

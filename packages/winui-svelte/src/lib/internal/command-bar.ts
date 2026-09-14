@@ -22,6 +22,12 @@ export interface CommandBarCommandState {
 	overflowWithMenuIcons: boolean;
 	/** Whether the overflow menu reserves a check column. */
 	overflowWithToggleButtons: boolean;
+	/** Whether the scope a command sits in draws the sub-item chevron. `CommandBar` collapses
+	 *  it for its whole subtree, popup included (`CommandBar_themeresources.xaml:95`);
+	 *  `CommandBarFlyout` collapses it on the bar (`CommandBarFlyout_themeresources.xaml:649`)
+	 *  and the overflow presenter turns it back on (`:552`). The resource is
+	 *  `AppBarButtonHasFlyoutChevronVisibility` and `:264` is the setter that reads it. */
+	subItemChevronVisible: boolean;
 }
 
 /** What one overflow row tells its presenter about the columns its peers must reserve. */
