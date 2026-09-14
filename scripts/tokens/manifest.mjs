@@ -316,13 +316,15 @@ export const COLORPICKER_KEYS = {
 	ColorPickerSliderInnerThumbHeight: 'ColorPickerSlider inner thumb, its height'
 };
 
-// `CommandBarFlyout.svelte` reads all nineteen. The four surface keys paint the flyout itself;
-// three overflow keys skin its presenter, and two give its commands their chevron and accelerator
-// foregrounds. The eight `AppBarButton` brushes are read twice over, once as the values this
-// control redefines `--winui-AppBarButton*` to for the commands it holds and once by its own
-// ellipsis button; the two margins are the inner borders, the command's own and the ellipsis's.
-// `CommandBar` reads none of them, which is why they are their own group rather than additions
-// to COMMANDBAR_KEYS.
+// `CommandBarFlyout.svelte` reads all thirty-one. The four surface keys paint the flyout
+// itself and three more skin its overflow presenter; the rest are the implicit `Style`s at
+// `:649`–`:651`, which upstream declares once in `LayoutRoot.Resources` and which therefore
+// reach the bar, the ellipsis button and the overflow popup alike. `AppBarButton` and
+// `AppBarToggleButton` are re-skinned from the same `CommandBarFlyoutAppBarButton*` names —
+// the dictionary has no toggle-specific key — so the checked, chevron and accelerator brushes
+// are read by both. The two margins are the inner borders, the command's own and the
+// ellipsis's. `CommandBar` reads none of them, which is why they are their own group rather
+// than additions to COMMANDBAR_KEYS.
 export const COMMANDBARFLYOUT_KEYS = {
 	CommandBarFlyoutBackground: 'CommandBarFlyout surface background',
 	CommandBarFlyoutForeground: 'CommandBarFlyout surface foreground',
@@ -351,6 +353,29 @@ export const COMMANDBARFLYOUT_KEYS = {
 		'CommandBarFlyout overflow command sub-item chevron',
 	CommandBarFlyoutAppBarButtonKeyboardTextLabelForeground:
 		'CommandBarFlyout overflow command accelerator text',
+	CommandBarFlyoutAppBarButtonKeyboardTextLabelForegroundPointerOver:
+		'CommandBarFlyout overflow command accelerator text, pointer over',
+	CommandBarFlyoutAppBarButtonKeyboardTextLabelForegroundPressed:
+		'CommandBarFlyout overflow command accelerator text, pressed',
+	CommandBarFlyoutAppBarButtonSubItemChevronPointerOverForeground:
+		'CommandBarFlyout overflow command sub-item chevron, pointer over',
+	CommandBarFlyoutAppBarButtonSubItemChevronPressedForeground:
+		'CommandBarFlyout overflow command sub-item chevron, pressed',
+	CommandBarFlyoutAppBarButtonSubItemChevronDisabledForeground:
+		'CommandBarFlyout overflow command sub-item chevron, disabled',
+	CommandBarFlyoutAppBarButtonBorderBrush: 'CommandBarFlyout command border',
+	CommandBarFlyoutAppBarButtonBackgroundChecked:
+		'CommandBarFlyout toggle command background, checked',
+	CommandBarFlyoutAppBarButtonBackgroundCheckedPointerOver:
+		'CommandBarFlyout toggle command background, checked and pointer over',
+	CommandBarFlyoutAppBarButtonBackgroundCheckedPressed:
+		'CommandBarFlyout toggle command background, checked and pressed',
+	CommandBarFlyoutAppBarButtonForegroundChecked:
+		'CommandBarFlyout toggle command foreground, checked',
+	CommandBarFlyoutAppBarButtonForegroundCheckedPointerOver:
+		'CommandBarFlyout toggle command foreground, checked and pointer over',
+	CommandBarFlyoutAppBarButtonForegroundCheckedPressed:
+		'CommandBarFlyout toggle command foreground, checked and pressed',
 	CommandBarFlyoutAppBarButtonInnerBorderMargin: 'CommandBarFlyout command inner-border margin',
 	CommandBarFlyoutAppBarEllipsisButtonInnerBorderMargin:
 		'CommandBarFlyout ellipsis inner-border margin'

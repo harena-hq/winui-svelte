@@ -191,9 +191,41 @@
 	--winui-CommandBarFlyoutAppBarButtonKeyboardTextLabelForeground: var(
 		--winui-TextFillColorSecondaryBrush
 	);
+	--winui-CommandBarFlyoutAppBarButtonKeyboardTextLabelForegroundPointerOver: var(
+		--winui-TextFillColorSecondaryBrush
+	);
+	--winui-CommandBarFlyoutAppBarButtonKeyboardTextLabelForegroundPressed: var(
+		--winui-TextFillColorTertiaryBrush
+	);
 	--winui-CommandBarFlyoutAppBarButtonSubItemChevronForeground: var(
 		--winui-TextFillColorSecondaryBrush
 	);
+	--winui-CommandBarFlyoutAppBarButtonSubItemChevronPointerOverForeground: var(
+		--winui-TextFillColorSecondaryBrush
+	);
+	--winui-CommandBarFlyoutAppBarButtonSubItemChevronPressedForeground: var(
+		--winui-TextFillColorTertiaryBrush
+	);
+	--winui-CommandBarFlyoutAppBarButtonSubItemChevronDisabledForeground: var(
+		--winui-TextFillColorDisabledBrush
+	);
+	--winui-CommandBarFlyoutAppBarButtonBackgroundChecked: var(--winui-AccentFillColorDefaultBrush);
+	--winui-CommandBarFlyoutAppBarButtonBackgroundCheckedPointerOver: var(
+		--winui-AccentFillColorSecondaryBrush
+	);
+	--winui-CommandBarFlyoutAppBarButtonBackgroundCheckedPressed: var(
+		--winui-AccentFillColorTertiaryBrush
+	);
+	--winui-CommandBarFlyoutAppBarButtonForegroundChecked: var(
+		--winui-TextOnAccentFillColorPrimaryBrush
+	);
+	--winui-CommandBarFlyoutAppBarButtonForegroundCheckedPointerOver: var(
+		--winui-TextOnAccentFillColorPrimaryBrush
+	);
+	--winui-CommandBarFlyoutAppBarButtonForegroundCheckedPressed: var(
+		--winui-TextOnAccentFillColorSecondaryBrush
+	);
+	--winui-CommandBarFlyoutAppBarButtonBorderBrush: var(--winui-SubtleFillColorTransparentBrush);
 	--winui-CommandBarFlyoutBorderThemeThickness: 1px;
 	--winui-CommandBarFlyoutBorderUpThemeThickness: 1px 1px 0px 1px;
 	--winui-CommandBarFlyoutBorderDownThemeThickness: 0px 1px 1px 1px;
@@ -2381,9 +2413,41 @@
 	--winui-CommandBarFlyoutAppBarButtonKeyboardTextLabelForeground: var(
 		--winui-TextFillColorSecondaryBrush
 	);
+	--winui-CommandBarFlyoutAppBarButtonKeyboardTextLabelForegroundPointerOver: var(
+		--winui-TextFillColorSecondaryBrush
+	);
+	--winui-CommandBarFlyoutAppBarButtonKeyboardTextLabelForegroundPressed: var(
+		--winui-TextFillColorTertiaryBrush
+	);
 	--winui-CommandBarFlyoutAppBarButtonSubItemChevronForeground: var(
 		--winui-TextFillColorSecondaryBrush
 	);
+	--winui-CommandBarFlyoutAppBarButtonSubItemChevronPointerOverForeground: var(
+		--winui-TextFillColorSecondaryBrush
+	);
+	--winui-CommandBarFlyoutAppBarButtonSubItemChevronPressedForeground: var(
+		--winui-TextFillColorTertiaryBrush
+	);
+	--winui-CommandBarFlyoutAppBarButtonSubItemChevronDisabledForeground: var(
+		--winui-TextFillColorDisabledBrush
+	);
+	--winui-CommandBarFlyoutAppBarButtonBackgroundChecked: var(--winui-AccentFillColorDefaultBrush);
+	--winui-CommandBarFlyoutAppBarButtonBackgroundCheckedPointerOver: var(
+		--winui-AccentFillColorSecondaryBrush
+	);
+	--winui-CommandBarFlyoutAppBarButtonBackgroundCheckedPressed: var(
+		--winui-AccentFillColorTertiaryBrush
+	);
+	--winui-CommandBarFlyoutAppBarButtonForegroundChecked: var(
+		--winui-TextOnAccentFillColorPrimaryBrush
+	);
+	--winui-CommandBarFlyoutAppBarButtonForegroundCheckedPointerOver: var(
+		--winui-TextOnAccentFillColorPrimaryBrush
+	);
+	--winui-CommandBarFlyoutAppBarButtonForegroundCheckedPressed: var(
+		--winui-TextOnAccentFillColorSecondaryBrush
+	);
+	--winui-CommandBarFlyoutAppBarButtonBorderBrush: var(--winui-SubtleFillColorTransparentBrush);
 	--winui-CommandBarFlyoutBorderThemeThickness: 1px;
 	--winui-CommandBarFlyoutBorderUpThemeThickness: 1px 1px 0px 1px;
 	--winui-CommandBarFlyoutBorderDownThemeThickness: 0px 1px 1px 1px;
@@ -4269,9 +4333,41 @@
 		--winui-CommandBarFlyoutAppBarButtonKeyboardTextLabelForeground: var(
 			--winui-TextFillColorSecondaryBrush
 		);
+		--winui-CommandBarFlyoutAppBarButtonKeyboardTextLabelForegroundPointerOver: var(
+			--winui-TextFillColorSecondaryBrush
+		);
+		--winui-CommandBarFlyoutAppBarButtonKeyboardTextLabelForegroundPressed: var(
+			--winui-TextFillColorTertiaryBrush
+		);
 		--winui-CommandBarFlyoutAppBarButtonSubItemChevronForeground: var(
 			--winui-TextFillColorSecondaryBrush
 		);
+		--winui-CommandBarFlyoutAppBarButtonSubItemChevronPointerOverForeground: var(
+			--winui-TextFillColorSecondaryBrush
+		);
+		--winui-CommandBarFlyoutAppBarButtonSubItemChevronPressedForeground: var(
+			--winui-TextFillColorTertiaryBrush
+		);
+		--winui-CommandBarFlyoutAppBarButtonSubItemChevronDisabledForeground: var(
+			--winui-TextFillColorDisabledBrush
+		);
+		--winui-CommandBarFlyoutAppBarButtonBackgroundChecked: var(--winui-AccentFillColorDefaultBrush);
+		--winui-CommandBarFlyoutAppBarButtonBackgroundCheckedPointerOver: var(
+			--winui-AccentFillColorSecondaryBrush
+		);
+		--winui-CommandBarFlyoutAppBarButtonBackgroundCheckedPressed: var(
+			--winui-AccentFillColorTertiaryBrush
+		);
+		--winui-CommandBarFlyoutAppBarButtonForegroundChecked: var(
+			--winui-TextOnAccentFillColorPrimaryBrush
+		);
+		--winui-CommandBarFlyoutAppBarButtonForegroundCheckedPointerOver: var(
+			--winui-TextOnAccentFillColorPrimaryBrush
+		);
+		--winui-CommandBarFlyoutAppBarButtonForegroundCheckedPressed: var(
+			--winui-TextOnAccentFillColorSecondaryBrush
+		);
+		--winui-CommandBarFlyoutAppBarButtonBorderBrush: var(--winui-SubtleFillColorTransparentBrush);
 		--winui-CommandBarFlyoutBorderThemeThickness: 1px;
 		--winui-CommandBarFlyoutBorderUpThemeThickness: 1px 1px 0px 1px;
 		--winui-CommandBarFlyoutBorderDownThemeThickness: 0px 1px 1px 1px;
@@ -6279,9 +6375,41 @@
 	--winui-CommandBarFlyoutAppBarButtonKeyboardTextLabelForeground: var(
 		--winui-SystemControlForegroundBaseHighBrush
 	);
+	--winui-CommandBarFlyoutAppBarButtonKeyboardTextLabelForegroundPointerOver: var(
+		--winui-SystemControlHighlightAltBaseHighBrush
+	);
+	--winui-CommandBarFlyoutAppBarButtonKeyboardTextLabelForegroundPressed: var(
+		--winui-SystemControlHighlightAltBaseHighBrush
+	);
 	--winui-CommandBarFlyoutAppBarButtonSubItemChevronForeground: var(
 		--winui-SystemControlForegroundBaseHighBrush
 	);
+	--winui-CommandBarFlyoutAppBarButtonSubItemChevronPointerOverForeground: var(
+		--winui-SystemControlHighlightAltBaseHighBrush
+	);
+	--winui-CommandBarFlyoutAppBarButtonSubItemChevronPressedForeground: var(
+		--winui-SystemControlHighlightAltBaseHighBrush
+	);
+	--winui-CommandBarFlyoutAppBarButtonSubItemChevronDisabledForeground: var(
+		--winui-SystemControlDisabledBaseMediumLowBrush
+	);
+	--winui-CommandBarFlyoutAppBarButtonBackgroundChecked: var(--winui-SystemColorHighlightColor);
+	--winui-CommandBarFlyoutAppBarButtonBackgroundCheckedPointerOver: var(
+		--winui-SystemColorHighlightColor
+	);
+	--winui-CommandBarFlyoutAppBarButtonBackgroundCheckedPressed: var(
+		--winui-SystemColorHighlightColor
+	);
+	--winui-CommandBarFlyoutAppBarButtonForegroundChecked: var(
+		--winui-SystemControlHighlightAltChromeWhiteBrush
+	);
+	--winui-CommandBarFlyoutAppBarButtonForegroundCheckedPointerOver: var(
+		--winui-SystemControlHighlightAltChromeWhiteBrush
+	);
+	--winui-CommandBarFlyoutAppBarButtonForegroundCheckedPressed: var(
+		--winui-SystemControlHighlightAltChromeWhiteBrush
+	);
+	--winui-CommandBarFlyoutAppBarButtonBorderBrush: var(--winui-SystemColorButtonTextColor);
 	--winui-CommandBarFlyoutBorderThemeThickness: 1px;
 	--winui-CommandBarFlyoutBorderUpThemeThickness: 1px 1px 0px 1px;
 	--winui-CommandBarFlyoutBorderDownThemeThickness: 0px 1px 1px 1px;
