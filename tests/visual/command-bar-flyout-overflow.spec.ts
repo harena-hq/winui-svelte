@@ -132,6 +132,21 @@ test('the overflow is painted, not see-through', async ({ page }) => {
 	expect(fill).not.toBe('transparent');
 });
 
+test("the overflow rows wear the flyout's command brushes", async ({ page }) => {
+	await page.goto('/dev/command-bar-flyout-overflow');
+	const row = overflow(page.getByTestId('expand-down')).locator('.root').first();
+	const margins = await row.evaluate((element) => {
+		const computed = getComputedStyle(element);
+		return {
+			actual: computed.getPropertyValue('--winui-AppBarButtonInnerBorderOverflowMargin').trim(),
+			expected: computed
+				.getPropertyValue('--winui-CommandBarFlyoutAppBarButtonInnerBorderMargin')
+				.trim()
+		};
+	});
+	expect(margins.actual).toBe(margins.expected);
+});
+
 test('clicking the ellipsis opens and closes the overflow', async ({ page }) => {
 	await page.goto('/dev/command-bar-flyout-overflow');
 	await hydrated(page);

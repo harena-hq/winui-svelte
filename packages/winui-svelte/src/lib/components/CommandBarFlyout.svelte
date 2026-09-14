@@ -177,6 +177,292 @@
 		box-shadow: var(--winui-PopupShadow);
 	}
 
+	/* `:649`–`:651` declare implicit command styles in `LayoutRoot.Resources`, which reaches
+	   both the bar and `OverflowPopup`. These resource redefinitions therefore belong on this
+	   common `.surface` ancestor rather than on `.primary`. */
+	.surface {
+		/* `CommandBarFlyoutAppBarButtonStyleBase`, `:111`–`:309`. */
+		--winui-AppBarButtonBackground: var(--winui-CommandBarFlyoutAppBarButtonBackground);
+		--winui-AppBarButtonBackgroundPointerOver: var(
+			--winui-CommandBarFlyoutAppBarButtonBackgroundPointerOver
+		);
+		--winui-AppBarButtonBackgroundPressed: var(
+			--winui-CommandBarFlyoutAppBarButtonBackgroundPressed
+		);
+		--winui-AppBarButtonBackgroundDisabled: var(
+			--winui-CommandBarFlyoutAppBarButtonBackgroundDisabled
+		);
+		--winui-AppBarButtonForeground: var(--winui-CommandBarFlyoutAppBarButtonForeground);
+		--winui-AppBarButtonForegroundPointerOver: var(
+			--winui-CommandBarFlyoutAppBarButtonForegroundPointerOver
+		);
+		--winui-AppBarButtonForegroundPressed: var(
+			--winui-CommandBarFlyoutAppBarButtonForegroundPressed
+		);
+		--winui-AppBarButtonForegroundDisabled: var(
+			--winui-CommandBarFlyoutAppBarButtonForegroundDisabled
+		);
+		--winui-AppBarButtonInnerBorderMargin: var(
+			--winui-CommandBarFlyoutAppBarButtonInnerBorderMargin
+		);
+		--winui-AppBarButtonInnerBorderOverflowMargin: var(
+			--winui-CommandBarFlyoutAppBarButtonInnerBorderMargin
+		);
+		--winui-AppBarButtonSubItemChevronForeground: var(
+			--winui-CommandBarFlyoutAppBarButtonSubItemChevronForeground
+		);
+		--winui-AppBarButtonSubItemChevronForegroundPointerOver: var(
+			--winui-CommandBarFlyoutAppBarButtonSubItemChevronPointerOverForeground
+		);
+		--winui-AppBarButtonSubItemChevronForegroundPressed: var(
+			--winui-CommandBarFlyoutAppBarButtonSubItemChevronPressedForeground
+		);
+		--winui-AppBarButtonSubItemChevronForegroundDisabled: var(
+			--winui-CommandBarFlyoutAppBarButtonSubItemChevronDisabledForeground
+		);
+		--winui-AppBarButtonKeyboardAcceleratorTextForeground: var(
+			--winui-CommandBarFlyoutAppBarButtonKeyboardTextLabelForeground
+		);
+		--winui-AppBarButtonKeyboardAcceleratorTextForegroundPointerOver: var(
+			--winui-CommandBarFlyoutAppBarButtonKeyboardTextLabelForegroundPointerOver
+		);
+		--winui-AppBarButtonKeyboardAcceleratorTextForegroundPressed: var(
+			--winui-CommandBarFlyoutAppBarButtonKeyboardTextLabelForegroundPressed
+		);
+		--winui-AppBarButtonKeyboardAcceleratorTextForegroundDisabled: var(
+			--winui-CommandBarFlyoutAppBarButtonForegroundDisabled
+		);
+
+		/* `CommandBarFlyoutAppBarToggleButtonStyleBase`, `:313`–`:523`. */
+		--winui-AppBarToggleButtonBackground: var(--winui-CommandBarFlyoutAppBarButtonBackground);
+		--winui-AppBarToggleButtonBackgroundPointerOver: var(
+			--winui-CommandBarFlyoutAppBarButtonBackgroundPointerOver
+		);
+		--winui-AppBarToggleButtonBackgroundPressed: var(
+			--winui-CommandBarFlyoutAppBarButtonBackgroundPressed
+		);
+		--winui-AppBarToggleButtonBackgroundDisabled: var(
+			--winui-CommandBarFlyoutAppBarButtonBackgroundDisabled
+		);
+		--winui-AppBarToggleButtonBackgroundChecked: var(
+			--winui-CommandBarFlyoutAppBarButtonBackgroundChecked
+		);
+		--winui-AppBarToggleButtonBackgroundCheckedPointerOver: var(
+			--winui-CommandBarFlyoutAppBarButtonBackgroundCheckedPointerOver
+		);
+		--winui-AppBarToggleButtonBackgroundCheckedPressed: var(
+			--winui-CommandBarFlyoutAppBarButtonBackgroundCheckedPressed
+		);
+		/* `:407` sets no checked-disabled inner-border background. */
+		--winui-AppBarToggleButtonBackgroundCheckedDisabled: var(
+			--winui-CommandBarFlyoutAppBarButtonBackground
+		);
+		--winui-AppBarToggleButtonBackgroundHighLightOverlayPointerOver: var(
+			--winui-CommandBarFlyoutAppBarButtonBackgroundPointerOver
+		);
+		--winui-AppBarToggleButtonBackgroundHighLightOverlayPressed: var(
+			--winui-CommandBarFlyoutAppBarButtonBackgroundPressed
+		);
+		--winui-AppBarToggleButtonBackgroundHighLightOverlayCheckedPointerOver: var(
+			--winui-CommandBarFlyoutAppBarButtonBackgroundPointerOver
+		);
+		--winui-AppBarToggleButtonBackgroundHighLightOverlayCheckedPressed: var(
+			--winui-CommandBarFlyoutAppBarButtonBackgroundPressed
+		);
+		--winui-AppBarToggleButtonForeground: var(--winui-CommandBarFlyoutAppBarButtonForeground);
+		--winui-AppBarToggleButtonForegroundPointerOver: var(
+			--winui-CommandBarFlyoutAppBarButtonForegroundPointerOver
+		);
+		--winui-AppBarToggleButtonForegroundPressed: var(
+			--winui-CommandBarFlyoutAppBarButtonForegroundPressed
+		);
+		--winui-AppBarToggleButtonForegroundDisabled: var(
+			--winui-CommandBarFlyoutAppBarButtonForegroundDisabled
+		);
+		--winui-AppBarToggleButtonForegroundChecked: var(
+			--winui-CommandBarFlyoutAppBarButtonForegroundChecked
+		);
+		--winui-AppBarToggleButtonForegroundCheckedPointerOver: var(
+			--winui-CommandBarFlyoutAppBarButtonForegroundCheckedPointerOver
+		);
+		--winui-AppBarToggleButtonForegroundCheckedPressed: var(
+			--winui-CommandBarFlyoutAppBarButtonForegroundCheckedPressed
+		);
+		--winui-AppBarToggleButtonForegroundCheckedDisabled: var(
+			--winui-CommandBarFlyoutAppBarButtonForegroundDisabled
+		);
+		/* The border ring remains transparent in every theme, so C1's forbidden literal zero is unnecessary. */
+		--winui-AppBarToggleButtonBorderBrush: var(--winui-CommandBarFlyoutAppBarButtonBorderBrush);
+		--winui-AppBarToggleButtonBorderBrushPointerOver: var(
+			--winui-CommandBarFlyoutAppBarButtonBorderBrush
+		);
+		--winui-AppBarToggleButtonBorderBrushPressed: var(
+			--winui-CommandBarFlyoutAppBarButtonBorderBrush
+		);
+		--winui-AppBarToggleButtonBorderBrushDisabled: var(
+			--winui-CommandBarFlyoutAppBarButtonBorderBrush
+		);
+		--winui-AppBarToggleButtonBorderBrushChecked: var(
+			--winui-CommandBarFlyoutAppBarButtonBorderBrush
+		);
+		--winui-AppBarToggleButtonBorderBrushCheckedPointerOver: var(
+			--winui-CommandBarFlyoutAppBarButtonBorderBrush
+		);
+		--winui-AppBarToggleButtonBorderBrushCheckedPressed: var(
+			--winui-CommandBarFlyoutAppBarButtonBorderBrush
+		);
+		--winui-AppBarToggleButtonBorderBrushCheckedDisabled: var(
+			--winui-CommandBarFlyoutAppBarButtonBorderBrush
+		);
+		--winui-AppBarToggleButtonCheckGlyphForeground: var(
+			--winui-CommandBarFlyoutAppBarButtonForeground
+		);
+		--winui-AppBarToggleButtonCheckGlyphForegroundPointerOver: var(
+			--winui-CommandBarFlyoutAppBarButtonForegroundPointerOver
+		);
+		--winui-AppBarToggleButtonCheckGlyphForegroundPressed: var(
+			--winui-CommandBarFlyoutAppBarButtonForegroundPressed
+		);
+		--winui-AppBarToggleButtonOverflowLabelForegroundPointerOver: var(
+			--winui-CommandBarFlyoutAppBarButtonForegroundPointerOver
+		);
+		--winui-AppBarToggleButtonOverflowLabelForegroundPressed: var(
+			--winui-CommandBarFlyoutAppBarButtonForegroundPressed
+		);
+		--winui-AppBarToggleButtonOverflowLabelForegroundDisabled: var(
+			--winui-CommandBarFlyoutAppBarButtonForegroundDisabled
+		);
+		--winui-AppBarToggleButtonOverflowLabelForegroundCheckedPointerOver: var(
+			--winui-CommandBarFlyoutAppBarButtonForegroundPointerOver
+		);
+		--winui-AppBarToggleButtonOverflowLabelForegroundCheckedPressed: var(
+			--winui-CommandBarFlyoutAppBarButtonForegroundPressed
+		);
+		--winui-AppBarToggleButtonOverflowLabelForegroundCheckedDisabled: var(
+			--winui-CommandBarFlyoutAppBarButtonForegroundDisabled
+		);
+		--winui-AppBarToggleButtonKeyboardAcceleratorTextForeground: var(
+			--winui-CommandBarFlyoutAppBarButtonKeyboardTextLabelForeground
+		);
+		--winui-AppBarToggleButtonKeyboardAcceleratorTextForegroundPointerOver: var(
+			--winui-CommandBarFlyoutAppBarButtonKeyboardTextLabelForegroundPointerOver
+		);
+		--winui-AppBarToggleButtonKeyboardAcceleratorTextForegroundPressed: var(
+			--winui-CommandBarFlyoutAppBarButtonKeyboardTextLabelForegroundPressed
+		);
+		--winui-AppBarToggleButtonKeyboardAcceleratorTextForegroundDisabled: var(
+			--winui-CommandBarFlyoutAppBarButtonForegroundDisabled
+		);
+		--winui-AppBarToggleButtonKeyboardAcceleratorTextForegroundCheckedPointerOver: var(
+			--winui-CommandBarFlyoutAppBarButtonForegroundPointerOver
+		);
+		--winui-AppBarToggleButtonKeyboardAcceleratorTextForegroundCheckedPressed: var(
+			--winui-CommandBarFlyoutAppBarButtonForegroundPressed
+		);
+		--winui-AppBarToggleButtonKeyboardAcceleratorTextForegroundCheckedDisabled: var(
+			--winui-CommandBarFlyoutAppBarButtonForegroundDisabled
+		);
+	}
+
+	/* `:285` and `:500` are both `<Grid x:Name="ContentRoot" MinWidth="40">` — a width floor and
+	   no height floor at all, where the library's own templates floor the content box at
+	   `AppBarThemeCompactHeight` once labels are collapsed. That token is 48, and a 48-pixel
+	   content box inside this control's 40-pixel command row overhangs it by eight and carries
+	   everything in it four below the row's centre. Measured on the sealed light baseline before
+	   this rule: the bar's icon ink spanned rows 260-275 inside a bar interior of 241-286 — a
+	   centre of 267.5 against the row's 263.5, in every theme. */
+	.primary :global(.root .content) {
+		min-height: 0;
+	}
+
+	/* `:296` and `:511`: the Viewbox carries no margin in either flyout template, where the
+	   library's templates place it with `AppBarButtonContentViewboxCollapsedMargin`
+	   (`16,0,2,0`). With the content box no longer floored at 48 this is the whole of the
+	   icon's placement, and both command kinds land on the row's centre.
+
+	   `:506` top-aligns the toggle's `IconAndLabelPanel` where `:291` centres the button's, and
+	   that asymmetry is deliberately not reproduced. It is observable only with primary labels
+	   collapsed, and no reference render of that combination exists: every original that puts a
+	   toggle on this bar is the text selection flyout, whose Bold, Italic and Underline carry
+	   labels and are therefore in `HasPrimaryLabels`, where `:488` and the button's `:273` both
+	   say `Top` and the two agree again. Photographed on the reference guest at 1600x900 from
+	   the Gallery's RichEditBox page. Honouring `:506` here would push a toggle's icon twelve
+	   pixels above the button's beside it on the strength of a line with no picture behind it;
+	   the unit that builds `HasPrimaryLabels` is where `Top` becomes visible and is set for
+	   both. */
+	.primary :global(.root .icon) {
+		margin: 0;
+	}
+
+	/* `:313`'s style states no `BorderThickness` where `:115` states `0` for the button, and
+	   `Control.BorderThickness` defaults to zero — so a toggle command in this flyout paints no
+	   ring at all and `:316`'s `BorderBrush` never reaches the screen. The library's own template
+	   binds `AppBarToggleButtonBorderThemeThickness`, which
+	   `AppBarToggleButton_themeresources.xaml:200` defines as 1 in every theme, and C1 will not
+	   take a `0` as a custom-property value because that is not a `var()` call — so the zero is
+	   said in CSS instead.
+
+	   It is visible in exactly one theme, which is why it was nearly missed: `:32` and `:66` give
+	   light and dark `SubtleFillColorTransparentBrush`, where a one-pixel ring is invisible, but
+	   `:100` gives high contrast `SystemControlForegroundTransparentBrush` — which despite the
+	   name resolves to the system button text colour and drew a box around every toggle command.
+	   Photographed on the reference guest before this rule. It also widens the checked command's
+	   accent square from 34 to the 36 the two-pixel inner-border margin asks for, in all three. */
+	.surface :global(.root .fill) {
+		/* c1-allow: CommandBarFlyout_themeresources.xaml:313, the style states no BorderThickness */
+		border-width: 0;
+	}
+
+	/* `content: none` rather than a zero inset and padding: the ring is an xor of two masks, and
+	   at zero width their rounded corners still disagree by a subpixel — photographed in high
+	   contrast as four corner marks around every unchecked toggle with the straight edges gone.
+	   A pseudo-element that is never generated has no corners to disagree about. */
+	.surface :global(.root .fill::after) {
+		content: none;
+	}
+
+	/* `:301` and `:516`, `Padding="0,6,0,7"`. */
+	.surface :global(.overflow-label) {
+		padding: 6px 0 7px 0;
+	}
+
+	/* `:152`, `:166`, and `:516`: rows reserving a check column indent by 39. */
+	.surface :global(.root[data-view-state='overflow-with-toggle-buttons'] .overflow-label),
+	.surface :global(.root[data-view-state='overflow-with-menu-icons'] .overflow-label) {
+		margin: 0 12px 0 39px;
+	}
+
+	/* `:180` and `:356`: rows reserving both columns indent by 67. */
+	.surface
+		:global(.root[data-view-state='overflow-with-toggle-buttons-and-menu-icons'] .overflow-label) {
+		margin: 0 12px 0 67px;
+	}
+
+	/* ToggleButton exposes only the two overflow states it owns; its `.check` distinguishes it
+	   from the button states that reserve the same check column. */
+	.surface :global(.root[data-view-state='overflow']:has(.check) .overflow-label) {
+		margin: 0 12px 0 39px;
+	}
+
+	.surface :global(.root[data-view-state='overflow-with-menu-icons']:has(.check) .overflow-label) {
+		margin: 0 12px 0 67px;
+	}
+
+	/* `:177` and `:353`, `ContentViewbox.Margin="39,0,12,0"`. */
+	.surface :global(.root[data-view-state='overflow-with-toggle-buttons-and-menu-icons'] .icon),
+	.surface :global(.root[data-view-state='overflow-with-menu-icons'][data-checked] .icon) {
+		margin: 0 12px 0 39px;
+	}
+
+	/* `:505`: no fixed glyph box, a twelve-point glyph, and `15,4,14,4` thickness. */
+	.surface :global(.check) {
+		width: auto;
+		height: auto;
+		margin: 4px 14px 4px 15px;
+		/* c1-allow: CommandBarFlyout_themeresources.xaml:505, `FontSize="12"` */
+		font-size: 12px;
+	}
+
 	.bar {
 		box-sizing: border-box;
 		display: grid;
@@ -232,31 +518,7 @@
 		border-width: var(--winui-CommandBarFlyoutBorderDownThemeThickness);
 	}
 
-	/* CommandBarFlyout_themeresources.xaml:112, :113, :188, :189, :195, :196, :202, :203, :280. */
 	.primary {
-		--winui-AppBarButtonBackground: var(--winui-CommandBarFlyoutAppBarButtonBackground);
-		--winui-AppBarButtonBackgroundPointerOver: var(
-			--winui-CommandBarFlyoutAppBarButtonBackgroundPointerOver
-		);
-		--winui-AppBarButtonBackgroundPressed: var(
-			--winui-CommandBarFlyoutAppBarButtonBackgroundPressed
-		);
-		--winui-AppBarButtonBackgroundDisabled: var(
-			--winui-CommandBarFlyoutAppBarButtonBackgroundDisabled
-		);
-		--winui-AppBarButtonForeground: var(--winui-CommandBarFlyoutAppBarButtonForeground);
-		--winui-AppBarButtonForegroundPointerOver: var(
-			--winui-CommandBarFlyoutAppBarButtonForegroundPointerOver
-		);
-		--winui-AppBarButtonForegroundPressed: var(
-			--winui-CommandBarFlyoutAppBarButtonForegroundPressed
-		);
-		--winui-AppBarButtonForegroundDisabled: var(
-			--winui-CommandBarFlyoutAppBarButtonForegroundDisabled
-		);
-		--winui-AppBarButtonInnerBorderMargin: var(
-			--winui-CommandBarFlyoutAppBarButtonInnerBorderMargin
-		);
 		display: flex;
 		flex-direction: row;
 		justify-content: start;
@@ -291,13 +553,6 @@
 		);
 		/* `:1085`, `BorderBrush="{TemplateBinding BorderBrush}"`. */
 		--winui-CommandBarOverflowPresenterBorderBrush: var(--winui-CommandBarFlyoutBorderBrush);
-		/* `:552` supplies the flyout's overflow-only chevron and accelerator foregrounds. */
-		--winui-AppBarButtonSubItemChevronForeground: var(
-			--winui-CommandBarFlyoutAppBarButtonSubItemChevronForeground
-		);
-		--winui-AppBarButtonKeyboardAcceleratorTextForeground: var(
-			--winui-CommandBarFlyoutAppBarButtonKeyboardTextLabelForeground
-		);
 		/* `:530`, `:531`, and `:532`; these are layout literals. */
 		min-width: 136px;
 		max-width: 440px;
