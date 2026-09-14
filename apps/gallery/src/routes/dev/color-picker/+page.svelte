@@ -46,6 +46,27 @@
 		colorSpectrumComponents="saturationValue"
 	/>
 </div>
+<h2 class="winui-SubtitleTextBlockStyle">more button</h2>
+<div class="row"><ColorPicker data-testid="more-button" moreButtonVisible color="#3478F6" /></div>
+<h2 class="winui-SubtitleTextBlockStyle">no channel text</h2>
+<div class="row">
+	<ColorPicker data-testid="no-channel-text" colorChannelTextInputVisible={false} color="#3478F6" />
+</div>
+<h2 class="winui-SubtitleTextBlockStyle">no hex</h2>
+<div class="row"><ColorPicker data-testid="no-hex" hexInputVisible={false} color="#3478F6" /></div>
+<h2 class="winui-SubtitleTextBlockStyle">alpha no text</h2>
+<div class="row">
+	<ColorPicker
+		data-testid="alpha-no-text"
+		alphaEnabled
+		alphaTextInputVisible={false}
+		color="#3478F680"
+	/>
+</div>
+<h2 class="winui-SubtitleTextBlockStyle">HSV bounds</h2>
+<div class="row">
+	<ColorPicker data-testid="hsv-bounds" minSaturation={20} maxSaturation={80} color="#3478F6" />
+</div>
 
 <style>
 	.row {
