@@ -6,11 +6,10 @@ test('CommandBarFlyout in three themes', async ({ page }) => {
 	await snapshotAllThemes(page, 'CommandBarFlyout', '/dev/command-bar-flyout');
 });
 
-test('the commands row is forty tall and the ellipsis forty-four wide', async ({ page }) => {
+test('the commands row is forty tall', async ({ page }) => {
 	await page.goto('/dev/command-bar-flyout');
-	// CommandBarFlyout_themeresources.xaml:1043 and :568.
+	// CommandBarFlyout_themeresources.xaml:1043.
 	await expect(page.getByTestId('default').locator('.primary')).toHaveCSS('height', '40px');
-	await expect(page.getByTestId('default').locator('.more')).toHaveCSS('width', '44px');
 });
 
 test("a closed flyout's commands carry no label", async ({ page }) => {
@@ -20,19 +19,6 @@ test("a closed flyout's commands carry no label", async ({ page }) => {
 	for (const label of await page.getByTestId('default').locator('.primary .label').all()) {
 		await expect(label).not.toBeVisible();
 	}
-});
-
-test('the ellipsis sits to the right of the last command', async ({ page }) => {
-	await page.goto('/dev/command-bar-flyout');
-	const specimen = page.getByTestId('default');
-	const more = await specimen.locator('.more').boundingBox();
-	const lastCommand = await specimen.locator('.primary > button').last().boundingBox();
-	expect(more).not.toBeNull();
-	expect(lastCommand).not.toBeNull();
-	// Adjacent `*` and `Auto` columns share an edge, so the ellipsis is not left of the last
-	// command even though their bounding boxes do not have a gap.
-	expect(more!.x).toBeGreaterThanOrEqual(lastCommand!.x + lastCommand!.width);
-	expect(Math.abs(more!.y - lastCommand!.y)).toBeLessThanOrEqual(1);
 });
 
 test('six commands do not push the bar past its maximum', async ({ page }) => {

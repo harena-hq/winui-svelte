@@ -74,7 +74,8 @@
 		labelPosition: defaultLabelPosition,
 		inOverflow: false,
 		overflowWithMenuIcons: false,
-		overflowWithToggleButtons: false
+		overflowWithToggleButtons: false,
+		subItemChevronVisible: false
 	}));
 
 	const showOverflowButton = $derived(

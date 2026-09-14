@@ -316,10 +316,11 @@ export const COLORPICKER_KEYS = {
 	ColorPickerSliderInnerThumbHeight: 'ColorPickerSlider inner thumb, its height'
 };
 
-// `CommandBarFlyout.svelte` reads all fourteen. The four surface keys paint the flyout itself;
-// the eight `AppBarButton` brushes are read twice over, once as the values this control
-// redefines `--winui-AppBarButton*` to for the commands it holds and once by its own ellipsis
-// button; the two margins are the inner borders, the command's own and the ellipsis's.
+// `CommandBarFlyout.svelte` reads all nineteen. The four surface keys paint the flyout itself;
+// three overflow keys skin its presenter, and two give its commands their chevron and accelerator
+// foregrounds. The eight `AppBarButton` brushes are read twice over, once as the values this
+// control redefines `--winui-AppBarButton*` to for the commands it holds and once by its own
+// ellipsis button; the two margins are the inner borders, the command's own and the ellipsis's.
 // `CommandBar` reads none of them, which is why they are their own group rather than additions
 // to COMMANDBAR_KEYS.
 export const COMMANDBARFLYOUT_KEYS = {
@@ -327,6 +328,9 @@ export const COMMANDBARFLYOUT_KEYS = {
 	CommandBarFlyoutForeground: 'CommandBarFlyout surface foreground',
 	CommandBarFlyoutBorderBrush: 'CommandBarFlyout surface border',
 	CommandBarFlyoutBorderThemeThickness: 'CommandBarFlyout surface border width',
+	CommandBarFlyoutBorderUpThemeThickness: 'CommandBarFlyout overflow border, expanded up',
+	CommandBarFlyoutBorderDownThemeThickness: 'CommandBarFlyout overflow border, expanded down',
+	CommandBarFlyoutButtonBackground: 'CommandBarFlyout overflow presenter background',
 	CommandBarFlyoutAppBarButtonBackground:
 		'CommandBarFlyout command and ellipsis background, at rest',
 	CommandBarFlyoutAppBarButtonBackgroundPointerOver:
@@ -343,6 +347,10 @@ export const COMMANDBARFLYOUT_KEYS = {
 		'CommandBarFlyout command and ellipsis foreground, pressed',
 	CommandBarFlyoutAppBarButtonForegroundDisabled:
 		'CommandBarFlyout command and ellipsis foreground, disabled',
+	CommandBarFlyoutAppBarButtonSubItemChevronForeground:
+		'CommandBarFlyout overflow command sub-item chevron',
+	CommandBarFlyoutAppBarButtonKeyboardTextLabelForeground:
+		'CommandBarFlyout overflow command accelerator text',
 	CommandBarFlyoutAppBarButtonInnerBorderMargin: 'CommandBarFlyout command inner-border margin',
 	CommandBarFlyoutAppBarEllipsisButtonInnerBorderMargin:
 		'CommandBarFlyout ellipsis inner-border margin'

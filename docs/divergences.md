@@ -113,6 +113,13 @@ are the same two: `CommandBarFlyoutBackground` is `DesktopAcrylicTransparentBrus
 way, for the same reason, and is listed here rather than opening a fourth entry so that the day
 an acrylic component lands, one deletion closes all of them.
 
+That control arrives twice, in fact. Its overflow popup carries a second backdrop link to the
+same `SystemBackdrop` (`CommandBarFlyoutCommandBar.cpp:251-256` and `:737-741`), and the brush
+its presenter is pointed at, `CommandBarFlyoutButtonBackground`
+(`CommandBarFlyout_themeresources.xaml:528`), is `SystemControlTransparentBrush` in both light
+and dark. The overflow composites over the same fallback as the bar, so the two boxes of one
+surface are painted the same way.
+
 ---
 
 ### WD-003 — the two Mica Background tiles on the Color page render without a fill
@@ -1958,3 +1965,22 @@ changes`.
   attributes to their inner interactive element, which changes two shipped components' public
   surface and belongs to a unit of its own.
 - **Would reconsider if**: either component gains attribute forwarding to its input.
+
+---
+
+### WD-087 — CommandBarFlyout expansion has no animation
+
+- **Control**: `CommandBarFlyout`.
+- **WinUI does**: `ExpansionStates` (`CommandBarFlyout_themeresources.xaml:697`) carries four
+  `VisualTransition`s. Collapsed-to-expanded runs for `ControlNormalAnimationDuration`, 250ms;
+  expanded-to-collapsed uses `ControlFastAnimationDuration`, 167ms, with a third key frame at
+  `ControlFastAnimationAfterDuration`, 168ms. The curve is `ControlFastOutSlowInKeySpline`,
+  `0,0,0,1`; the storyboards drive `ContentRoot.Width` to `ExpandedWidth` and translate the more
+  button and clip transforms from values `CommandBarFlyoutCommandBar.cpp:886-926` measures.
+- **We do**: render the final expanded and collapsed states without an animation.
+- **Why accepted**: the web width is an intrinsic `max-content` value in a clamped grid column,
+  deliberately avoiding script measurement, so it has no numeric endpoints to interpolate.
+- **Would reconsider if**: `interpolate-size: allow-keywords` is adopted after testing here. It
+  can transition to and from an intrinsic size in the reference Chromium guest, but it has not
+  been tested for this control. Screenshots would not show the difference because Playwright
+  finishes animations before capture; it affects pointer-driven interaction only.
