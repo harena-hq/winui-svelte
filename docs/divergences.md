@@ -1928,3 +1928,21 @@ changes`.
   reproduction of WinUI's.
 - **Would reconsider if**: the colour-name unit lands, at which point this divergence and WD-083
   can close together.
+
+---
+
+### WD-086 — the text-entry controls carry no accessible name
+
+- **Control**: `ColorPicker`'s text-entry grid.
+- **WinUI does**: set `AutomationProperties.Name` on each of the eight `TextBox`es and the
+  `ComboBox` (`ColorPicker.cpp:126`, `:135`, `:144`, `:153`, `:162`, `:171`, `:180`, `:189`,
+  `:198`), and swap the hex box's between "RGB hex" and "HSV hex" with the representation
+  (`:775-791`).
+- **We do**: render the visible label beside each box with no programmatic association.
+  `TextBox` spreads `...rest` onto its root `<div>` (`TextBox.svelte:74`) and `ComboBox` onto
+  its root `<div>` (`ComboBox.svelte:87-91`), so an `aria-label` passed from `ColorPicker`
+  reaches a wrapper with no role rather than the `<input>` or the trigger.
+- **Why accepted**: naming them means giving `TextBox` and `ComboBox` a way to forward
+  attributes to their inner interactive element, which changes two shipped components' public
+  surface and belongs to a unit of its own.
+- **Would reconsider if**: either component gains attribute forwarding to its input.

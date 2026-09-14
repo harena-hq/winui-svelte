@@ -23,6 +23,10 @@
 		/** IsColorPreviewVisible, ADR 0009. */ colorPreviewVisible?: boolean;
 		/** IsColorSliderVisible, ADR 0009 — the third-dimension slider. */ colorSliderVisible?: boolean;
 		/** IsAlphaSliderVisible, ADR 0009. */ alphaSliderVisible?: boolean;
+		/** IsMoreButtonVisible, ADR 0009. Defaults to **false**, as the dependency property does. */ moreButtonVisible?: boolean;
+		/** IsColorChannelTextInputVisible, ADR 0009. */ colorChannelTextInputVisible?: boolean;
+		/** IsAlphaTextInputVisible, ADR 0009. */ alphaTextInputVisible?: boolean;
+		/** IsHexInputVisible, ADR 0009. */ hexInputVisible?: boolean;
 		/** MinHue. */ minHue?: number;
 		/** MaxHue. */ maxHue?: number;
 		/** MinSaturation. */ minSaturation?: number;
@@ -40,8 +44,12 @@
 </script>
 
 <script lang="ts">
+	import { tick } from 'svelte';
+	import ComboBox from './ComboBox.svelte';
 	import ColorPickerSlider from './ColorPickerSlider.svelte';
 	import ColorSpectrum from './ColorSpectrum.svelte';
+	import TextBox from './TextBox.svelte';
+	import ToggleButton from './ToggleButton.svelte';
 	import { hsvToRgb, rgbToHsv } from '../internal/color';
 	let {
 		color = $bindable('#FFFFFFFF'),
@@ -52,6 +60,10 @@
 		colorPreviewVisible = true,
 		colorSliderVisible = true,
 		alphaSliderVisible = true,
+		moreButtonVisible = false,
+		colorChannelTextInputVisible = true,
+		alphaTextInputVisible = true,
+		hexInputVisible = true,
 		minHue = 0,
 		maxHue = 359,
 		minSaturation = 0,
@@ -76,6 +88,16 @@
 	let alpha = $state(initial ? initial.a : 1);
 	let seeded = $state(initial !== undefined);
 	let publishedColor = '';
+	// `m_textEntryGridOpened` (ColorPicker.cpp:743, :749, :755 — the More button's three
+	// handlers at :741-757). Not a public member upstream either.
+	let textEntryGridOpened = $state(false);
+	// The ComboBox's SelectedIndex, which is the whole of `ColorRepresentationSelected`
+	// (ColorPicker.cpp:469). Upstream exposes no property for it.
+	let representation = $state<'rgb' | 'hsv'>('rgb');
+	// `isVerticalOrientation` is a constant `true` here: `Orientation` is v17 unit 14
+	// (`ColorPicker.xaml:140-198`), so `ColorPicker.cpp:464` and `:465` reduce to these.
+	const moreButtonShown = $derived(moreButtonVisible);
+	const textEntryGridShown = $derived(!moreButtonVisible || textEntryGridOpened);
 	// WinUI's `Color` is an `{A,R,G,B}` struct with no string form at all, and this library
 	// represents it as a CSS colour string — the same thing `ColorSpectrum`'s own `color` prop
 	// takes, parsed the same way (`ColorSpectrum.svelte:230-240`). One hazard follows and the
@@ -164,6 +186,169 @@
 	// slider's own displayed value is whole, which is what the pin does.
 	const sliderValue = $derived(Math.round(value));
 	const alphaSliderValue = $derived(Math.round(alpha * 100));
+	type BoxKey = 'r' | 'g' | 'b' | 'h' | 's' | 'v' | 'a' | 'hex';
+	// The eight text boxes are more children that report their own text back, and they need
+	// `m_updatingControls` for the reason the two sliders do (see the comment at :156).
+	// `editing` is that guard: the box the user is typing in shows `draft` and every other box
+	// shows the colour. `ColorPicker.cpp:581-636` is the same rule read from the other side —
+	// `updateTextBoxes` rewrites every box except the one whose reason it was handed.
+	let editing = $state<BoxKey | null>(null);
+	let draft = $state('');
+	// `m_isFocusedTextBoxValid` (ColorPicker.cpp:800). Nothing reads it on blur: upstream
+	// restores `m_previousString` and then immediately calls `UpdateColorControls(ColorPropertyChanged)`
+	// (:816), whose reason excludes no box, so the restored text is overwritten by the colour in the
+	// same turn. Dropping `editing` does the same thing in one assignment, so there is no
+	// `m_previousString` here.
+	let invalid = $state(false);
+	let alphaRef = $state<HTMLInputElement | null>(null);
+	let hexRef = $state<HTMLInputElement | null>(null);
+	const rgb = $derived(hsvToRgb(hsv.h, hsv.s, hsv.v));
+	const byte = (n: number) => n.toString(16).toUpperCase().padStart(2, '0');
+	const displayed = $derived<Record<BoxKey, string>>({
+		r: String(rgb.r),
+		g: String(rgb.g),
+		b: String(rgb.b),
+		h: String(Math.round(hsv.h)),
+		s: String(Math.round(hsv.s * 100)),
+		v: String(Math.round(hsv.v * 100)),
+		a: `${Math.round(alpha * 100)}%`,
+		// RgbaToHex / RgbToHex, ColorConversion.cpp:295-308 and :256-268. `#AARRGGBB`, alpha
+		// first — the reverse of the `#RRGGBBAA` this component's own `color` prop speaks.
+		hex: alphaEnabled
+			? `#${byte(Math.round(alpha * 255))}${byte(rgb.r)}${byte(rgb.g)}${byte(rgb.b)}`
+			: `#${byte(rgb.r)}${byte(rgb.g)}${byte(rgb.b)}`
+	});
+	const text = (key: BoxKey) => (editing === key ? draft : displayed[key]);
+	const rgbKeys = ['r', 'g', 'b'] as const;
+	const channelRows = $derived(
+		representation === 'rgb'
+			? [
+					{ key: 'r' as const, label: 'Red' },
+					{ key: 'g' as const, label: 'Green' },
+					{ key: 'b' as const, label: 'Blue' }
+				]
+			: [
+					{ key: 'h' as const, label: 'Hue' },
+					{ key: 's' as const, label: 'Saturation' },
+					{ key: 'v' as const, label: 'Value' }
+				]
+	);
+	// `wcstoul` with the whole string required and an explicit nullopt for the empty one
+	// (ColorConversion.cpp:26-29, :38-41). It accepts leading whitespace, a sign, and `0x` for
+	// explicit base 16; constrained decimal boxes still reject negative values by their ranges.
+	function tryParseInt(value: string, base: 10 | 16) {
+		const pattern = base === 10 ? /^\s*[+-]?\d+$/ : /^\s*[+-]?(?:0x)?[0-9a-f]+$/i;
+		if (!pattern.test(value)) return;
+		const source = value.trimStart();
+		const negative = source.startsWith('-');
+		const parsed = parseInt(source.replace(/^[+-]/, ''), base);
+		// Windows `unsigned long` is 32 bits; the text boxes' maximum lengths keep the parsed
+		// magnitude within that range, so this is `wcstoul`'s reachable negative conversion.
+		return negative ? (2 ** 32 - parsed) % 2 ** 32 : parsed;
+	}
+	function clampRgbToHsv(next: { r: number; g: number; b: number }) {
+		const nextHsv = rgbToHsv(next.r / 255, next.g / 255, next.b / 255);
+		return {
+			h: Math.min(maxHue, Math.max(minHue, nextHsv.h)),
+			s: Math.min(maxSaturation / 100, Math.max(minSaturation / 100, nextHsv.s)),
+			v: Math.min(maxValue / 100, Math.max(minValue / 100, nextHsv.v))
+		};
+	}
+	function updateRepresentation(next: string) {
+		representation = next === 'hsv' ? 'hsv' : 'rgb';
+	}
+	function onChannelInput(key: Exclude<BoxKey, 'a' | 'hex'>, next: string) {
+		editing = key;
+		draft = next;
+		const parsed = tryParseInt(next, 10);
+		if (parsed === undefined) {
+			invalid = true;
+			return;
+		}
+		if (rgbKeys.includes(key as (typeof rgbKeys)[number])) {
+			invalid = parsed > 255;
+			if (invalid) return;
+			const r = tryParseInt(text('r'), 10);
+			const g = tryParseInt(text('g'), 10);
+			const b = tryParseInt(text('b'), 10);
+			if (r === undefined || g === undefined || b === undefined) {
+				invalid = true;
+				return;
+			}
+			// ApplyConstraintsToRgbColor converts RGB to HSV, clamps, converts back, then
+			// UpdateColor stores HSV (ColorPicker.cpp:1020-1036, :492-499). This component already
+			// stores HSV, so clamp that one conversion rather than introducing its extra round trip.
+			hsv = clampRgbToHsv({ r, g, b });
+			return;
+		}
+		const limits =
+			key === 'h'
+				? [minHue, maxHue]
+				: key === 's'
+					? [minSaturation, maxSaturation]
+					: [minValue, maxValue];
+		invalid = parsed < limits[0] || parsed > limits[1];
+		if (invalid) return;
+		const h = tryParseInt(text('h'), 10);
+		const s = tryParseInt(text('s'), 10);
+		const v = tryParseInt(text('v'), 10);
+		if (h === undefined || s === undefined || v === undefined) {
+			invalid = true;
+			return;
+		}
+		// HSV text handlers validate their own range and pass the three values through unclamped
+		// (ColorPicker.cpp:858-920).
+		hsv = { h, s: s / 100, v: v / 100 };
+	}
+	function onAlphaInput(next: string) {
+		if (!next.endsWith('%')) {
+			const caret = alphaRef?.selectionStart ?? next.length;
+			next += '%';
+			// `tick` lands after TextBox has applied its controlled value round-trip.
+			tick().then(() => alphaRef?.setSelectionRange(caret, caret));
+		}
+		editing = 'a';
+		draft = next;
+		const parsed = tryParseInt(next.slice(0, -1), 10);
+		if (parsed === undefined) {
+			invalid = true;
+			return;
+		}
+		invalid = parsed > 100;
+		if (invalid) return;
+		alpha = parsed / 100;
+	}
+	function onHexInput(next: string) {
+		if (!next.startsWith('#')) {
+			next = `#${next}`;
+			// `tick` lands after TextBox has applied its controlled value round-trip.
+			tick().then(() => hexRef?.setSelectionRange(next.length, next.length));
+		}
+		editing = 'hex';
+		draft = next;
+		const parsed = tryParseInt(next.slice(1), 16);
+		if (parsed === undefined) {
+			invalid = true;
+			return;
+		}
+		invalid = false;
+		const rgbValue = { r: (parsed >> 16) & 0xff, g: (parsed >> 8) & 0xff, b: parsed & 0xff };
+		hsv = clampRgbToHsv(rgbValue);
+		// ColorPicker.cpp:977 substitutes alpha 1 while alpha is disabled; preserve that branch
+		// even when the picker was seeded with a translucent CSS colour.
+		alpha = alphaEnabled ? ((parsed >> 24) & 0xff) / 255 : 1;
+	}
+	function onBoxFocus(key: BoxKey) {
+		editing = key;
+		draft = displayed[key];
+		invalid = false;
+	}
+	function onBoxBlur() {
+		// Upstream's rollback is immediately overwritten by UpdateColorControls; dropping the
+		// editing guard is the same observable result (ColorPicker.cpp:804-817).
+		editing = null;
+		invalid = false;
+	}
 	const gradient = $derived.by(() => {
 		const [min, rawMax] = bounds;
 		const max = rawMax <= min ? min : rawMax;
@@ -252,6 +437,87 @@
 				onValueChange={updateAlpha}
 			/>
 		</div>{/if}
+	<div class="more-entries">
+		{#if moreButtonShown}
+			<ToggleButton
+				class="more-button"
+				bind:checked={textEntryGridOpened}
+				aria-expanded={textEntryGridOpened}
+			>
+				<span class="more-content">
+					<span class="more-label">{textEntryGridOpened ? 'Less' : 'More'}</span>
+					<span class="more-glyph" data-open={textEntryGridOpened || undefined}></span>
+				</span>
+			</ToggleButton>
+		{/if}
+		{#if textEntryGridShown}
+			<!-- WD-086: visible labels have no programmatic association because TextBox and ComboBox
+			     put rest attributes on wrapper divs; see docs/divergences.md. -->
+			<div class:hex-left={!colorChannelTextInputVisible} class="text-entry">
+				{#if colorChannelTextInputVisible}
+					<ComboBox
+						class="representation"
+						items={[
+							{ value: 'rgb', label: 'RGB' },
+							{ value: 'hsv', label: 'HSV' }
+						]}
+						value={representation}
+						onValueChange={updateRepresentation}
+					/>
+				{/if}
+				<div class="text-panels">
+					{#if colorChannelTextInputVisible}
+						<!-- Upstream writes both grids then collapses one. One grid stands for both here: its
+						     wrapper has no spacing and exactly one child is ever visible. -->
+						<div class="channel-panel">
+							{#each channelRows as row, index (row.key)}
+								<!-- The three RowDefinitions are content-sized: this grid is in an auto-height
+								     StackPanel, so the source's star tracks have that effect (:375-379). -->
+								<TextBox
+									class="channel-box"
+									data-box={row.key}
+									style="grid-row: {index + 1}"
+									value={text(row.key)}
+									onValueChange={(next) => onChannelInput(row.key, next)}
+									onfocusin={() => onBoxFocus(row.key)}
+									onfocusout={onBoxBlur}
+									maxLength={3}
+								/>
+								<span class="channel-label" style:grid-row={index + 1}>{row.label}</span>
+							{/each}
+						</div>
+					{/if}
+					{#if alphaEnabled && alphaTextInputVisible}
+						<div class="alpha-panel">
+							<TextBox
+								class="alpha-box"
+								data-box="a"
+								bind:ref={alphaRef}
+								value={text('a')}
+								onValueChange={onAlphaInput}
+								onfocusin={() => onBoxFocus('a')}
+								onfocusout={onBoxBlur}
+								maxLength={4}
+							/>
+							<span class="channel-label">Opacity</span>
+						</div>
+					{/if}
+				</div>
+				{#if hexInputVisible}
+					<TextBox
+						class="hex-box"
+						data-box="hex"
+						bind:ref={hexRef}
+						value={text('hex')}
+						onValueChange={onHexInput}
+						onfocusin={() => onBoxFocus('hex')}
+						onfocusout={onBoxBlur}
+						maxLength={alphaEnabled ? 9 : 7}
+					/>
+				{/if}
+			</div>
+		{/if}
+	</div>
 </div>
 
 <style>
@@ -360,5 +626,153 @@
 	}
 	.slider-grid :global(.picker-slider) {
 		width: 100%;
+	}
+	.more-entries {
+		display: flex;
+		flex-direction: column;
+		margin-bottom: 12px;
+	}
+	.more-entries :global(.more-button) {
+		align-self: flex-end;
+		min-height: 32px;
+		min-width: 120px;
+		padding: 0;
+		justify-content: flex-end;
+		/* ColorPicker.xaml:270-295 — the Default dictionary, byte-identical to Light at :322-347.
+		   `Color="Transparent"` becomes `SystemControlTransparentBrush`, which is `transparent`
+		   in all three themes: C1 permits custom properties outside the token layer only when their
+		   values are `var()` calls, and this token is the direct transcription. */
+		--winui-ToggleButtonBackground: var(--winui-SystemControlTransparentBrush);
+		--winui-ToggleButtonBorderBrush: var(--winui-SystemControlTransparentBrush);
+		--winui-ToggleButtonForeground: var(--winui-SystemBaseHighColor);
+		--winui-ToggleButtonBackgroundPointerOver: var(--winui-SystemControlTransparentBrush);
+		--winui-ToggleButtonBorderBrushPointerOver: var(--winui-SystemControlTransparentBrush);
+		--winui-ToggleButtonForegroundPointerOver: var(--winui-SystemBaseMediumColor);
+		--winui-ToggleButtonBackgroundPressed: var(--winui-SystemControlTransparentBrush);
+		--winui-ToggleButtonBorderBrushPressed: var(--winui-SystemControlTransparentBrush);
+		--winui-ToggleButtonForegroundPressed: var(--winui-SystemBaseMediumLowColor);
+		--winui-ToggleButtonBackgroundDisabled: var(--winui-SystemControlTransparentBrush);
+		--winui-ToggleButtonBorderBrushDisabled: var(--winui-SystemControlTransparentBrush);
+		--winui-ToggleButtonForegroundDisabled: var(--winui-SystemBaseMediumLowColor);
+		--winui-ToggleButtonBackgroundChecked: var(--winui-SystemControlTransparentBrush);
+		--winui-ToggleButtonBorderBrushChecked: var(--winui-SystemControlTransparentBrush);
+		--winui-ToggleButtonForegroundChecked: var(--winui-SystemBaseHighColor);
+		--winui-ToggleButtonBackgroundCheckedPointerOver: var(--winui-SystemControlTransparentBrush);
+		--winui-ToggleButtonBorderBrushCheckedPointerOver: var(--winui-SystemControlTransparentBrush);
+		--winui-ToggleButtonForegroundCheckedPointerOver: var(--winui-SystemBaseMediumColor);
+		--winui-ToggleButtonBackgroundCheckedPressed: var(--winui-SystemControlTransparentBrush);
+		--winui-ToggleButtonBorderBrushCheckedPressed: var(--winui-SystemControlTransparentBrush);
+		--winui-ToggleButtonForegroundCheckedPressed: var(--winui-SystemBaseMediumLowColor);
+		--winui-ToggleButtonBackgroundCheckedDisabled: var(--winui-SystemControlTransparentBrush);
+		--winui-ToggleButtonBorderBrushCheckedDisabled: var(--winui-SystemControlTransparentBrush);
+		--winui-ToggleButtonForegroundCheckedDisabled: var(--winui-SystemBaseMediumLowColor);
+	}
+	/* ColorPicker.xaml:296-321 — the HighContrast dictionary. Backgrounds stay transparent;
+	   the other sixteen keys change. */
+	:global(:root[data-theme='high-contrast']) .more-entries :global(.more-button) {
+		--winui-ToggleButtonBorderBrush: var(--winui-SystemColorButtonTextColor);
+		--winui-ToggleButtonForeground: var(--winui-SystemColorButtonTextColor);
+		--winui-ToggleButtonBorderBrushPointerOver: var(--winui-SystemColorHighlightColor);
+		--winui-ToggleButtonForegroundPointerOver: var(--winui-SystemColorHighlightColor);
+		--winui-ToggleButtonBorderBrushPressed: var(--winui-SystemColorHighlightColor);
+		--winui-ToggleButtonForegroundPressed: var(--winui-SystemColorHighlightColor);
+		--winui-ToggleButtonBorderBrushDisabled: var(--winui-SystemColorGrayTextColor);
+		--winui-ToggleButtonForegroundDisabled: var(--winui-SystemColorGrayTextColor);
+		--winui-ToggleButtonBorderBrushChecked: var(--winui-SystemColorButtonTextColor);
+		--winui-ToggleButtonForegroundChecked: var(--winui-SystemColorButtonTextColor);
+		--winui-ToggleButtonBorderBrushCheckedPointerOver: var(--winui-SystemColorHighlightColor);
+		--winui-ToggleButtonForegroundCheckedPointerOver: var(--winui-SystemColorHighlightColor);
+		--winui-ToggleButtonBorderBrushCheckedPressed: var(--winui-SystemColorHighlightColor);
+		--winui-ToggleButtonForegroundCheckedPressed: var(--winui-SystemColorHighlightColor);
+		--winui-ToggleButtonBorderBrushCheckedDisabled: var(--winui-SystemColorGrayTextColor);
+		--winui-ToggleButtonForegroundCheckedDisabled: var(--winui-SystemColorGrayTextColor);
+	}
+	.more-content {
+		display: flex;
+		align-items: center;
+		margin: 5px 0 7px;
+	}
+	.more-glyph {
+		margin-left: 8px;
+		font-family: var(--winui-SymbolThemeFontFamily);
+		/* c1-allow: ColorPicker.xaml:264, FontSize is 12. */
+		font-size: 12px;
+		line-height: normal;
+	}
+	/* c1-allow: ColorPicker.xaml:264, collapsed Glyph is \E70D. */
+	.more-glyph::after {
+		content: '\E70D';
+	}
+	/* c1-allow: ColorPicker.xaml:264, expanded Glyph is \E70E. */
+	.more-glyph[data-open]::after {
+		content: '\E70E';
+	}
+	.text-entry {
+		display: grid;
+		grid-template-columns: 1fr 5px 1fr;
+		grid-template-rows: auto auto auto;
+	}
+	.text-entry :global(.representation) {
+		grid-row: 1;
+		grid-column: 1;
+		width: 120px;
+	}
+	.text-panels {
+		grid-row: 2;
+		grid-column: 1 / -1;
+		display: flex;
+		flex-direction: column;
+	}
+	.text-entry :global(.hex-box) {
+		grid-row: 1;
+		grid-column: 3;
+		justify-self: end;
+		align-self: start;
+		width: 132px;
+	}
+	/* These two rules exist only because of WD-042. `TextBox.svelte:157` floors its box at 318
+	   pixels, which is **our** number and not the pin's — upstream binds `MinWidth` to
+	   `TextControlThemeMinWidth`, 64 (`generic.xaml:100`). Upstream's `Width="120"` and
+	   `Width="132"` sit comfortably above 64 and need no help there; against our 318 they are
+	   ignored, so the floor has to be lowered to the width the template asks for. Both rules
+	   go when WD-042 closes. `min-width` is not a C1-regulated property, which is why they
+	   carry no `c1-allow`. */
+	.text-entry :global(.hex-box > .box) {
+		min-width: 132px;
+	}
+	.text-entry.hex-left :global(.hex-box) {
+		grid-column: 1;
+		justify-self: start;
+	}
+	.channel-panel {
+		display: grid;
+		grid-template-columns: auto 8px 1fr;
+	}
+	.channel-panel :global(.channel-box) {
+		grid-column: 1;
+		margin-top: 12px;
+		width: 120px;
+	}
+	/* WD-042 again; the reason is stated once above. */
+	.channel-panel :global(.channel-box > .box),
+	.alpha-panel :global(.alpha-box > .box) {
+		min-width: 120px;
+	}
+	.channel-label {
+		grid-column: 3;
+		align-self: center;
+		margin-top: 12px;
+	}
+	.alpha-panel {
+		display: grid;
+		grid-template-columns: auto 8px 1fr;
+		margin-top: 12px;
+	}
+	.alpha-panel :global(.alpha-box) {
+		grid-column: 1;
+		width: 120px;
+	}
+	.alpha-panel .channel-label {
+		margin-top: 0;
 	}
 </style>

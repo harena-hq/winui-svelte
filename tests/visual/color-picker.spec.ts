@@ -8,13 +8,36 @@ const HUE = '219';
 const SATURATION = '79';
 const VALUE = '96';
 
+// One budget for the whole file, because every test here opens the same expensive page.
+// `/dev/color-picker` is 9014 pixels of fifteen specimens holding thirteen `ColorSpectrum`s,
+// and a spectrum paints its gradient pixel by pixel (`ColorSpectrum.svelte:280-305`, which is
+// what upstream's `SpectrumBrush` does). Two measurements set this number. Hydration alone is
+// 6.6s on a cold load, and longer under sixteen workers. The three-theme capture crossed 30s at
+// the third theme's viewport resize with the first two already photographed. A per-expectation
+// timeout cannot fix either one: the slider test below died at exactly 30s waiting for an
+// attribute it had been given 30s to wait for, because the test's own budget was the same
+// number. Splitting the route would be the other answer and is a harness unit of its own —
+// every specimen here is a branch this control has, so the page is not the thing that is wrong.
+test.describe.configure({ timeout: 120_000 });
+
 test('ColorPicker in three themes', async ({ page }) => {
 	test.skip(!CDP_ENDPOINT, 'no tracked baseline exists for this browser');
+	// Three full-page captures of a 9014-pixel page; the file's budget above is sized for it.
 	await snapshotAllThemes(page, 'ColorPicker', '/dev/color-picker');
 });
 
 test('the third-dimension slider takes its channel from the components', async ({ page }) => {
 	await page.goto('/dev/color-picker');
+	// Wait for hydration once, explicitly, instead of letting the first `expect.poll` below do
+	// it on a budget that was never sized for it. The slider's ARIA is the page's slowest thing
+	// to arrive — 6.6s cold, against `expect.poll`'s 5s default — so this test had been racing
+	// hydration rather than measuring a channel, and was winning only while the page held eight
+	// spectra. The file's budget above is what makes a 30s wait here possible at all.
+	await expect(page.getByTestId('default').locator('.third .thumb')).toHaveAttribute(
+		'aria-valuemin',
+		'0',
+		{ timeout: 30_000 }
+	);
 	// `ColorPicker.xaml:244` writes `ColorChannel="Value"` and
 	// `SetThirdDimensionSliderChannel` (`ColorPicker.cpp:1144-1169`) overwrites it from
 	// `ColorSpectrumComponents`. The bounds alone cannot show that — saturation and value share
@@ -222,4 +245,220 @@ test('each hidden part is absent and the ones beside it are not', async ({ page 
 	// specimen but one leaves alpha disabled while `alphaSliderVisible` defaults to true.
 	expect(await count('default', '.alpha')).toBe(0);
 	expect(await count('alpha', '.alpha')).toBe(1);
+});
+
+test('the text entry grid is open and the More button absent by default', async ({ page }) => {
+	await page.goto('/dev/color-picker');
+	const picker = page.getByTestId('default');
+	await expect(picker.locator('.text-entry')).toBeVisible();
+	expect(await picker.locator('.more-button').count()).toBe(0);
+});
+
+test('the More button hides the grid and opens it', async ({ page }) => {
+	await page.goto('/dev/color-picker');
+	const picker = page.getByTestId('more-button');
+	const button = picker.locator('.more-button');
+	expect(await picker.locator('.text-entry').count()).toBe(0);
+	await expect(button.locator('.more-label')).toHaveText('More');
+	expect(
+		await button.locator('.more-glyph').evaluate((el) => getComputedStyle(el, '::after').content)
+	).toContain('\ue70d');
+	await button.click();
+	await expect(picker.locator('.text-entry')).toBeVisible();
+	await expect(button.locator('.more-label')).toHaveText('Less');
+	expect(
+		await button.locator('.more-glyph').evaluate((el) => getComputedStyle(el, '::after').content)
+	).toContain('\ue70e');
+	await expect(button).toHaveAttribute('aria-pressed', 'true');
+});
+
+test('the channel boxes read the seeded colour', async ({ page }) => {
+	await page.goto('/dev/color-picker');
+	const picker = page.getByTestId('default');
+	for (const [key, value] of [
+		['r', '52'],
+		['g', '120'],
+		['b', '246']
+	] as const)
+		await expect(picker.locator(`[data-box="${key}"] input`)).toHaveValue(value);
+	await expect(picker.locator('.channel-label')).toHaveText(['Red', 'Green', 'Blue']);
+});
+
+test('HSV replaces the three rows and reads the same colour', async ({ page }) => {
+	await page.goto('/dev/color-picker');
+	const picker = page.getByTestId('default');
+	await picker.locator('.representation button').click();
+	await page.getByRole('option', { name: 'HSV' }).click();
+	for (const [key, value] of [
+		['h', HUE],
+		['s', SATURATION],
+		['v', VALUE]
+	] as const)
+		await expect(picker.locator(`[data-box="${key}"] input`)).toHaveValue(value);
+	await expect(picker.locator('.channel-label')).toHaveText(['Hue', 'Saturation', 'Value']);
+});
+
+test('the hex box writes alpha first', async ({ page }) => {
+	await page.goto('/dev/color-picker');
+	const input = (id: string) => page.getByTestId(id).locator('[data-box="hex"] input');
+	await expect(input('default')).toHaveValue('#3478F6');
+	await expect(input('default')).toHaveAttribute('maxlength', '7');
+	await expect(input('alpha')).toHaveValue('#803478F6');
+	await expect(input('alpha')).toHaveAttribute('maxlength', '9');
+});
+
+test('a channel the user types survives the round trip', async ({ page }) => {
+	await page.goto('/dev/color-picker');
+	const picker = page.getByTestId('default');
+	const green = picker.locator('[data-box="g"] input');
+	const preview = () =>
+		picker.locator('.preview .current').evaluate((el) => getComputedStyle(el).backgroundColor);
+	for (const value of ['137', '1', '254']) {
+		await green.fill(value);
+		await green.blur();
+		await expect(green).toHaveValue(value);
+		await expect.poll(preview).toBe(`rgb(52, ${value}, 246)`);
+	}
+});
+
+test('an out-of-range channel moves nothing and is discarded on blur', async ({ page }) => {
+	await page.goto('/dev/color-picker');
+	const picker = page.getByTestId('default');
+	const green = picker.locator('[data-box="g"] input');
+	const preview = () =>
+		picker.locator('.preview .current').evaluate((el) => getComputedStyle(el).backgroundColor);
+	const before = await preview();
+	await green.fill('300');
+	expect(await preview()).toBe(before);
+	await green.blur();
+	await expect(green).toHaveValue('120');
+});
+
+test('the opacity box appends its own percent sign', async ({ page }) => {
+	await page.goto('/dev/color-picker');
+	const picker = page.getByTestId('alpha');
+	const alpha = picker.locator('[data-box="a"] input');
+	await expect(alpha).toHaveValue('50%');
+	await alpha.fill('25');
+	await expect(alpha).toHaveValue('25%');
+	await expect
+		.poll(() =>
+			picker.locator('.preview .current').evaluate((el) => getComputedStyle(el).backgroundColor)
+		)
+		.toBe('rgba(52, 120, 246, 0.25)');
+});
+
+test('the hex box prefixes its own hash', async ({ page }) => {
+	await page.goto('/dev/color-picker');
+	const picker = page.getByTestId('default');
+	const hex = picker.locator('[data-box="hex"] input');
+	await hex.fill('00FF00');
+	await expect(hex).toHaveValue('#00FF00');
+	await expect
+		.poll(() =>
+			picker.locator('.preview .current').evaluate((el) => getComputedStyle(el).backgroundColor)
+		)
+		.toBe('rgb(0, 255, 0)');
+});
+
+test('hiding the channel text leaves the hex box in the first column', async ({ page }) => {
+	await page.goto('/dev/color-picker');
+	const picker = page.getByTestId('no-channel-text');
+	expect(await picker.locator('.representation').count()).toBe(0);
+	expect(await picker.locator('.channel-panel').count()).toBe(0);
+	const [hex, grid] = await Promise.all([
+		picker.locator('.hex-box').boundingBox(),
+		picker.locator('.text-entry').boundingBox()
+	]);
+	expect(hex).not.toBeNull();
+	expect(grid).not.toBeNull();
+	expect(Math.abs(hex!.x - grid!.x)).toBeLessThanOrEqual(1);
+});
+
+test('the hex box can be hidden on its own', async ({ page }) => {
+	await page.goto('/dev/color-picker');
+	const picker = page.getByTestId('no-hex');
+	expect(await picker.locator('.hex-box').count()).toBe(0);
+	await expect(picker.locator('.channel-panel')).toBeVisible();
+});
+
+test('the opacity row follows both conditions', async ({ page }) => {
+	await page.goto('/dev/color-picker');
+	for (const [id, count] of [
+		['default', 0],
+		['alpha', 1],
+		['alpha-no-text', 0]
+	] as const)
+		expect(await page.getByTestId(id).locator('.alpha-panel').count()).toBe(count);
+});
+
+test("the HSV boxes refuse a value outside the picker's bounds", async ({ page }) => {
+	await page.goto('/dev/color-picker');
+	const picker = page.getByTestId('hsv-bounds');
+	await picker.locator('.representation button').click();
+	await page.getByRole('option', { name: 'HSV' }).click();
+	const saturation = picker.locator('[data-box="s"] input');
+	const preview = () =>
+		picker.locator('.preview .current').evaluate((el) => getComputedStyle(el).backgroundColor);
+	const before = await preview();
+	await saturation.fill('90');
+	expect(await preview()).toBe(before);
+	await saturation.fill('30');
+	expect(await preview()).not.toBe(before);
+});
+
+test("the grid's geometry", async ({ page }) => {
+	await page.goto('/dev/color-picker');
+	const geometry = await page.getByTestId('default').evaluate((picker) => {
+		const box = (selector: string) =>
+			picker.querySelector<HTMLElement>(selector)!.getBoundingClientRect();
+		const grid = box('.text-entry');
+		const representation = box('.representation');
+		const hex = box('.hex-box');
+		const channels = [...picker.querySelectorAll<HTMLElement>('.channel-box')].map((el) =>
+			el.getBoundingClientRect()
+		);
+		const label = box('.channel-label');
+		return {
+			columns: getComputedStyle(picker.querySelector<HTMLElement>('.text-entry')!)
+				.gridTemplateColumns.split(' ')
+				.map(Number.parseFloat),
+			representationWidth: representation.width,
+			hexWidth: hex.width,
+			hexRight: grid.right - hex.right,
+			labelGap: label.x - (channels[0].x + channels[0].width),
+			rowGaps: [
+				channels[1].y - channels[0].y - channels[0].height,
+				channels[2].y - channels[1].y - channels[1].height
+			],
+			margin: getComputedStyle(picker.querySelector<HTMLElement>('.more-entries')!).marginBottom
+		};
+	});
+	const alphaGap = await page.getByTestId('alpha').evaluate((picker) => {
+		const channel = picker.querySelectorAll<HTMLElement>('.channel-box')[2].getBoundingClientRect();
+		const alpha = picker.querySelector<HTMLElement>('.alpha-panel')!.getBoundingClientRect();
+		return alpha.y - (channel.y + channel.height);
+	});
+	expect(Math.abs(geometry.columns[0] - geometry.columns[2])).toBeLessThanOrEqual(1);
+	expect(geometry.columns[1]).toBe(5);
+	expect(geometry.representationWidth).toBe(120);
+	expect(geometry.hexWidth).toBe(132);
+	expect(Math.abs(geometry.hexRight)).toBeLessThanOrEqual(1);
+	expect(geometry.labelGap).toBe(8);
+	expect(geometry.rowGaps).toEqual([12, 12]);
+	expect(alphaGap).toBe(12);
+	expect(geometry.margin).toBe('12px');
+});
+
+test("the More button's chrome is transparent", async ({ page }) => {
+	// Default (system/light) and high-contrast are covered; the Gallery owns the theme through
+	// localStorage and documentElement.dataset, as snapshotAllThemes does.
+	await page.goto('/dev/color-picker');
+	const button = page.getByTestId('more-button').locator('.more-button');
+	await expect(button).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+	await page.evaluate(() => {
+		localStorage.setItem('winui-svelte:theme', 'high-contrast');
+		document.documentElement.dataset.theme = 'high-contrast';
+	});
+	await expect(button).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
 });
