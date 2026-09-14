@@ -27,6 +27,8 @@
 		/** IsColorChannelTextInputVisible, ADR 0009. */ colorChannelTextInputVisible?: boolean;
 		/** IsAlphaTextInputVisible, ADR 0009. */ alphaTextInputVisible?: boolean;
 		/** IsHexInputVisible, ADR 0009. */ hexInputVisible?: boolean;
+		/** Orientation. `ColorPicker.idl:51-52` defaults to Vertical; the Horizontal state is
+		 *  `ColorPicker.xaml:142-197`. */ orientation?: 'horizontal' | 'vertical';
 		/** MinHue. */ minHue?: number;
 		/** MaxHue. */ maxHue?: number;
 		/** MinSaturation. */ minSaturation?: number;
@@ -64,6 +66,7 @@
 		colorChannelTextInputVisible = true,
 		alphaTextInputVisible = true,
 		hexInputVisible = true,
+		orientation = 'vertical',
 		minHue = 0,
 		maxHue = 359,
 		minSaturation = 0,
@@ -94,10 +97,15 @@
 	// The ComboBox's SelectedIndex, which is the whole of `ColorRepresentationSelected`
 	// (ColorPicker.cpp:469). Upstream exposes no property for it.
 	let representation = $state<'rgb' | 'hsv'>('rgb');
-	// `isVerticalOrientation` is a constant `true` here: `Orientation` is v17 unit 14
-	// (`ColorPicker.xaml:140-198`), so `ColorPicker.cpp:464` and `:465` reduce to these.
-	const moreButtonShown = $derived(moreButtonVisible);
-	const textEntryGridShown = $derived(!moreButtonVisible || textEntryGridOpened);
+	const isVerticalOrientation = $derived(orientation === 'vertical');
+	// ColorPicker.cpp:464, and the comment upstream puts directly above it at :463: "More button
+	// is disabled in horizontal orientation; only respect IsMoreButtonVisible states when
+	// switching to Vertical orientation."
+	const moreButtonShown = $derived(moreButtonVisible && isVerticalOrientation);
+	// ColorPicker.cpp:465. The third disjunct is why a horizontal picker always shows its grid.
+	const textEntryGridShown = $derived(
+		!moreButtonVisible || textEntryGridOpened || !isVerticalOrientation
+	);
 	// WinUI's `Color` is an `{A,R,G,B}` struct with no string form at all, and this library
 	// represents it as a CSS colour string — the same thing `ColorSpectrum`'s own `color` prop
 	// takes, parsed the same way (`ColorSpectrum.svelte:230-240`). One hazard follows and the
@@ -349,13 +357,18 @@
 		editing = null;
 		invalid = false;
 	}
+	// ColorPicker.xaml:158-162 and :175-179 put a RotateTransform Angle="180" on both background
+	// rectangles in the Horizontal state. A XAML LinearGradientBrush runs 0,0 to 1,1, which in a
+	// 12-wide upright strip is top to bottom; half a turn makes it bottom to top, which is where
+	// the vertical slider's minimum is. In CSS that is the whole of the transform.
+	const stripDirection = $derived(isVerticalOrientation ? 'to right' : 'to top');
 	const gradient = $derived.by(() => {
 		const [min, rawMax] = bounds;
 		const max = rawMax <= min ? min : rawMax;
 		if (channel === 'saturation')
-			return `linear-gradient(to right, ${css({ h: hsv.h, s: min / 100, v: 1 })}, ${css({ h: hsv.h, s: max / 100, v: 1 })})`; // ColorPicker.cpp:1074-1075 forces v to 1.
+			return `linear-gradient(${stripDirection}, ${css({ h: hsv.h, s: min / 100, v: 1 })}, ${css({ h: hsv.h, s: max / 100, v: 1 })})`; // ColorPicker.cpp:1074-1075 forces v to 1.
 		if (channel === 'value')
-			return `linear-gradient(to right, ${css({ h: hsv.h, s: hsv.s, v: min / 100 })}, ${css({ h: hsv.h, s: hsv.s, v: max / 100 })})`;
+			return `linear-gradient(${stripDirection}, ${css({ h: hsv.h, s: hsv.s, v: min / 100 })}, ${css({ h: hsv.h, s: hsv.s, v: max / 100 })})`;
 		const minOffset = min / 359,
 			maxOffset = max / 359,
 			stops = [`${css({ h: min, s: 1, v: 1 })} 0%`];
@@ -367,9 +380,11 @@
 				);
 		}
 		stops.push(`${css({ h: max, s: 1, v: 1 })} 100%`);
-		return `linear-gradient(to right, ${stops.join(', ')})`;
+		return `linear-gradient(${stripDirection}, ${stops.join(', ')})`;
 	});
-	const alphaGradient = $derived(`linear-gradient(to right, ${css(hsv, 0)}, ${css(hsv, 1)})`);
+	const alphaGradient = $derived(
+		`linear-gradient(${stripDirection}, ${css(hsv, 0)}, ${css(hsv, 1)})`
+	);
 	function update(next: number) {
 		if (next === sliderValue) return;
 		if (channel === 'hue') hsv = { ...hsv, h: next };
@@ -382,7 +397,7 @@
 	}
 </script>
 
-<div bind:this={ref} class={['root', className]} {style} {...rest}>
+<div bind:this={ref} class={['root', className]} {style} data-orientation={orientation} {...rest}>
 	<div class:collapsed={!colorSpectrumVisible} class="spectrum-grid">
 		{#if colorSpectrumVisible}<ColorSpectrum
 				bind:hsvColor={
@@ -416,8 +431,12 @@
 	</div>
 	{#if colorSliderVisible}<div class="slider-grid third">
 			<div class="gradient" style:background-image={gradient}></div>
+			<!-- The inversion is upstream's. ColorPicker.xaml:153 and :166 set both sliders' Orientation
+			     to Vertical inside the picker's own Horizontal state: a picker laid out across the page
+			     stands its two sliders on end beside the spectrum. -->
 			<ColorPickerSlider
 				class="picker-slider"
+				orientation={isVerticalOrientation ? 'horizontal' : 'vertical'}
 				colorChannel={channel}
 				min={bounds[0]}
 				max={bounds[1]}
@@ -430,6 +449,7 @@
 			<div class="gradient" style:background-image={alphaGradient}></div>
 			<ColorPickerSlider
 				class="picker-slider"
+				orientation={isVerticalOrientation ? 'horizontal' : 'vertical'}
 				colorChannel="alpha"
 				min={0}
 				max={100}
@@ -774,5 +794,110 @@
 	}
 	.alpha-panel .channel-label {
 		margin-top: 0;
+	}
+	/* ColorPicker.xaml:142-197 — the Horizontal state. */
+	.root[data-orientation='horizontal'] {
+		display: grid;
+		grid-template-columns: auto auto auto auto;
+		grid-template-rows: auto;
+		align-items: stretch;
+		/* `:208-211`'s four columns are `Auto`, and a XAML `Auto` column is content-sized and
+		   never grows; a CSS `auto` track is stretched by the free-space step unless
+		   `justify-content` opts out. Measured without this line, against a root the harness row
+		   stretches to 1232: the third-dimension column came out 166 wide instead of 38, and its
+		   gradient strip — centred in the column, as :156 says — sat 61 pixels from the thumb it
+		   paints under. `:147`'s MaxWidth of 10000 is XAML for "do not cap", not for "fill". */
+		justify-content: start;
+		/* :144-147. The key names say VerticalOrientation and are read by the Horizontal state;
+		   the name is about the sliders, which this state stands on end. */
+		min-height: var(--winui-ColorPickerVerticalOrientationMinHeight);
+		max-height: var(--winui-ColorPickerVerticalOrientationMaxHeight);
+		min-width: 0;
+		max-width: none;
+	}
+	/* :148 */
+	.root[data-orientation='horizontal'] .spectrum-grid {
+		grid-column: 1;
+		margin-bottom: 0;
+	}
+	/* The collapsed spectrum is the one place the root's columns cannot all be content-sized.
+	   `ColorSpectrumCollapsed` (:17-26) unsets the preview's `Width`, gives it `Height="44"` and
+	   spans it across both of ColorSpectrumGrid's columns — five setters whose only purpose is to
+	   turn a 44-wide upright bar into a wide 44-tall one, and a content-sized track collapses that
+	   bar to nothing. Whether a XAML `Auto` column measures its child against the available width
+	   or against infinity is what decides it and the pin does not say; what the pin does say is
+	   that the same reasoning would collapse the bar in the *vertical* orientation too, where
+	   those five setters plainly work. So the first track flexes when, and only when, the spectrum
+	   is gone — which is what this library already renders vertically, at the root's own
+	   `MaxWidth`. Measured without this rule: the whole spectrum grid was 32 wide and the preview
+	   a four-pixel sliver. A capture of a horizontal ColorPicker with `IsColorSpectrumVisible`
+	   false would settle it; the Gallery sets that property nowhere. */
+	.root[data-orientation='horizontal']:has(.spectrum-grid.collapsed) {
+		grid-template-columns: minmax(0, 1fr) auto auto auto;
+	}
+	/* :149 */
+	.root[data-orientation='horizontal'] .preview {
+		margin: 0 16px 0 12px;
+	}
+	/* :150-152 */
+	.root[data-orientation='horizontal'] .third {
+		grid-column: 2;
+		margin: 0 6px 0 0;
+	}
+	/* :163-165 */
+	.root[data-orientation='horizontal'] .alpha {
+		grid-column: 3;
+		margin: 0 16px 0 0;
+	}
+	/* :154-157, :167-174 */
+	.root[data-orientation='horizontal'] .slider-grid > .checkerboard,
+	.root[data-orientation='horizontal'] .slider-grid > .gradient {
+		margin: 0 auto;
+		width: 12px;
+		height: auto;
+	}
+	.root[data-orientation='horizontal'] .slider-grid :global(.picker-slider) {
+		width: auto;
+		flex: 1 1 auto;
+		/* A flex item with auto width otherwise stretches across its column; the vertical template's
+		   fixed 32px container is the XAML slider's actual width. */
+		align-self: flex-start;
+	}
+	/* :180-182 */
+	.root[data-orientation='horizontal'] .more-entries {
+		grid-column: 4;
+		margin-bottom: 0;
+	}
+	/* :184 */
+	.root[data-orientation='horizontal'] .text-entry :global(.representation) {
+		grid-row: 2;
+	}
+	/* :185 */
+	.root[data-orientation='horizontal'] .text-panels {
+		grid-row: 3;
+	}
+	/* :186-192 */
+	.root[data-orientation='horizontal'] .text-entry :global(.hex-box) {
+		grid-row: 1;
+		grid-column: 1 / -1;
+		justify-self: start;
+		width: 120px;
+		margin-bottom: 12px;
+	}
+	/* WD-042 a third time, and the reason is the one stated above the first two: our 318px floor
+	   swallows the template's width. Here it is :192's Width="120", not the vertical hex box's
+	   132. Goes with the other two when that divergence closes. */
+	.root[data-orientation='horizontal'] .text-entry :global(.hex-box > .box) {
+		min-width: 120px;
+	}
+	/* :193-195. The label column stops being a star and becomes 122, so the TextBox column is
+	   the only flexible one left — and it is `Auto` (:371, :389, :408), which does not grow. The
+	   same free-space step as the root's needs the same opt-out: measured without it the box
+	   column was 242 against the template's 120, which put every label 122 further right than
+	   the 122 this token names. */
+	.root[data-orientation='horizontal'] .channel-panel,
+	.root[data-orientation='horizontal'] .alpha-panel {
+		grid-template-columns: auto 8px var(--winui-ColorPickerTextInputHorizontalOrientationMargin);
+		justify-content: start;
 	}
 </style>
