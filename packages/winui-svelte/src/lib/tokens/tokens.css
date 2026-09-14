@@ -112,8 +112,11 @@
 	);
 	--winui-ColorPickerHeaderContentDisabled: var(--winui-TextFillColorDisabledBrush);
 	--winui-ColorPickerBorderBrush: var(--winui-ControlStrokeColorDefaultBrush);
+	--winui-ColorPickerSliderCornerRadius: 6px;
 	--winui-ColorPickerSliderInnerThumbWidth: 10px;
 	--winui-ColorPickerSliderInnerThumbHeight: 10px;
+	--winui-ColorPickerVerticalOrientationMinWidth: 312px;
+	--winui-ColorPickerVerticalOrientationMaxWidth: 392px;
 	--winui-ComboBoxItemForeground: var(--winui-TextFillColorPrimaryBrush);
 	--winui-ComboBoxItemForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
 	--winui-ComboBoxItemForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);

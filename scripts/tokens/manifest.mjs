@@ -291,10 +291,14 @@ export const RATINGCONTROL_KEYS = {
 };
 
 // ColorSpectrum reads the border member of ColorPicker's dictionary. ColorPickerSlider reads
-// its thumb and header brushes plus its inner-thumb dimensions. Track-fill and strip-radius
-// entries remain excluded because they paint only ColorPicker-owned elements or invisible tracks.
+// its thumb and header brushes plus its inner-thumb dimensions. ColorPicker reads its root widths
+// and its owned gradient-strip radius. Track-fill remains excluded because it paints only the
+// opacity-zero ColorPickerSlider track rectangles.
 export const COLORPICKER_KEYS = {
 	ColorPickerBorderBrush: 'ColorSpectrum border, via ColorPickerBorderStyle',
+	ColorPickerVerticalOrientationMinWidth: 'ColorPicker root, its minimum width',
+	ColorPickerVerticalOrientationMaxWidth: 'ColorPicker root, its maximum width',
+	ColorPickerSliderCornerRadius: 'ColorPicker slider strip, its corner radius',
 	SystemControlBackgroundChromeWhiteBrush: 'ColorSpectrum SelectionEllipse default stroke',
 	SystemControlBackgroundChromeBlackHighBrush:
 		'ColorSpectrum SelectionEllipse dark and focus stroke',
@@ -2730,6 +2734,8 @@ export const DOUBLE_LENGTHS = {
 	RatingControlItemSpacing: 'RatingControl gap between stars',
 	ColorPickerSliderInnerThumbWidth: 'ColorPickerSlider inner thumb width',
 	ColorPickerSliderInnerThumbHeight: 'ColorPickerSlider inner thumb height',
+	ColorPickerVerticalOrientationMinWidth: 'ColorPicker root minimum width',
+	ColorPickerVerticalOrientationMaxWidth: 'ColorPicker root maximum width',
 	ScrollBarTrackBorderThemeThickness: 'ScrollBar track border width',
 	ScrollBarThumbOffset: 'ScrollBar collapsed thumb offset',
 	ScrollBarSize: 'ScrollBar rail thickness and arrow button size',
