@@ -28,7 +28,19 @@ export default defineConfig({
 	// answering. Measured: the full suite went 4 of 26 with the ContentDialog spec present and
 	// 26 of 26 without it, then 26 of 26 with it at one worker — in 36.7s against the parallel
 	// run's 42.8s, because the parallelism was never buying anything to begin with.
-	workers: CDP ? 1 : undefined,
+	//
+	// Sixteen, and not the core count, when the browser is local. Playwright's default is half
+	// the cores, which on this host is 96 workers against one preview server. At 155 tests that
+	// was green six consecutive times; at 165 two consecutive full runs failed seven and then
+	// five tests, with a different set each time and every one of them passing when its own spec
+	// was run alone — a `page.hover()` that had not settled by the time the assertion read it,
+	// keyboard presses that never landed. None of them were product defects, and a battery that
+	// fails differently each run is a gate that has stopped meaning anything.
+	//
+	// Sixteen costs nothing to buy that back: three consecutive full runs at 27.3s, against
+	// 27.2s for the run that failed five. The parallelism above sixteen was never buying wall
+	// clock either, for the same reason the CDP lane's never did.
+	workers: CDP ? 1 : 16,
 	fullyParallel: true,
 	forbidOnly: !!process.env.CI,
 	reporter: process.env.CI ? 'list' : 'html',
