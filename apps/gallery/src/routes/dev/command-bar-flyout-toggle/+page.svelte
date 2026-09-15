@@ -16,9 +16,9 @@
 	<CommandBarFlyout open placement="bottom" data-testid="bar-toggles">
 		{#snippet children(props)}{@render trigger(props)}{/snippet}
 		{#snippet commands()}
-			<AppBarToggleButton glyph="E8DD" label="Bold" checked />
-			<AppBarToggleButton glyph="E8DB" label="Italic" />
-			<AppBarButton glyph="E72D" label="Share" />
+			<AppBarToggleButton glyph="E8DD" label="Bold" labelPosition="collapsed" checked />
+			<AppBarToggleButton glyph="E8DB" label="Italic" labelPosition="collapsed" />
+			<AppBarButton glyph="E72D" label="Share" labelPosition="collapsed" />
 		{/snippet}
 		{#snippet secondaryCommands()}
 			<AppBarButton label="Select all" />
@@ -46,6 +46,18 @@
 			<AppBarToggleButton glyph="E8DD" label="Bold" checked />
 			<AppBarToggleButton glyph="E8DB" label="Italic" />
 			<AppBarButton glyph="E8AC" label="Rename" />
+		{/snippet}
+	</CommandBarFlyout>
+
+	<CommandBarFlyout open placement="bottom" data-testid="bar-toggles-labels">
+		{#snippet children(props)}{@render trigger(props)}{/snippet}
+		{#snippet commands()}
+			<AppBarToggleButton glyph="E8DD" label="Bold" checked />
+			<AppBarToggleButton glyph="E8DB" label="Italic" />
+			<AppBarButton glyph="E72D" label="Share" />
+		{/snippet}
+		{#snippet secondaryCommands()}
+			<AppBarButton label="Select all" />
 		{/snippet}
 	</CommandBarFlyout>
 </div>

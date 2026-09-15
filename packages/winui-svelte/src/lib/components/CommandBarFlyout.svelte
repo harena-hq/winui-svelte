@@ -45,7 +45,11 @@
 	import { Popover } from 'bits-ui';
 	import CommandBarOverflowPresenter from './CommandBarOverflowPresenter.svelte';
 	import { FLYOUT_PLACEMENTS } from '../internal/flyout-placement';
-	import { setCommandBarState } from '../internal/command-bar';
+	import {
+		setCommandBarRegistry,
+		setCommandBarState,
+		type CommandBarCommandShape
+	} from '../internal/command-bar';
 
 	let {
 		commands,
@@ -72,6 +76,14 @@
 			(overflowButtonVisibility === 'auto' && secondaryCommands !== undefined)
 	);
 	const overflowShown = $derived(expanded && secondaryCommands !== undefined);
+	let shapes = $state<Array<() => CommandBarCommandShape>>([]);
+	setCommandBarRegistry((shape) => {
+		shapes.push(shape);
+		return () => {
+			shapes = shapes.filter((current) => current !== shape);
+		};
+	});
+	const hasPrimaryLabels = $derived(shapes.some((shape) => shape().label));
 
 	function setExpanded(next: boolean) {
 		if (expanded === next) return;
@@ -79,11 +91,15 @@
 		onExpandedChange?.(next);
 	}
 
-	// `ClosedDisplayMode="Compact"` only makes a bottom-labelled closed bar compact. This bar's
-	// `DefaultLabelPosition="Collapsed"` chooses its 40px icon row instead.
+	// `ClosedDisplayMode="Compact"` only makes a bottom-labelled closed bar compact, and `:638`'s
+	// `DefaultLabelPosition="Collapsed"` is not what chooses the icon row either: this style's
+	// command templates implement no label-position states at all, and collapse `TextLabel` in the
+	// markup (`:299`, `:514`) for `PrimaryLabelStates` alone to reverse. So the label position
+	// this bar publishes is `PrimaryLabelStates` restated in the vocabulary the commands already
+	// speak — `bottom` is `HasPrimaryLabels` and `collapsed` is `NoPrimaryLabels`.
 	setCommandBarState(() => ({
 		compact: false,
-		labelPosition: 'collapsed',
+		labelPosition: hasPrimaryLabels ? 'bottom' : 'collapsed',
 		inOverflow: false,
 		overflowWithMenuIcons: false,
 		overflowWithToggleButtons: false,
@@ -128,7 +144,12 @@
 							{style}
 							{...rest}
 						>
-							<div class="primary">{@render commands?.()}</div>
+							<div
+								class="primary"
+								data-view-state={hasPrimaryLabels ? 'has-primary-labels' : 'no-primary-labels'}
+							>
+								{@render commands?.()}
+							</div>
 							{#if showOverflowButton}
 								<button
 									type="button"
@@ -388,8 +409,9 @@
 	   say `Top` and the two agree again. Photographed on the reference guest at 1600x900 from
 	   the Gallery's RichEditBox page. Honouring `:506` here would push a toggle's icon twelve
 	   pixels above the button's beside it on the strength of a line with no picture behind it;
-	   the unit that builds `HasPrimaryLabels` is where `Top` becomes visible and is set for
-	   both. */
+	   `HasPrimaryLabels` aligns both kinds to `Top` through `align-content: start`, so `:488` and
+	   `:273` agree and the asymmetry `:506` would introduce is confined to the collapsed-label
+	   bar, which no original render shows. */
 	.primary :global(.root .icon) {
 		margin: 0;
 	}
@@ -526,6 +548,58 @@
 		margin: 3px 0 3px 3px;
 	}
 
+	/* `:1015` and `:1016`: `PrimaryItemsControl.MinHeight` becomes 52 and its `Height` becomes
+	   `NaN`, which is XAML for unset — a fixed 40-pixel row becomes an auto one with a 52 floor,
+	   so a wrapped label grows the bar instead of spilling out of it. */
+	.primary[data-view-state='has-primary-labels'] {
+		height: auto;
+		min-height: 52px;
+	}
+
+	/* `:274` and `:489`, `IconAndLabelPanel.Width="60"`. The panel is `ContentRoot`'s `*` column
+	   (`:287`, `:502`) and the only other thing in that grid on the bar is
+	   `KeyboardAcceleratorTextLabel`, which `AppBarButtonHelpers.h:204` shows only when the command
+	   is drawn with the overflow style — so on the bar the panel's 60 is the whole of the content
+	   box's width, and a fixed 60 on the command reproduces it for both command kinds without
+	   restating either one's column list.
+
+	   The `display` is `:273`'s and `:488`'s `VerticalAlignment="Top"`, and it is here because a
+	   `<button>` does not treat its content as an ordinary block: Chromium centres a button's
+	   anonymous content box whenever the button is taller than it, and this row stretches every
+	   command to the bar's height. Measured without these two declarations: the content box sat
+	   2.5 below the command's top — half of 52 less its 47 — and the icon landed at 11.5 where
+	   the template says 9. Making the command a column flex container gives the content box a
+	   real `flex-start` instead of the anonymous centring, and leaves it stretched to the 60
+	   above. It is deliberately scoped to this state: that same centring is what reproduces
+	   `:291`'s `VerticalAlignment="Center"` in `NoPrimaryLabels`, and the same two declarations
+	   applied there move the icon to the top of a 40-pixel row. */
+	.primary[data-view-state='has-primary-labels'] > :global(.root) {
+		width: 60px;
+		display: flex;
+		flex-direction: column;
+	}
+
+	/* `:272` and `:487`, `IconAndLabelPanel.Margin="0,9,0,0"` — a Thickness is left,top,right,bottom,
+	   so this is nine at the top and nothing else. The panel has no element of its own here: it is
+	   the icon and the label in rows 1 and 2 of `.content`, whose `align-content: start` packs
+	   them to the top edge that `:273`'s and `:488`'s `VerticalAlignment="Top"` asks for — the
+	   rule above is what makes that edge the command's own. The icon is the panel's first row, so
+	   the panel's top margin is the icon's, and putting it here rather than on
+	   `.content` leaves the accelerator — vertically centred in `ContentRoot`, not in the panel —
+	   where the template puts it. It overrides the `margin: 0` two rules above, which is `:296`'s
+	   and `:511`'s unmargined Viewbox and still correct in `NoPrimaryLabels`. */
+	.primary[data-view-state='has-primary-labels'] :global(.root .icon) {
+		margin: 9px 0 0 0;
+	}
+
+	/* `:299` and `:514`, `TextLabel.Margin="0,6,0,2"`, against the library's own
+	   `AppBarButtonTextLabelMargin` of `2,0,2,8`. The label's font size needs no rule: this
+	   template's `CaptionTextBlockStyle` and the library's `AppBarButtonLabelFontSize` are both 12
+	   in every theme. */
+	.primary[data-view-state='has-primary-labels'] :global(.root .label) {
+		margin: 6px 0 2px 0;
+	}
+
 	/* `CommandBarFlyoutCommandBarOverflowPresenterStyle` (`:527-562`) repoints named brushes and
 	   states three sizes. The compound selector out-specifies the presenter's `.root` rule, so
 	   the cascade does not depend on stylesheet emission order. */
@@ -584,6 +658,10 @@
 		position: relative;
 		width: 44px;
 		min-height: 40px;
+		/* `:573`, `VerticalAlignment="Stretch"` — the button is `:569`'s 40 at minimum and otherwise
+		   as tall as the bar's interior, which is what makes its hover highlight the full height of
+		   the row rather than a 36-pixel band inside a 58-pixel bar. */
+		align-self: stretch;
 		padding: 0;
 		border: 0;
 		background: none;

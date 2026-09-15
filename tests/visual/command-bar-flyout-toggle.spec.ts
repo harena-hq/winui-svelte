@@ -11,6 +11,65 @@ test('CommandBarFlyout toggle commands in three themes', async ({ page }) => {
 	await snapshotAllThemes(page, 'CommandBarFlyoutToggle', '/dev/command-bar-flyout-toggle');
 });
 
+test('a toggle and a button agree on where the icon sits', async ({ page }) => {
+	await page.goto('/dev/command-bar-flyout-toggle');
+	const commands = page.getByTestId('bar-toggles-labels').locator('.primary .root');
+	const toggle = commands.first();
+	const button = commands.nth(2);
+	const [toggleTop, buttonTop, toggleOffset, buttonOffset] = await Promise.all([
+		toggle.locator('.icon').evaluate((element) => element.getBoundingClientRect().top),
+		button.locator('.icon').evaluate((element) => element.getBoundingClientRect().top),
+		toggle.evaluate((root) => {
+			const icon = root.querySelector<HTMLElement>('.icon')!;
+			return icon.getBoundingClientRect().top - root.getBoundingClientRect().top;
+		}),
+		button.evaluate((root) => {
+			const icon = root.querySelector<HTMLElement>('.icon')!;
+			return icon.getBoundingClientRect().top - root.getBoundingClientRect().top;
+		})
+	]);
+	// CommandBarFlyout_themeresources.xaml:488 and :273.
+	expect(toggleTop).toBeCloseTo(buttonTop, 1);
+	// CommandBarFlyout_themeresources.xaml:488 and :273.
+	expect(toggleOffset).toBeCloseTo(9, 1);
+	expect(buttonOffset).toBeCloseTo(9, 1);
+});
+
+test("the ellipsis button is as tall as the bar's interior", async ({ page }) => {
+	await page.goto('/dev/command-bar-flyout-toggle');
+	const specimen = page.getByTestId('bar-toggles-labels');
+	const primary = specimen.locator('.primary');
+	const more = specimen.locator('.more');
+	// CommandBarFlyout_themeresources.xaml:573's `VerticalAlignment="Stretch"` against :1043's
+	// `Margin="3,3,0,3"`: the button fills the bar's interior, which is the command row plus
+	// three above and three below. The row's height is read from the DOM rather than written as
+	// 58, so this says the ellipsis tracks the row instead of restating :1015's number.
+	expect(
+		Math.abs(
+			(await more.evaluate((element) => element.getBoundingClientRect().height)) -
+				((await primary.evaluate((element) => element.getBoundingClientRect().height)) + 6)
+		)
+	).toBeLessThanOrEqual(0.5);
+});
+
+test('a secondary command never enters the labelled state', async ({ page }) => {
+	await page.goto('/dev/command-bar-flyout-toggle');
+	const specimen = page.getByTestId('overflow-icons');
+	// CommandBarFlyoutCommandBar.cpp:803–:820.
+	await expect(specimen.locator('.primary')).toHaveAttribute(
+		'data-view-state',
+		'has-primary-labels'
+	);
+	const rows = overflow(specimen).locator('.root');
+	// CommandBarFlyoutCommandBar.cpp:822–:829.
+	await expect(rows).toHaveCount(3);
+	for (const row of await rows.all()) {
+		await expect(row).toHaveAttribute('data-view-state', /^overflow/);
+		// CommandBarFlyout_themeresources.xaml:299 and :514.
+		await expect(row.locator('.label')).toHaveCSS('display', 'none');
+	}
+});
+
 test("a checked toggle on the bar wears the flyout's checked skin", async ({ page }) => {
 	await page.goto('/dev/command-bar-flyout-toggle');
 	const checked = page.getByTestId('bar-toggles').locator('.primary .root[data-checked="true"]');

@@ -106,7 +106,12 @@ test('a bar with no secondary commands has no ellipsis', async ({ page }) => {
 	expect(moreBox).not.toBeNull();
 	expect(lastCommand).not.toBeNull();
 	expect(moreBox!.x).toBeGreaterThanOrEqual(lastCommand!.x + lastCommand!.width);
-	expect(Math.abs(moreBox!.y - lastCommand!.y)).toBeLessThanOrEqual(1);
+	// Centres, not tops. CommandBarFlyout_themeresources.xaml:573 stretches the button to the
+	// bar's interior where :1043 insets the command row by three, so the two boxes deliberately
+	// no longer start at the same y; what the template makes equal is where their contents sit.
+	expect(
+		Math.abs(moreBox!.y + moreBox!.height / 2 - (lastCommand!.y + lastCommand!.height / 2))
+	).toBeLessThanOrEqual(1);
 });
 
 test("the overflow command shows its chevron and the bar's does not", async ({ page }) => {

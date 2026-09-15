@@ -30,12 +30,15 @@ export interface CommandBarCommandState {
 	subItemChevronVisible: boolean;
 }
 
-/** What one overflow row tells its presenter about the columns its peers must reserve. */
+/** What one command tells the container it sits in about the space its peers must reserve. */
 export interface CommandBarCommandShape {
 	/** The command draws an icon, so the menu reserves an icon column. */
 	icon: boolean;
 	/** The command is a toggle, so the menu reserves a check column. */
 	toggle: boolean;
+	/** The command has a label that `HasVisibleLabel` would count:
+	 *  `CommandBarFlyoutCommandBar.h:74`. */
+	label: boolean;
 }
 
 /** Publish the state. The argument is a getter so the value stays reactive. */
@@ -54,11 +57,12 @@ export function getCommandBarState(): (() => CommandBarCommandState) | undefined
 }
 
 /**
- * Publish the overflow-row registry. WinUI decides `OverflowWithMenuIcons` and
- * `OverflowWithToggleButtons` by walking `SecondaryCommands` and applying the result at
- * `CommandBar_themeresources.xaml:875`–`:878`; a Svelte parent cannot inspect a snippet, so
- * each row reports its shape while it renders and the presenter combines them. Same information,
- * opposite direction.
+ * Publish the command registry. WinUI walks a command collection to decide the container states
+ * it implies — `OverflowWithMenuIcons` and `OverflowWithToggleButtons` from `SecondaryCommands`
+ * at `CommandBar_themeresources.xaml:875`-`:878`, and `HasPrimaryLabels` from `PrimaryCommands`
+ * at `CommandBarFlyoutCommandBar.cpp:803`-`:812`. A Svelte parent cannot inspect a snippet, so
+ * each command reports its shape while it renders and the container combines them. Same
+ * information, opposite direction.
  */
 export function setCommandBarRegistry(
 	register: (shape: () => CommandBarCommandShape) => () => void
@@ -66,7 +70,8 @@ export function setCommandBarRegistry(
 	setContext(REGISTER, register);
 }
 
-/** Read the registry, which is absent outside an overflow presenter. */
+/** Read the registry, which is absent outside a container that publishes one — the overflow
+ *  presenter and `CommandBarFlyout`'s bar. */
 export function getCommandBarRegistry():
 	((shape: () => CommandBarCommandShape) => () => void) | undefined {
 	return getContext(REGISTER);
