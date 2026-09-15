@@ -1,6 +1,6 @@
 import type { Locator } from '@playwright/test';
 import { expect, CDP_ENDPOINT, hydrated, test } from './fixtures';
-import { snapshotAllThemes } from './themes';
+import { growViewportToContent, snapshotAllThemes } from './themes';
 
 function overflow(bar: Locator) {
 	return bar.locator('..').locator('.overflow');
@@ -156,8 +156,90 @@ test('clicking the ellipsis opens and closes the overflow', async ({ page }) => 
 	await page.goto('/dev/command-bar-flyout-overflow');
 	await hydrated(page);
 	const specimen = page.getByTestId('collapsed');
+	// This specimen was the fifth of five and is the fifth of eight since the states below were
+	// added, which put it below the fold: Playwright scrolls a trigger into view before clicking
+	// it, that moves the anchor, and the popover correctly closes before the expanded state can be
+	// inspected. Nothing about this control changed; the page grew under it.
+	await growViewportToContent(page);
+	await page.evaluate(() => window.dispatchEvent(new Event('resize')));
 	await specimen.locator('.more').click();
 	await expect(overflow(specimen)).toBeVisible();
 	await specimen.locator('.more').click();
 	await expect(overflow(specimen)).toHaveCount(0);
+});
+
+test('a bar with no primary commands is hidden, not collapsed', async ({ page }) => {
+	await page.goto('/dev/command-bar-flyout-overflow');
+	const bar = page.getByTestId('secondary-only');
+	// CommandBarFlyout_themeresources.xaml:866-:874, and :868's comment for why it is hidden
+	// rather than collapsed: the overflow popup is anchored to this element.
+	await expect(bar.locator('..')).toHaveAttribute('data-view-state', 'secondary-commands-only');
+	// `:872`'s zero, read back through `box-sizing: border-box`: the declaration sizes the border
+	// box, which cannot go below the borders, so the content box is zero and the computed height
+	// is the two one-pixel edges. Chromium resolves `height` in the element's own box-sizing —
+	// the same reading that makes the empty bar next door 48 and not 46.
+	await expect(bar).toHaveCSS('height', '2px');
+	await expect(bar).toHaveCSS('opacity', '0');
+	await expect(bar).toHaveCSS('pointer-events', 'none');
+	// The menu the hidden bar anchors is still there and still drawn.
+	const menu = await overflow(bar).boundingBox();
+	expect(menu).not.toBeNull();
+	expect(menu!.height).toBeGreaterThan(40);
+});
+
+test('without primary commands the overflow keeps all four corners', async ({ page }) => {
+	await page.goto('/dev/command-bar-flyout-overflow');
+	// At the default viewport collision avoidance legitimately flips the lower specimen upward, so
+	// it would not be in the down state this test names.
+	await growViewportToContent(page);
+	// CommandBarFlyout_themeresources.xaml:984 and :993 are one shape, not two: both restate the
+	// unfiltered corner radius and the uniform border thickness, which is what the two
+	// `WithPrimaryCommands` states at :966 and :975 filter for the seam. So the up specimen and
+	// the down specimen must measure the same.
+	for (const [id, side] of [
+		['secondary-only-up', 'top'],
+		['secondary-only', 'bottom']
+	]) {
+		const bar = page.getByTestId(id);
+		// Same reason the other placement tests scroll and resize: `FLYOUT_PLACEMENTS` keeps
+		// collision avoidance on, so a specimen below the fold is legitimately flipped and would
+		// not be in the state its name claims.
+		await bar.scrollIntoViewIfNeeded();
+		await page.evaluate(() => window.dispatchEvent(new Event('resize')));
+		await expect(bar).toHaveAttribute('data-side', side);
+		const menu = overflow(bar);
+		const measured = await menu.evaluate((node) => {
+			const computed = getComputedStyle(node);
+			return {
+				radii: [
+					computed.borderTopLeftRadius,
+					computed.borderTopRightRadius,
+					computed.borderBottomRightRadius,
+					computed.borderBottomLeftRadius
+				],
+				widths: [
+					computed.borderTopWidth,
+					computed.borderRightWidth,
+					computed.borderBottomWidth,
+					computed.borderLeftWidth
+				]
+			};
+		});
+		expect(new Set(measured.radii).size).toBe(1);
+		expect(measured.radii[0]).not.toBe('0px');
+		// CommandBarFlyoutBorderThemeThickness, against the Up and Down thicknesses that zero one
+		// edge apiece.
+		expect(measured.widths).toEqual(['1px', '1px', '1px', '1px']);
+	}
+});
+
+test('an ellipsis with nothing behind it opens no overflow', async ({ page }) => {
+	await page.goto('/dev/command-bar-flyout-overflow');
+	const bar = page.getByTestId('primary-only-forced');
+	// `OverflowButtonVisibility="Visible"` (`:1050`) puts the button on the bar; :863 collapses
+	// `OverflowContentRoot` all the same, because `PrimaryCommandsOnly` is about the commands and
+	// not about the button.
+	await expect(bar.locator('..')).toHaveAttribute('data-view-state', 'primary-commands-only');
+	await expect(bar.locator('.more')).toHaveCount(1);
+	await expect(overflow(bar)).toHaveCount(0);
 });

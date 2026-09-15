@@ -69,13 +69,40 @@
 	}: CommandBarFlyoutProps = $props();
 
 	const position = $derived(FLYOUT_PLACEMENTS[placement]);
+	// `AvailableCommandsStates` (`:859`-`:875`), chosen the way `CommandBar_Partial.cpp:589`-`:590`
+	// chooses it — including the ordering, which asks about secondary commands first and so puts a
+	// bar with neither kind into `PrimaryCommandsOnly` rather than a fourth state. Upstream reads
+	// `HasVisibleElements` over two live command collections; a Svelte parent cannot look inside a
+	// snippet, so this reduces to whether the snippet was passed at all — the same reduction
+	// `showOverflowButton` makes for `secondaryCommands`, and the reduction that
+	// `CommandBarFlyoutCommandBar.cpp:670` already is, since it asks `PrimaryCommands().Size()`
+	// rather than walking for visibility. A `commands` snippet that renders nothing therefore
+	// counts here as a primary command.
+	//
+	// It is deliberately not derived from `shapes`, which does count the bar's commands: a command
+	// registers from an `$effect`, so `shapes` is empty for the first frame after mount and a
+	// registry-derived predicate would paint every ordinary flyout's bar collapsed before
+	// correcting itself. The snippet's presence is right from the first frame.
+	const hasPrimaryCommands = $derived(commands !== undefined);
+	const hasSecondaryCommands = $derived(secondaryCommands !== undefined);
+	const availableCommands = $derived(
+		hasPrimaryCommands && hasSecondaryCommands
+			? 'both-commands'
+			: !hasSecondaryCommands
+				? 'primary-commands-only'
+				: 'secondary-commands-only'
+	);
 	// CommandBar.svelte:80-83 reduces `EffectiveOverflowButtonVisibility` (`:1050`) the same way,
 	// for the same three cases.
 	const showOverflowButton = $derived(
 		overflowButtonVisibility === 'visible' ||
-			(overflowButtonVisibility === 'auto' && secondaryCommands !== undefined)
+			(overflowButtonVisibility === 'auto' && hasSecondaryCommands)
 	);
-	const overflowShown = $derived(expanded && secondaryCommands !== undefined);
+	// `:863`, `PrimaryCommandsOnly` collapses `OverflowContentRoot`. It is written against the
+	// state rather than against `secondaryCommands` so that the one place the overflow is decided
+	// names the line that decides it: a bar with no secondary commands has no overflow even where
+	// `overflowButtonVisibility="visible"` has put an ellipsis on it.
+	const overflowShown = $derived(expanded && availableCommands !== 'primary-commands-only');
 	let shapes = $state<Array<() => CommandBarCommandShape>>([]);
 	setCommandBarRegistry((shape) => {
 		shapes.push(shape);
@@ -136,7 +163,7 @@
 				<div {...wrapperProps}>
 					<!-- `OuterContentRoot` and `ContentRoot` (:1021, :1022) are one `.surface`, and
 					     `PrimaryItemsRoot` (:1038) is `.bar`. -->
-					<div class={['surface', overflowShown && 'expanded']}>
+					<div class={['surface', overflowShown && 'expanded']} data-view-state={availableCommands}>
 						<div
 							{...props}
 							bind:this={ref}
@@ -196,6 +223,21 @@
 		max-width: 440px;
 		border-radius: var(--winui-OverlayCornerRadius);
 		box-shadow: var(--winui-PopupShadow);
+	}
+
+	/* `SecondaryCommandsOnly` (`:866`-`:874`). The template's own comment at `:868` says why
+	   `PrimaryItemsRoot` is hidden three ways instead of being collapsed: the overflow popup is
+	   anchored to it, so it has to keep its place in the layout. `.bar` is `PrimaryItemsRoot`, and
+	   `.overflow` is its sibling rather than its child, so hiding it leaves the menu untouched.
+	   The border is not zeroed here because `:870` does not zero it — at zero height and zero
+	   opacity the two remaining pixels are `box-sizing: border-box`'s floor and nothing sees them.
+	   `:988`'s unfiltered `PrimaryItemsRoot.CornerRadius` needs no rule either: it is the radius
+	   `.bar` already carries, and the four `both-commands` seam rules below are what stop it being
+	   filtered. */
+	.surface[data-view-state='secondary-commands-only'] .bar {
+		height: 0;
+		opacity: 0;
+		pointer-events: none;
 	}
 
 	/* `:649`–`:651` declare implicit command styles in `LayoutRoot.Resources`, which reaches
@@ -519,23 +561,34 @@
 	/* `ExpandedUp` (`:837`) puts the overflow above the primary row and `ExpandedDown` (`:849`)
 	   below it. `bits-ui` publishes the placed side, after collision handling, as `data-side` on
 	   the props handed to this snippet. `ExpandedUpWithPrimaryCommands` (`:966`) removes the
-	   overflow's bottom edge; no setter changes the bar's four border edges. */
-	.surface.expanded:has(.bar[data-side='top']) .bar {
+	   overflow's bottom edge; no setter changes the bar's four border edges.
+
+	   The `both-commands` qualifier on all four selectors is `ExpandedUpWithoutPrimaryCommands`
+	   (`:984`) and `ExpandedDownWithoutPrimaryCommands` (`:993`), which are one shape and not
+	   two: every setter in both is the unfiltered `CornerRadius` and the uniform
+	   `CommandBarFlyoutBorderThemeThickness`, which is to say the template's defaults, so the two
+	   states exist only to undo the two above. Ours are already the defaults — `.overflow` takes
+	   `CommandBarOverflowPresenter.svelte:80` and `:82`, `.bar` its own radius — so the
+	   transcription is that these four stop matching, and a rule restating the defaults would be
+	   decoration. A XAML state group is exclusive and a CSS rule is not; the attribute is what
+	   supplies the exclusivity. */
+	.surface[data-view-state='both-commands'].expanded:has(.bar[data-side='top']) .bar {
 		border-radius: 0 0 var(--winui-OverlayCornerRadius) var(--winui-OverlayCornerRadius);
 	}
 
-	.surface.expanded:has(.bar[data-side='top']) :global(.overflow) {
+	.surface[data-view-state='both-commands'].expanded:has(.bar[data-side='top']) :global(.overflow) {
 		order: -1;
 		border-radius: var(--winui-OverlayCornerRadius) var(--winui-OverlayCornerRadius) 0 0;
 		border-width: var(--winui-CommandBarFlyoutBorderUpThemeThickness);
 	}
 
 	/* `ExpandedDownWithPrimaryCommands` (`:975`), the mirror image, removes the top edge. */
-	.surface.expanded:has(.bar[data-side='bottom']) .bar {
+	.surface[data-view-state='both-commands'].expanded:has(.bar[data-side='bottom']) .bar {
 		border-radius: var(--winui-OverlayCornerRadius) var(--winui-OverlayCornerRadius) 0 0;
 	}
 
-	.surface.expanded:has(.bar[data-side='bottom']) :global(.overflow) {
+	.surface[data-view-state='both-commands'].expanded:has(.bar[data-side='bottom'])
+		:global(.overflow) {
 		border-radius: 0 0 var(--winui-OverlayCornerRadius) var(--winui-OverlayCornerRadius);
 		border-width: var(--winui-CommandBarFlyoutBorderDownThemeThickness);
 	}

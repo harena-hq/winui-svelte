@@ -4,6 +4,32 @@ import { expect } from './fixtures';
 export const THEMES = ['light', 'dark', 'high-contrast'] as const;
 
 /**
+ * Grow the viewport to the dev page's own content height.
+ *
+ * The window is exactly `100vh` and clips (D16), and the dev layout is what scrolls inside it,
+ * so `body` is the viewport and a screenshot of it is a crop of the top of the page. That was
+ * invisible while every dev page fitted above the fold, and it stopped being invisible the
+ * moment one did not: TextBox's header and description rendered, and were photographed by
+ * nothing.
+ *
+ * Growing the viewport to the content is what makes the capture whole without touching the
+ * window semantics the shell is judged on. It settles rather than grows: the width does not
+ * change, so the content's height does not either, and a page shorter than the viewport reports
+ * the box height and is left alone.
+ *
+ * It is exported because an assertion about a portalled surface has to reach the same state the
+ * baseline was photographed in. A flyout is placed with collision avoidance on, so a specimen
+ * below the fold of the default viewport is legitimately flipped to the other side and is not in
+ * the state its test id claims; and Playwright's own auto-scroll before a click moves a trigger,
+ * which moves its anchored popup. Both are the same problem, and this is the one answer.
+ */
+export async function growViewportToContent(page: Page) {
+	const { width } = page.viewportSize()!;
+	const height = await page.locator('.dev').evaluate((element) => element.scrollHeight);
+	await page.setViewportSize({ width, height });
+}
+
+/**
  * Screenshot one component in every theme.
  *
  * C4 checks that each exported component is passed to this helper. The helper is what
@@ -35,19 +61,7 @@ export async function snapshotAllThemes(
 		await expect
 			.poll(() => page.evaluate(() => document.documentElement.dataset.theme ?? ''))
 			.toBe(theme);
-		// The window is exactly `100vh` and clips (D16), and the dev layout is what
-		// scrolls inside it, so `body` is the viewport and a screenshot of it is a crop of
-		// the top of the page. That was invisible while every dev page fitted above the
-		// fold, and it stopped being invisible the moment one did not: TextBox's header
-		// and description rendered, and were photographed by nothing.
-		//
-		// Growing the viewport to the content is what makes the capture whole without
-		// touching the window semantics the shell is judged on. It settles rather than
-		// grows: the width does not change, so the content's height does not either, and
-		// a page shorter than the viewport reports the box height and is left alone.
-		const { width } = page.viewportSize()!;
-		const height = await page.locator('.dev').evaluate((el) => el.scrollHeight);
-		await page.setViewportSize({ width, height });
+		await growViewportToContent(page);
 		// `options` reaches `toHaveScreenshot` for one setting, `animations`, and the default is
 		// Playwright's: `disabled`, which does not merely freeze an animation but **finishes**
 		// it — every running animation is seeked to its end and left there, permanently, before
