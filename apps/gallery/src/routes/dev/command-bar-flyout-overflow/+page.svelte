@@ -73,6 +73,38 @@
 			<AppBarButton glyph="E7AC" label="Open with" />
 		{/snippet}
 	</CommandBarFlyout>
+
+	<CommandBarFlyout open expanded placement="top" data-testid="secondary-only-up">
+		{#snippet children(props)}{@render trigger(props)}{/snippet}
+		{#snippet secondaryCommands()}
+			<AppBarButton glyph="E8B3" label="Select all" />
+			<AppBarButton glyph="E8AC" label="Rename" />
+			<AppBarButton glyph="E7AC" label="Open with" />
+		{/snippet}
+	</CommandBarFlyout>
+
+	<CommandBarFlyout open expanded placement="bottom" data-testid="secondary-only">
+		{#snippet children(props)}{@render trigger(props)}{/snippet}
+		{#snippet secondaryCommands()}
+			<AppBarButton glyph="E8B3" label="Select all" />
+			<AppBarButton glyph="E8AC" label="Rename" />
+			<AppBarButton glyph="E7AC" label="Open with" />
+		{/snippet}
+	</CommandBarFlyout>
+
+	<CommandBarFlyout
+		open
+		expanded
+		placement="bottom"
+		overflowButtonVisibility="visible"
+		data-testid="primary-only-forced"
+	>
+		{#snippet children(props)}{@render trigger(props)}{/snippet}
+		{#snippet commands()}
+			<AppBarButton glyph="E72D" label="Share" />
+			<AppBarButton glyph="E105" label="Save" />
+		{/snippet}
+	</CommandBarFlyout>
 </div>
 
 <style>

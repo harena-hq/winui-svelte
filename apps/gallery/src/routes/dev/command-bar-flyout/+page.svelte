@@ -65,6 +65,9 @@
 			<AppBarButton glyph="E74D" label="Delete" />
 		{/snippet}
 	</CommandBarFlyout>
+	<CommandBarFlyout open data-testid="no-commands">
+		{#snippet children(props)}{@render trigger(props)}{/snippet}
+	</CommandBarFlyout>
 </div>
 
 <style>

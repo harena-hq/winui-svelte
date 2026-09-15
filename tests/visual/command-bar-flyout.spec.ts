@@ -151,3 +151,16 @@ test('the flyout draws one border, not two', async ({ page }) => {
 	const painted = await bar.evaluate((node) => getComputedStyle(node).backgroundImage);
 	expect(painted).not.toBe('none');
 });
+
+test('a flyout with no commands at all keeps its bar', async ({ page }) => {
+	await page.goto('/dev/command-bar-flyout');
+	const bar = page.getByTestId('no-commands');
+	// CommandBar_Partial.cpp:589-:590 asks about secondary commands first, so a bar with neither
+	// kind lands in `PrimaryCommandsOnly` and not in the state that hides it. A two-way
+	// "has primary commands?" would hide this bar; :590's three-way expression does not.
+	await expect(bar.locator('..')).toHaveAttribute('data-view-state', 'primary-commands-only');
+	// :1043's forty plus its three above and three below makes a 46-pixel content box; the bar's
+	// two one-pixel border edges make its computed border-box height 48px.
+	await expect(bar).toHaveCSS('height', '48px');
+	await expect(bar).toHaveCSS('opacity', '1');
+});
