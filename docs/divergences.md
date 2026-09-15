@@ -1758,7 +1758,7 @@ changes`.
 
 ### WD-078 — `TextTrimming` reaches unwrapped text only, and has one ellipsis for XAML's two
 
-- **Control**: `TextBlock`.
+- **Control**: `TextBlock` and `RichTextBlock`.
 - **WinUI does**: two things this row collapses into one. It trims wrapping text as well as
   unwrapped text — a `TextBlock` with `TextWrapping="Wrap"` fills the height it is given and
   ellipsizes the last line that fits — and it distinguishes `CharacterEllipsis`, which cuts at
@@ -1984,3 +1984,31 @@ changes`.
   can transition to and from an intrinsic size in the reference Chromium guest, but it has not
   been tested for this control. Screenshots would not show the difference because Playwright
   finishes animations before capture; it affects pointer-driven interaction only.
+
+---
+
+### WD-088 — the linked text container, and the line budget that makes one
+
+- **Control**: `RichTextBlock`.
+- **WinUI does**: let text that does not fit one element continue in another. `OverflowContentTarget`
+  names a `RichTextBlockOverflow`, `HasOverflowContent` says whether anything is left, and
+  `MaxLines` is the count that decides. One mechanism produces all three: `PageNode::Measure`
+  starts `availableLinesCount` at `MaxLines` (`PageNode.cpp:369`), subtracts each paragraph's
+  measured lines (`:531-535`), and creates a `PageNodeBreak` when the budget or available height
+  runs out with blocks still to measure (`:585-592`). That break is the overflow.
+- **We do**: build none of the four. `RichTextBlock` has no `overflowContentTarget`, no
+  `hasOverflowContent`, no `maxLines`, and there is no `RichTextBlockOverflow` component.
+- **Why accepted**: flowing one element's leftovers into a named element elsewhere in the tree is
+  CSS Regions, withdrawn from every engine; the JavaScript alternative is a line-breaking engine
+  measuring substrings per element on every resize and font load. The line budget cannot be
+  clamped per element either: `-webkit-line-clamp` counts only its own box and needs
+  `display: -webkit-box`, which stops the `<p>` children being blocks; standard `line-clamp`
+  likewise counts one element's lines. CSS has no expression for a budget spent across siblings.
+- **What this costs in this Gallery**: one example. `Samples/RichTextBlock/RichTextBlockPage.xaml:50-71`
+  is a `RichTextBlock` and two chained `RichTextBlockOverflow`s in three grid columns, on item 19's
+  page. `MaxLines` occurs once in the pinned Gallery XAML and not on a `RichTextBlock`, and no
+  `.xaml` in the control pin contains `<RichTextBlock`.
+- **Would reconsider if**: a CSS fragmentation mechanism reaches Chromium that flows one element's
+  overflow into a **named other element**. Not columns: this example's three equal columns would
+  make `columns: 3` fit one page, but a target is a separate element with its own size, margin and
+  position anywhere in the tree.
