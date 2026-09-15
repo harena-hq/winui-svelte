@@ -79,7 +79,13 @@
 	// on the very list it is joining, and every peer that registers after it tears it down and
 	// re-runs it. Measured: four commands in one menu left the presenter holding one shape.
 	$effect(() =>
-		untrack(() => registry?.(() => ({ icon: Boolean(icon ?? glyph ?? children), toggle: false })))
+		untrack(() =>
+			registry?.(() => ({
+				icon: Boolean(icon ?? glyph ?? children),
+				toggle: false,
+				label: label !== undefined && label !== '' && labelPosition !== 'collapsed'
+			}))
+		)
 	);
 	const effectiveLabelPosition = $derived(labelPosition ?? bar?.().labelPosition ?? 'bottom');
 	const isCompact = $derived(compact ?? bar?.().compact ?? false);

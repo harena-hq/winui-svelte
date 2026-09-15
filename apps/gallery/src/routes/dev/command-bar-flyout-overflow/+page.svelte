@@ -78,7 +78,11 @@
 <style>
 	.specimens {
 		display: grid;
-		gap: 320px;
+		/* `expand-down` grows downward from its trigger and `expand-up` upward from its, so the
+		   two reach toward each other and the gap has to clear both. At 320 and a 46-pixel bar
+		   they were 24 apart; `HasPrimaryLabels` made each bar 58 and they met — measured on the
+		   sealed light baseline, one surface ended at y 626 and the next began at 627. */
+		gap: 400px;
 		justify-content: start;
 		/* The left inset is not decoration: a surface is centred on its trigger, and
 		   `wide-overflow`'s is 313 wide against a trigger of 169, so with no inset it is clamped
