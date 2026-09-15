@@ -1,5 +1,15 @@
 <script lang="ts">
-	import { DatePicker, PasswordBox, RadioButton, RadioButtons, TextBox } from 'winui-svelte';
+	import {
+		DatePicker,
+		LineBreak,
+		Paragraph,
+		PasswordBox,
+		RadioButton,
+		RadioButtons,
+		RichTextBlock,
+		Run,
+		TextBox
+	} from 'winui-svelte';
 	import ControlExample from '$lib/frame/ControlExample.svelte';
 	import ItemPage from '$lib/frame/ItemPage.svelte';
 	import { sampleOf } from '$lib/samples';
@@ -9,7 +19,22 @@
 	if (item === null) throw new Error('Compact Sizing page has no Gallery item');
 	const sample = sampleOf('CompactSizing/CompactSizingControls.txt');
 
-	// CompactSizingPage.xaml:66 — Standard starts checked.
+	// CompactSizingPage.xaml:33-51 — the ten bullet Runs, each with its bullet in the Run's own
+	// Text, and each preceded by a LineBreak.
+	const COMPACT_CONTROL_RUNS = [
+		'• ListView',
+		'• TextBox',
+		'• PasswordBox',
+		'• AutoSuggestBox',
+		'• ComboBox',
+		'• DatePicker',
+		'• TimePicker',
+		'• TreeView',
+		'• NavigationView',
+		'• MenuBar'
+	];
+
+	// CompactSizingPage.xaml:67 — Standard starts checked.
 	let density = $state('standard');
 	let firstName = $state('');
 	let lastName = $state('');
@@ -19,22 +44,30 @@
 </script>
 
 <ItemPage {item}>
-	<!-- CompactSizingPage.xaml:31-52 — RichTextBlock with one SemiBold Run and ten bullet Runs. -->
-	<p class="prose winui-BodyTextBlockStyle">
-		<strong>Controls that support compact styling:</strong><br />
-		• ListView<br />
-		• TextBox<br />
-		• PasswordBox<br />
-		• AutoSuggestBox<br />
-		• ComboBox<br />
-		• DatePicker<br />
-		• TimePicker<br />
-		• TreeView<br />
-		• NavigationView<br />
-		• MenuBar
-	</p>
+	<!-- CompactSizingPage.xaml:29-53 — RichTextBlock with one SemiBold Run and ten bullet Runs,
+	     and `Margin="0,24,0,0"` at :29, which is the inline style below.
 
-	<!-- CompactSizingPage.xaml:53-72 — the page's one ControlExample and its sample definition. -->
+	     No Style is named, and the class is still what carries the ramp. XAML's inherited text
+	     formatting record has a default of its own — TextFormatting::CreateDefault
+	     (TextFormatting.cpp:110) sets FontSize 14 (:124, applied at :142), FontWeight Normal (:146)
+	     and the ultimate font (:144), which FontAndScriptServices.h:30 declares as the literal
+	     string XamlAutoFontFamily — so a styleless RichTextBlock lands on exactly
+	     BodyRichTextBlockStyle's values. This document's root supplies no font at all, so the class
+	     is what stands in for a record CSS has no equivalent of.
+
+	     The first Run is 600, XAML's SemiBold. The `<strong>` it replaces rendered 700, because a
+	     browser's `strong` is `bolder` against a 400 parent. -->
+	<RichTextBlock class="winui-BodyTextBlockStyle" style="margin-top: 24px">
+		<Paragraph>
+			<!-- CompactSizingPage.xaml:31 — FontWeight="SemiBold" is 600. -->
+			<Run text="Controls that support compact styling:" fontWeight={600} />
+			{#each COMPACT_CONTROL_RUNS as run (run)}
+				<LineBreak /><Run text={run} />
+			{/each}
+		</Paragraph>
+	</RichTextBlock>
+
+	<!-- CompactSizingPage.xaml:54-77 — the page's one ControlExample and its sample definition. -->
 	<ControlExample headerText={sample.header ?? undefined} xaml={sample.xaml ?? undefined}>
 		<!-- SampleCompactSizingPage.xaml.cs:21-28 copies values only because Frame.Navigate rebuilds
 		     the page. This single Svelte form retains its own state while its density changes. -->
@@ -49,7 +82,7 @@
 			<DatePicker header="Pick a date" bind:date={chosenDate} />
 		</div>
 		{#snippet options()}
-			<!-- CompactSizingPage.xaml:60-69 — RadioButtons with its Header and two RadioButtons. -->
+			<!-- CompactSizingPage.xaml:62-74 — RadioButtons with its Header and two RadioButtons. -->
 			<div class="options">
 				<RadioButtons header="Fluent Standard and Compact Sizing">
 					<RadioButton name="compact-sizing-density" value="standard" bind:group={density}
@@ -65,12 +98,6 @@
 </ItemPage>
 
 <style>
-	/* CompactSizingPage.xaml:31 — RichTextBlock Margin="0,24,0,0", with browser paragraph
-	   margins cleared. */
-	.prose {
-		margin: 24px 0 0;
-	}
-
 	/* SampleStandardSizingPage.xaml:21 — StackPanel Spacing="16".
 
 	   The StackPanel is content-sized, because ControlExample's presenter aligns its content
