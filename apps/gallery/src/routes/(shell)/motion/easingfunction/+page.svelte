@@ -1,5 +1,14 @@
 <script lang="ts">
-	import { Button, ComboBox, NumberBox, RadioButton, RadioButtons, Rectangle } from 'winui-svelte';
+	import {
+		Button,
+		ComboBox,
+		NumberBox,
+		Paragraph,
+		RadioButton,
+		RadioButtons,
+		Rectangle,
+		RichTextBlock
+	} from 'winui-svelte';
 	import {
 		EASING_MODES,
 		EASING_NAMES,
@@ -53,18 +62,24 @@
 </script>
 
 <ItemPage {item}>
-	<!-- EasingFunctionPage.xaml:13-17 — a BodyRichTextBlock with three zero-margin Paragraphs. -->
-	<div class="lead">
-		<p class="winui-BodyTextBlockStyle">
-			- Use the Standard easing function for animating general property changes.
-		</p>
-		<p class="winui-BodyTextBlockStyle">
-			- Use the Accelerate easing function to animate objects that are exiting the scene.
-		</p>
-		<p class="winui-BodyTextBlockStyle">
-			- Use the Decelerate easing function to animate objects that are entering the scene.
-		</p>
-	</div>
+	<!-- EasingFunctionPage.xaml:13-17 — BodyRichTextBlockStyle and three zero-margin Paragraphs.
+
+	     The class is the TextBlock name because the two are the same class. generic.xaml:11150-11152
+	     and :11133-11135 each add FontWeight="Normal" to a base, and the two bases — :11140-11149
+	     and :11106-11114 — differ only in TextTrimming, OpticalMarginAlignment, and a FontSize
+	     written literally as 14 rather than through BodyTextBlockFontSize, which is 14. The first
+	     two are in the ramp converter's IGNORED_SETTERS (scripts/tokens/generate.mjs:540-547), so a
+	     generated winui-BodyRichTextBlockStyle would emit bytes that already exist under this name. -->
+	<RichTextBlock class="winui-BodyTextBlockStyle">
+		<Paragraph>- Use the Standard easing function for animating general property changes.</Paragraph
+		>
+		<Paragraph
+			>- Use the Accelerate easing function to animate objects that are exiting the scene.</Paragraph
+		>
+		<Paragraph
+			>- Use the Decelerate easing function to animate objects that are entering the scene.</Paragraph
+		>
+	</RichTextBlock>
 
 	<ControlExample
 		headerText={standardSample.header ?? undefined}
@@ -188,11 +203,6 @@
 	.options {
 		display: flex;
 		flex-direction: column;
-	}
-
-	/* EasingFunctionPage.xaml:13 — RichTextBlock has no Margin; Paragraph defaults to zero. */
-	.lead p {
-		margin: 0;
 	}
 
 	/* EasingFunctionPage.xaml:33-36, :68-71, :115-118, :181-184 — Grid's Auto and star

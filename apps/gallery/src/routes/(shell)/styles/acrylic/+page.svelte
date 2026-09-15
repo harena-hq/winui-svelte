@@ -1,5 +1,13 @@
 <script lang="ts">
-	import { ComboBox, Ellipse, Hyperlink, Rectangle, Slider } from 'winui-svelte';
+	import {
+		ComboBox,
+		Ellipse,
+		Hyperlink,
+		Paragraph,
+		Rectangle,
+		RichTextBlock,
+		Slider
+	} from 'winui-svelte';
 	import type { ComboBoxItemData, ComboBoxProps } from 'winui-svelte';
 	import { resolve } from '$app/paths';
 	import ControlExample from '$lib/frame/ControlExample.svelte';
@@ -92,27 +100,35 @@
 <!-- AcrylicPage.xaml:38-258 — the page's root StackPanel is supplied by ItemPage's content
      frame, while this component supplies the page content and the Gallery item header. -->
 <ItemPage {item}>
-	<!-- AcrylicPage.xaml:39-47 — the page's RichTextBlock and Paragraph. It stays plain HTML
-	     because that is what it reproduces: a RichTextBlock holding a Paragraph, and neither is a
-	     component yet. The paragraph ends in text rather than a LineBreak, so there is no empty
-	     final line to reproduce either — which is what TextBlock's own `::after` rule is for. -->
-	<p class="lead winui-BodyTextBlockStyle">
-		Acrylic Brush might fall back to SolidColorbrush in certain scenarios. If you can't see the
-		Acrylic effect, please refer to
-		<!-- AcrylicPage.xaml:43 — the external NavigateUri is kept verbatim. -->
-		<Hyperlink
-			navigateUri="https://learn.microsoft.com/windows/apps/design/style/acrylic#usability-and-adaptability"
-			>Acrylic brush adaptability documentation</Hyperlink
-		>. Acrylic Brush uses in-app acrylic. See
-		<!-- AcrylicPage.xaml:45 and AcrylicPage.xaml.cs:58-61 — a Click handler rather than a
-		     NavigateUri, and what it navigates to is the SystemBackdrops item. The cast is the
-		     one the shell's own layout makes at (shell)/+layout.svelte:29: an item id is a path
-		     the record produces, not a route literal the compiler knows, and today this one is
-		     still served by the [...path] placeholder route. -->
-		<Hyperlink navigateUri={resolve('/styles/systembackdrops' as `/${string}`)}
-			>SystemBackdrops (Mica/Acrylic)</Hyperlink
-		> for background acrylic.
-	</p>
+	<!-- AcrylicPage.xaml:39-47 — the page's RichTextBlock and Paragraph.
+
+	     No Style is named, and the class is still what carries the ramp: XAML's inherited text
+	     formatting record has a default of its own — TextFormatting::CreateDefault
+	     (TextFormatting.cpp:110) sets FontSize 14 (:124, applied at :142), FontWeight Normal (:146)
+	     and the ultimate font (:144), which FontAndScriptServices.h:30 declares as the literal
+	     string XamlAutoFontFamily — and this document's root supplies no font at all.
+
+	     The paragraph ends in text rather than a LineBreak, so Paragraph's own ::after rule adds no
+	     empty final line. -->
+	<RichTextBlock class="winui-BodyTextBlockStyle">
+		<Paragraph>
+			Acrylic Brush might fall back to SolidColorbrush in certain scenarios. If you can't see the
+			Acrylic effect, please refer to
+			<!-- AcrylicPage.xaml:43 — the external NavigateUri is kept verbatim. -->
+			<Hyperlink
+				navigateUri="https://learn.microsoft.com/windows/apps/design/style/acrylic#usability-and-adaptability"
+				>Acrylic brush adaptability documentation</Hyperlink
+			>. Acrylic Brush uses in-app acrylic. See
+			<!-- AcrylicPage.xaml:45 and AcrylicPage.xaml.cs:58-61 — a Click handler rather than a
+			     NavigateUri, and what it navigates to is the SystemBackdrops item. The cast is the
+			     one the shell's own layout makes at (shell)/+layout.svelte:29: an item id is a path
+			     the record produces, not a route literal the compiler knows, and today this one is
+			     still served by the [...path] placeholder route. -->
+			<Hyperlink navigateUri={resolve('/styles/systembackdrops' as `/${string}`)}
+				>SystemBackdrops (Mica/Acrylic)</Hyperlink
+			> for background acrylic.
+		</Paragraph>
+	</RichTextBlock>
 
 	<!-- AcrylicPage.xaml:48-77 — Example1 uses the default in-app brush and has no options pane
 	     or substitutions. -->
@@ -223,13 +239,6 @@
 </ItemPage>
 
 <style>
-	/* AcrylicPage.xaml:39-47 — Paragraph has no own margin in the source. It has no trailing
-	   LineBreak either, so nothing here reproduces an empty final line; TextBlock carries that
-	   rule for the blocks that do, and this page is not one of them. */
-	.lead {
-		margin: 0;
-	}
-
 	/* AcrylicPage.xaml:50-53 and :247-248 — Example1Grid, given Width 400 and Height 252 by
 	   the WiderLayout state. Its children are a Grid and a Rectangle with no Grid.Row or
 	   Grid.Column between them, so both occupy the one cell — which is what a XAML Grid does
