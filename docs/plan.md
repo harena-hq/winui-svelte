@@ -3599,6 +3599,34 @@ System / Shell` moves to item 16; `item 15` occurs once in the whole of `docs/`,
     trailing `LineBreak` makes an empty line and CSS's `<br>` makes none, and two pages carry a
     `::after` rule to put it back.
 
+    **Closed**, in twenty units. All five controls exist: `TextBlock` with the whole `Inlines`
+    model under it, `RichTextBlock` with `Paragraph` and `InlineUIContainer`, `CommandBarFlyout`,
+    `ColorPicker` with `ColorSpectrum` and `ColorPickerSlider`, and `RatingControl`. The divergence
+    registry went from 75 rows to 86 — WD-078 to WD-088, each cited from the code that declines it.
+
+    What the version cost that its goal did not predict, and none of it was a control:
+
+    - **One unit was about the suite rather than about anything it tests.** Ten new tests pushed
+      the battery past a contention ceiling — ninety-six workers against one preview server — and
+      six untouched specs began failing a different set each run. A green gate had stopped being
+      evidence, which is worse than a red one, and nothing in the version's goal line predicted
+      paying for it.
+    - **Two specs drove a control before it could listen.** Server-rendered markup is present and
+      interactive-looking before any handler is attached, so input that arrives first changes the
+      DOM, runs no Svelte code, and leaves the rest of the test measuring a page that never heard
+      it. The fix is a signal the client itself writes, and it is now `hydrated()` in the test
+      fixtures.
+    - **A control arriving makes work on pages that were already sealed.** Six Gallery pages were
+      reproducing `Hyperlink` as an anchor and stopped when the inline existed; seven more were
+      reproducing a `RichTextBlock` as `<p>`, `<strong>` and `<br>`, and all seven are v18's — four
+      of them are done and the three an `InfoBar` hosts are not. Neither set is a defect in the
+      page that wrote it; each was the honest reproduction at the time. But a version that builds
+      controls owes the pages that were waiting on them, and that debt is invisible from the
+      version's own goal line.
+
+    **Closing it makes nothing public.** D46 moved the exported set to v18's naming unit, so the
+    five controls are sealed against the original and are not thereby shipped.
+
 18. **What the versions owe** — the punch list, drained. Every `what this version still owes`
     table from v4 onward, and `docs/surface.md`, which is the sweep of the half of each control
     that is in its code-behind rather than in its template. This version's own goal line is that
