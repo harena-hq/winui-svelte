@@ -3,7 +3,15 @@ import { expect, CDP_ENDPOINT, hydrated, test } from './fixtures';
 import { growViewportToContent, snapshotAllThemes } from './themes';
 
 function overflow(bar: Locator) {
-	return bar.locator('..').locator('.overflow');
+	return surface(bar).locator('.overflow');
+}
+
+// `bits-ui` publishes the placed side on the element that receives its content props, and that
+// element is `.surface` — the parent of the bar, and the one that contains both the bar and the
+// overflow. It used to be `.bar`, and moving it is what let a secondary command take focus
+// without the scope dragging it back; see `CommandBarFlyout.svelte`'s `onOpenAutoFocus`.
+function surface(bar: Locator) {
+	return bar.locator('..');
 }
 
 test('CommandBarFlyout overflow in three themes', async ({ page }) => {
@@ -48,13 +56,13 @@ test('expanding up puts the overflow above the row', async ({ page }) => {
 	// `expand-up` reports `data-side="top"` with its overflow ending at the bar's top edge.
 	await up.scrollIntoViewIfNeeded();
 	await page.evaluate(() => window.dispatchEvent(new Event('resize')));
-	await expect(up).toHaveAttribute('data-side', 'top');
+	await expect(surface(up)).toHaveAttribute('data-side', 'top');
 	const upBar = await up.boundingBox();
 	const upOverflow = await overflow(up).boundingBox();
 	expect(upOverflow!.y + upOverflow!.height).toBeLessThanOrEqual(upBar!.y + 1);
 	await down.scrollIntoViewIfNeeded();
 	await page.evaluate(() => window.dispatchEvent(new Event('resize')));
-	await expect(down).toHaveAttribute('data-side', 'bottom');
+	await expect(surface(down)).toHaveAttribute('data-side', 'bottom');
 	const downBar = await down.boundingBox();
 	const downOverflow = await overflow(down).boundingBox();
 	expect(downOverflow!.y).toBeGreaterThanOrEqual(downBar!.y + downBar!.height - 1);
@@ -67,13 +75,13 @@ test('the seam is drawn once', async ({ page }) => {
 	const downBar = page.getByTestId('expand-down');
 	await upBar.scrollIntoViewIfNeeded();
 	await page.evaluate(() => window.dispatchEvent(new Event('resize')));
-	await expect(upBar).toHaveAttribute('data-side', 'top');
+	await expect(surface(upBar)).toHaveAttribute('data-side', 'top');
 	const up = overflow(upBar);
 	await expect(up).toHaveCSS('border-bottom-width', '0px');
 	await expect(up).toHaveCSS('border-top-width', '1px');
 	await downBar.scrollIntoViewIfNeeded();
 	await page.evaluate(() => window.dispatchEvent(new Event('resize')));
-	await expect(downBar).toHaveAttribute('data-side', 'bottom');
+	await expect(surface(downBar)).toHaveAttribute('data-side', 'bottom');
 	const down = overflow(downBar);
 	await expect(down).toHaveCSS('border-top-width', '0px');
 	await expect(down).toHaveCSS('border-bottom-width', '1px');
@@ -84,7 +92,7 @@ test('the corners meet square at the seam', async ({ page }) => {
 	const up = page.getByTestId('expand-up');
 	await up.scrollIntoViewIfNeeded();
 	await page.evaluate(() => window.dispatchEvent(new Event('resize')));
-	await expect(up).toHaveAttribute('data-side', 'top');
+	await expect(surface(up)).toHaveAttribute('data-side', 'top');
 	await expect(up).toHaveCSS('border-top-left-radius', '0px');
 	await expect(up).not.toHaveCSS('border-bottom-left-radius', '0px');
 	await expect(overflow(up)).toHaveCSS('border-bottom-left-radius', '0px');
@@ -206,7 +214,7 @@ test('without primary commands the overflow keeps all four corners', async ({ pa
 		// not be in the state its name claims.
 		await bar.scrollIntoViewIfNeeded();
 		await page.evaluate(() => window.dispatchEvent(new Event('resize')));
-		await expect(bar).toHaveAttribute('data-side', side);
+		await expect(surface(bar)).toHaveAttribute('data-side', side);
 		const menu = overflow(bar);
 		const measured = await menu.evaluate((node) => {
 			const computed = getComputedStyle(node);
