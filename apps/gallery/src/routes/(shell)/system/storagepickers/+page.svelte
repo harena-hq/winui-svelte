@@ -7,6 +7,9 @@
 		Image,
 		InfoBar,
 		NumberBox,
+		Paragraph,
+		RichTextBlock,
+		Run,
 		TextBox,
 		type ComboBoxItemData
 	} from 'winui-svelte';
@@ -112,13 +115,30 @@
 	     card the options pane makes tall, and centred ones sat 139px lower. -->
 	<!-- WD-070: PickSingleFileButton_Click (:27), PickMultipleFilesButton_Click (:76), SaveFileButton_Click (:147), PickFolderButton_Click (:214), and SelectSuggestedFolderButton_Click (:313) cannot open pickers at this origin. -->
 	<InfoBar open closable={false} style="margin-top: 8px">
-		<p class="info-copy winui-BodyTextBlockStyle">
-			The picker reopens in the <strong>last selected location and view</strong>. The
-			<strong class="code-run">SuggestedStartLocation</strong>
-			and <strong class="code-run">ViewMode</strong> are only applied the
-			<strong>first time</strong> the picker is opened (for example, right after app installation or when
-			no previous selection exists).
-		</p>
+		<!-- StoragePickersPage.xaml:13-21 — Margin="0,12,12,12" is XAML's left,top,right,bottom,
+		     reversed into CSS's order below. `Consolas` takes a generic fallback because no guest
+		     is guaranteed to have it. -->
+		<RichTextBlock
+			class="winui-BodyTextBlockStyle"
+			textSelectionEnabled={false}
+			style="margin: 12px 12px 12px 0"
+			><Paragraph
+				><Run text="The picker reopens in the " /><Run
+					fontWeight={600}
+					text="last selected location and view"
+				/><Run text=". The " /><Run
+					fontWeight={600}
+					fontFamily="Consolas, monospace"
+					text="SuggestedStartLocation"
+				/><Run text=" and " /><Run
+					fontWeight={600}
+					fontFamily="Consolas, monospace"
+					text="ViewMode"
+				/><Run text=" are only applied the " /><Run fontWeight={600} text="first time" /><Run
+					text=" the picker is opened (for example, right after app installation or when no previous selection exists)."
+				/></Paragraph
+			></RichTextBlock
+		>
 	</InfoBar>
 
 	<ControlExample
@@ -337,19 +357,6 @@
 </ItemPage>
 
 <style>
-	/* StoragePickersPage.xaml:12-22 — InfoBar's RichTextBlock has reversed XAML thickness. */
-	.info-copy {
-		margin: 12px 12px 12px 0;
-		user-select: none;
-	}
-	.info-copy strong {
-		/* c1-allow: StoragePickersPage.xaml:16 and :19 set FontWeight="SemiBold" on these Runs. */
-		font-weight: 600;
-	}
-	.info-copy .code-run {
-		/* c1-allow: StoragePickersPage.xaml:17-18 set FontFamily="Consolas" on these SemiBold Runs. */
-		font-family: Consolas, monospace;
-	}
 	.column {
 		display: flex;
 		flex-direction: column;

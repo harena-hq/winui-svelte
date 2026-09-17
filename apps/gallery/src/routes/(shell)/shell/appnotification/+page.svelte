@@ -1,5 +1,13 @@
 <script lang="ts">
-	import { Button, ComboBox, Hyperlink, InfoBar } from 'winui-svelte';
+	import {
+		Button,
+		ComboBox,
+		Hyperlink,
+		InfoBar,
+		Paragraph,
+		RichTextBlock,
+		Run
+	} from 'winui-svelte';
 	import ControlExample from '$lib/frame/ControlExample.svelte';
 	import ItemPage from '$lib/frame/ItemPage.svelte';
 	import { sampleOf } from '$lib/samples';
@@ -35,36 +43,45 @@
 	     counterpart on a web Notification. -->
 	<div class="notes">
 		<InfoBar open closable={false}>
-			<!-- AppNotificationPage.xaml:18-38 — the RichTextBlock's Margin is XAML's
-			     left,top,right,bottom. Every space before a full stop below is the whitespace XAML
-			     keeps between two adjacent Runs; it is on the reference guest and it is not a typo. -->
-			<p class="info-copy winui-BodyTextBlockStyle">
-				The <strong>AppNotificationManager</strong> class has a dependency on the
-				<Hyperlink
-					navigateUri="https://learn.microsoft.com/windows/apps/windows-app-sdk/deployment-architecture#singleton-package"
-					>Singleton package</Hyperlink
-				>
-				. Because of that dependency, there are certain considerations to be aware of if you're calling
-				these APIs from a
-				<Hyperlink
-					navigateUri="https://learn.microsoft.com/windows/apps/package-and-deploy/deploy-overview"
-					>self-contained app</Hyperlink
-				>
-				. For more info, and specifics, see
-				<Hyperlink
-					navigateUri="https://learn.microsoft.com/windows/apps/package-and-deploy/self-contained-deploy/deploy-self-contained-apps#dependencies-on-additional-msix-packages"
-					>Dependencies on additional MSIX packages</Hyperlink
-				>
-				.
-			</p>
+			<!-- AppNotificationPage.xaml:18-38 — Margin="0,12,12,12" is XAML's
+			     left,top,right,bottom, which is CSS's top,right,bottom,left reversed; the control
+			     has no margin prop, so it is the inline style. Every space before a full stop is
+			     the whitespace XAML keeps between two adjacent Runs, and every string is a `text`
+			     prop so that the template compiler cannot trim one away. -->
+			<RichTextBlock
+				class="winui-BodyTextBlockStyle"
+				textSelectionEnabled={false}
+				style="margin: 12px 12px 12px 0"
+				><Paragraph
+					><Run text="The " /><Run fontWeight={600} text="AppNotificationManager" /><Run
+						text=" class has a dependency on the "
+					/><Hyperlink
+						navigateUri="https://learn.microsoft.com/windows/apps/windows-app-sdk/deployment-architecture#singleton-package"
+						>Singleton package</Hyperlink
+					><Run
+						text=" . Because of that dependency, there are certain considerations to be aware of if you're calling these APIs from a "
+					/><Hyperlink
+						navigateUri="https://learn.microsoft.com/windows/apps/package-and-deploy/deploy-overview"
+						>self-contained app</Hyperlink
+					><Run text=" . For more info, and specifics, see " /><Hyperlink
+						navigateUri="https://learn.microsoft.com/windows/apps/package-and-deploy/self-contained-deploy/deploy-self-contained-apps#dependencies-on-additional-msix-packages"
+						>Dependencies on additional MSIX packages</Hyperlink
+					><Run text=" ." /></Paragraph
+				></RichTextBlock
+			>
 		</InfoBar>
 		<InfoBar open closable={false}>
 			<!-- AppNotificationPage.xaml:45-53. -->
-			<p class="info-copy winui-BodyTextBlockStyle">
-				If <strong>Do Not Disturb</strong> mode is enabled in system settings, these notifications will
-				not appear as toast popups, but they will still be added to the notification center and can be
-				viewed there.
-			</p>
+			<RichTextBlock
+				class="winui-BodyTextBlockStyle"
+				textSelectionEnabled={false}
+				style="margin: 12px 12px 12px 0"
+				><Paragraph
+					><Run text="If " /><Run fontWeight={600} text="Do Not Disturb" /><Run
+						text=" mode is enabled in system settings, these notifications will not appear as toast popups, but they will still be added to the notification center and can be viewed there."
+					/></Paragraph
+				></RichTextBlock
+			>
 		</InfoBar>
 		<!-- AppNotificationPage.xaml:56-61. -->
 		<InfoBar
@@ -129,14 +146,5 @@
 		flex-direction: column;
 		gap: 8px;
 		margin-top: 16px;
-	}
-	/* AppNotificationPage.xaml:18, :45 — InfoBar's RichTextBlock has reversed XAML thickness. */
-	.info-copy {
-		margin: 12px 12px 12px 0;
-		user-select: none;
-	}
-	.info-copy strong {
-		/* c1-allow: AppNotificationPage.xaml:23 and :50 set FontWeight="SemiBold" on these Runs. */
-		font-weight: 600;
 	}
 </style>

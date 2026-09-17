@@ -4,6 +4,9 @@
 		ComboBox,
 		InfoBar,
 		NumberBox,
+		Paragraph,
+		RichTextBlock,
+		Run,
 		TextBox,
 		ToggleSwitch,
 		ToolTip,
@@ -176,25 +179,44 @@
 				control resizing and button visibility.
 			</p>
 			<InfoBar severity="warning" title="Warning" closable={false}>
-				<!-- AppWindowPage.xaml:123-135. This is the original's own spacing, measured on the
-				     reference guest, and not a transcription error. -->
-				<p class="warning-paragraph winui-BodyTextBlockStyle">
-					For an<strong>AppWindow</strong>
-					with<strong>OverlappedPresenter</strong>
-					, if the title bar (<strong>HasTitleBar = true</strong>
-					) is enabled, the window must have a border (<strong>HasBorder = true</strong>
-					). Setting<strong>HasBorder</strong>
-					to<strong>false</strong>
-					while<strong>HasTitleBar</strong>
-					is<strong>true</strong>
-					will result in a fatal error.
-				</p>
+				<!-- AppWindowPage.xaml:123-136. The missing spaces are the original's own: it writes
+				     `For an<Run …>` with nothing between the text and the Run, so nothing is there to
+				     collapse into a space, while a newline before the next inline collapses into one.
+				     Measured on the reference guest and not a transcription error.
+
+				     Margin="0,-16,16,16" is XAML's left,top,right,bottom. The page carried it in a
+				     class that lost the cascade to `.example-column p`, so it was rendering as zero;
+				     an inline style on the control cannot lose it. -->
+				<RichTextBlock
+					class="winui-BodyTextBlockStyle"
+					textSelectionEnabled={false}
+					style="margin: -16px 16px 16px 0"
+					><Paragraph
+						><Run text="For an" /><Run fontWeight={600} text="AppWindow" /><Run text=" with" /><Run
+							fontWeight={600}
+							text="OverlappedPresenter"
+						/><Run text=" , if the title bar (" /><Run
+							fontWeight={600}
+							text="HasTitleBar = true"
+						/><Run text=" ) is enabled, the window must have a border (" /><Run
+							fontWeight={600}
+							text="HasBorder = true"
+						/><Run text=" ). Setting" /><Run fontWeight={600} text="HasBorder" /><Run
+							text=" to"
+						/><Run fontWeight={600} text="false" /><Run text=" while" /><Run
+							fontWeight={600}
+							text="HasTitleBar"
+						/><Run text=" is" /><Run fontWeight={600} text="true" /><Run
+							text=" will result in a fatal error."
+						/></Paragraph
+					></RichTextBlock
+				>
 			</InfoBar>
 			<!-- WD-065. AppWindowPage.xaml.cs:29-33 would open and activate SampleWindow3. -->
 			<Button>Show window</Button>
 		</div>
 		{#snippet options()}
-			<!-- AppWindowPage.xaml:141-205 — StackPanel Spacing="8". -->
+			<!-- AppWindowPage.xaml:142-205 — StackPanel Spacing="8". -->
 			<div class="options-column">
 				<ToolTip content="Keeps the window above all other windows when enabled.">
 					{#snippet children(props)}
@@ -385,11 +407,6 @@
 	.modal-example p,
 	.initial-size-description {
 		margin: 0;
-	}
-	.warning-paragraph {
-		/* AppWindowPage.xaml:123-123 — XAML Thickness="0,-16,16,16" maps to CSS top, right,
-		   bottom, left as -16px 16px 16px 0. */
-		margin: -16px 16px 16px 0;
 	}
 	.initial-size-description {
 		width: 250px;
