@@ -34,14 +34,6 @@
 			<AppBarButton glyph="E713" label="Settings" />
 		{/snippet}
 	</CommandBarFlyout>
-	<CommandBarFlyout open data-testid="disabled-command">
-		{#snippet children(props)}{@render trigger(props)}{/snippet}
-		{#snippet commands()}
-			<AppBarButton glyph="E72D" label="Share" />
-			<AppBarButton glyph="E105" label="Save" disabled />
-			<AppBarButton glyph="E74D" label="Delete" />
-		{/snippet}
-	</CommandBarFlyout>
 	<CommandBarFlyout open data-testid="labels-collapsed">
 		{#snippet children(props)}{@render trigger(props)}{/snippet}
 		{#snippet commands()}
@@ -67,6 +59,17 @@
 	</CommandBarFlyout>
 	<CommandBarFlyout open data-testid="no-commands">
 		{#snippet children(props)}{@render trigger(props)}{/snippet}
+	</CommandBarFlyout>
+	<CommandBarFlyout open data-testid="disabled-command">
+		{#snippet children(props)}{@render trigger(props)}{/snippet}
+		{#snippet commands()}
+			<!-- The disabled command is first so this specimen exercises the walk in
+			     `CommandBarFlyoutCommandBar.cpp:1381`: focus goes to the first command that can
+			     take it, not to the first command. -->
+			<AppBarButton glyph="E105" label="Save" disabled />
+			<AppBarButton glyph="E72D" label="Share" />
+			<AppBarButton glyph="E74D" label="Delete" />
+		{/snippet}
 	</CommandBarFlyout>
 </div>
 

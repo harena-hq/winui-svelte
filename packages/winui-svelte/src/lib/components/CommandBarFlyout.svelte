@@ -118,6 +118,34 @@
 		onExpandedChange?.(next);
 	}
 
+	// `CommandBarFlyoutCommandBar.cpp:33`-`:34`: the primary commands if there are any at all,
+	// else the secondary commands, else nothing. The collection is chosen by size and not by
+	// focusability, so a bar whose primary commands are all disabled focuses nothing rather than
+	// falling through to the menu. `SecondaryCommands()` is `.overflow`, a sibling of `.bar`
+	// rather than a child, so it is reached through the surface; it is only in the DOM while the
+	// flyout is expanded.
+	//
+	// `:1381` walks the whole collection and `:1390` counts a command as focused only when the
+	// focus call succeeded. That success check is load-bearing rather than defensive: `.focus()`
+	// on a hidden element is a silent no-op, and `:enabled` does not test visibility the way
+	// `IsControlFocusable` (`:1303`) does. Reading `document.activeElement` back is what closes
+	// that gap without a second visibility predicate.
+	//
+	// `:enabled` matches no `<div>`, which is how upstream's explicit `AppBarSeparator` exclusion
+	// at `:1305` falls out of the selector. Two clauses of `:1304` are not reproduced and are not
+	// needed by any control here: `AllowFocusWhenDisabled`, and an `aria-disabled` command.
+	function focusFirstCommand() {
+		const primary = ref?.querySelectorAll<HTMLElement>('.primary > .root') ?? [];
+		const secondary = ref?.parentElement?.querySelectorAll<HTMLElement>('.overflow .root') ?? [];
+		const commands = primary.length > 0 ? primary : secondary;
+		for (const command of commands) {
+			if (!command.matches(':enabled')) continue;
+			command.focus({ focusVisible: false });
+			if (document.activeElement === command) return true;
+		}
+		return false;
+	}
+
 	// `ClosedDisplayMode="Compact"` only makes a bottom-labelled closed bar compact, and `:638`'s
 	// `DefaultLabelPosition="Collapsed"` is not what chooses the icon row either: this style's
 	// command templates implement no label-position states at all, and collapse `TextLabel` in the
@@ -158,14 +186,47 @@
 		{/snippet}
 	</Popover.Trigger>
 	<Popover.Portal>
-		<Popover.Content side={position.side} align={position.align} sideOffset={offset}>
+		<Popover.Content
+			side={position.side}
+			align={position.align}
+			sideOffset={offset}
+			onOpenAutoFocus={(event) => {
+				// `CommandBarFlyoutCommandBar.cpp:49` and `:62` focus a command when the bar opens,
+				// both with `FocusState::Programmatic`; the only `FocusState::Keyboard` paths are
+				// `:1183` and `:1278`, which are Tab. `Programmatic` moves focus and draws no visual,
+				// so upstream's opening flyout has a focused command with no ring on it and the ring
+				// appears on the first Tab. `focus({ focusVisible: false })` is that distinction
+				// rather than a workaround for it: measured on both engines this project uses, it
+				// suppresses `:focus-visible` where a plain `focus()` grants it.
+				//
+				// `:34` yields `nullptr` for a flyout with neither kind of command and `:36` then does
+				// nothing at all. The primitive instead focuses its scope root in that case, which is a
+				// different focus move and can pull focus from a later open flyout in the Gallery's
+				// multi-flyout harness. Cancel it whether or not a command accepted focus, so the
+				// observable result remains the upstream no-op.
+				//
+				// `:31` gates all of this on `FlyoutShowMode::Standard`; this component has no
+				// `ShowMode`, so that condition is not reproduced.
+				focusFirstCommand();
+				event.preventDefault();
+			}}
+		>
 			{#snippet child({ props, wrapperProps })}
 				<div {...wrapperProps}>
-					<!-- `OuterContentRoot` and `ContentRoot` (:1021, :1022) are one `.surface`, and
-					     `PrimaryItemsRoot` (:1038) is `.bar`. -->
-					<div class={['surface', overflowShown && 'expanded']} data-view-state={availableCommands}>
+					<!-- `{...props}` carries `bits-ui`'s focus scope, and it belongs on the element that
+					     holds both command collections. `SecondaryCommands()` (`:34`) is `.overflow`, a
+					     sibling of `.bar`, so a scope bound to `.bar` treats focusing a secondary
+					     command as focus escaping and pulls it back with a plain `focus()` — which is
+					     what draws the visual this unit exists to remove. `.surface` is
+					     `OuterContentRoot`/`ContentRoot` (`:1021`, `:1022`), which is upstream's own
+					     container for the bar and the overflow together; `PrimaryItemsRoot` (`:1038`)
+					     remains `.bar`. -->
+					<div
+						{...props}
+						class={['surface', overflowShown && 'expanded']}
+						data-view-state={availableCommands}
+					>
 						<div
-							{...props}
 							bind:this={ref}
 							class={['bar', 'winui-BodyTextBlockStyle', className]}
 							{style}
@@ -223,6 +284,14 @@
 		max-width: 440px;
 		border-radius: var(--winui-OverlayCornerRadius);
 		box-shadow: var(--winui-PopupShadow);
+	}
+
+	/* The focus scope focuses its own element from script when the flyout opens and Chromium
+	   grants `:focus-visible` to a scripted focus on a `tabindex="-1"` element. That element is
+	   now `.surface`. `Flyout.svelte` and `Popup.svelte` carry the same rule for the same
+	   reason. */
+	.surface:focus {
+		outline: none;
 	}
 
 	/* `SecondaryCommandsOnly` (`:866`-`:874`). The template's own comment at `:868` says why
@@ -552,10 +621,6 @@
 				padding-box,
 			var(--winui-AcrylicBackgroundFillColorDefaultBrush) padding-box;
 		color: var(--winui-CommandBarFlyoutForeground);
-		/* The focus scope focuses this element from script when the flyout opens, and Chromium
-		   grants `:focus-visible` to a scripted focus on a `tabindex="-1"` element. `Flyout.svelte`
-		   and `Popup.svelte` carry the same rule for the same reason. */
-		outline: none;
 	}
 
 	/* `ExpandedUp` (`:837`) puts the overflow above the primary row and `ExpandedDown` (`:849`)
@@ -572,23 +637,22 @@
 	   transcription is that these four stop matching, and a rule restating the defaults would be
 	   decoration. A XAML state group is exclusive and a CSS rule is not; the attribute is what
 	   supplies the exclusivity. */
-	.surface[data-view-state='both-commands'].expanded:has(.bar[data-side='top']) .bar {
+	.surface[data-view-state='both-commands'].expanded[data-side='top'] .bar {
 		border-radius: 0 0 var(--winui-OverlayCornerRadius) var(--winui-OverlayCornerRadius);
 	}
 
-	.surface[data-view-state='both-commands'].expanded:has(.bar[data-side='top']) :global(.overflow) {
+	.surface[data-view-state='both-commands'].expanded[data-side='top'] :global(.overflow) {
 		order: -1;
 		border-radius: var(--winui-OverlayCornerRadius) var(--winui-OverlayCornerRadius) 0 0;
 		border-width: var(--winui-CommandBarFlyoutBorderUpThemeThickness);
 	}
 
 	/* `ExpandedDownWithPrimaryCommands` (`:975`), the mirror image, removes the top edge. */
-	.surface[data-view-state='both-commands'].expanded:has(.bar[data-side='bottom']) .bar {
+	.surface[data-view-state='both-commands'].expanded[data-side='bottom'] .bar {
 		border-radius: var(--winui-OverlayCornerRadius) var(--winui-OverlayCornerRadius) 0 0;
 	}
 
-	.surface[data-view-state='both-commands'].expanded:has(.bar[data-side='bottom'])
-		:global(.overflow) {
+	.surface[data-view-state='both-commands'].expanded[data-side='bottom'] :global(.overflow) {
 		border-radius: 0 0 var(--winui-OverlayCornerRadius) var(--winui-OverlayCornerRadius);
 		border-width: var(--winui-CommandBarFlyoutBorderDownThemeThickness);
 	}
