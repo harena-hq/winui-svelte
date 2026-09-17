@@ -97,7 +97,11 @@
 	/>
 </div>
 
-<h2 class="winui-SubtitleTextBlockStyle">minimal — pinned, pane open over the content</h2>
+<h2 class="winui-SubtitleTextBlockStyle">minimal — pinned, pane closed</h2>
+<p class="winui-BodyTextBlockStyle">
+	The control closes its own pane on entering minimal, so this is the closed state however
+	<code>paneOpen</code> is seeded. The toggle button is the only way back into the pane.
+</p>
 <div class="frame">
 	<NavigationView
 		{items}
