@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Button, ComboBox, InfoBar } from 'winui-svelte';
+	import { Button, ComboBox, Hyperlink, InfoBar } from 'winui-svelte';
 	import ControlExample from '$lib/frame/ControlExample.svelte';
 	import ItemPage from '$lib/frame/ItemPage.svelte';
 	import { sampleOf } from '$lib/samples';
@@ -40,19 +40,20 @@
 			     keeps between two adjacent Runs; it is on the reference guest and it is not a typo. -->
 			<p class="info-copy winui-BodyTextBlockStyle">
 				The <strong>AppNotificationManager</strong> class has a dependency on the
-				<a
-					href="https://learn.microsoft.com/windows/apps/windows-app-sdk/deployment-architecture#singleton-package"
-					>Singleton package</a
+				<Hyperlink
+					navigateUri="https://learn.microsoft.com/windows/apps/windows-app-sdk/deployment-architecture#singleton-package"
+					>Singleton package</Hyperlink
 				>
 				. Because of that dependency, there are certain considerations to be aware of if you're calling
 				these APIs from a
-				<a href="https://learn.microsoft.com/windows/apps/package-and-deploy/deploy-overview"
-					>self-contained app</a
+				<Hyperlink
+					navigateUri="https://learn.microsoft.com/windows/apps/package-and-deploy/deploy-overview"
+					>self-contained app</Hyperlink
 				>
 				. For more info, and specifics, see
-				<a
-					href="https://learn.microsoft.com/windows/apps/package-and-deploy/self-contained-deploy/deploy-self-contained-apps#dependencies-on-additional-msix-packages"
-					>Dependencies on additional MSIX packages</a
+				<Hyperlink
+					navigateUri="https://learn.microsoft.com/windows/apps/package-and-deploy/self-contained-deploy/deploy-self-contained-apps#dependencies-on-additional-msix-packages"
+					>Dependencies on additional MSIX packages</Hyperlink
 				>
 				.
 			</p>
@@ -137,12 +138,5 @@
 	.info-copy strong {
 		/* c1-allow: AppNotificationPage.xaml:23 and :50 set FontWeight="SemiBold" on these Runs. */
 		font-weight: 600;
-	}
-	/* AppNotificationPage.xaml:25-35 — this library has no inline Hyperlink control, so the three
-	   anchors take WinUI's accent text brush, as the existing Gallery precedent does
-	   (media/animatedvisualplayer/+page.svelte:156-160). Nothing sets text-decoration: the
-	   browser's own underline is what the original draws on all three. */
-	.info-copy a {
-		color: var(--winui-AccentTextFillColorPrimaryBrush);
 	}
 </style>
