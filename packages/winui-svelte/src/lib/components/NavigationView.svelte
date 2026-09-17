@@ -358,20 +358,32 @@
 	data-pane-display-mode={paneDisplayMode}
 	{...rest}
 >
+	<!-- NavigationView.xaml:180 — PaneToggleButtonGrid is a child of RootGrid, not of the pane,
+	     with HorizontalAlignment="Left" VerticalAlignment="Top" Canvas.ZIndex="100". Nothing about
+	     the pane's visibility reaches it, which is why a closed minimal pane still has a way to be
+	     opened. The two conditions that do reach it are NavigationView.cpp:4398's
+	     `IsPaneToggleButtonVisible() && !IsTopNavigationView()`. -->
+	{#if !isTop && paneToggleButtonVisible}
+		<div class="button-holder-grid">
+			<button
+				type="button"
+				class="pane-toggle"
+				aria-label={paneOpen ? 'Close navigation' : 'Open navigation'}
+				aria-expanded={paneOpen}
+				onclick={() => setPaneOpen(!paneOpen)}
+			></button>
+		</div>
+	{/if}
 	{#if !isTop}
 		{#if paneVisible}
 			<div class="pane">
 				<div class="pane-content-grid">
+					<!-- NavigationView.xaml:296, PaneContentGridToggleButtonRow. The button is
+					     anchored to the root below, the way upstream anchors PaneToggleButtonGrid
+					     to RootGrid; this row is the space upstream keeps for it inside the pane,
+					     and it is what stops the menu from moving up when the button leaves. -->
 					{#if paneToggleButtonVisible}
-						<div class="button-holder-grid">
-							<button
-								type="button"
-								class="pane-toggle"
-								aria-label={paneOpen ? 'Close navigation' : 'Open navigation'}
-								aria-expanded={paneOpen}
-								onclick={() => setPaneOpen(!paneOpen)}
-							></button>
-						</div>
+						<div class="toggle-button-row" aria-hidden="true"></div>
 					{/if}
 
 					<!-- This pane region is now a ScrollView; horizontal scrolling remains disabled. -->
@@ -700,9 +712,25 @@
 		background: var(--winui-NavigationViewDefaultPaneBackground);
 	}
 
+	/* NavigationView.xaml:180 — PaneToggleButtonGrid: left, top, and Canvas.ZIndex="100", which
+	   is above the overlaying pane's own z-index of 1. `ButtonHolderGrid` (:186) carries
+	   NavigationViewButtonHolderGridMargin and no horizontal margin, so the button sits at the
+	   root's left edge rather than at the pane content grid's -1px one. */
 	.button-holder-grid {
-		flex: 0 0 auto;
+		position: absolute;
+		left: 0;
+		top: 0;
+		z-index: 100;
 		display: flex;
+		margin: var(--winui-NavigationViewButtonHolderGridMargin);
+	}
+
+	/* NavigationView.xaml:296, PaneContentGridToggleButtonRow — the space the pane keeps for a
+	   button that is not in it. Height and margin are the button's own, so the items below hold
+	   the positions they had while the button was here. */
+	.toggle-button-row {
+		flex: 0 0 auto;
+		height: var(--winui-PaneToggleButtonHeight);
 		margin: var(--winui-NavigationViewButtonHolderGridMargin);
 	}
 
