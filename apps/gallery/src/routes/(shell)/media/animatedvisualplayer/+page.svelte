@@ -3,6 +3,7 @@
 		AnimatedVisualPlayer,
 		Border,
 		Button,
+		Hyperlink,
 		ToggleButton,
 		type AnimatedVisual
 	} from 'winui-svelte';
@@ -81,10 +82,10 @@
 			<p class="winui-BodyTextBlockStyle lead">
 				This AnimatedVisualPlayer consumes an animation created using Adobe AfterEffects and
 				translated into Microsoft.UI.Composition objects using
-				<a href="https://aka.ms/lottie">Lottie-Windows</a> . Since the
-				<a
-					href="https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.composition.compositionshape"
-					>CompositionShapes</a
+				<Hyperlink navigateUri="https://aka.ms/lottie">Lottie-Windows</Hyperlink> . Since the
+				<Hyperlink
+					navigateUri="https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.composition.compositionshape"
+					>CompositionShapes</Hyperlink
 				>
 				used here are supported on Windows 10 version 17763+, the AnimatedVisualPlayer falls back to an
 				Image when its Source is unavailable.
@@ -151,12 +152,6 @@
 	.lead {
 		align-self: stretch;
 		margin: 0;
-	}
-
-	/* AnimatedVisualPlayerPage.xaml:18-24 — this library has no inline Hyperlink control, so the
-	   two anchors use WinUI's accent text brush as the existing Gallery precedent does. */
-	.lead a {
-		color: var(--winui-AccentTextFillColorPrimaryBrush);
 	}
 
 	/* AnimatedVisualPlayerPage.xaml:45-99 — Width 400, Margin 12, four equal columns, and
