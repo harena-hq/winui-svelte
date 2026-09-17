@@ -3,7 +3,10 @@
 		AutoSuggestBox,
 		Button,
 		Hyperlink,
+		Paragraph,
 		PersonPicture,
+		RichTextBlock,
+		Run,
 		TextBox,
 		TitleBar,
 		ToggleSwitch
@@ -29,13 +32,18 @@
 
 <ItemPage {item}>
 	<div class="page-content">
-		<!-- TitleBarPage.xaml:23-29. The XAML <Hyperlink> is reproduced by Hyperlink. -->
-		<p class="lead winui-BodyTextBlockStyle">
-			For full title bar customization without using the TitleBar control, see the
-			<Hyperlink navigateUri={resolve('/multiplewindows/appwindowtitlebar')}
-				>AppWindowTitleBar</Hyperlink
-			> sample
-		</p>
+		<!-- TitleBarPage.xaml:23-29 — no Margin, no Style and no IsTextSelectionEnabled, so the
+		     control's own defaults apply and the text stays selectable. The original's Hyperlink
+		     is a Click handler onto the AppWindowTitleBar sample; this is that destination. -->
+		<RichTextBlock class="winui-BodyTextBlockStyle"
+			><Paragraph
+				><Run
+					text="For full title bar customization without using the TitleBar control, see the "
+				/><Hyperlink navigateUri={resolve('/multiplewindows/appwindowtitlebar')}
+					>AppWindowTitleBar</Hyperlink
+				><Run text=" sample" /></Paragraph
+			></RichTextBlock
+		>
 
 		<ControlExample
 			headerText={configurationSample.header ?? undefined}
@@ -132,9 +140,6 @@
 	.page-content {
 		/* TitleBarPage.xaml:22 — StackPanel Margin="0,12,0,0". */
 		margin-top: 12px;
-	}
-	.lead {
-		margin: 0;
 	}
 	.title-bar-card {
 		display: grid;
