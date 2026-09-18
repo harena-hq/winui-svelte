@@ -86,6 +86,7 @@ pnpm workspace. The library is publishable and imposes no build tooling on its c
 | D47 | The eighteen unscheduled pages are dispositioned by kind; D30 takes two more panels, D35 one rung lower | this file, "Roadmap → v17"        |
 | D48 | A gate is `pnpm gate` — one command, fixed arguments, a trusted environment assumed                     | this file, "Verification"         |
 | D49 | The commit subject grammar is enforced by a hook and by C10, and not by a document alone                | this file, "Conformance gates"    |
+| D50 | A spec never observes a page before that page's own JavaScript has run                                  | this file, "Verification"         |
 
 ## Verification
 
@@ -174,6 +175,36 @@ array, `--config` loads another config, and the API parses its own arguments, so
 can be made to print no summary at all. Both are smaller than the previous design's residue, which
 was a list of option names nobody could finish, and both are stated here rather than left for a
 sixth pass to find.
+
+**D50 — a spec never observes a page before that page's own JavaScript has run.**
+`tests/visual/fixtures.ts` overrides Playwright's `page` fixture so that `goto` and `reload`
+return only once the current document has written `winui-svelte:theme` — the Gallery root
+layout's own first write, which nothing produces server-side. The wait is not new; what is new is
+that no call site has to remember it. Four of the 109 spec files called the helper, ten times in
+all, against the 156 `page.goto` calls those files contain and two `page.reload`s.
+
+**The flake it removes had been diagnosed as contention, and contention is not sufficient to
+produce it.** Server-rendered markup is present and interactive-looking before the client has
+run, and a test that reads or drives it then is measuring a page that never heard it: a keypress
+delivered to a document with no handler is gone, and **a poll cannot recover a keypress the page
+never heard**, while a canvas an effect paints and a surface an effect portals are not there to
+be read yet. Measured 2026-09-18 at ninety-six workers — six times the contention the cap ever
+allowed — three full runs each way: without the wait, 23, 22 and 25 tests failed and passed on
+retry, drawn from seven spec files; with it, three green runs, no retries, 35s against 2.6m. The
+same parallelism produces all of those failures or none of them depending on one fixture, which
+is what settles the question the worker count could not. The cap goes with the diagnosis that
+produced it and the local lane runs at Playwright's own default again, which at least scales with
+the machine it finds; the reference lane stays at one worker for a reason that is unrelated and
+still true.
+
+**The signal has to be the document's, and the first version's was not.** `localStorage` outlives
+a navigation, so a check that only asks whether the key is set passes instantly on every
+navigation after the first in a test — the reload at `color-picker-slider.spec.ts:207` above all,
+which is followed immediately by a keypress. That version passed the whole battery: five green
+local runs, three green at ninety-six workers, and `pnpm gate` at 263 tests. A cold review found
+it by reading, and the measurement came after it rather than before: of twenty reloads driven
+under contention, **nine had not run their JavaScript when `reload()` resolved**. The wait records
+the write in `window` instead, which is per-document because the object is.
 
 Baseline directories are named for the browser's environment, not the runner's — with the
 browser on Windows and the runner here, a platform-keyed path would file Windows pixels

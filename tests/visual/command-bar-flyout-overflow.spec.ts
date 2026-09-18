@@ -1,5 +1,5 @@
 import type { Locator } from '@playwright/test';
-import { expect, CDP_ENDPOINT, hydrated, test } from './fixtures';
+import { expect, CDP_ENDPOINT, test } from './fixtures';
 import { growViewportToContent, snapshotAllThemes } from './themes';
 
 function overflow(bar: Locator) {
@@ -162,7 +162,6 @@ test("the overflow rows wear the flyout's command brushes", async ({ page }) => 
 
 test('clicking the ellipsis opens and closes the overflow', async ({ page }) => {
 	await page.goto('/dev/command-bar-flyout-overflow');
-	await hydrated(page);
 	const specimen = page.getByTestId('collapsed');
 	// This specimen was the fifth of five and is the fifth of eight since the states below were
 	// added, which put it below the fold: Playwright scrolls a trigger into view before clicking

@@ -1,4 +1,4 @@
-import { expect, hydrated, test } from './fixtures';
+import { expect, test } from './fixtures';
 
 // `CommandBarFlyoutCommandBar.cpp:49` and `:62` focus a command with `FocusState::Programmatic`,
 // which draws no visual; `:1183` and `:1278`, the Tab paths, pass `FocusState::Keyboard`, which
@@ -36,7 +36,6 @@ function settlesOn(page: import('@playwright/test').Page, specimen: string) {
 
 test('an opening flyout focuses its first command and lights nothing', async ({ page }) => {
 	await page.goto('/dev/command-bar-flyout-toggle');
-	await hydrated(page);
 	await settlesOn(page, 'bar-toggles-labels');
 	const state = await focused(page);
 	expect(state!.tag).toBe('button');
@@ -47,7 +46,6 @@ test('an opening flyout focuses its first command and lights nothing', async ({ 
 
 test('a disabled first command is skipped', async ({ page }) => {
 	await page.goto('/dev/command-bar-flyout');
-	await hydrated(page);
 	await settlesOn(page, 'disabled-command');
 	const state = await focused(page);
 	// `Save` is first in the markup and disabled; the walk at `:1381` takes `Share`.
@@ -57,7 +55,6 @@ test('a disabled first command is skipped', async ({ page }) => {
 
 test('a bar with no primary commands focuses its first secondary one', async ({ page }) => {
 	await page.goto('/dev/command-bar-flyout-overflow');
-	await hydrated(page);
 	await settlesOn(page, 'secondary-only');
 	const state = await focused(page);
 	// `:34` — no primary commands, so the secondary collection is what gets focused. The bar of
@@ -72,7 +69,6 @@ test('a bar with no primary commands focuses its first secondary one', async ({ 
 
 test('Tab still lights the command it moves to', async ({ page }) => {
 	await page.goto('/dev/command-bar-flyout-toggle');
-	await hydrated(page);
 	await settlesOn(page, 'bar-toggles-labels');
 	await page.keyboard.press('Tab');
 	await expect.poll(async () => (await focused(page))?.focusVisible ?? null).toBe(true);

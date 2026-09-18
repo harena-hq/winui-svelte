@@ -1,5 +1,5 @@
 import type { Page } from '@playwright/test';
-import { expect, hydrated, test } from './fixtures';
+import { expect, test } from './fixtures';
 
 // What `RefreshContainer` accepts as a pull is invisible to a screenshot: the container draws
 // nothing at rest whether it accepts one or not, which is how it shipped both taking a gesture the
@@ -43,7 +43,6 @@ function revealOf(page: Page) {
 
 test('a touch pull at the start of the region reveals the visualizer', async ({ page }) => {
 	await page.goto('/dev/pull-to-refresh');
-	await hydrated(page);
 	const at = await page.evaluate(() => {
 		const list = document.querySelector('.container ul')!;
 		list.scrollIntoView({ block: 'center' });
@@ -59,7 +58,6 @@ test('a touch pull at the start of the region reveals the visualizer', async ({ 
 
 test('a mouse drag at the same place reveals nothing', async ({ page }) => {
 	await page.goto('/dev/pull-to-refresh');
-	await hydrated(page);
 	const at = await page.evaluate(() => {
 		const list = document.querySelector('.container ul')!;
 		list.scrollIntoView({ block: 'center' });
@@ -81,7 +79,6 @@ test('dragging the list scrollbar scrolls it and pulls nothing', async ({ page }
 	// scrollbar and the defect this covers is about *this library's* — an overlay bar that is the
 	// scrolled region's sibling, so a press on it is outside the region.
 	await page.goto('/collections/pulltorefresh');
-	await hydrated(page);
 	await page.waitForSelector(
 		'.container [data-scroll-bar][data-orientation="vertical"] [class*="thumb"]'
 	);

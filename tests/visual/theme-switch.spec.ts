@@ -1,4 +1,4 @@
-import { expect, hydrated, test } from './fixtures';
+import { expect, test } from './fixtures';
 
 // Behavioural, not visual — the one gap `snapshotAllThemes` cannot close by construction.
 // A snapshot sets `dataset.theme` by hand and asks whether the page renders correctly in
@@ -10,7 +10,6 @@ import { expect, hydrated, test } from './fixtures';
 test('choosing a theme from the control actually changes and persists it', async ({ page }) => {
 	await page.goto('/settings');
 	await expect(page.locator('html')).not.toHaveAttribute('data-theme');
-	await hydrated(page);
 
 	await page.selectOption('select', 'dark');
 	await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
@@ -22,7 +21,6 @@ test('choosing a theme from the control actually changes and persists it', async
 	await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
 	await expect(page.locator('select')).toHaveValue('dark');
 
-	await hydrated(page);
 	await page.selectOption('select', '');
 	await expect(page.locator('html')).not.toHaveAttribute('data-theme');
 });
