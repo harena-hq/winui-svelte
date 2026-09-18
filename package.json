@@ -26,7 +26,8 @@
 		"framework:fetch": "node scripts/framework/fetch.mjs",
 		"framework:extract": "node scripts/framework/extract.mjs",
 		"test": "playwright test",
-		"verify": "pnpm build && pnpm check && pnpm lint && pnpm conform && pnpm smoke && pnpm test"
+		"verify": "pnpm build && pnpm check && pnpm lint && pnpm conform && pnpm smoke && pnpm gate",
+		"gate": "node scripts/gate/acceptance.mjs"
 	},
 	"devDependencies": {
 		"@eslint/js": "^10.0.1",
