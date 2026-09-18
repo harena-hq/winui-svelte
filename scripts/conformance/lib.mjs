@@ -1,6 +1,6 @@
 import { readdir, readFile, stat } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
-import { join, sep } from 'node:path';
+import { join } from 'node:path';
 
 // `new URL(...).pathname` is a URL component, not a filesystem path: it is
 // percent-encoded, and on Windows `file:///C:/repo` yields `/C:/repo`, which no
@@ -9,11 +9,36 @@ import { join, sep } from 'node:path';
 // runner in the plan.
 export const ROOT = fileURLToPath(new URL('../../', import.meta.url)).replace(/[\\/]$/, '');
 
-// Matched against a path prefix relative to the root, never a bare directory name:
-// `src/lib/components/build/` is ours and must be scanned.
-const SKIP = ['node_modules', '.git', '.svelte-kit', 'dist', 'build', '.private', 'test-results'];
+// Never source, wherever they sit. `.upstream` holds the pinned foreign checkouts and was
+// not on this list: it was reached only because no gate walks from the repository root, and
+// splitting the rule below made one of its C++ directories named `build` visible.
+const NEVER_SOURCE = [
+	'node_modules',
+	'.git',
+	'.svelte-kit',
+	'.private',
+	'.upstream',
+	'test-results'
+];
 
-const skipped = (path) => SKIP.some((s) => path === s || path.endsWith(`${sep}${s}`));
+// Build output, and only where something actually writes it — a directory beside a
+// manifest. That test cannot tell generated output from authored source: a component
+// written at `packages/winui-svelte/build/` would be skipped, and C5 walks `packages`
+// whole. No package here has one, and the alternative is reading `.gitignore`, which is a
+// second rule to keep in step with this one. `dist` and `build` sat in the list above until 2026-09-18, matched by name at
+// any depth, which skipped `src/lib/components/build/` — the case the comment there named
+// as the one that must be scanned. A `@apply` planted in a component under such a
+// directory was invisible to C1, C3, C6 and C9 at once, and all four reported clean.
+const BUILD_OUTPUT = ['dist', 'build'];
+
+const neverSource = (name) => NEVER_SOURCE.includes(name);
+
+const buildOutput = async (parent, name) =>
+	BUILD_OUTPUT.includes(name) &&
+	(await stat(join(ROOT, parent, 'package.json')).then(
+		() => true,
+		() => false
+	));
 
 /** Every file under `dir` whose basename matches `test`, as paths relative to the root. */
 export async function walk(dir, test, seen = new Set()) {
@@ -42,7 +67,8 @@ export async function walk(dir, test, seen = new Set()) {
 	}
 	for (const entry of entries) {
 		const path = join(dir, entry.name);
-		if (skipped(path)) continue;
+		if (neverSource(entry.name)) continue;
+		if (await buildOutput(dir, entry.name)) continue;
 
 		// `withFileTypes` does not follow links, so a symlinked source tree reports as
 		// neither file nor directory and would vanish from every gate.
