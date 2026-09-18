@@ -88,6 +88,7 @@ pnpm workspace. The library is publishable and imposes no build tooling on its c
 | D49 | The commit subject grammar is enforced by a hook and by C10, and not by a document alone                | this file, "Conformance gates"    |
 | D50 | A spec never observes a page before that page's own JavaScript has run                                  | this file, "Verification"         |
 | D51 | C6 reads the source the package is built from; `pnpm smoke` answers the consumer contract               | this file, "Conformance gates"    |
+| D52 | ContentDialog focuses content, then `DefaultButton`, then a command button, and lights none of them     | docs/surface.md, ContentDialog    |
 
 ## Verification
 
@@ -974,10 +975,11 @@ group sizes, which no longer line up one-to-one with a version.
     bucket: WD-010 declines to reproduce an upstream defect rather than invent state to be
     wrong with, WD-011 is a primitive's own presence timing, WD-012 is a Composition effect
     with no pinned recipe, WD-013 is an input distinction the platform cannot make, WD-014 is
-    a measurement and a layout CSS cannot put on one box, and WD-015 is a focus ring the
-    browser grants to a scripted focus. **WD-016 and WD-017 are the new kind**: a minimum
-    width and a content margin that the control's own pinned template declares and the shipped
-    control ignores. Neither is a behaviour being declined; in both the render and the
+    a measurement and a layout CSS cannot put on one box, and WD-015 was a focus ring the
+    browser was said to grant to any scripted focus — which it does not, and that entry was
+    replaced on 2026-09-18 by one that names a mechanism; see `docs/divergences.md`.
+    **WD-016 and WD-017 are the new kind**: a minimum width and a content margin that the
+    control's own pinned template declares and the shipped control ignores. Neither is a behaviour being declined; in both the render and the
     dictionary disagree and the render wins. The rule
     the version settled on is that **the render is the specification and the dictionary is
     the explanation**, because a reproduction faithful to the dictionary would be visibly

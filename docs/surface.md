@@ -668,6 +668,23 @@ inside `grid-template-columns` or `gap` rather than a custom property. It is see
 manifest so the completeness check counts it and then excluded from emission, which makes its
 absence from `tokens.css` a recorded decision rather than a hole.
 
+**Two behaviours live entirely in `ContentDialog_Partial.cpp` and neither is visible in the
+template.** `SetInitialFocusElement` (`:1984`) moves focus in when the dialog is shown, and it
+tries the content's first focusable element (`:1997`) before `DefaultButton` (`:2027`) and the
+first command button (`:2039`) — so a dialog whose content takes focus never reaches its default
+button, which is both Gallery examples. All three are `FocusState_Programmatic`, which draws no
+visual. This library reproduces the order and declines the visual with
+`focus({ focusVisible: false })`; WD-015 records the fourth step it adds.
+
+`ProcessLayoutRootKey` (`:1736`) is the other, and it is a **layout-root** handler rather than a
+focus one: Escape runs `ExecuteCloseAction` (`:2063`), which invokes the close button so that
+`CloseButtonClick` fires and the result is `None`, and Enter clicks `DefaultButton` if it is
+enabled (`:1761`) — from anywhere in the dialog, whatever holds focus. Neither is reproduced.
+Measured 2026-09-18 on `/dev/content-dialog`: Enter leaves the dialog open, and Escape closes it
+through the primitive's own handler, which does not run `onCloseButtonClick`. That is the
+outstanding half of this control and it is a unit of its own, not a divergence — nothing about
+it has been declined.
+
 ### TeachingTip — v6 unit 046a
 
 `TeachingTip_themeresources.xaml` carries fifty-one records and seven of them are dead.

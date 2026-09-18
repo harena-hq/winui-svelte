@@ -453,29 +453,44 @@ Recorded here once the control is built and the behaviour is observed rather tha
 
 ---
 
-### WD-015 — an opening dialog focuses itself, not its default button
+### WD-015 — a dialog nothing inside can focus keeps focus on the card
 
 - **Control**: `ContentDialog`.
-- **WinUI does**: move focus into the dialog when it is shown — to `DefaultButton` when one is
-  set, and to the dialog itself when `DefaultButton` is `None` — and draw a focus visual only
-  if the focus arrived from the keyboard. `FocusState` carries that distinction:
-  `FocusState.Programmatic` and `FocusState.Pointer` light nothing. Measured on the reference
-  guest, the first Gallery example is shown from a mouse click and its accent `Save` button has
-  no band around it.
-- **We do**: focus the dialog's own root in every case, through `onOpenAutoFocus`. Focus is
-  inside the trap, Tab reaches the three buttons in order, and no control is lit. The card is
-  `tabindex="-1"` and outside the tab order, so nothing but the open handler ever focuses it,
-  and its own outline is suppressed for the same reason WinUI's dialog draws none.
-- **Why accepted**: `:focus-visible` is a heuristic over the user's last interaction, and there
-  is no way to ask for focus without it. A page that loads with a dialog already open has had no
-  interaction at all, and Chromium resolves that as focus-visible — so focusing the default
-  button paints a band the original does not have, and focusing the CheckBox in the Gallery's
-  content, which is what the primitive does unaided, paints the CheckBox's. The behaviour lost is
-  Enter-activates-the-default-button from the moment the dialog opens; the behaviour kept is that
-  focus is inside the dialog, which is the part a keyboard user cannot work around.
-- **Would reconsider if**: the open transition can be attributed to a keyboard interaction, which
-  makes focusing the default button correct rather than merely faithful — at that point the ring
-  is what WinUI would draw too.
+- **WinUI does**: `SetInitialFocusElement` (`ContentDialog_Partial.cpp:1984`) tries three things
+  in order and stops at the first that takes focus — the first focusable element of the content
+  (`:1997`), then `DefaultButton` (`:2027`), then the first focusable command button (`:2039`).
+  Each is `FocusState_Programmatic` (`:2023`, `:2035`, `:2056`), which moves focus and draws no
+  visual. **Where none of the three accepts focus it does nothing at all**: `wasFocusSet` stays
+  false and focus is left on whatever the caller had it on, which for a dialog shown from a
+  button is that button — outside the dialog.
+- **We do**: reproduce the three steps, and add a fourth that focuses the card. The card is
+  `tabindex="-1"`, which is `IsTabStop="False"` on the dialog itself
+  (`ContentDialog_themeresources.xaml:62`), so it is out of the tab order and only script reaches
+  it — this handler, and the primitive's focus scope, which is the paragraph below. Its outline
+  is suppressed for the same reason WinUI's dialog draws none.
+- **Why accepted**: the dialog is modal and its primitive traps focus, and the trap's own
+  correction is a plain `focus()` — which is what grants `:focus-visible`. Measured 2026-09-18
+  with the fourth step deleted, on a dialog with text content and no buttons: focus stays on the
+  trigger, which the smoke layer has covered; the first Tab lands on `body`; and the second is
+  where the scope pulls focus to the card and **lights it**. So the step is not a courtesy. It
+  moves the same focus the trap would move two keystrokes later, and moves it unlit. It is
+  reached only by a dialog whose content takes no focus and which has no command buttons. Both
+  Gallery examples stop at step one; the harness route carries one dialog for each of the other
+  three steps, because nothing that reproduces the Gallery reaches them.
+- **Would reconsider if**: the primitive stops pulling focus back, or gains a way to be told
+  where to pull it back to. Then leaving focus where upstream leaves it costs nothing, and the
+  entry closes.
+
+This entry replaced a different one on 2026-09-18. What that one claimed is worth keeping, because
+it was wrong in three places and each of them was one source read away. It said WinUI focuses
+`DefaultButton` when one is set — the default button is the _fallback_, and neither Gallery example reaches it.
+It said there is no way to ask for focus without `:focus-visible` — `focus({ focusVisible: false })`
+is that way, and `CommandBarFlyout` in this same package had been using it for a day. And it said
+the behaviour lost was Enter-activates-the-default-button, which never depended on focus:
+`ProcessLayoutRootKey` (`:1761`) handles Enter at the layout root and clicks the default button if
+it is enabled, wherever focus is. That last one is a real gap and is still open; it is recorded in
+`docs/surface.md` with the rest of this control's code-behind, not here, because nothing about it
+has been declined.
 
 ---
 
