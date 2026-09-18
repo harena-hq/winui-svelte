@@ -49,7 +49,13 @@ to justify a second idiom — record it here if it does.
 
 ## Downstream impact
 
-Conformance gates C1 (no raw visual literals outside the token layer) and C6 (a bare
-Vite + Svelte consumer must render correctly) are the automated form of this decision. Theme
-switching becomes an attribute flip on the root element with no reload and no JS beyond
-setting it.
+Conformance gate C1 (no raw visual literals outside the token layer) is one automated form of
+this decision. The other is split in two, which this entry originally stated as one. C6 is the
+static half: the library's own source may not carry a Tailwind directive or a style
+preprocessor, because a directive nothing expands reaches the consumer as CSS the browser
+drops and every build on the way stays green. The bare Vite + Svelte consumer named here is
+`pnpm smoke`, which packs the library, installs it outside this workspace and builds it in
+one — measured on 2026-09-18 as the layer that caught TypeScript reaching a consumer when
+the build, `publint` and every conformance gate did not, and as blind to the Tailwind case
+C6 holds. Theme switching becomes an attribute flip on the
+root element with no reload and no JS beyond setting it.

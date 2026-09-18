@@ -43,7 +43,8 @@ export default ts.config(
 	// `svelte/no-navigation-without-resolve` asks that every `href` go through SvelteKit's
 	// `resolve()`, so an app served under a base path still links correctly. That is right for
 	// the Gallery and inapplicable to the library, which is not a SvelteKit app and must not
-	// import from `$app/*` — C3 and C6 both exist to keep it free of the consumer's framework.
+	// import from `$app/*`. No gate reads that specifier: C3 refuses an import that reaches
+	// `apps/gallery`, C6 refuses build tooling, and neither is this rule.
 	// Every `href` a library component renders arrives as a prop, and resolving it is the
 	// consumer's job; there is nothing here for the rule to protect.
 	//
