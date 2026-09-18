@@ -13,9 +13,24 @@ export const THEMES = ['light', 'dark', 'high-contrast'] as const;
  * nothing.
  *
  * Growing the viewport to the content is what makes the capture whole without touching the
- * window semantics the shell is judged on. It settles rather than grows: the width does not
- * change, so the content's height does not either, and a page shorter than the viewport reports
- * the box height and is left alone.
+ * window semantics the shell is judged on. A page shorter than the viewport reports the box
+ * height and is left alone.
+ *
+ * **It turns the dev layout's scroller off, so that the measurement and the capture share a
+ * width.** A scrollbar on the reference browser takes 15px of layout space, so a scrollable
+ * `.dev` is 15px narrower than the same `.dev` once the viewport fits its content, and measuring
+ * one to photograph the other photographs a layout that was never measured:
+ * `/dev/radio-button`'s description wraps onto a second line at 1265 and onto one line at 1280,
+ * so the viewport was set to 810 for a page 791 tall at the width it is shot at, and the capture
+ * carried 19 blank rows under its content. Nothing about the page had changed, which is
+ * why its baseline read as drift.
+ *
+ * Neither growing twice nor measuring once with the scrollbar hidden is enough, and the second
+ * failure is the instructive one. `scrollHeight` never reports less than `clientHeight`, so a
+ * second pass at 810 reads 810 and agrees with itself; and `scrollHeight` is rounded, so a page
+ * whose content is 791.4 tall is measured as 791, overflows a 791px viewport by four tenths of a
+ * pixel, gets its scrollbar back, and relayouts to 810. A fraction of a pixel is enough, which is
+ * why the scroller is turned off rather than reasoned around.
  *
  * It is exported because an assertion about a portalled surface has to reach the same state the
  * baseline was photographed in. A flyout is placed with collision avoidance on, so a specimen
@@ -25,8 +40,20 @@ export const THEMES = ['light', 'dark', 'high-contrast'] as const;
  */
 export async function growViewportToContent(page: Page) {
 	const { width } = page.viewportSize()!;
-	const height = await page.locator('.dev').evaluate((element) => element.scrollHeight);
+	const dev = page.locator('.dev');
+	// Reading `scrollHeight` flushes layout, so the height comes back for the full width and no
+	// frame is ever painted with a scroller this capture will not have.
+	const height = await dev.evaluate((element) => {
+		element.style.overflowY = 'hidden';
+		return element.scrollHeight;
+	});
 	await page.setViewportSize({ width, height });
+	// `height` came back as an integer from the width this is about to be photographed at, so the
+	// box is now exactly as tall as its own content reports itself to be and the difference is
+	// zero, rounding included. Any margin here would pass a capture that is genuinely short.
+	await expect
+		.poll(() => dev.evaluate((element) => element.scrollHeight - element.clientHeight))
+		.toBe(0);
 }
 
 /**
