@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# Runs only when `core.hooksPath` points here — see AGENTS.md, which is also where the
+# grammar itself is stated. A fresh clone starts with this guard off until that one line
+# is re-run there, and `--no-verify` skips it on any clone; `C10` is the layer that
+# notices either, because `pnpm conform` reads the commits rather than the commit.
+#
+# The rule is not here. It is in scripts/commit/subject.mjs, which C10 imports, so the
+# hook and the gate cannot come to disagree about what a subject is.
+exec node "$(git rev-parse --show-toplevel)/scripts/commit/subject.mjs" "$1"

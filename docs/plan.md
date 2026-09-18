@@ -85,6 +85,7 @@ pnpm workspace. The library is publishable and imposes no build tooling on its c
 | D46 | The first release exports a subset of what is built; a component ships when polished, not when sealed   | this file, "The library gate"     |
 | D47 | The eighteen unscheduled pages are dispositioned by kind; D30 takes two more panels, D35 one rung lower | this file, "Roadmap → v17"        |
 | D48 | A gate is `pnpm gate` — one command, fixed arguments, a trusted environment assumed                     | this file, "Verification"         |
+| D49 | The commit subject grammar is enforced by a hook and by C10, and not by a document alone                | this file, "Conformance gates"    |
 
 ## Verification
 
@@ -4148,53 +4149,52 @@ Automated, and a unit that fails one cannot be sealed.
   two components when the gate was written, and all eight other gates were green. It covers
   the Gallery for C1's reason: the Design pages are where the token layer is judged.
 
-  **What it cannot see is a token used where its type does not fit.** Three components have
-  now hit the same one: `ControlElevationBorderBrush` and its relatives are
-  `linear-gradient(…)` in the token layer, and a gradient named as a `border-color` is
-  invalid CSS. The browser drops the declaration and `border-color` falls back to
-  `currentColor` — the text colour — so the control gains a heavy black edge where the
-  original has a subtle one. Button documented it, TextBox hit it again and documented it
-  again, and NumberBox's spin buttons hit it a third time with all nine gates green: C1
-  passes because a token was used, C9 passes because the token exists, and the snapshot
-  suite passes because it was the baseline's first photograph.
+- **C10 — every sealed subject parses as a type, a scope and one intent.** The grammar is
+  Conventional Commits with the type set closed and the scope required; `AGENTS.md` states it
+  and `scripts/commit/subject.mjs` is it. The gate exists because the rule had been written
+  down and nothing read it: of the 360 commits before it, 66 conform — 253 subjects do not
+  parse and 41 more overrun 72 characters — and the drift is dateable to 2026-09-06, when a
+  subject took the shape `ProgressRing: <sentence>` and 82 more followed. That shape is why
+  nothing noticed: it looks like the grammar, so reading the log corroborates a rule the log
+  had stopped keeping, while a parser sees a commit whose type is `ProgressRing`. The
+  original audit of this reported 193, which was measured with scope optional — the rule's
+  own module is what counted the 253.
 
-  The fix each time is the same masked-`::before` ring, which means the defect is
-  mechanical enough to check for. The gate is a tenth: resolve each token to its final
-  value in the generated CSS, and fail any `border-color`, `color`, `outline-color` or
-  `caret-color` whose token bottoms out in a `gradient(`. Not written yet, and written down
-  here so the fourth occurrence is not discovered by eye either.
+  **The hook cannot know what git will store, so it errs in one direction on purpose.** A
+  `commit-msg` hook reads the file before git's cleanup, and the mode that cleanup runs in
+  comes from `commit.cleanup` or, unset, from whether the message is being edited — which no
+  hook is told. Three attempts got this wrong in three ways. The first stripped comments
+  unconditionally and so accepted a `-m` message whose second line was a comment, which git
+  stores and `%s` then swallows. The second read `GIT_EDITOR`, which git sets to `:` for a
+  commit that opens no editor — true, but not the converse, and
+  `GIT_EDITOR=: git commit --edit` is an edited message it called `whitespace`, refusing a
+  commit git would have kept. The third emulated git's scissors truncation and was wrong
+  about when git truncates at all: measured on git 2.43.0, only an edited message under
+  `commit.cleanup=scissors` truncates, and a `--verbose` diff
+  disappears instead by git's own bookkeeping about where it appended one.
 
-- **C5 — divergences are declared.** Every intentional departure from WinUI behaviour carries
-  a `WD-NNN` id in a code comment resolving to an entry in `docs/divergences.md`, and every
-  entry is cited by at least one site. Neither direction may dangle.
-- **C7 — the acceptance surface is covered.** Every resource the Design pages display is
-  emitted by the token layer, or listed in the generator's exclusions with a reason. This is
-  D12's second clause made checkable: the first half of the selection is structural and the
-  generator enforces it, while the second was a promise kept by hand until the page content
-  existed as data to check against.
-- **C6 — no consumer build tooling.** The shipped `dist` may contain no preprocessor `lang=`
-  attribute and no Tailwind directive, so a consumer with bare Vite + Svelte and nothing else
-  can build it. What it does not yet do is mount the result: the smoke app that would close
-  that half is unbuilt, and until it exists the gate proves buildability, not usability.
-- **C8 — the Gallery records are current.** C2's sibling for the other generated pair. The
-  records are derived from a checkout that is deliberately not committed, so the gate always
-  checks what a fresh clone can — the commit each record names against the pin, and each
-  record's census against its own contents — and re-derives both when the checkout is present
-  at that pin. The weaker half is the one that catches the failure that actually happens: a
-  record edited by hand rather than through the extractor.
+  What the code does now is state the asymmetry and follow it. Cleaning up _more_ than git
+  will can only let a message through for C10 to refuse; refusing one git would have kept
+  blocks a legitimate commit, and nothing catches that. So the hook normalises with
+  `git stripspace`, git's own implementation, in the most aggressive mode it can justify —
+  which makes an explicitly set `core.commentChar` right for free, while `auto` and
+  `core.commentString` are not honoured by `stripspace` on 2.43.0 and so have it removing
+  lines git would keep, once more in the accepting direction. Under
+  `commit.cleanup=scissors` it checks a **second** candidate, truncated at git's marker, and
+  accepts if either passes: git truncates there for an edited message, a hook cannot tell an
+  edited message from a `-m` one, and an extra candidate is the asymmetry applied rather
+  than one more guess about which. Two further reviews were spent on that marker — the
+  fourth found the case that needs the candidate at all, the marker on line two with a body
+  below it, and the fifth found the match too narrow, because git tolerates trailing
+  horizontal whitespace and a carriage return after the marker and this did not.
 
-- **C10 — a self-drawn focus visual suppresses the user agent's.** Proposed, not built. A
-  component that draws WinUI's focus band on a `:focus-visible` pseudo-element must also set
-  `outline: none` on the element that takes focus, or the browser paints a second ring on that
-  element's own border box. Thirteen components shipped without it, and the reason no gate and
-  no baseline caught it is worth stating plainly: the band is drawn 3px outside the control, so
-  on a control with room around it the two rings overlap and the defect reads as a slightly
-  heavier ring. It only separates where the control has no room — an overflow menu row, whose
-  border box is flush with the menu's own border — and there it reads as the ring breaking out
-  of the menu. The check is a static one of the same shape as C1: a stylesheet that matches
-  `:focus-visible` names an element, and that element's own rule must carry `outline: none`.
-  The three controls whose focusable element is an `<input>` at `opacity: 0` are outside it,
-  and the gate has to say so rather than exempt them silently.
+  The hook is skippable by construction, too: it runs only where `core.hooksPath` has been
+  set by hand, and `--no-verify` passes it on a clone where it has. So C10 is not a second
+  opinion but the layer that holds. The hook also tolerates work in flight — a `fixup!`, and
+  the subject `git merge` or `git revert` composed, so that neither aborts mid-operation —
+  and C10 refuses all of them. **A prefix is not provenance**: an ordinary single-parent
+  commit can be called `Merge anything`, so C10 exempts a merge by its parent count and
+  nothing by its spelling.
 
 C5 is the mechanism for the project's central constraint: WinUI behaviour we choose not to
 reproduce is a recorded decision, never a silent one.
