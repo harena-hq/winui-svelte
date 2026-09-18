@@ -102,6 +102,18 @@ VM**, driven from here over the Chrome DevTools Protocol: Playwright stays on th
 the guest gets nothing installed, which keeps it the stock machine that makes it worth
 measuring on. `WINUI_CDP_ENDPOINT` selects that arrangement.
 
+**What the reference browser is started with is reference state, like the machine's theme,
+accent, DPI and display language.** Every baseline here had been taken under
+`--enable-features=OverlayScrollbar`, and a relaunch that lost the flag put a 15px gutter back
+into the scroll containers that overflow, turning five specs red with nothing in this repository
+changed. The flag was itself
+the defect — overlay scrollbars are a headless artefact and not what Windows 11 draws — so what
+was retaken was the baselines and not the launch: one of the five was a harness defect the
+scrollbars exposed, in that the capture viewport was grown from a height measured at a different
+width, and the other four were rephotographed, twelve baseline images in all. A batch of
+unrelated baselines going red at once is a question about the rig before it is a question about
+the code.
+
 Baseline directories are named for the browser's environment, not the runner's — with the
 browser on Windows and the runner here, a platform-keyed path would file Windows pixels
 under `linux/`. Only the Windows set is tracked.
@@ -1684,11 +1696,19 @@ controls/dev -name 'AppBar*'` matches three `*_themeresources.xaml` files and no
     - **A refactor is verified by replay, not by assertion.** Unit 6 moved four selectors out
       of `ItemsView` into `internal/selection.ts`; what says the move changed nothing is that
       the twenty interactions unit 4c drove produce byte-identical selections after it.
-    - **The baselines cannot photograph a scrollbar.** The reference guest drives a headless
-      Edge, and headless Chromium uses overlay scrollbars on every platform: they take no
-      layout space, they are hidden at rest, and `::-webkit-scrollbar` rules do not paint them.
-      Three components now carry the same scrollbar block and none of it appears in any
-      baseline. The Scrolling tranche is where one `ScrollView` replaces all three.
+    - **The baselines photographed no scrollbar, and the reason written here was the rig's
+      rather than the browser's.** Three components carry the same scrollbar block as this version
+      closes and none of it appears in any baseline; the Scrolling tranche is where one
+      `ScrollView` replaces all three. The reason this entry gave — that the guest drives a headless Edge, and headless
+      Chromium uses overlay scrollbars on every platform, so they take no layout space, are hidden
+      at rest, and `::-webkit-scrollbar` rules do not paint them — is false of the browser, and was
+      true only of how this rig had been started: `--enable-features=OverlayScrollbar`. Measured
+      2026-09-18, after a relaunch lost that flag, against a visible Edge on the same guest rather
+      than assumed: the reference browser takes a 15px gutter for a scrollbar and paints it, and
+      `::-webkit-scrollbar` rules paint there. The flag was the defect and not the fix — overlay
+      scrollbars are a headless artefact and not what Windows 11 draws — so twelve baselines were
+      retaken to record what the reference draws, and "Verification" now records that a browser's
+      own command line is reference state.
 
     **What this version declined.** WD-026, that a collection renders every item and nothing is
     virtualised. WD-027, that every item is a tab stop and there is no current item, extended
@@ -2461,21 +2481,25 @@ controls/dev -name 'AppBar*'` matches three `*_themeresources.xaml` files and no
     | SemanticZoom       | one `SemanticZoom` 500 tall over a grouped `GridView` and a `ListView` of the group titles (`SemanticZoomPage.xaml:59-80`)       | none                                                                                                                               |
     | PullToRefresh      | two examples, each a `RefreshContainer` around a bordered `ListView` 200 tall (`PullToRefreshPage.xaml:13-24`)                   | none                                                                                                                               |
 
-    **This tranche is the one whose subject the acceptance harness cannot photograph, and that is
-    written down already.** v9's closing entry says it: the reference guest drives a headless
-    Edge, headless Chromium uses overlay scrollbars on every platform, and `::-webkit-scrollbar`
-    rules do not paint them. Six components carry the same block of those rules today —
-    `ListView`, `GridView`, `ItemsView`, `TreeView`, `NavigationView`'s pane and the Gallery
-    shell's page area — and three of them carry a comment naming this tranche as where the copying
-    stops. None of the six appears in any baseline.
+    **This tranche's subject is the one the acceptance harness was taken to be unable to
+    photograph, and that was the rig's own launch rather than anything about the harness.** v9's
+    closing entry gave the reason
+    — headless Chromium uses overlay scrollbars on every platform, and `::-webkit-scrollbar` rules
+    do not paint them — and that entry now carries its own correction. Six components carried the
+    same block of those rules when this version was planned — `ListView`, `GridView`, `ItemsView`,
+    `TreeView`, `NavigationView`'s pane and the Gallery shell's page area — and three of them
+    carried a comment naming this tranche as where the copying stops. None of the six appeared in
+    any baseline, which was true of the rig those baselines were taken on and of nothing else.
 
     **D33 — the scrollbar is elements, not `::-webkit-scrollbar`.** A pseudo-element scrollbar
-    cannot express what the original draws and cannot be seen by what judges it. It cannot: hold
-    the two arrow buttons the expanded bar has, carry the four `ConsciousStates`
-    (`ScrollBar_themeresources.xaml:528-670`), or animate between them on the pin's own timings;
-    and in the browser that takes the baselines it paints nothing at all. Elements can do all of
-    it, and a `div` photographs like any other content. Unit 0 measured both halves of that on the
-    guest before unit 1 was specified.
+    cannot express what the original draws. It cannot: hold the two arrow buttons the expanded bar
+    has, carry the four `ConsciousStates` (`ScrollBar_themeresources.xaml:528-670`), or animate
+    between them on the pin's own timings. Elements can do all of it, and a `div` photographs like
+    any other content. Unit 0 measured both boxes on the guest before unit 1 was specified, and
+    one half of what it measured was the rig: the pseudo-element box reserved no gutter and drew
+    nothing there because the browser had been started with `--enable-features=OverlayScrollbar`,
+    not because a pseudo-element cannot paint. The clause struck here was a fourth ground and is
+    none of the three above it.
 
     **D33's second clause was that bits-ui's `ScrollArea` would be the primitive underneath, and
     it was struck before unit 2 was written.** Reading the installed package rather than its
@@ -2635,13 +2659,15 @@ controls/dev -name 'AppBar*'` matches three `*_themeresources.xaml` files and no
     the pane's own content asks for — and that is a question about controls four versions old
     rather than about either page, which may not override a control's width.
 
-    **What the version was really about.** The scrollbar, and the fact that **the acceptance
-    harness cannot photograph one**. v9 recorded it and nothing had acted on it: the guest drives a
-    headless Edge, headless Chromium uses overlay scrollbars, and `::-webkit-scrollbar` rules paint
-    nothing there. Six components carried a copy of those rules and none of it appeared in any
-    baseline. Unit 0 measured both halves of that side by side before unit 1 was specified — the
-    pseudo-element box reserved no gutter and drew nothing; the element box drew a 12-pixel track,
-    both arrow glyphs and the thumb — and unit 3 retired all six copies into one control.
+    **What the version was really about.** The scrollbar, and what the acceptance harness was then
+    taken to be unable to photograph. v9 recorded that and nothing had acted on it: six components
+    carried a copy of the same `::-webkit-scrollbar` rules and none of it appeared in any baseline.
+    Unit 0 measured both boxes side by side before unit 1 was specified — the pseudo-element box
+    reserved no gutter and drew nothing; the element box drew a 12-pixel track, both arrow glyphs
+    and the thumb — and unit 3 retired all six copies into one control. Half of that measurement
+    was the rig's rather than the browser's, which D33 now records; the element box is what ships,
+    and it photographs. `ItemsView`'s harness baselines hold the rail at rest — the 2px panning
+    thumb, 56 rows of it, `#868686` in light and its own colour in each of the other two.
 
     **D33 was decided, then half of it was struck, and reading the primitive is what struck it.**
     bits-ui's `ScrollArea` floors its thumb at a hard-coded 18 where WinUI floors it at 30, divides
@@ -3127,10 +3153,11 @@ System / Shell` moves to item 16; `item 15` occurs once in the whole of `docs/`,
     animations they demonstrate can be judged by something.**
 
     The second clause is the version, and D34 is why it is a clause at all. This tranche's
-    acceptance problem is v13's one level further out. There, the harness could not photograph
-    the subject because headless Chromium paints no `::-webkit-scrollbar`; the answer was to
-    make the scrollbar out of elements, and a `div` photographs. Here the subject is not a thing
-    but an interval, and no still frame of any of these pages contains it.
+    acceptance problem is v13's one level further out — and v13's, it later turned out, was not an
+    acceptance problem at all: the harness could photograph a scrollbar all along, and what the
+    pseudo-element could not hold was the arrow buttons and the four states. Here the subject is
+    not a thing but an interval, and no still frame of any of these pages contains it, which no
+    rig can be started differently to fix.
 
     The instrument is v15's first unit and the rest of the version waits on it. What it has to
     do is turn an interval into a still: a page that renders a fixed set of samples of an
