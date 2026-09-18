@@ -29,18 +29,25 @@ export default defineConfig({
 	// 26 of 26 without it, then 26 of 26 with it at one worker — in 36.7s against the parallel
 	// run's 42.8s, because the parallelism was never buying anything to begin with.
 	//
-	// Sixteen, and not the core count, when the browser is local. Playwright's default is half
-	// the cores, which on this host is 96 workers against one preview server. At 155 tests that
-	// was green six consecutive times; at 165 two consecutive full runs failed seven and then
-	// five tests, with a different set each time and every one of them passing when its own spec
-	// was run alone — a `page.hover()` that had not settled by the time the assertion read it,
-	// keyboard presses that never landed. None of them were product defects, and a battery that
-	// fails differently each run is a gate that has stopped meaning anything.
+	// Playwright's own default when the browser is local, which is half the cores.
 	//
-	// Sixteen costs nothing to buy that back: three consecutive full runs at 27.3s, against
-	// 27.2s for the run that failed five. The parallelism above sixteen was never buying wall
-	// clock either, for the same reason the CDP lane's never did.
-	workers: CDP ? 1 : 16,
+	// It was sixteen from `bcb30dd` (2026-09-14) until this line, and the reason recorded there
+	// was wrong. The suite had begun failing a handful of tests on each full run, a different
+	// handful each time, every one of them passing when its own spec was run alone; it stopped at
+	// sixteen workers and was read as a contention ceiling. What it was racing is the page's own
+	// startup, and the worker count moves only how often that race is lost — which is why the
+	// number held until the suite grew from 165 tests to 263 and then stopped holding.
+	// `tests/visual/fixtures.ts` waits for the page's own JavaScript on every navigation now, and
+	// that is what the cap was standing in for.
+	//
+	// Measured 2026-09-18 at 263 tests and ninety-six workers, three full runs each way: without
+	// that wait, 23, 22 and 25 tests failed and passed on retry; with it, three green runs, no
+	// retries, 34.9s against sixteen workers' 41.7s. Contention is therefore not sufficient to
+	// produce the failures — the same ninety-six workers produce none of them once the wait is
+	// there — and a number tuned at one suite size was going to be wrong at the next, so the
+	// answer here is not a larger number. What that measurement does not establish is anything
+	// about a machine unlike this one; the default at least scales with whatever it finds.
+	workers: CDP ? 1 : undefined,
 	fullyParallel: true,
 	forbidOnly: !!process.env.CI,
 	// `list` whenever stdout is not a TTY, and not only under `CI`. The html reporter writes a file
