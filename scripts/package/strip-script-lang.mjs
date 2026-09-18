@@ -12,8 +12,14 @@ import { fileURLToPath } from 'node:url';
  *
  * That attribute is a claim about the file rather than a description of it, and a wrong
  * one: it tells every consumer's toolchain to expect TypeScript in a file that no longer
- * holds any. Gate C6 reads it the same way and refuses the package, which is the right
- * reading — ADR 0002's promise is that installing this library adds no build step.
+ * holds any. ADR 0002's promise is that installing this library adds no build step.
+ *
+ * This comment used to name gate C6 as the layer that refuses the attribute, and that was
+ * the circularity measured on 2026-09-18: C6 walked `dist` for `lang="ts"`, and the build
+ * script runs this file immediately before it, so the gate searched for a string this step
+ * had just deleted. It could not fail. C6 now asserts from the source side that this step
+ * is still in the build script, and `pnpm smoke` — which compiles the packaged components
+ * in a consumer — is what actually refuses TypeScript that survives packaging.
  *
  * Rewriting built output is not something to do often. It is done here because the step
  * that should do it does not, and because the alternative — writing the library's

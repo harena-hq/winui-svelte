@@ -86,7 +86,8 @@ component placed in `packages/winui-svelte/src/lib/components/` and built with
 - compiles under `svelte/compiler` from the packaged form, with no warnings, which is the check
   that matters: `generics` is a language-tools attribute and the question was whether the
   runtime compiler minds finding it without `lang="ts"` beside it. It does not;
-- passes `publint`, and gate C6 reads the same `dist`.
+- passes `publint`, and `pnpm smoke` compiles the same `dist` inside a consumer. Gate C6 read
+  it too when this was written; it reads the source instead since D51.
 
 The one residue is an `export {};` left in the packaged script by the preprocessor. It is inert
 and it is not new to generics.

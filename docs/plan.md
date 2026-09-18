@@ -87,6 +87,7 @@ pnpm workspace. The library is publishable and imposes no build tooling on its c
 | D48 | A gate is `pnpm gate` — one command, fixed arguments, a trusted environment assumed                     | this file, "Verification"         |
 | D49 | The commit subject grammar is enforced by a hook and by C10, and not by a document alone                | this file, "Conformance gates"    |
 | D50 | A spec never observes a page before that page's own JavaScript has run                                  | this file, "Verification"         |
+| D51 | C6 reads the source the package is built from; `pnpm smoke` answers the consumer contract               | this file, "Conformance gates"    |
 
 ## Verification
 
@@ -4010,17 +4011,19 @@ exported component against the evidence that sealed it and re-photographs the on
 evidence is a dev route.** That is a sweep of commit trailers plus a handful of captures, not
 120 pages.
 
-One thing has to be built before a release, and it is not scheduled with it. C6 as implemented
-reads the shipped `dist` for preprocessor and Tailwind markers, which proves the package needs
-no build tooling but not that a consumer can mount what it exports. The smoke app the gate
-description promises does not exist, and the Gallery is not it: the Gallery does consume
-`dist`, but through a pnpm workspace symlink, so the `peerDependencies` are satisfied by the
-library's own `devDependencies` and have never once been supplied by a consumer, and the
-compiler treats the package as first-party source rather than as a dependency. **Build it now
-rather than at the release**, as its own unit: waiting means the whole prop surface — as
-unchangeable once shipped as ADR 0006's token names, and ADR 0009 says so — is locked in one
-step with no consumer having exercised it. The smoke app is that consumer, and it can exist
-from any version onward.
+**The consumer this asked for was built fifty-one minutes later, and the paragraph asking for
+it stood for twelve days.** It said C6 proved the package needs no build tooling but not that
+a consumer can mount what it exports, and that the smoke app the gate description promised did
+not exist. That was true at 17:45 on 2026-09-06, when `e2dd2bfb` wrote it, and false at 18:36,
+when `5b002b2` installed the packed tarball into a project this workspace cannot help.
+`pnpm smoke` packs the library, installs it outside the workspace, mounts ten exports in a
+bare Vite + Svelte app, builds for the browser and for SSR, renders the SSR bundle, and
+refuses a build that imports a name the package does not export. A request written into this
+file is not re-read once it is satisfied, and every later sentence citing it reads as
+corroboration — the same shape as the scrollbar claim `d1eda87` corrected.
+
+C6 itself was what was actually owed, and it was worse than the paragraph said. The gate, the
+measurement that condemned it and what replaced it are under "Conformance gates" below.
 
 **The Gallery is not built to be reused as an app.** `apps/gallery` is a judgement instrument,
 and its only reason to exist is being compared with the original page by page. An app carries
@@ -4172,6 +4175,36 @@ Automated, and a unit that fails one cannot be sealed.
   back to it would pass. The threshold has not been tightened here because doing so makes
   every baseline sensitive to antialiasing noise across a re-pin; it is written down so the
   next person to trust a green suite about a small colour shift knows not to.
+
+- **C6 — the library asks for no build tool a consumer would have to install.** ADR 0002's
+  promise, and the gate that searched the output of the command that defeats it. The package
+  build runs `scripts/package/strip-script-lang.mjs` immediately after `svelte-package`, in one
+  `&&` chain, and that step deletes `lang="ts"` from every packaged component; C6 then walked
+  `dist` for that attribute. Measured 2026-09-18: deleting `preprocess` from `svelte.config.js`
+  shipped `export interface` and `import type` in `<script module>` to consumers, and
+  `pnpm build` exited 0, `publint` said "All good", and `pnpm conform` reported 10 passing, 0
+  failing. `pnpm smoke` refused the same tarball with 95 compile errors, naming the first file
+  and line.
+
+  **In the other direction the two layers swap.** An `@apply` planted in a component's
+  `<style>` reached `dist` untouched and the smoke consumer installed, built and rendered it
+  green — nothing expands the directive and nothing fails on it, so the browser drops the rule
+  and the page is quietly wrong. Each layer is blind to exactly what the other catches, and the
+  blind one was the one in the cheap half of the battery, under the title that claimed the
+  whole promise.
+
+  **It now reads the source the package is built from rather than `dist`** — the input
+  instead of an artifact nothing ties to it — for Tailwind and style-preprocessor markers, a
+  stylesheet extension no bundler compiles alone, and a tool's configuration file; and it
+  asserts that the two declarations which strip TypeScript at packaging are present and in
+  that order. It does not claim they worked: `vitePreprocess({ script: false })` satisfies the
+  declaration and ships TypeScript, and **`pnpm smoke` is the layer that answers** whether a
+  consumer can install and build this package. It reads the working tree and not git, so an
+  uncommitted file counts; and its patterns are text rather than a parsed stylesheet, which
+  `@import/**/"tailwindcss"` and the CSS escape `@\61 pply` both walk through. Those two were
+  found in cold review and left: the floor is that the ordinary way in has to be argued for. Its scope is the library alone, deliberately — ADR 0002 declines Tailwind
+  in `apps/gallery` too and nothing checks the Gallery, which is a recorded gap rather than an
+  omission, and a smaller one because the Gallery ships to nobody.
 
 - **C9 — every token a component reads is one the layer emits.** C1's opposite direction,
   and the one nothing was checking. C1 fails a value written without a token; C9 fails a
