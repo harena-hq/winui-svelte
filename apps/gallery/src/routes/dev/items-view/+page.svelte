@@ -65,12 +65,12 @@
 </div>
 
 <h2 class="winui-SubtitleTextBlockStyle">a stack layout, and a viewport that scrolls</h2>
-<!-- The viewport scrolls — 640 of content in 200 — but no scrollbar appears in the three
-     baselines, and that is the browser rather than the component. The reference guest drives a
-     headless Edge, and headless Chromium uses overlay scrollbars on every platform: they take no
-     layout space, they are hidden at rest, and `::-webkit-scrollbar` rules do not paint them.
-     The component's scrollbar rules are NavigationView's and are correct in a headed browser;
-     nothing this page can do will photograph one. -->
+<!-- The viewport scrolls — 640 of content in 200 — and the three baselines hold the scrollbar
+     the component draws for it: the `ScrollView` rail at rest, which is the 2px panning thumb
+     (`ScrollBar_themeresources.xaml:713-714`) in each theme's own
+     `ScrollBarPanningThumbBackground`, 56 rows tall here for the viewport's share of the
+     content. Nothing on this page styles a scrollbar and nothing needs to — v13's unit 3 retired
+     all six `::-webkit-scrollbar` copies, this viewport's among them, into that one control. -->
 <div class="row">
 	<div class="short">
 		<ItemsView items={photos} style="height: 100%">
