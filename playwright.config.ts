@@ -43,7 +43,22 @@ export default defineConfig({
 	workers: CDP ? 1 : 16,
 	fullyParallel: true,
 	forbidOnly: !!process.env.CI,
-	reporter: process.env.CI ? 'list' : 'html',
+	// `list` whenever stdout is not a TTY, and not only under `CI`. The html reporter writes a file
+	// and prints nothing to stdout, so a run whose output is captured — which is how an agent reads
+	// one — reports a failure as silence plus an exit code. Measured here: a local run failed one
+	// CommandBarFlyout assertion and its captured output carried no trace of it.
+	//
+	// The test is the descriptor's and not the reader's, in both directions: `| tee` makes stdout a
+	// pipe with a person watching, which costs nothing, and a PTY transcript keeps it a TTY while
+	// capturing anyway, which hides a failure again. Pass `--reporter=list` where that matters.
+	//
+	// `lane-summary` last, so its account of the run is the final thing printed. It reports and does
+	// not enforce: the gate is `pnpm gate`, a command rather than a flag, for the reasons in
+	// `scripts/gate/acceptance.mjs`.
+	reporter: [
+		[process.env.CI || !process.stdout.isTTY ? 'list' : 'html'],
+		['./tests/visual/lane-summary.ts']
+	],
 	use: {
 		baseURL: BASE_URL,
 		trace: 'on-first-retry'

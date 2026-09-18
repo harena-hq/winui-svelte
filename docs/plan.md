@@ -84,6 +84,7 @@ pnpm workspace. The library is publishable and imposes no build tooling on its c
 | D45 | AnimatedVisualPlayer ships whole and its Gallery page draws the composition's resting frame             | this file, "Roadmap → v16"        |
 | D46 | The first release exports a subset of what is built; a component ships when polished, not when sealed   | this file, "The library gate"     |
 | D47 | The eighteen unscheduled pages are dispositioned by kind; D30 takes two more panels, D35 one rung lower | this file, "Roadmap → v17"        |
+| D48 | A gate is `pnpm gate` — one command, fixed arguments, a trusted environment assumed                     | this file, "Verification"         |
 
 ## Verification
 
@@ -113,6 +114,65 @@ scrollbars exposed, in that the capture viewport was grown from a height measure
 width, and the other four were rephotographed, twelve baseline images in all. A batch of
 unrelated baselines going red at once is a question about the rig before it is a question about
 the code.
+
+**D48 — a gate is `pnpm gate`, and "the suite is green" means that command exited 0.** The local
+lane is for writing a spec and cannot answer the question the baselines exist for: every spec that
+photographs anything skips itself when there is no reference browser, Playwright reports a skip as
+not a failure, and a run that compared nothing therefore exits 0 and prints a pass. Not
+hypothetical — five baselines were red for weeks while every seal in the period carried "the suite
+is green" behind it, earned on that lane.
+
+**The gate is a command and not a flag, and four review passes are the reason.** The first design
+made the environment variable `CI` mean "this run is a gate", and had `playwright.config.ts` refuse
+under it every option that would narrow or weaken the run. Each pass found another way past: an
+empty `--shard`, which collects nothing; `--list` with an endpoint set; `--last-failed`, which
+leaves every spec file collected and so defeats counting them; `--reporter`, which replaces the
+reporter array outright and therefore deletes any guarantee a reporter carries;
+`--ignore-snapshots`, which passes an image assertion without comparing one; `--config` pointing
+elsewhere, after which this project's config never loads at all; and Playwright's own API, which
+parses an argument array that `process.argv` cannot see. The list was never going to close.
+`scripts/gate/acceptance.mjs` closes it by construction instead: it takes no arguments and forwards
+none, it requires `WINUI_CDP_ENDPOINT` and `WINUI_BASE_URL` rather than defaulting either, and it
+runs the suite whole. `pnpm verify` ends with it.
+
+The gate also asks the endpoint what it is, because being set is not the same as being the
+reference browser: it reads the endpoint's own `json/version` and refuses anything that does not
+name itself Edge on Windows. A local Chrome answering there would be photographed as if it were
+the guest, and filed under `edge-win32` with the rest. The question is put the way
+`connectOverCDP` puts it — the endpoint's path kept and `json/version/` appended under it — so
+that a proxied endpoint the harness can connect to is not one the gate refuses first. The one
+form it narrows deliberately is a `ws://` endpoint, which Playwright takes straight to the socket
+without ever fetching anything: the gate's contract is the HTTP discovery URL, and it says so in
+the refusal rather than reporting a socket as an endpoint that did not answer.
+
+**Every other way of invoking Playwright here is a developer run**, which is legitimate and is not
+a gate. `pnpm verify` is the one exception, and not by being trusted: it reaches Playwright only
+by calling the gate. A developer run that loads the configured reporter gets
+`tests/visual/lane-summary.ts` in place of a refusal: it names the lane, how many of its tests did
+not run, how many images sit in the reference lane's baseline directory — counted out of the
+directory rather than out of a number written down, and described as that rather than as what Git
+tracks — and, where it can tell, what narrowed the run. It reads the resolved configuration and
+the collected suite rather than a command line, so a `grep` set in the config file or on a project
+shows up as readily as a flag does. It reports and does not enforce, so a shape it misses costs a
+sentence rather than a guarantee.
+
+**What this defends against, stated because five review passes went looking for the rest.** It
+defends against accident and convenience: a narrowed run reported as a whole one, a forwarded
+flag, an absent reference browser, the wrong browser answering. It does not defend against anyone
+who controls the environment it runs in, and the fifth pass exited the gate 0 without running
+anything twice over — once through pnpm's own `script-shell` setting, once through a `NODE_OPTIONS`
+preload that replaced `spawnSync` — neither of which any file inside this repository can prevent,
+since both act before it is evaluated. `pnpm` resolving through `PATH` is the same shape. **A
+trusted environment is therefore a premise of D48 and not a claim of it**, alongside
+`WINUI_BASE_URL` pointing at the build this run produced, which nothing verifies.
+
+**The rest of the residue.** The gate cannot make anyone run it: a person or an agent who runs
+`pnpm test` and calls it green is making a claim the tooling contradicts in its own output but
+cannot refuse. And that contradiction is itself removable — `--reporter` replaces the reporter
+array, `--config` loads another config, and the API parses its own arguments, so a developer run
+can be made to print no summary at all. Both are smaller than the previous design's residue, which
+was a list of option names nobody could finish, and both are stated here rather than left for a
+sixth pass to find.
 
 Baseline directories are named for the browser's environment, not the runner's — with the
 browser on Windows and the runner here, a platform-keyed path would file Windows pixels
@@ -163,7 +223,8 @@ The gates come first because a gate added after feature work has to be retrofitt
 code that already violates it.
 
 **No hosted CI.** D6 puts the snapshot runner on a local Windows VM, and there is no remote to
-run a workflow against. `pnpm verify` is the gate and it runs wherever the work happens.
+run a workflow against. `pnpm verify` runs wherever the work happens, and ends with the
+acceptance gate D48 defines.
 
 **Sequencing note.** The harness runs on the Linux host, but its baselines are untracked there
 — only the Windows set is committed, because only there does Segoe UI Variable resolve. Taking
