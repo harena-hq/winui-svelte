@@ -89,6 +89,7 @@ pnpm workspace. The library is publishable and imposes no build tooling on its c
 | D50 | A spec never observes a page before that page's own JavaScript has run                                  | this file, "Verification"         |
 | D51 | C6 reads the source the package is built from; `pnpm smoke` answers the consumer contract               | this file, "Conformance gates"    |
 | D52 | ContentDialog focuses content, then `DefaultButton`, then a command button, and lights none of them     | docs/surface.md, ContentDialog    |
+| D53 | Baselines compare at a 0.01 colour tolerance, and one unstable page gets a counted pixel budget         | this file, "Verification"         |
 
 ## Verification
 
@@ -207,6 +208,63 @@ local runs, three green at ninety-six workers, and `pnpm gate` at 263 tests. A c
 it by reading, and the measurement came after it rather than before: of twenty reloads driven
 under contention, **nine had not run their JavaScript when `reload()` resolved**. The wait records
 the write in `window` instead, which is per-document because the object is.
+
+**D53 — a baseline is compared at a 0.01 colour tolerance, and the one page whose variation that
+tolerance cannot absorb carries a counted budget.** Playwright's default `threshold` is 0.2,
+and it is a fraction of pixelmatch's YIQ distance rather than of a channel: what it admits is a
+**52-level grey shift on every pixel of the page**, out of 255, however much of the page moves. A
+count cannot narrow that, because `maxDiffPixels` applies to the pixels the colour test has
+already passed, and a change inside the tolerance is zero of them. At 0.01 the same arithmetic
+admits two levels.
+
+**Two changes it let through were this project's own, and both were re-run against the new line.**
+Three trigger buttons added to `/dev/content-dialog` on 2026-09-18 failed the light and dark
+baselines and _passed_ the high-contrast one, after which `--update-snapshots` declined to rewrite
+an image the comparison believed and the spec reported green against a picture three buttons out
+of date. The gradient-border fix recorded under the acceptance gate below moved a button's face by
+four levels — the defect a person had reported by eye — with the suite green and nothing written.
+Restored and re-run: the stale dialog baseline passes at 0.2 and fails at 0.01 with **3,571
+counted pixels**; a four-level shift planted in `/dev/path`'s filled shape passes at 0.2 and fails
+at 0.01 with **51,814**.
+
+**What tightening costs was measured before the number was chosen.** Run with no colour tolerance
+at all, this lane does not repeat itself: over four full runs at `threshold: 0`, 265 of 271 tests
+passed and the failing set changed between runs. Hashing the captures says the same thing at the
+byte level, which a `threshold: 0` run does not by itself — twenty captures of one page in one
+session, twice over, gave `/dev/path` three distinct images, `/dev/progress-bar` two and
+`/dev/item-page` two, every difference anti-aliasing on a curve, a rounded corner or a scaled
+bitmap rather than anything laid out. At 0.01 two full runs failed the same two specs and nothing
+else, and both were stale baselines rather than noise; they were re-photographed, and each was
+compared against its predecessor first. The arithmetic boundary under any choice is about
+0.003788, where a single grey level stops being admitted — a property of the comparator rather
+than a measurement of this lane, and 0.01 sits above it because the lane's own noise is a channel
+level on the pages that move.
+
+**One page needed an exception, and it is a count rather than a colour.** Six runs of
+`path.spec.ts` with no budget counted nothing four times and two pixels twice, at the end of the
+Gallery's cubic where its `H` segment meets it. `maxDiffPixels: 10` carries that — five times the
+noise counted, against the 51,814 and the 185 the same page's planted changes counted — and what
+it gives up is exact: the option reaches one `toHaveScreenshot` call, so **each of Path's three
+themed baselines** fails on eleven or more counted pixels where every other baseline in the suite
+fails on one, and a size mismatch still fails outright. The alternative was a wider colour
+tolerance, and it is worse rather than merely different: six runs at 0.02 counted none of this
+noise, and 0.02 is where the four-level change above passes. A count costs one page ten pixels; a
+colour tolerance would have cost every page three grey levels.
+
+**What no tolerance here reaches, and it is the reason the comparison is now the open question
+rather than the tolerance.** Playwright calls pixelmatch with `includeAA: false`, and the
+protocol's screenshot parameters cannot change it — they are `threshold`, `maxDiffPixels`,
+`maxDiffPixelRatio` and a comparator name. A pixel the heuristic reads as an anti-aliased edge is
+dropped before the tolerance is consulted. That takes most of the evidence off a change that moves
+ink rather than recolouring it, and it does not take the failure: the one-pixel shift above still
+counted 185, and `maxDiffPixels` is unset, so one surviving pixel refuses the baseline. What
+disappears outright is a difference whose every pixel is read as an edge — which is what this
+lane's own noise is, `/dev/path` differing from itself by up to 72 pixels between renders with the
+comparator counting none of them. The two facts this unit established about the comparison — that
+the lane is not byte-deterministic, and that its anti-aliasing exclusion cannot be turned off —
+are the inputs to whether this project should compare the captures itself rather than ask
+Playwright to. That is a change to the shape of the visual lane and not to a tolerance, so it is
+its own unit.
 
 Baseline directories are named for the browser's environment, not the runner's — with the
 browser on Windows and the runner here, a platform-keyed path would file Windows pixels
@@ -4174,9 +4232,13 @@ Automated, and a unit that fails one cannot be sealed.
   Windows — and the suite passed, wrote nothing, and left the tracked baseline a picture of
   the defective render. Deleting the file first is what forces a write. So a change small
   enough to be tolerated is also a change the baselines will never record, and a regression
-  back to it would pass. The threshold has not been tightened here because doing so makes
-  every baseline sensitive to antialiasing noise across a re-pin; it is written down so the
-  next person to trust a green suite about a small colour shift knows not to.
+  back to it would pass. **The threshold was tightened on 2026-09-18 and this paragraph is the
+  case that justified it** — D53 sets it to 0.01, where four levels are refused, and the reason
+  recorded here for leaving it alone was a hypothesis rather than a measurement: the
+  anti-aliasing noise it predicted is, at 0.01, two pixels on one page. What the paragraph got
+  right is the mechanism, and that half still stands — a change the comparison tolerates is a
+  change the baselines never record, so the tolerance is the lower bound on what a green suite
+  claims.
 
 - **C6 — the library asks for no build tool a consumer would have to install.** ADR 0002's
   promise, and the gate that searched the output of the command that defeats it. The package

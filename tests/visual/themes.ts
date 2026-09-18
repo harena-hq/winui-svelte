@@ -67,7 +67,7 @@ export async function snapshotAllThemes(
 	page: Page,
 	component: string,
 	path: string,
-	options?: { animations?: 'allow' | 'disabled' }
+	options?: { animations?: 'allow' | 'disabled'; maxDiffPixels?: number }
 ) {
 	for (const theme of THEMES) {
 		await page.goto(path);
@@ -89,7 +89,7 @@ export async function snapshotAllThemes(
 			.poll(() => page.evaluate(() => document.documentElement.dataset.theme ?? ''))
 			.toBe(theme);
 		await growViewportToContent(page);
-		// `options` reaches `toHaveScreenshot` for one setting, `animations`, and the default is
+		// `options` reaches `toHaveScreenshot` for two settings. `animations` first: the default is
 		// Playwright's: `disabled`, which does not merely freeze an animation but **finishes**
 		// it — every running animation is seeked to its end and left there, permanently, before
 		// the capture. That is the right default for every route photographing a control at
@@ -102,6 +102,14 @@ export async function snapshotAllThemes(
 		// page rather than the picture and pass, and a first baseline written from the wrong
 		// render agrees with itself forever after — the same trap the theme comment above
 		// describes, reached by a different road. Found by opening the PNG.
+		//
+		// `maxDiffPixels` second, and it is for a page this browser does not rasterise the same way
+		// twice. The colour tolerance in `playwright.config.ts` is set close enough to one channel
+		// level that a page whose anti-aliasing genuinely moves between renders cannot be absorbed
+		// there without re-opening the hole that line closes. A count is the narrower instrument:
+		// it raises how many differing pixels this one page may carry, leaving what counts as a
+		// differing pixel where every other page has it. Only `path.spec.ts` carries one, and it
+		// states both the noise it was measured against and what it gives up.
 		await expect(page.locator('body')).toHaveScreenshot(`${component}-${theme}.png`, options);
 	}
 }

@@ -66,6 +66,50 @@ export default defineConfig({
 		[process.env.CI || !process.stdout.isTTY ? 'list' : 'html'],
 		['./tests/visual/lane-summary.ts']
 	],
+	// Baselines are compared with a per-pixel colour tolerance of 0.01, against Playwright's
+	// default of 0.2.
+	//
+	// The number is a fraction of pixelmatch's YIQ distance and not of a channel: a pixel counts
+	// as different only once `0.5053·dY² + 0.299·dI² + 0.1957·dQ²` passes `35215 · threshold²`.
+	// A change with no hue in it — every pixel a shade lighter or darker — is pure dY, so what
+	// the tolerance admits is `sqrt(35215 · threshold² / 0.5053)` grey levels out of 255: **52 at
+	// the default, and 2 here.** It is not a budget spent across the picture: `maxDiffPixels` is
+	// unset, so every pixel may move by that much and none of them is counted. A count could not
+	// have narrowed it either, because the count is applied to the pixels this test has already
+	// passed, and a change inside the tolerance is zero pixels however much of the page it covers.
+	//
+	// **Two changes the default let through, both of them this repository's own.** Three trigger
+	// buttons added to `/dev/content-dialog` on 2026-09-18 failed the light and dark baselines and
+	// *passed* the high-contrast one, after which `--update-snapshots` declined to rewrite an
+	// image the comparison believed and the spec reported green against a picture three buttons
+	// out of date. And a gradient-border fix moved a button's face by four levels — the defect a
+	// person had reported by eye — with the suite green and nothing written. Both were re-run
+	// against this line: the stale dialog baseline restored passes at 0.2 and fails here at
+	// **3,571 counted pixels**; a four-level shift planted in `/dev/path`'s filled shape passes at
+	// 0.2 and fails here at **51,814**. High contrast is where the first surfaced, because that
+	// palette moves in the steps the default covers, but the blindness was every theme's.
+	//
+	// **What tightening costs was measured before the number was chosen.** Run with no colour
+	// tolerance at all, this lane does not repeat itself: over four full runs at `threshold: 0`,
+	// 265 of 271 tests passed and the failing set changed between runs. Hashing the captures
+	// rather than comparing them says the same thing at the byte level — twenty captures of one
+	// page in one session, twice over, gave `/dev/path` three distinct images, `/dev/progress-bar`
+	// two and `/dev/item-page` two. At 0.01, two full runs failed the same two specs and nothing
+	// else, and both were stale baselines rather than noise. The arithmetic boundary underneath
+	// any choice is about 0.003788, where a single grey level stops being admitted; that is a
+	// property of the comparator and not a measurement of this lane, and 0.01 sits above it
+	// deliberately, because this lane's own noise is a channel level on the pages that move.
+	//
+	// **What no tolerance here reaches.** Playwright calls pixelmatch with `includeAA: false`, and
+	// nothing in the protocol's screenshot parameters can change it — they are `threshold`,
+	// `maxDiffPixels`, `maxDiffPixelRatio` and a comparator name. A pixel the heuristic reads as
+	// an anti-aliased edge is dropped before this line is consulted. That takes most of the
+	// evidence off a change that moves ink rather than recolouring it — a curve moved one pixel
+	// sideways counted 185 pixels — but not the failure, because `maxDiffPixels` is unset and one
+	// surviving pixel is enough. What disappears outright is a difference whose every pixel is
+	// read as an edge, which is exactly this lane's own rasterisation noise: `/dev/path` differs
+	// from itself by up to 72 pixels between renders and the comparator counts none of them.
+	expect: { toHaveScreenshot: { threshold: 0.01 } },
 	use: {
 		baseURL: BASE_URL,
 		trace: 'on-first-retry'
