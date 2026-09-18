@@ -4236,6 +4236,20 @@ violation — and against the evasions that occurred to a reviewer, not only the
 before it is relied on. A gate that has only ever passed is indistinguishable from one that
 cannot fail.
 
+**Four of them shared one blind spot, and the helper's own comment named it.**
+`scripts/conformance/lib.mjs` skipped any directory whose path ended in `dist` or `build`,
+beside a comment saying the list is matched as a path prefix precisely so that
+`src/lib/components/build/` — "ours, and must be scanned" — would be. It was not: a component
+planted there with a Tailwind directive in its `<style>` was invisible to C1, C3, C6 and C9 at
+once, and all four reported clean. Corrected 2026-09-18 by splitting the list in two — never
+source at any depth, against build output only where it sits beside a manifest — which is what
+the comment had described all along. Splitting it also exposed that `.upstream`, the pinned
+foreign checkouts, had never been on the list at all: nothing had noticed because no gate walks
+from the repository root, and what surfaced it was one of its C++ directories being named
+`build`. Adding it halves what a root walk reads, from 15,873 files to 7,906. A comment that states the rule the code was meant to
+implement is evidence about intent and none at all about behaviour, and this one had stood
+unread beside the line contradicting it.
+
 Probe with an empty index. A guard probe commits and resets to prove the guard fired; run with
 work staged, that reset discards the work.
 
