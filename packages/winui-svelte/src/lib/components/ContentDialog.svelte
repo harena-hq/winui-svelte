@@ -49,6 +49,55 @@
 	// `FullSizeDesired` is absent. It is one visual state, `FullDialogSizing`, which stretches the
 	// card vertically; it is not what this unit measures and no Gallery example sets it.
 	// `XamlRoot` is absent: a browser tab has one root and the portal goes to it.
+
+	// Candidates for `FocusManager_GetFirstFocusableElement`, which `ContentDialog_Partial.cpp:2011`
+	// asks about the content. Everything the browser can focus by default, plus anything given a
+	// `tabindex` or made editable; it deliberately over-matches, because the two tests that
+	// narrow it are properties rather than selectors and are applied in `tabStop` below.
+	const FOCUS_CANDIDATE = [
+		'a[href]',
+		'area[href]',
+		'button',
+		'input',
+		'select',
+		'textarea',
+		'iframe',
+		'summary',
+		'audio[controls]',
+		'video[controls]',
+		'[contenteditable]:not([contenteditable="false"])',
+		'[tabindex]'
+	].join(', ');
+
+	/**
+	 * Is this element a tab stop, and where in the order?
+	 *
+	 * `IsTabStop="False"` is a negative `tabIndex` — reachable by script and not by Tab, which is
+	 * what the template says the dialog itself is (`ContentDialog_themeresources.xaml:62`) and
+	 * what the card carries. **Read through the `tabIndex` property, never off the attribute**:
+	 * the property is the parsed value, so it answers `tabindex=" -1"` as −1 and `tabindex="-0"`
+	 * as 0 and the elements that are tab stops with no attribute at all — with the one exception
+	 * below, which the property gets wrong.
+	 *
+	 * XAML orders focus by `TabIndex` and so does HTML: a positive index comes first, ascending,
+	 * and everything else follows in document order. The content slot is the consumer's, so a
+	 * positive index in it is theirs to write and not this library's to assume away.
+	 */
+	function tabStop(element: HTMLElement) {
+		if (element.matches(':disabled')) return null;
+		// One element does not answer for itself. Measured in Chromium 2026-09-18: a
+		// `contenteditable` element with no `tabindex` of its own reports `tabIndex` −1 and is a
+		// tab stop anyway, where `audio[controls]`, `video[controls]`, `iframe` and `summary` all
+		// report 0 and `details` without a `summary` reports −1 and is not focusable at all. An
+		// explicit attribute is still the consumer's word, in both directions.
+		const index =
+			element.isContentEditable && !element.hasAttribute('tabindex') ? 0 : element.tabIndex;
+		if (index < 0) return null;
+		// `Number.MAX_SAFE_INTEGER` and not `Infinity`: the rank is subtracted in the comparator
+		// below, and `Infinity - Infinity` is `NaN`, which makes a comparator that reorders the
+		// equal ranks — the whole of the ordinary case — by nothing in particular.
+		return index > 0 ? index : Number.MAX_SAFE_INTEGER;
+	}
 </script>
 
 <script lang="ts">
@@ -83,6 +132,67 @@
 		callback?.();
 		open = false;
 	}
+
+	let contentRef = $state<HTMLElement | null>(null);
+	let primaryRef = $state<HTMLButtonElement | null>(null);
+	let secondaryRef = $state<HTMLButtonElement | null>(null);
+	let closeRef = $state<HTMLButtonElement | null>(null);
+
+	// `GetDefaultButtonHelper` (`ContentDialog_Partial.cpp:1566`) resolves `DefaultButton` to a
+	// button rather than to a style, so this reads the prop and not the accent variant beside it.
+	// A button whose text is unset is not rendered here and upstream collapses it; either way the
+	// step below it is what answers.
+	const defaultButtonRef = $derived(
+		defaultButton === 'primary'
+			? primaryRef
+			: defaultButton === 'secondary'
+				? secondaryRef
+				: defaultButton === 'close'
+					? closeRef
+					: null
+	);
+
+	// `wasFocusSet` is an out-parameter of each `SetFocusedElement` call below rather than an
+	// assumption that it worked, and reading `document.activeElement` back is that
+	// out-parameter: `.focus()` on a hidden or unrendered element is a silent no-op, which no
+	// selector can predict.
+	function focusProgrammatically(element: HTMLElement | null) {
+		if (!element) return false;
+		element.focus({ focusVisible: false });
+		return document.activeElement === element;
+	}
+
+	// `ContentDialog::SetInitialFocusElement` (`ContentDialog_Partial.cpp:1984`), whose three
+	// steps are `:1997` the first focusable element of the content, `:2027` the default button,
+	// and `:2039` the first focusable command button — each with `FocusState_Programmatic`
+	// (`:2023`, `:2035`, `:2056`), which moves focus and draws no visual.
+	//
+	// The order is content first, and the default button is the *fallback*. Both of the Gallery's
+	// examples put a CheckBox in the content, so neither ever reaches step two, and the accent
+	// `Save` button of the one with `DefaultButton="Primary"` is not the element that holds focus
+	// when the dialog opens. Measured on the reference guest 2026-09-18: shown from a mouse
+	// click, nothing in the dialog is lit; one Tab lights `Save`, which places focus on the
+	// CheckBox before it; and Space pressed instead of Tab toggles that CheckBox and still lights
+	// nothing.
+	//
+	// `focus({ focusVisible: false })` is `FocusState_Programmatic` rather than a workaround for
+	// it — a plain `focus()` grants `:focus-visible` on a page that has seen no interaction,
+	// which is every page that opens a dialog on load.
+	//
+	// The last line is this library's and not upstream's: `SetInitialFocusElement` simply returns
+	// with focus wherever it was, which leaves it outside a dialog that traps it. WD-015.
+	function setInitialFocusElement() {
+		const content = [...(contentRef?.querySelectorAll<HTMLElement>(FOCUS_CANDIDATE) ?? [])]
+			.map((element) => [element, tabStop(element)] as const)
+			.filter((pair): pair is readonly [HTMLElement, number] => pair[1] !== null)
+			// `sort` is stable, so equal ranks keep the document order `querySelectorAll` returned.
+			.sort(([, a], [, b]) => a - b);
+		for (const [candidate] of content) if (focusProgrammatically(candidate)) return;
+		if (focusProgrammatically(defaultButtonRef)) return;
+		for (const command of [primaryRef, secondaryRef, closeRef])
+			if (focusProgrammatically(command)) return;
+		focusProgrammatically(ref);
+	}
 </script>
 
 <Dialog.Root
@@ -102,16 +212,11 @@
 			<Dialog.Content
 				interactOutsideBehavior="ignore"
 				onOpenAutoFocus={(event) => {
-					// The primitive focuses the first focusable descendant, which in the Gallery's
-					// dialog is the CheckBox in the content — and a CheckBox that has focus draws its
-					// focus visual. WinUI moves focus into the dialog too, but its `FocusState` says
-					// whether focus arrived from the keyboard, and it draws the visual only when it
-					// did; a dialog shown from a click lights nothing. `:focus-visible` cannot be told
-					// which it was. Focusing the dialog's own root is what WinUI does when
-					// `DefaultButton` is `None`: focus is inside the trap, Tab reaches the buttons in
-					// order, and no control is lit. WD-015.
+					// The primitive focuses the first focusable descendant with a plain `focus()`,
+					// which is the right element in the Gallery's dialog and lights it. Cancel that
+					// and run upstream's own three steps unlit instead.
 					event.preventDefault();
-					ref?.focus();
+					setInitialFocusElement();
 				}}
 			>
 				{#snippet child({ props })}
@@ -131,13 +236,14 @@
 										{/snippet}
 									</Dialog.Title>
 								{/if}
-								<div class="content">{@render children?.()}</div>
+								<div class="content" bind:this={contentRef}>{@render children?.()}</div>
 							</div>
 						</div>
 						{#if buttonCount > 0}
 							<div class="commands" data-count={buttonCount}>
 								{#if primaryButtonText}
 									<Button
+										bind:ref={primaryRef}
 										variant={defaultButton === 'primary' ? 'accent' : 'default'}
 										disabled={primaryButtonDisabled}
 										onclick={() => dismiss(onPrimaryButtonClick)}
@@ -147,6 +253,7 @@
 								{/if}
 								{#if secondaryButtonText}
 									<Button
+										bind:ref={secondaryRef}
 										variant={defaultButton === 'secondary' ? 'accent' : 'default'}
 										disabled={secondaryButtonDisabled}
 										onclick={() => dismiss(onSecondaryButtonClick)}
@@ -156,6 +263,7 @@
 								{/if}
 								{#if closeButtonText}
 									<Button
+										bind:ref={closeRef}
 										variant={defaultButton === 'close' ? 'accent' : 'default'}
 										onclick={() => dismiss(onCloseButtonClick)}
 									>
@@ -221,9 +329,10 @@
 		background: var(--winui-ContentDialogBackground) padding-box;
 		box-shadow: var(--winui-DialogShadow);
 		color: var(--winui-ContentDialogForeground);
-		/* The card is `tabindex="-1"`, so nothing but the open handler above ever focuses it and
-		   it is not in the tab order. The browser still paints its own ring there, and WinUI's
-		   dialog draws none. */
+		/* The card is `tabindex="-1"`, so it is not in the tab order and only script focuses it:
+		   the open handler above, and the primitive's focus scope, which falls back to its own
+		   container when focus leaves it. The browser paints its own ring for the second of
+		   those, and WinUI's dialog draws none. */
 		outline: none;
 	}
 
