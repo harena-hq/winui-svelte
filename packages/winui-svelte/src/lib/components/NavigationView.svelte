@@ -793,35 +793,53 @@
 		visibility: visible;
 	}
 
-	.root:not([data-collapsed='true']) .pane {
+	/* `PaneRoot.Width` is `OpenPaneLength` in every state — `SplitView_themeresources.xaml:700`
+	   binds it once and no visual state overrides it. A rail is not a narrower pane: it is this
+	   pane, clipped. `PaneClipRectangle` (`:706`) is the clip and `PaneClipRectangleTransform`
+	   is what the open and close transitions move, which is the whole reason the width lives
+	   here and the narrowing does not. */
+	.pane {
 		width: var(--nav-open-pane-length);
 	}
 
-	.root[data-collapsed='true'] .pane {
+	/* `ListSizeCompact` (NavigationView.xaml:303) narrows `PaneContentGrid`, not `PaneRoot`.
+	   Transcribing that width onto the pane put it on the wrong box: it gave the same rail at
+	   rest, and it left the control with no clip to animate and with the pane's own right edge
+	   — its border, and `HCPaneBorder` — drawn at the rail's edge where the template clips both
+	   away. */
+	.root[data-collapsed='true'] .pane-content-grid {
 		width: var(--winui-NavigationViewCompactPaneLength);
 	}
 
-	/* `ColumnDefinition1`, the strip the pane's column keeps while the pane is drawn over the
-	   content. The pane is `OpenPaneLength` wide and the column under it is not:
-	   `OpenCompactOverlayLeft` (SplitView_themeresources.xaml:635) sets the column to
-	   `CompactPaneGridLength` and moves `ContentRoot` into the second one, so a compact rail
-	   keeps exactly the room it had and the content does not move when the pane opens — which
-	   is the defect this closes. `OpenOverlayLeft` (`:563`) sets neither, so `ContentRoot` keeps
-	   the template's `Grid.ColumnSpan="2"` (`:718`) and spans the control: a minimal pane
-	   reserves nothing and the content is full width beneath it.
+	/* `PaneClipRectangle`. A closed rail shows `CompactPaneLength` of a pane that is
+	   `OpenPaneLength` wide; every open shape shows all of it. */
+	.root[data-collapsed='true'] .pane {
+		clip-path: inset(
+			0 calc(var(--nav-open-pane-length) - var(--winui-NavigationViewCompactPaneLength)) 0 0
+		);
+	}
+
+	/* `ColumnDefinition1`, the width of the column the pane sits in — which is not the pane's
+	   own width, and that is the distinction the template keeps and this control had lost. The
+	   pane is `OpenPaneLength` in every state; the column under it is `CompactPaneGridLength`
+	   wherever the shape is compact, open or closed (`ClosedCompactLeft`,
+	   SplitView_themeresources.xaml:543, and `OpenCompactOverlayLeft`, `:635`, which also moves
+	   `ContentRoot` into the second column), and it is nothing at all for the minimal shapes,
+	   where `ContentRoot` keeps the template's `Grid.ColumnSpan="2"` (`:718`) and spans the
+	   control. Inline is the third case and needs no rule: the column is the pane's width, which
+	   is what a flex item takes by default.
 
 	   A negative end margin is that column. The pane lays out at its own width and gives back
-	   all but the strip, so its outer size is what the column would have been, and the two
-	   states differ only in how much comes back. `SplitView.svelte` reaches the same pair
-	   through `--pane-column`, because that control's root is the grid the template describes
-	   and this one's is not. */
-	.root[data-overlay='true'][data-display-mode='compact'] .pane {
+	   all but the column, so its outer size is the column's. `SplitView.svelte` reaches the same
+	   three cases through `--pane-column`, because that control's root is the grid the template
+	   describes and this one's is not. */
+	.root[data-display-mode='compact'] .pane {
 		margin-inline-end: calc(
 			var(--winui-NavigationViewCompactPaneLength) - var(--nav-open-pane-length)
 		);
 	}
 
-	.root[data-overlay='true'][data-display-mode='minimal'] .pane {
+	.root[data-display-mode='minimal'] .pane {
 		margin-inline-end: calc(-1 * var(--nav-open-pane-length));
 	}
 
