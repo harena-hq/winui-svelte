@@ -505,6 +505,30 @@
 		</div>
 	{/if}
 
+	<!-- `LightDismissLayer`, SplitView_themeresources.xaml:723 — a `Fill="Transparent"` rectangle
+	     over the SplitView's content that every `Open*Overlay*` state makes visible (`:571`,
+	     `:650`, `:678`). Tapping it closes the pane, and that reaches this control because
+	     `RootSplitView.IsPaneOpen` is two-way bound to `IsPaneOpen` (NavigationView.xaml:289),
+	     which `NavigationView.cpp:1702` says in as many words. The condition is
+	     `NavigationView::IsLightDismissible` (`:1842`) — the SplitView's `DisplayMode` neither
+	     `Inline` nor `CompactInline` — which, taken with an open pane, is what `overlay` already
+	     is here.
+
+	     There is no scrim, and that is upstream's answer rather than a simplification: the fill
+	     only becomes `SplitViewLightDismissOverlayBackground` in the `OverlayVisible` state
+	     (`:688`), which `LightDismissOverlayMode` selects, and its default `Auto` resolves to off
+	     everywhere but Xbox. `SplitView.svelte` carries the same layer for the same part.
+
+	     The pane is above this (its `z-index: 1`) and so is the toggle button (`:100`), so
+	     neither dismisses by being clicked. What this does not reproduce is the cancellable half:
+	     `AttemptClosePaneLightly` (`:1707`) raises `PaneClosing` and honours its `Cancel`, and
+	     ADR 0009's change callbacks have no equivalent — the same gap `SplitView.svelte` records.
+	     Its other three callers are `GamepadView`, `XButton1` and Alt+Left (`:3112`, `:3132`);
+	     the first two are not web inputs and the third is the browser's own Back. -->
+	{#if overlay}
+		<div class="light-dismiss" onclick={() => setPaneOpen(false)} aria-hidden="true"></div>
+	{/if}
+
 	<div class="content-grid">
 		{#if header}
 			<div class="header-content">{@render header()}</div>
@@ -924,6 +948,14 @@
 
 	.footer-items {
 		flex: 0 0 auto;
+	}
+
+	/* `:723`. Desktop `Auto` light dismiss leaves this transparent, so it is a hit target and
+	   nothing else. `z-index` is left alone on purpose: positioned and painted above the static
+	   content, below the pane's 1 and the button holder's 100. */
+	.light-dismiss {
+		position: absolute;
+		inset: 0;
 	}
 
 	.content-grid {
