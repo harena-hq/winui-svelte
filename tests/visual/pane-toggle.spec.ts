@@ -7,12 +7,18 @@ import { expect, test } from './fixtures';
 // PaneToggleButtonGrid to RootGrid, where nothing about the pane's visibility reaches it.
 const minimal = '.root[data-pane-display-mode="leftMinimal"]';
 
+// `getAnimations()` is typed as returning the base `Animation`, and only the `CSSTransition`
+// subtype names the property it animates — which is the whole of what these tests read.
+type CSSTransitionLike = Animation & { transitionProperty: string };
+
 test('a closed minimal pane can be opened from the control itself', async ({ page }) => {
 	await page.goto('/dev/navigation-view');
 
 	const root = page.locator(minimal).first();
 	await expect(root).toHaveAttribute('data-pane-open', 'false');
-	await expect(root.locator('.pane')).toHaveCount(0);
+	// Hidden rather than absent: the pane is a template part with a `Visibility`, kept in the
+	// document so the open and close transitions have something to run on.
+	await expect(root.locator('.pane')).toBeHidden();
 
 	const toggle = root.locator('.pane-toggle');
 	await expect(toggle).toBeVisible();
@@ -25,10 +31,11 @@ test('a closed minimal pane can be opened from the control itself', async ({ pag
 	await expect(root.locator('.pane')).toBeVisible();
 	await expect(toggle).toHaveAttribute('aria-expanded', 'true');
 
-	// And back, rather than being stuck the other way.
+	// And back, rather than being stuck the other way. `toBeHidden` waits, which is what the
+	// close transition needs: `visibility` flips at the end of its 120ms, not at the start.
 	await toggle.click();
 	await expect(root).toHaveAttribute('data-pane-open', 'false');
-	await expect(root.locator('.pane')).toHaveCount(0);
+	await expect(root.locator('.pane')).toBeHidden();
 });
 
 // The harness's second minimal frame is opened from the page after mount, because the control
@@ -81,7 +88,7 @@ test('a click outside an overlaying pane closes it', async ({ page }) => {
 	await clickContent(page, root);
 
 	await expect(root).toHaveAttribute('data-pane-open', 'false');
-	await expect(root.locator('.pane')).toHaveCount(0);
+	await expect(root.locator('.pane')).toBeHidden();
 });
 
 // The expanded pane is not light-dismissible — `NavigationView::IsLightDismissible`
@@ -122,6 +129,86 @@ test('opening a compact rail does not move or resize the content', async ({ page
 	// Width and left edge both, because reserving nothing moves one and widens the other.
 	expect(after.width).toBe(before.width);
 	expect(after.x).toBe(before.x);
+});
+
+// The durations, read off the states rather than timed. A transition that is declared and never
+// reached is the failure this guards: the selectors carry the whole mapping from a display mode
+// to a duration, and a wrong one is invisible in every other test here, which only ever waits
+// for the end state.
+test('each shape carries the duration its transition is given', async ({ page }) => {
+	await page.goto('/dev/navigation-view');
+
+	// The computed value is one duration per transitioned property, and a rule that sets them
+	// all at once collapses to a single entry — so compare the distinct values, not the string.
+	const duration = async (root: Locator) => {
+		const declared = await root
+			.locator('.pane')
+			.evaluate((el) => getComputedStyle(el).transitionDuration);
+		return [...new Set(declared.split(',').map((d) => d.trim()))];
+	};
+
+	// Minimal, closed: the overlay close pair, 0:0:0.12 (SplitView_themeresources.xaml:177).
+	const minimalRoot = page.locator(minimal).first();
+	await expect(minimalRoot).toHaveAttribute('data-pane-open', 'false');
+	expect(await duration(minimalRoot)).toEqual(['0.12s']);
+
+	// Minimal, open: the overlay open pair, 0:0:0.35 (`:55`).
+	await minimalRoot.locator('.pane-toggle').click();
+	await expect(minimalRoot).toHaveAttribute('data-pane-open', 'true');
+	expect(await duration(minimalRoot)).toEqual(['0.35s']);
+
+	// Expanded is inline and always open, so it can only reach the open resource, 200ms
+	// (`SplitViewPaneAnimationOpenDuration`).
+	const expandedRoot = page.locator('.root[data-pane-display-mode="auto"]').first();
+	await expect(expandedRoot).toHaveAttribute('data-display-mode', 'expanded');
+	expect(await duration(expandedRoot)).toEqual(['0.2s']);
+});
+
+// And that one actually runs. `getAnimations()` reports a `CSSTransition` only while it is in
+// flight, so this is the difference between a rule that is declared and a rule that fires — the
+// distinction no other test in this file can make, because each of them waits for the end state
+// and the end state is the same either way.
+test('opening an overlaying pane starts a transition', async ({ page }) => {
+	await page.goto('/dev/navigation-view');
+
+	const root = page.locator(minimal).first();
+	await root.locator('.pane-toggle').click();
+
+	// Read inside the 350ms the open transition lasts. A round trip is single-digit ms.
+	const running = await root.locator('.pane').evaluate((el) =>
+		el.getAnimations().map((animation) => ({
+			property: (animation as CSSTransitionLike).transitionProperty,
+			duration: animation.effect?.getTiming().duration
+		}))
+	);
+
+	// All three, and the exact duration. The strictness is the assertion: a transition that is
+	// reversing one already in flight is given a *shortened* duration in proportion to the
+	// progress made, so anything under 350 here means something was running that should not have
+	// been — which is how the settling defect above was found, as a reading of 347.06.
+	expect(running.map((a) => a.property).sort()).toEqual(['clip-path', 'translate', 'visibility']);
+	expect(new Set(running.map((a) => a.duration))).toEqual(new Set([350]));
+});
+
+// The guard that keeps the control's own settling from animating. It earns a test because a
+// green suite cannot tell a suppressed transition from one that never had a reason to run: every
+// other test here acts first and reads after, and by then the page has settled either way.
+// Measured against a component without the guard: three of this harness's panes animate on load,
+// the rail's clip over 120ms and two overlay panes over 120 and 350.
+test('nothing animates while the control is still settling', async ({ page }) => {
+	await page.goto('/dev/navigation-view');
+
+	const running = await page.evaluate(() =>
+		[...document.querySelectorAll('.pane')].flatMap((el) =>
+			el
+				.getAnimations()
+				.map(
+					(a) => `${(a as CSSTransitionLike).transitionProperty}:${a.effect?.getTiming().duration}`
+				)
+		)
+	);
+
+	expect(running).toEqual([]);
 });
 
 test('the top display mode has no pane toggle', async ({ page }) => {
