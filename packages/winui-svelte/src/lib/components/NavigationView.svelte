@@ -225,6 +225,29 @@
 		setPaneOpen(mode === 'expanded');
 	});
 
+	// A `VisualTransition` runs when a state changes, and the first state a control is put into
+	// is not a change — upstream's pane does not animate onto the screen when the page opens.
+	// Here it did, and for a reason worth naming: the effect above settles `paneOpen` against a
+	// `mode` that is measured from the rendered width, so the first thing the browser sees after
+	// hydration is an attribute changing, which is exactly what a CSS transition listens for.
+	// Measured before this guard: three panes on the harness animated on load, the rail's clip
+	// over 120ms and two overlay panes over 120 and 350.
+	//
+	// Two frames rather than one. The width arrives through `bind:clientWidth`, so `mode` can
+	// settle on the frame after the first paint, and a flag raised one frame earlier would let
+	// that settling animate — which is the same defect one frame later.
+	let settled = $state(false);
+	$effect(() => {
+		const outer = requestAnimationFrame(() => {
+			const inner = requestAnimationFrame(() => {
+				settled = true;
+			});
+			frame = inner;
+		});
+		let frame = outer;
+		return () => cancelAnimationFrame(frame);
+	});
+
 	// Every write the control makes to `expandedItems` goes through this. A new array
 	// every time, never a mutation of the one the consumer holds — that is what makes the
 	// binding two-way and `onExpandedItemsChange` observable. `NavigationViewItem` calls
@@ -252,8 +275,6 @@
 	let paneScrollableHeight = $state(0);
 	let menuOverflows = $derived(paneScrollableHeight > 0);
 
-	// Minimal hides the pane entirely when it is closed; the other two keep it, narrowed.
-	const paneVisible = $derived(mode !== 'minimal' || paneOpen);
 	// Overlaying is what makes compact and minimal different from expanded: the pane is
 	// drawn above the content instead of beside it, so the content does not reflow.
 	const overlay = $derived(mode !== 'expanded' && paneOpen);
@@ -356,6 +377,7 @@
 	data-overlay={overlay}
 	data-collapsed={collapsed}
 	data-pane-display-mode={paneDisplayMode}
+	data-settled={settled || undefined}
 	{...rest}
 >
 	<!-- NavigationView.xaml:180 — PaneToggleButtonGrid is a child of RootGrid, not of the pane,
@@ -375,61 +397,40 @@
 		</div>
 	{/if}
 	{#if !isTop}
-		{#if paneVisible}
-			<div class="pane">
-				<div class="pane-content-grid">
-					<!-- NavigationView.xaml:296, PaneContentGridToggleButtonRow. The button is
+		<!-- Rendered in every left shape, including the minimal one where it is not shown.
+		     `PaneRoot` is a template part with a `Visibility`, not a part that comes and goes:
+		     `Closed` leaves it at the template's `Collapsed` (SplitView_themeresources.xaml:700)
+		     and every other state sets it `Visible`, and the `Closed → Open*` transitions set it
+		     visible at key time zero so the pane is on screen for the whole of the animation
+		     that brings it in. An element added on open and removed on close has nothing to
+		     animate in either direction, which is what this was. Hidden by `visibility` below,
+		     so it is out of the tab order and out of the accessibility tree while closed. -->
+		<div class="pane">
+			<div class="pane-content-grid">
+				<!-- NavigationView.xaml:296, PaneContentGridToggleButtonRow. The button is
 					     anchored to the root below, the way upstream anchors PaneToggleButtonGrid
 					     to RootGrid; this row is the space upstream keeps for it inside the pane,
 					     and it is what stops the menu from moving up when the button leaves. -->
-					{#if paneToggleButtonVisible}
-						<div class="toggle-button-row" aria-hidden="true"></div>
-					{/if}
+				{#if paneToggleButtonVisible}
+					<div class="toggle-button-row" aria-hidden="true"></div>
+				{/if}
 
-					<!-- This pane region is now a ScrollView; horizontal scrolling remains disabled. -->
-					<ScrollView
-						class="items-container-grid"
-						style="flex: 1 1 auto; min-height: 0"
-						horizontalScrollMode="disabled"
-						bind:scrollableHeight={paneScrollableHeight}
-					>
-						<ul role="tree" class="menu-items">
-							{#each items as entry, i (isNavigationViewHeader(entry) ? `h${i}` : entry.id)}
-								{#if isNavigationViewHeader(entry)}
-									<li role="none">
-										<div class="item-header winui-BodyStrongTextBlockStyle">{entry.header}</div>
-									</li>
-								{:else}
-									<NavigationViewItem
-										item={entry}
-										level={1}
-										{selected}
-										{expandedItems}
-										{setExpanded}
-										{onItemInvoked}
-										{collapsed}
-									/>
-								{/if}
-							{/each}
-						</ul>
-					</ScrollView>
-
-					{#if menuOverflows}
-						<div class="items-separator"></div>
-					{/if}
-
-					<!-- Always in the grid, as `FooterContentBorder` is — NavigationView.xaml:377.
-				     Empty it is 4 pixels of bottom margin, and those 4 are part of the space
-				     the footer sits in whether or not an app fills the slot. -->
-					<div class="footer-content-border">
-						{#if paneFooter}{@render paneFooter()}{/if}
-					</div>
-
-					{#if settingsVisible}
-						<div class="footer-items">
-							<ul role="tree" class="menu-items">
+				<!-- This pane region is now a ScrollView; horizontal scrolling remains disabled. -->
+				<ScrollView
+					class="items-container-grid"
+					style="flex: 1 1 auto; min-height: 0"
+					horizontalScrollMode="disabled"
+					bind:scrollableHeight={paneScrollableHeight}
+				>
+					<ul role="tree" class="menu-items">
+						{#each items as entry, i (isNavigationViewHeader(entry) ? `h${i}` : entry.id)}
+							{#if isNavigationViewHeader(entry)}
+								<li role="none">
+									<div class="item-header winui-BodyStrongTextBlockStyle">{entry.header}</div>
+								</li>
+							{:else}
 								<NavigationViewItem
-									item={SETTINGS_ITEM}
+									item={entry}
 									level={1}
 									{selected}
 									{expandedItems}
@@ -437,12 +438,39 @@
 									{onItemInvoked}
 									{collapsed}
 								/>
-							</ul>
-						</div>
-					{/if}
+							{/if}
+						{/each}
+					</ul>
+				</ScrollView>
+
+				{#if menuOverflows}
+					<div class="items-separator"></div>
+				{/if}
+
+				<!-- Always in the grid, as `FooterContentBorder` is — NavigationView.xaml:377.
+				     Empty it is 4 pixels of bottom margin, and those 4 are part of the space
+				     the footer sits in whether or not an app fills the slot. -->
+				<div class="footer-content-border">
+					{#if paneFooter}{@render paneFooter()}{/if}
 				</div>
+
+				{#if settingsVisible}
+					<div class="footer-items">
+						<ul role="tree" class="menu-items">
+							<NavigationViewItem
+								item={SETTINGS_ITEM}
+								level={1}
+								{selected}
+								{expandedItems}
+								{setExpanded}
+								{onItemInvoked}
+								{collapsed}
+							/>
+						</ul>
+					</div>
+				{/if}
 			</div>
-		{/if}
+		</div>
 	{:else}
 		<div class="top-pane">
 			<!-- BackButtonPlaceholderOnTopNav is zero in BackButtonCollapsed; this library has no back-button prop. -->
@@ -583,6 +611,22 @@
 		   copies of the number, because the rules that reserve the pane's strip subtract it. */
 		/* c1-allow: NavigationView.idl:198, OpenPaneLength MUX_DEFAULT_VALUE("320.0") */
 		--nav-open-pane-length: 320px;
+		/* How far outside its own box the pane's clip reaches. Upstream needs no such thing,
+		   because upstream clips one element and casts the shadow from another: `PaneClipRectangle`
+		   is `PaneRoot`'s (SplitView_themeresources.xaml:705), while the `ThemeShadow` goes on
+		   `ShadowCaster`, a sibling Grid in NavigationView's own template (NavigationView.xaml:409)
+		   that `NavigationView::SetDropShadow` reaches by name (NavigationView.cpp:5034). This
+		   control has one box doing both, so a clip at the border box takes the shadow with it —
+		   measured, `inset(0)` erases the shadow completely and a negative inset restores it byte
+		   for byte.
+
+		   Sixteen is `PaneOverlayShadowDepth` (NavigationView_themeresources.xaml:207), the depth
+		   `--winui-PaneShadow` is built from, and it is a bound on that shadow's own reach rather
+		   than a guess: the recipe halves the depth to an elevation, offsets by half of that and
+		   blurs by two thirds of it, which for 16 is 4px down and 5.333px of blur. A blur spreads
+		   less than its full radius, so 16 clears the whole of it with room over. */
+		/* c1-allow: NavigationView_themeresources.xaml:207, PaneOverlayShadowDepth */
+		--nav-pane-clip-outset: 16px;
 		position: relative;
 		display: flex;
 		min-height: 0;
@@ -811,12 +855,98 @@
 		width: var(--winui-NavigationViewCompactPaneLength);
 	}
 
-	/* `PaneClipRectangle`. A closed rail shows `CompactPaneLength` of a pane that is
-	   `OpenPaneLength` wide; every open shape shows all of it. */
+	/* `PaneClipRectangle` and `PaneTransform`, the two things the open and close transitions
+	   move, and the two states they move between. Every open shape shows the whole pane where it
+	   sits; the closed ones differ, and the difference is the point:
+
+	   a closed rail shows `CompactPaneLength` of it and the pane does not move — the compact
+	   transitions drive `PaneClipRectangleTransform` and nothing else (`:111`, `:229`), so the
+	   rail widens in place;
+
+	   a closed minimal pane is gone, and gets there by moving — the minimal transitions drive
+	   `PaneTransform` by `NegativeOpenPaneLength` *and* the clip by `OpenPaneLength` (`:55`,
+	   `:177`), so it slides off to the left rather than narrowing to nothing.
+
+	   The base state is the open one, which is also what expanded holds. Both properties are
+	   written as `inset()` on every branch because a transition needs two values of one kind:
+	   `clip-path: none` and an `inset()` do not interpolate, they cut. Every edge the clip is not
+	   cutting at is held `--nav-pane-clip-outset` outside the box rather than on it, so that the
+	   shadow survives — see that property. */
+	.pane {
+		translate: 0 0;
+		clip-path: inset(calc(-1 * var(--nav-pane-clip-outset)));
+		visibility: visible;
+	}
+
 	.root[data-collapsed='true'] .pane {
 		clip-path: inset(
-			0 calc(var(--nav-open-pane-length) - var(--winui-NavigationViewCompactPaneLength)) 0 0
+			calc(-1 * var(--nav-pane-clip-outset))
+				calc(var(--nav-open-pane-length) - var(--winui-NavigationViewCompactPaneLength))
+				calc(-1 * var(--nav-pane-clip-outset)) calc(-1 * var(--nav-pane-clip-outset))
 		);
+	}
+
+	/* `Closed` leaves `PaneRoot` at the template's `Collapsed` (`:700`). `visibility` is in the
+	   transition list with the other two so that it flips at the end of a close and at the start
+	   of an open, which is what the storyboards do by setting it visible at key time zero. */
+	.root[data-display-mode='minimal']:not([data-pane-open='true']) .pane {
+		translate: calc(-1 * var(--nav-open-pane-length)) 0;
+		clip-path: inset(
+			calc(-1 * var(--nav-pane-clip-outset)) 0 calc(-1 * var(--nav-pane-clip-outset))
+				var(--nav-open-pane-length)
+		);
+		visibility: hidden;
+	}
+
+	/* The durations, and the one thing this encoding cannot carry. Upstream names sixteen
+	   transitions by the pair of states they run between; CSS can only see the state being
+	   entered, so each rule below is a target and the duration is whichever transition most
+	   often arrives there. The overlay pair is 0:0:0.35 in and 0:0:0.12 out on
+	   `0.1,0.9 0.2,1.0`, written as literals in the transitions themselves (`:55`, `:111`,
+	   `:177`, `:229`). The close is the base and the open states replace it — the same
+	   resolution `SplitView.svelte` reached for the same reason.
+
+	   What it costs: a window narrowing from expanded to a rail is `OpenInlineLeft →
+	   ClosedCompactLeft` (`:382`), 100ms on the inline spline, and it arrives at the same
+	   closed-rail state that a pane closing from an overlay arrives at, which is 120ms. The
+	   rail's own state cannot hold both, so the resize takes the overlay number. Twenty
+	   milliseconds on a transition nothing drives deliberately, and it is written here rather
+	   than left for a reader to find. */
+	.pane {
+		/* c1-allow: SplitView_themeresources.xaml:177, :229 — overlay close duration and spline */
+		transition:
+			translate 120ms cubic-bezier(0.1, 0.9, 0.2, 1),
+			clip-path 120ms cubic-bezier(0.1, 0.9, 0.2, 1),
+			visibility 120ms;
+	}
+
+	.root[data-pane-open='true'][data-display-mode='compact'] .pane,
+	.root[data-pane-open='true'][data-display-mode='minimal'] .pane {
+		/* c1-allow: SplitView_themeresources.xaml:55, :111 — overlay open duration */
+		transition-duration: 350ms;
+	}
+
+	/* Expanded is the inline shape, and its pair is a resource rather than a literal
+	   (`:295`, `:324`). It is always open, so only the open duration can be reached. */
+	.root[data-display-mode='expanded'] .pane {
+		transition:
+			translate var(--winui-SplitViewPaneAnimationOpenDuration) cubic-bezier(0, 0.35, 0.15, 1),
+			clip-path var(--winui-SplitViewPaneAnimationOpenDuration) cubic-bezier(0, 0.35, 0.15, 1),
+			/* c1-allow: SplitView_themeresources.xaml:324 — inline open spline */ visibility
+				var(--winui-SplitViewPaneAnimationOpenDuration);
+	}
+
+	/* Until the control has settled, there is no transition to run — see the comment on
+	   `settled`. This is a `transition-property` of `none` rather than a zero duration, so that
+	   nothing is even considered while the first state is being reached. */
+	.root:not([data-settled]) .pane {
+		transition-property: none;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.pane {
+			transition-duration: 0s;
+		}
 	}
 
 	/* `ColumnDefinition1`, the width of the column the pane sits in — which is not the pane's
