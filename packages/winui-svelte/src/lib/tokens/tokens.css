@@ -34,6 +34,7 @@
 	--winui-FocusVisualPrimaryThickness: 2px;
 	--winui-FocusVisualSecondaryThickness: 1px;
 	--winui-ToolTipShadow: 0 4px 5.333px rgba(0, 0, 0, 0.137);
+	--winui-PaneShadow: 0 4px 5.333px rgba(0, 0, 0, 0.137);
 	--winui-PopupShadow: 0 8px 10.667px rgba(0, 0, 0, 0.137);
 	--winui-DialogShadow: 0 2px 14.222px rgba(0, 0, 0, 0.149), 0 32px 42.667px rgba(0, 0, 0, 0.188);
 
@@ -4191,6 +4192,7 @@
 	--winui-TextControlHeaderForegroundDisabled: var(--winui-SystemControlDisabledBaseMediumLowBrush);
 	--winui-TextControlButtonBackground: var(--winui-SystemControlTransparentBrush);
 	--winui-ToolTipShadow: 0 4px 5.333px rgba(0, 0, 0, 0.259);
+	--winui-PaneShadow: 0 4px 5.333px rgba(0, 0, 0, 0.259);
 	--winui-PopupShadow: 0 8px 10.667px rgba(0, 0, 0, 0.259);
 	--winui-DialogShadow: 0 2px 14.222px rgba(0, 0, 0, 0.369), 0 32px 42.667px rgba(0, 0, 0, 0.369);
 }
@@ -6219,6 +6221,7 @@
 		);
 		--winui-TextControlButtonBackground: var(--winui-SystemControlTransparentBrush);
 		--winui-ToolTipShadow: 0 4px 5.333px rgba(0, 0, 0, 0.259);
+		--winui-PaneShadow: 0 4px 5.333px rgba(0, 0, 0, 0.259);
 		--winui-PopupShadow: 0 8px 10.667px rgba(0, 0, 0, 0.259);
 		--winui-DialogShadow: 0 2px 14.222px rgba(0, 0, 0, 0.369), 0 32px 42.667px rgba(0, 0, 0, 0.369);
 	}
@@ -8183,6 +8186,7 @@
 	--winui-DateTimeFlyoutButtonBorderThickness: 1px;
 	--winui-HelperButtonThemePadding: 0px -2px 0px 0px;
 	--winui-ToolTipShadow: none;
+	--winui-PaneShadow: none;
 	--winui-PopupShadow: none;
 	--winui-DialogShadow: none;
 }

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import { NavigationView, type NavigationViewEntry } from 'winui-svelte';
 
 	/*
@@ -70,6 +71,18 @@
 	// Seeded before the control mounts, which is the point: a page reached at a child's URL
 	// has to render with that child's parent already open.
 	let seeded = $state(['design']);
+
+	// The frame below is the one that photographs an overlaying pane, and the control will not
+	// render one at rest: it closes its own pane on entering minimal, and mounting in minimal is
+	// entering it. That behaviour is right — a phone-width window opens with the pane shut — so
+	// the harness drives the other state rather than the control being changed to allow it. A
+	// child's `onMount` runs before its parent's, so this write lands after the control's own
+	// and its guard, which only acts when the display mode changes, does not answer it. The
+	// toggle button still closes the pane from here.
+	let overlayPaneOpen = $state(false);
+	onMount(() => {
+		overlayPaneOpen = true;
+	});
 </script>
 
 <svelte:head><title>NavigationView — harness</title></svelte:head>
@@ -109,6 +122,24 @@
 		onItemInvoked={select('minimal')}
 		paneDisplayMode="leftMinimal"
 		bind:paneOpen={minimalPaneOpen}
+	>
+		<p class="winui-BodyTextBlockStyle">The pane is drawn over this.</p>
+	</NavigationView>
+</div>
+
+<h2 class="winui-SubtitleTextBlockStyle">minimal — pinned, pane open</h2>
+<p class="winui-BodyTextBlockStyle">
+	What a phone-width window looks like once the toggle has been pressed. The pane is drawn over the
+	content rather than beside it, so it is opaque, rounded on its right corners, and casts a shadow
+	onto what it covers.
+</p>
+<div class="frame">
+	<NavigationView
+		{items}
+		{selected}
+		onItemInvoked={select('overlay')}
+		paneDisplayMode="leftMinimal"
+		bind:paneOpen={overlayPaneOpen}
 	>
 		<p class="winui-BodyTextBlockStyle">The pane is drawn over this.</p>
 	</NavigationView>
