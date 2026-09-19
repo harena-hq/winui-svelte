@@ -99,6 +99,31 @@ test('a click on the content leaves a pane that is not overlaying alone', async 
 	await expect(root).toHaveAttribute('data-pane-open', 'true');
 });
 
+// `OpenCompactOverlayLeft` (SplitView_themeresources.xaml:635) keeps `ColumnDefinition1` at
+// `CompactPaneGridLength` and moves `ContentRoot` into the second column, so a rail that opens
+// over the content leaves the content exactly where it was. No capture can ask this: both
+// arrangements are a pane over content, and the difference is where the content's box starts.
+test('opening a compact rail does not move or resize the content', async ({ page }) => {
+	await page.goto('/dev/navigation-view');
+
+	const root = page.locator('.root[data-pane-display-mode="leftCompact"]').first();
+	const content = root.locator('.content-grid');
+	await expect(root).toHaveAttribute('data-pane-open', 'false');
+
+	const before = await content.boundingBox();
+	if (!before) throw new Error('the content grid has no box before the pane opens');
+
+	await root.locator('.pane-toggle').click();
+	await expect(root).toHaveAttribute('data-overlay', 'true');
+
+	const after = await content.boundingBox();
+	if (!after) throw new Error('the content grid has no box after the pane opens');
+
+	// Width and left edge both, because reserving nothing moves one and widens the other.
+	expect(after.width).toBe(before.width);
+	expect(after.x).toBe(before.x);
+});
+
 test('the top display mode has no pane toggle', async ({ page }) => {
 	await page.goto('/dev/navigation-view');
 	const top = page.locator('.root[data-pane-display-mode="top"]').first();
