@@ -505,6 +505,15 @@
 		</div>
 	{/if}
 
+	<div class="content-grid">
+		{#if header}
+			<div class="header-content">{@render header()}</div>
+		{/if}
+		<div class="content-presenter">
+			{#if children}{@render children()}{/if}
+		</div>
+	</div>
+
 	<!-- `LightDismissLayer`, SplitView_themeresources.xaml:723 — a `Fill="Transparent"` rectangle
 	     over the SplitView's content that every `Open*Overlay*` state makes visible (`:571`,
 	     `:650`, `:678`). Tapping it closes the pane, and that reaches this control because
@@ -519,8 +528,18 @@
 	     (`:688`), which `LightDismissOverlayMode` selects, and its default `Auto` resolves to off
 	     everywhere but Xbox. `SplitView.svelte` carries the same layer for the same part.
 
-	     The pane is above this (its `z-index: 1`) and so is the toggle button (`:100`), so
-	     neither dismisses by being clicked. What this does not reproduce is the cancellable half:
+	     **It goes after the content, which is where the template puts it** — the last child of
+	     `ContentRoot`, after the `Border` carrying `Content` (`:718-723`). That order is the
+	     whole mechanism and it is not decoration: a positioned element with `z-index: auto`
+	     paints in tree order, so a layer written before the content loses to anything in the
+	     content that is positioned. Measured on the Gallery's own shell, where
+	     `ScrollView`'s `.scroll-view.page` is `position: relative` and took every tap: the layer
+	     was there, covered the point, and `elementFromPoint` returned the page.
+
+	     The pane is above this (its `z-index: 1`, which beats `auto` whatever the order) and so
+	     is the toggle button (`:100`), so neither dismisses by being clicked.
+
+	     What this does not reproduce is the cancellable half:
 	     `AttemptClosePaneLightly` (`:1707`) raises `PaneClosing` and honours its `Cancel`, and
 	     ADR 0009's change callbacks have no equivalent — the same gap `SplitView.svelte` records.
 	     Its other three callers are `GamepadView`, `XButton1` and Alt+Left (`:3112`, `:3132`);
@@ -528,15 +547,6 @@
 	{#if overlay}
 		<div class="light-dismiss" onclick={() => setPaneOpen(false)} aria-hidden="true"></div>
 	{/if}
-
-	<div class="content-grid">
-		{#if header}
-			<div class="header-content">{@render header()}</div>
-		{/if}
-		<div class="content-presenter">
-			{#if children}{@render children()}{/if}
-		</div>
-	</div>
 </div>
 
 {#snippet overflowRows()}

@@ -141,7 +141,14 @@
 		paneDisplayMode="leftMinimal"
 		bind:paneOpen={overlayPaneOpen}
 	>
-		<p class="winui-BodyTextBlockStyle">The pane is drawn over this.</p>
+		<!-- Positioned, and that is the point. A light-dismiss layer is positioned with
+		     `z-index: auto`, so it paints in tree order against anything else positioned in the
+		     content — and the Gallery's shell puts a `position: relative` scroller there, which
+		     took every tap while a plain paragraph took none. A harness whose content is
+		     unpositioned cannot tell the two orders apart. -->
+		<div class="positioned">
+			<p class="winui-BodyTextBlockStyle">The pane is drawn over this.</p>
+		</div>
 	</NavigationView>
 </div>
 
@@ -233,6 +240,17 @@
 
 	.narrow {
 		max-width: 420px;
+		height: 100%;
+	}
+
+	/* See the comment on the frame that uses it. `position` is the reason it exists and the
+	   height is what makes the position reachable: a positioned box only takes the taps that
+	   land on it, and one as tall as its own paragraph leaves the rest of the content area to
+	   whatever is underneath — which is how the first version of this harness passed against a
+	   component that failed on the shell. The shell's `ScrollView` fills its content area, so
+	   this does too. No paint of its own, so no baseline moves. */
+	.positioned {
+		position: relative;
 		height: 100%;
 	}
 
