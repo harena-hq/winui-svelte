@@ -3215,9 +3215,22 @@ export { dropShadowRecipe };
  * `MenuFlyoutPresenter_Partial.cpp:483`, so a submenu at nesting depth 1 is `Translation.Z` 40
  * and Elevation 20, past the boundary where the ambient layer switches on. No token is emitted
  * for it and no component is changed for it.
+ *
+ * `PaneShadow` is the one member of this family whose depth a resource does state.
+ * `PaneOverlayShadowDepth` is 16 in `NavigationView_themeresources.xaml:207`, and
+ * `NavigationView::SetDropShadow` (`NavigationView.cpp:5028`) reads it, puts a `ThemeShadow` on
+ * the `ShadowCaster` grid and translates it to that Z. The resource names the depth and not the
+ * shadow, so the row is still named the way the rest of the family is. Sixteen is ToolTip's
+ * depth as well, so the two rows carry the same bytes today; they are two rows because they are
+ * two readings, and one of them moving would not be the other moving.
  */
 export const PLATFORM_SHADOWS = {
 	ToolTipShadow: {
+		light: dropShadowRecipe(16, 'light'),
+		dark: dropShadowRecipe(16, 'dark'),
+		highContrast: 'none'
+	},
+	PaneShadow: {
 		light: dropShadowRecipe(16, 'light'),
 		dark: dropShadowRecipe(16, 'dark'),
 		highContrast: 'none'

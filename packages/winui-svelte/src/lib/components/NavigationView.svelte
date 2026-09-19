@@ -676,18 +676,81 @@
 		flex-direction: column;
 		flex: 0 0 auto;
 		overflow: hidden;
+		/* `PaneRoot.Width` is `OpenPaneLength`, and a XAML width includes the border the rule
+		   below adds — the same reason `.content-presenter` carries this line. Without it the
+		   open pane would be 322 where the resource says 320. */
+		box-sizing: border-box;
+		/* The containing block for `HCPaneBorder` below. An overlaying pane is positioned
+		   already; this is what covers the other display modes. */
+		position: relative;
 		/* `RootSplitView.PaneBackground`, NavigationView.xaml:289. An overlaying pane is
 		   drawn on top of the content, so it is opaque; a pane sitting beside the content
-		   is transparent and shows the window's backdrop. Both are solid colours at this
-		   pin — `AcrylicInAppFillColorDefaultBrush` is defined as one, not as a material. */
+		   is transparent and shows the window's backdrop. `AcrylicInAppFillColorDefaultBrush`
+		   is an `AcrylicBrush` in light and dark (AcrylicBrush_themeresources.xaml:44, :96)
+		   and a `SolidColorBrush` only in high contrast (:148) — what reaches this line is its
+		   `FallbackColor`, which is WD-002 and not a property of this control. */
 		background: var(--winui-NavigationViewDefaultPaneBackground);
+		/* `RootSplitView.CornerRadius`, NavigationView.xaml:289 — `OverlayCornerRadius` through
+		   `RightCornerRadiusFilterConverter`, which is `Filter="Right"`
+		   (CornerRadius_themeresources.xaml:18), so the top-right and bottom-right corners and
+		   not the other two. The binding sits on the SplitView and reads as though it rounded
+		   the whole control; the SplitView's own template is what settles it, handing the value
+		   to `PaneRoot` alone (SplitView_themeresources.xaml:700, `CornerRadius="{TemplateBinding
+		   CornerRadius}"`). So it is the pane that is rounded, in every display mode, which is
+		   why this sits on `.pane` rather than under `data-overlay` with the shadow. A SplitView
+		   is square by default — its style takes `SplitViewPaneRootCornerRadius` (:47), which is
+		   0 (:13) — so this radius is NavigationView's override and not the primitive's own.
+
+		   It shows only where the pane is opaque. Beside the content the pane paints
+		   `NavigationViewExpandedPaneBackground`, which is a transparent colour in light and
+		   dark and `SystemColorWindowColor` in high contrast
+		   (NavigationView_themeresources.xaml:6, :72, :138) — so of the three themes, only high
+		   contrast can show a corner here while the pane is not overlaying. */
+		border-radius: 0 var(--winui-OverlayCornerRadius) var(--winui-OverlayCornerRadius) 0;
+		/* `RootSplitView.BorderThickness`, the same line, reaching `PaneRoot` the same way. It is
+		   transparent while the pane is beside the content (`PaneNotOverlaying` sets
+		   `RootSplitView.BorderBrush` to `Transparent`, NavigationView.xaml:127) and takes its
+		   space in every mode either way, which is why the thickness is here and only the colour
+		   is under `data-overlay`.
+
+		   `NavigationViewPaneContentGridMargin` is the evidence that it belongs here: the pane
+		   content grid's margin is `-1,3`, and a -1 with no border to cancel pushes the menu a
+		   pixel past the pane's own edge, where the `overflow: hidden` above cuts it. That
+		   margin has been transcribed since the Navigation tranche; the border it was written
+		   against had not been. */
+		border: var(--winui-NavigationViewBorderThickness) solid transparent;
 	}
 
-	/* NavigationView.xaml:126, the `PaneNotOverlaying` visual state. `data-overlay` is
+	/* NavigationView.xaml:129, a setter of the `PaneNotOverlaying` visual state. `data-overlay` is
 	   already that distinction: it is true exactly when the pane is drawn above the
 	   content rather than beside it. */
 	.root:not([data-overlay='true']) .pane {
 		background: var(--winui-NavigationViewExpandedPaneBackground);
+	}
+
+	/* `HCPaneBorder`, SplitView_themeresources.xaml:715 — a 1px rectangle right-aligned inside
+	   `PaneRoot`, beside the pane's own border rather than instead of it. Every `Open*` state
+	   makes it visible (`:563`, `:595`, `:635` and their right-placed twins) and `Closed` and
+	   the two `ClosedCompact*` ones leave it collapsed, so what it tracks is `IsPaneOpen` and
+	   not the display mode — which is why this is keyed on `data-pane-open` and not on
+	   `data-overlay` like the shadow. Its fill is `SystemControlForegroundTransparentBrush`:
+	   transparent in light and dark, `SystemColorButtonTextColor` in high contrast, so the seam
+	   is in the markup in all three themes and drawn in one. `SplitView.svelte` carries the
+	   same part for the same reason. */
+	.pane::after {
+		content: '';
+		position: absolute;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		/* c1-allow: SplitView_themeresources.xaml:715, HCPaneBorder Width="1" */
+		width: 1px;
+		background: var(--winui-SystemControlForegroundTransparentBrush);
+		visibility: hidden;
+	}
+
+	.root[data-pane-open='true'] .pane::after {
+		visibility: visible;
 	}
 
 	/* The open pane's width. microsoft-ui-xaml @ 79646b4e, NavigationView.idl:198 —
@@ -710,6 +773,27 @@
 		inset: 0 auto 0 0;
 		z-index: 1;
 		background: var(--winui-NavigationViewDefaultPaneBackground);
+		/* `RootSplitView.BorderBrush`, NavigationView.xaml:289 — the stroke the pane carries
+		   while it is over the content, and the one `PaneNotOverlaying` paints transparent. */
+		border-color: var(--winui-NavigationViewItemSeparatorForeground);
+		/* `NavigationView::SetDropShadow` (NavigationView.cpp:5028) puts a `ThemeShadow` on the
+		   `ShadowCaster` grid at `PaneOverlayShadowDepth` while the pane is open in compact or
+		   minimal, and `PaneNotOverlaying` (NavigationView.xaml:128) holds that grid at zero
+		   opacity otherwise — the same condition `data-overlay` already is. Without it an
+		   opaque pane sits on the content with nothing between them, which is what the pane
+		   looked like here at phone width.
+
+		   Upstream casts the shadow from a separate sibling grid the width of the open pane
+		   (NavigationView.xaml:409) rather than from the pane, because a composition shadow is
+		   drawn into the tree as its own visual. The rect is the pane's, so the shadow goes on
+		   the pane here, and the one difference that follows is that the grid carries no corner
+		   radius of its own: upstream's shadow turns the corner square where this one follows
+		   the radius above. The group's transitions also move that grid: `ShadowCasterTransform`
+		   slides from `NegativeOpenPaneLengthMinusCompactLength` to 0 while the opacity goes to
+		   1, over 0:0:0.35 in and 0:0:0.12 out (NavigationView.xaml:95, :109). Neither the
+		   slide nor the fade is here, because nothing here animates the pane either: it is
+		   added to and removed from the document, and this shadow arrives with it. */
+		box-shadow: var(--winui-PaneShadow);
 	}
 
 	/* NavigationView.xaml:180 — PaneToggleButtonGrid: left, top, and Canvas.ZIndex="100", which
