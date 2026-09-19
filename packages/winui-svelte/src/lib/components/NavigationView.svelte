@@ -577,6 +577,12 @@
 		   unchanged, and this is not one. ADR 0006. */
 		/* c1-allow: NavigationViewItemBase.h:63, c_itemIndentation — no resource names it */
 		--nav-indentation: 31px;
+		/* `OpenPaneLength`'s default. microsoft-ui-xaml @ 79646b4e, NavigationView.idl:198 — a
+		   property default rather than a theme resource, so there is no token to read it from,
+		   and not `--winui-` prefixed for the reason above. A custom property rather than three
+		   copies of the number, because the rules that reserve the pane's strip subtract it. */
+		/* c1-allow: NavigationView.idl:198, OpenPaneLength MUX_DEFAULT_VALUE("320.0") */
+		--nav-open-pane-length: 320px;
 		position: relative;
 		display: flex;
 		min-height: 0;
@@ -787,24 +793,50 @@
 		visibility: visible;
 	}
 
-	/* The open pane's width. microsoft-ui-xaml @ 79646b4e, NavigationView.idl:198 —
-	   `OpenPaneLength`'s MUX_DEFAULT_VALUE. It is a property default rather than a theme
-	   resource, so there is no token to read it from. */
 	.root:not([data-collapsed='true']) .pane {
-		/* c1-allow: NavigationView.idl:198, OpenPaneLength MUX_DEFAULT_VALUE("320.0") */
-		width: 320px;
+		width: var(--nav-open-pane-length);
 	}
 
 	.root[data-collapsed='true'] .pane {
 		width: var(--winui-NavigationViewCompactPaneLength);
 	}
 
+	/* `ColumnDefinition1`, the strip the pane's column keeps while the pane is drawn over the
+	   content. The pane is `OpenPaneLength` wide and the column under it is not:
+	   `OpenCompactOverlayLeft` (SplitView_themeresources.xaml:635) sets the column to
+	   `CompactPaneGridLength` and moves `ContentRoot` into the second one, so a compact rail
+	   keeps exactly the room it had and the content does not move when the pane opens — which
+	   is the defect this closes. `OpenOverlayLeft` (`:563`) sets neither, so `ContentRoot` keeps
+	   the template's `Grid.ColumnSpan="2"` (`:718`) and spans the control: a minimal pane
+	   reserves nothing and the content is full width beneath it.
+
+	   A negative end margin is that column. The pane lays out at its own width and gives back
+	   all but the strip, so its outer size is what the column would have been, and the two
+	   states differ only in how much comes back. `SplitView.svelte` reaches the same pair
+	   through `--pane-column`, because that control's root is the grid the template describes
+	   and this one's is not. */
+	.root[data-overlay='true'][data-display-mode='compact'] .pane {
+		margin-inline-end: calc(
+			var(--winui-NavigationViewCompactPaneLength) - var(--nav-open-pane-length)
+		);
+	}
+
+	.root[data-overlay='true'][data-display-mode='minimal'] .pane {
+		margin-inline-end: calc(-1 * var(--nav-open-pane-length));
+	}
+
 	/* Overlaying, not reflowing: compact and minimal draw the open pane above the content.
 	   `NavigationViewDefaultPaneBackground` rather than the expanded one, because an
 	   overlaid pane has the content behind it rather than the window. */
 	.root[data-overlay='true'] .pane {
-		position: absolute;
-		inset: 0 auto 0 0;
+		/* Above the content, and still in the flow that decides how much room the content gets.
+		   Those are two questions in the template and they were one here: a pane taken out of
+		   flow reserves nothing, so opening a compact rail handed its strip back to the content
+		   and the page relaid out behind the pane. `ColumnDefinition1` is where the template
+		   answers the second one, and the rule further down is what sets it.
+
+		   `z-index` needs no `position` of its own — `.pane` is already `relative`, for
+		   `HCPaneBorder`. */
 		z-index: 1;
 		background: var(--winui-NavigationViewDefaultPaneBackground);
 		/* `RootSplitView.BorderBrush`, NavigationView.xaml:289 — the stroke the pane carries
