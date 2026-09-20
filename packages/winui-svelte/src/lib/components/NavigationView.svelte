@@ -393,7 +393,9 @@
 				aria-label={paneOpen ? 'Close navigation' : 'Open navigation'}
 				aria-expanded={paneOpen}
 				onclick={() => setPaneOpen(!paneOpen)}
-			></button>
+			>
+				<span class="layout-root"></span>
+			</button>
 		</div>
 	{/if}
 	{#if !isTop}
@@ -1154,6 +1156,12 @@
 		z-index: 100;
 		display: flex;
 		margin: var(--winui-NavigationViewButtonHolderGridMargin);
+		/* Two Grids with no `Background` between the root and the button — `PaneToggleButtonGrid`
+		   and this one — and a XAML Grid with no brush is not a hit-test target. Sized to the
+		   button, it is exactly the strip the button's own padding opens (see `.pane-toggle`),
+		   and without this that strip would be caught here instead of falling through to the
+		   pane. The paint turns hit-testing back on for itself. */
+		pointer-events: none;
 	}
 
 	/* NavigationView.xaml:296, PaneContentGridToggleButtonRow — the space the pane keeps for a
@@ -1177,16 +1185,57 @@
 		);
 	}
 
+	/* `PaneToggleButtonStyle`, NavigationView_themeresources.xaml:270. The button's box and the
+	   box it paints are not the same box, and what separates them is this style's `Padding`:
+	   `NavigationViewItemButtonMargin`, `4,2` (`:282`, the Thickness at `:228`), which the
+	   template hands to `LayoutRoot` as a `Margin` (`:287`). This control drew the painted box
+	   alone, so the toggle sat four pixels left of the menu items it shares a left edge with in
+	   the original, and two above them.
+
+	   The 48 is `CompactPaneLength`, which the control's own style sets from
+	   `NavigationViewCompactPaneLength` (`NavigationView.xaml:6`, the value at
+	   `NavigationView_themeresources.xaml:208`). `UpdatePaneButtonsWidths` copies it into
+	   `TemplateSettings.PaneToggleButtonWidth` (`NavigationView.cpp:1820`) and
+	   `UpdatePaneToggleSize` writes that onto the button as its `Width` (`:4634`) — under a guard
+	   that asks whether the back button *part* exists (`:4600`), not whether one is shown, so the
+	   48 holds for a control like this one that shows none.
+
+	   Two 40s sit next to that and neither of them is this box. The resource literally named
+	   `PaneToggleButtonWidth` (`NavigationView_themeresources.xaml:206`) is read by
+	   `GetPaneToggleButtonWidth` and spent as the pane header's left inset (`cpp:4663`); the
+	   button's own `MinWidth` is `SmallerPaneToggleButtonWidth`, `CompactPaneLength - 8`
+	   (`cpp:1821`), set as a local value at `NavigationView.xaml:197` where it shadows this
+	   style's setter at `:274` entirely. Neither is transcribed here.
+
+	   The button's 40 of height is arithmetic and not a resource: `LayoutRoot`'s `Height` is the
+	   button's `MinHeight`, `PaneToggleButtonHeight` 36 (`:273`), and the 2 above and the 2 below
+	   make the measured box 40. Searched for it before saying so — both NavigationView
+	   dictionaries for a length that could be it, and the `.cpp` for every write to the button's
+	   `Height`, of which there are none. The one 40 that comes close is `c_paneToggleButtonHeight`
+	   (`cpp:90`), which `GetPaneToggleButtonHeight` uses only if the resource is missing
+	   (`:4090`), and it is not: it is the 36 at `NavigationView_themeresources.xaml:205`. */
 	.pane-toggle {
 		position: relative;
+		/* The 48 is the whole box, the way a XAML `Width` is. The default would add the padding to
+		   it and make the slot 56. */
+		box-sizing: border-box;
 		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		min-width: var(--winui-PaneToggleButtonWidth);
-		min-height: var(--winui-PaneToggleButtonHeight);
-		background: var(--winui-NavigationViewItemBackground);
+		width: var(--winui-NavigationViewCompactPaneLength);
+		padding: var(--winui-NavigationViewItemButtonMargin);
+		/* The strip that padding opens belongs to the button, paints nothing, and in the original
+		   answers no pointer either: XAML hit-tests rendered visuals, and outside `LayoutRoot` this
+		   button renders none. Photographed on the reference guest — with the pointer one pixel
+		   inside the button's left edge and three short of the paint, the paint stays the pane's own
+		   colour; it lights as soon as the pointer is on it. A `<button>` hit-tests its whole border
+		   box whatever it paints, so the strip is given back to what is under it and the paint below
+		   takes the events — which keeps `:hover` and `:active` on this element honest, because both
+		   reach it only through the child that was hit. */
+		pointer-events: none;
+		background: none;
 		color: var(--winui-NavigationViewItemForeground);
 		border: 0;
+		/* Read by the focus band's `border-radius: inherit` below, which is the only thing that
+		   paints on this element. */
 		border-radius: var(--winui-ControlCornerRadius);
 		cursor: pointer;
 		font-family: var(--winui-SymbolThemeFontFamily);
@@ -1195,17 +1244,43 @@
 		outline: none;
 	}
 
+	/* `LayoutRoot`, NavigationView_themeresources.xaml:287 — everything the button paints. It
+	   takes `Background` and `CornerRadius` from the button by `TemplateBinding`, which is also
+	   why the two states below set them on this element and not on the button: the style's own
+	   setters name `LayoutRoot.Background` (`:300`, `:308`). `HorizontalAlignment="Stretch"` on
+	   it is what makes it 40 wide, the 48 less the 4 on each side. */
+	.pane-toggle .layout-root {
+		display: flex;
+		pointer-events: auto;
+		flex: 1 1 auto;
+		align-items: center;
+		justify-content: center;
+		height: var(--winui-PaneToggleButtonHeight);
+		background: var(--winui-NavigationViewItemBackground);
+		border-radius: var(--winui-ControlCornerRadius);
+	}
+
 	/* GlobalNavButton, the hamburger. Written here rather than in the markup because it
 	   is a picture, not text: a screen reader gets `aria-label` and should not also be
-	   handed a private-use code point. */
-	.pane-toggle::before {
+	   handed a private-use code point. In the template it is an `AnimatedIcon` centred in a
+	   `Border` of the button's `MinWidth` (`NavigationView_themeresources.xaml:322`), in column 0
+	   of a two-column grid whose `*` column holds the `PaneTitle` presenter (`:330`). With no
+	   pane title that column is 0 wide, so the Border is the whole of `LayoutRoot` and centring
+	   in the one is centring in the other — which is why this is on the painted box and not on a
+	   third element. */
+	.pane-toggle .layout-root::before {
 		content: '\e700';
 	}
 
 	/* The focus visual; see Button.svelte in this package for the shape. `::after` because
-	   `::before` above is the glyph. `NavigationView.xaml:197` sets `FocusVisualMargin="0"`
-	   on `TogglePaneButton` explicitly, so the band is drawn inside the button's own bounds
-	   and inherits its corner radius. */
+	   `::before` above is the glyph. It hangs off the button rather than off the painted box,
+	   which is the distinction the dictionary draws by hand: `NavigationView.xaml:197` sets
+	   `FocusVisualMargin="0"` on `TogglePaneButton`, and `LayoutRoot` here is not a
+	   `Control.IsTemplateFocusTarget`, where all four of the other `LayoutRoot`s in
+	   `NavigationView_themeresources.xaml` are (`:451`, `:649`, `:729`, `:917`) and three of them
+	   carry this very inset. So the band is
+	   48 by 40 around a paint of 40 by 36, and it moves with the box above as part of the same
+	   correction rather than as a second one. */
 	.pane-toggle:focus-visible::after {
 		content: '';
 		position: absolute;
@@ -1220,12 +1295,12 @@
 		pointer-events: none;
 	}
 
-	.pane-toggle:hover {
+	.pane-toggle:hover .layout-root {
 		background: var(--winui-NavigationViewButtonBackgroundPointerOver);
 		color: var(--winui-NavigationViewButtonForegroundPointerOver);
 	}
 
-	.pane-toggle:active {
+	.pane-toggle:active .layout-root {
 		background: var(--winui-NavigationViewButtonBackgroundPressed);
 		color: var(--winui-NavigationViewButtonForegroundPressed);
 	}

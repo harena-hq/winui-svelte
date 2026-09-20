@@ -930,8 +930,24 @@ has been declined.
   top, where the original's back chevron is centred 23.5 and its toggle 63.5; and our one menu
   item is centred 67 below the top against the original's 104. The remaining two or three
   pixels — by which 39, 37 and the back button's own 40 fail to agree — are margin, not a
-  second missing element: our pane toggle's row measures 36, which is what
-  `PaneToggleButtonHeight` (`NavigationView_themeresources.xaml:205`) says it should be.
+  second missing element. **All three of our figures were taken on 2026-09-10 and two fixes have
+  moved every one of them since**; the original's four are untouched, being the original's.
+  `976872b` took four pixels out of the pane's toggle row, so 94 and 67 are each four less than
+  they were, and the unit after it gave the toggle the `4,2` its style insets the painted box by,
+  which moves the toggle's own 25 and makes what measured 36 measure 40 — the same 36 of
+  `PaneToggleButtonHeight` (`NavigationView_themeresources.xaml:205`) with
+  `NavigationViewItemButtonMargin`'s 2 above and 2 below (`:282`, handed to `LayoutRoot` at
+  `:287`). That 40 is the pin's arithmetic for the box and not a reading of the original: nothing
+  here has measured the original's toggle box, and 63.5 − 23.5 is a distance between two
+  controls' centres rather than either one's size.
+
+  They are left as taken rather than patched one at a time, because the three are only worth
+  anything paired with the original's four on the one screen at the one width, and a number
+  re-measured here on a different page would read as comparable when it is not. The pair is
+  retaken whole or not at all, and what the entry rests on is the back button's own 40, which
+  neither fix touches. Nothing checks a measurement in this document, which is how these went
+  stale without a gate noticing.
+
 - **Why accepted**: the Gallery's own window has never shown it, so the gap has been invisible
   rather than absent. `MainWindow.xaml:142` sets `IsBackButtonVisible="Collapsed"` on the
   `NavigationView` and puts the back button in the title bar instead, bound to the frame's

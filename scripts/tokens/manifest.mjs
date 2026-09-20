@@ -2060,8 +2060,16 @@ export const SHELL_KEYS = {
 	NavigationViewButtonHolderGridMargin: 'NavigationView, the row holding the pane-toggle button',
 	NavigationViewPaneHeaderRowMinHeight:
 		'NavigationView pane, the row that keeps the pane-toggle button its space',
-	PaneToggleButtonHeight: 'NavigationView pane-toggle button, its box',
-	PaneToggleButtonWidth: 'NavigationView pane-toggle button, its box',
+	// Neither of these is the toggle button's box, which is 48 by 40 and written by the control:
+	// `UpdatePaneButtonsWidths` takes the width from `CompactPaneLength`
+	// (`NavigationView.cpp:1811`) and the height falls out of the paint plus the 2s of
+	// `NavigationViewItemButtonMargin`. The height key sizes the box the button paints inside
+	// that. The width key is not the
+	// button's at all: `GetPaneToggleButtonWidth` (`:4085`) spends it as the pane header's left
+	// inset (`:4663`) and as the pane title's margin (`:4764`), while the button's own `MinWidth`
+	// is a different 40 that `NavigationView.xaml:197` binds over this style's setter.
+	PaneToggleButtonHeight: 'NavigationView pane-toggle button, the box it paints',
+	PaneToggleButtonWidth: 'NavigationView pane, the inset that clears the pane-toggle button',
 	NavigationViewAutoSuggestAreaHeight: 'NavigationView pane, the search row',
 	NavigationViewAutoSuggestBoxMargin: 'NavigationView pane, the search row',
 	NavigationViewHeaderMargin: 'NavigationView content area, the page header',
@@ -2901,8 +2909,8 @@ export const DOUBLE_LENGTHS = {
 	NavigationViewSelectionIndicatorRadius: 'the selection indicator',
 	NavigationViewSelectionIndicatorWidth: 'the selection indicator',
 	NavigationViewPaneHeaderRowMinHeight: 'the pane row that keeps the toggle button its space',
-	PaneToggleButtonHeight: 'the pane toggle button box',
-	PaneToggleButtonWidth: 'the pane toggle button box',
+	PaneToggleButtonHeight: 'the box the pane toggle button paints',
+	PaneToggleButtonWidth: 'the pane inset that clears the toggle button, not the button',
 	TitleBarBackButtonWidth: 'the title bar back button',
 	TitleBarCompactHeight: 'the title bar row',
 	TitleBarExpandedHeight: 'the title bar row',
