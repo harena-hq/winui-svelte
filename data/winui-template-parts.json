@@ -1,0 +1,815 @@
+{
+	"source": {
+		"repo": "https://github.com/microsoft/microsoft-ui-xaml",
+		"commit": "79646b4e5d4d85355f7478e0e0149b31e57d85f0",
+		"files": [
+			"controls/dev/NavigationView/NavigationView.xaml",
+			"controls/dev/SplitView/SplitView_themeresources.xaml"
+		],
+		"fileCount": 2,
+		"extractedAt": "2026-09-20"
+	},
+	"census": {
+		"templates": 7,
+		"parts": 80,
+		"states": 67
+	},
+	"templates": [
+		{
+			"file": "controls/dev/NavigationView/NavigationView.xaml",
+			"key": "controls:NavigationView",
+			"targetType": "controls:NavigationView",
+			"parts": [
+				{
+					"name": "RootGrid",
+					"tag": "Grid",
+					"line": 11
+				},
+				{
+					"name": "PaneToggleButtonGrid",
+					"tag": "Grid",
+					"line": 180
+				},
+				{
+					"name": "TogglePaneTopPadding",
+					"tag": "Grid",
+					"line": 185
+				},
+				{
+					"name": "ButtonHolderGrid",
+					"tag": "Grid",
+					"line": 186
+				},
+				{
+					"name": "NavigationViewBackButton",
+					"tag": "Button",
+					"line": 187
+				},
+				{
+					"name": "NavigationViewBackButtonToolTip",
+					"tag": "ToolTip",
+					"line": 189
+				},
+				{
+					"name": "NavigationViewCloseButton",
+					"tag": "Button",
+					"line": 192
+				},
+				{
+					"name": "NavigationViewCloseButtonToolTip",
+					"tag": "ToolTip",
+					"line": 194
+				},
+				{
+					"name": "TogglePaneButton",
+					"tag": "Button",
+					"line": 197
+				},
+				{
+					"name": "PaneTitleTextBlock",
+					"tag": "TextBlock",
+					"line": 198
+				},
+				{
+					"name": "PaneTitleHolder",
+					"tag": "Grid",
+					"line": 200
+				},
+				{
+					"name": "PaneTitlePresenter",
+					"tag": "ContentControl",
+					"line": 201
+				},
+				{
+					"name": "TopNavArea",
+					"tag": "StackPanel",
+					"line": 212
+				},
+				{
+					"name": "TopNavTopPadding",
+					"tag": "Grid",
+					"line": 213
+				},
+				{
+					"name": "TopNavGrid",
+					"tag": "Grid",
+					"line": 214
+				},
+				{
+					"name": "BackButtonPlaceholderOnTopNav",
+					"tag": "ColumnDefinition",
+					"line": 216
+				},
+				{
+					"name": "TopNavLeftPadding",
+					"tag": "Grid",
+					"line": 226
+				},
+				{
+					"name": "PaneHeaderOnTopPane",
+					"tag": "ContentControl",
+					"line": 227
+				},
+				{
+					"name": "PaneTitleOnTopPane",
+					"tag": "ContentControl",
+					"line": 228
+				},
+				{
+					"name": "TopNavMenuItemsHost",
+					"tag": "controls:ItemsRepeater",
+					"line": 232
+				},
+				{
+					"name": "TopNavOverflowButton",
+					"tag": "Button",
+					"line": 239
+				},
+				{
+					"name": "TopNavMenuItemsOverflowHost",
+					"tag": "controls:ItemsRepeater",
+					"line": 264
+				},
+				{
+					"name": "PaneCustomContentOnTopPane",
+					"tag": "ContentControl",
+					"line": 274
+				},
+				{
+					"name": "TopPaneAutoSuggestArea",
+					"tag": "Grid",
+					"line": 275
+				},
+				{
+					"name": "TopPaneAutoSuggestBoxPresenter",
+					"tag": "ContentControl",
+					"line": 276
+				},
+				{
+					"name": "PaneFooterOnTopPane",
+					"tag": "ContentControl",
+					"line": 278
+				},
+				{
+					"name": "TopFooterMenuItemsHost",
+					"tag": "controls:ItemsRepeater",
+					"line": 280
+				},
+				{
+					"name": "TopNavContentOverlayAreaGrid",
+					"tag": "Border",
+					"line": 286
+				},
+				{
+					"name": "RootSplitView",
+					"tag": "SplitView",
+					"line": 289
+				},
+				{
+					"name": "PaneContentGrid",
+					"tag": "Grid",
+					"line": 291
+				},
+				{
+					"name": "PaneContentGridToggleButtonRow",
+					"tag": "RowDefinition",
+					"line": 296
+				},
+				{
+					"name": "ItemsContainerRow",
+					"tag": "RowDefinition",
+					"line": 301
+				},
+				{
+					"name": "ContentPaneTopPadding",
+					"tag": "Grid",
+					"line": 303
+				},
+				{
+					"name": "PaneHeaderContentBorderRow",
+					"tag": "RowDefinition",
+					"line": 306
+				},
+				{
+					"name": "PaneHeaderCloseButtonColumn",
+					"tag": "ColumnDefinition",
+					"line": 309
+				},
+				{
+					"name": "PaneHeaderToggleButtonColumn",
+					"tag": "ColumnDefinition",
+					"line": 310
+				},
+				{
+					"name": "PaneHeaderContentBorder",
+					"tag": "ContentControl",
+					"line": 313
+				},
+				{
+					"name": "AutoSuggestArea",
+					"tag": "Grid",
+					"line": 315
+				},
+				{
+					"name": "PaneAutoSuggestBoxPresenter",
+					"tag": "ContentControl",
+					"line": 316
+				},
+				{
+					"name": "PaneAutoSuggestButton",
+					"tag": "Button",
+					"line": 317
+				},
+				{
+					"name": "PaneCustomContentBorder",
+					"tag": "ContentControl",
+					"line": 348
+				},
+				{
+					"name": "ItemsContainerGrid",
+					"tag": "Grid",
+					"line": 350
+				},
+				{
+					"name": "MenuItemsScrollViewer",
+					"tag": "ScrollViewer",
+					"line": 363
+				},
+				{
+					"name": "MenuItemsHost",
+					"tag": "controls:ItemsRepeater",
+					"line": 365
+				},
+				{
+					"name": "VisualItemsSeparator",
+					"tag": "controls:NavigationViewItemSeparator",
+					"line": 375
+				},
+				{
+					"name": "FooterContentBorder",
+					"tag": "ContentControl",
+					"line": 377
+				},
+				{
+					"name": "FooterItemsScrollViewer",
+					"tag": "ScrollViewer",
+					"line": 380
+				},
+				{
+					"name": "FooterMenuItemsHost",
+					"tag": "controls:ItemsRepeater",
+					"line": 381
+				},
+				{
+					"name": "ContentGrid",
+					"tag": "Grid",
+					"line": 392
+				},
+				{
+					"name": "ContentTopPadding",
+					"tag": "Grid",
+					"line": 402
+				},
+				{
+					"name": "ContentLeftPadding",
+					"tag": "Grid",
+					"line": 403
+				},
+				{
+					"name": "HeaderContent",
+					"tag": "ContentControl",
+					"line": 404
+				},
+				{
+					"name": "ContentPresenter",
+					"tag": "ContentPresenter",
+					"line": 405
+				},
+				{
+					"name": "ShadowCaster",
+					"tag": "Grid",
+					"line": 409
+				},
+				{
+					"name": "ShadowCasterTransform",
+					"tag": "CompositeTransform",
+					"line": 411
+				}
+			],
+			"states": [
+				{
+					"name": "DisplayModeGroup",
+					"tag": "VisualStateGroup",
+					"line": 13
+				},
+				{
+					"name": "Compact",
+					"tag": "VisualState",
+					"line": 14
+				},
+				{
+					"name": "Expanded",
+					"tag": "VisualState",
+					"line": 15
+				},
+				{
+					"name": "Minimal",
+					"tag": "VisualState",
+					"line": 16
+				},
+				{
+					"name": "TopNavigationMinimal",
+					"tag": "VisualState",
+					"line": 25
+				},
+				{
+					"name": "MinimalWithBackButton",
+					"tag": "VisualState",
+					"line": 32
+				},
+				{
+					"name": "TogglePaneGroup",
+					"tag": "VisualStateGroup",
+					"line": 42
+				},
+				{
+					"name": "TogglePaneButtonCollapsed",
+					"tag": "VisualState",
+					"line": 43
+				},
+				{
+					"name": "TogglePaneButtonVisible",
+					"tag": "VisualState",
+					"line": 44
+				},
+				{
+					"name": "HeaderGroup",
+					"tag": "VisualStateGroup",
+					"line": 53
+				},
+				{
+					"name": "HeaderVisible",
+					"tag": "VisualState",
+					"line": 54
+				},
+				{
+					"name": "HeaderCollapsed",
+					"tag": "VisualState",
+					"line": 55
+				},
+				{
+					"name": "AutoSuggestGroup",
+					"tag": "VisualStateGroup",
+					"line": 61
+				},
+				{
+					"name": "AutoSuggestBoxVisible",
+					"tag": "VisualState",
+					"line": 62
+				},
+				{
+					"name": "AutoSuggestBoxCollapsed",
+					"tag": "VisualState",
+					"line": 63
+				},
+				{
+					"name": "PaneStateGroup",
+					"tag": "VisualStateGroup",
+					"line": 70
+				},
+				{
+					"name": "NotClosedCompact",
+					"tag": "VisualState",
+					"line": 71
+				},
+				{
+					"name": "ClosedCompact",
+					"tag": "VisualState",
+					"line": 72
+				},
+				{
+					"name": "PaneStateListSizeGroup",
+					"tag": "VisualStateGroup",
+					"line": 79
+				},
+				{
+					"name": "ListSizeFull",
+					"tag": "VisualState",
+					"line": 80
+				},
+				{
+					"name": "ListSizeCompact",
+					"tag": "VisualState",
+					"line": 81
+				},
+				{
+					"name": "PaneOverlayGroup",
+					"tag": "VisualStateGroup",
+					"line": 93
+				},
+				{
+					"name": "ShadowCasterEaseOutStoryboard",
+					"tag": "Storyboard",
+					"line": 110
+				},
+				{
+					"name": "PaneOverlaying",
+					"tag": "VisualState",
+					"line": 124
+				},
+				{
+					"name": "PaneNotOverlaying",
+					"tag": "VisualState",
+					"line": 125
+				},
+				{
+					"name": "TitleBarVisibilityGroup",
+					"tag": "VisualStateGroup",
+					"line": 133
+				},
+				{
+					"name": "TitleBarVisible",
+					"tag": "VisualState",
+					"line": 134
+				},
+				{
+					"name": "TitleBarCollapsed",
+					"tag": "VisualState",
+					"line": 135
+				},
+				{
+					"name": "OverflowLabelGroup",
+					"tag": "VisualStateGroup",
+					"line": 141
+				},
+				{
+					"name": "OverflowButtonWithLabel",
+					"tag": "VisualState",
+					"line": 142
+				},
+				{
+					"name": "OverflowButtonNoLabel",
+					"tag": "VisualState",
+					"line": 143
+				},
+				{
+					"name": "BackButtonGroup",
+					"tag": "VisualStateGroup",
+					"line": 149
+				},
+				{
+					"name": "BackButtonVisible",
+					"tag": "VisualState",
+					"line": 150
+				},
+				{
+					"name": "BackButtonCollapsed",
+					"tag": "VisualState",
+					"line": 151
+				},
+				{
+					"name": "PaneVisibilityGroup",
+					"tag": "VisualStateGroup",
+					"line": 157
+				},
+				{
+					"name": "PaneVisible",
+					"tag": "VisualState",
+					"line": 158
+				},
+				{
+					"name": "PaneCollapsed",
+					"tag": "VisualState",
+					"line": 159
+				},
+				{
+					"name": "PaneSeparatorStates",
+					"tag": "VisualStateGroup",
+					"line": 170
+				},
+				{
+					"name": "SeparatorCollapsed",
+					"tag": "VisualState",
+					"line": 171
+				},
+				{
+					"name": "SeparatorVisible",
+					"tag": "VisualState",
+					"line": 172
+				}
+			]
+		},
+		{
+			"file": "controls/dev/NavigationView/NavigationView.xaml",
+			"key": "FlyoutPresenter under TopNavOverflowButton",
+			"targetType": "FlyoutPresenter",
+			"parts": [
+				{
+					"name": "ScrollViewer",
+					"tag": "ScrollViewer",
+					"line": 254
+				},
+				{
+					"name": "ContentPresenter",
+					"tag": "ContentPresenter",
+					"line": 255
+				}
+			],
+			"states": []
+		},
+		{
+			"file": "controls/dev/NavigationView/NavigationView.xaml",
+			"key": "controls:NavigationViewItem",
+			"targetType": "controls:NavigationViewItem",
+			"parts": [
+				{
+					"name": "NVIRootGrid",
+					"tag": "Grid",
+					"line": 436
+				},
+				{
+					"name": "NavigationViewItemPresenter",
+					"tag": "primitives:NavigationViewItemPresenter",
+					"line": 462
+				},
+				{
+					"name": "NavigationViewItemMenuItemsHost",
+					"tag": "controls:ItemsRepeater",
+					"line": 463
+				},
+				{
+					"name": "ChildrenFlyout",
+					"tag": "Flyout",
+					"line": 469
+				},
+				{
+					"name": "FlyoutRootGrid",
+					"tag": "Grid",
+					"line": 492
+				},
+				{
+					"name": "FlyoutContentGrid",
+					"tag": "Grid",
+					"line": 493
+				}
+			],
+			"states": [
+				{
+					"name": "ItemOnNavigationViewListPositionStates",
+					"tag": "VisualStateGroup",
+					"line": 442
+				},
+				{
+					"name": "OnLeftNavigation",
+					"tag": "VisualState",
+					"line": 443
+				},
+				{
+					"name": "OnTopNavigationPrimary",
+					"tag": "VisualState",
+					"line": 448
+				},
+				{
+					"name": "OnTopNavigationOverflow",
+					"tag": "VisualState",
+					"line": 455
+				}
+			]
+		},
+		{
+			"file": "controls/dev/NavigationView/NavigationView.xaml",
+			"key": "FlyoutPresenter under ChildrenFlyout",
+			"targetType": "FlyoutPresenter",
+			"parts": [
+				{
+					"name": "ScrollViewer",
+					"tag": "ScrollViewer",
+					"line": 484
+				},
+				{
+					"name": "ContentPresenter",
+					"tag": "ContentPresenter",
+					"line": 485
+				}
+			],
+			"states": []
+		},
+		{
+			"file": "controls/dev/NavigationView/NavigationView.xaml",
+			"key": "controls:NavigationViewItemHeader",
+			"targetType": "controls:NavigationViewItemHeader",
+			"parts": [
+				{
+					"name": "NavigationViewItemHeaderRootGrid",
+					"tag": "Grid",
+					"line": 513
+				},
+				{
+					"name": "InnerHeaderGrid",
+					"tag": "Grid",
+					"line": 564
+				},
+				{
+					"name": "HeaderText",
+					"tag": "TextBlock",
+					"line": 565
+				}
+			],
+			"states": [
+				{
+					"name": "PaneStates",
+					"tag": "VisualStateGroup",
+					"line": 515
+				},
+				{
+					"name": "HeaderTextVisible",
+					"tag": "VisualState",
+					"line": 547
+				},
+				{
+					"name": "HeaderTextCollapsed",
+					"tag": "VisualState",
+					"line": 548
+				},
+				{
+					"name": "DisplayModeStates",
+					"tag": "VisualStateGroup",
+					"line": 555
+				},
+				{
+					"name": "LeftMode",
+					"tag": "VisualState",
+					"line": 556
+				},
+				{
+					"name": "TopMode",
+					"tag": "VisualState",
+					"line": 557
+				}
+			]
+		},
+		{
+			"file": "controls/dev/NavigationView/NavigationView.xaml",
+			"key": "controls:NavigationViewItemSeparator",
+			"targetType": "controls:NavigationViewItemSeparator",
+			"parts": [
+				{
+					"name": "NavigationViewItemSeparatorRootGrid",
+					"tag": "Grid",
+					"line": 580
+				},
+				{
+					"name": "SeparatorLine",
+					"tag": "Rectangle",
+					"line": 600
+				}
+			],
+			"states": [
+				{
+					"name": "NavigationSeparatorLineStates",
+					"tag": "VisualStateGroup",
+					"line": 582
+				},
+				{
+					"name": "HorizontalLine",
+					"tag": "VisualState",
+					"line": 583
+				},
+				{
+					"name": "HorizontalLineCompact",
+					"tag": "VisualState",
+					"line": 584
+				},
+				{
+					"name": "VerticalLine",
+					"tag": "VisualState",
+					"line": 589
+				}
+			]
+		},
+		{
+			"file": "controls/dev/SplitView/SplitView_themeresources.xaml",
+			"key": "SplitView",
+			"targetType": "SplitView",
+			"parts": [
+				{
+					"name": "ColumnDefinition1",
+					"tag": "ColumnDefinition",
+					"line": 696
+				},
+				{
+					"name": "ColumnDefinition2",
+					"tag": "ColumnDefinition",
+					"line": 697
+				},
+				{
+					"name": "PaneRoot",
+					"tag": "Grid",
+					"line": 700
+				},
+				{
+					"name": "PaneClipRectangle",
+					"tag": "RectangleGeometry",
+					"line": 705
+				},
+				{
+					"name": "PaneClipRectangleTransform",
+					"tag": "CompositeTransform",
+					"line": 707
+				},
+				{
+					"name": "PaneTransform",
+					"tag": "CompositeTransform",
+					"line": 712
+				},
+				{
+					"name": "HCPaneBorder",
+					"tag": "Rectangle",
+					"line": 715
+				},
+				{
+					"name": "ContentRoot",
+					"tag": "Grid",
+					"line": 718
+				},
+				{
+					"name": "ContentTransform",
+					"tag": "CompositeTransform",
+					"line": 720
+				},
+				{
+					"name": "LightDismissLayer",
+					"tag": "Rectangle",
+					"line": 723
+				}
+			],
+			"states": [
+				{
+					"name": "DisplayModeStates",
+					"tag": "VisualStateGroup",
+					"line": 53
+				},
+				{
+					"name": "Closed",
+					"tag": "VisualState",
+					"line": 542
+				},
+				{
+					"name": "ClosedCompactLeft",
+					"tag": "VisualState",
+					"line": 543
+				},
+				{
+					"name": "ClosedCompactRight",
+					"tag": "VisualState",
+					"line": 552
+				},
+				{
+					"name": "OpenOverlayLeft",
+					"tag": "VisualState",
+					"line": 563
+				},
+				{
+					"name": "OpenOverlayRight",
+					"tag": "VisualState",
+					"line": 576
+				},
+				{
+					"name": "OpenInlineLeft",
+					"tag": "VisualState",
+					"line": 595
+				},
+				{
+					"name": "OpenInlineRight",
+					"tag": "VisualState",
+					"line": 607
+				},
+				{
+					"name": "OpenCompactOverlayLeft",
+					"tag": "VisualState",
+					"line": 635
+				},
+				{
+					"name": "OpenCompactOverlayRight",
+					"tag": "VisualState",
+					"line": 655
+				},
+				{
+					"name": "OverlayVisibilityStates",
+					"tag": "VisualStateGroup",
+					"line": 684
+				},
+				{
+					"name": "OverlayNotVisible",
+					"tag": "VisualState",
+					"line": 685
+				},
+				{
+					"name": "OverlayVisible",
+					"tag": "VisualState",
+					"line": 686
+				}
+			]
+		}
+	]
+}
