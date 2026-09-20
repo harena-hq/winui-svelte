@@ -295,6 +295,32 @@ test('a pane beside the content casts nothing, and keeps a rail-wide caster', as
 	expect(await box()).toBe(48);
 });
 
+// The caster carries the shadow and the pane carries the corners, and a CSS `box-shadow` takes
+// its silhouette from the box that carries it — so a square caster leaves the one place the two
+// boxes differ unshadowed. Measured on the reference guest against the Gallery's own overlaying
+// pane: outside the bottom-right arc the content darkens by 13 to 15 levels of 111, the same as
+// at the straight edge above it, where this control darkened it by nothing at all.
+//
+// The assertion is the contour rather than the pixels, because the pixels are what the baselines
+// hold and this suite has no decoder. It bites on the rule being dropped: with the radius gone
+// the two boxes no longer agree.
+test('the shadow turns the corner its pane turns', async ({ page }) => {
+	await page.goto('/dev/navigation-view');
+
+	const root = page.locator(minimal).first();
+	await root.locator('.pane-toggle').click();
+	await expect(root).toHaveAttribute('data-overlay', 'true');
+	await settle(root);
+
+	const radius = (selector: string) =>
+		root.locator(selector).evaluate((el) => getComputedStyle(el).borderRadius);
+	const pane = await radius('.pane');
+	// `OverlayCornerRadius` is 8, and a pane rounded on neither side would pass an equality test
+	// against a caster rounded on neither side.
+	expect(pane).not.toBe('0px');
+	expect(await radius('.shadow-caster')).toBe(pane);
+});
+
 // `ContentTransform`, which this control had no answer for until it had a margin to move. The
 // template jumps `ColumnDefinition1` at key time zero and glides `ContentRoot` back from
 // `OpenPaneLengthMinusCompactLength` (SplitView_themeresources.xaml:382), so the content travels

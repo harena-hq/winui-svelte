@@ -1088,6 +1088,19 @@
 		z-index: 1;
 		opacity: 0;
 		box-shadow: var(--winui-PaneShadow);
+		/* The same corners `.pane` takes, and upstream's caster has none (NavigationView.xaml:409
+		   declares a `Grid` with a width and a transform and nothing else). It is here because the
+		   two shadows are made differently: a composition `ThemeShadow` is drawn from a visual and
+		   lands behind the rounded `PaneRoot` in front of it, while a CSS `box-shadow` takes its
+		   silhouette from the border box of whatever carries it. Photographed on the reference
+		   guest — the Gallery's own pane, overlaying, bottom-right corner — the original's shadow
+		   is continuous around the corner arc: just outside it the content is darkened by 13 to 15
+		   levels of 111, which is what the straight edge two hundred rows above darkens it by.
+		   Square here, that arc is the one place the shadow is not drawn at all, because an outer
+		   box-shadow is never painted inside the box that casts it. So the radius is not a part
+		   transcribed from the caster; it is what makes this primitive produce the contour the
+		   original's shadow has. */
+		border-radius: 0 var(--winui-OverlayCornerRadius) var(--winui-OverlayCornerRadius) 0;
 		/* `ShadowCasterTransform.TranslateX` (NavigationView.xaml:411), which the group's
 		   transitions run from `NegativeOpenPaneLengthMinusCompactLength` to 0 (`:98`) and back
 		   (`:113`). `RootSplitView.CompactPaneLength` is the control's own in every display mode
