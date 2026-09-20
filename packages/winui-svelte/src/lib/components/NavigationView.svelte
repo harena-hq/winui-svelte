@@ -1167,9 +1167,12 @@
 	/* NavigationView.xaml:296, PaneContentGridToggleButtonRow — the space the pane keeps for a
 	   button that is not in it. The row is `Auto`, so two constraints meet on it and the larger
 	   wins: `TogglePaneButtonVisible` sets the row's own `MinHeight` to
-	   `NavigationViewPaneHeaderRowMinHeight`, 40 (`NavigationView.xaml:48`), and the grid inside
-	   it gets a `MinHeight` of the toggle button's height from `UpdatePaneLayout`
-	   (`NavigationView.cpp:4662`, applied at `:4721`) under the same condition. So the `{#if}`
+	   `NavigationViewPaneHeaderRowMinHeight`, 40 (`NavigationView.xaml:48`), and the single row of
+	   the grid that sits in it — `PaneHeaderContentBorderRow` (`NavigationView.xaml:306`, in the
+	   `<Grid Grid.Row="2">` at `:304`) — gets a `MinHeight` of the toggle button's height under
+	   the same condition, from `UpdateBackAndCloseButtonsVisibility` (`NavigationView.cpp:4662`,
+	   applied at `:4721`). That function and not the one named for the layout: `UpdatePaneLayout`
+	   is `:1510` to `:1653` and writes no `MinHeight` at all. So the `{#if}`
 	   around this element is that state, and `max()` here is the arithmetic rather than its
 	   answer — 40 at this pin, and still the original's number if `PaneToggleButtonHeight` ever
 	   passes 40.

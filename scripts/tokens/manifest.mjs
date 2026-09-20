@@ -2064,11 +2064,14 @@ export const SHELL_KEYS = {
 	// `UpdatePaneButtonsWidths` takes the width from `CompactPaneLength`
 	// (`NavigationView.cpp:1811`) and the height falls out of the paint plus the 2s of
 	// `NavigationViewItemButtonMargin`. The height key sizes the box the button paints inside
-	// that. The width key is not the
+	// that, and floors the pane row that keeps it space — by a second route, `:4662` reading the
+	// application resource through `GetPaneToggleButtonHeight` (`:4090`) rather than through the
+	// style's `MinHeight`. The width key is not the
 	// button's at all: `GetPaneToggleButtonWidth` (`:4085`) spends it as the pane header's left
 	// inset (`:4663`) and as the pane title's margin (`:4764`), while the button's own `MinWidth`
 	// is a different 40 that `NavigationView.xaml:197` binds over this style's setter.
-	PaneToggleButtonHeight: 'NavigationView pane-toggle button, the box it paints',
+	PaneToggleButtonHeight:
+		'NavigationView pane-toggle button, the box it paints and the pane row it floors',
 	PaneToggleButtonWidth: 'NavigationView pane, the inset that clears the pane-toggle button',
 	NavigationViewAutoSuggestAreaHeight: 'NavigationView pane, the search row',
 	NavigationViewAutoSuggestBoxMargin: 'NavigationView pane, the search row',
@@ -2909,7 +2912,7 @@ export const DOUBLE_LENGTHS = {
 	NavigationViewSelectionIndicatorRadius: 'the selection indicator',
 	NavigationViewSelectionIndicatorWidth: 'the selection indicator',
 	NavigationViewPaneHeaderRowMinHeight: 'the pane row that keeps the toggle button its space',
-	PaneToggleButtonHeight: 'the box the pane toggle button paints',
+	PaneToggleButtonHeight: 'the box the pane toggle button paints, and the pane row it floors',
 	PaneToggleButtonWidth: 'the pane inset that clears the toggle button, not the button',
 	TitleBarBackButtonWidth: 'the title bar back button',
 	TitleBarCompactHeight: 'the title bar row',
