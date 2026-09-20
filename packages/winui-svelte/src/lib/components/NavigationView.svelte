@@ -270,10 +270,31 @@
 		onExpandedItemsChange?.(next);
 	}
 
-	// `UpdatePaneLayout` shows the pane's separator when the menu scrolls. ScrollView observes
-	// both its viewport and content, so its published scrollable height answers that directly.
+	// `UpdatePaneLayout` decides the pane's separator, and the condition is not "the menu
+	// scrolls". `VisualItemsSeparator` is collapsed outright when the footer holds no menu item
+	// and no settings item (`NavigationView.cpp:1588`), and collapsed again when the menu and
+	// the footer group both fit (`:1599`). The three branches that show it (`:1610`, `:1617`,
+	// `:1624`) are the ones where they do not. That pair is the test, and not whether anything
+	// is below the rule: `FooterContentBorder` is in the grid either way, as the markup below
+	// says.
+	//
+	// That first test reads `m_footerItemsSource`, which is set (`:852`) from the source built
+	// at `:818`-`:825` — `FooterMenuItemsSource`, or `FooterMenuItems` — and **not** from
+	// `PaneFooter`. The pane footer's height is counted where the space is partitioned
+	// (`:1586`, under upstream's own comment saying so at `:1585`) and nowhere in the decision,
+	// so filling that slot does not bring the rule back. This library has no `footerMenuItems` prop —
+	// `FooterItemsScrollViewer` is declined over the same absence — so that count is
+	// structurally zero and what is left of the test is `settingsVisible` alone.
+	//
+	// `:1593`'s empty-menu branch is deliberately not re-expressed: a pane with no items has
+	// nothing to overrun with, so the measurement below already answers it false.
+	//
+	// ScrollView observes both its viewport and its content, so its published scrollable height
+	// puts `:1599`'s question to the laid-out boxes rather than to the measure pass — the menu
+	// does not fit in what the footer has left it.
 	let paneScrollableHeight = $state(0);
-	let menuOverflows = $derived(paneScrollableHeight > 0);
+	const menuOverflows = $derived(paneScrollableHeight > 0);
+	const paneSeparatorVisible = $derived(settingsVisible && menuOverflows);
 
 	// Overlaying is what makes compact and minimal different from expanded: the pane is
 	// drawn above the content instead of beside it, so the content does not reflow.
@@ -449,7 +470,7 @@
 					</ul>
 				</ScrollView>
 
-				{#if menuOverflows}
+				{#if paneSeparatorVisible}
 					<div class="items-separator"></div>
 				{/if}
 

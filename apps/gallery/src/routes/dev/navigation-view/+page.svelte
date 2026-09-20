@@ -72,6 +72,14 @@
 	// has to render with that child's parent already open.
 	let seeded = $state(['design']);
 
+	// The two panes whose menus overrun. Each gets its own array rather than sharing `seeded`:
+	// a bound prop is written back by the control, so one array across three frames would make
+	// a click in any of them expand the other two, and the overrun this page exists to hold
+	// steady would depend on where the last click landed.
+	let overrunWithoutSettings = $state(['design']);
+	let overrunWithPaneFooter = $state(['design']);
+	let overrunWithBoth = $state(['design']);
+
 	// The frame below is the one that photographs an overlaying pane, and the control will not
 	// render one at rest: it closes its own pane on entering minimal, and mounting in minimal is
 	// entering it. That behaviour is right — a phone-width window opens with the pane shut — so
@@ -94,7 +102,7 @@
 </p>
 
 <h2 class="winui-SubtitleTextBlockStyle">auto — resolved from the control's width</h2>
-<div class="frame">
+<div class="frame" id="menu-fits">
 	<NavigationView {items} {selected} onItemInvoked={select('auto')}>
 		<p class="winui-BodyTextBlockStyle">Content sits beside the pane.</p>
 	</NavigationView>
@@ -166,8 +174,70 @@
 <p class="winui-BodyTextBlockStyle">
 	The frame starts with <code>design</code> already open because the page seeded the array.
 </p>
-<div class="frame">
+<div class="frame" id="seeded-expansion">
 	<NavigationView {items} {selected} onItemInvoked={select('seeded')} bind:expandedItems={seeded}>
+		<p class="winui-BodyTextBlockStyle">Content sits beside the pane.</p>
+	</NavigationView>
+</div>
+
+<h2 class="winui-SubtitleTextBlockStyle">the menu overruns and the footer holds no item</h2>
+<p class="winui-BodyTextBlockStyle">
+	The same overrunning menu as above with no settings row, and no pane separator. Upstream's test is
+	on the pair <em>no footer menu item and no settings item</em>, not on whether anything is below
+	the rule — the pane footer's box is always in the grid, empty or not.
+</p>
+<div class="frame" id="menu-overruns-without-settings">
+	<NavigationView
+		{items}
+		{selected}
+		onItemInvoked={select('overrun-no-settings')}
+		bind:expandedItems={overrunWithoutSettings}
+		settingsVisible={false}
+	>
+		<p class="winui-BodyTextBlockStyle">Content sits beside the pane.</p>
+	</NavigationView>
+</div>
+
+<h2 class="winui-SubtitleTextBlockStyle">the menu overruns and the pane footer is filled</h2>
+<p class="winui-BodyTextBlockStyle">
+	The frame above with the <code>paneFooter</code> slot filled. The separator is still not drawn:
+	the test upstream makes is on the footer <em>items</em>, and an app's pane footer is not one of
+	them — its height is counted when the pane's space is divided and nowhere in the decision.
+</p>
+<div class="frame" id="menu-overruns-with-pane-footer">
+	<NavigationView
+		{items}
+		{selected}
+		onItemInvoked={select('overrun-pane-footer')}
+		bind:expandedItems={overrunWithPaneFooter}
+		settingsVisible={false}
+	>
+		{#snippet paneFooter()}
+			<p class="winui-CaptionTextBlockStyle pane-footer-note">Signed in as harness</p>
+		{/snippet}
+		<p class="winui-BodyTextBlockStyle">Content sits beside the pane.</p>
+	</NavigationView>
+</div>
+
+<h2 class="winui-SubtitleTextBlockStyle">
+	the menu overruns with a settings row and a pane footer
+</h2>
+<p class="winui-BodyTextBlockStyle">
+	Both filled at once, which is the only arrangement in which a pane footer can be seen not to
+	<em>remove</em> the separator. The frame above shows one does not bring the rule back; without this
+	one, a control that treated a filled pane footer as a reason to collapse would look right in every other
+	frame on this page.
+</p>
+<div class="frame" id="menu-overruns-with-settings-and-pane-footer">
+	<NavigationView
+		{items}
+		{selected}
+		onItemInvoked={select('overrun-both')}
+		bind:expandedItems={overrunWithBoth}
+	>
+		{#snippet paneFooter()}
+			<p class="winui-CaptionTextBlockStyle pane-footer-note">Signed in as harness</p>
+		{/snippet}
 		<p class="winui-BodyTextBlockStyle">Content sits beside the pane.</p>
 	</NavigationView>
 </div>
@@ -252,6 +322,16 @@
 	.positioned {
 		position: relative;
 		height: 100%;
+	}
+
+	/* The `paneFooter` slot holds an app's own content, so what it looks like is the harness's
+	   to decide and not the control's: nothing here reproduces anything, and none of these
+	   numbers is upstream's. One line, inset by eye, so that the frame photographs the slot
+	   being filled rather than a block of text. */
+	.pane-footer-note {
+		margin: 0;
+		padding: 4px 16px;
+		color: var(--winui-TextFillColorSecondaryBrush);
 	}
 
 	.log {
