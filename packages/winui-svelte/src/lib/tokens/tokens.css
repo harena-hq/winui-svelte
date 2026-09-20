@@ -1745,6 +1745,7 @@
 	--winui-TopNavigationViewOverflowButtonWidth: 40px;
 	--winui-TopNavigationViewOverflowButtonHeight: 40px;
 	--winui-NavigationViewItemOnLeftMinHeight: 36px;
+	--winui-NavigationViewPaneHeaderRowMinHeight: 40px;
 	--winui-NavigationViewItemOnLeftIconBoxHeight: 16px;
 	--winui-NavigationViewSelectionIndicatorWidth: 3px;
 	--winui-NavigationViewSelectionIndicatorHeight: 16px;

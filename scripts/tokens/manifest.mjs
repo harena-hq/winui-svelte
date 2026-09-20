@@ -96,11 +96,13 @@ export const ADDITIONAL_KEYS = {
  *   `NavigationViewItemPresenter` — the box *outside* the one this reproduction draws, whose
  *   own margin is `NavigationViewItemButtonMargin`. A zero margin on a box CSS does not need
  *   is a key with nothing to paint.
- * - **The pane header and pane title** — `NavigationViewPaneHeaderRowMinHeight` and
- *   `NavigationViewPaneTitlePresenterMargin`. The Gallery sets neither property, so
- *   nothing renders in either slot. `NavigationViewItemInnerHeaderMargin` was listed here
- *   too and does not belong: despite the name it is the inset inside a *group header* in
- *   the item list, which the Gallery does render.
+ * - **The pane title** — `NavigationViewPaneTitlePresenterMargin`. The Gallery sets no
+ *   `PaneTitle`, so nothing renders in that slot. Two keys have been struck off this bullet
+ *   for reading their name rather than their use: `NavigationViewItemInnerHeaderMargin`,
+ *   which despite the name is the inset inside a *group header* in the item list, and
+ *   `NavigationViewPaneHeaderRowMinHeight`, which is a *row's* floor rather than a header's
+ *   size and is what reserves the toggle button's space in a pane with no header in it at
+ *   all (`NavigationView.xaml:48`).
  * - **The compact-mode child flyout** — `NavigationViewItemChildrenMenuFlyoutPadding`.
  *   That flyout is a Flyout, which belongs to the Dialogs and flyouts tranche.
  * - **The title bar's deactivated and subtitle states** —
@@ -2056,6 +2058,8 @@ export const SHELL_KEYS = {
 	NavigationViewCompactPaneLength: 'NavigationView pane, its width when collapsed',
 	NavigationViewIconBoxWidth: 'NavigationView item, the icon column',
 	NavigationViewButtonHolderGridMargin: 'NavigationView, the row holding the pane-toggle button',
+	NavigationViewPaneHeaderRowMinHeight:
+		'NavigationView pane, the row that keeps the pane-toggle button its space',
 	PaneToggleButtonHeight: 'NavigationView pane-toggle button, its box',
 	PaneToggleButtonWidth: 'NavigationView pane-toggle button, its box',
 	NavigationViewAutoSuggestAreaHeight: 'NavigationView pane, the search row',
@@ -2896,6 +2900,7 @@ export const DOUBLE_LENGTHS = {
 	NavigationViewSelectionIndicatorHeight: 'the selection indicator',
 	NavigationViewSelectionIndicatorRadius: 'the selection indicator',
 	NavigationViewSelectionIndicatorWidth: 'the selection indicator',
+	NavigationViewPaneHeaderRowMinHeight: 'the pane row that keeps the toggle button its space',
 	PaneToggleButtonHeight: 'the pane toggle button box',
 	PaneToggleButtonWidth: 'the pane toggle button box',
 	TitleBarBackButtonWidth: 'the title bar back button',
