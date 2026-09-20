@@ -1157,12 +1157,24 @@
 	}
 
 	/* NavigationView.xaml:296, PaneContentGridToggleButtonRow — the space the pane keeps for a
-	   button that is not in it. Height and margin are the button's own, so the items below hold
-	   the positions they had while the button was here. */
+	   button that is not in it. The row is `Auto`, so two constraints meet on it and the larger
+	   wins: `TogglePaneButtonVisible` sets the row's own `MinHeight` to
+	   `NavigationViewPaneHeaderRowMinHeight`, 40 (`NavigationView.xaml:48`), and the grid inside
+	   it gets a `MinHeight` of the toggle button's height from `UpdatePaneLayout`
+	   (`NavigationView.cpp:4662`, applied at `:4721`) under the same condition. So the `{#if}`
+	   around this element is that state, and `max()` here is the arithmetic rather than its
+	   answer — 40 at this pin, and still the original's number if `PaneToggleButtonHeight` ever
+	   passes 40.
+	   Not the button's own box, which is what this rule reserved until it was measured. The
+	   button is in an overlay anchored to the root (`NavigationView.xaml:180`), not in this row,
+	   so the 4 below it is margin in the overlay that the pane was never asked to match, and
+	   reserving 4 + 36 + 4 here put everything under it in the pane four pixels low. */
 	.toggle-button-row {
 		flex: 0 0 auto;
-		height: var(--winui-PaneToggleButtonHeight);
-		margin: var(--winui-NavigationViewButtonHolderGridMargin);
+		min-height: max(
+			var(--winui-NavigationViewPaneHeaderRowMinHeight),
+			var(--winui-PaneToggleButtonHeight)
+		);
 	}
 
 	.pane-toggle {
