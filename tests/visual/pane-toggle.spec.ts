@@ -240,6 +240,61 @@ test('opening an overlaying pane starts a transition', async ({ page }) => {
 	expect(new Set(running.map((a) => a.duration))).toEqual(new Set([350]));
 });
 
+// `ShadowCaster` (NavigationView.xaml:409) is a box that casts and nothing else, and the
+// `PaneOverlayGroup` transitions fade it in over 0:0:0.35 and out over 0:0:0.12 (`:102`, `:116`)
+// while `ShadowCasterTransform` slides it (`:98`, `:113`). The shadow was on `.pane` until it had
+// an element of its own, where it appeared and vanished in one frame — and no end-state
+// assertion could say so, because at either end the shadow is where it belongs.
+test('the shadow fades rather than appearing', async ({ page }) => {
+	await page.goto('/dev/navigation-view');
+
+	const root = page.locator(minimal).first();
+	const running = async () =>
+		root.locator('.shadow-caster').evaluate((el) =>
+			el.getAnimations().map((animation) => ({
+				property: (animation as CSSTransitionLike).transitionProperty,
+				duration: animation.effect?.getTiming().duration
+			}))
+		);
+
+	await root.locator('.pane-toggle').click();
+	const opening = await running();
+	expect(opening.map((a) => a.property).sort()).toEqual(['opacity', 'translate']);
+	expect(new Set(opening.map((a) => a.duration))).toEqual(new Set([350]));
+
+	await settle(root);
+	await root.locator('.pane-toggle').click();
+	const closing = await running();
+	expect(closing.map((a) => a.property).sort()).toEqual(['opacity', 'translate']);
+	// 120 exactly, not 120-and-under: a shortened duration would mean the fade in above was
+	// still running when this one started, and settling between the two is what rules that out.
+	expect(new Set(closing.map((a) => a.duration))).toEqual(new Set([120]));
+});
+
+// `PaneNotOverlaying` holds the caster at zero opacity (NavigationView.xaml:128) and
+// `SetDropShadow` attaches the shadow only in compact or minimal (NavigationView.cpp:5030), so a
+// pane sitting beside the content casts nothing. `ListSizeCompact` narrows the caster to
+// `CompactPaneLength` at the same time (`:84`), which is what this reads instead of the opacity
+// it cannot see: an invisible box still has a width.
+test('a pane beside the content casts nothing, and keeps a rail-wide caster', async ({ page }) => {
+	await page.goto('/dev/navigation-view');
+
+	const root = page.locator('.root[data-pane-display-mode="auto"]').first();
+	await expect(root).toHaveAttribute('data-display-mode', 'expanded');
+	const caster = root.locator('.shadow-caster');
+	const box = () => caster.evaluate((el) => el.getBoundingClientRect().width);
+
+	await expect(root).toHaveAttribute('data-pane-open', 'true');
+	expect(await caster.evaluate((el) => getComputedStyle(el).opacity)).toBe('0');
+	expect(await box()).toBe(320);
+
+	await root.locator('.pane-toggle').click();
+	await expect(root).toHaveAttribute('data-collapsed', 'true');
+	await settle(root);
+	expect(await caster.evaluate((el) => getComputedStyle(el).opacity)).toBe('0');
+	expect(await box()).toBe(48);
+});
+
 // `ContentTransform`, which this control had no answer for until it had a margin to move. The
 // template jumps `ColumnDefinition1` at key time zero and glides `ContentRoot` back from
 // `OpenPaneLengthMinusCompactLength` (SplitView_themeresources.xaml:382), so the content travels

@@ -397,6 +397,10 @@
 		</div>
 	{/if}
 	{#if !isTop}
+		<!-- `ShadowCaster`, NavigationView.xaml:409 — see the rule. Written before the pane
+		     rather than after the SplitView, which is where upstream puts it; the rule says what
+		     that costs. -->
+		<div class="shadow-caster" aria-hidden="true"></div>
 		<!-- Rendered in every left shape, including the minimal one where it is not shown.
 		     `PaneRoot` is a template part with a `Visibility`, not a part that comes and goes:
 		     `Closed` leaves it at the template's `Collapsed` (SplitView_themeresources.xaml:700)
@@ -611,20 +615,27 @@
 		   copies of the number, because the rules that reserve the pane's strip subtract it. */
 		/* c1-allow: NavigationView.idl:198, OpenPaneLength MUX_DEFAULT_VALUE("320.0") */
 		--nav-open-pane-length: 320px;
-		/* How far outside its own box the pane's clip reaches. Upstream needs no such thing,
-		   because upstream clips one element and casts the shadow from another: `PaneClipRectangle`
-		   is `PaneRoot`'s (SplitView_themeresources.xaml:705), while the `ThemeShadow` goes on
-		   `ShadowCaster`, a sibling Grid in NavigationView's own template (NavigationView.xaml:409)
-		   that `NavigationView::SetDropShadow` reaches by name (NavigationView.cpp:5034). This
-		   control has one box doing both, so a clip at the border box takes the shadow with it —
-		   measured, `inset(0)` erases the shadow completely and a negative inset restores it byte
-		   for byte.
+		/* How far outside its own box the pane's clip is held on the edges it is not cutting at.
+		   Upstream needs no such thing: `PaneClipRectangle` is a rectangle geometry the size of
+		   `PaneRoot` (SplitView_themeresources.xaml:705), and a clip that coincides with the box
+		   it is on is a clip that does nothing.
 
-		   Sixteen is `PaneOverlayShadowDepth` (NavigationView_themeresources.xaml:207), the depth
-		   `--winui-PaneShadow` is built from, and it is a bound on that shadow's own reach rather
-		   than a guess: the recipe halves the depth to an elevation, offsets by half of that and
-		   blurs by two thirds of it, which for 16 is 4px down and 5.333px of blur. A blur spreads
-		   less than its full radius, so 16 clears the whole of it with room over. */
+		   Here it is not nothing, twice over. `inset(0)` erases an outer `box-shadow` — measured,
+		   and the reason `ShadowCaster` below is its own element. And with the shadow gone it
+		   still softens the pane's own edge, because a clip at the border box antialiases the
+		   boundary it lands on and the pane's top is at a fractional offset: measured on the
+		   reference lane, the pane's top scanline moved by as much as 105 levels in high
+		   contrast, over three specimens, where the same render at `-16px` is byte-identical to
+		   the one before this clip existed. **`pnpm gate` cannot see it** — pixelmatch reads a
+		   one-row change at a box edge as an anti-aliased edge and discards it, so all three
+		   themes passed while the render had changed.
+
+		   Any positive length does the job, because the pane paints nothing outside its border
+		   box. Sixteen is where the number came from — `PaneOverlayShadowDepth`
+		   (NavigationView_themeresources.xaml:207), the depth `--winui-PaneShadow` is built
+		   from, which bounded the shadow this clip used to cut. It is kept as a clearance rather
+		   than re-derived, because a clearance that was right for a 5.333px blur is comfortably
+		   right for nothing at all. */
 		/* c1-allow: NavigationView_themeresources.xaml:207, PaneOverlayShadowDepth */
 		--nav-pane-clip-outset: 16px;
 		position: relative;
@@ -870,8 +881,8 @@
 	   The base state is the open one, which is also what expanded holds. Both properties are
 	   written as `inset()` on every branch because a transition needs two values of one kind:
 	   `clip-path: none` and an `inset()` do not interpolate, they cut. Every edge the clip is not
-	   cutting at is held `--nav-pane-clip-outset` outside the box rather than on it, so that the
-	   shadow survives — see that property. */
+	   cutting at is held `--nav-pane-clip-outset` outside the box rather than on it — see that
+	   property for what a clip lying on the border box does to the edge it lands on. */
 	.pane {
 		translate: 0 0;
 		clip-path: inset(calc(-1 * var(--nav-pane-clip-outset)));
@@ -966,12 +977,14 @@
 	/* Until the control has settled, there is no transition to run — see the comment on
 	   `settled`. This is a `transition-property` of `none` rather than a zero duration, so that
 	   nothing is even considered while the first state is being reached. */
-	.root:not([data-settled]) .pane {
+	.root:not([data-settled]) .pane,
+	.root:not([data-settled]) .shadow-caster {
 		transition-property: none;
 	}
 
 	@media (prefers-reduced-motion: reduce) {
-		.pane {
+		.pane,
+		.shadow-caster {
 			transition-duration: 0s;
 		}
 	}
@@ -1030,24 +1043,91 @@
 		/* `RootSplitView.BorderBrush`, NavigationView.xaml:289 — the stroke the pane carries
 		   while it is over the content, and the one `PaneNotOverlaying` paints transparent. */
 		border-color: var(--winui-NavigationViewItemSeparatorForeground);
-		/* `NavigationView::SetDropShadow` (NavigationView.cpp:5028) puts a `ThemeShadow` on the
-		   `ShadowCaster` grid at `PaneOverlayShadowDepth` while the pane is open in compact or
-		   minimal, and `PaneNotOverlaying` (NavigationView.xaml:128) holds that grid at zero
-		   opacity otherwise — the same condition `data-overlay` already is. Without it an
-		   opaque pane sits on the content with nothing between them, which is what the pane
-		   looked like here at phone width.
+	}
 
-		   Upstream casts the shadow from a separate sibling grid the width of the open pane
-		   (NavigationView.xaml:409) rather than from the pane, because a composition shadow is
-		   drawn into the tree as its own visual. The rect is the pane's, so the shadow goes on
-		   the pane here, and the one difference that follows is that the grid carries no corner
-		   radius of its own: upstream's shadow turns the corner square where this one follows
-		   the radius above. The group's transitions also move that grid: `ShadowCasterTransform`
-		   slides from `NegativeOpenPaneLengthMinusCompactLength` to 0 while the opacity goes to
-		   1, over 0:0:0.35 in and 0:0:0.12 out (NavigationView.xaml:95, :109). Neither the
-		   slide nor the fade is here, because nothing here animates the pane either: it is
-		   added to and removed from the document, and this shadow arrives with it. */
+	/* `ShadowCaster` — NavigationView.xaml:409. A Grid beside the SplitView in NavigationView's
+	   own template, the width of the open pane, with no background, no content and no corner
+	   radius: a box that casts and does nothing else. `NavigationView::SetDropShadow`
+	   (NavigationView.cpp:5028) puts a `ThemeShadow` on it at `PaneOverlayShadowDepth` while the
+	   pane is open in compact or minimal, and `PaneNotOverlaying` (NavigationView.xaml:128) holds
+	   it at zero opacity otherwise — the two conditions `data-overlay` already is. Without a
+	   shadow an opaque pane sits on the content with nothing between them, which is what the pane
+	   looked like here at phone width.
+
+	   The shadow was on `.pane` until this element existed, and both of the divergences that
+	   followed came of one box doing two jobs. A clip at the border box takes an outer
+	   `box-shadow` with it, so `f7fb6a8`'s clip erased the shadow and a negative inset had to buy
+	   it back — the inset stays, for the second reason recorded on it, but it is no longer this
+	   shadow's business. And `.pane` carries `OverlayCornerRadius` on its right corners, so its
+	   shadow turned those corners where upstream's, cast by a square Grid, does not: the corner
+	   is square now, and the arc between the pane's rounded corner and the caster's square one
+	   shows the content rather than a shadow, because an outer `box-shadow` is not painted
+	   inside the box that casts it.
+
+	   Painted before `.pane` and occluded by it, where upstream's caster is declared after the
+	   SplitView. It makes no difference while the pane is open and still — the shadow is drawn
+	   outside the caster's box, which is the pane's box — and one difference on the way out,
+	   where the caster is already rail-width under a pane that is still wide: here that band is
+	   hidden behind the pane, and a composition drop shadow, drawn under its own visual and over
+	   what is below it, would show it. Not measured; the guest was not driven through a 120ms
+	   window for it. */
+	.shadow-caster {
+		position: absolute;
+		/* `Grid.RowSpan="2"` over a root grid whose row 1 holds the SplitView: the caster is as
+		   tall as the control rather than as tall as the pane. Row 0 is the top-nav area, and a
+		   left display mode collapses it — so wherever this element is rendered at all, the two
+		   heights are the same. */
+		inset: 0 auto 0 0;
+		width: var(--nav-open-pane-length);
+		/* Transparent and out of the way: upstream's caster has no background and is not
+		   hit-testable without one. */
+		pointer-events: none;
+		/* Above the content and above `.light-dismiss`, which is where the caster sits upstream
+		   by being written after the SplitView that holds them both. `.pane` takes the same
+		   `z-index` under `data-overlay` and wins on tree order. */
+		z-index: 1;
+		opacity: 0;
 		box-shadow: var(--winui-PaneShadow);
+		/* `ShadowCasterTransform.TranslateX` (NavigationView.xaml:411), which the group's
+		   transitions run from `NegativeOpenPaneLengthMinusCompactLength` to 0 (`:98`) and back
+		   (`:113`). `RootSplitView.CompactPaneLength` is the control's own in every display mode
+		   (`:289`), so this offset is 320 - 48 in minimal too, where the pane itself slides the
+		   whole 320 (SplitView_themeresources.xaml:64) — on the way in the caster leads the pane
+		   by a rail's width, which is upstream's arithmetic rather than a simplification of it.
+		   In compact the two agree exactly: same value, same spline, same duration as the clip
+		   (SplitView_themeresources.xaml:129). */
+		translate: calc(var(--winui-NavigationViewCompactPaneLength) - var(--nav-open-pane-length)) 0;
+	}
+
+	/* `ListSizeCompact` narrows the caster to `CompactPaneLength` (NavigationView.xaml:84), and
+	   `OnSplitViewPaneClosing` enters that state as the close begins (NavigationView.cpp:1765),
+	   so the caster is rail-width for the whole of the way out while the pane is still narrowing
+	   to meet it. `data-collapsed` is that state's condition exactly — closed in `CompactOverlay`
+	   or `CompactInline` (NavigationView.cpp:1794). The group has no transitions, so the width
+	   changes in one frame in both directions. */
+	.root[data-collapsed='true'] .shadow-caster {
+		width: var(--winui-NavigationViewCompactPaneLength);
+	}
+
+	.root[data-overlay='true'] .shadow-caster {
+		opacity: 1;
+		translate: 0 0;
+	}
+
+	/* The `PaneOverlayGroup` transitions, NavigationView.xaml:95 and :109 — 0:0:0.35 into
+	   `PaneOverlaying` and 0:0:0.12 out. The opacity frames are `LinearDoubleKeyFrame` and carry
+	   no spline (`:102`, `:116`); the translate frames carry `0.1,0.9 0.2,1.0`, the curve the
+	   pane's own clip runs on. */
+	.shadow-caster {
+		/* c1-allow: NavigationView.xaml:113, :116 — the ease-out duration and its spline */
+		transition:
+			opacity 120ms linear,
+			translate 120ms cubic-bezier(0.1, 0.9, 0.2, 1);
+	}
+
+	.root[data-overlay='true'] .shadow-caster {
+		/* c1-allow: NavigationView.xaml:99, :102 — the way in */
+		transition-duration: 350ms;
 	}
 
 	/* NavigationView.xaml:180 — PaneToggleButtonGrid: left, top, and Canvas.ZIndex="100", which
