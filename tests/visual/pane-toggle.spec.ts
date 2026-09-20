@@ -402,3 +402,53 @@ test('the top display mode has no pane toggle', async ({ page }) => {
 	const top = page.locator('.root[data-pane-display-mode="top"]').first();
 	await expect(top.locator('.pane-toggle')).toHaveCount(0);
 });
+
+// The button's box and the box it paints are not the same box. `PaneToggleButtonStyle` gives the
+// button a `Padding` of `NavigationViewItemButtonMargin`, `4,2`
+// (NavigationView_themeresources.xaml:282), and hands that to the painted `LayoutRoot` as a
+// `Margin` (:287); the button's own width is `CompactPaneLength`, written onto it in code
+// (NavigationView.cpp:4634). It is asserted here rather than left to the baselines because the
+// baselines photograph the glyph moving and nothing else, and the local lane skips them — so the
+// two boxes could collapse back into one with the suite green.
+test('the toggle button is 48 by 40 and paints 40 by 36 at 4,2 inside it', async ({ page }) => {
+	await page.goto('/dev/navigation-view');
+
+	const root = page.locator('.root[data-pane-display-mode="auto"]').first();
+	const button = await root.locator('.pane-toggle').boundingBox();
+	const paint = await root.locator('.pane-toggle .layout-root').boundingBox();
+	if (!button || !paint) throw new Error('the pane toggle has no box');
+
+	expect({ width: button.width, height: button.height }).toEqual({ width: 48, height: 40 });
+	expect({ width: paint.width, height: paint.height }).toEqual({ width: 40, height: 36 });
+	expect({ x: paint.x - button.x, y: paint.y - button.y }).toEqual({ x: 4, y: 2 });
+});
+
+// And the strip that padding opens answers no pointer, which is the original's behaviour rather
+// than an omission: XAML hit-tests rendered visuals and this button renders none outside
+// `LayoutRoot`. Photographed on the reference guest — with the pointer one pixel inside the
+// button's left edge, three short of the paint, the paint stays the pane's own colour; it lights
+// as soon as the pointer is on it. A `<button>` hit-tests its whole border box whatever it
+// paints, so this is the one thing here that had to be handed back by hand.
+test('the toggle button answers a pointer only where it paints', async ({ page }) => {
+	await page.goto('/dev/navigation-view');
+
+	const root = page.locator('.root[data-pane-display-mode="auto"]').first();
+	const paint = root.locator('.pane-toggle .layout-root');
+	const button = await root.locator('.pane-toggle').boundingBox();
+	if (!button) throw new Error('the pane toggle has no box');
+	const fill = () => paint.evaluate((element) => getComputedStyle(element).backgroundColor);
+	const hit = (x: number, y: number) =>
+		page.evaluate(([x, y]) => document.elementFromPoint(x, y)?.className ?? '', [x, y]);
+	const middle = button.y + button.height / 2;
+	const resting = await fill();
+
+	await page.mouse.move(button.x + 1, middle);
+	expect(await fill()).toBe(resting);
+	// Past the button and past the holder grid above it, both of which are boxes upstream paints
+	// nothing in, to the row the pane keeps for the button.
+	expect(await hit(button.x + 1, middle)).toContain('toggle-button-row');
+
+	await page.mouse.move(button.x + button.width / 2, middle);
+	expect(await fill()).not.toBe(resting);
+	expect(await hit(button.x + button.width / 2, middle)).toContain('layout-root');
+});
