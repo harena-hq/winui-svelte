@@ -275,6 +275,16 @@ test('the content glides when an expanded pane closes', async ({ page }) => {
 	// pre-duration, and a margin running at 200 would mean the pair had been flattened.
 	expect(running).toEqual(['clip-path:200', 'margin-right:199.99']);
 
+	// `getAnimations()` above reports a transition the instant it is created, before any frame
+	// has advanced it, and a forced layout outside a frame reads the animation at the previous
+	// frame's time. A click and a read that both land inside one frame therefore read the start
+	// value — which is 0 travelled, a glide reported as no transition at all. So wait for the
+	// renderer to produce a frame. The assertion above needs no wait, because it asks whether
+	// the transition exists rather than where it has got to.
+	await page.evaluate(
+		() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)))
+	);
+
 	// And it is genuinely mid-flight rather than merely declared: the box has started moving and
 	// has not arrived. A jump would read the whole 272 here, and no transition at all would read
 	// zero — the two failures either side of this one.
