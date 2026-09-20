@@ -8,8 +8,9 @@ import * as c7 from './c7-acceptance-surface-covered.mjs';
 import * as c8 from './c8-gallery-records-current.mjs';
 import * as c9 from './c9-tokens-resolve.mjs';
 import * as c10 from './c10-commit-subjects.mjs';
+import * as c11 from './c11-template-parts.mjs';
 
-const GATES = [c1, c2, c3, c4, c5, c6, c7, c8, c9, c10];
+const GATES = [c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11];
 
 const MARK = { pass: '  ok  ', fail: ' FAIL ', pending: 'pending' };
 

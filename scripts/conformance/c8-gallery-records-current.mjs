@@ -9,6 +9,7 @@ const SAMPLES = 'data/winui-gallery-samples.json';
 const LANGUAGES = 'data/winui-gallery-languages.json';
 const COLORCODE = 'data/colorcode.json';
 const SYMBOL = 'data/winui-symbol.json';
+const PARTS = 'data/winui-template-parts.json';
 
 /**
  * C2's sibling, for the other generated records. It answers the same question —
@@ -52,7 +53,7 @@ function sharedGlyphs(symbol) {
 	return [...uses.values()].filter((count) => count > 1).length;
 }
 
-function counted(design, shell, samples, languages, colorcode, symbol) {
+function counted(design, shell, samples, languages, colorcode, symbol, parts) {
 	const tiles = design.color.items.filter((item) => item.kind === 'tiles');
 	const bySection = {};
 	for (const grid of tiles) {
@@ -138,13 +139,22 @@ function counted(design, shell, samples, languages, colorcode, symbol) {
 			remapped: symbol.symbols.filter((entry) => entry.legacy !== entry.glyph).length,
 			unchanged: symbol.symbols.filter((entry) => entry.legacy === entry.glyph).length,
 			sharedGlyphs: sharedGlyphs(symbol)
+		},
+		// C11 reads this record's templates against `docs/template-parts.md`. Without the census
+		// below, a pin that moved and a record nobody regenerated would leave C11 comparing the
+		// dispositions against a list of parts that is no longer the template's — passing, and
+		// saying so, about a question it had stopped asking.
+		[PARTS]: {
+			templates: parts.templates.length,
+			parts: parts.templates.reduce((n, t) => n + t.parts.length, 0),
+			states: parts.templates.reduce((n, t) => n + t.states.length, 0)
 		}
 	};
 }
 
 export async function run() {
 	const records = {};
-	const paths = [DESIGN, SHELL, SAMPLES, LANGUAGES, COLORCODE, SYMBOL];
+	const paths = [DESIGN, SHELL, SAMPLES, LANGUAGES, COLORCODE, SYMBOL, PARTS];
 	for (const path of paths) {
 		let text;
 		try {
@@ -158,7 +168,9 @@ export async function run() {
 						? 'pnpm colorcode:extract'
 						: path === SYMBOL
 							? 'pnpm symbol:extract'
-							: 'pnpm gallery:extract'
+							: path === PARTS
+								? 'pnpm parts:extract'
+								: 'pnpm gallery:extract'
 				}\``
 			);
 		}
@@ -181,7 +193,8 @@ export async function run() {
 		[SAMPLES]: GALLERY_UPSTREAM.commit,
 		[LANGUAGES]: GALLERY_UPSTREAM.commit,
 		[COLORCODE]: COLORCODE_UPSTREAM.commit,
-		[SYMBOL]: CONTROL_UPSTREAM.commit
+		[SYMBOL]: CONTROL_UPSTREAM.commit,
+		[PARTS]: CONTROL_UPSTREAM.commit
 	};
 	for (const [path, record] of Object.entries(records)) {
 		const pinned = pins[path];
@@ -211,7 +224,8 @@ export async function run() {
 		records[SAMPLES],
 		records[LANGUAGES],
 		records[COLORCODE],
-		records[SYMBOL]
+		records[SYMBOL],
+		records[PARTS]
 	);
 	for (const [path, counts] of Object.entries(expected)) {
 		for (const [key, value] of Object.entries(counts)) {
@@ -259,7 +273,13 @@ export async function run() {
 	const { records: derive } = await import('../gallery/extract.mjs');
 	const { record: deriveColorCode } = await import('../colorcode/extract.mjs');
 	const { record: deriveSymbol } = await import('../symbol/extract.mjs');
-	const fresh = { ...derive(), colorcode: deriveColorCode(), symbol: deriveSymbol() };
+	const { record: deriveParts } = await import('../parts/extract.mjs');
+	const fresh = {
+		...derive(),
+		colorcode: deriveColorCode(),
+		symbol: deriveSymbol(),
+		parts: deriveParts()
+	};
 	// `extractedAt` is the day the record was written, not part of what it says: a
 	// re-run tomorrow would differ in that one field and in nothing else.
 	const strip = (record) => {
@@ -274,7 +294,8 @@ export async function run() {
 		[SAMPLES, fresh.samples],
 		[LANGUAGES, fresh.languages],
 		[COLORCODE, fresh.colorcode],
-		[SYMBOL, fresh.symbol]
+		[SYMBOL, fresh.symbol],
+		[PARTS, fresh.parts]
 	]) {
 		if (JSON.stringify(strip(records[path])) !== JSON.stringify(strip(record))) stale.push(path);
 	}

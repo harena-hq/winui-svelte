@@ -1,0 +1,174 @@
+# Template parts, and what this library does with each
+
+A WinUI control template is a list of named parts. This file says, for every part of every
+template it covers, which element of ours plays it — or why none does.
+
+**It exists because six parts were found one at a time.** Over two days `SplitView`'s template
+gave up a border, a corner radius, `HCPaneBorder`, `LightDismissLayer`, a clip, and a column
+whose second state was unaccounted for. Each was found by someone reporting what the control
+looked like on a phone, or by the next unit tripping over it. Every one of them had been sitting
+in a file this repository already had, at a pin it already knew, for as long as the control had
+existed. The comparison was always cheap; what was missing was anything that said it had not
+been done.
+
+So the comparison is written down, and a gate reads it. `data/winui-template-parts.json` is the
+census, extracted from the pin by `scripts/parts/extract.mjs`. This file is the disposition.
+**C11** joins the two and fails on a part with no row, a row naming no part, a template claimed
+by a component that does not exist, and a `reproduced` row whose selector that component does
+not carry. The last of those is the one that matters: without it this table could be filled in
+one sitting without opening a single component, and it would look exactly the same.
+
+## A template can be reproduced more than once
+
+`SplitView` appears twice below. `SplitView.svelte` reproduces it because it is that control;
+`NavigationView.svelte` reproduces it because `NavigationView.xaml` hosts a `SplitView` and this
+library renders its own pane instead of composing ours. Two reproductions, two dispositions, and
+the difference between the columns is the whole of why this file was needed — every one of the
+six parts was present in one column and absent from the other.
+
+A section heading is therefore a template **and** a component, not a template alone.
+
+## Dispositions
+
+- **reproduced** — an element of ours plays the part. The _Where_ cell names it, and C11 requires
+  that name to appear in the component's source. Where the mechanism differs from the template's,
+  the cell says so: matching the template's _effect_ is the bar, not its markup.
+- **declined** — the part serves a surface this library does not offer. The cell names the prop
+  that would fill it, so that adding that prop arrives with a checklist rather than a blank page.
+- **open** — the part serves a surface we do offer, and nothing of ours plays it. A defect, and
+  the cell says where it is tracked.
+
+## Scope
+
+The census covers both files in full — 7 templates, 80 parts, 67 states. This file disposes of
+the **parts** of the two templates the six defects came from. The rest are listed under
+_Pending_ and counted by C11 on every run, so that what is undone is a number in the output
+rather than an absence nobody reads.
+
+**States are recorded and not yet disposed of.** A `VisualState` is a different question from a
+part — our control answers states with attributes on `.root` rather than with elements — and
+mixing the two axes into one table would have meant writing 147 rows in one sitting, which is
+how a table gets filled in without anything being opened. Their disposition is its own unit.
+
+**Transitions are not in the census at all.** A `VisualTransition` is identified by the pair of
+states it runs between rather than by a name, so it needs a different key; `4cba9b2` records what
+is known about them in the meantime.
+
+---
+
+## `SplitView` in `SplitView.svelte`
+
+The control that is the primitive. Its root is the grid the template describes, so the column
+definitions are real grid tracks here.
+
+| Part                         | Disposition | Where                                                                                                                                                                           |
+| ---------------------------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ColumnDefinition1`          | reproduced  | `--pane-column`, the first `grid-template-columns` track                                                                                                                        |
+| `ColumnDefinition2`          | reproduced  | the `minmax(0, 1fr)` track beside it                                                                                                                                            |
+| `PaneRoot`                   | reproduced  | `.pane`                                                                                                                                                                         |
+| `PaneClipRectangle`          | reproduced  | `.pane`, `clip-path`                                                                                                                                                            |
+| `PaneClipRectangleTransform` | reproduced  | the animated inset of that `clip-path`                                                                                                                                          |
+| `PaneTransform`              | reproduced  | `.pane`, `translate`                                                                                                                                                            |
+| `HCPaneBorder`               | reproduced  | `.pane::after`                                                                                                                                                                  |
+| `ContentRoot`                | reproduced  | `.content`                                                                                                                                                                      |
+| `ContentTransform`           | reproduced  | by another mechanism: the template jumps the column and glides the content back, this control transitions `grid-template-columns` and the content glides because the track does |
+| `LightDismissLayer`          | reproduced  | `.light-dismiss`                                                                                                                                                                |
+
+## `SplitView` in `NavigationView.svelte`
+
+`NavigationView.xaml:289` hosts a `SplitView` named `RootSplitView`. This library renders the
+pane itself rather than composing `SplitView.svelte`, so none of the template above arrives for
+free, and this column is where that cost is paid.
+
+| Part                         | Disposition | Where                                                                                                                                                                 |
+| ---------------------------- | ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ColumnDefinition1`          | reproduced  | the negative `margin-inline-end` on `.pane`, which reserves the column by giving back the rest                                                                        |
+| `ColumnDefinition2`          | reproduced  | `.content-grid`, the flex item that takes what is left                                                                                                                |
+| `PaneRoot`                   | reproduced  | `.pane`                                                                                                                                                               |
+| `PaneClipRectangle`          | reproduced  | `.pane`, `clip-path`                                                                                                                                                  |
+| `PaneClipRectangleTransform` | reproduced  | the animated inset of that `clip-path`                                                                                                                                |
+| `PaneTransform`              | reproduced  | `.pane`, `translate`                                                                                                                                                  |
+| `HCPaneBorder`               | reproduced  | `.pane::after`                                                                                                                                                        |
+| `ContentRoot`                | reproduced  | `.content-grid`                                                                                                                                                       |
+| `ContentTransform`           | open        | the content jumps where the inline shapes glide it; `SplitView.svelte` reaches the same effect by transitioning its track, and this control transitions no equivalent |
+| `LightDismissLayer`          | reproduced  | `.light-dismiss`                                                                                                                                                      |
+
+## `controls:NavigationView` in `NavigationView.svelte`
+
+| Part                               | Disposition | Where                                                                                                                                                                                                                         |
+| ---------------------------------- | ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `RootGrid`                         | reproduced  | `.root`                                                                                                                                                                                                                       |
+| `PaneToggleButtonGrid`             | reproduced  | `.button-holder-grid`; the only thing between this grid and the next is the title-bar padding below, so the two collapse into one box here                                                                                    |
+| `TogglePaneTopPadding`             | declined    | `TemplateSettings.TopPadding` is the Windows title-bar inset; a page has no title bar to inset from                                                                                                                           |
+| `ButtonHolderGrid`                 | reproduced  | `.button-holder-grid`                                                                                                                                                                                                         |
+| `NavigationViewBackButton`         | declined    | no back-button prop                                                                                                                                                                                                           |
+| `NavigationViewBackButtonToolTip`  | declined    | with the back button                                                                                                                                                                                                          |
+| `NavigationViewCloseButton`        | declined    | no close-button prop; a minimal pane is dismissed by the toggle or by tapping beside it                                                                                                                                       |
+| `NavigationViewCloseButtonToolTip` | declined    | with the close button                                                                                                                                                                                                         |
+| `TogglePaneButton`                 | reproduced  | `.pane-toggle`                                                                                                                                                                                                                |
+| `PaneTitleTextBlock`               | declined    | no `paneTitle` prop                                                                                                                                                                                                           |
+| `PaneTitleHolder`                  | declined    | with `paneTitle`                                                                                                                                                                                                              |
+| `PaneTitlePresenter`               | declined    | with `paneTitle`                                                                                                                                                                                                              |
+| `TopNavArea`                       | reproduced  | `.top-pane`                                                                                                                                                                                                                   |
+| `TopNavTopPadding`                 | declined    | the title-bar inset again                                                                                                                                                                                                     |
+| `TopNavGrid`                       | reproduced  | `.top-nav-grid`                                                                                                                                                                                                               |
+| `BackButtonPlaceholderOnTopNav`    | declined    | with the back button                                                                                                                                                                                                          |
+| `TopNavLeftPadding`                | declined    | nothing upstream drives it: `Width="0"` in the markup, and the name occurs exactly once in the control pin — its own declaration — and once in the system pin, in the shipped copy of the same template                       |
+| `PaneHeaderOnTopPane`              | declined    | no `paneHeader` prop                                                                                                                                                                                                          |
+| `PaneTitleOnTopPane`               | declined    | with `paneTitle`                                                                                                                                                                                                              |
+| `TopNavMenuItemsHost`              | reproduced  | `.top-list`                                                                                                                                                                                                                   |
+| `TopNavOverflowButton`             | reproduced  | `.overflow-button`                                                                                                                                                                                                            |
+| `TopNavMenuItemsOverflowHost`      | reproduced  | `.overflow-list`                                                                                                                                                                                                              |
+| `PaneCustomContentOnTopPane`       | declined    | no `paneCustomContent` prop                                                                                                                                                                                                   |
+| `TopPaneAutoSuggestArea`           | declined    | no `autoSuggestBox` prop                                                                                                                                                                                                      |
+| `TopPaneAutoSuggestBoxPresenter`   | declined    | with `autoSuggestBox`                                                                                                                                                                                                         |
+| `PaneFooterOnTopPane`              | reproduced  | `.top-footer`                                                                                                                                                                                                                 |
+| `TopFooterMenuItemsHost`           | reproduced  | `.top-trailing` holds the settings item's list                                                                                                                                                                                |
+| `TopNavContentOverlayAreaGrid`     | declined    | no `contentOverlay` prop                                                                                                                                                                                                      |
+| `RootSplitView`                    | reproduced  | `.pane` and `.content-grid` together; what that costs is the section above                                                                                                                                                    |
+| `PaneContentGrid`                  | reproduced  | `.pane-content-grid`                                                                                                                                                                                                          |
+| `PaneContentGridToggleButtonRow`   | reproduced  | `.toggle-button-row`                                                                                                                                                                                                          |
+| `ItemsContainerRow`                | reproduced  | the `flex: 1 1 auto` on the pane's `ScrollView`, which is what a `*` row is in a flex column                                                                                                                                  |
+| `ContentPaneTopPadding`            | declined    | the title-bar inset again                                                                                                                                                                                                     |
+| `PaneHeaderContentBorderRow`       | declined    | with `paneHeader`                                                                                                                                                                                                             |
+| `PaneHeaderCloseButtonColumn`      | declined    | with the close button                                                                                                                                                                                                         |
+| `PaneHeaderToggleButtonColumn`     | declined    | with `paneHeader`; it is the column the toggle takes inside the header row, and there is no header row                                                                                                                        |
+| `PaneHeaderContentBorder`          | declined    | with `paneHeader`                                                                                                                                                                                                             |
+| `AutoSuggestArea`                  | declined    | with `autoSuggestBox`                                                                                                                                                                                                         |
+| `PaneAutoSuggestBoxPresenter`      | declined    | with `autoSuggestBox`                                                                                                                                                                                                         |
+| `PaneAutoSuggestButton`            | declined    | with `autoSuggestBox`; it is the rail's stand-in for the box                                                                                                                                                                  |
+| `PaneCustomContentBorder`          | declined    | with `paneCustomContent`                                                                                                                                                                                                      |
+| `ItemsContainerGrid`               | reproduced  | `.items-container-grid`                                                                                                                                                                                                       |
+| `MenuItemsScrollViewer`            | reproduced  | the `ScrollView` that wraps `.menu-items`                                                                                                                                                                                     |
+| `MenuItemsHost`                    | reproduced  | `.menu-items`                                                                                                                                                                                                                 |
+| `VisualItemsSeparator`             | reproduced  | `.items-separator`                                                                                                                                                                                                            |
+| `FooterContentBorder`              | reproduced  | `.footer-content-border`                                                                                                                                                                                                      |
+| `FooterItemsScrollViewer`          | declined    | no `footerMenuItems` prop, so the host below holds at most the settings item and a scroller over one row has nothing to do                                                                                                    |
+| `FooterMenuItemsHost`              | reproduced  | `.footer-items`                                                                                                                                                                                                               |
+| `ContentGrid`                      | reproduced  | `.content-grid`                                                                                                                                                                                                               |
+| `ContentTopPadding`                | declined    | the title-bar inset again                                                                                                                                                                                                     |
+| `ContentLeftPadding`               | declined    | `NavigationView.cpp:4704` sets its width to the room the back or close button takes, and there is neither                                                                                                                     |
+| `HeaderContent`                    | reproduced  | `.header-content`                                                                                                                                                                                                             |
+| `ContentPresenter`                 | reproduced  | `.content-presenter`                                                                                                                                                                                                          |
+| `ShadowCaster`                     | open        | the `PaneShadow` is on `.pane` instead, which is why a clip written as `inset(0)` erased it; upstream's caster is a separate box with its own width, opacity and transform across the states, and its own ease-out storyboard |
+| `ShadowCasterTransform`            | open        | with `ShadowCaster`                                                                                                                                                                                                           |
+
+## Pending
+
+Recorded in the census, not yet disposed of. C11 counts these every run.
+
+| Template                                     | Reproduced by                                                            |
+| -------------------------------------------- | ------------------------------------------------------------------------ |
+| `controls:NavigationViewItem`                | `NavigationViewItem.svelte`, and again by `NavigationViewTopItem.svelte` |
+| `controls:NavigationViewItemHeader`          | `NavigationView.svelte`                                                  |
+| `controls:NavigationViewItemSeparator`       | `NavigationView.svelte`                                                  |
+| `FlyoutPresenter under TopNavOverflowButton` | `NavigationView.svelte`                                                  |
+| `FlyoutPresenter under ChildrenFlyout`       | `NavigationViewItem.svelte`                                              |
+
+**One thing seen while recording them, stated here so it is not lost with the pending flag.**
+`ChildrenFlyout` and the two grids under it are how upstream shows a parent item's children when
+the pane is a rail. `NavigationViewItem.svelte` renders children as a nested list and
+`NavigationView.svelte` hides that list outright in a rail, with a comment saying the flyout
+"belongs to the tranche that builds Flyout". That tranche has since landed — the top-nav overflow
+opens one. The blocker named in the comment is gone, which is a different status from the one the
+comment records.
