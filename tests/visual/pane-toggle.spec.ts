@@ -131,6 +131,36 @@ test('opening a compact rail does not move or resize the content', async ({ page
 	expect(after.x).toBe(before.x);
 });
 
+// The other half of the rule above, and the half it had missed. Expanded is a compact SplitView
+// too — `UpdateVisualStateForDisplayModeGroup` gives it `CompactInline` (NavigationView.cpp:2668)
+// — so closing its pane reaches `ClosedCompactLeft` like any other closed compact shape, and the
+// column goes to `CompactPaneGridLength`. The content must therefore move, by exactly the
+// difference between the two lengths. Asserting the number rather than the direction is what
+// separates this from a rule that gives back some arbitrary amount.
+test('closing an expanded pane hands its strip back to the content', async ({ page }) => {
+	await page.goto('/dev/navigation-view');
+
+	const root = page.locator('.root[data-pane-display-mode="auto"]').first();
+	await expect(root).toHaveAttribute('data-display-mode', 'expanded');
+	await expect(root).toHaveAttribute('data-pane-open', 'true');
+	const content = root.locator('.content-grid');
+
+	const before = await content.boundingBox();
+	if (!before) throw new Error('the content grid has no box before the pane closes');
+
+	await root.locator('.pane-toggle').click();
+	await expect(root).toHaveAttribute('data-collapsed', 'true');
+
+	const after = await content.boundingBox();
+	if (!after) throw new Error('the content grid has no box after the pane closes');
+
+	// 320 - 48. Both edges, because a rule that reserved nothing at all would move the left edge
+	// by the whole 320 and widen the box by the same, and one that reserved everything moves
+	// neither — the two failures this has to tell apart.
+	expect(before.x - after.x).toBe(272);
+	expect(after.width - before.width).toBe(272);
+});
+
 // The durations, read off the states rather than timed. A transition that is declared and never
 // reached is the failure this guards: the selectors carry the whole mapping from a display mode
 // to a duration, and a wrong one is invisible in every other test here, which only ever waits
