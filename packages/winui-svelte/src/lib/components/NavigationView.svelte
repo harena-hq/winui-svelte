@@ -952,18 +952,31 @@
 	/* `ColumnDefinition1`, the width of the column the pane sits in — which is not the pane's
 	   own width, and that is the distinction the template keeps and this control had lost. The
 	   pane is `OpenPaneLength` in every state; the column under it is `CompactPaneGridLength`
-	   wherever the shape is compact, open or closed (`ClosedCompactLeft`,
-	   SplitView_themeresources.xaml:543, and `OpenCompactOverlayLeft`, `:635`, which also moves
-	   `ContentRoot` into the second column), and it is nothing at all for the minimal shapes,
-	   where `ContentRoot` keeps the template's `Grid.ColumnSpan="2"` (`:718`) and spans the
-	   control. Inline is the third case and needs no rule: the column is the pane's width, which
-	   is what a flex item takes by default.
+	   in `ClosedCompactLeft` (SplitView_themeresources.xaml:543) and in `OpenCompactOverlayLeft`
+	   (`:635`, which also moves `ContentRoot` into the second column), and it is nothing at all
+	   for the minimal shapes, where `ContentRoot` keeps the template's `Grid.ColumnSpan="2"`
+	   (`:718`) and spans the control whatever the column says.
+
+	   Which of our shapes reach those states is decided one level up, and not where it looks.
+	   `NavigationView::UpdateVisualStateForDisplayModeGroup` gives the SplitView `CompactOverlay`
+	   for Compact and **`CompactInline` for Expanded** (NavigationView.cpp:2664, :2668) — so the
+	   expanded shape is a compact SplitView too, and it has two states rather than one. Open, it
+	   is `OpenInlineLeft` and the column is the pane's own width, which is what a flex item takes
+	   by default. Closed, it is `ClosedCompactLeft` like any other closed compact shape, and the
+	   column is 48. That second half is what this rule had missed: the pane clipped down to a
+	   rail and went on reserving all 320, leaving 272 pixels of nothing between the rail and the
+	   content in a window wide enough to be expanded.
+
+	   `collapsed` is the attribute that says it — `!paneOpen && mode !== 'minimal'` is
+	   `ClosedCompactLeft` exactly — and with compact's open state beside it the pair covers the
+	   two states the template gives 48 to, and no others.
 
 	   A negative end margin is that column. The pane lays out at its own width and gives back
 	   all but the column, so its outer size is the column's. `SplitView.svelte` reaches the same
-	   three cases through `--pane-column`, because that control's root is the grid the template
+	   cases through `--pane-column`, because that control's root is the grid the template
 	   describes and this one's is not. */
-	.root[data-display-mode='compact'] .pane {
+	.root[data-display-mode='compact'] .pane,
+	.root[data-collapsed='true'] .pane {
 		margin-inline-end: calc(
 			var(--winui-NavigationViewCompactPaneLength) - var(--nav-open-pane-length)
 		);
