@@ -63,6 +63,17 @@ test('the harness opens its second minimal pane, and it stays open', async ({ pa
  * hang is the first evidence the layer works: it intercepts the pointer. `page.mouse` makes no
  * such check, which is what a real click is.
  */
+// Measuring a box across a toggle is a race as soon as the box is transitioned. `.pane` runs
+// every transition this control has, so waiting for its animations to drain is waiting for the
+// layout to be the one the end state asks for. Polling `getAnimations()` rather than sleeping a
+// duration: the durations are the thing under test, and a test that hard-codes the number it is
+// checking passes whatever the number becomes.
+async function settle(root: Locator) {
+	await expect
+		.poll(() => root.locator('.pane').evaluate((el) => el.getAnimations().length))
+		.toBe(0);
+}
+
 async function clickContent(page: Page, root: Locator) {
 	// `page.mouse` takes viewport coordinates and does none of the work `locator.click()` does
 	// first, scrolling included. This harness is about 4,700px tall inside a window that is
@@ -150,6 +161,10 @@ test('closing an expanded pane hands its strip back to the content', async ({ pa
 
 	await root.locator('.pane-toggle').click();
 	await expect(root).toHaveAttribute('data-collapsed', 'true');
+	// The attribute flips at the start of the glide, not at the end of it. Before the margin was
+	// transitioned this read the settled box by luck; with the transition in place it read 0 of
+	// the 272, which is the first frame.
+	await settle(root);
 
 	const after = await content.boundingBox();
 	if (!after) throw new Error('the content grid has no box after the pane closes');
@@ -187,11 +202,16 @@ test('each shape carries the duration its transition is given', async ({ page })
 	await expect(minimalRoot).toHaveAttribute('data-pane-open', 'true');
 	expect(await duration(minimalRoot)).toEqual(['0.35s']);
 
-	// Expanded is inline and always open, so it can only reach the open resource, 200ms
-	// (`SplitViewPaneAnimationOpenDuration`).
+	// Expanded is the inline shape, and it carries two durations rather than one. Three
+	// properties run at `SplitViewPaneAnimationOpenDuration`; `margin-inline-end`, which is this
+	// control's `ContentTransform`, runs at `SplitViewPaneAnimationOpenPreDuration`. That is
+	// 0.19999 against 0.2 — ten microseconds, which is upstream ordering the two so the content
+	// finishes first rather than staggering anything a viewer could see. Asserted rather than
+	// rounded away, because the day it reads `['0.2s']` the pre-duration has been dropped and
+	// nothing else in this file would notice.
 	const expandedRoot = page.locator('.root[data-pane-display-mode="auto"]').first();
 	await expect(expandedRoot).toHaveAttribute('data-display-mode', 'expanded');
-	expect(await duration(expandedRoot)).toEqual(['0.2s']);
+	expect(await duration(expandedRoot)).toEqual(['0.2s', '0.19999s']);
 });
 
 // And that one actually runs. `getAnimations()` reports a `CSSTransition` only while it is in
@@ -218,6 +238,51 @@ test('opening an overlaying pane starts a transition', async ({ page }) => {
 	// been — which is how the settling defect above was found, as a reading of 347.06.
 	expect(running.map((a) => a.property).sort()).toEqual(['clip-path', 'translate', 'visibility']);
 	expect(new Set(running.map((a) => a.duration))).toEqual(new Set([350]));
+});
+
+// `ContentTransform`, which this control had no answer for until it had a margin to move. The
+// template jumps `ColumnDefinition1` at key time zero and glides `ContentRoot` back from
+// `OpenPaneLengthMinusCompactLength` (SplitView_themeresources.xaml:382), so the content travels
+// while the column arrives at once. Here the column is a negative margin and the glide is its
+// transition.
+//
+// This is the only test that can tell a glide from a jump. The one above waits for the end state
+// and the end state is 272 either way — which is exactly what it read, and passed, while the
+// content was still jumping.
+test('the content glides when an expanded pane closes', async ({ page }) => {
+	await page.goto('/dev/navigation-view');
+
+	const root = page.locator('.root[data-pane-display-mode="auto"]').first();
+	await expect(root).toHaveAttribute('data-display-mode', 'expanded');
+	const content = root.locator('.content-grid');
+
+	const before = await content.boundingBox();
+	if (!before) throw new Error('the content grid has no box before the pane closes');
+
+	await root.locator('.pane-toggle').click();
+	const running = await root.locator('.pane').evaluate((el) =>
+		el
+			.getAnimations()
+			.map(
+				(a) => `${(a as CSSTransitionLike).transitionProperty}:${a.effect?.getTiming().duration}`
+			)
+			.sort()
+	);
+
+	// Chromium reports the physical property a logical one resolves to, so `margin-inline-end`
+	// comes back as `margin-right` in this left-to-right page. Both numbers are asserted: the
+	// clip's 200 is `SplitViewPaneAnimationOpenDuration` and the margin's 199.99 is the
+	// pre-duration, and a margin running at 200 would mean the pair had been flattened.
+	expect(running).toEqual(['clip-path:200', 'margin-right:199.99']);
+
+	// And it is genuinely mid-flight rather than merely declared: the box has started moving and
+	// has not arrived. A jump would read the whole 272 here, and no transition at all would read
+	// zero — the two failures either side of this one.
+	const midway = await content.boundingBox();
+	if (!midway) throw new Error('the content grid has no box during the glide');
+	const travelled = before.x - midway.x;
+	expect(travelled).toBeGreaterThan(0);
+	expect(travelled).toBeLessThan(272);
 });
 
 // The guard that keeps the control's own settling from animating. It earns a test because a

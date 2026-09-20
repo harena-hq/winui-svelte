@@ -80,18 +80,18 @@ definitions are real grid tracks here.
 pane itself rather than composing `SplitView.svelte`, so none of the template above arrives for
 free, and this column is where that cost is paid.
 
-| Part                         | Disposition | Where                                                                                                                                                                 |
-| ---------------------------- | ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `ColumnDefinition1`          | reproduced  | the negative `margin-inline-end` on `.pane`, which reserves the column by giving back the rest                                                                        |
-| `ColumnDefinition2`          | reproduced  | `.content-grid`, the flex item that takes what is left                                                                                                                |
-| `PaneRoot`                   | reproduced  | `.pane`                                                                                                                                                               |
-| `PaneClipRectangle`          | reproduced  | `.pane`, `clip-path`                                                                                                                                                  |
-| `PaneClipRectangleTransform` | reproduced  | the animated inset of that `clip-path`                                                                                                                                |
-| `PaneTransform`              | reproduced  | `.pane`, `translate`                                                                                                                                                  |
-| `HCPaneBorder`               | reproduced  | `.pane::after`                                                                                                                                                        |
-| `ContentRoot`                | reproduced  | `.content-grid`                                                                                                                                                       |
-| `ContentTransform`           | open        | the content jumps where the inline shapes glide it; `SplitView.svelte` reaches the same effect by transitioning its track, and this control transitions no equivalent |
-| `LightDismissLayer`          | reproduced  | `.light-dismiss`                                                                                                                                                      |
+| Part                         | Disposition | Where                                                                                                                                                                                                                          |
+| ---------------------------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `ColumnDefinition1`          | reproduced  | the negative `margin-inline-end` on `.pane`, which reserves the column by giving back the rest                                                                                                                                 |
+| `ColumnDefinition2`          | reproduced  | `.content-grid`, the flex item that takes what is left                                                                                                                                                                         |
+| `PaneRoot`                   | reproduced  | `.pane`                                                                                                                                                                                                                        |
+| `PaneClipRectangle`          | reproduced  | `.pane`, `clip-path`                                                                                                                                                                                                           |
+| `PaneClipRectangleTransform` | reproduced  | the animated inset of that `clip-path`                                                                                                                                                                                         |
+| `PaneTransform`              | reproduced  | `.pane`, `translate`                                                                                                                                                                                                           |
+| `HCPaneBorder`               | reproduced  | `.pane::after`                                                                                                                                                                                                                 |
+| `ContentRoot`                | reproduced  | `.content-grid`                                                                                                                                                                                                                |
+| `ContentTransform`           | reproduced  | by another mechanism, the same one `SplitView.svelte` uses: this control's `ColumnDefinition1` is the negative `margin-inline-end` on `.pane`, so transitioning that margin moves the content while the column arrives at once |
+| `LightDismissLayer`          | reproduced  | `.light-dismiss`                                                                                                                                                                                                               |
 
 ## `controls:NavigationView` in `NavigationView.svelte`
 

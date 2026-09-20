@@ -1531,9 +1531,17 @@ export const TIMEPICKER_KEYS = {
 /**
  * Keys SplitView reads from its template: its lengths, border, corner, inline motion, and
  * framework brushes. `SplitViewLightDismissOverlayBackground` is absent because desktop Auto
- * light dismiss remains transparent; `SplitViewPaneAnimationOpenPreDuration` times a content
- * translation this grid-column transcription does not use; and `SplitViewRightBorderThemeThickness`
- * is defined but not applied by the template, whose style always uses the left thickness.
+ * light dismiss remains transparent, and `SplitViewRightBorderThemeThickness` is defined but not
+ * applied by the template, whose style always uses the left thickness.
+ *
+ * `SplitViewPaneAnimationOpenPreDuration` was absent for the same kind of reason and is here now,
+ * which is worth a sentence because the reason was right when it was written. It times
+ * `ContentTransform`, the translation that keeps `ContentRoot` smooth while `ColumnDefinition1`
+ * jumps, and `SplitView.svelte` transcribes the column as a grid track it can transition
+ * directly — so nothing read the key. `NavigationView.svelte` reserves that column as a negative
+ * margin instead, and transitioning *that* is the content translation, at the duration the
+ * template gives it. A key with no role acquires one when a second component transcribes the
+ * same template differently.
  */
 export const SPLITVIEW_KEYS = {
 	SplitViewOpenPaneThemeLength: 'SplitView pane, open',
@@ -1542,6 +1550,8 @@ export const SPLITVIEW_KEYS = {
 	SplitViewPaneRootCornerRadius: 'SplitView pane corner',
 	SplitViewPaneAnimationOpenDuration: 'SplitView pane, opening inline',
 	SplitViewPaneAnimationCloseDuration: 'SplitView pane, closing inline',
+	SplitViewPaneAnimationOpenPreDuration:
+		'SplitView content translation while the pane column jumps',
 	SystemControlPageBackgroundChromeLowBrush:
 		'SplitView pane background, the style default (framework dictionary)',
 	SystemControlForegroundTransparentBrush:
