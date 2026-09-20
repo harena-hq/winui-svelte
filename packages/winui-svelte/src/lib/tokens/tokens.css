@@ -1967,6 +1967,7 @@
 	--winui-SplitViewCompactPaneThemeLength: 48px;
 	--winui-SplitViewLeftBorderThemeThickness: 0px 1px 0px 0px;
 	--winui-SplitViewPaneAnimationOpenDuration: 200ms;
+	--winui-SplitViewPaneAnimationOpenPreDuration: 199.99ms;
 	--winui-SplitViewPaneAnimationCloseDuration: 100ms;
 	--winui-SplitViewPaneRootCornerRadius: 0px;
 	--winui-TabViewBackground: var(--winui-SubtleFillColorTransparentBrush);
@@ -3931,6 +3932,7 @@
 	--winui-SplitViewCompactPaneThemeLength: 48px;
 	--winui-SplitViewLeftBorderThemeThickness: 0px 1px 0px 0px;
 	--winui-SplitViewPaneAnimationOpenDuration: 200ms;
+	--winui-SplitViewPaneAnimationOpenPreDuration: 199.99ms;
 	--winui-SplitViewPaneAnimationCloseDuration: 100ms;
 	--winui-SplitViewPaneRootCornerRadius: 0px;
 	--winui-TabViewBackground: var(--winui-SubtleFillColorTransparentBrush);
@@ -5936,6 +5938,7 @@
 		--winui-SplitViewCompactPaneThemeLength: 48px;
 		--winui-SplitViewLeftBorderThemeThickness: 0px 1px 0px 0px;
 		--winui-SplitViewPaneAnimationOpenDuration: 200ms;
+		--winui-SplitViewPaneAnimationOpenPreDuration: 199.99ms;
 		--winui-SplitViewPaneAnimationCloseDuration: 100ms;
 		--winui-SplitViewPaneRootCornerRadius: 0px;
 		--winui-TabViewBackground: var(--winui-SubtleFillColorTransparentBrush);
@@ -7886,6 +7889,7 @@
 	--winui-SplitViewCompactPaneThemeLength: 48px;
 	--winui-SplitViewLeftBorderThemeThickness: 0px 1px 0px 0px;
 	--winui-SplitViewPaneAnimationOpenDuration: 200ms;
+	--winui-SplitViewPaneAnimationOpenPreDuration: 199.99ms;
 	--winui-SplitViewPaneAnimationCloseDuration: 100ms;
 	--winui-SplitViewPaneRootCornerRadius: 0px;
 	--winui-TabViewBackground: var(--winui-SystemColorButtonFaceColorBrush);

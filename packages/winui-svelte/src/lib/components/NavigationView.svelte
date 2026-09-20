@@ -907,11 +907,17 @@
 	   resolution `SplitView.svelte` reached for the same reason.
 
 	   What it costs: a window narrowing from expanded to a rail is `OpenInlineLeft →
-	   ClosedCompactLeft` (`:382`), 100ms on the inline spline, and it arrives at the same
-	   closed-rail state that a pane closing from an overlay arrives at, which is 120ms. The
-	   rail's own state cannot hold both, so the resize takes the overlay number. Twenty
-	   milliseconds on a transition nothing drives deliberately, and it is written here rather
-	   than left for a reader to find. */
+	   ClosedCompactLeft` (`:382`), which drives the clip over
+	   `SplitViewPaneAnimationOpenDuration` — 200ms. It arrives at the same closed-rail state
+	   that a pane closing from an overlay arrives at, which is 120ms, and the rail's own state
+	   cannot hold both, so the resize takes the overlay number. Eighty milliseconds on a
+	   transition nothing drives deliberately, written here rather than left for a reader to
+	   find.
+
+	   That number was 20 in this comment and in `4cba9b2`'s body until this commit, from reading
+	   `SplitViewPaneAnimationCloseDuration`'s 0.1s out of the resource table and attaching it to
+	   a transition that names a different resource. Citing `:382` was not enough; the duration a
+	   transition runs at is in the transition. */
 	.pane {
 		/* c1-allow: SplitView_themeresources.xaml:177, :229 — overlay close duration and spline */
 		transition:
@@ -926,14 +932,35 @@
 		transition-duration: 350ms;
 	}
 
-	/* Expanded is the inline shape, and its pair is a resource rather than a literal
-	   (`:295`, `:324`). It is always open, so only the open duration can be reached. */
+	/* Expanded is the inline shape, and its durations are resources rather than literals.
+
+	   It is not always open, which this comment used to say and `c67f2df` corrected one rule
+	   below without correcting it here: the expanded shape moves between `OpenInlineLeft` and
+	   `ClosedCompactLeft` (`:355`, `:382`), and one resource covers both directions — the clip
+	   over `SplitViewPaneAnimationOpenDuration` either way.
+
+	   `margin-inline-end` is in the list and is the `ContentTransform` this control had no
+	   answer for. The template jumps `ColumnDefinition1` at key time zero and glides
+	   `ContentRoot` back from `OpenPaneLengthMinusCompactLength`, so the content moves smoothly
+	   while the column moves at once; here the column *is* that margin, and transitioning it
+	   moves the content for the same reason `SplitView.svelte` transitions its track. Only the
+	   expanded rules list it, because it is the only shape whose margin has two values —
+	   compact holds `CompactPaneGridLength` open and closed alike, and minimal reserves nothing
+	   in either.
+
+	   Its duration is `SplitViewPaneAnimationOpenPreDuration`, which is 0.19999 against the
+	   open duration's 0.2. Ten microseconds is not a stagger anyone sees; it is upstream
+	   ordering the two so the content's animation is the one that finishes first. Reproduced
+	   because it is what the template says, and noted because a reader who finds a five-decimal
+	   duration deserves to be told it is a tie-break rather than a typo. */
 	.root[data-display-mode='expanded'] .pane {
 		transition:
 			translate var(--winui-SplitViewPaneAnimationOpenDuration) cubic-bezier(0, 0.35, 0.15, 1),
 			clip-path var(--winui-SplitViewPaneAnimationOpenDuration) cubic-bezier(0, 0.35, 0.15, 1),
-			/* c1-allow: SplitView_themeresources.xaml:324 — inline open spline */ visibility
-				var(--winui-SplitViewPaneAnimationOpenDuration);
+			/* c1-allow: SplitView_themeresources.xaml:355, :382 — inline spline */ visibility
+				var(--winui-SplitViewPaneAnimationOpenDuration),
+			margin-inline-end var(--winui-SplitViewPaneAnimationOpenPreDuration)
+				cubic-bezier(0, 0.35, 0.15, 1);
 	}
 
 	/* Until the control has settled, there is no transition to run — see the comment on
