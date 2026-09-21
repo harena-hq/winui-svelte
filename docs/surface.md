@@ -970,6 +970,19 @@ reliably carries. A grep narrows the reading; it does not end it. The honest pro
 read every negative about upstream in a file when that file's evidence base changes, and the
 count above is a floor because nobody has done that yet.
 
+**This file has now been read through for the shape, and the read is the result.** Every
+negative in it was looked at — not grepped — and classified: a claim about what the _pin_
+contains, or a claim about a template, a dictionary, our own library, or a measurement taken on
+the reference guest. Only the first class can expire when the checkout grows. **Nothing new came
+out of it.** The two entries that would have — step 1's Pivot paragraph and the
+`ListViewItemPresenter` one — were already corrected by `4c0ce0a` itself, and each says the file
+is in the checkout "as of v12" and the control "has not been re-swept". Two more that read like
+the class are not: Popup's placement paragraph is a measurement from the guest, and "Popup draws
+no text at all" is about what this library's Popup renders.
+
+That leaves `docs/plan.md`, four times the length and not read this way. The count above stays a
+floor until it is.
+
 **What this costs is the procedure.** The four-step sweep ends at step 1 when step 1 says there
 is nothing to read, so for every control whose verdict was recorded before the widening, steps 2
 and 3 never ran. The entries below are true about what they did read; they are not complete.
