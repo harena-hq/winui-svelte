@@ -103,8 +103,6 @@ export const ADDITIONAL_KEYS = {
  *   `NavigationViewPaneHeaderRowMinHeight`, which is a *row's* floor rather than a header's
  *   size and is what reserves the toggle button's space in a pane with no header in it at
  *   all (`NavigationView.xaml:48`).
- * - **The compact-mode child flyout** — `NavigationViewItemChildrenMenuFlyoutPadding`.
- *   That flyout is a Flyout, which belongs to the Dialogs and flyouts tranche.
  * - **The title bar's deactivated and subtitle states** —
  *   `TitleBarDeactivatedForegroundBrush`, `TitleBarDeactivatedOpacity`,
  *   `TitleBarSubtitle*`. A web page has no deactivated window state, and the Gallery
@@ -2116,6 +2114,8 @@ export const SHELL_KEYS = {
 	NavigationViewItemOnLeftIconBoxHeight: 'NavigationView item, the icon box',
 	NavigationViewItemOnLeftIconBoxMargin: 'NavigationView item, the icon box',
 	NavigationViewItemContentPresenterMargin: 'NavigationView item, around its label',
+	NavigationViewItemChildrenMenuFlyoutPadding:
+		'NavigationView item, inside the rail flyout that holds its children',
 	NavigationViewItemBorderThickness: 'NavigationView item, its border width',
 	NavigationViewSelectionIndicatorForeground: 'NavigationView item, the selection indicator',
 	NavigationViewSelectionIndicatorWidth: 'NavigationView item, the selection indicator',

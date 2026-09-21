@@ -165,8 +165,16 @@ surface are painted the same way.
 
 - **We do**: every item is `tabindex="0"` and is reached by Tab, and so is every expand
   chevron, which is a `<button>`. There is no arrow-key navigation among items, no
-  typeahead, and no Home/End. In closed-compact there is no flyout and no children: the
-  rail hides them outright, so an expanded parent there draws nothing. Enter and Space
+  typeahead, and no Home/End. **The closed-compact flyout is built and it inherits all of
+  that.** The reference record has four clauses for it — focus lands on the first item, Up and
+  Down cycle within it, Left does not escape it, Escape closes it — and three hold here. Focus
+  lands on the flyout's first row and Escape closes it in one press, both asserted in
+  `navigation-view-rail.spec.ts`. Left does not escape it either — read from the code rather
+  than pressed, and for a weaker reason than the original's, since no arrow key in this control
+  does anything at all. **Up and Down
+  are the one that fails**: the flyout's rows are tab stops with no ring of their own. The one
+  press took a decision of its own, WD-092.
+  Enter and Space
   invoke and toggle, which is the part that already matches — on the row. **On the chevron
   they do the chevron's own job**, collapsing or expanding without invoking, because the row
   acts on a key only when the key's target is the row itself (ADR 0015's deferred item 2;
@@ -2213,3 +2221,34 @@ changes`.
   naming that branch, whose snippet the control renders into a `NavigationViewItem` it draws
   itself. That is what the factory's second branch produces, arrived at by being told rather than
   by inspecting.
+
+---
+
+### WD-092 — a row inside the rail's children flyout carries no tooltip
+
+- **Control**: `NavigationViewItem` in `NavigationView`'s `ChildrenFlyout`.
+- **WinUI does**: attach one. `ShouldEnableToolTip` is `IsOnLeftNav() && m_isClosedCompact`
+  (`NavigationViewItem.cpp:743`), and `m_isClosedCompact` is pane state — the pane shut, with
+  the SplitView in either compact mode (`:253-255`) — so it stays true for a row the control has
+  reparented into the flyout. The tooltip is redundant there, because the flyout shows the label
+  the rail was hiding, but upstream does not switch it off.
+- **We do**: draw no tooltip for any row inside the flyout, at any depth. The rail's own rows keep
+  theirs.
+- **Why accepted**: the tooltip primitive dismisses on Escape, which the WAI-ARIA tooltip pattern
+  asks for and WinUI's `ToolTip` does not do. That second half is a negative and the search
+  behind it is this: `VK_ESCAPE` and `VirtualKey_Escape` occur in **none** of the pin's
+  tooltip-named sources — `ToolTip_Partial.cpp`, `ToolTipService_Partial.cpp`,
+  `ToolTipAutomationPeer_Partial.cpp` and their headers, plus the four generated
+  `winrtgeneratedclasses/ToolTip*.g.cpp` — run as a file walk over every `*tooltip*` `.cpp` and
+  `.h` in the checkout. The positive control for the same query is
+  `ComboBox_Partial.cpp`, which matches five times, so the query finds the thing when it is
+  there. Focus lands inside the flyout when it opens, so the
+  focused row's tooltip is open, and its Escape handler runs first: measured before this entry,
+  dismissing a rail flyout took **two** presses — the first closed the tooltip, the second the
+  flyout. `docs/keyboard.md`'s answer 8 was pressed on the reference and records one. Keeping the
+  tooltip would trade a behaviour that was measured against the original for one that was
+  inferred from a predicate, and the redundant tooltip is what the trade would buy.
+- **Would reconsider if**: the tooltip stops consuming Escape — which is a decision about every
+  tooltip in the library and not about this control, and would be taken against the WAI-ARIA
+  pattern rather than against WinUI. `ToolTip.svelte` is where it would land, and this entry is
+  the first site that would notice.

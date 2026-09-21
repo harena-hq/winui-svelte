@@ -67,10 +67,11 @@
 
 <script lang="ts">
 	import {
-		getNavigationViewLevel,
 		getNavigationViewPane,
-		setNavigationViewLevel
+		getNavigationViewPlacement,
+		setNavigationViewPlacement
 	} from '../internal/navigation-view';
+	import Flyout from './Flyout.svelte';
 	import Self from './NavigationViewItem.svelte';
 	import ToolTip from './ToolTip.svelte';
 
@@ -81,17 +82,52 @@
 	// a throw rather than a case to render around.
 	const pane = getNavigationViewPane();
 
-	/** 1 for a top-level item. Drives both `aria-level` and the left indentation. */
-	const level = getNavigationViewLevel();
 	// Read first, publish second. Both calls name the same key, so a `setContext` before
-	// the `getContext` would hand this row the level it meant for its own children.
-	setNavigationViewLevel(level + 1);
+	// the `getContext` would hand this row the level it meant for its own children — and the
+	// publish is at the foot of this block, because what it publishes depends on everything
+	// between.
+	const readPlacement = getNavigationViewPlacement();
+
+	/** 1 for a top-level item. Drives both `aria-level` and the left indentation. */
+	const level = $derived(readPlacement().level);
+	/** `IsTopLevelItem`: this row is in one of the control's own lists, not in a flyout. */
+	const topLevel = $derived(readPlacement().topLevel);
+	/** This row is itself drawn inside the rail's children flyout. */
+	const withinFlyout = $derived(readPlacement().inFlyout);
 
 	const open = $derived(pane().expandedItems.includes(tag));
 	const hasChildren = $derived((items?.length ?? 0) > 0);
 	const isSelected = $derived(pane().selected === tag);
 	/** `ShouldEnableToolTip`: the left pane is the closed-compact icons-only rail. */
 	const collapsed = $derived(pane().collapsed);
+
+	/**
+	 * `ShouldRepeaterShowInFlyout` — `(m_isClosedCompact && IsTopLevelItem()) || IsOnTopPrimary()`
+	 * (`NavigationViewItem.cpp:897`). The rail has no room for a child row: with the label gone
+	 * it would be indistinguishable from its parent's, so upstream reparents the children's
+	 * repeater into an attached flyout (`:875-889`) and shows it on expand (`:824`).
+	 *
+	 * Only the first half of that predicate is here. `IsOnTopPrimary()` is the top pane, which
+	 * this library draws with `NavigationViewTopItem` and which owes the same flyout — that is
+	 * WD-025, and it is not this component's to answer.
+	 */
+	const childrenInFlyout = $derived(collapsed && topLevel && hasChildren);
+
+	// Depth 0 inside the flyout, one deeper everywhere else: `PropagateDepthToChildren(0)` on
+	// the way in and `(1)` on the way out (`NavigationViewItem.cpp:883`, `:891`). A flyout's
+	// rows are drawn the way top-level rows are — no indent, `aria-level` 1 — because the
+	// flyout is their whole context.
+	//
+	// `topLevel` is false for every row this one renders, in both branches, and that is the
+	// half a depth alone would get wrong: a row inside the flyout is at depth 0 and is still
+	// not top-level, so a child of it that has children of its own draws them inline within
+	// the flyout rather than opening a second one.
+	setNavigationViewPlacement(() => ({
+		level: childrenInFlyout ? 1 : level + 1,
+		topLevel: false,
+		// Once inside the flyout, everything below is too.
+		inFlyout: childrenInFlyout || withinFlyout
+	}));
 	/**
 	 * The consumer's row template, or nothing. A row's children go through the same template
 	 * its parent did, because upstream gives an item's own repeater the same factory the
@@ -179,6 +215,55 @@
 		};
 	}
 
+	/**
+	 * The flyout's trigger props with every handler taken out.
+	 *
+	 * Upstream's is an **attached** flyout — `FlyoutBase.AttachedFlyout` in the template,
+	 * shown by `ShowAttachedFlyout` when the item expands (`NavigationViewItem.cpp:824`) and
+	 * hidden by `flyout.Hide()` when it collapses (`:844`). Nothing toggles it by being
+	 * clicked. The primitive underneath this one is a trigger-driven popover, so its handlers
+	 * are what would make a click toggle the popup a second time after the row's own
+	 * `activate()` has already toggled the expansion the popup follows. What is kept is the
+	 * identity: the ids and ARIA the popup needs to point at its anchor.
+	 */
+	function anchorOnly(props: Record<string, unknown>) {
+		// `Reflect.ownKeys`, not `Object.entries`. The bag carries the primitive's attachment
+		// under a **symbol** key — that is how Svelte 5 passes one through a prop object — and
+		// `Object.entries` skips symbols silently. Filtering with it produced an anchor the
+		// floating layer had never measured: the popup rendered at `translate(0, -200%)` of the
+		// document's origin with every one of its own custom properties still `undefined`,
+		// which reads as a placement bug rather than as a missing attachment.
+		const kept: Record<PropertyKey, unknown> = {};
+		for (const key of Reflect.ownKeys(props)) {
+			if (typeof key === 'string' && key.startsWith('on')) continue;
+			kept[key] = (props as Record<PropertyKey, unknown>)[key];
+		}
+		return kept as Record<string, unknown>;
+	}
+
+	// `NavigationViewItemChildrenMenuFlyoutPadding` (`NavigationView_themeresources.xaml:267`)
+	// through the presenter's own padding token, which is how `NavigationView.svelte` already
+	// restyles the top-nav overflow flyout.
+	//
+	// The top margin is upstream's, with its reason beside it in the template — "Set negative
+	// top margin to make the flyout align exactly with the button"
+	// (`NavigationView.xaml:473-474`). The left margin is this implementation's own, and it
+	// exists because the anchor is the `<li>` rather than the row upstream anchors to
+	// (`m_rootGrid`, `NavigationViewItem.cpp:824`): the `<li>` is the row plus the row's
+	// `NavigationViewItemButtonMargin`, which is `2px 4px`.
+	//
+	// **Only the horizontal half of that margin needs giving back**, and the asymmetry is the
+	// CSS box model rather than a judgement. The row's top margin collapses *through* the
+	// `<li>` — no border, no padding, no formatting context of its own — so the two boxes
+	// already share a top edge and upstream's -4 lands where upstream means it. The side
+	// margins do not collapse, so the `<li>` is 4px wider on the right and the popup would sit
+	// 4px further out. Measured: with the left margin the gap to the row is 4, which is
+	// `Flyout`'s own default; without it, 8.
+	const CHILDREN_FLYOUT_STYLE =
+		'--winui-FlyoutContentPadding: var(--winui-NavigationViewItemChildrenMenuFlyoutPadding);' +
+		/* c1-allow: NavigationView.xaml:474, and the `4px` side of NavigationViewItemButtonMargin */
+		' margin-top: -4px; margin-left: -4px;';
+
 	function withTriggerKeydown(props: Record<string, unknown>) {
 		return (event: KeyboardEvent) => {
 			(props.onkeydown as ((event: KeyboardEvent) => void) | undefined)?.(event);
@@ -187,8 +272,31 @@
 	}
 </script>
 
-<li role="none">
-	<!-- The row is written once and rendered through a snippet, because the collapsed pane
+<!-- The child rows, written once: the pane draws them under the row and the rail draws them
+     in a flyout, and upstream reparents one repeater between the two rather than keeping two
+     (`NavigationViewItem.cpp:875-889`). -->
+{#snippet childRows()}
+	<!-- The index is the child's position among its siblings, which is the index the repeater
+	     this reproduces hands its own template. -->
+	{#each items ?? [] as child, i (child.id)}
+		{#if template}
+			{@render template(child, i)}
+		{:else}
+			<Self tag={child.id} content={child.content} glyph={child.glyph} items={child.children} />
+		{/if}
+	{/each}
+{/snippet}
+
+<!-- `role="tree"` rather than `group`: the flyout is portalled out of the pane, so its list is
+     not a subtree of anything in the document any more. The rows inside it are published at
+     level 1 for the same reason — see `childrenInFlyout` above. -->
+{#snippet flyoutRows()}
+	<ul role="tree" class="children flyout-children">{@render childRows()}</ul>
+{/snippet}
+
+{#snippet item(anchor = EMPTY_TRIGGER_PROPS)}
+	<li role="none" {...anchor}>
+		<!-- The row is written once and rendered through a snippet, because the collapsed pane
 	     wraps it in a `ToolTip` and the expanded pane must have no wrapper and no extra
 	     element at all. `props` is the tooltip's trigger props in the first case and the
 	     frozen empty object in the second, which is why every use of it tolerates being
@@ -197,43 +305,43 @@
 	     a type annotation in markup is a parse error in every consumer's build while this
 	     package's own `check` stays green, and without either one `check` fails on an
 	     implicit `any`. A default is plain JavaScript and types it. -->
-	{#snippet row(props = EMPTY_TRIGGER_PROPS)}
-		<div
-			{...props}
-			role="treeitem"
-			class="item"
-			aria-selected={isSelected}
-			aria-expanded={hasChildren ? open : undefined}
-			aria-level={level}
-			tabindex="0"
-			data-selected={isSelected}
-			data-expanded={hasChildren ? open : undefined}
-			onclick={withTriggerClick(props)}
-			onkeydown={withTriggerKeydown(props)}
-		>
-			<span class="selection-indicator"></span>
-			<span class="icon-column" data-icon={glyph ? true : undefined}>
-				{#if glyph}
-					<span class="icon">{String.fromCodePoint(parseInt(glyph, 16))}</span>
-				{/if}
-			</span>
-			<!-- `data-label` is the cell drawing a string, which is the only shape the three
-			     trimming rules below are for. -->
-			<span class="content-presenter" data-label={children ? undefined : true}
-				>{#if children}{@render children()}{:else}{content}{/if}</span
+		{#snippet row(props = EMPTY_TRIGGER_PROPS)}
+			<div
+				{...props}
+				role="treeitem"
+				class="item"
+				aria-selected={isSelected}
+				aria-expanded={hasChildren ? open : undefined}
+				aria-level={level}
+				tabindex="0"
+				data-selected={isSelected}
+				data-expanded={hasChildren ? open : undefined}
+				onclick={withTriggerClick(props)}
+				onkeydown={withTriggerKeydown(props)}
 			>
-			{#if hasChildren}
-				<button
-					type="button"
-					class="expand-chevron"
-					aria-label={open ? 'Collapse' : 'Expand'}
-					onclick={toggle}
-				></button>
-			{/if}
-		</div>
-	{/snippet}
+				<span class="selection-indicator"></span>
+				<span class="icon-column" data-icon={glyph ? true : undefined}>
+					{#if glyph}
+						<span class="icon">{String.fromCodePoint(parseInt(glyph, 16))}</span>
+					{/if}
+				</span>
+				<!-- `data-label` is the cell drawing a string, which is the only shape the three
+			     trimming rules below are for. -->
+				<span class="content-presenter" data-label={children ? undefined : true}
+					>{#if children}{@render children()}{:else}{content}{/if}</span
+				>
+				{#if hasChildren}
+					<button
+						type="button"
+						class="expand-chevron"
+						aria-label={open ? 'Collapse' : 'Expand'}
+						onclick={toggle}
+					></button>
+				{/if}
+			</div>
+		{/snippet}
 
-	<!-- `ShouldEnableToolTip` at NavigationViewItem.cpp:743 is `IsOnLeftNav() && m_isClosedCompact`:
+		<!-- `ShouldEnableToolTip` at NavigationViewItem.cpp:743 is `IsOnLeftNav() && m_isClosedCompact`:
 	     the tooltip exists only while the pane is the icons-only rail, because an expanded pane
 	     already shows the label. `UpdateNavigationViewItemToolTip` at :283 sets its content to
 	     the item's own. Neither is in the template — the code-behind half of a control's
@@ -250,31 +358,71 @@
 	     It changes nothing the control renders today: every row it draws has a non-empty
 	     `content`, the settings row included. The top pane's settings row is the one with an
 	     empty content, and it is not this component — `NavigationViewTopItem.svelte` draws it
-	     and carries its own tooltip, `UpdateSettingsItemToolTip` at NavigationView.cpp:1921. -->
-	{#if collapsed && content}
-		<ToolTip {content}>
-			{#snippet children(props)}
-				{@render row(props)}
-			{/snippet}
-		</ToolTip>
-	{:else}
-		{@render row()}
-	{/if}
+	     and carries its own tooltip, `UpdateSettingsItemToolTip` at NavigationView.cpp:1921.
 
-	{#if hasChildren && open}
-		<ul role="group" class="children">
-			<!-- The index is the child's position among its siblings, which is the index the
-			     repeater this reproduces hands its own template. -->
-			{#each items ?? [] as child, i (child.id)}
-				{#if template}
-					{@render template(child, i)}
-				{:else}
-					<Self tag={child.id} content={child.content} glyph={child.glyph} items={child.children} />
-				{/if}
-			{/each}
-		</ul>
-	{/if}
-</li>
+	     **And not inside the flyout**, which is WD-092 and this library's own departure. The
+	     predicate above is pane state, so it stays true for a row drawn in the flyout, and
+	     upstream does attach a tooltip there. It is redundant there — the flyout shows the
+	     label the rail was hiding — and it is not harmless: the primitive's tooltip takes the
+	     Escape that `docs/keyboard.md`'s answer 8 measured closing the flyout, so a rail's
+	     flyout needed two presses to dismiss. -->
+		{#if collapsed && content && !withinFlyout}
+			<ToolTip {content}>
+				{#snippet children(props)}
+					{@render row(props)}
+				{/snippet}
+			</ToolTip>
+		{:else}
+			{@render row()}
+		{/if}
+
+		{#if hasChildren && open && !childrenInFlyout}
+			<ul role="group" class="children">{@render childRows()}</ul>
+		{/if}
+	</li>
+{/snippet}
+
+{#if childrenInFlyout}
+	<!-- `ChildrenFlyout` — `NavigationView.xaml:468-469`, `Placement="RightEdgeAlignedTop"`.
+	     The anchor is the `<li>` rather than the row inside it, and the reason is measured
+	     rather than assumed: the row is already a tooltip trigger on the rail, and the two
+	     primitives' trigger props collide on `id`, on `data-state` and on `aria-expanded` —
+	     the last of which this row already owns as the tree's own expansion, so a merged bag
+	     would not just lose one primitive's identity but overwrite a semantic attribute.
+	     **The two boxes are not the same rectangle**, and an earlier version of this comment
+	     said they were: the `<li>` is the row plus the horizontal half of the row's
+	     `NavigationViewItemButtonMargin`, the vertical half having collapsed through it.
+	     `CHILDREN_FLYOUT_STYLE` gives that half back, and the test asserts the placement
+	     against the row rather than against the side it lands on.
+
+	     What the `<li>` anchor costs is announcement: the primitive puts `aria-haspopup` and
+	     its own `aria-expanded` on the anchor, and an `<li role="none">` is where assistive
+	     technology drops them. Putting them on the row instead is what the collision above
+	     rules out — the row's `aria-expanded` is the tree's, and it is the attribute that
+	     would be overwritten.
+
+
+	     `open` is the row's expansion, one-way: upstream shows the attached flyout *because*
+	     the item expanded, so the expansion is the state and the popup follows it. The
+	     callback is the other direction only — a dismiss the popup performs itself, Escape or
+	     a click outside, has to collapse the row or the two would disagree and the flyout
+	     could not be opened again. -->
+	<Flyout
+		{open}
+		onOpenChange={(next) => {
+			if (!next && open) pane().setExpanded(tag, false);
+		}}
+		placement="rightEdgeAlignedTop"
+		style={CHILDREN_FLYOUT_STYLE}
+		content={flyoutRows}
+	>
+		{#snippet children(props)}
+			{@render item(anchorOnly(props))}
+		{/snippet}
+	</Flyout>
+{:else}
+	{@render item()}
+{/if}
 
 <style>
 	.item {
@@ -540,5 +688,15 @@
 		list-style: none;
 		margin: 0;
 		padding: 0;
+	}
+
+	/* The flyout's list is the same list, drawn outside the pane. It needs a width of its own
+	   because the presenter it sits in has none: `FlyoutThemeMinWidth` is the floor every
+	   flyout gets and a rail's menu is narrower than nothing else here would make it, so the
+	   rows would stretch to that floor with their labels adrift. `CompactPaneLength` is not
+	   the answer either — that is the rail's own width, which is what the flyout is *beside*.
+	   `max-content` lets the longest label size it, which is what a menu of rows does. */
+	.flyout-children {
+		width: max-content;
 	}
 </style>

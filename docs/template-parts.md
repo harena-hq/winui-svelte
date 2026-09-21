@@ -330,11 +330,13 @@ Recorded in the census, not yet disposed of. C11 counts these every run.
 
 **One thing seen while recording them, stated here so it is not lost with the pending flag.**
 `ChildrenFlyout` and the two grids under it are how upstream shows a parent item's children when
-the pane is a rail. `NavigationViewItem.svelte` renders children as a nested list and
-`NavigationView.svelte` hides that list outright in a rail, with a comment saying the flyout
-"belongs to the tranche that builds Flyout". That tranche has since landed — the top-nav overflow
-opens one. The blocker named in the comment is gone, which is a different status from the one the
-comment records.
+the pane is a rail. That flyout is now built: `NavigationViewItem.svelte` renders the children
+into a `Flyout` anchored to the row when the pane is the closed-compact rail, and the rule that
+hid them — whose own comment said the flyout "belongs to the tranche that builds Flyout" — is
+gone with it. What stays pending here is narrower than it was: the `FlyoutPresenter` **style**
+under `ChildrenFlyout` carries a `ControlTemplate` of its own (`NavigationView.xaml:483-487`),
+and its two parts are what this row still owes a census for. The padding and the negative top
+margin that style sets are reproduced and cited at the site that sets them.
 
 ## Pending states
 

@@ -102,16 +102,51 @@ export function getNavigationViewPane(): () => NavigationViewPaneState {
 	return state;
 }
 
-/** Publish the depth the rows rendered from here sit at. The pane publishes 1. */
-export function setNavigationViewLevel(level: number) {
-	setContext(LEVEL, level);
+/**
+ * Where a row sits, as upstream's two separate facts rather than as one number.
+ *
+ * `level` is `Depth` (`NavigationViewItemBase`), 1-based here because it is also the row's
+ * `aria-level`. `topLevel` is `IsTopLevelItem`, and the two are **not** the same question:
+ * upstream computes it as "my parent repeater is one of the control's own"
+ * (`NavigationView.cpp:5748-5751`), never from the depth. The rail's flyout is what separates
+ * them — a row inside it is given depth 0 (`PropagateDepthToChildren(0)`,
+ * `NavigationViewItem.cpp:883`) and is still not top-level, because the repeater it sits in is
+ * the reparented children one. Reading rootness off the depth would give every flyout child
+ * with children a flyout of its own, which upstream does not do.
+ */
+export interface NavigationViewPlacement {
+	/** `Depth` + 1, so a top-level row is 1. Drives `aria-level` and the left indentation. */
+	level: number;
+	/** `IsTopLevelItem`: this row is in one of the control's own lists. */
+	topLevel: boolean;
+	/**
+	 * This row is drawn inside the rail's children flyout, at any depth within it.
+	 *
+	 * It has no upstream counterpart and it is here for one reason: the flyout shows labels,
+	 * so the rail's tooltip is redundant inside it, and the primitive's tooltip takes the
+	 * Escape that should have closed the flyout. WD-092.
+	 */
+	inFlyout: boolean;
 }
 
 /**
- * Read it. A row reads its own level, then publishes `level + 1` for its children. There is
- * no fallback default: the pane publishes 1 before it renders a row, and a call that got
- * here without one has already thrown on `PANE` above.
+ * Publish where the rows rendered from here sit. The pane publishes `{ level: 1, topLevel:
+ * true }`.
+ *
+ * A getter rather than a value, for the same reason the pane's state is one: what a row
+ * publishes is not fixed at initialisation. The pane opening and closing moves a row's
+ * children between the flyout and the list below it while the row stays mounted, and
+ * `setContext` runs once.
  */
-export function getNavigationViewLevel(): number {
-	return getContext<number>(LEVEL);
+export function setNavigationViewPlacement(placement: () => NavigationViewPlacement) {
+	setContext(LEVEL, placement);
+}
+
+/**
+ * Read it. A row reads its own placement, then publishes one for its children. There is no
+ * fallback default: the pane publishes before it renders a row, and a call that got here
+ * without one has already thrown on `PANE` above.
+ */
+export function getNavigationViewPlacement(): () => NavigationViewPlacement {
+	return getContext<() => NavigationViewPlacement>(LEVEL);
 }

@@ -243,13 +243,27 @@ then the ninth entry, which is a search rather than a press and says so.
    closes it. A parent that has content of its own swaps the content on selection immediately,
    so Escape-and-stay and pick-a-child are both available from there. Everything else answers as
    above.
-   **We** have no flyout, and no children either. Measured: invoking a parent in the rail sets
-   `aria-expanded` and draws nothing — the child rows have no box, and no popup appears — and
-   Escape has nothing to close. Read, not measured: the rule that causes it is
-   `NavigationView.svelte:1463-1465`, `display: none` on a collapsed pane's `.children`, and
-   its own comment already says the children belong in a flyout. The rows stay in the DOM,
-   which is why counting them is not the check. This is `ChildrenFlyout`, ADR 0015's deferred
-   item, and the paragraph above it is its contract.
+   **We** had no flyout, and no children either. Measured at the time: invoking a parent in the
+   rail set `aria-expanded` and drew nothing — the child rows had no box, no popup appeared —
+   and Escape had nothing to close. The rule that caused it was `display: none` on a collapsed
+   pane's `.children`, whose own comment already said the children belonged in a flyout.
+   **That is built.** A rail row now opens its children in a `Flyout` anchored to it, drawn at
+   depth 0 as upstream draws them, and `navigation-view-rail.spec.ts` asserts the flyout, its
+   level, that nothing is left under the row, that a parent _inside_ it keeps its own children
+   inline, and that a dismissal collapses the row.
+   **Three of this paragraph's four clauses are matched and one is not.** Focus lands on the
+   flyout's first item; Escape closes it; and Left does not escape it. The first two are
+   asserted; the third is read from the code rather than pressed, and holds for a weaker reason
+   than the original's — no arrow key in this control does anything, so the observable agrees
+   while the mechanism does not. **Up and Down are the clause that fails**:
+   every row is its own tab stop and no arrow key moves focus, which is WD-004 for the pane and
+   is now WD-004 for the flyout too. Escape needed a decision of its own to arrive at one press
+   — the focused row's tooltip was taking the first — and that is WD-092. One behaviour beyond
+   this record was measured while building it and is asserted: a click outside closes the
+   flyout.
+   What stays unreached from this answer is what it never covered: where focus returns after
+   Escape, whether Tab or Home and End do anything inside the flyout, and what a parent that has
+   content of its own does on selection.
 
 9. **Not pressed, and not pressable here.** The shape the question needs is an editable field
    _inside_ a `NavigationViewItem`, and the Gallery never builds one. `NavigationViewPage.xaml`

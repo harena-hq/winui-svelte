@@ -164,7 +164,7 @@
 </script>
 
 <script lang="ts" generics="T extends NavigationViewItemData = NavigationViewItemData">
-	import { setNavigationViewLevel, setNavigationViewPane } from '../internal/navigation-view';
+	import { setNavigationViewPane, setNavigationViewPlacement } from '../internal/navigation-view';
 	import Flyout from './Flyout.svelte';
 	import NavigationViewItem from './NavigationViewItem.svelte';
 	import NavigationViewTopItem from './NavigationViewTopItem.svelte';
@@ -323,6 +323,64 @@
 		onExpandedItemsChange?.(next);
 	}
 
+	// `HandleExpansionStateMemory` — NavigationViewItem.cpp:265-281 — with upstream's own
+	// reason written above it: "NavigationView needs to force collapse top level items when
+	// the pane closes. This is done to avoid a compact state with children showing." It is
+	// done "in a way that allows the control to restore the expanded state when the pane is
+	// opened again", which is `ForceCollapse` (`:851`) remembering and `RestoreExpandedState`
+	// (`:860`) putting it back. The comment quoted is at `:261-264`.
+	//
+	// It matters more here than it did upstream's day: a rail draws an expanded row's children
+	// in a flyout, so without this, closing the pane on an expanded row would pop a flyout open
+	// that nobody asked for — which is the "compact state with children showing" the comment
+	// names, arrived at by a different route.
+	//
+	// Two departures, both deliberate. Upstream remembers per item and this remembers the set,
+	// because this library holds expansion on the control rather than on the row. A row *can*
+	// be expanded while the pane is shut — that is the flyout's whole trigger — so the two
+	// agree for a different reason: the restore branch clears what it remembered before its
+	// own early return, so a row the consumer expanded while shut is not in the set, and a row
+	// that was remembered and then collapsed by hand is dropped from `restoring` by the
+	// `includes` filter rather than being forced back open.
+	// And the trigger is `collapsed` rather than `IsPaneOpen`: a minimal pane is not drawn at
+	// all when shut and shows labels when open, so collapsing there would be a write with
+	// nothing to show for it, and upstream's own restore would undo it before anything saw it.
+	//
+	// `actedOnCollapsed` is deliberately not `$state`, for the reason the display-mode effect
+	// above gives: an effect that reads and writes the same reactive value re-runs on its own
+	// write.
+	//
+	// Two things this does not preserve, both stated rather than fixed. The restored ids are
+	// appended, so a consumer holding more than one expanded row gets them back in a different
+	// order than it had them — the array is a set and upstream holds a flag per item, so the
+	// order is this library's artefact either way. And `remembered` is not re-checked against
+	// `items`: a consumer who replaces the menu while the pane is shut gets ids back that name
+	// no row, which costs nothing to render and shows up only in the bound array.
+	let remembered: string[] = [];
+	let actedOnCollapsed: boolean | null = null;
+	$effect(() => {
+		if (collapsed === actedOnCollapsed) return;
+		actedOnCollapsed = collapsed;
+		const topLevelIds = new Set(
+			items.filter((entry) => !isNavigationViewHeader(entry)).map((entry) => (entry as T).id)
+		);
+		if (collapsed) {
+			const closing = expandedItems.filter((id) => topLevelIds.has(id));
+			if (closing.length === 0) return;
+			remembered = closing;
+			const next = expandedItems.filter((id) => !topLevelIds.has(id));
+			expandedItems = next;
+			onExpandedItemsChange?.(next);
+		} else {
+			const restoring = remembered.filter((id) => !expandedItems.includes(id));
+			remembered = [];
+			if (restoring.length === 0) return;
+			const next = [...expandedItems, ...restoring];
+			expandedItems = next;
+			onExpandedItemsChange?.(next);
+		}
+	});
+
 	// `UpdatePaneLayout` decides the pane's separator, and the condition is not "the menu
 	// scrolls". `VisualItemsSeparator` is collapsed outright when the footer holds no menu item
 	// and no settings item (`NavigationView.cpp:1588`), and collapsed again when the menu and
@@ -373,8 +431,10 @@
 		// the widening is real, because a row's `children` are typed by the record.
 		menuItemTemplate: menuItemTemplate as Snippet<[NavigationViewEntry, number]> | undefined
 	}));
-	// The rows the pane renders itself are the top level. Each one publishes one deeper.
-	setNavigationViewLevel(1);
+	// The rows the pane renders itself are the top level, and the only rows that are —
+	// `IsTopLevelItem` is "my parent repeater is one of the control's own"
+	// (`NavigationView.cpp:5748-5751`). Each row publishes its own placement for its children.
+	setNavigationViewPlacement(() => ({ level: 1, topLevel: true, inFlyout: false }));
 
 	// The row is measured against two boxes, and **not** against the box the items sit in.
 	// `.top-items` is content-sized, so hiding an item narrows it — measuring there would feed
@@ -1531,13 +1591,6 @@
 
 	.root[data-collapsed='true'] .pane :global(.item .content-presenter),
 	.root[data-collapsed='true'] .pane :global(.item .expand-chevron) {
-		display: none;
-	}
-
-	/* A collapsed pane shows top-level items only: a child's row would be
-	   indistinguishable from its parent's with the label gone, and WinUI moves them into
-	   a flyout, which belongs to the tranche that builds Flyout. */
-	.root[data-collapsed='true'] .pane :global(.children) {
 		display: none;
 	}
 </style>
