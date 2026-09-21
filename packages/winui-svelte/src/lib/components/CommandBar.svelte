@@ -340,7 +340,8 @@
 
 	/* `MinimalClosed` (:613) translates the clip by `TemplateSettings.MinimalVerticalDelta` and
 	   takes the content out of the hit test (:619). Same reading as `HiddenClosed` below: the
-	   delta is not in the pin, so the outcome is what is reproduced — the ellipsis alone.
+	   delta was not in the pin when this was written — `AppBar_Partial.cpp:1340-1342` computes
+	   `MinimalVerticalDelta` and the checkout carries it now, unswept — so the outcome is what is reproduced — the ellipsis alone.
 	   Layout, no c1-allow. */
 	.root[data-display-mode='minimal']:not([data-open='true']) .commands {
 		display: none;
