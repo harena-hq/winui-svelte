@@ -38,6 +38,10 @@
  * context is the unit that splits it.
  */
 import { getContext, setContext } from 'svelte';
+import type { Snippet } from 'svelte';
+// Type-only, and that is what keeps it honest: the component imports this module, so a value
+// import of the component here would be a cycle. `import type` is erased before there is one.
+import type { NavigationViewEntry } from '../components/NavigationView.svelte';
 
 const PANE = Symbol('winui-svelte.navigation-view.pane');
 const LEVEL = Symbol('winui-svelte.navigation-view.level');
@@ -54,6 +58,23 @@ export interface NavigationViewPaneState {
 	onItemInvoked?: (id: string) => void;
 	/** `ShouldEnableToolTip`: the left pane is the closed-compact icons-only rail. */
 	collapsed: boolean;
+	/**
+	 * `MenuItemTemplate` (`NavigationView.idl:207`) — the consumer's snippet for one entry,
+	 * absent when the control draws its own rows.
+	 *
+	 * It travels here rather than down as a prop because a row's *children* are templated
+	 * too: upstream hands an item's own repeater the same factory its five own repeaters get
+	 * (`NavigationViewItem.cpp:171`, against `NavigationView.cpp:470`, `:492`, `:511`, `:557`
+	 * and `:580`), so the template reaches every depth — and a Svelte parent cannot reach
+	 * into a snippet, which is the constraint this whole module exists for.
+	 *
+	 * The entry is typed by the bound rather than by the control's `T`. At the top level that
+	 * is exact and the control casts once where it publishes this, saying so. On the nested
+	 * path it is a widening: `NavigationViewItem`'s `items` prop is `NavigationViewItemData[]`,
+	 * so a template that reads a row's own extra fields sees the bound's there. The unit that
+	 * makes the item generic in its row is what would carry `T` the rest of the way.
+	 */
+	menuItemTemplate?: Snippet<[NavigationViewEntry, number]>;
 }
 
 /** Publish the pane's state. The argument is a getter so the value stays reactive. */

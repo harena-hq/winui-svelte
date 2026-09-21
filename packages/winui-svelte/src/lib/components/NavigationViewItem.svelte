@@ -92,6 +92,12 @@
 	const isSelected = $derived(pane().selected === tag);
 	/** `ShouldEnableToolTip`: the left pane is the closed-compact icons-only rail. */
 	const collapsed = $derived(pane().collapsed);
+	/**
+	 * The consumer's row template, or nothing. A row's children go through the same template
+	 * its parent did, because upstream gives an item's own repeater the same factory the
+	 * control's repeaters get (`NavigationViewItem.cpp:171`).
+	 */
+	const template = $derived(pane().menuItemTemplate);
 
 	function activate() {
 		// `OnNavigationViewItemInvoked` calls `ToggleIsExpandedNavigationViewItem`
@@ -139,11 +145,11 @@
 		// can be targeted at one; and it fixes the chevron below, which is this library's own
 		// extra tab stop (WD-004) and whose Space the row had been taking for itself.
 		//
-		// The pointer half is not decided here. A click's target is whatever sits under it,
-		// so the label would fail the same test and a row would stop being clickable; the
-		// pointer's equivalent is a descendant calling `stopPropagation`, which the chevron
-		// below already does. The unit that lets a consumer put an element in the cell is the
-		// one that owes the rest.
+		// The pointer half is a different test and is decided elsewhere — see the comment on
+		// `withTriggerClick` and WD-090. Target identity is the wrong one for it: a click's
+		// target is whatever sits under the pointer, so the label would fail it and the row
+		// would stop being clickable. What stands in for handledness there is a descendant
+		// calling `stopPropagation`, which the chevron below already does.
 		if (event.target !== event.currentTarget) return;
 		event.preventDefault();
 		activate();
@@ -161,6 +167,11 @@
 	// per render, which would make the spread a new value every time.
 	const EMPTY_TRIGGER_PROPS: Record<string, unknown> = Object.freeze({});
 
+	// WD-004 has the key half of this row's input contract and WD-090 has the pointer half:
+	// a click that reaches the row invokes it, whatever it passed through on the way. Upstream
+	// gates the invoke on a press no descendant handled, and the DOM has nothing a row can read
+	// that says so — a `<button>`'s click sets no flag — so a descendant that must not invoke
+	// the row stops the event, as `toggle` above does. See docs/divergences.md.
 	function withTriggerClick(props: Record<string, unknown>) {
 		return (event: MouseEvent) => {
 			(props.onclick as ((event: MouseEvent) => void) | undefined)?.(event);
@@ -252,8 +263,14 @@
 
 	{#if hasChildren && open}
 		<ul role="group" class="children">
-			{#each items ?? [] as child (child.id)}
-				<Self tag={child.id} content={child.content} glyph={child.glyph} items={child.children} />
+			<!-- The index is the child's position among its siblings, which is the index the
+			     repeater this reproduces hands its own template. -->
+			{#each items ?? [] as child, i (child.id)}
+				{#if template}
+					{@render template(child, i)}
+				{:else}
+					<Self tag={child.id} content={child.content} glyph={child.glyph} items={child.children} />
+				{/if}
 			{/each}
 		</ul>
 	{/if}
