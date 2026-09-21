@@ -2096,3 +2096,120 @@ changes`.
   overflow into a **named other element**. Not columns: this example's three equal columns would
   make `columns: 3` fit one page, but a target is a separate element with its own size, margin and
   position anywhere in the tree.
+
+---
+
+### WD-089 — `menuItemTemplate` draws the left pane's rows and not the top pane's
+
+- **Control**: `NavigationView`, `MenuItemTemplate` (`NavigationView.idl:207`).
+- **WinUI does**: hand one element factory to every repeater that draws menu items — the left
+  nav (`NavigationView.cpp:470`), the top nav (`:492`), the top overflow (`:511`), the left
+  footer (`:557`) and the top footer (`:580`) — and to each realized item's own children
+  repeater as well (`NavigationViewItem.cpp:171`). One template therefore draws a row wherever
+  the row appears, and a top-pane item is a `NavigationViewItem` exactly as a left-pane one is.
+- **We do**: apply `menuItemTemplate` to the left pane's menu and to a row's children at every
+  depth. The top pane's items, the top pane's overflow flyout and both settings rows are drawn
+  by the control as before. The settings rows are not a divergence — upstream exempts the
+  settings item from templating too (`NavigationViewItemsFactory.cpp:39-43`) — the top pane is.
+- **Why accepted**: this library draws a top-pane row with a different component.
+  `NavigationViewTopItem` exists because the top presenter carries its own template and its own
+  states (`NavigationView_themeresources.xaml:891`, and the `NavigationViewIconPositionStates`
+  group at `:789` whose `IconOnly` is `:791` and whose `ContentOnly` is `:802`), which is a
+  different element with a different surface, not a styled
+  `NavigationViewItem`. ADR 0015 decided that the snippet draws a `NavigationViewItem`, so a
+  template applied to the top pane would put a left-pane row in a horizontal strip. Reaching the
+  top pane means first deciding what element a top-pane snippet draws, which is a surface
+  question ADR 0015 did not take and a prop this control cannot infer from the entry alone.
+- **Would reconsider if**: `NavigationViewTopItem` becomes public surface — D46's naming unit is
+  where the exported set is fixed — or the two components converge on one element, at which
+  point the template has one answer for both panes instead of two.
+
+---
+
+### WD-090 — a click on a consumer's control inside a row still invokes the row
+
+- **Control**: `NavigationViewItem` pointer input.
+- **WinUI does**: gate the invoke on a press nothing else handled. The item subscribes to its
+  presenter's `PointerPressed` plainly and says why in its own comment — "Handlers that set
+  flags are skipped when args.Handled is already True" (`NavigationViewItem.cpp:1272-1273`) — so
+  `m_isPressed` is set only for a press no descendant took. `PointerReleased` is subscribed with
+  `handledEventsToo: true` (`:1278-1281`), under the comment at `:1277` stating the opposite
+  rule for handlers that _reset_ flags, and the release invokes only `if (m_isPressed)`
+  (`:1095`) before marking itself handled (`:1105`). A `Button` a consumer puts in the row's
+  content marks that press handled — `ButtonBase::OnPointerPressed` calls `put_Handled(TRUE)`
+  for an enabled left-button press whose `ClickMode` is not `Hover`
+  (`ButtonBase_Partial.cpp:689-699`), having itself returned early if the press arrived already
+  handled (`:677-681`) — so the row above it never invokes. A text field is the same case
+  argued more weakly, and weakly in the same place the keyboard half is: `TextBox`'s own
+  `OnPointerPressed` forwards straight to its generated base (`TextBox_Partial.cpp:130-134`)
+  and the editing is native, so what the pin offers is indirect — `ComboBox_Partial.cpp:369`
+  and `:374` hook their own editable `TextBox`'s `PointerPressed` and `Tapped` with
+  `handledEventsToo`, which `docs/keyboard.md`'s answer 9 reads as that field marking pointer
+  events handled.
+- **We do**: invoke on any click that reaches the row. A descendant suppresses it by calling
+  `stopPropagation`, which is what this control's own expand chevron does — `toggle` in
+  `NavigationViewItem.svelte`, whose comment already says the row would otherwise re-expand what
+  the chevron just collapsed.
+- **Why accepted**: the DOM has no `Handled` for a pointer event. `defaultPrevented` is the
+  analogue the keyboard half of this control uses, and a `<button>`'s click does not set it —
+  activating a button is not a cancellable default action the way a space typed into a text
+  field is, so the flag that separates the two cases for a key carries nothing for a click.
+  What is left is a list, and there are two of them, because a click's target is whatever sits
+  under the pointer and the row's own label is a descendant as surely as a consumer's button
+  is. A **negative** list — tag names and roles the row treats as "would have handled it" — is
+  a guess about elements the control has never seen, and a wrong entry is a row that silently
+  stops being clickable, in a control whose whole job is being clicked. A **positive** list —
+  invoke only for a target inside the parts the control drew — cannot be wrong about a
+  consumer's element, and has no marker to key on either: the row's `data-label` is written
+  only when `children` is absent, so on the very rows this would govern the attribute is gone.
+  It is wrong about upstream as well: the factory's second branch puts non-item template output on a
+  generated container's `ContentPresenter` (`NavigationViewItemsFactory.cpp:71-85`), and a
+  `TextBlock` there does not mark the press handled — `CTextBlock::OnPointerPressed`
+  (`dxaml/xcp/core/text/TextBlock/TextBlock.cpp:3543`) sets `m_bHandled` only when the hit test
+  found a `Hyperlink` (`:3593-3595`), and the managed layer adds no override of its own
+  (`TextBlock_Partial.cpp` carries neither `OnPointerPressed` nor `put_Handled`, a negative run
+  against `ButtonBase_Partial.cpp`, where the same query returns one). Text selection is a third
+  path and is not claimed about here: an `IsTextSelectionEnabled` block hands the press to
+  `m_pSelectionManager` (`:3586-3592`, the call at `:3588-3591`) and what that does with the flag was not read. So
+  upstream's row **does** invoke for a click on an ordinary label a consumer templated, and a
+  positive list breaks exactly the template a consumer writes first.
+  `stopPropagation` avoids both lists: it states the fact at the one site that already knows
+  it, and it is the idiom the control itself uses one element away.
+- **Would reconsider if**: the platform grows a way for an element to mark a pointer event
+  handled without stopping its propagation, or a consumer with per-row commands reports paying
+  for this at every command it draws — the second is a measurement about a real menu, and it is
+  the one likely to arrive first.
+
+---
+
+### WD-091 — a template that does not draw a row is not wrapped in one
+
+- **Control**: `NavigationView`, `menuItemTemplate`.
+- **WinUI does**: branch on what the template produced.
+  `NavigationViewItemsFactory::GetElementCore` returns the produced element as the container
+  when it already derives from `NavigationViewItemBase` (`NavigationViewItemsFactory.cpp:53-55`);
+  otherwise it takes a `NavigationViewItem` from its own pool or creates one (`:58-69`) and puts
+  the template's output on that container's `ContentPresenter` (`:71-85`). So `MenuItemTemplate`
+  works whether it draws a row or draws what goes inside one.
+- **We do**: render the snippet's output where the row would have gone, unwrapped. A snippet
+  that draws a `NavigationViewItem` is the branch this reproduces — the one the Gallery's own
+  page recommends in prose, "use a `NavigationViewItem` as the data template"
+  (`NavigationViewPage.xaml:223`). A snippet that draws anything else produces that markup
+  where a row would have been, at both depths: as a child of the pane's `<ul role="tree">`
+  (`NavigationView.svelte`'s menu list) and as a child of a row's `<ul role="group">`
+  (`NavigationViewItem.svelte`'s children list). No row around it, no `treeitem` role, and no
+  selection, invoke or expansion — and, unless the snippet writes its own `<li>`, an element a
+  `<ul>` may not have as a child, which is the part accessibility tooling notices first. **The
+  control reaches this branch itself**: a header entry is handed to the template like any other
+  and has no row to be, which is why `/dev/navigation-view-template` exercises it without a
+  consumer writing anything odd.
+- **Why accepted**: the test the factory performs is a type check on a rendered element, and a
+  Svelte snippet's output is not something its caller can inspect before it is in the DOM. The
+  XAML factory can ask because it holds the object it created; reproducing the branch here means
+  reading back from the tree after the fact and then behaving differently according to markup the
+  control cannot see. ADR 0015 rejected that on this ground and took the other branch.
+- **Would reconsider if**: a consumer wants the content branch — a template that fills a row
+  rather than drawing one. The answer is additive and needs no run-time test: a second prop
+  naming that branch, whose snippet the control renders into a `NavigationViewItem` it draws
+  itself. That is what the factory's second branch produces, arrived at by being told rather than
+  by inspecting.

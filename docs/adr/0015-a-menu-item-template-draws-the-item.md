@@ -164,11 +164,26 @@ measured its own packaging rather than assuming it.
    diverge somewhere, and they are not symmetric: acting on a key aimed at something else
    certainly breaks a field a consumer put in the cell, while acting only on a key aimed at
    the row costs nothing this control draws today, since a label is not focusable and no key
-   can be targeted at one. **The pointer half is not decided**, because target identity is the wrong
-   test for it: a click's target is whatever sits under the pointer, so the label would fail
-   it and the row would stop being clickable. The pointer's equivalent is a descendant
-   stopping the event, which the chevron already does; the unit that lets a consumer put an
-   element in the cell owes the rest.
+   can be targeted at one. **The pointer half is a separate decision**, because target identity
+   is the wrong test for it: a click's target is whatever sits under the pointer, so the label
+   would fail it and the row would stop being clickable. It was owed by the unit that lets a
+   consumer put an element in the cell, and that unit took it — by reading the pin rather than
+   by reasoning from the paragraph above, which had guessed at the mechanism and named only the
+   remedy. **Upstream's gate is handledness, not target.** `NavigationViewItem` subscribes to
+   its presenter's `PointerPressed` plainly, under its own comment saying that handlers which
+   set flags are skipped once `args.Handled` is true (`NavigationViewItem.cpp:1272-1273`), so
+   `m_isPressed` is set only for a press no descendant took; `PointerReleased` is subscribed
+   with `handledEventsToo: true` (`:1278-1281`) precisely so the flag is always reset; and the
+   release invokes only `if (m_isPressed)` (`:1095`). A `Button` a consumer puts in the content
+   marks that press handled — `ButtonBase::OnPointerPressed` calls `put_Handled(TRUE)`
+   (`ButtonBase_Partial.cpp:689-699`) — so upstream's row does not invoke. For a text field the
+   evidence is indirect and WD-090 says how far it goes. The DOM carries no such
+   flag for a pointer — a `<button>`'s click sets no `defaultPrevented`, which is why the
+   keyboard half's analogue is no help here — so the decision taken is the remedy this paragraph
+   already named: a descendant declines by stopping the event, as the chevron does. The gap that
+   leaves is **WD-090**, and it is asserted in both directions by
+   `navigation-view-template.spec.ts` — the command button that stops the click does not invoke
+   the row, the field that does not stop it does.
    A gate could not press a key when this was written and now one does.
    `navigation-view-keyboard.spec.ts` is this control's first keyboard assertion, and the
    chevron is what made the decision observable without waiting for a consumer's element:

@@ -307,7 +307,13 @@ then the ninth entry, which is a search rather than a press and says so.
    a space typed into a field does not set it, so no faithful test exists and the two
    available behaviours are not equally costly. ADR 0015's deferred item 2 carries the
    argument and `navigation-view-keyboard.spec.ts` asserts the result, on the chevron — the
-   one box inside a row that a key can reach today. **This entry is what let that be decided
+   one box inside a row that a key could reach when that was written. **That clause is now out
+   of date, and the decision's own case is pressed.** `menuItemTemplate` gave a consumer's
+   element a place in the content cell, and `navigation-view-template.spec.ts` types a space
+   into a field inside a row: the space reaches the field and no invoke is reported, and
+   removing the guard fails both halves of that assertion. Nothing above becomes knowable —
+   the reference still cannot be asked and what WinUI's row does is still unrecorded — but
+   this platform's half is no longer only argued. **This entry is what let that be decided
    at all**, which is the fourth outcome doing the work it was added for: the search says
    what cannot be known, and a unit was sealed with that stated rather than blocked on it.
 

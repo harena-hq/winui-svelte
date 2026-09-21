@@ -82,6 +82,39 @@
 		 * any other id, so a caller's own menu must not use it.
 		 */
 		selected?: string | null;
+		/**
+		 * MenuItemTemplate (`NavigationView.idl:207`) — the snippet that draws one entry, given
+		 * the entry and its index in the list it came from. **The snippet draws a
+		 * `NavigationViewItem`**, not the label inside one: upstream hands both templates to one
+		 * element factory (`NavigationView.cpp:4293-4298`) whose first branch returns what the
+		 * template produced as the container when that already is a `NavigationViewItemBase`
+		 * (`NavigationViewItemsFactory.cpp:53-55`), and the Gallery's own page recommends that
+		 * branch in prose — "set the `MenuItemTemplate` property and use a `NavigationViewItem`
+		 * as the data template" (`NavigationViewPage.xaml:223`). ADR 0015. The factory's other
+		 * branch — anything else, put on a container the factory generates (`:58-69`, `:71-85`)
+		 * — is not reproduced, and WD-091 says what a snippet drawing something else gets.
+		 *
+		 * **Every entry reaches it, headers included.** That is what reproduces
+		 * `MenuItemTemplateSelector` (`:208`) rather than declining it, and it is the Gallery's
+		 * own stated reason for that member — "if you wish to bind to the header content as
+		 * well, use data template selectors" (`:223`). XAML needs a second member because a
+		 * `DataTemplate` is a value and cannot branch; a snippet is a function and writes the
+		 * `{#if}` the selector's `SelectTemplateCore` would have been. So a template that draws
+		 * only rows branches on the discriminant itself — `'header' in entry`, which is what
+		 * `isNavigationViewHeader` above tests; the helper is a value and `index.ts` exports
+		 * only the types from this module, which D46's naming unit is where to settle. The
+		 * control draws no header of its own once a template is set.
+		 *
+		 * **The settings row is never templated**, reproducing
+		 * `NavigationViewItemsFactory.cpp:39-43`.
+		 *
+		 * **The left pane only, in this version.** Upstream sets the same factory on all five of
+		 * its repeaters (`NavigationView.cpp:470`, `:492`, `:511`, `:557`, `:580`); the two top
+		 * ones and the overflow draw `NavigationViewTopItem` here, a different component with a
+		 * different surface that a snippet drawing a `NavigationViewItem` would fill wrongly.
+		 * WD-089 has the record.
+		 */
+		menuItemTemplate?: Snippet<[NavigationViewEntry<T>, number]>;
 		/** ItemInvoked — fires when a menu row is activated. */
 		onItemInvoked?: (id: string) => void;
 		/** IsPaneOpen — `$bindable`. */
@@ -140,6 +173,7 @@
 	let {
 		items,
 		selected = null,
+		menuItemTemplate,
 		onItemInvoked,
 		paneOpen = $bindable(true),
 		onPaneOpenChange,
@@ -330,7 +364,14 @@
 		expandedItems,
 		setExpanded,
 		onItemInvoked,
-		collapsed
+		collapsed,
+		// The cast is the widening the context's own field documents, and it is here rather
+		// than there because this is the only place that knows `T`. A snippet taking
+		// `NavigationViewEntry<T>` is not a snippet taking `NavigationViewEntry`: a parameter
+		// is contravariant and `T` is the narrower type. Every entry the markup below renders
+		// it with is one out of `items`, so the top level is exact; the nested path is where
+		// the widening is real, because a row's `children` are typed by the record.
+		menuItemTemplate: menuItemTemplate as Snippet<[NavigationViewEntry, number]> | undefined
 	}));
 	// The rows the pane renders itself are the top level. Each one publishes one deeper.
 	setNavigationViewLevel(1);
@@ -482,8 +523,16 @@
 					bind:scrollableHeight={paneScrollableHeight}
 				>
 					<ul role="tree" class="menu-items">
+						<!-- The template comes first because it is handed every entry, headers
+						     included — the branch below it is what the control draws when there is
+						     no template, not a case the template does not cover. A snippet drawing
+						     a `NavigationViewItem` brings this `<li>` with it; one drawing a header
+						     writes its own, which is the cost of reproducing the selector as a
+						     function rather than as a second member. -->
 						{#each items as entry, i (isNavigationViewHeader(entry) ? `h${i}` : entry.id)}
-							{#if isNavigationViewHeader(entry)}
+							{#if menuItemTemplate}
+								{@render menuItemTemplate(entry, i)}
+							{:else if isNavigationViewHeader(entry)}
 								<li role="none">
 									<div class="item-header winui-BodyStrongTextBlockStyle">{entry.header}</div>
 								</li>
@@ -512,6 +561,9 @@
 
 				{#if settingsVisible}
 					<div class="footer-items">
+						<!-- Never templated, whatever `menuItemTemplate` is:
+						     `NavigationViewItemsFactory::GetElementCore` returns the settings item
+						     ahead of both branches (`NavigationViewItemsFactory.cpp:39-43`). -->
 						<ul role="tree" class="menu-items">
 							<NavigationViewItem
 								tag={SETTINGS_ITEM.id}
