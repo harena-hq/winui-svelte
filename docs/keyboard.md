@@ -136,9 +136,10 @@ question with one answer.
    words where a control wants the opposite: "Ancestor PART_BodyScroller marks nav keys Handled
    before they bubble here; handledEventsToo:true lets us still act on them"
    (`TableView.cpp:271-273`). So a key handled inside the row never reaches the row's handler,
-   and ours reaches it always. The half still to observe is whether a focused `TextBox` marks
-   Space handled at all — that is what decides the case, and it is in a base class the pin's
-   `NavigationView` directory does not carry.
+   and ours reaches it always. The half the pin does not answer is whether a focused `TextBox`
+   marks Space handled at all — that is what would decide the case. An earlier version of this
+   line put that in a base class the pin's `NavigationView` directory does not carry, which was too
+   generous: it is not in the pin at all, and the observation below records the search.
 
 ### `TabView` — the strip
 
@@ -177,9 +178,11 @@ hierarchical sample — `Home` / `Account` / `Document options`
 (`NavigationViewPage.xaml:364-415`), with the three `PanePosition` radios beside it
 (`:322-337`). Two sittings, both on that date: the eight answers below, then two follow-ups —
 which instance had been pressed, and what the foot of the ring does. Our column was measured on
-`/dev/navigation-view` by pressing the same keys. **Question 9 is not answered, and question 5
-is answered in part** — its collapsing half was not pressed. The record is the eight below, with
-that gap named where it falls.
+`/dev/navigation-view` by pressing the same keys. **Question 5 is answered in part** — its
+collapsing half was not pressed. **Question 9 was not pressed either, and on 2026-09-21 it
+stopped being a press that is owed**: entry 9 below records why the reference cannot be
+asked it. The record is the eight pressed answers, with that gap named where it falls, and
+then the ninth entry, which is a search rather than a press and says so.
 
 1. **The list is one stop, and the stop is the selected item.** Tab walks the pane toggle, then
    the selected item, then the Settings row at the foot of the pane; one press leaves the list
@@ -248,6 +251,55 @@ that gap named where it falls.
    which is why counting them is not the check. This is `ChildrenFlyout`, ADR 0015's deferred
    item, and the paragraph above it is its contract.
 
+9. **Not pressed, and not pressable here.** The shape the question needs is an editable field
+   _inside_ a `NavigationViewItem`, and the Gallery never builds one. `NavigationViewPage.xaml`
+   does carry two `TextBox`es and an `AutoSuggestBox` — `:451` and `:461` are the sample's own
+   options panel, the `Header` and `PaneTitle` properties, and `:550` is
+   `NavigationView.AutoSuggestBox`, the pane's search slot. All three sit outside every item, and
+   the control subscribes to each _item_'s `KeyDown` (`NavigationView.cpp:3595`), so none of them
+   routes through the handler the question is about. Across every `.xaml` in the pin, none puts a
+   `TextBox` or an `AutoSuggestBox` inside a `ListViewItem`, `GridViewItem`, `Expander`,
+   `SettingsCard`, `NavigationViewItem`, `TreeViewItem` or `DataTemplate`; the 22 files that
+   carry one at all put it inside a `Grid` or a `StackPanel`, which is what says the search was
+   looking rather than failing — 22 is every candidate in the pin, by an element-tree walk of
+   all 188 `.xaml` files and by `grep -rl` independently.
+   The pin does not answer it either, and the load-bearing part of that search is structural
+   rather than a count: **`CTextBoxBase` is named by the pin and never defined in it.** Every
+   `class CTextBoxBase` is a forward declaration — `IBackingStore.h:9`, `RichEditGripper.h:9`,
+   `RichEditGripperChild.h:11`, `DependencyObjectTraits.g.h:2900` — no `textboxbase.cpp`
+   exists, and both uses of `CTextBoxBase::` are comments pointing at code that is absent
+   (`PointerInputProcessor.cpp:739`, `InputPaneProcessor.cpp:142`). Around it,
+   `TextBox_Partial.cpp:432-436` forwards `OnKeyDown` straight to `RaiseNative`, and
+   `core/text/TextBox/` holds three files — `PlainTextPosition.cpp`, `TextBoxHelpers.cpp`,
+   `TextSelection.cpp` — in which `VirtualKey`, `KeyEventArgs`, `OnKeyDown` and `VK_` do not
+   appear at all. The editing is RichEdit and TSF, which this repository does not carry, and
+   that is the pin's own account rather than a convention: `KeyboardInputProcessor.cpp:703-707`
+   says a handled `WM_CHAR` is "passed to TextServiceFramework (TSF)" by calling
+   "OnCharacterReceived event handler for TextBoxBase" — the class it then declares at `:709`
+   and the pin never defines.
+   **One count here is not evidence, and is recorded so it is not mistaken for some.**
+   `VK_SPACE` occurs in exactly two files pin-wide — `Hyperlink.cpp:418` and
+   `KeyboardAccelerator_Partial.cpp:360` — which reads as decisive and is not:
+   `VirtualKey_Space` is the spelling most of the C++ uses, and that one is in 33 files.
+   **What this does not say** is what WinUI's row would do. It says the reference cannot be asked,
+   which is a fact about the instrument and not about the control — the distinction the answer
+   would have turned on.
+   Three near-misses are worth recording so they are not re-derived. `ComboBox_Partial.cpp:369`
+   and `:374` hook their own editable `TextBox`'s `PointerPressed` and `Tapped` with
+   `handledEventsToo`, so that field does mark **pointer** events handled; it says nothing
+   about keys. The same file's `:124` does ask for already-handled events on the key side —
+   but for `CharacterReceived`, on the ComboBox itself, which is a different event from the
+   `KeyDown` an item's handler reads, so it narrows the gap without closing it. And `AutoSuggestBox_Partial.cpp:623` takes `VirtualKey_Space`, with
+   `:646-649` calling `put_Handled(TRUE)` — a text-entry control marking Space handled, in
+   the very control this page puts in the pane at `:550`. It is still not an answer, and the
+   pin says why directly above the handler: it "is only for Gamepad or Remote cases" and
+   "is never invoked for Keyboard cases since Focus stays on the TextBox" (`:574-576`).
+   Reading either of the two as though it settled the keyboard is the move this document
+   exists to stop.
+   **We** invoke on Space from the row's own `keydown` and call `preventDefault()`
+   (`NavigationViewItem.svelte`), which a field inside the row would feel. That is now a decision
+   to take on other grounds rather than a measurement to wait for.
+
 ### What this decided
 
 Behavioural claims of WD-004's that fell, each a reading rather than an observation: that Left
@@ -269,13 +321,21 @@ prevent the key's default there rather than by swallowing it to make the ring ti
 ring does not wrap is the conclusion drawn from that press, not a further observation — the
 answer reports the scroll and not where focus went — and the top end is not measured at all.
 
+**Question 9 closes without a press, and closing it is not the same as answering it.** What
+the reference can be asked is bounded by what the Gallery builds, and it builds no editable
+field inside a row. So the row's handling of a key aimed at something inside it is decided
+on other grounds — the pin's asymmetry is one of them, and naming the rest belongs to the
+unit that makes `NavigationViewItem` public rather than to this record. What this removes is
+a gate, not a question: ADR 0015 waited on an observation that cannot be taken.
+
 WD-004's **Why accepted** rests on exactly the difficulty two of the fallen claims supplied. The
 entry is corrected in place. Whether it stays a divergence at all is the second outcome below,
 and a separate decision: a roving tabindex is not something the web cannot do.
 
 ## What an observation decides
 
-Three outcomes, and each has a different destination:
+Four outcomes, and each has a different destination. The fourth was added on 2026-09-21,
+by the first question that produced it:
 
 - **The original does X and we do X.** Nothing to record except that it was checked — which is
   the change this document actually asks for, below.
@@ -285,6 +345,10 @@ Three outcomes, and each has a different destination:
 - **The original does X and the web cannot do X.** A `WD-` entry — and now one whose "WinUI
   does" line is a report of an observation rather than a reading, with the date and the machine
   in it.
+- **The reference cannot be asked.** The shape the question needs does not exist in the
+  Gallery, and the pin does not carry the code that would answer it instead. It goes into the
+  record as a search rather than a press, with what was searched written down, and the
+  decision it was gating moves to other grounds. Entry 9 above is the first of these.
 
 **WD-004 is a candidate for the second outcome.** Its own reasoning says the loop "is not hard"
 and that what is hard is the contract being right without a test — which is an argument for
@@ -298,6 +362,11 @@ that cost minutes. The same move, for the same reason:
 > **A control whose surface includes a keyboard contract is not sealed until that contract has
 > been pressed on Windows 11, and the unit says what was pressed.**
 
+One exception, and it is narrow enough to state in a sentence: where the reference cannot be
+made to show the behaviour at all, the unit says **that**, with the search behind it, and
+seals. A rule that admits no such case is a rule that blocks a unit on a press nobody can
+take, which is worse than the drift it was written against.
+
 Not a gate — a gate cannot press a key. A line in the unit, the way a baseline set is a line in
 the unit. And for a `WD-` entry about behaviour, a required sentence naming the machine and the
 date, so that the registry stops reading the same whether the machine was consulted or not.
@@ -307,4 +376,5 @@ waits on them; the rest are swept when something asks.
 
 ADR 0015 is the first decision to cite this rule: it makes `NavigationViewItem` a public
 component, which publishes the keyboard contract WD-004 describes, so the observation above
-comes before that control is sealed.
+comes before that control is sealed. That is the eight presses of 2026-09-21, and the ninth
+entry, which is the exception above rather than a press still owed.

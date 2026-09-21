@@ -129,8 +129,8 @@ packaging rather than assuming it.
    `generics="T"`. It did not measure `generics="T extends NavigationViewItemData = …"`, and a
    language-tools attribute carrying one is not the same string. Measure it the same way —
    `dist`, the emitted `.d.ts`, a compile from the packaged form, `publint`, `pnpm smoke`.
-2. **The keyboard contract becomes public surface, and it has not been observed.** Two things
-   meet here. The narrow one: the row is a `div[role=treeitem]` with `tabindex="0"` whose
+2. **The keyboard contract becomes public surface, and the reference has said all it can.** Two
+   things meet here. The narrow one: the row is a `div[role=treeitem]` with `tabindex="0"` whose
    `keydown` handler calls `preventDefault()` on Space (`NavigationViewItem.svelte:40-46`), so
    a text field a consumer renders inside it cannot receive a space. The DOM has that by
    construction: the event bubbles whether or not anything handled it. **XAML does not have it,
@@ -138,20 +138,22 @@ packaging rather than assuming it.
    then withdrew as unreadable, and which the pin answers in its own words. The control
    subscribes to each item's `KeyDown` plainly (`NavigationView.cpp:3595`, handler at `:2709`)
    and never calls `AddHandler`, the overload that asks for already-handled events; where a
-   control in the same pin wants the opposite it says why, at `TableView.cpp:271-273`. What is
-   still not readable is whether a focused `TextBox` marks Space handled in the first place —
-   that is in a base class the pin's `NavigationView` directory does not carry, and it is what
-   decides the case. So it remains a ninth question for the observation, and a narrower one:
-   type into a text field inside a row of the original and see whether the row invokes. The
-   wide one: that handler is WD-004, whose "WinUI does" paragraph described the WAI-ARIA tree
-   pattern and assumed WinUI follows it. That assumption was checked on 2026-09-21 and is
-   false — `docs/keyboard.md` has the record — so the wide question is answered and only the
-   narrow one above is still owed. Making
-   `NavigationViewItem` public publishes both. **So the contract is pressed on Windows 11
-   before this control is sealed, and the unit says what was pressed** — `docs/keyboard.md`'s
-   rule for a control whose surface includes a keyboard contract. A gate cannot press a
-   key: `navigation-view.spec.ts` contains no keyboard assertion today, and the parts census
-   holds no focus state, so nothing green here says anything about it.
+   control in the same pin wants the opposite it says why, at `TableView.cpp:271-273`. What the pin
+   does not carry is whether a focused `TextBox` marks Space handled in the first place,
+   which is what would decide the case. **Both halves were resolved on 2026-09-21 and
+   neither is still owed.** The wide one: that handler is WD-004, whose "WinUI does" paragraph
+   described the WAI-ARIA tree pattern and assumed WinUI follows it; the assumption was
+   pressed and is false, and `docs/keyboard.md` has the record. The narrow one — type into a
+   field inside a row of the original and see whether the row invokes — **cannot be asked of
+   the reference at all**: the Gallery builds no editable field inside a row, and the pin
+   does not carry the editor, so the search stands in for the press. That record is
+   `docs/keyboard.md`'s entry 9, with what was searched written into it, and it is the first
+   use of the fourth outcome that document now lists.
+   So the row's handling of a key aimed at something inside it is a decision this unit takes
+   on other grounds rather than a measurement it waits for, and the unit says which grounds.
+   A gate cannot press a key either: `navigation-view.spec.ts` contains no keyboard
+   assertion today, and the parts census holds no focus state, so nothing green here says
+   anything about it.
 3. **An identity prop collides with the DOM.** `NavigationViewItemData.id` is a data field and
    is untouched, but ADR 0009 spreads the rest props onto the root, where `id` is a live HTML
    attribute — so a public `NavigationViewItem` cannot take `id` to mean "which row this is".
