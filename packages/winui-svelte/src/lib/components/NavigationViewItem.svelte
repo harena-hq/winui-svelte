@@ -1,26 +1,35 @@
 <script lang="ts">
 	import type { NavigationViewItemData } from './NavigationView.svelte';
+	import {
+		getNavigationViewLevel,
+		getNavigationViewPane,
+		setNavigationViewLevel
+	} from '../internal/navigation-view';
 	import Self from './NavigationViewItem.svelte';
 	import ToolTip from './ToolTip.svelte';
 
 	interface Props {
 		item: NavigationViewItemData;
-		/** 1 for a top-level item. Drives both `aria-level` and the left indentation. */
-		level: number;
-		selected: string | null;
-		expandedItems: string[];
-		setExpanded: (id: string, open: boolean) => void;
-		onItemInvoked?: (id: string) => void;
-		/** `ShouldEnableToolTip`: the left pane is the closed-compact icons-only rail. */
-		collapsed: boolean;
 	}
 
-	let { item, level, selected, expandedItems, setExpanded, onItemInvoked, collapsed }: Props =
-		$props();
+	let { item }: Props = $props();
 
-	const open = $derived(expandedItems.includes(item.id));
+	// Everything else this row needs is a fact about the pane it sits in, and the pane
+	// publishes it — `internal/navigation-view.ts` says why, and why an absent context is
+	// a throw rather than a case to render around.
+	const pane = getNavigationViewPane();
+
+	/** 1 for a top-level item. Drives both `aria-level` and the left indentation. */
+	const level = getNavigationViewLevel();
+	// Read first, publish second. Both calls name the same key, so a `setContext` before
+	// the `getContext` would hand this row the level it meant for its own children.
+	setNavigationViewLevel(level + 1);
+
+	const open = $derived(pane().expandedItems.includes(item.id));
 	const hasChildren = $derived((item.children?.length ?? 0) > 0);
-	const isSelected = $derived(selected === item.id);
+	const isSelected = $derived(pane().selected === item.id);
+	/** `ShouldEnableToolTip`: the left pane is the closed-compact icons-only rail. */
+	const collapsed = $derived(pane().collapsed);
 
 	function activate() {
 		// `OnNavigationViewItemInvoked` calls `ToggleIsExpandedNavigationViewItem`
@@ -32,9 +41,9 @@
 		// The invoke is still reported. Whether the id is somewhere to go is the caller's
 		// question, and in the Gallery a row with children is not.
 		if (hasChildren) {
-			setExpanded(item.id, !open);
+			pane().setExpanded(item.id, !open);
 		}
-		onItemInvoked?.(item.id);
+		pane().onItemInvoked?.(item.id);
 	}
 
 	function onkeydown(event: KeyboardEvent) {
@@ -49,7 +58,7 @@
 		// Without this the row's own handler also runs, and collapsing would immediately
 		// re-expand.
 		event.stopPropagation();
-		setExpanded(item.id, !open);
+		pane().setExpanded(item.id, !open);
 	}
 
 	// The row renders with no tooltip when the pane is expanded, and then there are no
@@ -132,15 +141,7 @@
 	{#if hasChildren && open}
 		<ul role="group" class="children">
 			{#each item.children ?? [] as child (child.id)}
-				<Self
-					item={child}
-					level={level + 1}
-					{selected}
-					{expandedItems}
-					{setExpanded}
-					{onItemInvoked}
-					{collapsed}
-				/>
+				<Self item={child} />
 			{/each}
 		</ul>
 	{/if}

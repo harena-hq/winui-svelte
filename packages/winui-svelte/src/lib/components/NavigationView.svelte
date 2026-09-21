@@ -113,6 +113,7 @@
 </script>
 
 <script lang="ts">
+	import { setNavigationViewLevel, setNavigationViewPane } from '../internal/navigation-view';
 	import Flyout from './Flyout.svelte';
 	import NavigationViewItem from './NavigationViewItem.svelte';
 	import NavigationViewTopItem from './NavigationViewTopItem.svelte';
@@ -301,6 +302,21 @@
 	const overlay = $derived(mode !== 'expanded' && paneOpen);
 	// Icons only, labels and chevrons hidden.
 	const collapsed = $derived(!paneOpen && mode !== 'minimal');
+
+	// What the pane decided, published once for every row under it rather than pushed down
+	// as props — ADR 0015, and `internal/navigation-view.ts` for why. The call sits below
+	// the declarations it closes over so that nothing here depends on hoisting; `setContext`
+	// only needs to run during this component's initialisation, which the whole script is.
+	setNavigationViewPane(() => ({
+		selected,
+		expandedItems,
+		setExpanded,
+		onItemInvoked,
+		collapsed
+	}));
+	// The rows the pane renders itself are the top level. Each one publishes one deeper.
+	setNavigationViewLevel(1);
+
 	// The row is measured against two boxes, and **not** against the box the items sit in.
 	// `.top-items` is content-sized, so hiding an item narrows it — measuring there would feed
 	// the decision back into its own input and the row would collapse one item per frame until
@@ -456,15 +472,7 @@
 									<div class="item-header winui-BodyStrongTextBlockStyle">{entry.header}</div>
 								</li>
 							{:else}
-								<NavigationViewItem
-									item={entry}
-									level={1}
-									{selected}
-									{expandedItems}
-									{setExpanded}
-									{onItemInvoked}
-									{collapsed}
-								/>
+								<NavigationViewItem item={entry} />
 							{/if}
 						{/each}
 					</ul>
@@ -484,15 +492,7 @@
 				{#if settingsVisible}
 					<div class="footer-items">
 						<ul role="tree" class="menu-items">
-							<NavigationViewItem
-								item={SETTINGS_ITEM}
-								level={1}
-								{selected}
-								{expandedItems}
-								{setExpanded}
-								{onItemInvoked}
-								{collapsed}
-							/>
+							<NavigationViewItem item={SETTINGS_ITEM} />
 						</ul>
 					</div>
 				{/if}
