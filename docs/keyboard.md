@@ -122,9 +122,16 @@ question with one answer.
 7. Does moving focus change the selection, or does selection need Enter or Space?
 8. With the pane closed-compact, do the same answers hold?
 9. With a text field focused _inside_ a row — the shape ADR 0015 makes possible — does typing a
-   space invoke the row, or does the field take it? XAML's answer is not readable from the pin:
-   `NavigationViewItem.cpp` defines no `OnKeyDown`, the control's handling is
-   `NavigationView.cpp:2709` attached at `:3595`, and the rest is in a base class the pin's
+   space invoke the row, or does the field take it? **Half of this is readable from the pin and
+   half is not**, and an earlier version of this line said none of it was. The readable half:
+   the control subscribes to each item's `KeyDown` plainly — `NavigationView.cpp:3595`, handler
+   at `:2709` — and `AddHandler`, the only overload that asks for events something already
+   marked handled, appears nowhere in that file. The pin states the consequence in its own
+   words where a control wants the opposite: "Ancestor PART_BodyScroller marks nav keys Handled
+   before they bubble here; handledEventsToo:true lets us still act on them"
+   (`TableView.cpp:271-273`). So a key handled inside the row never reaches the row's handler,
+   and ours reaches it always. The half still to observe is whether a focused `TextBox` marks
+   Space handled at all — that is what decides the case, and it is in a base class the pin's
    `NavigationView` directory does not carry.
 
 ### `TabView` — the strip
