@@ -296,9 +296,20 @@ then the ninth entry, which is a search rather than a press and says so.
    "is never invoked for Keyboard cases since Focus stays on the TextBox" (`:574-576`).
    Reading either of the two as though it settled the keyboard is the move this document
    exists to stop.
-   **We** invoke on Space from the row's own `keydown` and call `preventDefault()`
-   (`NavigationViewItem.svelte`), which a field inside the row would feel. That is now a decision
-   to take on other grounds rather than a measurement to wait for.
+   **We** invoked on Space from the row's own `keydown` and called `preventDefault()`
+   (`NavigationViewItem.svelte`), which a field inside the row would have felt. That was a
+   decision to take on other grounds rather than a measurement to wait for, and it has been
+   taken: the row acts on a key only when the key's `target` is the row itself. **That is not
+   a reproduction of the routing above and must not be read as one** — what the pin
+   establishes is that the row does not see an _already-handled_ key, and the half this entry
+   could not get is the half that would say whether the field handles it. Target identity is
+   narrower, and it was chosen on a web ground: `defaultPrevented` is the DOM's `Handled` and
+   a space typed into a field does not set it, so no faithful test exists and the two
+   available behaviours are not equally costly. ADR 0015's deferred item 2 carries the
+   argument and `navigation-view-keyboard.spec.ts` asserts the result, on the chevron — the
+   one box inside a row that a key can reach today. **This entry is what let that be decided
+   at all**, which is the fourth outcome doing the work it was added for: the search says
+   what cannot be known, and a unit was sealed with that stated rather than blocked on it.
 
 ### What this decided
 

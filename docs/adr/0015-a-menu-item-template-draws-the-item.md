@@ -149,23 +149,61 @@ measured its own packaging rather than assuming it.
    does not carry the editor, so the search stands in for the press. That record is
    `docs/keyboard.md`'s entry 9, with what was searched written into it, and it is the first
    use of the fourth outcome that document now lists.
-   So the row's handling of a key aimed at something inside it is a decision this unit takes
-   on other grounds rather than a measurement it waits for, and the unit says which grounds.
-   A gate cannot press a key either: `navigation-view.spec.ts` contains no keyboard
-   assertion today, and the parts census holds no focus state, so nothing green here says
-   anything about it.
+   So the row's handling of a key aimed at something inside it was a decision rather than a
+   measurement, and the unit took it: **the row acts on a key only when the key's `target` is
+   the row itself.** The ground is not the pin's routing, and a first draft of this paragraph
+   said it was. What the citations above establish is that XAML's row does not see an
+   **already-handled** key — a key from a descendant that nothing handled still reaches it —
+   and whether a focused `TextBox` marks Space handled is the half entry 9 could not ask. So
+   target identity is narrower than upstream's routing rather than a reproduction of it, and
+   claiming otherwise would have invented the missing half.
+   The ground is about the web instead. `defaultPrevented` is the DOM's analogue of `Handled`
+   and the motivating case does not set it — a space typed into a text field is that field's
+   _default_ action, so nothing cancels it and a handledness test would let the row swallow
+   the key. No faithful test being available, the choice is between two behaviours that each
+   diverge somewhere, and they are not symmetric: acting on a key aimed at something else
+   certainly breaks a field a consumer put in the cell, while acting only on a key aimed at
+   the row costs nothing this control draws today, since a label is not focusable and no key
+   can be targeted at one. **The pointer half is not decided**, because target identity is the wrong
+   test for it: a click's target is whatever sits under the pointer, so the label would fail
+   it and the row would stop being clickable. The pointer's equivalent is a descendant
+   stopping the event, which the chevron already does; the unit that lets a consumer put an
+   element in the cell owes the rest.
+   A gate could not press a key when this was written and now one does.
+   `navigation-view-keyboard.spec.ts` is this control's first keyboard assertion, and the
+   chevron is what made the decision observable without waiting for a consumer's element:
+   before it, Space on a focused chevron ran the _row's_ handler, whose `preventDefault()`
+   also cancelled the button's own activation, so one press collapsed the section **and**
+   navigated away from the page inside it. The section collapses either way — the row's
+   `activate()` toggles it too — so the URL is the whole of what separates the two, and
+   **one of the file's two tests is what separates them.** The other, Space on the row
+   itself, cannot disagree with this guard at all: a focused row is its own event target
+   whether the guard is there or not. It stands against a different mistake — an inverted
+   test, or an over-broad one keyed on `defaultPrevented` or on `closest()` — and it is
+   worth its line for that rather than as evidence for this.
 3. **An identity prop collides with the DOM.** `NavigationViewItemData.id` is a data field and
    is untouched, but ADR 0009 spreads the rest props onto the root, where `id` is a live HTML
    attribute — so a public `NavigationViewItem` cannot take `id` to mean "which row this is".
    Upstream's answer is `FrameworkElement.Tag`, and the Gallery's own code-behind reads
    `selectedItem.Tag` to route (`NavigationViewPage.xaml.cs:76-78`, `:96-97`). `tag` is the
    leading answer; the unit picks it or an explicitly routed alternative, and says which.
+   **It took `tag`**, typed as the `string` this library's `selected` already is rather than
+   as `Tag`'s `IInspectable`. `NavigationViewItemData.id` is untouched: it stays the data
+   field, and the control reads it and passes it as the element's `tag`.
 4. **Where `.content-presenter`'s label rules go.** `white-space: nowrap`, `overflow: hidden`
-   and `text-overflow: ellipsis` (`NavigationViewItem.svelte:312-318`) are rules for a label,
+   and `text-overflow: ellipsis` (`NavigationViewItem.svelte`'s `.content-presenter` rule —
+   named rather than numbered, because the change this item asks for is what moves it) are
+   rules for a label,
    on a box that takes arbitrary content once this lands. Upstream has three presenters
    carrying `ContentTemplate` — `NavigationView_themeresources.xaml:616` (left), `:891` (top)
    and `:1062` (top overflow) — and the two top ones carry `TextWrapping="NoWrap"` while the
    left one, which is the one this control reproduces, carries none of the three.
+   **The unit put them on the label rather than on the box**: the presenter carries them
+   under `[data-label]`, which is the cell drawing the `content` string, and a cell a
+   consumer fills with an element gets what upstream's left presenter has, which is nothing.
+   That leaves the string the control draws trimmed exactly as before, so no baseline moves —
+   the three rules are this library's own addition either way, and the reading above is what
+   says they are a label's.
 5. **`icon` on `NavigationViewItemData`** is owed separately by ADR 0012 and already recorded
    in the plan as owed. It is adjacent and is not decided again here.
 
@@ -175,7 +213,8 @@ measured its own packaging rather than assuming it.
 everything this ADR spends. **It is not rejected for the reason an earlier draft gave, and the
 measurement is worth keeping**: that draft said a ring around the row could not be drawn from
 inside the cell, and a probe against the repository's own rules says otherwise.
-`.content-presenter` declares no `position` (`NavigationViewItem.svelte:312-318`), so an
+`.content-presenter` declares no `position` (`NavigationViewItem.svelte`'s rule of that
+name), so an
 absolutely positioned descendant's containing block is `.item` — which is `position: relative`
 deliberately, because `.selection-indicator` is absolute against it (`:255-263`) — and an
 `overflow` ancestor clips nothing whose containing block is above it. The ring measured as the

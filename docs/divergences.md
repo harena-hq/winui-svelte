@@ -167,7 +167,14 @@ surface are painted the same way.
   chevron, which is a `<button>`. There is no arrow-key navigation among items, no
   typeahead, and no Home/End. In closed-compact there is no flyout and no children: the
   rail hides them outright, so an expanded parent there draws nothing. Enter and Space
-  invoke and toggle, which is the part that already matches.
+  invoke and toggle, which is the part that already matches — on the row. **On the chevron
+  they do the chevron's own job**, collapsing or expanding without invoking, because the row
+  acts on a key only when the key's target is the row itself (ADR 0015's deferred item 2;
+  `navigation-view-keyboard.spec.ts` asserts it). **That is not a second divergence**, it is
+  this one's other half: the chevron being a tab stop at all is what this entry already
+  records, and a tab stop whose keys ran the row's handler instead of its own was that
+  divergence half-built. The original has nothing here to differ from — its chevron is a
+  `Grid` and the press found it unreachable, both above.
 - **Why accepted**: the tree is built from scratch, not on top of a primitive. The machine
   this project would adopt for one — `@zag-js/tree-view`, which ADR 0004 picks by name in its
   **Decision** — arrives with the Collections tranche. An earlier version of this sentence
@@ -176,9 +183,14 @@ surface are painted the same way.
   lacks"), and the sentence contradicted its own next clause. A
   hand-rolled roving-tabindex loop is not hard; what is hard is the keyboard contract
   being right without it being tested: each tree interaction is a state machine with
-  collapsed children, headers, an expand chevron that is focusable in WinUI but lives
-  inside an item that is, and three display modes that each close the pane and change
-  the candidate set. The web's own keyboard contract for a `role="tree"` is the WAI-ARIA
+  collapsed children, headers, an expand chevron, and three display modes that each close
+  the pane and change the candidate set. **One clause of that list is struck.** The chevron
+  was described here as "focusable in WinUI but lives inside an item that is", and it is
+  not: the template makes `ExpandCollapseChevron` a `Grid`
+  (`NavigationView_themeresources.xaml:617`), which is not a `Control` and has no
+  `IsTabStop`, and the observation below found it unreachable by key. Ours is a `<button>`
+  and is a tab stop, so the asymmetry runs the opposite way from the one this sentence
+  costed. The web's own keyboard contract for a `role="tree"` is the WAI-ARIA
   Authoring Practices guide, and this paragraph took WinUI to follow it — **which the
   observation refutes, and it was the clause `docs/keyboard.md` was written to check.** The
   guide's tree pattern has Right expand, Left collapse and typeahead; the original has no
@@ -189,9 +201,9 @@ surface are painted the same way.
 
   **The observation weakened this.** Two of the three things that made the contract look
   expensive — a Left/Right expand state machine and a typeahead — do not exist, and the
-  chevron this paragraph calls "focusable in WinUI but lives inside an item that is" is not
-  reachable by keyboard at all — whether it can be focused by some other route was not
-  pressed, and does not matter to a paragraph that costed a tab stop. What is left is a ring
+  chevron whose clause is struck above is not reachable by keyboard at all — the press is
+  what found that, and the template is what says why, so the "some other route" this
+  sentence used to leave open is closed rather than merely unpressed. What is left is a ring
   over one flat candidate list that does not wrap at the foot, Home and End, a possible
   collapse on Left, and a flyout in closed-compact. That is smaller than what the Collections
   tranche was being waited on for.
