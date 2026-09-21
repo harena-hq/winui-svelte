@@ -938,7 +938,7 @@ export const AUTOSUGGESTBOX_KEYS = {
  * The spin buttons are `RepeatButton`s in `SourceNames` — `RepeatButton_themeresources.xaml`,
  * defined alongside the rest of the CommonStyles — rather than in the NumberBox dictionary
  * itself, so every brush the buttons paint is a `RepeatButton*` name. The button's own
- * style at `NumberBox_themeresources.xaml:182` is `BasedOn` the default `RepeatButton`
+ * style at `NumberBox.xaml:182` is `BasedOn` the default `RepeatButton`
  * style, so the background, foreground and border it paints come from the `RepeatButton*`
  * families, in the four `CommonStates` the source paints (Normal, PointerOver, Pressed,
  * Disabled).

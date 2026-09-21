@@ -30,7 +30,7 @@
 		headerText={formattedSample.header ?? undefined}
 		xaml={formattedSample.xaml ?? undefined}
 	>
-		<!-- DatePickerPage.xaml:27-36 and .xaml.cs:19-29. Control2Output is never set, so it remains empty. -->
+		<!-- DatePickerPage.xaml:27-36 and DatePickerPage.xaml.cs:19-29. Control2Output is never set, so it remains empty. -->
 		<div class="example-row">
 			<DatePicker
 				date={formattedDate}

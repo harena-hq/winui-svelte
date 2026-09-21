@@ -522,8 +522,10 @@
 	   amounts to.
 
 	   The fill is painted on `::before` rather than on the button itself so the inner
-	   margin and the rounded corners track the source. See SearchBox.svelte:166 for the
-	   measurement. */
+	   margin and the rounded corners track the source — `.query::before` below is where
+	   both are written. This used to point at a measurement in `SearchBox.svelte`, a
+	   component the Gallery deleted when its title bar took the published control; the
+	   deletion is recorded in WD-042 and the pointer had outlived the file. */
 	.query {
 		position: relative;
 		display: flex;

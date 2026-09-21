@@ -412,7 +412,7 @@
 	   in every state, including disabled — `NumberBox_themeresources.xaml` never overrides
 	   it. */
 
-	/* The spin buttons. `NumberBoxSpinButtonStyle` at NumberBox_themeresources.xaml:182 is
+	/* The spin buttons. `NumberBoxSpinButtonStyle` at NumberBox.xaml:182 is
 	   `BasedOn` the default `RepeatButton` style, so the brushes it paints come from the
 	   `RepeatButton*` families: `Background`, `Foreground` and `BorderBrush` in the four
 	   `CommonStates` (Normal, PointerOver, Pressed, Disabled).
@@ -455,7 +455,7 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		/* c1-allow: NumberBox_themeresources.xaml:185, `MinWidth="32"` on
+		/* c1-allow: NumberBox.xaml:185, `MinWidth="32"` on
 		   `NumberBoxSpinButtonStyle` */
 		min-width: 32px;
 		padding: 0;
@@ -474,7 +474,7 @@
 		background: var(--winui-RepeatButtonBackground);
 		color: var(--winui-RepeatButtonForeground);
 		font-family: var(--winui-SymbolThemeFontFamily);
-		/* c1-allow: NumberBox_themeresources.xaml:182, `FontSize="12"` on
+		/* c1-allow: NumberBox.xaml:189, `FontSize="12"` on
 		   `NumberBoxSpinButtonStyle` */
 		font-size: 12px;
 		line-height: normal;

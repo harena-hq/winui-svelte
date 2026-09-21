@@ -369,7 +369,8 @@
 	/* The fill lives on `::before` rather than on the button itself so the inner margin
 	   tracks the source: the upstream `ButtonLayoutGrid` carries
 	   `Margin="{ThemeResource TextBoxInnerButtonMargin}"`, and putting the margin on
-	   the button would shrink the radius the way SearchBox records. */
+	   the button would shrink the radius. (That last clause used to credit a deleted
+	   `SearchBox` component for the measurement; the mechanism is the argument.) */
 	.reveal::before {
 		content: '';
 		position: absolute;
