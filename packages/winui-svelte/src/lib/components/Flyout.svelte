@@ -47,8 +47,13 @@
 	// `Opening`, `Opened`, `Closing` and `Closed` are recoverable from `onOpenChange`.
 	// `Full` placement is deferred: it stretches across the window rather than anchoring, so
 	// it is not a placement the floating layer computes.
-	// Flyout is a framework control WinUI 3 only restyles: there is no implementation in the
-	// pin to read, so its dictionary and the recorded measurement are the complete record.
+	// Flyout is a framework control WinUI 3 only restyles, and **the pin does carry its
+	// implementation** — `dxaml/xcp/dxaml/lib/Flyout_partial.cpp`, 112 lines. This comment used
+	// to say there was none to read and that the dictionary and the recorded measurement were
+	// the complete record. That was true when it was written: the sparse checkout held
+	// `controls/dev` alone until `4c0ce0a` widened it, and the sentence was never revisited
+	// afterwards. What those 112 lines add here is unswept — `docs/surface.md`'s "The checkout
+	// grew and these claims did not" has the measurement and the rest of the list.
 </script>
 
 <script lang="ts">

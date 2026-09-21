@@ -733,9 +733,11 @@ group sizes, which no longer line up one-to-one with a version.
     open on every control sealed so far.
 
     **It has since been swept, and the sweep is `docs/surface.md`.** That file carries what
-    the second half of each sealed control adds, the finding that seven of the twelve have
-    no implementation in the pin at all — they are `Windows.UI.Xaml` controls WinUI 3 only
-    restyles, so their Gallery sample page is the only enumeration of their surface — and,
+    the second half of each sealed control adds, the finding that seven of the twelve are
+    `Windows.UI.Xaml` controls WinUI 3 only restyles — **recorded at the time as "no
+    implementation in the pin at all", which was true of the sparse checkout then and stopped
+    being true when `4c0ce0a` widened it**; that file's "The checkout grew and these claims did
+    not" has the measurement — and,
     the part that matters going forward, the four steps that sweep a control **before** it
     is sealed rather than after. Two defects came out of it and are fixed; the rest are
     recorded there, including the ones that belong to controls the table below does not
@@ -1064,10 +1066,14 @@ group sizes, which no longer line up one-to-one with a version.
     this entry states: the control snapshotted in all three themes and compared against the
     original on the guest, every prop following D21 as ADR 0012 amends it, and the surface
     sweep's step-1 verdict recorded before the seal — which for eight of the eleven controls
-    is _the pin carries no implementation at all_. `AppBarButton`, `AppBarToggleButton`,
-    `AppBarSeparator` and `CommandBar` join the seven this file already listed: `find
-controls/dev -name 'AppBar*'` matches three `*_themeresources.xaml` files and nothing
-    else, and there is no `CommandBar.cpp` either.
+    was recorded as _the pin carries no implementation at all_ — **true of the checkout this
+    version had, and false of the one the repository has now.** The search is quoted in the same
+    sentence: `find controls/dev -name 'AppBar*'` matches three `*_themeresources.xaml` files and
+    nothing else, and at v7 `controls/dev` was the whole checkout. `4c0ce0a` added `dxaml` two
+    days later, and all four of `AppBarButton`, `AppBarToggleButton`, `AppBarSeparator` and
+    `CommandBar` have an implementation there — 836, 430, 84 and 4257 lines. Steps 2 and 3 of the
+    sweep were skipped on a verdict that has since expired, which is `docs/surface.md`'s "The
+    checkout grew and these claims did not".
 
     **What the version cost that its goal did not predict.** Six of the eight things that
     changed a control were found by a browser or by the guest, and none by a gate:
@@ -1436,7 +1442,10 @@ controls/dev -name 'AppBar*'` matches three `*_themeresources.xaml` files and no
 
     3. **Pivot, PivotItem and PivotHeaderItem.** The odd control of the four in every respect.
        Its whole template is in `CommonStyles/Pivot_themeresources.xaml:207` to the end of
-       that file — WinUI 3 restyles it and carries no implementation — and its brushes are
+       that file — WinUI 3 restyles it, and **the implementation this sentence said it lacked
+       is in `dxaml/phone/lib`**, which the checkout did not carry when the sentence was
+       written: `Pivot_Partial.cpp` is 4302 lines, `PivotItem_Partial.cpp` 440 and
+       `PivotHeaderItem.cpp` 546, none of them swept — and its brushes are
        `SystemControl*` legacy names almost without exception (`:19-63`), which is D17 and
        ADR 0008's table rather than anything new. Its header is 24px `SemiLight` with `-25`
        character spacing, a ramp entry nothing else in this library uses.

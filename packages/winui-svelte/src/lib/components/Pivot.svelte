@@ -38,7 +38,9 @@
 
 	// The title is built although `Pivot_themeresources.xaml:316` hard-codes it Collapsed and
 	// nothing in the file reverses that: the original renders it, so that code is in the XAML
-	// framework; `docs/surface.md` records that Pivot has no .cpp in the control pin. LeftHeader,
+	// framework; `docs/surface.md` records that
+	// `controls/dev` carries no Pivot `.cpp` and `dxaml/phone/lib` carries 4302 lines of one,
+	// unswept. LeftHeader,
 	// RightHeader and their templates are absent: the ContentPresenters at `:407` and `:431` are
 	// unused on the acceptance surface. The template's ItemsPresenter and PivotHeaderPanel are
 	// template-private hosts; D26 has this component render items directly. PivotItem's Pivot group

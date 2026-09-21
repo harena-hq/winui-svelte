@@ -132,9 +132,9 @@ Per control, what the second half adds beyond the template this library already 
 | NavigationView     | pane, header, back-button, settings and auto-suggest visibility states, all decided in code                                                                                                                                                                                                                                                                                                 | already built as display modes                                                                                                                              |
 | NavigationView     | `NavigationView.cpp:5028` puts a `ThemeShadow` on the `ShadowCaster` grid at `PaneOverlayShadowDepth` while the pane is open and overlaying, and `UnsetDropShadow` (`:5046`) runs a storyboard to take it away                                                                                                                                                                              | built — `.shadow-caster`, faded in and out by the same group transitions                                                                                    |
 | NavigationView     | the menu is elements, and `MenuItems` (`NavigationView.idl:203`) is the collection the markup fills; a `MenuItemTemplate` that produces a `NavigationViewItem` _is_ the container and is returned as it stands (`NavigationViewItemsFactory.cpp:53-55`), anything else is put on a generated container's `ContentPresenter` (`:71-85`), and the settings row is exempt from both (`:39-43`) | `menuItemTemplate` built for the left pane and for a row's children at every depth; the settings row is exempt as upstream's is, and the top pane is WD-089 |
-| Slider             | `IsThumbToolTipEnabled` — the value in a tooltip while the thumb is dragged                                                                                                                                                                                                                                                                                                                 | closed in `1c20909`; **not in the pin** — measured on the reference guest instead                                                                           |
-| Pivot              | no implementation in the pin, and the template collapses `TitleContentControl` (`Pivot_themeresources.xaml:316`) — the framework shows it, and the original draws it                                                                                                                                                                                                                        | built in `9844c14`, from the photograph rather than from the pin                                                                                            |
-| the other six      | no implementation in the pin                                                                                                                                                                                                                                                                                                                                                                | see the Gallery column below                                                                                                                                |
+| Slider             | `IsThumbToolTipEnabled` — the value in a tooltip while the thumb is dragged; recorded here as **not in the pin**, which the checkout has since falsified: `Slider_Partial.cpp` mentions `ThumbToolTip` 69 times                                                                                                                                                                             | closed in `1c20909`; **not in the pin** — measured on the reference guest instead                                                                           |
+| Pivot              | recorded as "no implementation in the pin" before the checkout carried `dxaml/phone/lib`, where `Pivot_Partial.cpp` is 4302 unswept lines; and the template collapses `TitleContentControl` (`Pivot_themeresources.xaml:316`) — the framework shows it, and the original draws it                                                                                                           | built in `9844c14`, from the photograph rather than from the pin                                                                                            |
+| the other six      | recorded as "no implementation in the pin" against a checkout that did not carry one; all six have one now, unswept — see below                                                                                                                                                                                                                                                             | see the Gallery column below                                                                                                                                |
 
 And what the Gallery's own pages demonstrate that this library cannot do yet:
 
@@ -194,8 +194,13 @@ sealed — one entry per control, added by the unit that sealed it.
 There is no `controls/dev/ToolTip/` at all — step 1's stronger answer. ToolTip is a
 `Windows.UI.Xaml` control that WinUI 3 only restyles, so its resources sit in
 `controls/dev/CommonStyles/ToolTip_themeresources.xaml`, 77 lines, with the other restyled
-controls' dictionaries; there is no implementation anywhere in the pin, and steps 2 and 3
-of the procedure do not apply. The Gallery's page and Microsoft's
+controls' dictionaries. **The rest of this paragraph was true when it was written and is not
+now**, for the reason "The checkout grew and these claims did not" gives below: the checkout
+held `controls/dev` alone until `4c0ce0a`, and it now carries `ToolTip_Partial.cpp` at 2584
+lines and `ToolTipService_Partial.cpp` at 2362. Steps 2 and 3 did not apply to the evidence this
+entry had; they apply to the evidence the repository has, and they have not been run. What those
+two files say about placement, delay and dismissal is unswept, and the deferral below was
+decided without them. The Gallery's page and Microsoft's
 published reference are the whole of the second half. What that left open —
 `PlacementRect`, and a `VerticalOffset` whose effect on the guest did not reduce to a
 simple delta — is deferred in `plan.md` rather than guessed at.
@@ -893,3 +898,53 @@ The sweep reads what a control _draws_. It does not enumerate automation peers, 
 protocols, or the parts of a code-behind that only compute layout the browser computes for
 us. Those are out of scope for a library whose bar is visual fidelity, and a line here that
 mentioned them would imply a decision that was never made.
+
+## The checkout grew and these claims did not
+
+**Ten places across five files said a control has "no implementation in the pin", or something
+that reduces to it. Every one is false today, and none was false when it was written.** The distinction is the
+whole of this section, and a first draft of it got the distinction backwards.
+
+The pinned checkout is sparse, and `scripts/tokens/fetch.mjs` decides what it holds. Until
+`4c0ce0a` (2026-09-09, "the sparse checkout carries the second half, and the sweep looks for
+it") that list was `/controls/dev/**` and nothing else. The seven sites date from 2026-09-06 to
+09-08. An unscoped search of the checkout as it then stood returned nothing for those controls,
+so each claim was true of the evidence its author had.
+
+**`4c0ce0a` widened the checkout, corrected the procedure, and did not sweep what it had
+falsified.** It rewrote step 1 to say "search the whole checkout, not `controls/dev`", and the
+second row at the top of this file is its correction of this section's own opening. What it left
+standing is every _downstream_ sentence that had recorded the old answer: four in this file —
+the `Slider`, `Pivot` and "other six" rows and the `ToolTip` entry — three in `docs/plan.md`, and
+one comment each in `Flyout.svelte`, `CommandBar.svelte` and `Pivot.svelte`. A commit that widens the
+evidence owes a sweep of the negatives recorded against the narrower evidence, and that is the
+lesson here rather than anything about how to phrase a search.
+
+**Measured now, so the hole has a size.** Of the 98 components under
+`packages/winui-svelte/src/lib/components`, **93 have a `.cpp` of their own somewhere in the
+pin**, matching `<name>_partial.cpp` or `<name>.cpp` case-insensitively and excluding generated
+`*.g.cpp`. The five that do not are `Bold`, `Italic`, `Run` and `Underline` — text inlines,
+declared as core objects in `dxaml/xcp/core/inc/inline.h` at `:447`, `:418`, `:255` and `:389` —
+and `NavigationViewTopItem`, which is this library's own split of one upstream class rather than
+a control upstream names. The rule counts files, not content: a file existing is not a second
+half worth reading, and `Flyout_partial.cpp` at 112 lines is the reminder in both directions —
+short, and still carrying `OnPropertyChanged2`, `CreatePresenter` and accelerator handling.
+
+Sizes, for the controls the corrected sentences name: `ToolTip_Partial.cpp` 2584,
+`ToolTipService_Partial.cpp` 2362, `CommandBar_Partial.cpp` 4257, `AppBarButton_Partial.cpp`
+836, `AppBarToggleButton_Partial.cpp` 430, `AppBarSeparator_Partial.cpp` 84,
+`Flyout_partial.cpp` 112, and in `dxaml/phone/lib`, `Pivot_Partial.cpp` 4302,
+`PivotItem_Partial.cpp` 440, `PivotHeaderItem.cpp` 546. Those directories are not a discovery:
+`fetch.mjs:37-50` names each one and says what it holds — `dxaml/phone/lib` at `:50`.
+
+**What this costs is the procedure.** The four-step sweep ends at step 1 when step 1 says there
+is nothing to read, so for every control whose verdict was recorded before the widening, steps 2
+and 3 never ran. The entries below are true about what they did read; they are not complete.
+
+**What it costs beyond that is not measured, and this section will not guess.** Every sealed
+control was photographed against the original on the reference guest, so the half a photograph
+can see is checked; the unswept half is behaviour with no visual signature, which is what
+`docs/divergences.md` exists for. Whether any sealed control is wrong because of this is an open
+question and **there is at least one candidate**: `CommandBar.svelte` says the compact-to-minimal
+delta "is not in the pin", and `AppBar_Partial.cpp:1340-1342` computes and stores `MinimalVerticalDelta`. That
+one is corrected at its site; the rest of the 93 are not swept.
