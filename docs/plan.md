@@ -3812,6 +3812,21 @@ System / Shell` moves to item 16; `item 15` occurs once in the whole of `docs/`,
     that is in its code-behind rather than in its template. This version's own goal line is that
     no sealed control has an unbuilt second half.
 
+    **One row is not a second half but a first, and ADR 0015 is why it is here.**
+    `NavigationView` takes a closed record per item and draws every row itself, so nothing a
+    consumer writes can render inside one. Upstream's menu is elements — `MenuItems`
+    (`NavigationView.idl:203`), which the Gallery's own page writes directly in seven of its
+    eight examples — with `MenuItemsSource` and `MenuItemTemplate` (`:204`, `:207`) as the
+    binding path beside it, and the template the source recommends produces a
+    `NavigationViewItem` rather than filling one. Reproducing either makes
+    `NavigationViewItem` a public component; reproducing the second also makes `items` generic
+    in a type bounded by the record. Neither can be added to a control that has already
+    shipped, which is why the decision is taken here rather than after the naming unit: the
+    unit that names the exported set exports this control, and the surface has to be settled
+    first. The ADR's own "What this leaves for the implementing unit to establish" is that
+    unit's starting list, and its second item — a row whose `keydown` swallows Space cannot
+    hold a text field — is the one with a test rather than a measurement behind it.
+
     **Its last unit is the library gate below**, which is the release bar.
 
 19. **The Gallery's remaining pages** — every item page no version builds. This version exists

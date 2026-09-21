@@ -188,3 +188,7 @@ date, so that the registry stops reading the same whether the machine was consul
 
 Controls already sealed are not re-swept wholesale. The two in dispute are swept when a decision
 waits on them; the rest are swept when something asks.
+
+ADR 0015 is the first decision to cite this rule: it makes `NavigationViewItem` a public
+component, which publishes the keyboard contract WD-004 describes, so the observation above
+comes before that control is sealed.
