@@ -353,7 +353,8 @@
 	   margin and the rounded corners track the source: `TextBoxButtonStates` sets the
 	   background on a child element with `TextBoxInnerButtonMargin` and
 	   `ControlCornerRadius`, and putting the margin on the button would shrink the
-	   radius the way SearchBox records. */
+	   radius. (That last clause used to credit a deleted `SearchBox` component for the
+	   measurement; the mechanism is the argument.) */
 	.delete::before {
 		content: '';
 		position: absolute;

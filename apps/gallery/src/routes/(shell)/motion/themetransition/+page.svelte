@@ -133,7 +133,7 @@
 			<div class="entrance-row">
 				{#each entranceItems as row (row.id)}
 					<!-- c1-allow: ThemeTransitionPage.xaml:22 gives every rectangle the named colour
-					     LightBlue, and .xaml.cs:89 gives the same one to each rectangle added later. It
+					     LightBlue, and ThemeTransitionPage.xaml.cs:89 gives the same one to each rectangle added later. It
 					     is the sample's own brush rather than a themed one, so there is no token to read
 					     it from. Written at the attribute rather than hoisted into a script constant:
 					     C1 reads a presentation attribute and reads nothing in the script block, so a
@@ -233,7 +233,9 @@
 					onanimationend={onPopupAnimationEnd}
 				>
 					<!-- ThemeTransitionPage.xaml:176-178 names brushes missing from this library's token
-					     layer. Flyout.svelte:155-156 already uses this shipped WinUI flyout-surface pair;
+					     layer. `Flyout.svelte`'s `.presenter` rule already uses this shipped WinUI flyout-surface
+					     pair — named rather than numbered, because a line in a file this repository
+					     edits is staled by the next edit;
 					     do not invent FlyoutBackgroundThemeBrush (C9 rejects undefined tokens). -->
 					<Ellipse
 						class="popup-ellipse"

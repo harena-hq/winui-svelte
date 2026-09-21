@@ -102,7 +102,7 @@
 
 	function selectDate(dates: Date[]) {
 		const next = dates[0];
-		// OnSelectedDatesChanged closes first, then writes Date (CalendarDatePicker.cpp:269-271).
+		// OnSelectedDatesChanged closes first, then writes Date (`dxaml/xcp/dxaml/lib/calendardatepicker_partial.cpp:269-271`).
 		setOpen(false);
 		date = next;
 		onDateChange?.(next);

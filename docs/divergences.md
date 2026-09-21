@@ -1163,7 +1163,9 @@ Examples 3 and 4 are this entry's.
   `MaxWidth="580"` (`MainWindow.xaml:42-45`), so 318 is the space it was given, not a floor it
   asserts — the two were conflated when the value was first measured. The comments that
   carried that measurement also cited a file which no longer exists: the Gallery's own
-  `SearchBox` component, deleted when the title bar started using the published control.
+  `SearchBox` component, deleted when the title bar started using the published control. Those
+  three comments no longer cite it — C12 found the one that named a line, and the two that only
+  named the component were corrected beside it.
 - **What it costs, measured**: the Compact Sizing page shows it. Upstream that page's form is
   296 wide, because `ControlExample`'s presenter aligns its content left, the StackPanel is
   therefore content-sized, and the widest child asking for a width is the DatePicker at 296 —
