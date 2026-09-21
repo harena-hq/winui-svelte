@@ -133,13 +133,16 @@ measured its own packaging rather than assuming it.
    meet here. The narrow one: the row is a `div[role=treeitem]` with `tabindex="0"` whose
    `keydown` handler calls `preventDefault()` on Space (`NavigationViewItem.svelte:40-46`), so
    a text field a consumer renders inside it cannot receive a space. The DOM has that by
-   construction: the event bubbles whether or not anything handled it. **Whether XAML has it
-   is not readable from here**, and an earlier draft asserted it does not. `NavigationViewItem.cpp`
-   defines no `OnKeyDown`; the control's own key handling is `NavigationView.cpp:2709`,
-   attached to each item at `:3595`; and whatever makes a focused `TextBox` swallow Space is in
-   a base class the pin's `NavigationView` directory does not carry. So it is a ninth question
-   for the observation, not a premise: type into a text field inside a row of the original and
-   see whether the row invokes. The
+   construction: the event bubbles whether or not anything handled it. **XAML does not have it,
+   and that much is readable from the pin** — a claim this ADR first asserted without evidence,
+   then withdrew as unreadable, and which the pin answers in its own words. The control
+   subscribes to each item's `KeyDown` plainly (`NavigationView.cpp:3595`, handler at `:2709`)
+   and never calls `AddHandler`, the overload that asks for already-handled events; where a
+   control in the same pin wants the opposite it says why, at `TableView.cpp:271-273`. What is
+   still not readable is whether a focused `TextBox` marks Space handled in the first place —
+   that is in a base class the pin's `NavigationView` directory does not carry, and it is what
+   decides the case. So it remains a ninth question for the observation, and a narrower one:
+   type into a text field inside a row of the original and see whether the row invokes. The
    wide one: that handler is WD-004, whose "WinUI does" paragraph describes the WAI-ARIA tree
    pattern and assumes WinUI follows it, which nothing has checked. Making
    `NavigationViewItem` public publishes both. **So the contract is pressed on Windows 11
