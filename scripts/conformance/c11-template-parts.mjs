@@ -58,9 +58,18 @@ const DISPOSITIONS = {
  * name a cell mentions. The consequence to know is that a row naming one good selector and one
  * capitalised token passes with the second unexamined — the fallback rule below is satisfied per
  * row, while the check above is per token — so a green gate over `.PaneRoot` says nothing.
+ *
+ * Upper-case is admitted in two places, and both are forms whose own punctuation says what they
+ * are: a custom property, which has always been read as `--[a-z][a-zA-Z0-9-]*`, and — since this
+ * was widened — the value inside a bracketed attribute selector. A prop's value is written the
+ * way a prop is, `[data-display-mode='compactOverlay']`, and while the value had to be
+ * lower-case it failed to match; the bare attribute name matched instead, leaving a `[` before
+ * it and `='compactOverlay']` after, which made the whole span read as prose. `SplitView`'s
+ * states are keyed on four such values, and every one of them was being discarded from a cell
+ * that had opened the component and named the right rule.
  */
 const TOKEN =
-	/[.][a-z][a-z0-9-]*(?:::[a-z-]+)?|--[a-z][a-zA-Z0-9-]*|\[data-[a-z][a-z0-9-]*(?:=(['"])[a-z][a-z0-9-]*\1)?\]|data-[a-z][a-z0-9-]*/g;
+	/[.][a-z][a-z0-9-]*(?:::[a-z-]+)?|--[a-z][a-zA-Z0-9-]*|\[data-[a-z][a-z0-9-]*(?:=(['"])[a-zA-Z][a-zA-Z0-9-]*\1)?\]|data-[a-z][a-z0-9-]*/g;
 /**
  * What may stand between two tokens of one selector, and nothing else may.
  *
