@@ -105,14 +105,41 @@
 	// Pointer tracking for the pointer-anchored default. The anchor is a virtual
 	// element whose rect sits at the pointer — `side="top"`, `align="center"`,
 	// `sideOffset={offset}` defaults to 20 and reproduces the measurement §4 records.
-	// `updatePositionStrategy` is `"always"` so Floating UI calls `getBoundingClientRect()` on every animation
-	// frame; the function reads the reactive `pointer` so the tooltip follows the
-	// pointer for as long as it is open.
+	//
+	// **The popup is placed where the pointer was when it opened, and does not follow it**
+	// — the half §4 did not measure. Photographed on the reference guest: a tooltip
+	// standing over a 40px button did not change by one pixel while the pointer moved 21
+	// across it and 20 down, and the same tooltip opened from x 381 and from x 409 centred
+	// on 381 and on 409, the pointer's own delta. Pointer-anchored and pointer-following
+	// are two claims; the measurement established the first and this component had
+	// implemented the second.
+	//
+	// `pointer` therefore goes on tracking, and `frozen` is what the popup is positioned
+	// against: the first rect read after an open, held until the close clears it. The
+	// obvious implementation — stop recording once `open` is true — is wrong, and the
+	// test that opens from two positions is what says so. The primitive opens the *second*
+	// tooltip with no delay, so `open` is already true when the `pointermove` carrying the
+	// new position arrives, and a guard on `open` pins every later tooltip to the first
+	// one's place. Freezing on the read instead is indifferent to that order: the move
+	// handler and the popup's mount fall in one task, and Floating UI does not measure
+	// until the microtask after it.
 	const pointer = $state({ x: 0, y: 0 });
+
+	let frozen: { x: number; y: number } | null = null;
+
+	// Released whenever the tooltip is closed, and by an effect rather than inside the
+	// `bind:open` setter below. That setter runs when the *primitive* changes `open`; a
+	// consumer closing its own bound `open` never reaches it, and the stale anchor would
+	// then pin the next tooltip where the last one stood — the same defect the two
+	// rejected implementations had, arriving by a path the pointer never takes.
+	$effect(() => {
+		if (!open) frozen = null;
+	});
 
 	const pointerAnchor: Measurable = {
 		getBoundingClientRect(): DOMRect {
-			return new DOMRect(pointer.x, pointer.y, 0, 0);
+			frozen ??= { x: pointer.x, y: pointer.y };
+			return new DOMRect(frozen.x, frozen.y, 0, 0);
 		}
 	};
 
@@ -132,16 +159,48 @@
 	// while the same tooltip opened by a hover a moment later lands correctly. Binding
 	// the element here makes the anchor exist as early as the element does.
 	let triggerEl = $state<HTMLElement | null>(null);
+	/** Whether a pointer is on the trigger — see `customAnchor` for why the anchor turns on it. */
+	let pointerInside = $state(false);
+	// Pointer-anchored **only while there is a pointer on the trigger**. `onfocus` is one of
+	// the handlers the primitive puts on it, so a keyboard user tabbing onto the trigger opens
+	// a tooltip with no pointer anywhere, and `pointer` then holds either its initial `{0, 0}`
+	// or wherever the mouse last was inside this trigger — neither of which is a position to
+	// honour. Upstream has no such case to answer: `PlacementMode.Mouse` is a pointer's
+	// placement and XAML opens a keyboard tooltip against the element. So does this.
+	//
+	// It has to be the anchor rather than the frozen value, because freezing is what makes the
+	// wrong answer permanent: before this, a corner-pinned popup at least corrected itself the
+	// moment a pointer crossed the trigger, and the freeze removed the correction.
 	const customAnchor = $derived<Measurable | HTMLElement | null>(
-		placement === 'mouse' ? pointerAnchor : triggerEl
+		placement === 'mouse' && pointerInside ? pointerAnchor : triggerEl
 	);
+
+	function track(event: PointerEvent) {
+		if (placement !== 'mouse') return;
+		pointer.x = event.clientX;
+		pointer.y = event.clientY;
+	}
 
 	function onPointerMove(bitProps: Record<string, unknown>, event: PointerEvent) {
 		(bitProps.onpointermove as ((event: PointerEvent) => void) | undefined)?.(event);
-		if (placement === 'mouse') {
-			pointer.x = event.clientX;
-			pointer.y = event.clientY;
-		}
+		track(event);
+	}
+
+	// The entry is recorded **before** the primitive's own handler runs, and that order is
+	// the whole reason this wrapper exists beside `onpointermove`. A tooltip opened inside
+	// the provider's skip-delay window opens on the entry itself, and its popup is mounted
+	// and measured in the microtask after that handler — one dispatch before the
+	// `pointermove` carrying the same position. Recording on the way in means the pointer
+	// is already where it is by the time anything asks.
+	function onPointerEnter(bitProps: Record<string, unknown>, event: PointerEvent) {
+		pointerInside = true;
+		track(event);
+		(bitProps.onpointerenter as ((event: PointerEvent) => void) | undefined)?.(event);
+	}
+
+	function onPointerLeave(bitProps: Record<string, unknown>, event: PointerEvent) {
+		pointerInside = false;
+		(bitProps.onpointerleave as ((event: PointerEvent) => void) | undefined)?.(event);
 	}
 
 	// The handlers the primitive uses to open and close the tooltip by itself. With
@@ -174,6 +233,8 @@
 		}
 		return {
 			...bitProps,
+			onpointerenter: (event: PointerEvent) => onPointerEnter(bitProps, event),
+			onpointerleave: (event: PointerEvent) => onPointerLeave(bitProps, event),
 			onpointermove: (event: PointerEvent) => onPointerMove(bitProps, event)
 		};
 	}
