@@ -102,9 +102,39 @@
 	// indeterminate, matching the template's behaviour.
 	const dataChecked = $derived(indeterminate ? 'false' : checked ? 'true' : 'false');
 
-	// The pin carries no code that orders these states — there is no AppBarButton.cpp in the pin —
-	// and the precedence below is the library's, chosen because the overflow states set everything
-	// the bar states set and Compact is a property of a bar whose labels are underneath.
+	// **The pin orders these states, and this reproduces its order.** An earlier version of this
+	// comment said the opposite — "the pin carries no code that orders these states, there is no
+	// AppBarButton.cpp in the pin, and the precedence below is the library's" — and all three
+	// clauses were wrong. `AppBarToggleButton_Partial.cpp`'s `ChangeVisualState` branches on
+	// `UseOverflowStyle` and offers only two overflow states, `OverflowWithMenuIcons` (`:162`)
+	// and `Overflow` (`:166`). **There is no toggle-buttons branch here, and the reason is
+	// stronger than a missing branch**: `m_isWithToggleButtons` is declared on `AppBarButton`
+	// alone (`AppBarButton_Partial.h:110`) and occurs nowhere in this control's own partial or
+	// header, and `OverflowWithToggleButtons` is absent from
+	// `AppBarToggleButton_themeresources.xaml`, whose `ApplicationViewStates` group holds
+	// exactly the six states this derived produces — `FullSize` (`:234`), `Compact` (`:235`),
+	// `LabelOnRight` (`:245`), `LabelCollapsed` (`:267`), `Overflow` (`:277`) and
+	// `OverflowWithMenuIcons` (`:287`). The flag is not on the type and the state is not in the
+	// template.
+	//
+	// Without the overflow style, the label chain is the shared helper's:
+	// `AppBarButtonHelpers.h:171-188` takes a label position of Right, then Collapsed, then
+	// `IsCompact`, then `FullSize`. That it is shared is `AppBarToggleButton_Partial.cpp:219`
+	// calling `ChangeCommonVisualStates<AppBarToggleButton>`, the function declared at
+	// `AppBarButtonHelpers.h:152` that contains the chain.
+	//
+	// Collapsed is written before right below, the opposite of the pin, and that is not a
+	// divergence: a label position is one enum value at a time, so no input separates them.
+	//
+	// **What this does not claim is that the input is upstream's.** The order matches; the enum
+	// does not. `CommandBarLabelPosition`, the item-level one, has two members —
+	// `EnumValueTable.g.h:468-472` lists `Default` and `Collapsed` and no third — and Right
+	// exists only on the bar, as `CommandBarDefaultLabelPosition`, which
+	// `GetEffectiveLabelPosition` (`AppBarToggleButton_Partial.cpp:294`) returns when the item says Default.
+	// This library's per-item `labelPosition` is the **bar's** enum offered per item, with an
+	// absent prop standing in for Default, so a command can ask for a position upstream can only
+	// be given by its bar. No state that upstream's template lacks becomes reachable; the pairing
+	// of input to state is what is new. WD-093.
 	const dataViewState = $derived(
 		isInOverflow && hasOverflowWithMenuIcons
 			? 'overflow-with-menu-icons'

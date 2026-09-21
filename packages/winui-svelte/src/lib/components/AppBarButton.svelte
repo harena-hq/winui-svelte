@@ -97,9 +97,32 @@
 		overflowWithMenuIcons ?? bar?.().overflowWithMenuIcons ?? false
 	);
 
-	// The pin carries no code that orders these states — there is no AppBarButton.cpp in the pin —
-	// and the precedence below is the library's, chosen because the overflow states set everything
-	// the bar states set and Compact is a property of a bar whose labels are underneath.
+	// **The pin orders these states, and this reproduces its order.** An earlier version of this
+	// comment said the opposite — "the pin carries no code that orders these states, there is no
+	// AppBarButton.cpp in the pin, and the precedence below is the library's" — and all three
+	// clauses were wrong. The filename is `AppBarButton_Partial.cpp`, the framework control's
+	// half of the pin rather than the WinUI one, and `ChangeVisualState` (`:272`) branches on
+	// `UseOverflowStyle` first: with it, toggle buttons **and** icons go to
+	// `OverflowWithToggleButtonsAndMenuIcons` (`:289`), toggle buttons alone to
+	// `OverflowWithToggleButtons` (`:293`), icons alone to `OverflowWithMenuIcons` (`:297`), and
+	// neither to `Overflow` (`:301`). Without it, `AppBarButtonHelpers.h:171-188` takes a label
+	// position of Right, then Collapsed, then `IsCompact`, then `FullSize`.
+	//
+	// Two pairs below are written in the opposite order to the pin's — icons before toggle
+	// buttons, collapsed before right — and **neither is a divergence**: the both-true case is
+	// already taken by the branch above them, and a label position is one enum value at a time,
+	// so no input separates the two orders. They are left as they are so that this note is the
+	// record rather than a diff nobody can test.
+	//
+	// **What this does not claim is that the input is upstream's.** The order matches; the enum
+	// does not. `CommandBarLabelPosition`, the item-level one, has two members —
+	// `EnumValueTable.g.h:468-472` lists `Default` and `Collapsed` and no third — and Right
+	// exists only on the bar, as `CommandBarDefaultLabelPosition`, which
+	// `GetEffectiveLabelPosition` (`AppBarButton_Partial.cpp:451`) returns when the item says Default.
+	// This library's per-item `labelPosition` is the **bar's** enum offered per item, with an
+	// absent prop standing in for Default, so a command can ask for a position upstream can only
+	// be given by its bar. No state that upstream's template lacks becomes reachable; the pairing
+	// of input to state is what is new. WD-093.
 	const dataViewState = $derived(
 		isInOverflow && hasOverflowWithToggleButtons && hasOverflowWithMenuIcons
 			? 'overflow-with-toggle-buttons-and-menu-icons'

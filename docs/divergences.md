@@ -2254,3 +2254,38 @@ changes`.
   tooltip in the library and not about this control, and would be taken against the WAI-ARIA
   pattern rather than against WinUI. `ToolTip.svelte` is where it would land, and this entry is
   the first site that would notice.
+
+---
+
+### WD-093 — a command's own `labelPosition` can ask for Right, where upstream's cannot
+
+- **Control**: `AppBarButton` and `AppBarToggleButton`.
+- **WinUI does**: split the question across two enums. An item carries `CommandBarLabelPosition`,
+  which has exactly two members — `Default` and `Collapsed`
+  (`dxaml/xcp/components/metadata/inc/EnumValueTable.g.h:468-472`) — and a bar carries
+  `CommandBarDefaultLabelPosition`, which is where `Right` lives.
+  `AppBarButton::GetEffectiveLabelPosition` (`AppBarButton_Partial.cpp:451`, and
+  `AppBarToggleButton_Partial.cpp:294` for the toggle) returns the item's own value when it is
+  `Collapsed` and the **bar's** default otherwise. So Right is a decision a bar takes for all of
+  its commands, and an item may only opt out of its label entirely.
+- **We do**: type the item's prop as `'bottom' | 'right' | 'collapsed'` and resolve it as
+  `labelPosition ?? bar's ?? 'bottom'`. Two shapes follow that upstream has no way to express: a
+  single command can be told to put its label on the right while its bar does not, and a single
+  command can be pulled back to the bottom while its bar says right.
+- **Why accepted**: it was written before the split was read, and what is here is the _bar's_
+  enum — `Bottom`, `Right`, `Collapsed` (`EnumValueTable.g.h:455-460`) — offered per item, with
+  an absent prop standing in for `Default`. The two upstream enums are **not** nested, which an
+  earlier draft of this bullet claimed: `Default` is in neither the bar's set nor this union, and
+  it means _defer to the bar_, which is what optionality expresses here. Narrowing the union now
+  is a breaking change to a prop already in the module graph — the package is at `0.0.0` and no
+  consumer holds it, so that is a shape rather than a bill, and the bullet below says when the
+  bill would start. The **reachable state set is unaffected**: the effective position feeds the
+  same Right → Collapsed → Compact → FullSize chain the pin runs
+  (`AppBarButtonHelpers.h:171-188`), every value this prop can take is one that chain already
+  handles, and no state exists here that upstream's template lacks. What is new is the _pairing_
+  — a command given `'right'` inside a bottom-labelled bar renders `label-on-right`, which
+  upstream cannot produce for that command. Saying the behaviour was unaffected would deny the
+  shape the bullet above names.
+- **Would reconsider if**: the naming unit that fixes the exported set reaches these two controls
+  before a consumer holds them, which is the one moment narrowing the union costs nothing. Until
+  then this entry is what says the extra member is ours.
