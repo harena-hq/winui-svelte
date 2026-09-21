@@ -423,8 +423,12 @@ alignment a reader assumes.
 
 **There is nothing to sweep, and saying so is the entry.** `controls/dev/` has no `Popup`
 directory: `Popup` is a `Windows.UI.Xaml.Controls.Primitives` control that WinUI 3 neither
-reimplements nor restyles, so there is no `.cpp`, no template and no dictionary of its own —
-the first control in this project with none of the three. `docs/surface.md`'s procedure names
+reimplements nor restyles, so it has no template and no dictionary of its own. **The "no
+`.cpp`" half was true of the checkout when this was written and is not now**:
+`dxaml/xcp/dxaml/lib/Popup_Partial.cpp` and `dxaml/xcp/core/core/elements/Popup.cpp` are both
+in the pin, unswept. This entry is also the one that shows a grep cannot close that class — it
+never says the word "pin", so the sweep described at the end of this file walks straight past
+it. `docs/surface.md`'s procedure names
 the no-`.cpp` case; this is the case where the procedure returns nothing at all, which is a
 result rather than a gap.
 
@@ -456,8 +460,10 @@ that makes both halves reachable, and says so.
 
 ### Flyout — v6 unit 3
 
-Like Popup, a framework control WinUI 3 only restyles: no `.cpp` in the pin, so the dictionary
-and the measurement are the whole record. Unlike Popup, the dictionary is the control.
+Like Popup, a framework control WinUI 3 only restyles. "No `.cpp` in the pin, so the dictionary
+and the measurement are the whole record" was true of the checkout when this was written; the
+pin now carries `Flyout_partial.cpp`, `FlyoutBase_partial.cpp`, `FlyoutPresenter_partial.cpp`
+and `core/core/elements/Flyout.cpp`, none of them swept. Unlike Popup, the dictionary is the control.
 `FlyoutPresenter_themeresources.xaml`'s `DefaultFlyoutPresenterStyle` at `:22` sets every
 visual property, and the template at `:43` is one `Border` with a background, a border, a
 corner radius and `BackgroundSizing="InnerBorderEdge"` around a `ScrollViewer` whose
@@ -901,8 +907,11 @@ mentioned them would imply a decision that was never made.
 
 ## The checkout grew and these claims did not
 
-**Ten places across five files said a control has "no implementation in the pin", or something
-that reduces to it. Every one is false today, and none was false when it was written.** The distinction is the
+**Fifteen places across five files said a control has "no implementation in the pin", or
+something that reduces to it. Every one is false today, and fourteen of the fifteen were true
+when written.** The count has gone ten, twelve, fifteen across three passes, each finding what
+the last had missed — **so treat it as a floor rather than a total.** The set is not closed and
+the paragraph below says why it cannot be closed by searching. The distinction is the
 whole of this section, and a first draft of it got the distinction backwards.
 
 The pinned checkout is sparse, and `scripts/tokens/fetch.mjs` decides what it holds. Until
@@ -916,7 +925,12 @@ falsified.** It rewrote step 1 to say "search the whole checkout, not `controls/
 second row at the top of this file is its correction of this section's own opening. What it left
 standing is every _downstream_ sentence that had recorded the old answer: four in this file —
 the `Slider`, `Pivot` and "other six" rows and the `ToolTip` entry — three in `docs/plan.md`, and
-one comment each in `Flyout.svelte`, `CommandBar.svelte` and `Pivot.svelte`. A commit that widens the
+one comment each in `Flyout.svelte`, `CommandBar.svelte` and `Pivot.svelte`. Two of the
+`docs/plan.md` six were found only by the second sweep described at the end of this section:
+`IsThreeState` "lives in system XAML, not in the pin" and `IsSticky` which "the pin never
+mentions" — against `ToggleButton_Partial.cpp:249`'s `OnToggleImpl` for the first and
+`CommandBar_Partial.cpp:932` and `:1990` for the second. Three more came out of the pass after
+that: this file's Popup and Flyout entries, and `docs/plan.md`'s ToggleSwitch bullet. A commit that widens the
 evidence owes a sweep of the negatives recorded against the narrower evidence, and that is the
 lesson here rather than anything about how to phrase a search.
 
@@ -936,6 +950,25 @@ Sizes, for the controls the corrected sentences name: `ToolTip_Partial.cpp` 2584
 `Flyout_partial.cpp` 112, and in `dxaml/phone/lib`, `Pivot_Partial.cpp` 4302,
 `PivotItem_Partial.cpp` 440, `PivotHeaderItem.cpp` 546. Those directories are not a discovery:
 `fetch.mjs:37-50` names each one and says what it holds — `dxaml/phone/lib` at `:50`.
+
+**Why each pass missed what the next one found, and why no grep closes this.** The first pass
+searched the phrase it had just read — `no implementation in the pin`, which matches two files.
+Three sites said the same thing in other words and escaped it; two more escaped even the pass
+that caught those. A weaker token does better: case-insensitive word-boundary `pin` over this
+file, `docs/plan.md` and the components is **166 matching lines across 36 files** on the
+pre-fix tree, which is one pass of reading and returns thirteen of the fifteen.
+
+**It does not return the other two, and that is the point.** This file's Popup entry says
+"there is no `.cpp`, no template and no dictionary of its own" and never uses the word `pin` at
+all. Neither does `docs/plan.md`'s Pivot bullet — "WinUI 3 restyles it and carries no
+implementation" — which has no `pin` on any line within thirty-five of it, and which the
+_first_ pass caught by reading. The Flyout entry beside Popup says "no `.cpp` in the pin" and
+would be caught, which is what makes the pair instructive: two adjacent entries about two
+framework controls, one findable by token and one not. So the class
+is defined by its _shape_ — a negative about what upstream contains — and not by any token it
+reliably carries. A grep narrows the reading; it does not end it. The honest procedure is to
+read every negative about upstream in a file when that file's evidence base changes, and the
+count above is a floor because nobody has done that yet.
 
 **What this costs is the procedure.** The four-step sweep ends at step 1 when step 1 says there
 is nothing to read, so for every control whose verdict was recorded before the widening, steps 2
