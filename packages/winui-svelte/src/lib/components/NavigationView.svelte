@@ -17,7 +17,12 @@
 		header: string;
 	}
 
-	export type NavigationViewEntry = NavigationViewItemData | NavigationViewHeaderData;
+	/**
+	 * One position in `items` — a row or a header. Generic in the row so a consumer's own
+	 * record reaches the control unflattened; written bare it means what it always did.
+	 */
+	export type NavigationViewEntry<T extends NavigationViewItemData = NavigationViewItemData> =
+		T | NavigationViewHeaderData;
 
 	/**
 	 * The WinUI `NavigationViewDisplayMode` enum — `Minimal | Compact | Expanded` — which is
@@ -40,8 +45,10 @@
 		'auto' | 'left' | 'top' | 'leftCompact' | 'leftMinimal';
 
 	/**
-	 * The two shapes are disjoint on their own, so the discriminant is a field one of them
-	 * has rather than a `kind` nobody writes and everybody forgets to keep true.
+	 * The discriminant is a field one of the shapes has rather than a `kind` nobody writes
+	 * and everybody forgets to keep true. The two are not disjoint, which an earlier
+	 * version of this comment claimed: a row that also carries a `header` satisfies both
+	 * shapes, and every reading here takes it as a header.
 	 */
 	export function isNavigationViewHeader(
 		entry: NavigationViewEntry
@@ -49,12 +56,23 @@
 		return 'header' in entry;
 	}
 
-	export interface NavigationViewProps {
+	/**
+	 * `T` is the consumer's own row type, with `NavigationViewItemData` as its **bound**
+	 * rather than as its whole type: a row may carry a path, a rename flag, anything the
+	 * consumer holds beside the fields this control reads — `header` excepted, since a
+	 * row carrying one is read as a header. `T` is inferred from `items`. ADR 0015.
+	 *
+	 * The parameter is defaulted, and that is not a convenience. This interface is
+	 * exported, so a consumer who wrote `NavigationViewProps` with no type argument has
+	 * written something that stops compiling the moment it takes one. The default is what
+	 * keeps the widening additive.
+	 */
+	export interface NavigationViewProps<T extends NavigationViewItemData = NavigationViewItemData> {
 		/**
 		 * Narrows `MenuItemsSource` (objects that become `NavigationViewItem` elements) to
-		 * plain data records identified by `id`.
+		 * plain data records identified by `id`. This is where `T` is inferred.
 		 */
-		items: NavigationViewEntry[];
+		items: NavigationViewEntry<T>[];
 		/**
 		 * Narrows `SelectedItem` (one of the menu's `NavigationViewItem` objects) to an
 		 * `id` the consumer holds.
@@ -112,7 +130,7 @@
 	}
 </script>
 
-<script lang="ts">
+<script lang="ts" generics="T extends NavigationViewItemData = NavigationViewItemData">
 	import { setNavigationViewLevel, setNavigationViewPane } from '../internal/navigation-view';
 	import Flyout from './Flyout.svelte';
 	import NavigationViewItem from './NavigationViewItem.svelte';
@@ -137,7 +155,7 @@
 		style,
 		ref = $bindable(null),
 		...rest
-	}: NavigationViewProps = $props();
+	}: NavigationViewProps<T> = $props();
 
 	// The control's own width, not the viewport's: NavigationView measures itself, and a
 	// pane inside a split screen is meant to collapse on its own account. `bind:clientWidth`
@@ -334,9 +352,7 @@
 	const overflowing = $derived(Number.isFinite(overflowFrom));
 	const isOverflowed = (index: number) => index >= overflowFrom && index !== selectedIndex;
 	const overflowItems = $derived(
-		items.filter(
-			(entry, index) => !isNavigationViewHeader(entry) && isOverflowed(index)
-		) as NavigationViewItemData[]
+		items.filter((entry, index) => !isNavigationViewHeader(entry) && isOverflowed(index)) as T[]
 	);
 
 	function recomputeTopOverflow() {
