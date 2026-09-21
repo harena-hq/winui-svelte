@@ -143,8 +143,10 @@ packaging rather than assuming it.
    that is in a base class the pin's `NavigationView` directory does not carry, and it is what
    decides the case. So it remains a ninth question for the observation, and a narrower one:
    type into a text field inside a row of the original and see whether the row invokes. The
-   wide one: that handler is WD-004, whose "WinUI does" paragraph describes the WAI-ARIA tree
-   pattern and assumes WinUI follows it, which nothing has checked. Making
+   wide one: that handler is WD-004, whose "WinUI does" paragraph described the WAI-ARIA tree
+   pattern and assumed WinUI follows it. That assumption was checked on 2026-09-21 and is
+   false — `docs/keyboard.md` has the record — so the wide question is answered and only the
+   narrow one above is still owed. Making
    `NavigationViewItem` public publishes both. **So the contract is pressed on Windows 11
    before this control is sealed, and the unit says what was pressed** — `docs/keyboard.md`'s
    rule for a control whose surface includes a keyboard contract. A gate cannot press a
@@ -217,7 +219,12 @@ elements cannot be. The four are one surface.
 - Roadmap item 19's remaining Gallery pages include this control's data-binding example, the
   page the evidence above is read from; it becomes buildable rather than deferred.
 - `ChildrenFlyout` — the rail's flyout of a parent item's children — renders items too, and is
-  built on this rather than beside it.
+  built on this rather than beside it. Its **focus** contract is answered:
+  `docs/keyboard.md`'s eighth answer was pressed on the reference guest on 2026-09-21 and says
+  what the flyout does with focus — where it lands on open, that Up and Down cycle within it,
+  that Left does not escape it and Escape closes it. What that answer does not reach is still
+  open: where focus returns after Escape, whether Tab or Home and End do anything inside the
+  flyout, and what a nested parent within it does.
 - `docs/surface.md` gains the two rows this reading found; the sweep that should have found
   them is recorded there with why it did not.
 - `TeachingTip` and `NavigationView` still owe `icon` (ADR 0012); this does not discharge it.
