@@ -12,9 +12,13 @@
  * the element it must inform. A Svelte parent cannot reach into a snippet, so the same
  * facts travel as context — the shape `internal/command-bar.ts` ships, minus its second
  * half. There a command reads context as the default under its own prop and a prop the
- * consumer passes wins; here there is nothing to layer it under until `NavigationViewItem`
- * takes the props ADR 0015 maps, and the unit that adds them adds the prop-wins rule with
- * them.
+ * consumer passes wins; here there is still nothing to layer under, and the reason changed
+ * when `NavigationViewItem` took its own props. It has them now, and none of them is a
+ * second spelling of anything here: `tag` is the argument each lookup below is made with,
+ * not an override of its answer. `IsSelected` and `IsExpanded` are the two that would be,
+ * and they are deliberately absent — a prop for either is a second writer for a fact this
+ * library holds on the control, and the unit that gives one a second writer is the unit
+ * that owes the prop-wins rule.
  *
  * Two keys rather than one, because they have different lifetimes. The pane's state is one
  * value for the whole subtree and the control publishes it once. The level is different at

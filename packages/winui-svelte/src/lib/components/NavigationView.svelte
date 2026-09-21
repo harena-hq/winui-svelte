@@ -488,7 +488,12 @@
 									<div class="item-header winui-BodyStrongTextBlockStyle">{entry.header}</div>
 								</li>
 							{:else}
-								<NavigationViewItem item={entry} />
+								<NavigationViewItem
+									tag={entry.id}
+									content={entry.content}
+									glyph={entry.glyph}
+									items={entry.children}
+								/>
 							{/if}
 						{/each}
 					</ul>
@@ -508,7 +513,11 @@
 				{#if settingsVisible}
 					<div class="footer-items">
 						<ul role="tree" class="menu-items">
-							<NavigationViewItem item={SETTINGS_ITEM} />
+							<NavigationViewItem
+								tag={SETTINGS_ITEM.id}
+								content={SETTINGS_ITEM.content}
+								glyph={SETTINGS_ITEM.glyph}
+							/>
 						</ul>
 					</div>
 				{/if}
