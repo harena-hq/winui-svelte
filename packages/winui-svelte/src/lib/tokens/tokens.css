@@ -1783,6 +1783,7 @@
 	--winui-TopNavigationViewContentGridCornerRadius: 0px;
 	--winui-NavigationViewMinimalContentGridCornerRadius: 0px;
 	--winui-TopNavigationViewOverflowMenuPadding: 2px 0px;
+	--winui-NavigationViewItemChildrenMenuFlyoutPadding: 2px 0px;
 	--winui-NavigationViewItemExpandedGlyphFontSize: 8px;
 	--winui-NavigationViewItemExpandedGlyph: '\00e70d';
 	--winui-NumberBoxSpinButtonBorderThickness: 1px 1px 1px 0px;
