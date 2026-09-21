@@ -49,14 +49,18 @@ primitive, the machine decides, and the machine has to be asked.
 ## Why this needs saying
 
 Two keyboard models are in dispute, and neither was settled by pressing a key on Windows 11.
+The two bullets below are the state that motivated this list. The first of them has since been
+answered — the record is under "The `NavigationView` observation" — and is left standing here
+because what it argued for is what the answer then cost.
 
-- **WD-004** (`docs/divergences.md:145`) — `NavigationView`'s items are each a tab stop, with no
-  arrow keys, no typeahead, no Home or End. Its "WinUI does" paragraph is a careful description
-  of the WAI-ARIA tree pattern, and its reasoning says so in as many words (`:163-164`): _"the web's own
-  keyboard contract for a `role="tree"` is the WAI-ARIA Authoring Practices guide, **which is
-  what WinUI follows**"_. That clause is an assumption. It is very probably true. It has not
+- **WD-004** (in `docs/divergences.md`) — `NavigationView`'s items are each a tab stop, with no
+  arrow keys, no typeahead, no Home or End. Its "WinUI does" paragraph was a careful description
+  of the WAI-ARIA tree pattern, and its **Why accepted** said so in as many words: _"the web's
+  own keyboard contract for a `role="tree"` is the WAI-ARIA Authoring Practices guide, **which
+  is what WinUI follows**"_. That clause is an assumption. It is very probably true. It has not
   been checked, and under the standard above it is exactly the kind of sentence that gets
-  checked.
+  checked. **It was checked on 2026-09-21, and it is false** — the tree pattern's Right-expands,
+  Left-collapses and typeahead are not what the original does.
 - **`TabView`'s ring** — the close button sits _inside_ the arrow-key order and the add-tab
   button sits outside it, as a tab stop of its own. This one was read from the pin:
   `TabView.cpp:1580-1589` handles the two keys, and `IsTabStop="False"` at `TabView.xaml:576`
@@ -69,10 +73,12 @@ The two entries are not equally weak, and that is the point: **the difference be
 invisible in the registry.** Both read as settled. Nothing in the format distinguishes a
 divergence measured against the machine from one inferred from a document.
 
-**And WD-004 is load-bearing for more than its own control.** The `ItemsView` and `TreeView`
-divergence is accepted as "WD-004's situation on a second control, and the same answer"
-(`docs/divergences.md:752`), and says it will be re-examined when the roving-tabindex rig
-WD-004 is waiting on gets built. Three controls rest on one unchecked clause.
+**And WD-004 is load-bearing for more than its own control.** WD-027, the `ItemsView` and
+`TreeView` divergence, is accepted in its **Why accepted** as "WD-004's situation on a second
+control, and the same answer", and says it will be re-examined when the roving-tabindex rig
+WD-004 is waiting on gets built. Three controls rested on one unchecked clause; the clause has
+now been checked for one of the three, and the other two inherit the answer only as far as
+`NavigationView`'s pane resembles them.
 
 ## What in this project can see a keyboard model
 
@@ -163,6 +169,109 @@ new is needed:
 There is no rig for this and one should not be built yet. Playwright drives _our_ routes and can
 automate step 3; nothing drives a XAML application. A person and a keyboard is the instrument,
 and for a dozen questions per control it is the cheap instrument.
+
+## The `NavigationView` observation
+
+Pressed by hand on the reference guest on 2026-09-21, on the `NavigationView` page's
+hierarchical sample — `Home` / `Account` / `Document options`
+(`NavigationViewPage.xaml:364-415`), with the three `PanePosition` radios beside it
+(`:322-337`). Two sittings, both on that date: the eight answers below, then two follow-ups —
+which instance had been pressed, and what the foot of the ring does. Our column was measured on
+`/dev/navigation-view` by pressing the same keys. **Question 9 is not answered, and question 5
+is answered in part** — its collapsing half was not pressed. The record is the eight below, with
+that gap named where it falls.
+
+1. **The list is one stop, and the stop is the selected item.** Tab walks the pane toggle, then
+   the selected item, then the Settings row at the foot of the pane; one press leaves the list
+   rather than one press per item. Where the fourth press goes was not pressed. Up and Down
+   move among the items once the list is entered. The entry point being the _selected_ item,
+   not the first, is the part of a roving tabindex that is easy to get wrong.
+   **We** make every item its own stop and every chevron another. On `/dev/navigation-view`'s
+   `#menu-fits` frame, the open-pane specimen: toggle, `Home`, `Design`,
+   `Design`'s chevron, `Accessibility`, its chevron, `All`, `Basic input`, `Collections`,
+   `Settings`.
+2. **Down does not expand; it steps past.** On a collapsed parent Down moves to the next item
+   rather than opening it, and past the last item it reaches the Settings row, from which Up
+   returns to the list. **At the foot, Down scrolls the page the sample sits on** — that is the
+   press. The ring therefore does not wrap, which is a conclusion and not a further
+   observation: what closes it is focus staying on the Settings row, and the record reports the
+   scroll without reporting where focus went. Up on the pane toggle does the same, but the
+   toggle is outside the ring to begin with (1 above), so that press measures a non-ring
+   element and **the ring's top end is not measured at all**. A collapsed row toggles open and
+   shut on Enter and on Space.
+   **We** do nothing on any arrow key. Enter and Space toggle a parent open and shut, and report
+   the invoke — the one half of this question that matches.
+3. **Home and End jump to the ends**, and pressing them again does nothing.
+   **We** do nothing on either.
+4. **There is no typeahead.** Typing a letter does not move focus.
+   **We** have none either. This one matches, and it is one of the places where the registry
+   said otherwise.
+5. **Left does not expand a collapsed row, and Right does not descend into an expanded one.**
+   **Whether Left collapses an expanded row was not pressed** — half of this question is still
+   open.
+   **We** do nothing on any of the three. Matches as far as the two answers reach.
+   By-catch, not from the list. Pressed: holding keyboard focus on a parent of the hierarchical
+   sample for a moment raises its tooltip, and the Gallery's own shell pane, pressed in the
+   follow-up sitting, raises none. Deduced from those two presses and two readings: **the
+   tooltip belongs to the sample rather than to the control.** The readings are that the
+   sample sets `ToolTipService.ToolTip` on every item (`NavigationViewPage.xaml:376-410`) while
+   the shell sets none, and that a custom tooltip is never replaced —
+   `UpdateNavigationViewItemToolTip` substitutes the suggested one only under
+   `if (!toolTipContent || toolTipContent == m_suggestedToolTipContent.get())`,
+   `NavigationViewItem.cpp:287-288`, commented "no custom tooltip, then use suggested
+   tooltip". Without that second reading the two panes would not be separable at all. So the
+   two panes differ exactly where their markup differs, which leaves `ShouldEnableToolTip` —
+   `IsOnLeftNav() && m_isClosedCompact`, `NavigationViewItem.cpp:743` — standing: an open pane
+   shows none of its own. Our reading of that line was already what the component implements,
+   and nothing here contradicts it — which is as far as this goes. It is not an observation of
+   `ShouldEnableToolTip`: no press can see a line of C++, and this one is consistent with the
+   reading rather than a test of it.
+6. **The chevron is reachable by pointer only**, and it is not needed: invoking anywhere on the
+   row toggles the subtree.
+   **We** render it as a `<button>`, which puts it in the tab order — the extra stops in 1
+   above — and only while the pane is open. Measured: walking the closed-compact rail gives
+   seven stops, the top-level rows and `Settings`, with no chevron among them. Read, not
+   measured: the rule that causes it is `NavigationView.svelte:1455-1458`, `display: none` on
+   the chevron and the label together.
+7. **Focus alone does not move the selection.** Enter or Space is required.
+   **We** behave the same way. Matches.
+8. **Closed-compact opens a flyout for a row with children.** Focus lands on the flyout's first
+   item; Up and Down cycle within the flyout and nothing else; Left does not escape it; Escape
+   closes it. A parent that has content of its own swaps the content on selection immediately,
+   so Escape-and-stay and pick-a-child are both available from there. Everything else answers as
+   above.
+   **We** have no flyout, and no children either. Measured: invoking a parent in the rail sets
+   `aria-expanded` and draws nothing — the child rows have no box, and no popup appears — and
+   Escape has nothing to close. Read, not measured: the rule that causes it is
+   `NavigationView.svelte:1463-1465`, `display: none` on a collapsed pane's `.children`, and
+   its own comment already says the children belong in a flyout. The rows stay in the DOM,
+   which is why counting them is not the check. This is `ChildrenFlyout`, ADR 0015's deferred
+   item, and the paragraph above it is its contract.
+
+### What this decided
+
+Behavioural claims of WD-004's that fell, each a reading rather than an observation: that Left
+and Right move focus among items, that Left and Right drive expand and collapse, that typing
+jumps to a matching label, and that the chevron is reached by the arrow keys. No count is
+offered — the old paragraph does not separate into countable claims the same way for two
+readers, and a number a reader has to agree with adds nothing the list does not already say.
+One more, that Tab leaves the pane into the next focusable element, is neither confirmed nor
+refuted here. The expand-and-collapse one falls on its expanding half
+— Left does not expand and Right does not descend — while whether Left collapses is still
+unpressed, so what replaces it is smaller than the claim but not yet nothing.
+
+What the original asks for, on this record, is Up and Down over a ring that includes the
+Settings row, Home and End, Enter and Space to invoke and to toggle, and in closed-compact a
+flyout with a ring of its own and an Escape. No typeahead, no focusable chevron, and at most a
+collapse on Left rather than a Left/Right state machine. **And Down at the foot scrolls the
+page rather than moving within the list**, which an implementation reproduces by declining to
+prevent the key's default there rather than by swallowing it to make the ring tidy. That the
+ring does not wrap is the conclusion drawn from that press, not a further observation — the
+answer reports the scroll and not where focus went — and the top end is not measured at all.
+
+WD-004's **Why accepted** rests on exactly the difficulty two of the fallen claims supplied. The
+entry is corrected in place. Whether it stays a divergence at all is the second outcome below,
+and a separate decision: a roving tabindex is not something the web cannot do.
 
 ## What an observation decides
 

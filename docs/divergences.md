@@ -145,30 +145,67 @@ surface are painted the same way.
 ### WD-004 — NavigationView items are each a tab stop; arrow keys do not move focus
 
 - **Control**: `NavigationView`'s menu tree.
-- **WinUI does**: the pane is a single tab stop. Tab enters it; arrow keys (Up/Down,
-  Left/Right — Left/Right also drive expand and collapse) move focus among items,
-  Home/End jump to the ends, typing jumps to the next item whose label starts with the
-  pressed character; Tab leaves the pane and walks into the next focusable element in
-  tab order. The chevron is reached by the same arrow keys, not by Tab.
-- **We do**: every item is `tabindex="0"` and is reached by Tab. There is no arrow-key
-  navigation among items, no typeahead, no Home/End. Tab walks through them in document
-  order, which is also the visual order.
-- **Why accepted**: the tree is built from scratch, not on top of a primitive. ADR 0004
-  notes that no surveyed primitive library ships a tree, and the one this project would
-  adopt for it — `@zag-js/tree-view` — arrives with the Collections tranche. A
+- **WinUI does**, **pressed on the reference guest on 2026-09-21** — the record, with our
+  column beside it and every gap named, is in `docs/keyboard.md`: the pane is a single tab
+  stop and the stop is the _selected_ item, so Tab walks the pane toggle, that item, then the
+  Settings row. Up and Down move among the items and run into the Settings row at the foot,
+  where Down scrolls the page the sample sits on instead of moving within the list — the ring
+  therefore does not wrap, which is a conclusion from that press rather than a second
+  observation, since the record does not say where focus went. Home and End jump to the ends.
+  Enter and Space invoke a row and toggle a collapsed one open and shut. Left does not expand
+  a collapsed row and Right does not descend into an expanded one. There is no typeahead, and
+  the chevron is reachable by pointer only. In closed-compact, a row with children opens a
+  flyout with a ring of its own, which Escape closes.
+
+  Three things this record does not decide: where Tab goes after the Settings row, what the
+  ring's top end does, and whether Left collapses an expanded row. An earlier version of this
+  bullet claimed that Left and Right moved focus among items, that they also drove expand and
+  collapse, that typing jumped to a matching label, and that the chevron was reached by the
+  arrow keys. Each was read rather than pressed, and each fell.
+
+- **We do**: every item is `tabindex="0"` and is reached by Tab, and so is every expand
+  chevron, which is a `<button>`. There is no arrow-key navigation among items, no
+  typeahead, and no Home/End. In closed-compact there is no flyout and no children: the
+  rail hides them outright, so an expanded parent there draws nothing. Enter and Space
+  invoke and toggle, which is the part that already matches.
+- **Why accepted**: the tree is built from scratch, not on top of a primitive. The machine
+  this project would adopt for one — `@zag-js/tree-view`, which ADR 0004 picks by name in its
+  **Decision** — arrives with the Collections tranche. An earlier version of this sentence
+  said ADR 0004 had found that no surveyed library ships a tree; its **Context** says the
+  opposite ("Zag ships machines for **TreeView**, ColorPicker and NumberInput, which bits-ui
+  lacks"), and the sentence contradicted its own next clause. A
   hand-rolled roving-tabindex loop is not hard; what is hard is the keyboard contract
   being right without it being tested: each tree interaction is a state machine with
   collapsed children, headers, an expand chevron that is focusable in WinUI but lives
   inside an item that is, and three display modes that each close the pane and change
   the candidate set. The web's own keyboard contract for a `role="tree"` is the WAI-ARIA
-  Authoring Practices guide, which is what WinUI follows, and reproducing it requires
-  the same test rig the Collections tranche will build for TreeView. Until then, every
+  Authoring Practices guide, and this paragraph took WinUI to follow it — **which the
+  observation refutes, and it was the clause `docs/keyboard.md` was written to check.** The
+  guide's tree pattern has Right expand, Left collapse and typeahead; the original has no
+  typeahead, no expand on Right, and at most a collapse on Left. So the rig this paragraph
+  waits for is a rig for a contract the original does not implement. Until then, every
   item being a tab stop is the behaviour the keyboard already reaches, and the cost of
   the gap is a Tab key rather than an arrow key — a real loss, and a recorded one.
+
+  **The observation weakened this.** Two of the three things that made the contract look
+  expensive — a Left/Right expand state machine and a typeahead — do not exist, and the
+  chevron this paragraph calls "focusable in WinUI but lives inside an item that is" is not
+  reachable by keyboard at all — whether it can be focused by some other route was not
+  pressed, and does not matter to a paragraph that costed a tab stop. What is left is a ring
+  over one flat candidate list that does not wrap at the foot, Home and End, a possible
+  collapse on Left, and a flyout in closed-compact. That is smaller than what the Collections
+  tranche was being waited on for.
+
 - **Would reconsider if**: the Collections tranche lands with a tree that the navigation
   pane can adopt, or the Gallery's own page structure makes hand-rolling the contract
   cheap enough to do without that. Either way the entry is deleted, because the
-  behaviour it names is the one WinUI ships.
+  behaviour it names is the one WinUI ships. **A third route to the same predicate has
+  appeared, and neither written condition describes it**: nothing changed about the Gallery's
+  page structure and the Collections tranche has not landed — what changed is the size of the
+  contract, now that three of the things that made it expensive turn out not to exist. On
+  that ground the row is a candidate for the punch list rather than this registry, since
+  `keyboard.md` puts it plainly: a roving tabindex is not something the web cannot do. Moving
+  it is its own decision and has not been taken here.
 
 ---
 
@@ -757,7 +794,11 @@ has been declined.
   project sets is met either way: focus draws the same band on the same element.
 - **Would reconsider if**: the tranche's `TreeView` unit builds the roving-tabindex rig WD-004
   is already waiting on, at which point both rows are re-examined together and this one is
-  deleted if the rig fits a two-dimensional candidate set.
+  deleted if the rig fits a two-dimensional candidate set. WD-004's half of that shared
+  rationale was pressed on 2026-09-21 and came back smaller than it had been described; this
+  row's own reading is of `ItemsView` and `TreeView` and no key was pressed on either, so
+  nothing here is restated on that account — it is noted so the re-examination knows one half
+  has moved.
 
 ---
 
