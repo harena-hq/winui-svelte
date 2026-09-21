@@ -662,14 +662,23 @@ and its ring fill under high contrast, upstream's mapping, left faithful.
 Three questions came up that the resources alone could not answer, and each was settled by
 running the original on the reference guest rather than by reasoning:
 
-- **CheckBox's three-state cycle** — unchecked, checked, indeterminate — because `IsThreeState`
-  lives in system XAML, not in the pin.
+- **CheckBox's three-state cycle** — unchecked, checked, indeterminate. Written 2026-09-05 as
+  "`IsThreeState` lives in system XAML, not in the pin", and **this is the one of the fifteen
+  that was not true when written**: `controls/dev/InkToolbar/InkToolbar.cpp` and
+  `InkToolbarMenuButton.cpp` named `IsThreeState` inside the pre-widening checkout. They are
+  _uses_ rather than an implementation, so a "no implementation" reading of the sentence
+  survives and the words as written do not. What the widening added is the cycle itself:
+  `ToggleButton::OnToggleImpl` at `ToggleButton_Partial.cpp:249`, reached through
+  `get_IsThreeState`. Unswept, like the rest — `docs/surface.md`'s "The checkout grew and these
+  claims did not".
 - **CheckBox's unchecked glyph.** The resources define four brushes for it; the animated
   original draws nothing. They exist for the down-level path, which hides the glyph by
   painting it the colour of the fill — a trick that holds in Light and Dark and breaks under
   high contrast. WD-006 accepts the fallback glyph, not a state the original never shows.
-- **ToggleSwitch's default content** — "On" and "Off", which the control's own code supplies
-  and the pin does not carry.
+- **ToggleSwitch's default content** — "On" and "Off", which the control's own code supplies.
+  "The pin does not carry" it was written 2026-09-05 and is now false of everything but the
+  strings themselves: `ToggleSwitch_Partial.cpp:311` and `:322` fetch both through
+  `GetLocalizedResourceString`, and only the localized values are outside the checkout.
 
 The contract itself needed two amendments, both written after the code rather than before it:
 `ref` points at the interactive element rather than at the root, which TextBox had already
@@ -1313,8 +1322,11 @@ group sizes, which no longer line up one-to-one with a version.
     - SplitButton's key-down `SecondaryButtonSpan`, which changes the hit target rather than
       any pixel of the resting control;
     - SplitButton's touch press, which needs a touch pointer to reach `TouchPressed` at all;
-    - CommandBar's `IsSticky`, which the acceptance page never sets true and the pin never
-      mentions — it is read from the reference or it is not read;
+    - CommandBar's `IsSticky`, which the acceptance page never sets true. "The pin never
+      mentions" it was true of the checkout when this was written on 2026-09-07 and is not now:
+      `CommandBar_Partial.cpp:932` and `:1990` read it, and `AppBar_Partial.cpp` names it on
+      thirteen lines. Still read from the reference or not read, because nothing has swept
+      those;
     - MenuBar's hover crossing, which exists only while a menu is open.
 
     **What this version will not build.**
