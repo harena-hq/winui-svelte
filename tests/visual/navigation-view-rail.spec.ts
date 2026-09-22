@@ -190,3 +190,66 @@ test('closing the pane collapses an expanded top-level row, and opening it puts 
 	await expect(state).toHaveText('open / design');
 	await expect(design).toHaveAttribute('aria-expanded', 'true');
 });
+
+// **The popup layer, asserted where the defect was seen.** A portalled element lands in
+// `<body>` with `z-index: auto`, which puts it above ordinary content by tree order and below
+// any positioned element carrying a positive one. This control has two — the pane at 1 and the
+// pane-toggle holder at 100, reproducing `PaneToggleButtonGrid`'s `Canvas.ZIndex="100"` — and a
+// rail row's tooltip opens upwards, over the toggle. Before the layer the toggle was drawn on
+// top of an opaque popup, and `elementFromPoint` at the overlap returned the toggle's own glyph
+// span rather than the tooltip.
+//
+// C13 checks that every portalled surface *declares* the layer. This checks that the
+// declaration arrives where it has to: for a floating surface the primitive reads the content
+// element's computed z-index and mirrors it onto the wrapper it positions, so a value on the
+// wrong element inside the portal would satisfy the gate and paint nothing.
+//
+// **The placement is load-bearing and is this library's, not upstream's.** `ToolTip`'s default
+// is `PlacementMode.Mouse`, which puts the popup above the pointer, and that is what carries it
+// over the toggle at all. A unit that gave the rail's tooltip the placement WinUI's own rail
+// uses would move the overlap somewhere else and this test would need re-aiming rather than
+// deleting — the claim is about stacking, and the geometry is only how it is reached.
+test('a rail tooltip is painted over the pane toggle, not under it', async ({ page }) => {
+	await page.goto(PAGE);
+
+	await page.locator('#rail .item').first().hover();
+	const popup = page.locator('.popup:text-is("Home")');
+	await expect(popup).toBeVisible();
+
+	// Until Floating UI has placed it the wrapper is parked at `translate(0, -200%)`, which has
+	// a real box, so the read waits for two consecutive agreeing positions rather than for
+	// visibility.
+	let last: string | null = null;
+	await expect
+		.poll(async () => {
+			const now = await popup.evaluate((element) => {
+				const box = element.getBoundingClientRect();
+				return `${Math.round(box.x)},${Math.round(box.y)}`;
+			});
+			const settled = now === last;
+			last = now;
+			return settled;
+		})
+		.toBe(true);
+
+	const stack = await page.evaluate(() => {
+		const popped = [...document.querySelectorAll('.popup')].find(
+			(element) => element.textContent?.trim() === 'Home'
+		)!;
+		const toggle = document.querySelector('#rail .pane-toggle')!;
+		const a = popped.getBoundingClientRect();
+		const b = toggle.getBoundingClientRect();
+		const left = Math.max(a.left, b.left);
+		const top = Math.max(a.top, b.top);
+		const right = Math.min(a.right, b.right);
+		const bottom = Math.min(a.bottom, b.bottom);
+		if (!(right > left && bottom > top)) return { overlaps: false, at: null };
+		const hit = document.elementFromPoint((left + right) / 2, (top + bottom) / 2);
+		return { overlaps: true, at: hit?.closest('.popup') ? 'popup' : 'something else' };
+	});
+
+	// Asserted, not assumed: a change that moved the tooltip clear of the toggle would leave
+	// the check below true of an empty intersection, and this test would stop testing silently.
+	expect(stack.overlaps).toBe(true);
+	expect(stack.at).toBe('popup');
+});

@@ -278,6 +278,10 @@
 	   `OuterOverflowContentRootV2` its own `CommandBarFlyoutOverflowShadow` while the popup host
 	   casts the bar's; they read as one shadow around one surface. */
 	.surface {
+		/* The popup layer. `Popup.svelte`'s `.root` rule carries the whole reason; the short
+		   version is that this element is static, so the declaration paints nothing here and
+		   is read by the primitive, which mirrors it onto the wrapper it positions. */
+		z-index: 1000;
 		display: grid;
 		grid-template-columns: minmax(0, 1fr);
 		width: max-content;
@@ -633,7 +637,7 @@
 	   two: every setter in both is the unfiltered `CornerRadius` and the uniform
 	   `CommandBarFlyoutBorderThemeThickness`, which is to say the template's defaults, so the two
 	   states exist only to undo the two above. Ours are already the defaults — `.overflow` takes
-	   `CommandBarOverflowPresenter.svelte:80` and `:82`, `.bar` its own radius — so the
+	   `CommandBarOverflowPresenter.svelte`'s `border` and `border-radius` (`:107`, `:109`), `.bar` its own radius — so the
 	   transcription is that these four stop matching, and a rule restating the defaults would be
 	   decoration. A XAML state group is exclusive and a CSS rule is not; the attribute is what
 	   supplies the exclusivity. */

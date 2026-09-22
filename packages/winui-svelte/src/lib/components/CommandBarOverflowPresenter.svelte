@@ -63,6 +63,33 @@
 	   `GetDropShadowRecipe` in dxaml/xcp/components/graphics/inc/DropShadowRecipe.h defines it;
 	   `PLATFORM_SHADOWS` derives the value and records the one composition-to-CSS blur constant. */
 	.root {
+		/* The popup layer, and this component is where `CommandBar`'s lives: its portal's
+		   content is this component, and its `c13-layer:` marker redirects the gate here.
+		   `Popup.svelte`'s `.root` rule carries the whole reason. In that use the declaration
+		   is read rather than applied — the primitive takes it off this element and mirrors it
+		   onto the wrapper it positions.
+
+		   **Inline it is not inert, and an earlier version of this comment said it was.**
+		   `CommandBarFlyout.svelte:259` renders this component as a direct child of its
+		   `.surface`, which is `display: grid` (`:285`), and **a grid item's `z-index` applies
+		   and establishes a stacking context whatever its `position` is**. So inline this box
+		   is painted in the positive-z layer, above its sibling `.bar`.
+
+		   Checked, and it changes nothing drawn. The two are adjacent grid rows that abut:
+		   `CommandBarOverflowPresenterMargin` sits on `.items` below, not on this element, and
+		   neither margin is negative. The overflow's shadow is suppressed where it would cross
+		   the seam (`CommandBarFlyout.svelte:755`). The `ExpandedUp` state gives the overflow
+		   `order: -1` (`:649`), and grid paints in order-modified document order, so that state
+		   really does reverse which of the two is on top — with no geometric overlap, nothing
+		   renders differently either way.
+
+		   The lane agrees as far as it reaches: the full battery ran with this declaration in
+		   place and **no baseline moved**, this component's three among them. How far that
+		   reaches was not established — `order: -1` belongs to
+		   `.surface[data-view-state='both-commands'].expanded[data-side='top']`, and whether
+		   any baseline photographs a flyout opening upwards is unchecked, so that one state
+		   rests on the reasoning above rather than on the lane. */
+		z-index: 1000;
 		box-sizing: border-box;
 		/* CommandBar_themeresources.xaml:896, `MaxWidth="{ThemeResource CommandBarOverflowMaxWidth}"`. */
 		max-width: var(--winui-CommandBarOverflowMaxWidth);

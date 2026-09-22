@@ -436,6 +436,10 @@
 		background: var(--winui-DatePickerSpacerFill);
 	}
 	.presenter {
+		/* The popup layer. `Popup.svelte`'s `.root` rule carries the whole reason; the short
+		   version is that this element is static, so the declaration paints nothing here and
+		   is read by the primitive, which mirrors it onto the wrapper it positions. */
+		z-index: 1000;
 		box-sizing: border-box;
 		/* c1-allow: DatePicker_themeresources.xaml:263 — the presenter's style sets MaxHeight 398,
 		   and the flyout always fills it. Border box, because that 398 is the outer box on the

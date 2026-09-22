@@ -323,6 +323,10 @@
 	   tail casts nothing of its own — and the tail is a child of this box, so it needs no rule
 	   to keep it that way. */
 	.card {
+		/* The popup layer. `Popup.svelte`'s `.root` rule carries the whole reason. This
+		   element is positioned, so the declaration applies here as well as being mirrored
+		   onto the wrapper the primitive positions. */
+		z-index: 1000;
 		position: relative;
 		box-sizing: border-box;
 		display: flex;

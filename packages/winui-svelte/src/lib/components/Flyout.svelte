@@ -116,6 +116,10 @@
 	   `GetDropShadowRecipe` in dxaml/xcp/components/graphics/inc/DropShadowRecipe.h defines it;
 	   `PLATFORM_SHADOWS` derives the value and records the one composition-to-CSS blur constant. */
 	.presenter {
+		/* The popup layer. `Popup.svelte`'s `.root` rule carries the whole reason; the short
+		   version is that this element is static, so the declaration paints nothing here and
+		   is read by the primitive, which mirrors it onto the wrapper it positions. */
+		z-index: 1000;
 		box-sizing: border-box;
 		/* The focus scope focuses this element from script when the flyout opens, and Chromium
 		   grants `:focus-visible` to a scripted focus on a `tabindex="-1"` element — so the

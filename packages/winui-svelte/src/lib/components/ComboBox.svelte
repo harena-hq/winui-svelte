@@ -339,6 +339,10 @@
 	   control narrower than that. Without this the popup shrinks to its longest item and
 	   the control looks nothing like the original. */
 	.popup {
+		/* The popup layer. `Popup.svelte`'s `.root` rule carries the whole reason; the short
+		   version is that this element is static, so the declaration paints nothing here and
+		   is read by the primitive, which mirrors it onto the wrapper it positions. */
+		z-index: 1000;
 		min-width: max(var(--bits-floating-anchor-width), var(--winui-ComboBoxPopupThemeMinWidth));
 		background: var(--winui-ComboBoxDropDownBackground);
 		border-style: solid;
