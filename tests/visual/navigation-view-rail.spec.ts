@@ -23,7 +23,10 @@ test('a rail row opens its children in a flyout, at the top level and outside th
 	await expect(flyout).toBeVisible();
 	// Color and Geometry, and not Color's own two: they are one level further in and the
 	// flyout shows one list.
-	await expect(flyout.locator('> li > [role="treeitem"]')).toHaveCount(2);
+	// The `.item-presenter` step is `NavigationViewItemPresenter`, which the row now sits inside —
+	// NavigationView.xaml:462. Keeping the path explicit is the point: a descendant selector
+	// here would count the grandchildren this assertion exists to exclude.
+	await expect(flyout.locator('> li > .item-presenter > [role="treeitem"]')).toHaveCount(2);
 
 	// `PropagateDepthToChildren(0)` — NavigationViewItem.cpp:883. A flyout's rows are drawn the
 	// way top-level rows are, so they carry `aria-level` 1 and no indent.
@@ -37,15 +40,22 @@ test('a rail row opens its children in a flyout, at the top level and outside th
 	// `Margin="0,-4,0,0"` at `:474`, whose comment gives its reason: "to make the flyout align
 	// exactly with the button".
 	//
-	// Measured against the **row**, which is what upstream anchors to (`m_rootGrid`,
-	// `NavigationViewItem.cpp:824`), and not against the `<li>` this implementation hangs the
-	// popup on. That is the whole point of the numbers: the `<li>` is the row plus the row's
-	// own margin, so a placement that looks right against the `<li>` is 2px high and 4px right
-	// against the row, and a check that only asked which side the popup was on could not see
-	// it. The 4 on the x axis is `Flyout`'s own measured gap, which is its default.
-	const anchor = (await design.boundingBox())!;
+	// Measured against the `<li>`, which is the element the popup is anchored to and the box
+	// upstream anchors to: `ShowAttachedFlyout(m_rootGrid.get())` (`NavigationViewItem.cpp:824`).
+	// It shares its left, right and top with the row inside it and is taller — it also holds
+	// the children list — and those three edges are the ones these two numbers read.
+	//
+	// Not the fill: the fill is inset by `NavigationViewItemButtonMargin`, so asking the same
+	// two questions of it moves both answers by that margin — 4 on x and 2 on y — and a check
+	// written against the fill cannot tell the two boxes apart.
+	//
+	// **Zero on the x axis, not `Flyout`'s default 4.** Upstream's `Right` mode is flush:
+	// `*pControlPos = anchorPos + anchorSize` (`FlyoutBase_partial.cpp:386`, reached at
+	// `:457-464`). The -4 on the y axis is the presenter style's `Margin="0,-4,0,0"` on top of
+	// `PreferredJustification::Top`, which is `*pControlPos = anchorPos` (`:99-101`, `:331-333`).
+	const anchor = (await design.locator('xpath=ancestor::li[1]').boundingBox())!;
 	const presenter = (await page.locator('.presenter:has(.flyout-children)').boundingBox())!;
-	expect(presenter.x - (anchor.x + anchor.width)).toBeCloseTo(4, 0);
+	expect(presenter.x - (anchor.x + anchor.width)).toBeCloseTo(0, 0);
 	expect(presenter.y - anchor.y).toBeCloseTo(-4, 0);
 });
 
