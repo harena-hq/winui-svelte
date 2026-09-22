@@ -274,6 +274,27 @@ then the ninth entry, which is a search rather than a press and says so.
    and nothing here contradicts it — which is as far as this goes. It is not an observation of
    `ShouldEnableToolTip`: no press can see a line of C++, and this one is consistent with the
    reading rather than a test of it.
+
+   Pressed again on 2026-09-22, **with the pane collapsed to the rail this time**, and it does
+   raise one: an arrow key onto a rail row opens that row's own tooltip, after a wait, and the
+   popup stands 12px clear of the row's 48x40 bounds. Pressed on the shell's pane and on the
+   page's own sample, which agree to the pixel — the two disagree about the arrow keys
+   themselves (answer 2) and not about this. The earlier press found none on this
+   pane, and the two readings sit together only if that one was taken with the pane open, which
+   the note does not say — so the honest account is that the shell pane has now been pressed in
+   both states and shows a tooltip in one of them. That makes it the first press to see
+   `ShouldEnableToolTip`'s second conjunct at all, which the paragraph above says no press had:
+   an open pane shows none, the same pane collapsed shows one.
+
+   **What this press establishes about the tooltip itself is one thing and one measurement**, and
+   the `ToolTip` input-mode unit that used them says which is which. The press establishes only
+   _that there is a wait_ — a capture taken in the same breath as the key catches no tooltip and
+   one taken a second later has it; **800ms is read from the pin**, not measured here
+   (`GetInitialShowDelay`, `ToolTipService_Partial.cpp:1788-1838`). The 12 is the measurement,
+   taken twice on two rows and once again on the page's own sample; `surface.md` carries 12 as
+   `DEFAULT_KEYBOARD_OFFSET`, which is the pin's number for it, and the measurement that agrees
+   with it lives in `ToolTip.svelte`'s comment on the offset constants.
+
 6. **The chevron is reachable by pointer only**, and it is not needed: invoking anywhere on the
    row toggles the subtree.
    **We** rendered it as a `<button>`, which put it in the tab order — the extra stops in 1
