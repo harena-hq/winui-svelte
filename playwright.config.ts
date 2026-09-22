@@ -31,7 +31,7 @@ export default defineConfig({
 	//
 	// Playwright's own default when the browser is local, which is half the cores.
 	//
-	// It was sixteen from `bcb30dd` (2026-09-14) until this line, and the reason recorded there
+	// It was sixteen from `2e00fda` (2026-09-14) until this line, and the reason recorded there
 	// was wrong. The suite had begun failing a handful of tests on each full run, a different
 	// handful each time, every one of them passing when its own spec was run alone; it stopped at
 	// sixteen workers and was read as a contention ceiling. What it was racing is the page's own

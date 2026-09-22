@@ -43,7 +43,7 @@
 
 	// LinePage.xaml:239-246 — the GeometryGroup, composed here as one Path.Data string.
 	// D35: a Geometry is a value rather than an element, so the library publishes no builders
-	// for one and the page writes the string; commit f708785 records the decision.
+	// for one and the page writes the string; commit d886c0f records the decision.
 	//
 	// FillRule="EvenOdd" is the leading F0 token — readPathData takes it off the front and puts
 	// it on the element as fill-rule, which is the only difference between XAML's path

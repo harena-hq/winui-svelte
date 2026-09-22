@@ -66,11 +66,50 @@ history is a rebase that never happened.
 
 This section exists because the grammar was stated only in a skill this repository does
 not carry, and nothing read a subject line. Of the 360 commits before the rule was
-enforced, 66 conform: 253 subjects do not parse and 41 more overrun 72 characters. The
-drift is dateable — on 2026-09-06 one subject took the shape `ProgressRing: <sentence>`
-and 82 more followed, which _looks_ like the grammar while a parser sees a type named
-`ProgressRing`. Those commits are rewritten in their own unit; `C10` states the boundary
-in one line rather than passing quietly over them.
+enforced, 66 conformed: 253 subjects did not parse and 41 more overran 72 characters.
+The drift was dateable — on 2026-09-06 one subject took the shape
+`ProgressRing: <sentence>` and 82 more followed, which _looks_ like the grammar while a
+parser sees a type named `ProgressRing`. **Those 294 subjects were rewritten on
+2026-09-22**, every tree left byte-identical, so `C10` now reads the whole log and the
+boundary it used to state is gone. The tag `pre-history-rewrite-20260922` holds the
+history as it was.
+
+**A subject with two clauses is still one intent.** A commit is one intent, and a subject
+that needs "and" usually names two; yet 151 of these 412 subjects carry an `and` or a
+semicolon. The rule is about the unit, not the conjunction: "the pane is one tab stop and the
+rows are a ring" is one mechanism stated as the two facts that make it checkable, and
+splitting it would seal a pane that tabs into nothing. Where the two halves are two units,
+they are still split.
+
+## Commit trailers
+
+The block goes **last, with nothing after it**, and a value that wraps indents its
+continuation lines by two spaces. Both are `git-interpret-trailers`' requirements rather
+than house style: a continuation flush at the left margin makes git read the whole block
+as prose and return no trailers at all, which is invisible until someone asks for one.
+The symptom is an empty column in `git log --format='%h %(trailers:only=true)'`, and 46
+of this repository's commits carried it silently, because a single-line trailer never
+wraps and the only trailer most of them had was one line.
+
+**An agent takes `Assisted-by: <agent>:<model>`, one line per agent that contributed,
+and never `Co-Authored-By:` or `Signed-off-by:`.** The right-hand side names the model
+and nothing else — not the harness that drove it, the service that served it, the effort
+level or the context window, because a model served by one host is the same model served
+by another. `Assisted-by: Claude:claude-opus-5`, not
+`Assisted-by: Claude:claude-opus-5[1m]`.
+
+**A sha in a commit message is a citation, and a rewrite has to re-point it.** 75 of
+them across 46 messages, and 44 more in tracked files, were left dangling by the first
+attempt at the 2026-09-22 rewrite. `git filter-repo` translates the ones in messages
+itself — but before it calls `--commit-callback`, so a callback that replaces the
+message undoes the translation it never saw happen.
+
+**A trailer earns its line by recording what the diff cannot show.** The main ones:
+`Reviewed:` names the evidence of an independent review, not the fact of one (older commits also
+used it for gate results); `Done-when:` what had to hold for the unit to count as done;
+`Lesson:` a mistake or gotcha the next change would otherwise repeat; `Directive:` and
+`Rejected:` a decision taken and an alternative turned down, with why; `Not-verified:` what was
+not checked.
 
 ## Engineering method
 
@@ -79,4 +118,7 @@ work here. One goal per version; each unit states its Done-when, passes its
 conformance gates and receives an independent review. This brief may record
 an exception with its rationale.
 
-No override is in force. This project follows this brief's engineering method.
+One exception is in force, and it is the one recorded under **Commit subjects** above:
+the rule that a subject needing "and" names two intents governs the unit, not the
+conjunction, so a two-clause intent line is allowed where the clauses are two halves
+of one mechanism.

@@ -915,7 +915,7 @@ has been declined.
   pixels — by which 39, 37 and the back button's own 40 fail to agree — are margin, not a
   second missing element. **All three of our figures were taken on 2026-09-10 and two fixes have
   moved every one of them since**; the original's four are untouched, being the original's.
-  `976872b` took four pixels out of the pane's toggle row, so 94 and 67 are each four less than
+  `b127665` took four pixels out of the pane's toggle row, so 94 and 67 are each four less than
   they were, and the unit after it gave the toggle the `4,2` its style insets the painted box by,
   which moves the toggle's own 25 and makes what measured 36 measure 40 — the same 36 of
   `PaneToggleButtonHeight` (`NavigationView_themeresources.xaml:205`) with
