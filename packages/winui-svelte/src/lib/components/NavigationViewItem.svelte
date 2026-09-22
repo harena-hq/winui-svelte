@@ -301,22 +301,29 @@
 	//
 	// The top margin is upstream's, with its reason beside it in the template — "Set negative
 	// top margin to make the flyout align exactly with the button"
-	// (`NavigationView.xaml:473-474`). The left margin is this implementation's own, and it
-	// exists because the anchor is the `<li>` rather than the row upstream anchors to
-	// (`m_rootGrid`, `NavigationViewItem.cpp:824`): the `<li>` is the row plus the row's
-	// `NavigationViewItemButtonMargin`, which is `2px 4px`.
+	// (`NavigationView.xaml:473-474`), and `Margin="0,-4,0,0"` is the whole of it: upstream
+	// writes no horizontal margin at all.
 	//
-	// **Only the horizontal half of that margin needs giving back**, and the asymmetry is the
-	// CSS box model rather than a judgement. The row's top margin collapses *through* the
-	// `<li>` — no border, no padding, no formatting context of its own — so the two boxes
-	// already share a top edge and upstream's -4 lands where upstream means it. The side
-	// margins do not collapse, so the `<li>` is 4px wider on the right and the popup would sit
-	// 4px further out. Measured: with the left margin the gap to the row is 4, which is
-	// `Flyout`'s own default; without it, 8.
+	// **Neither does this, and an earlier version of it did** — `margin-left: -4px`, written as
+	// the horizontal half of `NavigationViewItemButtonMargin` given back, because the `<li>`
+	// was then the row plus that half. It is not that any more: the margin is the presenter's
+	// padding, so the `<li>` is the row on both axes, and it is the box upstream anchors to —
+	// `ShowAttachedFlyout(m_rootGrid.get())` (`NavigationViewItem.cpp:824`), `m_rootGrid` being
+	// the template's `NVIRootGrid` (named at `:15`, taken at `:86`), which holds the presenter
+	// in its first row and the children repeater in its second.
+	//
+	// **What that number was really cancelling is `offset`, and it is set to zero below
+	// instead.** `Flyout`'s own default is 4 (`Flyout.svelte:66`), measured on a
+	// `Bottom`-placed flyout and not on this one; upstream places a `Right` mode flush against
+	// the anchor, `*pControlPos = anchorPos + anchorSize` with nothing added
+	// (`FlyoutBase_partial.cpp:386`, reached for `MajorPlacementMode::Right` at `:457-464`).
+	// The vertical is the same story with the answer already right: `RightEdgeAlignedTop` is
+	// `PreferredJustification::Top` (`:99-101`), which is `*pControlPos = anchorPos` (`:331-333`),
+	// and the presenter's `Margin="0,-4,0,0"` lifts it the 4 from there.
 	const CHILDREN_FLYOUT_STYLE =
 		'--winui-FlyoutContentPadding: var(--winui-NavigationViewItemChildrenMenuFlyoutPadding);' +
-		/* c1-allow: NavigationView.xaml:474, and the `4px` side of NavigationViewItemButtonMargin */
-		' margin-top: -4px; margin-left: -4px;';
+		/* c1-allow: NavigationView.xaml:474 */
+		' margin-top: -4px;';
 
 	function withTriggerKeydown(props: Record<string, unknown>) {
 		return (event: KeyboardEvent) => {
@@ -362,45 +369,53 @@
 	     package's own `check` stays green, and without either one `check` fails on an
 	     implicit `any`. A default is plain JavaScript and types it. -->
 		{#snippet row(props = EMPTY_TRIGGER_PROPS)}
-			<div
-				{...props}
-				role="treeitem"
-				class="item"
-				aria-selected={isSelected}
-				aria-expanded={hasChildren ? open : undefined}
-				aria-level={level}
-				tabindex={tabStop ? 0 : -1}
-				data-selected={isSelected}
-				data-expanded={hasChildren ? open : undefined}
-				onclick={withTriggerClick(props)}
-				onkeydown={withTriggerKeydown(props)}
-			>
-				<span class="selection-indicator"></span>
-				<span class="icon-column" data-icon={glyph ? true : undefined}>
-					{#if glyph}
-						<span class="icon">{String.fromCodePoint(parseInt(glyph, 16))}</span>
-					{/if}
-				</span>
-				<!-- `data-label` is the cell drawing a string, which is the only shape the three
-			     trimming rules below are for. -->
-				<span class="content-presenter" data-label={children ? undefined : true}
-					>{#if children}{@render children()}{:else}{content}{/if}</span
+			<!-- `NavigationViewItemPresenter`, the element the item's own template marks
+			     `Control.IsTemplateFocusTarget` — `NavigationView.xaml:462`. It is the row, and the
+			     `4,2` it carries below is a margin on the *presenter's* `LayoutRoot`
+			     (`NavigationView_themeresources.xaml:451`), which lies inside this box. The focus
+			     visual is drawn at the focus target's bounds, so it covers that margin rather than
+			     the fill. -->
+			<div class="item-presenter">
+				<div
+					{...props}
+					role="treeitem"
+					class="item"
+					aria-selected={isSelected}
+					aria-expanded={hasChildren ? open : undefined}
+					aria-level={level}
+					tabindex={tabStop ? 0 : -1}
+					data-selected={isSelected}
+					data-expanded={hasChildren ? open : undefined}
+					onclick={withTriggerClick(props)}
+					onkeydown={withTriggerKeydown(props)}
 				>
-				{#if hasChildren}
-					<!-- Not a tab stop. `ExpandCollapseChevron` is a `Grid`
+					<span class="selection-indicator"></span>
+					<span class="icon-column" data-icon={glyph ? true : undefined}>
+						{#if glyph}
+							<span class="icon">{String.fromCodePoint(parseInt(glyph, 16))}</span>
+						{/if}
+					</span>
+					<!-- `data-label` is the cell drawing a string, which is the only shape the three
+			     trimming rules below are for. -->
+					<span class="content-presenter" data-label={children ? undefined : true}
+						>{#if children}{@render children()}{:else}{content}{/if}</span
+					>
+					{#if hasChildren}
+						<!-- Not a tab stop. `ExpandCollapseChevron` is a `Grid`
 					     (`NavigationView_themeresources.xaml:617`), which is not a `Control` and has
 					     no `IsTabStop`, and the 2026-09-21 press found it unreachable by key
 					     (`docs/keyboard.md`, answer 6). It stays a `<button>` for the pointer and
 					     for assistive technology, and `tabindex="-1"` still allows the two keyboard
 					     tests that drive it to focus it from script. -->
-					<button
-						type="button"
-						class="expand-chevron"
-						aria-label={open ? 'Collapse' : 'Expand'}
-						tabindex="-1"
-						onclick={toggle}
-					></button>
-				{/if}
+						<button
+							type="button"
+							class="expand-chevron"
+							aria-label={open ? 'Collapse' : 'Expand'}
+							tabindex="-1"
+							onclick={toggle}
+						></button>
+					{/if}
+				</div>
 			</div>
 		{/snippet}
 
@@ -452,11 +467,16 @@
 	     primitives' trigger props collide on `id`, on `data-state` and on `aria-expanded` —
 	     the last of which this row already owns as the tree's own expansion, so a merged bag
 	     would not just lose one primitive's identity but overwrite a semantic attribute.
-	     **The two boxes are not the same rectangle**, and an earlier version of this comment
-	     said they were: the `<li>` is the row plus the horizontal half of the row's
-	     `NavigationViewItemButtonMargin`, the vertical half having collapsed through it.
-	     `CHILDREN_FLYOUT_STYLE` gives that half back, and the test asserts the placement
-	     against the row rather than against the side it lands on.
+	     **The `<li>` and the row now share three of their four edges, and that is new.** The
+	     `<li>` carries no padding, border or margin of its own, so its left, right and top are
+	     the presenter's; it is taller, because it also holds the children list when a row is
+	     expanded outside a flyout. Three edges is what the placement needs, and they are the
+	     three `m_rootGrid` has — that grid holds the presenter in its first row and the
+	     children repeater in its second, so it is the same shape. While the row carried
+	     `NavigationViewItemButtonMargin` as a CSS `margin` the `<li>` was the row plus the
+	     horizontal half of it, and `CHILDREN_FLYOUT_STYLE` gave that half back; the margin is
+	     the presenter's padding now, and the compensation is gone with the mismatch it
+	     answered.
 
 	     What the `<li>` anchor costs is announcement: the primitive puts `aria-haspopup` and
 	     its own `aria-expanded` on the anchor, and an `<li role="none">` is where assistive
@@ -476,6 +496,7 @@
 			if (!next && open) pane().setExpanded(tag, false);
 		}}
 		placement="rightEdgeAlignedTop"
+		offset={0}
 		style={CHILDREN_FLYOUT_STYLE}
 		content={flyoutRows}
 	>
@@ -488,6 +509,32 @@
 {/if}
 
 <style>
+	/* `NavigationViewItemPresenter` — the row, and the box the focus visual is drawn at.
+	   `NavigationViewItemButtonMargin` is a margin on the `LayoutRoot` *inside* the presenter
+	   (`NavigationView_themeresources.xaml:451`, the Thickness at `:228`), written here as
+	   padding rather than on the fill as a margin because two XAML margins add where two CSS
+	   margins collapse: with it on the fill, consecutive rows sat 38 apart with 2px between
+	   their fills against the original's 40 and 4.
+
+	   `NavigationViewItemMargin`, the item's own margin, is `0` (`:245`), so the row is this
+	   box and nothing separates one row from the next.
+
+	   The corner radius is the presenter's `CornerRadius="{TemplateBinding CornerRadius}"`
+	   (`NavigationView.xaml:462`) taking the item's `ControlCornerRadius` (`:432`). It paints
+	   nothing here; the focus visual inherits it. Upstream then deflates the *inner* stroke's
+	   radius by half the primary thickness as it draws that stroke — `AdjustCornerRadius`,
+	   `FocusRectManager.cpp:68-88`, clamped at zero per corner — where the two inset shadows
+	   below share one radius, so this library's inner stroke rounds a half-thickness wider at
+	   the corners. That is the shape `Button.svelte` already carries and not a choice this
+	   makes; it is written here because this is the first comment in the file to say anything
+	   about the radius, and a sentence that states only the half that matches reads as a
+	   sentence that checked both. */
+	.item-presenter {
+		position: relative;
+		padding: var(--winui-NavigationViewItemButtonMargin);
+		border-radius: var(--winui-ControlCornerRadius);
+	}
+
 	.item {
 		/* XAML's `MinHeight` and `MinWidth` include the border and the padding; CSS's
 		   `min-height` and `min-width` do not, unless the box is `border-box`. Without
@@ -500,7 +547,6 @@
 		grid-template-columns: auto 1fr auto;
 		align-items: center;
 		min-height: var(--winui-NavigationViewItemOnLeftMinHeight);
-		margin: var(--winui-NavigationViewItemButtonMargin);
 		/* c1-allow: NavigationView_themeresources.xaml:604, the item's ContentGrid carries
 		   Margin="0,0,14,0" and no resource names the 14 */
 		padding-right: 14px;
@@ -712,11 +758,39 @@
 
 	/* The focus visual; see Button.svelte for the shape.
 
-	   No `FocusVisualMargin` is set on `NavigationViewItem` anywhere in
-	   `controls/dev/NavigationView/`, so the band is drawn inside the item's own bounds.
-	   `.expand-chevron` is this library's own tab stop and has no upstream counterpart,
-	   so it takes the same default. */
-	.item:focus-visible::before {
+	   **The band is drawn at the presenter's bounds, not the fill's.** The focused element is
+	   the item, and its own template marks the presenter as the focus target
+	   (`Control.IsTemplateFocusTarget`, `NavigationView.xaml:462`); the fill is that
+	   presenter's `LayoutRoot`, inset by `NavigationViewItemButtonMargin`. Both strokes then
+	   land inside the 4px the margin leaves on each side, and the selection indicator — which
+	   starts at the fill's left edge — clears the secondary stroke by a pixel. Drawn on the
+	   fill instead, the primary stroke ran straight over the indicator.
+
+	   The presenter's own `LayoutRoot` is marked too (`NavigationView_themeresources.xaml:451`)
+	   and that does not reach this band, because the property registers upward rather than
+	   being looked up downward: a marked element walks to its nearest `Control` ancestor and
+	   stores itself in that control's `FocusTargetDescendant` (`framework.cpp:890-905`), so
+	   `LayoutRoot` registers on the presenter and the presenter registers on the item, and on
+	   focus the item reads only its own descendant (`uielement.cpp:6486-6496`) — one hop.
+
+	   That both strokes are inside the bounds rather than straddling them is upstream's:
+	   `CFocusRectManager::ConfigureFocusElement` gives the outer border the bounds it was
+	   handed and deflates the inner one by the primary thickness
+	   (`FocusRectManager.cpp:434-455`, the two roles named at `:173-174`). The bounds are the
+	   target's own because the presenter's style sets no `FocusVisualMargin`
+	   (`NavigationView_themeresources.xaml:440-447`), and it is the target's value that is read
+	   before the focused element's (`FocusRectManager.cpp:109-110`); a `0` margin leaves
+	   `ShrinkRectByThickness` (`FocusRectNudging.h:388`) returning the rect it was given. The
+	   four `FocusVisualMargin` setters in `controls/dev/NavigationView/` are all on `Button`
+	   styles, and one of them is `-4,0` — a negative horizontal margin is what *would* widen a
+	   band, which is why it is worth saying that this row is not the button that has it.
+
+	   `:has()` rather than a rule on the focused element itself, because the element that
+	   takes the focus and the element the band is drawn on are two different boxes here, and
+	   that is exactly what `IsTemplateFocusTarget` says. `.expand-chevron` below is this
+	   library's own tab stop with no upstream counterpart, so it keeps the ordinary shape and
+	   draws at its own bounds. */
+	.item-presenter:has(> .item:focus-visible)::before {
 		content: '';
 		position: absolute;
 		inset: 0;
