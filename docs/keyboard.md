@@ -232,7 +232,20 @@ then the ninth entry, which is a search rather than a press and says so.
    (`NavigationView.cpp:2786`), `Depth()` is 0 so the climb at `:2822` is skipped too, and
    XAML's directional navigation finishes the move. **The web has no directional focus
    navigation, so declining moves nothing** — which is the whole of the defect, and the reason
-   this one place has to name the element that upstream never names.
+   this one place has to name the element that upstream never names. What makes the declining
+   work upstream is one line of code-behind rather than the template:
+   `rootGrid.XYFocusKeyboardNavigation(Enabled)` (`NavigationView.cpp:681`), with the content
+   grid switched off beside it at `:686`.
+
+   **Press this on the page's own sample and not on the Gallery's shell pane.** Re-pressed on
+   2026-09-22 on both: the sample answers as above in both directions, and the shell's pane
+   does neither — Up from its first row stays on the row and Down from its hamburger stays on
+   the hamburger, in the open pane and in the rail alike. The shell draws its toggle in the
+   app's own title bar rather than at the top of the pane, which is the obvious suspect and is
+   **not** established here; what is established is that the shell is not a specimen of this
+   behaviour. Read off the shell alone, the press says the ring has no head, which is how a
+   correct build came within one edit of being reverted.
+
 3. **Home and End jump to the ends**, and pressing them again does nothing.
    **We** did nothing on either.
    **Built on 2026-09-22**, and with a scope of their own: they reach the ends of the row's own
