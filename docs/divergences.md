@@ -2211,3 +2211,74 @@ changes`.
 - **Would reconsider if**: the naming unit that fixes the exported set reaches these two controls
   before a consumer holds them, which is the one moment narrowing the union costs nothing. Until
   then this entry is what says the extra member is ours.
+
+---
+
+### WD-094 — a tooltip reshown within 200ms waits the full delay, not the shorter one
+
+- **Control**: `ToolTip`.
+- **WinUI does**: shorten the wait for a tooltip raised soon after the last one closed.
+  `GetInitialShowDelay` (`ToolTipService_Partial.cpp:1795-1838`) takes the input mode and an
+  `isReshow` flag and multiplies `SPI_GETMOUSEHOVERTIME` — 400ms by default
+  (`ToolTipService_Partial.h:18`). A reshow is an open within `BETWEEN_SHOW_DELAY_MS`, 200ms, of
+  the last one (`ToolTipService_Partial.h:17`), measured against a static on the service
+  (`:659`).
+
+  **The multipliers are 1x for a mouse reshow and 2x for a keyboard one, and the first of those
+  is not what the function's own comment says.** The comment prints 1.5x (`:1791`); the code is
+  `ulSPIGetMouseHoverTimeTicks *= static_cast<INT64>(isReshow ? 1.5 : 2)` (`:1825`), and the
+  conditional's common type is `double`, so a reshow multiplies by `static_cast<INT64>(1.5)` —
+  1. Upstream's mouse reshow is 400ms. The other cells are integer arithmetic and survive the
+     cast (`:1822-1823`, `:1828-1829`). A review caught this entry quoting the comment; the number
+     below is the code's.
+
+- **We do**: wait 800ms for every open, in both modes this library reaches. That is 400ms longer
+  than upstream's mouse reshow, and exactly upstream's keyboard one — upstream's keyboard row is
+  the same 2x as its normal one, so that half is right by not being a special case.
+- **Why accepted**: the clock the row needs does not exist here. The reshow window is a static on
+  `ToolTipService`, one per application, and this library composes bits-ui, whose nearest
+  mechanism is per **provider** — and `ToolTip.svelte` renders one provider per tooltip, so no
+  two tooltips in a page share a "last shown" moment to measure a reshow against. What bits-ui
+  does offer in that window is not a shorter delay but **no delay at all**
+  (`skipDelayDuration`, default 300ms, `tooltip.svelte.js:141-151`).
+
+  For the mouse the two available answers are equidistant: the full delay is 400ms long and the
+  skip is 400ms short. **The keyboard breaks the tie** — the full delay is exactly upstream's
+  800 and the skip is the whole 800 short of it — and withholding the skip also makes the delay
+  a function of the input mode alone, which is the property the rest of the unit rests on.
+
+- **Would reconsider if**: the providers are hoisted to one per application, which is what a
+  shared clock would need and which nothing else asks for today. A tooltip primitive that exposed
+  the reshow delay as a number rather than as a skip would settle it without that.
+
+---
+
+### WD-095 — a programmatic focus opens a tooltip here, where upstream wants UIA behind it
+
+- **Control**: `ToolTip`.
+- **WinUI does**: open a tooltip on a focus that is `FocusState::Keyboard`, or that is
+  `FocusState::Programmatic` **and** followed a UIA-driven focus set — the test is
+  `focusState == Keyboard || (focusState == Programmatic && GetWasUIAFocusSetSinceLastInput())`
+  (`ToolTipService_Partial.cpp:1706-1707`), and `OnOwnerEnterInternal` is reached only under it
+  (`:1714`). An ordinary `element.Focus(FocusState::Programmatic)` from application code opens
+  nothing.
+- **We do**: open one for any focus that matches `:focus-visible` and did not follow a pointer
+  press. Chromium grants `:focus-visible` to a scripted `focus()` whenever the last user input
+  was a keypress or there has been none — measured with a scripted `focus()` after each kind of
+  input — so a consumer calling `.focus()` raises a tooltip that upstream would not.
+- **Why accepted**: the distinction upstream draws does not exist in the DOM. `FocusState` is
+  three-valued and carries how the focus was set; a `focus` event carries nothing, and
+  `:focus-visible` is the platform's own heuristic for the same question — which is why it is
+  the right stand-in for `Keyboard` and cannot be made into a stand-in for "not
+  `Programmatic`". Nor is there a UIA flag to ask: an assistive technology moving focus on the
+  web arrives as an ordinary focus. Of the two ways to be wrong, opening one tooltip too many
+  matches upstream's _intent_ for the UIA case, which is the case the property exists for.
+
+  The neighbouring half is **not** a divergence and is reproduced: a focus that follows a mouse
+  press is declined, by the `pointerDown` latch `ToolTip.svelte` keeps for it. Chromium grants
+  `:focus-visible` to a pressed text input, so the pseudo-class alone would have opened one
+  there and upstream calls that focus `Pointer`.
+
+- **Would reconsider if**: the platform gains a way to tell a scripted focus from a user's, or
+  the library grows a prop for it. A consumer that must not raise a tooltip programmatically can
+  set `openOnHover={false}` today and drive `open` itself.

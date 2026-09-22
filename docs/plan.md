@@ -841,9 +841,13 @@ group sizes, which no longer line up one-to-one with a version.
     Goal: **the application can tell the user what is happening.**
 
     Swept before the first line was written, which is what `docs/surface.md` is for. Four of
-    the five have a full implementation in the pin; **ToolTip has only theme resources** —
-    it is a `Windows.UI.Xaml` control, so its 78-line dictionary and the Gallery's page are
-    the whole of what can be read. What the sweep changed about this version's shape:
+    the five have a full implementation in the pin, and **this said ToolTip had only theme
+    resources** — that it is a `Windows.UI.Xaml` control, so its dictionary and the Gallery's
+    page were the whole of what could be read. **The dictionary is 77 lines, not 78, and the
+    claim around it expired on `4c0ce0a`**, which widened the sparse checkout to `dxaml`: the
+    pin carries `ToolTip_Partial.cpp` and `ToolTipService_Partial.cpp`. `surface.md`'s ToolTip
+    entry is the corrected account, and this line is the last copy of the old one — it sat in
+    the file that entry points at. What the sweep changed about this version's shape:
 
     - **ProgressRing has no template to derive from.** Its `ControlTemplate` is one
       `AnimatedVisualPlayer` and nothing else: both the determinate and the indeterminate

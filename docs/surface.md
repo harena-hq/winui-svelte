@@ -201,7 +201,7 @@ true of the evidence it had and is false now**, for the reason "The checkout gre
 claims did not" gives below: the checkout held `controls/dev` alone until `4c0ce0a`, and it now
 carries `ToolTip_Partial.cpp` at 2584 lines and `ToolTipService_Partial.cpp` at 2362. Steps 2
 and 3 did not apply to the evidence this entry had. Against the evidence the repository has,
-**placement has now been run and delay and dismissal have not.**
+**placement and the show delay have now been run and dismissal has not.**
 
 Placement, read by `8e18c01`, the unit that stopped the pop-up moving out from under a leaving
 pointer: the
@@ -217,10 +217,43 @@ close at `ToolTip_Partial.cpp:405`. An opened tooltip survives its owner's `Poin
 a safe-zone check closes it (`ToolTipService_Partial.cpp:1474`, the comment at `:1484-1485`,
 `OnSafeZoneCheck` at `:349`). `ToolTip.svelte` carries the same citations.
 
-Delay and dismissal are where the deferral below still stands on its original footing: the
-Gallery's page and Microsoft's published reference are the whole of what this library has read
-for them. What that left open — `PlacementRect`, and a `VerticalOffset` whose effect on the
-guest did not reduce to a simple delta — is deferred in `plan.md` rather than guessed at.
+The show delay and the offset, read together because upstream decides them together: both are
+functions of `m_inputMode`, the field placement already turned on. `GetInitialShowDelay`
+(`ToolTipService_Partial.cpp:1788-1838`) is a table of mode against normal-or-reshow over
+`SPI_GETMOUSEHOVERTIME` (400ms, `ToolTipService_Partial.h:18`) — **and one cell of the table its
+own comment prints is not the cell its code computes**, the mouse reshow being 1x rather than
+1.5x because `static_cast<INT64>(isReshow ? 1.5 : 2)` truncates (`:1825` against `:1791`) — and
+the offset switch
+(`ToolTip_Partial.cpp:1229-1255`, and `:1722-1748` on the windowed path) picks between
+`DEFAULT_KEYBOARD_OFFSET` 12, `DEFAULT_MOUSE_OFFSET` 20 and `DEFAULT_TOUCH_OFFSET` 44
+(`ToolTip_Partial.h:10-13`) wherever `IsPropertyLocal` says the consumer has not fixed it
+(`:1220`, `:1713`).
+
+**Three pieces of that surface are read and not reproduced.** Two of them are here because
+nothing chose them; the first is here only as a pointer, because a choice _was_ made and
+`divergences.md` is where a choice goes:
+
+- **The reshow row**, which is **WD-094** rather than an entry here, because the shorter of the
+  two available answers was chosen rather than merely unbuilt. The keyboard's reshow row is 2x —
+  the same as its normal one — so that half is built by not being a special case at all.
+- **The touch mode.** `AutomaticToolTipInputMode::Touch` has its own delay (1x, and 0 on a
+  reshow) and its own 44px offset, and upstream opens a tooltip on a press-and-hold. The
+  primitive returns on `pointerType === "touch"` before anything here sees it, so a touch opens
+  none.
+- **The second half of `IsEnabled`.** A tooltip that is already open when `IsEnabled` goes
+  false is _hidden_ upstream — the popup's opacity goes to 0 while `IsOpen` stays true
+  (`ToolTip_Partial.cpp:2075-2098`). This library's `disabled` only withholds the openings, which
+  is what it did before the input-mode unit as well; the unit's own `disabled` test is at the
+  moments it opens.
+- **`ToolTip.HorizontalOffset` and `VerticalOffset` as two properties.** This library takes one
+  `offset` across the single axis a placement uses. Upstream keeps them independent and inflates
+  the target rect by both (`ToolTip_Partial.cpp:1275`); they carry the same value only because
+  an unset one falls through to the same mode constant, which is every case this library has.
+
+Dismissal is where the deferral below still stands on its original footing: the Gallery's page
+and Microsoft's published reference are the whole of what this library has read for it. What
+that left open — `PlacementRect`, and a `VerticalOffset` whose effect on the guest did not
+reduce to a simple delta — is deferred in `plan.md` rather than guessed at.
 
 **The stale twin of this entry was in the component**, which still said there was no
 implementation to read; `8e18c01` corrected it. It is the **fourth** member of this
