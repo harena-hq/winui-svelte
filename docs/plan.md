@@ -1887,7 +1887,9 @@ group sizes, which no longer line up one-to-one with a version.
 
     **What this version declined.** WD-026, that a collection renders every item and nothing is
     virtualised. WD-027, that every item is a tab stop and there is no current item, extended
-    from ItemsView to TreeView and still waiting on the roving-tabindex rig WD-004 named.
+    from ItemsView to TreeView. It was accepted as WD-004's situation on a second control;
+    WD-004 was closed on 2026-09-22 and WD-027 now stands on its own reading, which is of
+    two templates and no press.
     WD-028, that a FlipView moves by its buttons and does not scroll.
 
 10. **The sample-page frame** — `ControlExample`'s three panes, `SampleCodePresenter`, the

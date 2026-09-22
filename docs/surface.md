@@ -396,8 +396,10 @@ container queries and the `calc((THRESHOLD - 100%) * 999)` flex-basis trick both
 samples sit in containers of identical width. So the panel measures, and the library's second
 `ResizeObserver` is here.
 
-**The trap is the one `NavigationView.svelte:225` already documents, in its sharper form.**
-There the observer writes a value nothing in the effect reads back. Here the value _is_ the
+**The trap is the one `NavigationView.svelte` already documents above `topGrid`, in its sharper
+form** — the comment beginning "The row is measured against two boxes", which says why the
+top-overflow measurement is taken on `.top-nav-grid` rather than on `.top-items`. There the
+observer writes a value nothing in the effect reads back. Here the value _is_ the
 layout being measured: measure the row, flip to the column, and the row is gone, so the next
 measurement says it fits and the panel oscillates forever. The fix is that the measurement
 must not depend on the orientation it produces — a `[data-measuring]` attribute overrides the

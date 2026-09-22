@@ -141,9 +141,10 @@ measured its own packaging rather than assuming it.
    control in the same pin wants the opposite it says why, at `TableView.cpp:271-273`. What the pin
    does not carry is whether a focused `TextBox` marks Space handled in the first place,
    which is what would decide the case. **Both halves were resolved on 2026-09-21 and
-   neither is still owed.** The wide one: that handler is WD-004, whose "WinUI does" paragraph
+   neither is still owed.** The wide one: that handler was WD-004, whose "WinUI does" paragraph
    described the WAI-ARIA tree pattern and assumed WinUI follows it; the assumption was
-   pressed and is false, and `docs/keyboard.md` has the record. The narrow one — type into a
+   pressed and is false, and `docs/keyboard.md` has the record. The entry was
+   deleted on 2026-09-22, when the ring that press asked for was built. The narrow one — type into a
    field inside a row of the original and see whether the row invokes — **cannot be asked of
    the reference at all**: the Gallery builds no editable field inside a row, and the pin
    does not carry the editor, so the search stands in for the press. That record is

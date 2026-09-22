@@ -142,93 +142,6 @@ surface are painted the same way.
 
 ---
 
-### WD-004 — NavigationView items are each a tab stop; arrow keys do not move focus
-
-- **Control**: `NavigationView`'s menu tree.
-- **WinUI does**, **pressed on the reference guest on 2026-09-21** — the record, with our
-  column beside it and every gap named, is in `docs/keyboard.md`: the pane is a single tab
-  stop and the stop is the _selected_ item, so Tab walks the pane toggle, that item, then the
-  Settings row. Up and Down move among the items and run into the Settings row at the foot,
-  where Down scrolls the page the sample sits on instead of moving within the list — the ring
-  therefore does not wrap, which is a conclusion from that press rather than a second
-  observation, since the record does not say where focus went. Home and End jump to the ends.
-  Enter and Space invoke a row and toggle a collapsed one open and shut. Left does not expand
-  a collapsed row and Right does not descend into an expanded one. There is no typeahead, and
-  the chevron is reachable by pointer only. In closed-compact, a row with children opens a
-  flyout with a ring of its own, which Escape closes.
-
-  Three things this record does not decide: where Tab goes after the Settings row, what the
-  ring's top end does, and whether Left collapses an expanded row. An earlier version of this
-  bullet claimed that Left and Right moved focus among items, that they also drove expand and
-  collapse, that typing jumped to a matching label, and that the chevron was reached by the
-  arrow keys. Each was read rather than pressed, and each fell.
-
-- **We do**: every item is `tabindex="0"` and is reached by Tab, and so is every expand
-  chevron, which is a `<button>`. There is no arrow-key navigation among items, no
-  typeahead, and no Home/End. **The closed-compact flyout is built and it inherits all of
-  that.** The reference record has four clauses for it — focus lands on the first item, Up and
-  Down cycle within it, Left does not escape it, Escape closes it — and three hold here. Focus
-  lands on the flyout's first row and Escape closes it in one press, both asserted in
-  `navigation-view-rail.spec.ts`. Left does not escape it either — read from the code rather
-  than pressed, and for a weaker reason than the original's, since no arrow key in this control
-  does anything at all. **Up and Down
-  are the one that fails**: the flyout's rows are tab stops with no ring of their own. The one
-  press took a decision of its own, WD-092.
-  Enter and Space
-  invoke and toggle, which is the part that already matches — on the row. **On the chevron
-  they do the chevron's own job**, collapsing or expanding without invoking, because the row
-  acts on a key only when the key's target is the row itself (ADR 0015's deferred item 2;
-  `navigation-view-keyboard.spec.ts` asserts it). **That is not a second divergence**, it is
-  this one's other half: the chevron being a tab stop at all is what this entry already
-  records, and a tab stop whose keys ran the row's handler instead of its own was that
-  divergence half-built. The original has nothing here to differ from — its chevron is a
-  `Grid` and the press found it unreachable, both above.
-- **Why accepted**: the tree is built from scratch, not on top of a primitive. The machine
-  this project would adopt for one — `@zag-js/tree-view`, which ADR 0004 picks by name in its
-  **Decision** — arrives with the Collections tranche. An earlier version of this sentence
-  said ADR 0004 had found that no surveyed library ships a tree; its **Context** says the
-  opposite ("Zag ships machines for **TreeView**, ColorPicker and NumberInput, which bits-ui
-  lacks"), and the sentence contradicted its own next clause. A
-  hand-rolled roving-tabindex loop is not hard; what is hard is the keyboard contract
-  being right without it being tested: each tree interaction is a state machine with
-  collapsed children, headers, an expand chevron, and three display modes that each close
-  the pane and change the candidate set. **One clause of that list is struck.** The chevron
-  was described here as "focusable in WinUI but lives inside an item that is", and it is
-  not: the template makes `ExpandCollapseChevron` a `Grid`
-  (`NavigationView_themeresources.xaml:617`), which is not a `Control` and has no
-  `IsTabStop`, and the observation below found it unreachable by key. Ours is a `<button>`
-  and is a tab stop, so the asymmetry runs the opposite way from the one this sentence
-  costed. The web's own keyboard contract for a `role="tree"` is the WAI-ARIA
-  Authoring Practices guide, and this paragraph took WinUI to follow it — **which the
-  observation refutes, and it was the clause `docs/keyboard.md` was written to check.** The
-  guide's tree pattern has Right expand, Left collapse and typeahead; the original has no
-  typeahead, no expand on Right, and at most a collapse on Left. So the rig this paragraph
-  waits for is a rig for a contract the original does not implement. Until then, every
-  item being a tab stop is the behaviour the keyboard already reaches, and the cost of
-  the gap is a Tab key rather than an arrow key — a real loss, and a recorded one.
-
-  **The observation weakened this.** Two of the three things that made the contract look
-  expensive — a Left/Right expand state machine and a typeahead — do not exist, and the
-  chevron whose clause is struck above is not reachable by keyboard at all — the press is
-  what found that, and the template is what says why, so the "some other route" this
-  sentence used to leave open is closed rather than merely unpressed. What is left is a ring
-  over one flat candidate list that does not wrap at the foot, Home and End, a possible
-  collapse on Left, and a flyout in closed-compact. That is smaller than what the Collections
-  tranche was being waited on for.
-
-- **Would reconsider if**: the Collections tranche lands with a tree that the navigation
-  pane can adopt, or the Gallery's own page structure makes hand-rolling the contract
-  cheap enough to do without that. Either way the entry is deleted, because the
-  behaviour it names is the one WinUI ships. **A third route to the same predicate has
-  appeared, and neither written condition describes it**: nothing changed about the Gallery's
-  page structure and the Collections tranche has not landed — what changed is the size of the
-  contract, now that three of the things that made it expensive turn out not to exist. On
-  that ground the row is a candidate for the punch list rather than this registry, since
-  `keyboard.md` puts it plainly: a roving tabindex is not something the web cannot do. Moving
-  it is its own decision and has not been taken here.
-
----
-
 ### WD-005 — TitleBar never collapses its title to make room for content
 
 - **Control**: `TitleBar`.
@@ -806,19 +719,28 @@ has been declined.
   arrow keys, no Home or End, and no `CurrentItemIndex`, because without focus management the
   property would report nothing the view actually knows. A TreeView branch opens by clicking
   its chevron and by Enter or Space on a row that has one.
-- **Why accepted**: it is WD-004's situation on a second control, and the same answer. The
-  keyboard contract for a grid of items is a roving-tabindex state machine whose candidate set
-  changes with the layout — a stack moves by one, a uniform grid by a row, a lined flow by a
+- **Why accepted**: the keyboard contract for a grid of items is a roving-tabindex state
+  machine whose candidate set changes with the layout — a stack moves by one, a uniform grid by a row, a lined flow by a
   line whose length is measured — and getting it wrong is worse than not having it, because a
   half-working arrow key is a trap where a Tab key is merely a longer road. The visual bar this
   project sets is met either way: focus draws the same band on the same element.
-- **Would reconsider if**: the tranche's `TreeView` unit builds the roving-tabindex rig WD-004
-  is already waiting on, at which point both rows are re-examined together and this one is
-  deleted if the rig fits a two-dimensional candidate set. WD-004's half of that shared
-  rationale was pressed on 2026-09-21 and came back smaller than it had been described; this
-  row's own reading is of `ItemsView` and `TreeView` and no key was pressed on either, so
-  nothing here is restated on that account — it is noted so the re-examination knows one half
-  has moved.
+- **Would reconsider if**: the tranche's `TreeView` unit builds a roving tabindex over a
+  two-dimensional candidate set, at which point this row is deleted.
+
+  **This entry used to rest on another.** It was accepted as "WD-004's situation on a second
+  control, and the same answer", and WD-004 — `NavigationView`'s pane, every row a tab stop and
+  no arrow keys — **is gone**: it was pressed on the reference on 2026-09-21, came back much
+  smaller than it had been described, and the ring it asked for was built on 2026-09-22. So the
+  shared rationale is no longer shared, and what is left here has to stand on its own: it does,
+  because the argument above is about a candidate set whose **shape** changes with the layout —
+  a stack moves by one, a uniform grid by a row, a lined flow by a measured line — and that is
+  the half `NavigationView` never had. Its pane is a tree rather than a flat list, so its
+  candidate set does change with expansion; what it never becomes is two-dimensional, and one
+  dimension is what made the ring a loop over document order rather than a state machine. What does not carry over is the borrowed
+  authority. No key has been pressed on `ItemsView` or `TreeView`, this row's reading is of
+  their two templates, and the rule `docs/keyboard.md` set on that date — a control whose
+  surface includes a keyboard contract is not sealed until the contract has been pressed —
+  reaches both of them before either is re-examined.
 
 ---
 

@@ -164,7 +164,11 @@
 </script>
 
 <script lang="ts" generics="T extends NavigationViewItemData = NavigationViewItemData">
-	import { setNavigationViewPane, setNavigationViewPlacement } from '../internal/navigation-view';
+	import {
+		RING_ROOT_ATTRIBUTE,
+		setNavigationViewPane,
+		setNavigationViewPlacement
+	} from '../internal/navigation-view';
 	import Flyout from './Flyout.svelte';
 	import NavigationViewItem from './NavigationViewItem.svelte';
 	import NavigationViewTopItem from './NavigationViewTopItem.svelte';
@@ -417,9 +421,111 @@
 	// as props — ADR 0015, and `internal/navigation-view.ts` for why. The call sits below
 	// the declarations it closes over so that nothing here depends on hoisting; `setContext`
 	// only needs to run during this component's initialisation, which the whole script is.
+	/**
+	 * The path from the top level down to `id`, or `null` when the list does not hold it.
+	 *
+	 * The header skip is belt-and-braces rather than load-bearing, and saying so is the point:
+	 * a header entry carries neither `id` nor `children`, so both tests below would fall
+	 * through on their own. It is written out because the narrowing is what makes the two casts
+	 * under it honest, and a reader who removes it should know it was not holding anything up.
+	 */
+	function pathTo(entries: NavigationViewEntry<T>[], id: string, trail: T[]): T[] | null {
+		for (const entry of entries) {
+			if (isNavigationViewHeader(entry)) continue;
+			const row = entry as T;
+			if (row.id === id) return [...trail, row];
+			const below = row.children
+				? pathTo(row.children as NavigationViewEntry<T>[], id, [...trail, row])
+				: null;
+			if (below) return below;
+		}
+		return null;
+	}
+
+	// `GetContainerForIndexPath(m_selectionModel.SelectedIndex(), true /* lastVisible */)` —
+	// NavigationView.cpp:2988 — is the path to the selection walked while every row above it is
+	// expanded, stopping at the last row reached. The walk is `:5421` and `:5450`, and what
+	// stops it is `!nvi.IsExpanded()` at `:5431` for the top level and `:5460` for every depth
+	// below. So the stop is the selected row when it is on screen and its deepest
+	// expanded-through ancestor when it is not.
+	//
+	// **The rail is that rule and not a case of its own, in both directions.** With its flyout
+	// shut the top-level row is not expanded, so the walk stops there and a selection two levels
+	// down resolves to the rail row. With the flyout **open** it keeps going: upstream descends
+	// through `GetRepeater()` (`:5465`), and a rail row's repeater is the one reparented into
+	// the flyout (`NavigationViewItem.cpp:875-889`), so the container it returns is the flyout's
+	// row. Here the same thing falls out of `expandedItems`, which holds the rail row for
+	// exactly as long as its flyout is open.
+	//
+	// **What `:2989` then does is reproduced by something else entirely, and only the half this
+	// computes is computed here.** Upstream both takes the entry away from the rail's rows *and*
+	// puts focus on the flyout's row, because it is a `GettingFocus` handler and can redirect
+	// focus in flight. This half is the first: naming the flyout's row changes nothing on its
+	// own — a row inside the flyout is a stop whatever `tabStops` says, which is `tabStop` in
+	// `NavigationViewItem.svelte` short-circuiting on `withinFlyout`.
+	//
+	// The second half arrives from the primitive instead. `Flyout` wraps a bits-ui popover and
+	// does not pass `trapFocus`, which defaults on, so while the flyout is open focus cannot
+	// leave it: measured on the harness, focusing the pane toggle is undone and Tab cycles
+	// inside the flyout. That is a stronger condition than upstream's redirect rather than the
+	// same one — upstream traps nothing and a second Tab leaves — and it is asserted rather
+	// than argued, because an earlier version of this comment reasoned from document order to
+	// the opposite conclusion and was wrong twice over. `docs/keyboard.md` carries it under
+	// answer 8.
+	//
+	// `settingsVisible` puts the settings row in unconditionally, because it is a root list of
+	// one and is therefore always its own list's entry. That is the stop Tab reaches after the
+	// menu, which is what the reference press recorded (`docs/keyboard.md`, answer 1).
+	//
+	// **The left pane's, and computed in top mode as well.** `NavigationViewTopItem` draws the
+	// top pane's rows and never reads this, so what it computes there is unread rather than
+	// wrong — the same shape `expandedItems` and `collapsed` already have, and
+	// `internal/navigation-view.ts` says why the record is published in both modes anyway.
+	const tabStops = $derived.by((): string[] | null => {
+		if (selected === null) return null;
+		// The `settingsVisible` test is belt-and-braces: an id in this list that names no
+		// rendered row changes nothing, because what reads the list is a row asking whether it
+		// is named. What it does buy is a consumer whose own row is tagged `settings` while the
+		// control's is hidden, which is the only way the two can collide.
+		const settings = settingsVisible ? [SETTINGS_ITEM.id] : [];
+		const path = pathTo(items, selected, []);
+		if (!path) {
+			// `selected` names no row in this list, and the two ways that happens are not the
+			// same upstream.
+			//
+			// **The settings row is one of them, and it is a real selection.** Its index is in
+			// the footer block, so `rootRepeaterForSelectedItem` (`:2980`) is the footer's
+			// repeater, the comparison at `:2986` fails for the menu's, and nothing is
+			// redirected — `GetContainerForIndexPath` at `:2988` is never reached, rather than
+			// reached and finding nothing. What XAML lands on entering is then simply the first
+			// row. The menu is still crossed in one press because the *other* branch runs: the
+			// walk that sets `IsTabStop(false)` on the way out (`:3018`) compares each row
+			// against the repeater being left, not against the selection, and the handler's own
+			// guard at `:2947` only asks that a selection exist somewhere, which this is.
+			if (settingsVisible && selected === SETTINGS_ITEM.id) {
+				const first = items.find((entry) => !isNavigationViewHeader(entry));
+				return first ? [(first as T).id, ...settings] : settings;
+			}
+			// **An id that names nothing is the other, and it is not a selection.** The model
+			// has no index, and `:2947` guards the whole handler on one, so neither branch runs
+			// and the rows are tab stops as they come. A consumer routing by URL is where this
+			// arrives: a page under no row, or one that has not resolved yet. Same answer as a
+			// `null` selection above, reached from a different premise — which is why it is
+			// written out rather than folded into that test.
+			return null;
+		}
+		let stop = path[0].id;
+		for (let i = 1; i < path.length; i++) {
+			if (!expandedItems.includes(path[i - 1].id)) break;
+			stop = path[i].id;
+		}
+		return [stop, ...settings];
+	});
+
 	setNavigationViewPane(() => ({
 		selected,
 		expandedItems,
+		tabStops,
 		setExpanded,
 		onItemInvoked,
 		collapsed,
@@ -565,7 +671,12 @@
 		     that brings it in. An element added on open and removed on close has nothing to
 		     animate in either direction, which is what this was. Hidden by `visibility` below,
 		     so it is out of the tab order and out of the accessibility tree while closed. -->
-		<div class="pane">
+		<!-- The arrow keys' ring is the whole pane, menu and settings row together: upstream's
+		     Up and Down defer to XAML's directional focus, which crosses from one root repeater
+		     into the other, and the reference press recorded Down reaching Settings from the last
+		     menu row. Home and End read `role="tree"` instead and stop at one list's ends —
+		     `internal/navigation-view.ts` has both citations. -->
+		<div class="pane" {...RING_ROOT_ATTRIBUTE}>
 			<div class="pane-content-grid">
 				<!-- NavigationView.xaml:296, PaneContentGridToggleButtonRow. The button is
 					     anchored to the root below, the way upstream anchors PaneToggleButtonGrid

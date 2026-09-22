@@ -40,7 +40,7 @@ That buys an exemption **only where a primitive is involved**. Of ninety-eight c
 nineteen import bits-ui and one imports Zag; the rest are hand-rolled, and a hand-rolled control
 has no primitive whose model to defer to. `NavigationView` and `TabView` are both hand-rolled.
 **So neither of the two models in dispute below is covered by the licence** — and WD-004's own
-reasoning does not claim it is: it was accepted on cost, because the contract is hard to get
+reasoning did not claim it was: it was accepted on cost, because the contract is hard to get
 right untested.
 
 **The rule, in one line:** where a primitive is in the way, record and accept; where there is no
@@ -53,8 +53,12 @@ The two bullets below are the state that motivated this list. The first of them 
 answered — the record is under "The `NavigationView` observation" — and is left standing here
 because what it argued for is what the answer then cost.
 
-- **WD-004** (in `docs/divergences.md`) — `NavigationView`'s items are each a tab stop, with no
-  arrow keys, no typeahead, no Home or End. Its "WinUI does" paragraph was a careful description
+- **WD-004** — `NavigationView`'s items are each a tab stop, with no arrow keys, no typeahead,
+  no Home or End. **The entry is deleted**: it was closed on 2026-09-22 by the unit that built
+  the ring, so every mention of it in this document names a registry entry that no longer
+  exists and is history rather than a pointer. `docs/divergences.md`'s preamble is what makes
+  that the right ending — an entry nothing cites is a divergence that was fixed, and the
+  registry would be lying if it stayed. Its "WinUI does" paragraph was a careful description
   of the WAI-ARIA tree pattern, and its **Why accepted** said so in as many words: _"the web's
   own keyboard contract for a `role="tree"` is the WAI-ARIA Authoring Practices guide, **which
   is what WinUI follows**"_. That clause is an assumption. It is very probably true. It has not
@@ -73,24 +77,27 @@ The two entries are not equally weak, and that is the point: **the difference be
 invisible in the registry.** Both read as settled. Nothing in the format distinguishes a
 divergence measured against the machine from one inferred from a document.
 
-**And WD-004 is load-bearing for more than its own control.** WD-027, the `ItemsView` and
-`TreeView` divergence, is accepted in its **Why accepted** as "WD-004's situation on a second
-control, and the same answer", and says it will be re-examined when the roving-tabindex rig
-WD-004 is waiting on gets built. Three controls rested on one unchecked clause; the clause has
+**And WD-004 was load-bearing for more than its own control.** WD-027, the `ItemsView` and
+`TreeView` divergence, was accepted in its **Why accepted** as "WD-004's situation on a second
+control, and the same answer", and said it would be re-examined when the roving-tabindex rig
+WD-004 was waiting on got built. Both halves of that have now happened — the clause was checked
+and the rig was built — and WD-027 was rewritten on 2026-09-22 to stand on its own reading
+rather than on a borrowed one. Three controls rested on one unchecked clause; the clause has
 now been checked for one of the three, and the other two inherit the answer only as far as
 `NavigationView`'s pane resembles them.
 
 ## What in this project can see a keyboard model
 
-Almost nothing. Counted 2026-09-21.
+Almost nothing. Counted 2026-09-21; the two rows a later unit moved are recounted 2026-09-22
+and say which date they carry.
 
-| apparatus             | what it sees                                                                                                                                                                       | keyboard?                                                                                                                           |
-| --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
-| three-theme snapshots | a resting frame, photographed                                                                                                                                                      | no — a focus ring is at most a still, and only if something put focus there                                                         |
-| C1–C11                | literals, generated records, layer separation, the theme matrix, divergence citations, consumer tooling, the acceptance surface, token resolution, commit subjects, template parts | no — every one is structural or textual                                                                                             |
-| the visual suite      | 111 specs, of which **6** press a key                                                                                                                                              | partially: `content-dialog-focus`, `command-bar-flyout-focus`, `color-picker`, `color-picker-slider`, `hyperlink`, `rating-control` |
-| `surface.md`'s sweep  | four steps: find the `.cpp`, grep it, read the template's states, open the sample page                                                                                             | no — all four are readings                                                                                                          |
-| the parts census      | 7 templates, 80 parts, 67 states                                                                                                                                                   | no — and see below                                                                                                                  |
+| apparatus             | what it sees                                                                                                                                                                                                                                     | keyboard?                                                                                                                                                                                                      |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| three-theme snapshots | a resting frame, photographed                                                                                                                                                                                                                    | no — a focus ring is at most a still, and only if something put focus there                                                                                                                                    |
+| C1–C13                | literals, generator parity, layer separation, the theme matrix, divergence citations, consumer tooling, the acceptance surface, generated-record parity, token resolution, commit subjects, template parts, resolving citations, the popup layer | no — every one is structural or textual (recounted 2026-09-22)                                                                                                                                                 |
+| the visual suite      | 115 specs, of which **10** press a key (recounted 2026-09-22)                                                                                                                                                                                    | partially: `content-dialog-focus`, `command-bar-flyout-focus`, `color-picker`, `color-picker-slider`, `hyperlink`, `rating-control`, and `navigation-view`'s four — `-keyboard`, `-rail`, `-template`, `-ring` |
+| `surface.md`'s sweep  | four steps: find the `.cpp`, grep it, read the template's states, open the sample page                                                                                                                                                           | no — all four are readings                                                                                                                                                                                     |
+| the parts census      | 7 templates, 80 parts, 67 states                                                                                                                                                                                                                 | no — and see below                                                                                                                                                                                             |
 
 Two rows deserve their own sentence.
 
@@ -189,10 +196,16 @@ then the ninth entry, which is a search rather than a press and says so.
    rather than one press per item. Where the fourth press goes was not pressed. Up and Down
    move among the items once the list is entered. The entry point being the _selected_ item,
    not the first, is the part of a roving tabindex that is easy to get wrong.
-   **We** make every item its own stop and every chevron another. On `/dev/navigation-view`'s
+   **We** made every item its own stop and every chevron another. On `/dev/navigation-view`'s
    `#menu-fits` frame, the open-pane specimen: toggle, `Home`, `Design`,
    `Design`'s chevron, `Accessibility`, its chevron, `All`, `Basic input`, `Collections`,
    `Settings`.
+   **Built on 2026-09-22.** The pane works out which row Tab lands on and every other row
+   carries `tabindex="-1"`; the entry is the selected row, or its deepest ancestor still on
+   screen when the selection sits inside a collapsed subtree, and the settings row is a stop of
+   its own because it is a root list of its own. `navigation-view-ring.spec.ts` presses the
+   sequence on each of those branches. **Where the fourth press goes is still not pressed**,
+   and this implementation sends it to whatever follows the pane in the document.
 2. **Down does not expand; it steps past.** On a collapsed parent Down moves to the next item
    rather than opening it, and past the last item it reaches the Settings row, from which Up
    returns to the list. **At the foot, Down scrolls the page the sample sits on** — that is the
@@ -202,10 +215,32 @@ then the ninth entry, which is a search rather than a press and says so.
    toggle is outside the ring to begin with (1 above), so that press measures a non-ring
    element and **the ring's top end is not measured at all**. A collapsed row toggles open and
    shut on Enter and on Space.
-   **We** do nothing on any arrow key. Enter and Space toggle a parent open and shut, and report
-   the invoke — the one half of this question that matches.
+   **We** did nothing on any arrow key. Enter and Space toggle a parent open and shut, and
+   report the invoke — the one half of this question that matched.
+   **Built on 2026-09-22.** Up and Down walk the visible rows in document order, step over a
+   header, step past a collapsed parent rather than opening it, and cross into the settings row
+   and back. At the foot the key is **left unhandled**, which is how the page's own scroll is
+   reproduced rather than swallowed, and the test asserts the absent `preventDefault()` as well
+   as the absent move — the assertion that separates "the ring ends here" from "every arrow is
+   consumed".
 3. **Home and End jump to the ends**, and pressing them again does nothing.
-   **We** do nothing on either.
+   **We** did nothing on either.
+   **Built on 2026-09-22**, and with a scope of their own: they reach the ends of the row's own
+   root list rather than of the ring the arrows use, because
+   `KeyboardFocus{First,Last}ItemFromItem` ask one repeater for its ends while Up and Down
+   defer to directional focus. Pressed again at an end they move nothing and are still handled,
+   which is `args.Handled(true)` running before the call, and the test asserts both halves.
+   **Which ends is a reading, not a press, and the answer above does not contain it.** "Jump to
+   the ends" does not say whether End stops at the last row of the list or at the last row
+   visible under it, and the two differ whenever the last top-level row is expanded — which the
+   hierarchical sample can be made to show. What is built is the pin's answer:
+   `GetLastFocusableElement` (`NavigationView.cpp:2876`) walks one repeater's own
+   `ItemsSourceView` and never descends, while `FocusNextUpItem` asks
+   `FindLastFocusableElement(childRepeater)` (`:2799`) and does. The first implementation took
+   the last visible row, and no specimen on the harness could tell the two apart until the last
+   top-level row there was given children. **One press answers both halves of this**: End
+   from a menu row lands on the last top-level row, on the last row visible under the menu, or
+   on the settings row, and the three are mutually exclusive.
 4. **There is no typeahead.** Typing a letter does not move focus.
    **We** have none either. This one matches, and it is one of the places where the registry
    said otherwise.
@@ -231,11 +266,19 @@ then the ninth entry, which is a search rather than a press and says so.
    reading rather than a test of it.
 6. **The chevron is reachable by pointer only**, and it is not needed: invoking anywhere on the
    row toggles the subtree.
-   **We** render it as a `<button>`, which puts it in the tab order — the extra stops in 1
+   **We** rendered it as a `<button>`, which put it in the tab order — the extra stops in 1
    above — and only while the pane is open. Measured: walking the closed-compact rail gives
    seven stops, the top-level rows and `Settings`, with no chevron among them. Read, not
-   measured: the rule that causes it is `NavigationView.svelte:1455-1458`, `display: none` on
-   the chevron and the label together.
+   measured: the rule that causes it is the `display: none` on
+   `.root[data-collapsed='true'] .pane :global(.item .expand-chevron)` in
+   `NavigationView.svelte`, which hides the chevron and the label together.
+   **Changed on 2026-09-22**: the chevron carries `tabindex="-1"` and no Tab reaches it, which
+   is what the press found of upstream's. It stays a `<button>` for the pointer and for
+   assistive technology, so one difference survives and it is not a keyboard one — a click
+   focuses ours and cannot focus a `Grid`, so a Space pressed after a click toggles here and
+   would invoke whatever held focus there. Nothing has been pressed on that, and it is the web
+   doing what the web does rather than something the web cannot do, so it is a punch-list
+   question and not a registry entry.
 7. **Focus alone does not move the selection.** Enter or Space is required.
    **We** behave the same way. Matches.
 8. **Closed-compact opens a flyout for a row with children.** Focus lands on the flyout's first
@@ -255,9 +298,24 @@ then the ninth entry, which is a search rather than a press and says so.
    flyout's first item; Escape closes it; and Left does not escape it. The first two are
    asserted; the third is read from the code rather than pressed, and holds for a weaker reason
    than the original's — no arrow key in this control does anything, so the observable agrees
-   while the mechanism does not. **Up and Down are the clause that fails**:
-   every row is its own tab stop and no arrow key moves focus, which is WD-004 for the pane and
-   is now WD-004 for the flyout too. Escape needed a decision of its own to arrive at one press
+   while the mechanism does not. **Up and Down were the clause that failed**:
+   every row was its own tab stop and no arrow key moved focus, which was WD-004 for the pane
+   and was WD-004 for the flyout too. **Built on 2026-09-22**, and the flyout is a ring of its
+   own rather than part of the pane's: its list carries the ring marker, so the arrows inside it
+   reach its two rows and stop, and the settings row behind it is not reachable from there.
+   **Whether it wraps is the half still owed** — this record's word is "cycle", which reads as a
+   wrap, and the only end behaviour measured anywhere in this control is the pane's, which does
+   not wrap. Built without one, and the press is owed.
+   **And the rail's own entry is reproduced by two mechanisms rather than one.** Upstream's
+   redirect (`NavigationView.cpp:2989`) does two things when the flyout is open and a Tab
+   arrives at the rail: it takes the entry away from the rail's rows, and it puts focus on the
+   flyout's row. `tabStops` supplies the first. The second comes from the primitive instead —
+   `Flyout` passes no `trapFocus` and bits-ui defaults it on — and it is **stronger** than
+   upstream's: focus cannot leave the flyout at all, where upstream traps nothing and a second
+   Tab leaves. Measured, not reasoned: focusing the pane toggle is undone and Tab cycles over
+   the flyout's rows. An earlier draft of this paragraph reasoned from document order to "the
+   Tab lands on the settings row", which the press refutes in both of its halves. **What is
+   owed is the reference's behaviour after the entry press**, which this record never covered. Escape needed a decision of its own to arrive at one press
    — the focused row's tooltip was taking the first — and that is WD-092. One behaviour beyond
    this record was measured while building it and is asserted: a click outside closes the
    flyout.
@@ -359,9 +417,10 @@ on other grounds — the pin's asymmetry is one of them, and naming the rest bel
 unit that makes `NavigationViewItem` public rather than to this record. What this removes is
 a gate, not a question: ADR 0015 waited on an observation that cannot be taken.
 
-WD-004's **Why accepted** rests on exactly the difficulty two of the fallen claims supplied. The
-entry is corrected in place. Whether it stays a divergence at all is the second outcome below,
-and a separate decision: a roving tabindex is not something the web cannot do.
+WD-004's **Why accepted** rested on exactly the difficulty two of the fallen claims supplied.
+The entry was corrected in place on the day of the press, and **deleted on 2026-09-22** when the
+ring was built. Which outcome it was is the second one below, and it was already named there as
+a candidate: a roving tabindex is not something the web cannot do.
 
 ## What an observation decides
 
@@ -381,9 +440,47 @@ by the first question that produced it:
   record as a search rather than a press, with what was searched written down, and the
   decision it was gating moves to other grounds. Entry 9 above is the first of these.
 
-**WD-004 is a candidate for the second outcome.** Its own reasoning says the loop "is not hard"
-and that what is hard is the contract being right without a test — which is an argument for
-building the test, and the list above is most of it.
+**WD-004 was a candidate for the second outcome, and that is what it turned out to be.** Its
+own reasoning said the loop "is not hard" and that what is hard is the contract being right
+without a test — which is an argument for building the test, and the list above was most of it.
+Built on 2026-09-22: `moveRingFocus` in `internal/navigation-view.ts`, the pane's `tabStops`
+in `NavigationView.svelte`, and `navigation-view-ring.spec.ts` over a harness with one frame
+per branch of the rule.
+
+Fourteen mutations were run against that spec's fifteen tests and each killed at least one, re-measured against the spec as it stands rather than as it stood when the mutation
+was first written. Listed by the edit rather than by a description of it, because two rows of
+an earlier version of this table named an edit loosely enough to read two ways and the counts
+then matched the other reading:
+
+| the edit                                                            | tests killed |
+| ------------------------------------------------------------------- | ------------ |
+| the flyout's list loses the ring marker                             | 1            |
+| the pane loses the ring marker                                      | 5            |
+| Home and End read the ring marker instead of `role="tree"`          | 1            |
+| End takes the last row visible under the list, not the list's own   | 1            |
+| the arrows `preventDefault` whether or not focus moved              | 1            |
+| Space is handled with Alt down                                      | 1            |
+| the walk ignores expansion, so the stop is the path's deepest row   | 2            |
+| the stop is the list's first row                                    | 3            |
+| the stop is the path's top-level row and never deeper               | 2            |
+| the walk stops at the top level while the pane is collapsed         | 1            |
+| an id naming no row is answered the way the settings row is         | 1            |
+| the list's first row is `items[0]` rather than its first non-header | 1            |
+| the visibility filter is removed                                    | 1            |
+| the chevron is a tab stop again                                     | 3            |
+
+**What the table does not show is where the defects came from, and it is not from here.**
+Three were found by a cold read of the diff — End's scope, the split in the `!path` branch, and
+a claim about where Tab lands with the rail's flyout open — and each was a case of the comment
+stating upstream's rule correctly while the code beside it did something else. **Mutation
+cannot find that**, because it measures the tests against the code as written: mutating code
+that is already wrong produces code that is differently wrong, and a test that agreed with the
+first agrees with neither or with both for reasons that say nothing. Each of those three became
+a row above only _after_ the reading produced the specimen that separates the two rules; two of
+them needed a change to the harness before any test could disagree at all.
+
+What no mutation could land on is recorded with them: the `settingsVisible` test in `tabStops`
+is belt-and-braces, because an id naming no rendered row changes nothing.
 
 ## The one procedural change
 
@@ -406,6 +503,6 @@ Controls already sealed are not re-swept wholesale. The two in dispute are swept
 waits on them; the rest are swept when something asks.
 
 ADR 0015 is the first decision to cite this rule: it makes `NavigationViewItem` a public
-component, which publishes the keyboard contract WD-004 describes, so the observation above
+component, which publishes the keyboard contract WD-004 described, so the observation above
 comes before that control is sealed. That is the eight presses of 2026-09-21, and the ninth
 entry, which is the exception above rather than a press still owed.
