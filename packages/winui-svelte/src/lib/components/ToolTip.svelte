@@ -75,9 +75,15 @@
 	// them would be inventing a contract, so the props wait for a unit that measures
 	// the family properly.
 
-	// ToolTip is a `Windows.UI.Xaml` control WinUI 3 only restyles: there is no
-	// implementation in the pin to read, and `docs/surface.md` names this case as one
-	// to acknowledge rather than leave unexplained.
+	// ToolTip is a `Windows.UI.Xaml` control WinUI 3 only restyles, so there is no
+	// `controls/dev/ToolTip/` — and **the pin carries the implementation anyway**, at
+	// `dxaml/xcp/dxaml/lib/ToolTip_Partial.cpp` (2584 lines) and `ToolTipService_Partial.cpp`
+	// (2362). An earlier version of this comment said there was none to read. That was true of
+	// a checkout holding `controls/dev` alone and `4c0ce0a` falsified it;
+	// `docs/surface.md`'s ToolTip section was corrected and this line was not, which is the
+	// class that section is about. What is read here is placement and the input mode — the
+	// anchor comments below and `onPointerLeave` carry the citations — and delay and
+	// dismissal are still unswept.
 
 	// The template's `OpenStates` group fades the popup in and out with
 	// `FadeInThemeAnimation` and `FadeOutThemeAnimation`. Not built in this unit —
@@ -133,7 +139,12 @@
 	// then pin the next tooltip where the last one stood — the same defect the two
 	// rejected implementations had, arriving by a path the pointer never takes.
 	$effect(() => {
-		if (!open) frozen = null;
+		if (!open) {
+			frozen = null;
+			// And the anchor's *choice*, for the same reason the position is released here
+			// rather than on the pointer leaving. See `onPointerLeave`.
+			pointerInside = false;
+		}
 	});
 
 	const pointerAnchor: Measurable = {
@@ -158,14 +169,32 @@
 	// while the same tooltip opened by a hover a moment later lands correctly. Binding
 	// the element here makes the anchor exist as early as the element does.
 	let triggerEl = $state<HTMLElement | null>(null);
-	/** Whether a pointer is on the trigger — see `customAnchor` for why the anchor turns on it. */
+	/**
+	 * Whether a pointer was on the trigger when this open began — and, while the tooltip is
+	 * closed, simply whether one is on it now.
+	 *
+	 * The two handlers below write it only when `open` is false and the effect above clears it
+	 * on the close, so **it cannot change under a popup that is on screen**, in either
+	 * direction. That is the whole invariant, and each half of it was a defect on its own:
+	 * `onPointerLeave` has the one that was measured and `onPointerEnter` the one a review
+	 * found.
+	 */
 	let pointerInside = $state(false);
-	// Pointer-anchored **only while there is a pointer on the trigger**. `onfocus` is one of
+	// Pointer-anchored **only when a pointer's own entry latched the flag while the tooltip was
+	// closed, and nothing has closed it since**. Presence is not the test, and stating it as
+	// presence was wrong in both directions: the popup stays pointer-anchored after the pointer
+	// has left, and a close taken with the pointer still resting on the trigger — a press
+	// dismisses one (`tooltip.svelte.js:461-470`, `:583-588`) — leaves the next programmatic
+	// open element-anchored with a pointer sitting right there. The pin agrees on that corner
+	// too, because it clears `m_inputMode` on the close. `onfocus` is one of
 	// the handlers the primitive puts on it, so a keyboard user tabbing onto the trigger opens
 	// a tooltip with no pointer anywhere, and `pointer` then holds either its initial `{0, 0}`
 	// or wherever the mouse last was inside this trigger — neither of which is a position to
-	// honour. Upstream has no such case to answer: `PlacementMode.Mouse` is a pointer's
-	// placement and XAML opens a keyboard tooltip against the element. So does this.
+	// honour. Upstream **answers** this case rather than not having it, and an earlier version
+	// of this line said it had none to answer: the keyboard path hands `OnOwnerEnterInternal`
+	// the mode `Keyboard` (`ToolTipService_Partial.cpp:1714`), so the mouse-placement test the
+	// enter handler below cites is not taken and the popup is placed against the element. So
+	// is this one.
 	//
 	// It has to be the anchor rather than the frozen value, because freezing is what makes the
 	// wrong answer permanent: before this, a corner-pinned popup at least corrected itself the
@@ -191,14 +220,89 @@
 	// and measured in the microtask after that handler — one dispatch before the
 	// `pointermove` carrying the same position. Recording on the way in means the pointer
 	// is already where it is by the time anything asks.
+	//
+	// The latch is taken here and not re-taken, and the pin says so in its own words:
+	// "PlacementMode.Mouse only makes sense for automatic ToolTips opened by touch or mouse"
+	// (`ToolTip_Partial.cpp:815`, above the test at `:817`; the windowed-popup path repeats
+	// both at `:1432-1434`). What that test reads is fixed for the life of an open.
+	// `AutomaticToolTipInputMode` is `{None, Touch, Mouse, Keyboard}` (`DXamlTypes.h:69-75`)
+	// and `m_inputMode` is written in exactly three places: the constructor
+	// (`ToolTip_Partial.cpp:32`), the close (`:405`), and the open — where
+	// `ToolTipService_Partial.cpp:480` copies `s_lastEnterInputMode` in, inside
+	// `OpenAutomaticToolTip`, three lines above that function's own `put_IsOpen(TRUE)` at
+	// `:483`. `OnOwnerEnterInternal` records the mode at `:657`, and the keyboard path hands
+	// it `Keyboard` (`ToolTipService_Partial.cpp:1714`).
+	//
+	// So a tooltip opened by anything but a pointer is element-placed for its whole life,
+	// whatever the pointer does afterwards — and the close clearing the mode at `:405` is why
+	// a programmatic re-open with the pointer still sitting on the trigger is element-placed
+	// there too, which is what the effect above reproduces. That second case was never
+	// measured here and the flag used to get it wrong in the other direction: nothing cleared
+	// it across a close the pointer never left.
+	//
+	// Without the `!open` test a tooltip opened with no pointer — a keyboard focus, or a
+	// consumer's own `open` — jumped to the pointer the moment one crossed the trigger; and
+	// once the leave stopped releasing the flag, that jump became permanent. The hover-open
+	// case is unaffected for the ordering reason this handler already exists for: it runs
+	// before the primitive's, so `open` is still false at the enter even when the provider's
+	// skip-delay opens the popup synchronously.
 	function onPointerEnter(bitProps: Record<string, unknown>, event: PointerEvent) {
-		pointerInside = true;
+		if (!open) pointerInside = true;
 		track(event);
 		(bitProps.onpointerenter as ((event: PointerEvent) => void) | undefined)?.(event);
 	}
 
+	// The leave does **not** release the anchor, and a close is what does. `customAnchor`
+	// turns on `pointerInside`, so clearing it here flips a popup that is still on screen from
+	// the pointer's rect to the trigger's — and the flip alone is what moves it. Changing the
+	// anchor writes `customAnchorNode` (`use-floating-layer.svelte.js:188-190`), an effect
+	// copies that to `anchorNode` (`:27-39`), that box is the `reference`
+	// (`:195`) which `attach()` reads (`use-floating.svelte.js:113`, `:115`) inside
+	// `$effect(attach)` at `:139`, and re-running it calls `autoUpdate`, whose last statement
+	// is an unconditional `update()` (`floating-ui.dom.mjs:676`).
+	// `updatePositionStrategy="always"` is **not** the cause and dropping it would not help:
+	// it only turns on the per-frame rect poll. Measured on `/dev/navigation-view-rail`: a
+	// rail row's tooltip opened at y 197 and
+	// jumped to y 179 the moment the pointer crossed onto another row, standing there for
+	// another 200ms before it closed. The 18 is not a placement error and it is not a
+	// coincidence — the row is 36 tall, the pointer was at its middle, and both anchors put
+	// the popup's bottom 20 above themselves, so the gap between them is the half-row.
+	//
+	// Upstream is in the same position and answers it the same way, which is worth saying
+	// because it hooks a pointer move at all: `ToolTip_Partial.cpp:373` — "Since ToolTip is
+	// kept open, need to hook up with CoreWindow or XamlIslandRoot to handle PointerMove and
+	// Key event" — and what it does with those moves is the safe-zone test, never a placement.
+	//
+	// Why the popup is still on screen to be moved: `Tooltip.Provider` defaults
+	// `disableHoverableContent` to false, so a trigger leaving only stops the delay timer
+	// (`tooltip.svelte.js:284-291`) and the close comes from the grace area a moment later.
+	// A tooltip the pointer then settles on stays open, and it keeps the anchor it opened
+	// with, which is the same answer by the same route.
+	//
+	// Upstream keeps an opened tooltip on screen past the pointer leaving its owner **and**
+	// does not move it, which is both halves of what this does.
+	// `ToolTipService_Partial.cpp:1474` is `OnOwnerPointerExitedOrLostOrCanceled` and its own
+	// comment at `:1484-1485` is the first half — "Opened ToolTip will be kept and will be
+	// closed when Pointer is out side of safe zone / Not opened ToolTip will be cancelled" —
+	// with the close arriving later from `OnSafeZoneCheck` (`:349`) through
+	// `HandleToolTipSafeZone` (`:913`, the test at `:939`) and `IsToolTipInSafeZone`
+	// (`:1113`). The second half is that the popup is placed only by
+	// `PerformPlacementInternal`, and its six callers are `OnPlacementCriteriaChanged`
+	// (`ToolTip_Partial.cpp:569`), `OnToolTipSizeChanged` (`:1905`), `OnPopupOpened`
+	// (`:1938`), `OnRootVisualSizeChanged` (`:2049`), `OnIsEnabledChanged` (`:2093`) and
+	// `RepositionPopup` (`:2204`, which nothing in the pin calls). Not one is a pointer path.
+	//
+	// An earlier version of this comment argued from the opposite premise — that a WinUI
+	// tooltip's pointer leaving is its close, so there was no window in which to get this
+	// wrong. There is a window, upstream sits in it without moving, and the conclusion is the
+	// stronger for it. A review found it by opening the two files that this file's own module
+	// comment on ToolTip's place in the pin had said were not there to open.
+	//
+	// The flag is still cleared before the next open, in the effect above, and the pointer's
+	// own position goes on being tracked either way — this withholds the *decision*, not the
+	// measurement.
 	function onPointerLeave(bitProps: Record<string, unknown>, event: PointerEvent) {
-		pointerInside = false;
+		if (!open) pointerInside = false;
 		(bitProps.onpointerleave as ((event: PointerEvent) => void) | undefined)?.(event);
 	}
 
