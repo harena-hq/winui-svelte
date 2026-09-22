@@ -75,6 +75,34 @@ export interface NavigationViewPaneState {
 	 * makes the item generic in its row is what would carry `T` the rest of the way.
 	 */
 	menuItemTemplate?: Snippet<[NavigationViewEntry, number]>;
+	/**
+	 * The rows a Tab into the pane lands on, or `null` when every row is an ordinary tab stop.
+	 *
+	 * `OnRepeaterGettingFocus` (`NavigationView.cpp:2944`) has the two halves of it, and they
+	 * are two branches rather than one rule. Focus arriving from **outside** a root repeater is
+	 * redirected onto `GetContainerForIndexPath(selectedIndex, lastVisible = true)` (`:2988`) —
+	 * the selected row, or its deepest on-screen ancestor when the selection sits inside a
+	 * collapsed subtree. A Tab from **within** the same repeater instead walks the rows
+	 * `FindNextElement` keeps offering and sets `IsTabStop(false)` on each (`:3018`) until the
+	 * search leaves the repeater, restoring them afterwards. Together they are what the
+	 * reference press recorded: one stop per list, and that stop is the selected row.
+	 *
+	 * **Upstream's mechanism is dynamic and this one is static**, and the difference is in the
+	 * mechanism rather than in the observable. There every row is a tab stop until a Tab asks
+	 * otherwise; here the rows that are not the entry carry `tabindex="-1"` from the start. The
+	 * two agree on every press this control can receive — entering the list, leaving it in
+	 * either direction, and a row focused by pointer, which is a stop upstream and is reachable
+	 * by click here — because what both produce is a list Tab crosses in one press.
+	 *
+	 * Both of upstream's branches are guarded by `m_selectionModel.SelectedIndex()`, so with no
+	 * selection at all neither fires and the rows are tab stops as they come. That is what
+	 * `null` means here: the pin's own guard, not a default chosen for it.
+	 *
+	 * A list rather than one id, because the pane has two root lists — the menu and the
+	 * settings row — which is why Tab reaches Settings as a stop of its own. It holds at most
+	 * two, so membership is a scan, and a `string[]` is what `expandedItems` beside it already is.
+	 */
+	tabStops: string[] | null;
 }
 
 /** Publish the pane's state. The argument is a getter so the value stays reactive. */
@@ -149,4 +177,107 @@ export function setNavigationViewPlacement(placement: () => NavigationViewPlacem
  */
 export function getNavigationViewPlacement(): () => NavigationViewPlacement {
 	return getContext<() => NavigationViewPlacement>(LEVEL);
+}
+
+/**
+ * The attribute a keyboard ring's root carries.
+ *
+ * `closest` finds the innermost, which is what makes the rail's children flyout a ring of its
+ * own with no ordering logic anywhere: the pane carries the marker and so does the flyout's
+ * list, and a row inside the flyout resolves to the flyout.
+ *
+ * It is here rather than in the two components because both of them write it and one of them
+ * reads it, and a string spelled in three places is the shape a rename breaks silently.
+ */
+export const RING_ROOT = 'data-navigation-view-ring';
+
+/**
+ * The same marker as something to spread onto a ring root, so no component has to spell the
+ * attribute itself. One frozen object rather than a fresh one per render, which would make
+ * the spread a new value every time.
+ */
+export const RING_ROOT_ATTRIBUTE: Record<string, string> = Object.freeze({ [RING_ROOT]: '' });
+
+/**
+ * Move focus one visible row along the ring `row` sits in, and say whether it moved.
+ *
+ * Upstream's Up and Down are `FocusNextUpItem` (`NavigationView.cpp:2773`) and
+ * `FocusNextDownItem` (`:2832`), and most of what they do is repair XAML's *geometric* focus
+ * navigation: ask `FocusManager` for the element above or below, then check whether what came
+ * back is a row at the same depth and, if not, descend into its last visible child or climb to
+ * its parent. The observable that arithmetic produces is the previous or next **visible row in
+ * document order** — which the DOM already has, so this reads the ring out of the document
+ * rather than recomputing it from the item tree, and the tree's shape never enters.
+ *
+ * **Two scopes, because the pin has two, and they differ twice over.** Up and Down defer to
+ * XAML's directional focus, which crosses out of the menu's repeater into the settings row
+ * below it — the reference press recorded exactly that, Down reaching Settings and Up returning
+ * (`docs/keyboard.md`, answer 2). Home and End cross neither out of the list **nor into a
+ * subtree**: `KeyboardFocusFirstItemFromItem` (`:2898`) and `KeyboardFocusLastItemFromItem`
+ * (`:2921`) take `GetParentRootItemsRepeaterForContainer(nvib)` (`:2909`, `:2932`) and hand it
+ * to `GetFirstFocusableElement` (`:2853`) or `GetLastFocusableElement` (`:2876`), each of which
+ * walks **`ir.ItemsSourceView()`** — one repeater's own items — and never descends into a
+ * child repeater. The arrows do descend, which is the same distinction from the other side:
+ * `FocusNextUpItem` asks `FindLastFocusableElement(childRepeater)` (`:2799`) for the row above
+ * an expanded parent, and `FocusNextDownItem` asks `FindFirstFocusableElement` (`:2844`).
+ *
+ * So End from a menu row reaches the **last top-level row**, even when that row is expanded
+ * and its children are on screen below it. An earlier version of this function took the last
+ * visible row instead; the comment said what upstream does and the code did not, and no
+ * specimen on the harness could tell the two apart because the last top-level row there had no
+ * children.
+ *
+ * In this DOM the two root lists are the pane's two `<ul role="tree">` and an inline expanded
+ * subtree is a `<ul role="group">` inside one of them, so `closest('[role="tree"]')` climbs to
+ * the root exactly as `:1093` walks up to the root repeater — from any depth, which is why the
+ * pressed row's own position never enters the ends. Inside the rail's children flyout the
+ * flyout's own list is a `role="tree"` **and** carries the ring marker, so both scopes land on
+ * it there — which is the `m_lastItemExpandedIntoFlyout` branch those two functions take first
+ * (`:2901`, `:2924`).
+ */
+export function moveRingFocus(row: HTMLElement, key: string): boolean {
+	// `checkVisibility` rather than `offsetParent !== null`: a closed minimal pane is hidden
+	// with `visibility`, which leaves the rows laid out and gives every one of them an
+	// `offsetParent`. A collapsed subtree is not in the document at all, so nothing here has
+	// to know about expansion.
+	const visibleRowsIn = (container: Element) =>
+		[...container.querySelectorAll<HTMLElement>('[role="treeitem"]')].filter((candidate) =>
+			candidate.checkVisibility({ visibilityProperty: true })
+		);
+
+	if (key === 'Home' || key === 'End') {
+		const list = row.closest('[role="tree"]');
+		// Unreachable for anything this control renders — every row carrying the handler sits in
+		// one of the pane's lists or in a flyout's, and the top pane draws `NavigationViewTopItem`,
+		// which never calls this. It is a guard rather than a case, and it is here because the
+		// argument is a plain element and this module is reachable by a deep import.
+		if (!list) return false;
+		// The list's **own** rows. `closest` on the two list roles rather than a child selector,
+		// because what has to be true is "this row belongs to this list and not to one nested in
+		// it" — a consumer's `menuItemTemplate` may put a wrapper between the `<li>` and the row,
+		// and a nested list is a `<ul role="group">` either way.
+		const own = visibleRowsIn(list).filter(
+			(candidate) => candidate.closest('[role="tree"],[role="group"]') === list
+		);
+		const next = key === 'Home' ? own[0] : own[own.length - 1];
+		if (!next || next === row) return false;
+		next.focus();
+		return true;
+	}
+
+	const root = row.closest(`[${RING_ROOT}]`);
+	// The same guard, and the same reason.
+	if (!root) return false;
+	const rows = visibleRowsIn(root);
+	const at = rows.indexOf(row);
+	if (at < 0) return false;
+	// No wrap at either end. The foot is measured — at the last row Down scrolled the page the
+	// sample sits on rather than returning to the top (`docs/keyboard.md`, answer 2) — and the
+	// head is not: Up on the pane toggle does the same thing, but the toggle is outside the ring
+	// to begin with, so that press measures a non-ring element. `docs/keyboard.md` carries the
+	// head as a press that is owed rather than as a behaviour this chose.
+	const next = rows[key === 'ArrowDown' ? at + 1 : at - 1];
+	if (!next || next === row) return false;
+	next.focus();
+	return true;
 }

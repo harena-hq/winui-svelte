@@ -69,6 +69,8 @@
 	import {
 		getNavigationViewPane,
 		getNavigationViewPlacement,
+		moveRingFocus,
+		RING_ROOT_ATTRIBUTE,
 		setNavigationViewPlacement
 	} from '../internal/navigation-view';
 	import Flyout from './Flyout.svelte';
@@ -100,6 +102,21 @@
 	const isSelected = $derived(pane().selected === tag);
 	/** `ShouldEnableToolTip`: the left pane is the closed-compact icons-only rail. */
 	const collapsed = $derived(pane().collapsed);
+
+	/**
+	 * Whether Tab stops here. The pane works out which row that is and why — see `tabStops` in
+	 * `internal/navigation-view.ts`.
+	 *
+	 * A row inside the children flyout keeps its own stop. The mechanism upstream does not
+	 * reach it either: both halves of `OnRepeaterGettingFocus` test the *root* repeater, and
+	 * the flyout's is the reparented children one.
+	 */
+	const tabStop = $derived.by(() => {
+		// One read, held: `pane()` is a getter that builds its record on each call, so a second
+		// call is a second object and the narrowing from the null test does not survive it.
+		const stops = pane().tabStops;
+		return withinFlyout || stops === null || stops.includes(tag);
+	});
 
 	/**
 	 * `ShouldRepeaterShowInFlyout` — `(m_isClosedCompact && IsTopLevelItem()) || IsOnTopPrimary()`
@@ -151,10 +168,7 @@
 	}
 
 	function onkeydown(event: KeyboardEvent) {
-		// WD-004: Enter and Space, and no arrow keys — every item is its own tab stop.
-		// See docs/divergences.md.
-		if (event.key !== 'Enter' && event.key !== ' ') return;
-		// And only a key aimed at the row itself. `children` is a consumer's content from
+		// Only a key aimed at the row itself. `children` is a consumer's content from
 		// here on, so this box can hold a text field, and in the DOM every key pressed in one
 		// bubbles to this handler whether or not the field acted on it.
 		//
@@ -178,8 +192,11 @@
 		// key aimed at something else has a certain cost — it breaks a field a consumer put in
 		// the cell, which is the case ADR 0015 exists for. Acting only on a key aimed at the row
 		// costs nothing this control draws today, because a label is not focusable and no key
-		// can be targeted at one; and it fixes the chevron below, which is this library's own
-		// extra tab stop (WD-004) and whose Space the row had been taking for itself.
+		// can be targeted at one; and it fixes the chevron below, which is the one focusable box
+		// this library puts inside a row and whose Space the row had been taking for itself. The
+		// chevron is no longer a *tab* stop — it is reached by pointer, as upstream's is — and
+		// that does not make this moot: a click focuses it, so a Space that follows one is still
+		// aimed at the chevron rather than at the row.
 		//
 		// The pointer half is a different test and is decided elsewhere — see the comment on
 		// `withTriggerClick` and WD-090. Target identity is the wrong one for it: a click's
@@ -187,8 +204,45 @@
 		// would stop being clickable. What stands in for handledness there is a descendant
 		// calling `stopPropagation`, which the chevron below already does.
 		if (event.target !== event.currentTarget) return;
-		event.preventDefault();
-		activate();
+
+		// `HandleKeyEventForNavigationViewItem` — NavigationView.cpp:2733 — is this switch, and
+		// the keys it does not name are the answer to three of the questions the reference was
+		// asked: Left does not expand a collapsed row, Right does not descend into an expanded
+		// one, and typing a letter moves nothing (`docs/keyboard.md`, answers 4 and 5).
+		switch (event.key) {
+			case 'Enter':
+			case ' ':
+				// **Alt+Space is upstream's one guard on Space, and it is a guard against
+				// swallowing rather than a behaviour of its own.**
+				// `HandleKeyEventForNavigationViewItem` reads the Alt key state and handles
+				// Space only when it is up (`NavigationView.cpp:2744-2753`), under its own
+				// comment: "If Alt+Space is pressed, don't handle it to allow the system menu to
+				// be opened". The chord opens the window menu on Windows, which is where the
+				// reference browser runs, so the key has somewhere to go here too. Enter has no
+				// such guard upstream and gets none here.
+				//
+				// Read from the pin rather than pressed: the 2026-09-21 sitting did not try this
+				// chord, and `docs/keyboard.md` records it as a reading.
+				if (event.key === ' ' && event.altKey) return;
+				event.preventDefault();
+				activate();
+				return;
+			case 'ArrowUp':
+			case 'ArrowDown':
+			case 'Home':
+			case 'End': {
+				const moved = moveRingFocus(event.currentTarget as HTMLElement, event.key);
+				// **Home and End are handled whatever they find, and the arrows are handled only
+				// when focus moved.** That asymmetry is upstream's and it is measured on both
+				// sides. `args.Handled(true)` runs at `:2757` and `:2761` *before* the call, so
+				// pressing Home on the first row consumes the key and does nothing — which is
+				// what answer 3 pressed. The arrows leave the key alone when they cannot move:
+				// at the foot of the ring Down scrolled the page the sample sits on, which is
+				// answer 2, and a `preventDefault()` here would have cancelled that scroll.
+				if (moved || event.key === 'Home' || event.key === 'End') event.preventDefault();
+				return;
+			}
+		}
 	}
 
 	function toggle(event: MouseEvent) {
@@ -203,8 +257,8 @@
 	// per render, which would make the spread a new value every time.
 	const EMPTY_TRIGGER_PROPS: Record<string, unknown> = Object.freeze({});
 
-	// WD-004 has the key half of this row's input contract and WD-090 has the pointer half:
-	// a click that reaches the row invokes it, whatever it passed through on the way. Upstream
+	// `onkeydown` above has the key half of this row's input contract and WD-090 has the pointer
+	// half: a click that reaches the row invokes it, whatever it passed through on the way. Upstream
 	// gates the invoke on a press no descendant handled, and the DOM has nothing a row can read
 	// that says so — a `<button>`'s click sets no flag — so a descendant that must not invoke
 	// the row stops the event, as `toggle` above does. See docs/divergences.md.
@@ -291,7 +345,9 @@
      not a subtree of anything in the document any more. The rows inside it are published at
      level 1 for the same reason — see `childrenInFlyout` above. -->
 {#snippet flyoutRows()}
-	<ul role="tree" class="children flyout-children">{@render childRows()}</ul>
+	<ul role="tree" class="children flyout-children" {...RING_ROOT_ATTRIBUTE}>
+		{@render childRows()}
+	</ul>
 {/snippet}
 
 {#snippet item(anchor = EMPTY_TRIGGER_PROPS)}
@@ -313,7 +369,7 @@
 				aria-selected={isSelected}
 				aria-expanded={hasChildren ? open : undefined}
 				aria-level={level}
-				tabindex="0"
+				tabindex={tabStop ? 0 : -1}
 				data-selected={isSelected}
 				data-expanded={hasChildren ? open : undefined}
 				onclick={withTriggerClick(props)}
@@ -331,10 +387,17 @@
 					>{#if children}{@render children()}{:else}{content}{/if}</span
 				>
 				{#if hasChildren}
+					<!-- Not a tab stop. `ExpandCollapseChevron` is a `Grid`
+					     (`NavigationView_themeresources.xaml:617`), which is not a `Control` and has
+					     no `IsTabStop`, and the 2026-09-21 press found it unreachable by key
+					     (`docs/keyboard.md`, answer 6). It stays a `<button>` for the pointer and
+					     for assistive technology, and `tabindex="-1"` still allows the two keyboard
+					     tests that drive it to focus it from script. -->
 					<button
 						type="button"
 						class="expand-chevron"
 						aria-label={open ? 'Collapse' : 'Expand'}
+						tabindex="-1"
 						onclick={toggle}
 					></button>
 				{/if}
