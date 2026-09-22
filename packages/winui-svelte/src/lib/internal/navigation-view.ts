@@ -199,6 +199,27 @@ export const RING_ROOT = 'data-navigation-view-ring';
 export const RING_ROOT_ATTRIBUTE: Record<string, string> = Object.freeze({ [RING_ROOT]: '' });
 
 /**
+ * The element above the ring's first row — the pane toggle.
+ *
+ * **Upstream has no such marker, because upstream does not need one.** `FocusNextUpItem`
+ * (`NavigationView.cpp:2773`) is a *repair* on XAML's geometric focus navigation rather than a
+ * replacement for it: from the first row, `FindNextElement(Up)` returns the toggle, the
+ * `try_as<NavigationViewItem>` at `:2786` fails so the whole correction is skipped, `Depth()`
+ * is 0 so the climb-to-parent at `:2822` is skipped too, and the key goes back **unhandled**.
+ * XAML's own directional navigation then moves focus onto the toggle. Pressed on the reference
+ * on 2026-09-22: from the settings row, Up walks every visible row and then reaches the
+ * hamburger.
+ *
+ * The web has no directional focus navigation, so declining the key moves nothing — which is
+ * what this control did, and is the defect this marker exists to fix. Where upstream declines
+ * and lets the platform finish, this has to name the element itself.
+ */
+export const RING_HEAD = 'data-navigation-view-ring-head';
+
+/** The head marker, spreadable. One frozen object, as `RING_ROOT_ATTRIBUTE` is. */
+export const RING_HEAD_ATTRIBUTE: Record<string, string> = Object.freeze({ [RING_HEAD]: '' });
+
+/**
  * Move focus one visible row along the ring `row` sits in, and say whether it moved.
  *
  * Upstream's Up and Down are `FocusNextUpItem` (`NavigationView.cpp:2773`) and
@@ -271,13 +292,57 @@ export function moveRingFocus(row: HTMLElement, key: string): boolean {
 	const rows = visibleRowsIn(root);
 	const at = rows.indexOf(row);
 	if (at < 0) return false;
-	// No wrap at either end. The foot is measured — at the last row Down scrolled the page the
-	// sample sits on rather than returning to the top (`docs/keyboard.md`, answer 2) — and the
-	// head is not: Up on the pane toggle does the same thing, but the toggle is outside the ring
-	// to begin with, so that press measures a non-ring element. `docs/keyboard.md` carries the
-	// head as a press that is owed rather than as a behaviour this chose.
+	// **The two ends are not the same, and both are measured now.** At the foot Down scrolled
+	// the page the sample sits on rather than returning to the top (`docs/keyboard.md`,
+	// answer 2), so there is no wrap and the key is left alone. At the head Up reaches the pane
+	// toggle — pressed 2026-09-22 — which upstream gets by declining the key and letting XAML's
+	// directional navigation finish the move. Nothing here wraps in either direction.
+	if (key === 'ArrowUp' && at === 0) {
+		const head = ringHeadFor(root);
+		if (!head) return false;
+		head.focus();
+		return true;
+	}
 	const next = rows[key === 'ArrowDown' ? at + 1 : at - 1];
 	if (!next || next === row) return false;
 	next.focus();
+	return true;
+}
+
+/**
+ * The ring's head for a given ring root, or `null`.
+ *
+ * Depth-limited on purpose. The toggle is a child of the control's root grid rather than of the
+ * pane — `PaneToggleButtonGrid` is a child of `RootGrid` (`NavigationView.xaml:180`) — so it is
+ * found through the ring root's parent; and a `NavigationView` rendered inside another one's
+ * content area would put a second toggle under the same ancestor, one level deeper than this
+ * looks. `:scope > * > [head]` is that control's own toggle and nothing else's.
+ */
+function ringHeadFor(root: Element): HTMLElement | null {
+	return root.parentElement?.querySelector<HTMLElement>(`:scope > * > [${RING_HEAD}]`) ?? null;
+}
+
+/**
+ * Move focus from the ring's head onto its first visible row, and say whether it moved.
+ *
+ * **The other half of the same platform behaviour, and both halves are pressed.** Nothing in
+ * `NavigationView` subscribes to the toggle's keys — the `KeyDown` handler is attached to each
+ * item (`NavigationView.cpp:3595`) — so Down on the toggle is handled by nobody and XAML's
+ * directional navigation moves focus to the row below, by the same mechanism that carries Up
+ * the other way. Pressed on the reference on 2026-09-22, in the same sitting as the upward
+ * half: Down on the hamburger enters the first row.
+ *
+ * The reading came first and the press followed, which is the order this file wants: the
+ * mechanism said what to expect, and the expectation was checked rather than shipped.
+ */
+export function enterRingFromHead(head: HTMLElement, key: string): boolean {
+	if (key !== 'ArrowDown') return false;
+	const root = head.parentElement?.parentElement?.querySelector(`[${RING_ROOT}]`);
+	if (!root) return false;
+	const first = [...root.querySelectorAll<HTMLElement>('[role="treeitem"]')].find((candidate) =>
+		candidate.checkVisibility({ visibilityProperty: true })
+	);
+	if (!first) return false;
+	first.focus();
 	return true;
 }

@@ -165,6 +165,8 @@
 
 <script lang="ts" generics="T extends NavigationViewItemData = NavigationViewItemData">
 	import {
+		enterRingFromHead,
+		RING_HEAD_ATTRIBUTE,
 		RING_ROOT_ATTRIBUTE,
 		setNavigationViewPane,
 		setNavigationViewPlacement
@@ -647,12 +649,27 @@
 	     `IsPaneToggleButtonVisible() && !IsTopNavigationView()`. -->
 	{#if !isTop && paneToggleButtonVisible}
 		<div class="button-holder-grid">
+			<!-- The head of the arrow ring, and the only element outside the pane that the ring
+			     touches. Up from the pane's first row lands here, and Down from here goes back —
+			     `enterRingFromHead` in `internal/navigation-view.ts` has the pin reading for
+			     both and says which of the two was pressed. Nothing else about the toggle
+			     changes: it is not a row, it is not in `tabStops`, and Tab reaches it because it
+			     is a `<button>`, exactly as before. -->
 			<button
 				type="button"
 				class="pane-toggle"
 				aria-label={paneOpen ? 'Close navigation' : 'Open navigation'}
 				aria-expanded={paneOpen}
 				onclick={() => setPaneOpen(!paneOpen)}
+				onkeydown={(event) => {
+					// Only a key aimed at the button itself, and only when it moved — the same
+					// two tests the rows apply, for the same two reasons. Up is deliberately
+					// absent: the reference press recorded Up on the toggle scrolling the page
+					// the sample sits on, so there is nothing above it to reach.
+					if (event.target !== event.currentTarget) return;
+					if (enterRingFromHead(event.currentTarget, event.key)) event.preventDefault();
+				}}
+				{...RING_HEAD_ATTRIBUTE}
 			>
 				<span class="layout-root"></span>
 			</button>
