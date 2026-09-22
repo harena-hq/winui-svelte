@@ -194,16 +194,53 @@ sealed — one entry per control, added by the unit that sealed it.
 There is no `controls/dev/ToolTip/` at all — step 1's stronger answer. ToolTip is a
 `Windows.UI.Xaml` control that WinUI 3 only restyles, so its resources sit in
 `controls/dev/CommonStyles/ToolTip_themeresources.xaml`, 77 lines, with the other restyled
-controls' dictionaries. **The rest of this paragraph was true when it was written and is not
-now**, for the reason "The checkout grew and these claims did not" gives below: the checkout
-held `controls/dev` alone until `4c0ce0a`, and it now carries `ToolTip_Partial.cpp` at 2584
-lines and `ToolTipService_Partial.cpp` at 2362. Steps 2 and 3 did not apply to the evidence this
-entry had; they apply to the evidence the repository has, and they have not been run. What those
-two files say about placement, delay and dismissal is unswept, and the deferral below was
-decided without them. The Gallery's page and Microsoft's
-published reference are the whole of the second half. What that left open —
-`PlacementRect`, and a `VerticalOffset` whose effect on the guest did not reduce to a
-simple delta — is deferred in `plan.md` rather than guessed at.
+controls' dictionaries.
+
+**What this entry concluded from that — that there is therefore no implementation to read — was
+true of the evidence it had and is false now**, for the reason "The checkout grew and these
+claims did not" gives below: the checkout held `controls/dev` alone until `4c0ce0a`, and it now
+carries `ToolTip_Partial.cpp` at 2584 lines and `ToolTipService_Partial.cpp` at 2362. Steps 2
+and 3 did not apply to the evidence this entry had. Against the evidence the repository has,
+**placement has now been run and delay and dismissal have not.**
+
+Placement, read by `8e18c01`, the unit that stopped the pop-up moving out from under a leaving
+pointer: the
+popup is placed only by `PerformPlacementInternal`, whose six callers are
+`OnPlacementCriteriaChanged` (`ToolTip_Partial.cpp:569`), `OnToolTipSizeChanged` (`:1905`),
+`OnPopupOpened` (`:1938`), `OnRootVisualSizeChanged` (`:2049`), `OnIsEnabledChanged` (`:2093`)
+and `RepositionPopup` (`:2204`, which nothing in the pin calls) — not one of them a pointer
+path, and upstream hooks a pointer move only for its safe-zone test, saying so at `:373`. Which
+placement an open uses is fixed for that open's life: `:815` is upstream's own sentence,
+"PlacementMode.Mouse only makes sense for automatic ToolTips opened by touch or mouse", and the
+mode the test at `:817` reads is latched at `ToolTipService_Partial.cpp:480` and cleared on the
+close at `ToolTip_Partial.cpp:405`. An opened tooltip survives its owner's `PointerExited` until
+a safe-zone check closes it (`ToolTipService_Partial.cpp:1474`, the comment at `:1484-1485`,
+`OnSafeZoneCheck` at `:349`). `ToolTip.svelte` carries the same citations.
+
+Delay and dismissal are where the deferral below still stands on its original footing: the
+Gallery's page and Microsoft's published reference are the whole of what this library has read
+for them. What that left open — `PlacementRect`, and a `VerticalOffset` whose effect on the
+guest did not reduce to a simple delta — is deferred in `plan.md` rather than guessed at.
+
+**The stale twin of this entry was in the component**, which still said there was no
+implementation to read; `8e18c01` corrected it. It is the **fourth** member of this
+class found in a component and the **sixteenth** overall — `Flyout.svelte`'s opening,
+`CommandBar.svelte`'s `MinimalVerticalDelta` note and `Pivot.svelte`'s title paragraph are the
+other three, and `fa52a86` corrected all three. So the sweep did reach components; it reached
+those three and not this one.
+
+**What none of the four could have been found by is the phrase the first sweep grepped for**,
+and the two reasons it failed them — a wrap for two of them and the wording for the other two —
+are measured in "The checkout grew and these claims did not" below. ToolTip's is the wrapping
+one: on the tree before `fa52a86`, `:78` ends "…restyles: there is no" and `:79` opens
+"implementation in the pin to read", so the phrase is present and no single line carries it.
+
+One candidate is left that this unit did not settle: `docs/keyboard.md`'s answer that the class
+which would decide question 9 "is not in the pin at all", where the checkout now carries
+`dxaml/xcp/dxaml/lib/TextBox_Partial.cpp` and `dxaml/xcp/core/text/`. ADR 0011's negative was
+checked and is **not** a member — it is about the pinned dictionary, and no XAML outside
+`controls/dev` in this checkout sets a `LineHeight`, nor is there a `generic.xaml` in it. And a
+grep is not the read: the component corpus has not been gone through for the shape.
 
 ### InfoBadge — v5 unit 3
 
@@ -907,12 +944,20 @@ mentioned them would imply a decision that was never made.
 
 ## The checkout grew and these claims did not
 
-**Fifteen places across five files said a control has "no implementation in the pin", or
-something that reduces to it. Every one is false today, and fourteen of the fifteen were true
-when written.** The count has gone ten, twelve, fifteen across three passes, each finding what
-the last had missed — **so treat it as a floor rather than a total.** The set is not closed and
-the paragraph below says why it cannot be closed by searching. The distinction is the
-whole of this section, and a first draft of it got the distinction backwards.
+**Sixteen places across six files said a control has "no implementation in the pin", or
+something that reduces to it. Every one is false today, and fifteen of the sixteen were true
+when written.** The count has gone ten, twelve, fifteen, sixteen across four passes, each
+finding what the last had missed — **so treat it as a floor rather than a total.** The set is
+not closed and the paragraph below says why it cannot be closed by searching. The distinction
+is the whole of this section, and a first draft of it got the distinction backwards.
+
+**The sixteenth's route is the part worth recording: it was not found by looking for it.** It is
+`ToolTip.svelte`'s own opening, and it turned up because a reviewer went to the pin to check a
+claim about the tooltip's placement and noticed the component asserting that pin was not there
+to be read. It dates from `3c1a2ca` (2026-09-06), three days before the widening, so it joins
+the fifteen of sixteen that were true when written. The ToolTip entry above has it, and the
+paragraph below has the harder half: a weaker token than the one the first pass ran _would_ have
+returned this line, and what reached it instead is not on the record.
 
 The pinned checkout is sparse, and `scripts/tokens/fetch.mjs` decides what it holds. Until
 `4c0ce0a` (2026-09-09, "the sparse checkout carries the second half, and the sweep looks for
@@ -925,7 +970,10 @@ falsified.** It rewrote step 1 to say "search the whole checkout, not `controls/
 second row at the top of this file is its correction of this section's own opening. What it left
 standing is every _downstream_ sentence that had recorded the old answer: four in this file —
 the `Slider`, `Pivot` and "other six" rows and the `ToolTip` entry — three in `docs/plan.md`, and
-one comment each in `Flyout.svelte`, `CommandBar.svelte` and `Pivot.svelte`. Two of the
+one comment each in `Flyout.svelte`, `CommandBar.svelte`, `Pivot.svelte` and `ToolTip.svelte`.
+**The fourth component is the sixteenth member and it was added to this list a pass later**: its
+comment dates from `3c1a2ca` (2026-09-06), so `4c0ce0a` left it standing with the rest, and the
+sentence above says "every". Two of the
 `docs/plan.md` six were found only by the second sweep described at the end of this section:
 `IsThreeState` "lives in system XAML, not in the pin" and `IsSticky` which "the pin never
 mentions" — against `ToggleButton_Partial.cpp:249`'s `OnToggleImpl` for the first and
@@ -956,7 +1004,38 @@ searched the phrase it had just read — `no implementation in the pin`, which m
 Three sites said the same thing in other words and escaped it; two more escaped even the pass
 that caught those. A weaker token does better: case-insensitive word-boundary `pin` over this
 file, `docs/plan.md` and the components is **166 matching lines across 36 files** on the
-pre-fix tree, which is one pass of reading and returns thirteen of the fifteen.
+pre-fix tree, which is one pass of reading and returns thirteen of the fifteen that pass knew
+about.
+
+**Measured on `fa52a86^`, that phrase fails in two distinct ways and only one of them is the
+wording.** It matches three lines in two files, both documents — `docs/plan.md:737` and this
+file's `:136` and `:137` — and **not one component**, even though two of the four component
+members carry the phrase: prettier had folded it across a line break in `ToolTip.svelte` ("there
+is no" / "implementation in the pin to read") and in `Flyout.svelte` ("implementation in the" /
+"pin to read"). A line-oriented grep cannot see a phrase a formatter has wrapped. **That is C9's
+own defect, 63 minutes earlier** — `5991807` at 16:26:32 repaired a per-line scan whose `\s*` the
+formatter wrapped, and `fa52a86` at 17:30:01 ran a per-line phrase search across prose the same
+formatter wraps; neither commit knew it was working in the other's corpus.
+
+**The weaker token would have returned the sixteenth, and what reached the other three is
+partly on the record.** `ToolTip.svelte:79` on that tree is "implementation in the pin to read"
+— inside those 166 lines and carrying the word — so no instrument named here was too weak for
+it, and all four members carry `pin` on some line. What the phrase grep returned was the two
+documents and not one component, which is why the components arrived by other routes at all:
+`fa52a86`'s body attributes `CommandBar.svelte` and `Pivot.svelte` to its review rather than to
+its own search, and it names Pivot's route — that file was "pointing at a `surface.md` row this
+change rewrote", an inbound reference from the document under edit, and **not a route
+either instrument supplies.** (Both would have _returned_ Pivot's comment — it carries `pin`
+like the rest — which is the distinction: returning a line and arriving at it are different
+things.) `Flyout.svelte` was among the seven the pass
+found for itself — ten in that body's enumeration, three of them the review's — and how is not
+written down. Neither is what that pass ran over the components, and **this paragraph will not
+guess either of those**: three drafts of it did, each naming a different mechanism with nothing
+behind the choice, and the third was refuted by the same commit it was citing.
+
+So the instrument is not the whole story in either direction. One fixed phrase loses members to
+wrapping and to wording both; a third route is neither of those, and is a reference from the
+file being edited; and a line a search returns is not a line anyone has read.
 
 **It does not return the other two, and that is the point.** This file's Popup entry says
 "there is no `.cpp`, no template and no dictionary of its own" and never uses the word `pin` at
@@ -964,7 +1043,9 @@ all. Neither does `docs/plan.md`'s Pivot bullet — "WinUI 3 restyles it and car
 implementation" — which has no `pin` on any line within thirty-five of it, and which the
 _first_ pass caught by reading. The Flyout entry beside Popup says "no `.cpp` in the pin" and
 would be caught, which is what makes the pair instructive: two adjacent entries about two
-framework controls, one findable by token and one not. So the class
+framework controls, one findable by token and one not — and that sentence about the Pivot
+bullet is the one method statement the passes left behind about themselves, recorded for that
+site and for no other. So the class
 is defined by its _shape_ — a negative about what upstream contains — and not by any token it
 reliably carries. A grep narrows the reading; it does not end it. The honest procedure is to
 read every negative about upstream in a file when that file's evidence base changes, and the
