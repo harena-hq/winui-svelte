@@ -525,6 +525,10 @@
 	   `GetDropShadowRecipe` in dxaml/xcp/components/graphics/inc/DropShadowRecipe.h defines it;
 	   `PLATFORM_SHADOWS` derives the value and records the one composition-to-CSS blur constant. */
 	.presenter {
+		/* The popup layer. `Popup.svelte`'s `.root` rule carries the whole reason; the short
+		   version is that this element is static, so the declaration paints nothing here and
+		   is read by the primitive, which mirrors it onto the wrapper it positions. */
+		z-index: 1000;
 		box-sizing: border-box;
 		/* A column flex container, because XAML's stack has no margin collapsing and CSS's
 		   normal flow does. Every row carries `MenuFlyoutItemMargin`'s 2px top and bottom, and

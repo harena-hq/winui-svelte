@@ -588,6 +588,10 @@
 	   keeps the 64 the source states as the floor. Without this the popup shrinks to
 	   its longest item and the control looks nothing like the original. */
 	.popup {
+		/* The popup layer. `Popup.svelte`'s `.root` rule carries the whole reason; the short
+		   version is that this element is static, so the declaration paints nothing here and
+		   is read by the primitive, which mirrors it onto the wrapper it positions. */
+		z-index: 1000;
 		background: var(--winui-AutoSuggestBoxSuggestionsListBackground);
 		border-style: solid;
 		border-width: var(--winui-AutoSuggestListBorderThemeThickness);
@@ -612,7 +616,7 @@
 	   because this control has no `AutoSuggestListViewItem*` family and the
 	   `ComboBoxItem*` family is what `DefaultListViewItemStyle` paints under the same
 	   names upstream. The same `Margin`, `CornerRadius`, `Padding` and eight brushes
-	   ComboBox's items use — see ComboBox.svelte:345 for the upstream references. */
+	   ComboBox's items use — see ComboBox.svelte's `border-width` at :349 for the upstream references. */
 	.item {
 		position: relative;
 		display: flex;
@@ -657,7 +661,7 @@
 	}
 
 	/* The focus visual for the popup items. The ComboBox focus visual at
-	   ComboBox.svelte:434 is the model; `FocusVisualMargin="-3"` upstream at
+	   ComboBox.svelte's `outline: none` at :438 is the model; `FocusVisualMargin="-3"` upstream at
 	   ComboBox_themeresources.xaml:609 puts the band three pixels outside the item's
 	   border box. */
 	.item:focus-visible {

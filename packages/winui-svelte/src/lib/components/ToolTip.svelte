@@ -426,6 +426,10 @@
 	   the 16px line box that makes the one-line tooltip 32 high (1 border + 6
 	   padding + 16 line + 8 padding + 1 border). */
 	.popup {
+		/* The popup layer. `Popup.svelte`'s `.root` rule carries the whole reason; the short
+		   version is that this element is static, so the declaration paints nothing here and
+		   is read by the primitive, which mirrors it onto the wrapper it positions. */
+		z-index: 1000;
 		background: var(--winui-ToolTipBackgroundBrush) padding-box;
 		color: var(--winui-ToolTipForegroundBrush);
 		border-style: solid;

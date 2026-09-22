@@ -354,6 +354,10 @@
 		background: var(--winui-TimePickerSpacerFill);
 	}
 	.presenter {
+		/* The popup layer. `Popup.svelte`'s `.root` rule carries the whole reason; the short
+		   version is that this element is static, so the declaration paints nothing here and
+		   is read by the primitive, which mirrors it onto the wrapper it positions. */
+		z-index: 1000;
 		box-sizing: border-box;
 		height: 398px;
 		overflow: hidden;

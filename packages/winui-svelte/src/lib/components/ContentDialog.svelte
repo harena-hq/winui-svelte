@@ -282,6 +282,10 @@
 <style>
 	/* ContentDialog_themeresources.xaml:222 — LayoutRoot's smoke rectangle fills the window. */
 	.smoke {
+		/* The popup layer. `Popup.svelte`'s `.root` rule carries the whole reason. `Dialog` is
+		   not a floating layer — there is no wrapper for the primitive to mirror this onto —
+		   and this element is `position: fixed`, so the declaration is used where it sits. */
+		z-index: 1000;
 		position: fixed;
 		inset: 0;
 		background: var(--winui-ContentDialogSmokeFill);
@@ -289,6 +293,10 @@
 
 	/* ContentDialog_themeresources.xaml:221 — LayoutRoot is the centred, full-window layer. */
 	.layout {
+		/* The popup layer. `Popup.svelte`'s `.root` rule carries the whole reason. `Dialog` is
+		   not a floating layer — there is no wrapper for the primitive to mirror this onto —
+		   and this element is `position: fixed`, so the declaration is used where it sits. */
+		z-index: 1000;
 		position: fixed;
 		inset: 0;
 		display: flex;

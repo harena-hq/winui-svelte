@@ -132,6 +132,11 @@
 	</div>
 	{#if secondaryCommands !== undefined}
 		<Popover.Root bind:open={() => open, (next) => setOpen(next)}>
+			<!-- c13-layer: CommandBarOverflowPresenter.svelte — this portal's content is that
+			     component, so the layer is on its `.root` rather than on anything here. C13
+			     follows the name and checks that file, so this is a redirection rather than an
+			     exemption. `Popup.svelte`'s `.root` rule is what the layer is and why every
+			     portalled surface needs one. -->
 			<Popover.Portal>
 				<!-- CommandBar_themeresources.xaml:851 places the overflow at the bar's right edge. -->
 				<!-- OpenDown uses the primitive's normal bottom placement; its flip supplies OpenUp. -->
