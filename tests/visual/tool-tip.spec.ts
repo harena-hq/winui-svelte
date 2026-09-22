@@ -101,6 +101,47 @@ test('and then stays where it opened while the pointer moves under it', async ({
 	}
 });
 
+// The other end of the same claim, and the one the rail found. The two tests above both keep
+// the pointer *on* the trigger; what happens when it leaves is a third case, and the anchor was
+// changing there — `pointerInside` went false, `customAnchor` fell back to the trigger, and the
+// popup that was still on screen moved to the new answer before it closed. Measured on
+// `/dev/navigation-view-rail`, where the row is 36 tall and the jump was its half, 18px.
+//
+// Sampled rather than read once, and the live reads are counted: the popup closes about 200ms
+// after the leave, so a single read that lands after it would pass against either component.
+test('and does not re-anchor to the trigger when the pointer leaves it', async ({ page }) => {
+	await page.goto('/dev/tool-tip');
+
+	const { box, trigger } = await openAt(page, 40);
+
+	// `.popup` by its text rather than the `POPUP` locator: this read has to be able to come
+	// back empty, and a locator that matches nothing throws instead.
+	const rectNow = () =>
+		page.evaluate(() => {
+			const el = [...document.querySelectorAll('.popup')].find(
+				(e) => e.textContent?.trim() === 'Simple ToolTip'
+			);
+			if (!el) return null;
+			const r = el.getBoundingClientRect();
+			return { x: r.x, y: r.y };
+		});
+
+	// Off the trigger altogether, which is what a pointer crossing onto the next row does.
+	await page.mouse.move(trigger.x + trigger.width / 2, trigger.y + trigger.height + 60);
+
+	let seen = 0;
+	for (let i = 0; i < 15; i++) {
+		const now = await rectNow();
+		if (!now) break;
+		expect(Math.abs(now.x - box.x)).toBeLessThanOrEqual(0.5);
+		expect(Math.abs(now.y - box.y)).toBeLessThanOrEqual(0.5);
+		seen++;
+		await page.waitForTimeout(20);
+	}
+	// Otherwise the loop above asserted nothing: every read came back after the close.
+	expect(seen).toBeGreaterThan(0);
+});
+
 // The pointer is not the only thing that opens one. `onfocus` reaches the trigger whenever
 // `openOnHover` is true, so a keyboard user tabbing onto it opens a tooltip with no pointer
 // anywhere near — and a pointer-anchored popup has nothing to anchor to. The original's answer
@@ -125,4 +166,42 @@ test('a tooltip opened by the keyboard is anchored to the trigger, not to a poin
 	// Centred on the trigger, which is what `align="center"` against the element means — and
 	// nowhere near the viewport's corner, which is where `{0, 0}` puts it.
 	expect(Math.abs(now.x + now.width / 2 - (box.x + box.width / 2))).toBeLessThanOrEqual(1);
+});
+
+// The enter half of the same invariant, and the one a review found rather than a probe. The
+// test above opens by focus and reads the popup at the open, before any pointer arrives; this
+// brings a pointer in afterwards. `pointerInside` was going false to true under a popup already
+// on screen, `customAnchor` flipped from the trigger to the pointer, and the popup jumped —
+// and once the leave stopped releasing the flag, nothing put it back until the close.
+//
+// The pin decides this by the open too, and says so in its own words at
+// `ToolTip_Partial.cpp:815`: "PlacementMode.Mouse only makes sense for automatic ToolTips
+// opened by touch or mouse". The mode that test reads is latched at
+// `ToolTipService_Partial.cpp:480` and cleared on the close at `ToolTip_Partial.cpp:405`.
+test('and stays on the trigger when a pointer arrives after a keyboard open', async ({ page }) => {
+	await page.goto('/dev/tool-tip');
+
+	const trigger = page.locator(TRIGGER).first();
+	const box = (await trigger.boundingBox())!;
+	// Off every trigger first. A pointer already resting on this one would have latched the
+	// anchor before the focus, and this would be a test of the hover path instead.
+	await page.mouse.move(box.x + box.width + 200, box.y + 200);
+	await trigger.focus();
+
+	const popup = page.locator(POPUP);
+	await expect(popup).toBeVisible();
+	const at = await placed(popup);
+
+	// 40 in from the left edge: the offset the two pointer tests use, and 250 from where the
+	// element anchor centres the popup on this 580-wide trigger.
+	await page.mouse.move(box.x + 40, box.y + box.height / 2);
+
+	// Sampled rather than read once, for the same reason the leave test samples: the flip is a
+	// frame or two after the move and a single read can land before it.
+	for (let i = 0; i < 10; i++) {
+		const now = (await popup.boundingBox())!;
+		expect(Math.abs(now.x - at.x)).toBeLessThanOrEqual(0.5);
+		expect(Math.abs(now.y - at.y)).toBeLessThanOrEqual(0.5);
+		await page.waitForTimeout(30);
+	}
 });
