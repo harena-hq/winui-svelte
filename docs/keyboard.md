@@ -223,6 +223,16 @@ then the ninth entry, which is a search rather than a press and says so.
    reproduced rather than swallowed, and the test asserts the absent `preventDefault()` as well
    as the absent move — the assertion that separates "the ring ends here" from "every arrow is
    consumed".
+   **The head was pressed later the same day, and the first build got it wrong.** Up from the
+   first row reaches the **pane toggle**, and Down from the toggle comes back to the first row.
+   This answer's own note that "the ring's top end is not measured at all" was right when it was
+   written, and the ring shipped stopping at the first row on the strength of it. Upstream
+   reaches the toggle by _declining_ the key: `FindNextElement(Up)` returns the toggle, which is
+   not a `NavigationViewItem`, so `FocusNextUpItem`'s correction is skipped
+   (`NavigationView.cpp:2786`), `Depth()` is 0 so the climb at `:2822` is skipped too, and
+   XAML's directional navigation finishes the move. **The web has no directional focus
+   navigation, so declining moves nothing** — which is the whole of the defect, and the reason
+   this one place has to name the element that upstream never names.
 3. **Home and End jump to the ends**, and pressing them again does nothing.
    **We** did nothing on either.
    **Built on 2026-09-22**, and with a scope of their own: they reach the ends of the row's own
@@ -468,6 +478,15 @@ then matched the other reading:
 | the list's first row is `items[0]` rather than its first non-header | 1            |
 | the visibility filter is removed                                    | 1            |
 | the chevron is a tab stop again                                     | 3            |
+
+**And the ring shipped with a defect none of that could see.** It stopped at the first row,
+because the head had never been pressed and this document said so; a user driving the rail
+found it the same day. Every mutation above is an edit to code that already agreed with the
+ring as specified, and the specification was what was short — which is the limit of the whole
+method stated as plainly as it can be: **a suite measures a build against its specification,
+and no amount of it reaches a specification with a hole in it.** The press is what reached
+this one, and the hole was marked on the page: this document had already written "the ring's
+top end is not measured at all" and the unit sealed anyway.
 
 **What the table does not show is where the defects came from, and it is not from here.**
 Three were found by a cold read of the diff — End's scope, the split in the `!path` branch, and

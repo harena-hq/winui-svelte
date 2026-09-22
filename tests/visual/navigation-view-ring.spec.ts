@@ -418,3 +418,61 @@ test('an open rail flyout holds focus, so Tab never reaches the pane behind it',
 		await expect(focused(page)).toHaveText(`flyout / ${next}`);
 	}
 });
+
+test('Up from the first row reaches the pane toggle, and Down comes back', async ({ page }) => {
+	await page.goto(PAGE);
+	const frame = page.locator('#selected-mid');
+	const handled = await watchHandled(page);
+
+	// **The head of the ring, which the 2026-09-21 sitting never measured and the 2026-09-22
+	// one did.** Upstream reaches it by *declining*: `FindNextElement(Up)` returns the toggle,
+	// which is not a `NavigationViewItem`, so `FocusNextUpItem`'s correction is skipped
+	// (`NavigationView.cpp:2786`), `Depth()` is 0 so the climb at `:2822` is skipped, and XAML's
+	// own directional navigation moves focus. The web has none, so this moves it explicitly.
+	await frame.locator(row('Home')).focus();
+	await page.keyboard.press('ArrowUp');
+	await expect(focused(page)).toHaveText('selected-mid / pane toggle');
+	expect(await handled('ArrowUp')).toBe(true);
+
+	// And back down, pressed in the same sitting: Down on the hamburger enters the first row.
+	// Nothing subscribes to the toggle's keys upstream, so the same platform navigation that
+	// carries Up out of the pane carries Down back in.
+	await page.keyboard.press('ArrowDown');
+	await expect(focused(page)).toHaveText('selected-mid / Home');
+	expect(await handled('ArrowDown')).toBe(true);
+});
+
+test('the walk from the settings row reaches the toggle, crossing every visible row', async ({
+	page
+}) => {
+	await page.goto(PAGE);
+	const frame = page.locator('#selected-mid');
+
+	// The press the user reported, end to end: from the settings row, Up walks back through
+	// every row two expanded subtrees put on screen and then leaves the pane for the toggle.
+	// Written as one walk rather than as two tests because what was reported is the walk — a
+	// ring that stops one row short is the defect, and only the last step of a traversal can
+	// show it.
+	await frame.locator(row('Settings')).focus();
+	for (const next of ['Archive', 'Recent', 'All', 'Geometry', 'Color', 'Design', 'Home']) {
+		await page.keyboard.press('ArrowUp');
+		await expect(focused(page)).toHaveText(`selected-mid / ${next}`);
+	}
+	await page.keyboard.press('ArrowUp');
+	await expect(focused(page)).toHaveText('selected-mid / pane toggle');
+});
+
+test('the rail reaches its toggle too, over its own three rows', async ({ page }) => {
+	await page.goto(PAGE);
+	const frame = page.locator('#rail');
+
+	// A rail's ring is shorter and ends the same way. This is the frame the defect was reported
+	// on, and the one where the head is hardest to reach by pointer.
+	await frame.locator(row('Settings')).focus();
+	for (const next of ['All', 'Design', 'Home']) {
+		await page.keyboard.press('ArrowUp');
+		await expect(focused(page)).toHaveText(`rail / ${next}`);
+	}
+	await page.keyboard.press('ArrowUp');
+	await expect(focused(page)).toHaveText('rail / pane toggle');
+});
