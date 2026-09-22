@@ -127,7 +127,7 @@ and which this template has no group for. Only the first gets rows below: the ce
 template's own names, and the template does not have the second.
 
 **Transitions are not in the census at all.** A `VisualTransition` is identified by the pair of
-states it runs between rather than by a name, so it needs a different key; `4cba9b2` records what
+states it runs between rather than by a name, so it needs a different key; `8c53057` records what
 is known about them in the meantime.
 
 ---

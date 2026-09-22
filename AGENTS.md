@@ -67,11 +67,50 @@ history is a rebase that never happened.
 
 This section exists because the grammar was stated only in a skill this repository does
 not carry, and nothing read a subject line. Of the 360 commits before the rule was
-enforced, 66 conform: 253 subjects do not parse and 41 more overrun 72 characters. The
-drift is dateable — on 2026-09-06 one subject took the shape `ProgressRing: <sentence>`
-and 82 more followed, which _looks_ like the grammar while a parser sees a type named
-`ProgressRing`. Those commits are rewritten in their own unit; `C10` states the boundary
-in one line rather than passing quietly over them.
+enforced, 66 conformed: 253 subjects did not parse and 41 more overran 72 characters.
+The drift was dateable — on 2026-09-06 one subject took the shape
+`ProgressRing: <sentence>` and 82 more followed, which _looks_ like the grammar while a
+parser sees a type named `ProgressRing`. **Those 294 subjects were rewritten on
+2026-09-22**, every tree left byte-identical, so `C10` now reads the whole log and the
+boundary it used to state is gone. The tag `pre-history-rewrite-20260922` holds the
+history as it was.
+
+**A subject with two clauses is still one intent.** `engineering:principles` §7 says to
+split when you need "and", and 151 of these 412 subjects carry an `and` or a semicolon.
+The rule is about the unit, not the conjunction: "the pane is one tab stop and the rows
+are a ring" is one mechanism stated as the two facts that make it checkable, and
+splitting it would seal a pane that tabs into nothing. Where the two halves are two
+units, they are still split. **This is the override the Engineering method section below
+says is not in force for anything else**, and it is recorded here rather than left to be
+inferred from the log.
+
+## Commit trailers
+
+The block goes **last, with nothing after it**, and a value that wraps indents its
+continuation lines by two spaces. Both are `git-interpret-trailers`' requirements rather
+than house style: a continuation flush at the left margin makes git read the whole block
+as prose and return no trailers at all, which is invisible until someone asks for one.
+The symptom is an empty column in `git log --format='%h %(trailers:only=true)'`, and 46
+of this repository's commits carried it silently, because a single-line trailer never
+wraps and the only trailer most of them had was one line.
+
+**An agent takes `Assisted-by: <agent>:<model>`, one line per agent that contributed,
+and never `Co-Authored-By:` or `Signed-off-by:`.** The right-hand side names the model
+and nothing else — not the harness that drove it, the service that served it, the effort
+level or the context window, because a model served by one host is the same model served
+by another. `Assisted-by: Claude:claude-opus-5`, not
+`Assisted-by: Claude:claude-opus-5[1m]`.
+
+**A sha in a commit message is a citation, and a rewrite has to re-point it.** 75 of
+them across 46 messages, and 44 more in tracked files, were left dangling by the first
+attempt at the 2026-09-22 rewrite. `git filter-repo` translates the ones in messages
+itself — but before it calls `--commit-callback`, so a callback that replaces the
+message undoes the translation it never saw happen.
+
+Which trailers earn their line, and what each is for, is `engineering:principles`'
+`references/commit-trailers.md`. Restated here is only what a fresh clone without that
+skill would otherwise not know, which is the same reason the subject grammar is written
+out above.
 
 ## Engineering method
 
@@ -82,4 +121,7 @@ not distributed with this repository and are not publicly available. If they
 are unavailable, the rules in this brief still stand on their own. This brief
 may override either, with the exception and its rationale recorded here.
 
-No override is in force. This project follows `engineering:principles` as written.
+One override is in force, and it is the one recorded under **Commit subjects** above:
+§7's "if you need 'and', split" governs the unit, not the conjunction, so a two-clause
+intent line is allowed where the clauses are two halves of one mechanism. Everything
+else this project follows as written.

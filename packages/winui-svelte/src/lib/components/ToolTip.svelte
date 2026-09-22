@@ -86,7 +86,7 @@
 	// `controls/dev/ToolTip/` — and **the pin carries the implementation anyway**, at
 	// `dxaml/xcp/dxaml/lib/ToolTip_Partial.cpp` (2584 lines) and `ToolTipService_Partial.cpp`
 	// (2362). An earlier version of this comment said there was none to read. That was true of
-	// a checkout holding `controls/dev` alone and `4c0ce0a` falsified it;
+	// a checkout holding `controls/dev` alone and `8928bb8` falsified it;
 	// `docs/surface.md`'s ToolTip section was corrected and this line was not, which is the
 	// class that section is about. What is read here is placement, the input mode and the show
 	// delay — the anchor comments below, `onPointerLeave`, `SHOW_DELAY` and the provider carry

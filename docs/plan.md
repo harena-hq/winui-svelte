@@ -745,7 +745,7 @@ group sizes, which no longer line up one-to-one with a version.
     the second half of each sealed control adds, the finding that seven of the twelve are
     `Windows.UI.Xaml` controls WinUI 3 only restyles — **recorded at the time as "no
     implementation in the pin at all", which was true of the sparse checkout then and stopped
-    being true when `4c0ce0a` widened it**; that file's "The checkout grew and these claims did
+    being true when `8928bb8` widened it**; that file's "The checkout grew and these claims did
     not" has the measurement — and,
     the part that matters going forward, the four steps that sweep a control **before** it
     is sealed rather than after. Two defects came out of it and are fixed; the rest are
@@ -772,8 +772,8 @@ group sizes, which no longer line up one-to-one with a version.
     popup re-breaks both, and ComboBox already carries the second. They are sealed before
     the next tranche starts. The other four are single lines in single components.
 
-    **All six are closed.** The four single-component fixes are `d2363bb`, `bd4f202`,
-    `7bfc14b` and `e57b3af`; the two mechanisms are `c7b2e0f` and `8021c8d`. Two of the
+    **All six are closed.** The four single-component fixes are `8619668`, `6201fb9`,
+    `fc50c93` and `23d24ba`; the two mechanisms are `b10a5b6` and `5371910`. Two of the
     four were not the one-liners this paragraph predicted. The caret was not moved by the
     `type` change at all — Chromium resets a password field's selection at the end of the
     task that dispatched the pointer event, so a restore has to wait a frame and `tick()`
@@ -844,7 +844,7 @@ group sizes, which no longer line up one-to-one with a version.
     the five have a full implementation in the pin, and **this said ToolTip had only theme
     resources** — that it is a `Windows.UI.Xaml` control, so its dictionary and the Gallery's
     page were the whole of what could be read. **The dictionary is 77 lines, not 78, and the
-    claim around it expired on `4c0ce0a`**, which widened the sparse checkout to `dxaml`: the
+    claim around it expired on `8928bb8`**, which widened the sparse checkout to `dxaml`: the
     pin carries `ToolTip_Partial.cpp` and `ToolTipService_Partial.cpp`. `surface.md`'s ToolTip
     entry is the corrected account, and this line is the last copy of the old one — it sat in
     the file that entry points at. What the sweep changed about this version's shape:
@@ -1082,7 +1082,7 @@ group sizes, which no longer line up one-to-one with a version.
     was recorded as _the pin carries no implementation at all_ — **true of the checkout this
     version had, and false of the one the repository has now.** The search is quoted in the same
     sentence: `find controls/dev -name 'AppBar*'` matches three `*_themeresources.xaml` files and
-    nothing else, and at v7 `controls/dev` was the whole checkout. `4c0ce0a` added `dxaml` two
+    nothing else, and at v7 `controls/dev` was the whole checkout. `8928bb8` added `dxaml` two
     days later, and all four of `AppBarButton`, `AppBarToggleButton`, `AppBarSeparator` and
     `CommandBar` have an implementation there — 836, 430, 84 and 4257 lines. Steps 2 and 3 of the
     sweep were skipped on a verdict that has since expired, which is `docs/surface.md`'s "The
@@ -2336,7 +2336,7 @@ generics="T">` component through `pnpm --filter winui-svelte build` reaches `dis
     since v10 had the description 4px high and the example header 12px high, and nothing said
     so until a page put the original's own content under the frame. Both roots are formatting
     context roots now, and a third case turned up the same day — a TextBlock's margin on an
-    inline span. The lesson is on the seal of `db96ae9` and in the harness fix that followed.
+    inline span. The lesson is on the seal of `05f00af` and in the harness fix that followed.
 
     **The one-column layout has a pre-count state, and it is the default's own.** `RadioButtons`
     counts its children in the DOM to know its row count; before the count exists, a
@@ -4116,13 +4116,13 @@ evidence is a dev route.** That is a sweep of commit trailers plus a handful of 
 **The consumer this asked for was built fifty-one minutes later, and the paragraph asking for
 it stood for twelve days.** It said C6 proved the package needs no build tooling but not that
 a consumer can mount what it exports, and that the smoke app the gate description promised did
-not exist. That was true at 17:45 on 2026-09-06, when `e2dd2bfb` wrote it, and false at 18:36,
-when `5b002b2` installed the packed tarball into a project this workspace cannot help.
+not exist. That was true at 17:45 on 2026-09-06, when `155b49c4` wrote it, and false at 18:36,
+when `1b792c5` installed the packed tarball into a project this workspace cannot help.
 `pnpm smoke` packs the library, installs it outside the workspace, mounts ten exports in a
 bare Vite + Svelte app, builds for the browser and for SSR, renders the SSR bundle, and
 refuses a build that imports a name the package does not export. A request written into this
 file is not re-read once it is satisfied, and every later sentence citing it reads as
-corroboration — the same shape as the scrollbar claim `d1eda87` corrected.
+corroboration — the same shape as the scrollbar claim `d2b00ff` corrected.
 
 C6 itself was what was actually owed, and it was worse than the paragraph said. The gate, the
 measurement that condemned it and what replaced it are under "Conformance gates" below.
