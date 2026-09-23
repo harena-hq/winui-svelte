@@ -206,6 +206,11 @@
 		height: 20px;
 	}
 
+	/* Two `<Rectangle>`s upstream, one per track and not one restyled: `OuterBorder` carries
+	   `ToggleSwitchFillOff` and `ToggleSwitchStrokeOff` (ToggleSwitch_themeresources.xaml:507)
+	   and `SwitchKnobBounds` carries the `…On` pair (:508). Being Shapes, their stroke lands
+	   where these borders land and the fill under it stops at the stroke's centreline rather
+	   than at either box edge: WD-096. */
 	.off-track,
 	.on-track {
 		position: absolute;

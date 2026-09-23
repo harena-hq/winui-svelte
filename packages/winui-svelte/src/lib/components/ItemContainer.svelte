@@ -162,8 +162,22 @@
 		border-color: var(--winui-ItemContainerSelectionVisualPressedBackground);
 	}
 
-	/* Like CheckBox.svelte, CSS draws this border inside its box while upstream's Rectangle has a
-	   centred stroke. Its half-pixel outer edge is therefore not reproduced. */
+	/* `PART_CommonVisual` is a `Rectangle` (`ItemContainer.xaml:127`), so the note on CheckBox's
+	   `.box` carries the argument: a Shape has no `BackgroundSizing`, and
+	   `CShape::GetOutlineRect` shrinks the geometry by the stroke (`shape.cpp:867`) so the
+	   stroke sits inside the box exactly where a CSS border sits. With
+	   `ItemContainerSelectedInnerThickness` 1 (`ItemContainer_themeresources.xaml:58`) the half
+	   pixel at issue is the fill's outer edge and not the stroke's, and `border-box` and
+	   `padding-box` miss it by the same amount in opposite directions, so the default stands.
+	   WD-096 is that half pixel, and carries the measurement of what no CSS at this scale can
+	   express.
+
+	   The fill is upstream's own, and the shape of it is why the declared absence is visible:
+	   the Rectangle carries a `Stroke` and no `Fill`, and of the six states in `CombinedStates`
+	   (`ItemContainer.xaml:13`) five animate `Fill` alongside `Stroke` while the sixth,
+	   `UnselectedNormal` (`ItemContainer.xaml:14`), is empty. So the resting container is the
+	   one that shows the undeclared fill, which is why the base rule below paints no
+	   background and the five state rules each paint one. */
 	.common-visual {
 		border-style: solid;
 		border-width: var(--winui-ItemContainerSelectedInnerThickness);

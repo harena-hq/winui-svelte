@@ -169,7 +169,8 @@
 		font-weight: 600;
 		color: var(--winui-PersonPictureForegroundThemeBrush);
 	}
-	/* PersonPicture.xaml:65 — XAML strokes are inside the element bounds. */
+	/* PersonPicture.xaml:65 — XAML strokes are inside the element bounds. The fill under one is
+	   not: it stops at the stroke's centreline, which is WD-096. */
 	.ellipse {
 		position: absolute;
 		inset: 0;
@@ -213,7 +214,8 @@
 		justify-content: center;
 		color: var(--winui-PersonPictureEllipseBadgeForegroundThemeBrush);
 	}
-	/* PersonPicture.xaml:69 — the badge plate carries its own inside stroke. */
+	/* PersonPicture.xaml:69 — the badge plate carries its own inside stroke, and its fill stops
+	   half a pixel inside it: WD-096. */
 	.badge-plate {
 		position: absolute;
 		inset: 0;
