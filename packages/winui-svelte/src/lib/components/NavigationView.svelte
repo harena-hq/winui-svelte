@@ -1058,7 +1058,51 @@
 		display: flex;
 		flex-direction: column;
 		flex: 0 0 auto;
-		overflow: hidden;
+		/* The pane's clip is its **border** box. `PaneClipRectangle` is
+		   `{0, 0, GetOpenPaneLength(), newFinalSize.height}` in `PaneRoot`'s own space
+		   (`SplitView.cpp:166-170` — that height is the SplitView's arranged one, which
+		   `PaneRoot` stretches to), and `PaneRoot.Width` is `TemplateSettings.OpenPaneLength`
+		   (`SplitView_themeresources.xaml:700`), written from that same call
+		   (`SplitView.cpp:347`, `:357`). A XAML width includes the border, so the clip's
+		   rectangle and the border box are one rectangle. CSS clips at the padding box, a pixel
+		   in on every side, and `NavigationViewPaneContentGridMargin`'s -1 puts a row's
+		   outermost pixel exactly there: measured on the reference 2026-09-22, a focused row's
+		   band runs 370-372 while the pane's own background starts at 371, so upstream draws
+		   that column and cuts nothing. Ours lost it from both ends of every row, and the band
+		   came out two columns wide against the original's three.
+
+		   In high contrast the right end still shows two, and this is not what fixes it:
+		   `.pane::after` below paints over the band's inner column, because CSS paints a
+		   pseudo-element after its host's descendants where XAML draws a focus visual in a
+		   layer above the tree. Pre-existing, and a different unit.
+
+		   `clip` rather than `hidden` because `overflow-clip-margin` governs only the former.
+		   Nothing is given up with the scroll container: `.pane` is not what scrolls in this
+		   control — the `ScrollView` inside it is.
+
+		   **This is the one clip in this file that may lie on the pane's own box**, and the
+		   exception is structural rather than a judgement. `--nav-pane-clip-outset` above holds
+		   a `clip-path` 16px off the box because a clip *on* it erased the pane's shadow and
+		   softened its top edge. `overflow` reaches neither: it clips descendants and never the
+		   element's own background, border or shadow, and `.shadow-caster` is a sibling rather
+		   than a child. Measured after this change, column 0 reads the same value as column 1 in
+		   all three themes, so nothing was softened.
+
+		   The corners come along for the ride, and that took a second read to believe.
+		   `PaneClipRectangle` is a plain `RectangleGeometry` with no `RadiusX`/`RadiusY`
+		   (`SplitView_themeresources.xaml:705-709`), which reads as though XAML rounded nothing
+		   and CSS's `border-radius` clip were ours alone. It is not: **any** `FrameworkElement`
+		   with a non-zero `CornerRadius` and children takes a composition node for rounded-corner
+		   clipping (`framework.cpp:2681-2709`, and the flag's own comment at
+		   `uielement.h:3191`), and the clip that node applies is sized
+		   `GetActualWidth()`/`GetActualHeight()` — the border box again
+		   (`HWCompNodeWinRT.cpp:3153-3208`). So `PaneRoot` clips its children twice, to a square
+		   rectangle and to a rounded one, and both are the border box. Ours now is too, where
+		   before it was the padding box with a radius a pixel smaller. Measured at the
+		   `HCPaneBorder` column, the arc took about eight rows off each end of the seam and now
+		   takes about five. */
+		overflow: clip;
+		overflow-clip-margin: border-box;
 		/* `PaneRoot.Width` is `OpenPaneLength`, and a XAML width includes the border the rule
 		   below adds — the same reason `.content-presenter` carries this line. Without it the
 		   open pane would be 322 where the resource says 320. */
@@ -1097,10 +1141,10 @@
 		   is under `data-overlay`.
 
 		   `NavigationViewPaneContentGridMargin` is the evidence that it belongs here: the pane
-		   content grid's margin is `-1,3`, and a -1 with no border to cancel pushes the menu a
-		   pixel past the pane's own edge, where the `overflow: hidden` above cuts it. That
-		   margin has been transcribed since the Navigation tranche; the border it was written
-		   against had not been. */
+		   content grid's margin is `-1,3`, and a -1 with no border to cancel would push the menu
+		   a pixel past the pane's own edge rather than onto it. That margin has been transcribed
+		   since the Navigation tranche; the border it was written against had not been. Where
+		   the menu lands is the border box, which is why the clip above has to reach it. */
 		border: var(--winui-NavigationViewBorderThickness) solid transparent;
 	}
 

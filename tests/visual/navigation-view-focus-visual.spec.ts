@@ -29,10 +29,27 @@ const selectedRow = (page: Page) =>
 
 const presenterOf = (row: Locator) => row.locator('xpath=..');
 
-/** The columns of one screenshot's horizontal midline, classified. */
-async function midline(page: Page, shot: Buffer) {
+/** The columns of one screenshot's horizontal midline, classified.
+ *
+ * `side` says which edge to count from and `span` how far in to read. Neither window may reach
+ * the row's content, whose glyphs are as dark as a focus stroke — and on the right the content
+ * is not even the nearest hazard: the pane's `ScrollView` puts a scrollbar thumb four columns
+ * in, which is grey enough to classify as a stroke under a darker theme and which is there at
+ * all only because this page holds enough rows to overflow. So the right-hand window is four,
+ * a number with a reason: the band is `FocusVisualPrimaryThickness` plus
+ * `FocusVisualSecondaryThickness` wide — three — and the fourth column is its clearance. That
+ * bound is flush: the thumb was measured at right index 4, the column after the last one read,
+ * so a scrollbar a pixel wider or a `ScrollViewScrollBarsMargin` a pixel narrower puts it back
+ * inside. This test is downstream of the scrollbar's geometry, and nothing else says so.
+ *
+ * The left-hand window is sixteen because the selection indicator has to be inside it. What
+ * makes that safe is weaker than a bound and is worth saying plainly: the assertions below are
+ * equalities over the classified sets, so anything that wanders in **and classifies** breaks
+ * one. Something that wanders in and classifies as nothing — which is exactly what the thumb
+ * does at `129,129,129` — would hide here as readily as on the right. */
+async function midline(page: Page, shot: Buffer, side: 'left' | 'right' = 'left', span = 16) {
 	return page.evaluate(
-		async (url) => {
+		async ({ url, side, span }) => {
 			const image = new Image();
 			image.src = url;
 			await image.decode();
@@ -45,7 +62,9 @@ async function midline(page: Page, shot: Buffer) {
 			const stroke: number[] = [];
 			const secondary: number[] = [];
 			const accent: number[] = [];
-			for (let x = 0; x < Math.min(16, image.naturalWidth); x++) {
+			const width = Math.min(span, image.naturalWidth);
+			for (let n = 0; n < width; n++) {
+				const x = side === 'left' ? n : image.naturalWidth - 1 - n;
 				const [r, g, b] = context.getImageData(x, y, 1, 1).data;
 				// Four things can appear in these columns, and every threshold below is one of
 				// their measured light-theme values rather than a guess. The accent is tested
@@ -59,9 +78,9 @@ async function midline(page: Page, shot: Buffer) {
 				// row's fill is 234. A classifier with no class for it cannot see the stroke the
 				// indicator has to clear, and every assertion about that clearance is then
 				// really an assertion about the primary.
-				if (b > r + 60) accent.push(x);
-				else if (r + g + b < 300) stroke.push(x);
-				else if (r > 246 && g > 246 && b > 246) secondary.push(x);
+				if (b > r + 60) accent.push(n);
+				else if (r + g + b < 300) stroke.push(n);
+				else if (r > 246 && g > 246 && b > 246) secondary.push(n);
 			}
 			return {
 				stroke,
@@ -71,7 +90,7 @@ async function midline(page: Page, shot: Buffer) {
 				height: image.naturalHeight
 			};
 		},
-		`data:image/png;base64,${shot.toString('base64')}`
+		{ url: `data:image/png;base64,${shot.toString('base64')}`, side, span }
 	);
 }
 
@@ -135,25 +154,54 @@ test('the strokes sit at the row edge and leave the indicator a column of its ow
 	// Every column is pinned, because each one is a measurement and two of them are measurements
 	// of something owed. Reading left to right from the row's own left edge:
 	//
-	//   0  cut. The band's outer edge belongs here; `.pane` clips at its padding box while
-	//      `NavigationViewPaneContentGridMargin` pulls the menu a pixel outside it, so the
-	//      outermost pixel of every row is lost. **This unit is what made that visible** — the
-	//      band used to be drawn 4px in, where nothing was clipped. The original loses nothing:
-	//      measured 2026-09-22, its band's outer edge is at x=370 with the pane's own background
-	//      starting at x=371. When that is fixed this becomes `[0, 1]`.
-	//   1  primary. 2px wide upstream, and the first of the two is the column above.
+	//   0  primary, the outer of its two columns. It is here only since the pane's clip was
+	//      moved to its border box, where `PaneClipRectangle` puts it; until then CSS cut this
+	//      column at the padding box and the band rendered two columns wide against the
+	//      original's three.
+	//   1  primary, the inner column. 2px wide upstream.
 	//   2  secondary, 1px.
 	//   3  untouched — the pixel of clearance the margin leaves.
 	//   4  the fill's left edge.
 	//   5  the indicator, which upstream starts at 4, flush with the fill. Ours is a column in
-	//      because `.item` draws a 1px border the presenter's template never reads; also owed.
+	//      because `.item` draws a 1px border the presenter's template never reads; owed, and
+	//      recorded in `.private/NEXT.md`. When that is fixed these become `[4, 5, 6]`.
 	//
-	// Both owed defects are in `.private/NEXT.md`. A bound rather than an equality here would
-	// notice neither the day it is fixed nor the day it gets worse.
-	expect(focused.stroke).toEqual([1]);
+	// A bound rather than an equality here would notice neither the day it is fixed nor the day
+	// it gets worse.
+	expect(focused.stroke).toEqual([0, 1]);
 	expect(focused.secondary).toEqual([2]);
 	expect(focused.accent).toEqual([5, 6, 7]);
 	// And the claim the unit is for, stated once in its own terms: the indicator clears the
 	// **secondary** stroke — the inner one, the one nearest it — with a column to spare.
 	expect(Math.min(...focused.accent) - Math.max(...focused.secondary)).toBeGreaterThanOrEqual(2);
+});
+
+test("the band reaches the row's far end too, because the clip is the border box", async ({
+	page
+}) => {
+	await page.goto(PAGE);
+	const row = selectedRow(page);
+	const presenter = presenterOf(row);
+
+	// `NavigationViewPaneContentGridMargin` is the Thickness `-1,3`, whose two values are
+	// left/right and top/bottom — so the menu hangs a pixel past the pane's box at **both**
+	// ends, and both are inside `PaneClipRectangle`, which is `PaneRoot`'s border box
+	// (`SplitView.cpp:166-170`). The test above owns the left end and pins it column by column;
+	// this one owns the right, because a clip that came back on one side only would pass that
+	// test and leave half the defect standing.
+	//
+	// Unfocused first, for the reason that test gives: without it the assertions below would
+	// still pass on the day something else starts drawing in these columns.
+	const quiet = await midline(page, await presenter.screenshot(), 'right', 4);
+	expect(quiet.stroke).toEqual([]);
+	expect(quiet.secondary).toEqual([]);
+
+	await row.focus();
+	const right = await midline(page, await presenter.screenshot(), 'right', 4);
+
+	// Counting inward from the right edge, the same three columns as the left end, and no
+	// selection indicator after them — that one is drawn at the row's start.
+	expect(right.stroke).toEqual([0, 1]);
+	expect(right.secondary).toEqual([2]);
+	expect(right.accent).toEqual([]);
 });
