@@ -172,3 +172,154 @@ for (const control of CONTROLS)
 		await expect.poll(() => ring(page, box), { timeout: 5000 }).not.toBe(light);
 		await measure('dark');
 	});
+
+/**
+ * The same claim one element up: the flyout presenter's own fill stops at its stroke.
+ *
+ * Nothing above reaches this element. The three tests above are about a **state** rule dropping
+ * a clip the base rule set; here the clip was simply never written, and the element is the
+ * popup surface rather than the button that opens it. Upstream's presenter is a single
+ * `<Border x:Name="Background">` binding `Background`, `BorderBrush` and `BorderThickness`
+ * together — `DatePicker_themeresources.xaml:276` under the style at
+ * `DatePicker_themeresources.xaml:260`, `TimePicker_themeresources.xaml:274` under
+ * `TimePicker_themeresources.xaml:259` — and `BackgroundSizing` does not occur in either file,
+ * so each Border takes the property's default. The same author writes it out on the presenter
+ * next door: `MenuFlyout_themeresources.xaml:289` sets `BackgroundSizing="InnerBorderEdge"`
+ * explicitly on `MenuFlyoutPresenter`'s template root.
+ *
+ * Two readings rather than one, because a single edge cannot say that the fill is what an
+ * unclipped stroke lies on. `SurfaceStrokeColorFlyout` is translucent, so an unclipped stroke
+ * takes its colour from the presenter's own fill, which is uniform: forcing `border-box` must
+ * therefore collapse both edges onto one value, and that is asserted.
+ *
+ * **The converse is not asserted, and the reason is worth the line.** Clipped, the two edges do
+ * differ on this build — the stroke then lies on what is behind the popup, and `PopupShadow` is
+ * not the same above the presenter as beside it. But that difference is a fact about the shadow
+ * and not about the clip: with `box-shadow: none` and the clip exactly as shipped, both edges
+ * read one value again (228 light, 25 dark, measured). An assertion that the shipped edges
+ * differ would go red on a shadow change with the fill perfectly faithful, and its message would
+ * send the reader to the clip. The two assertions that carry this test — shipped equals forced
+ * `padding-box`, and forced `border-box` differs — hold with or without a shadow.
+ *
+ * High contrast is left out for the same reason as above, and it is worth saying rather than
+ * leaving as a silence: there the presenter's fill is `SystemColorWindowColor` and its stroke
+ * `SystemColorWindowTextColor`, both opaque, so an unclipped fill under an opaque stroke
+ * changes nothing and the positive control could not fire.
+ */
+
+const PRESENTERS = [
+	{ name: 'DatePicker', route: '/dev/date-picker' },
+	{ name: 'TimePicker', route: '/dev/time-picker' }
+] as const;
+
+/**
+ * The two pixels inside the presenter's stroke: its left edge on the horizontal midline, and
+ * its top edge on the vertical one.
+ */
+async function edges(page: Page, presenter: Locator) {
+	const shot = await presenter.screenshot();
+	return page.evaluate(
+		async (url) => {
+			const image = new Image();
+			image.src = url;
+			await image.decode();
+			const canvas = document.createElement('canvas');
+			canvas.width = image.naturalWidth;
+			canvas.height = image.naturalHeight;
+			const context = canvas.getContext('2d')!;
+			context.drawImage(image, 0, 0);
+			const at = (x: number, y: number) =>
+				[...context.getImageData(x, y, 1, 1).data].slice(0, 3).join(',');
+			return {
+				left: at(0, Math.floor(image.naturalHeight / 2)),
+				top: at(Math.floor(image.naturalWidth / 2), 0)
+			};
+		},
+		`data:image/png;base64,${shot.toString('base64')}`
+	);
+}
+
+for (const control of PRESENTERS)
+	test(`${control.name}'s flyout presenter fill stops at the inner border edge`, async ({
+		page
+	}) => {
+		/** What the page renders for the closed button, which differs between the two themes. */
+		const rendered = () =>
+			page
+				.locator('.flyout-button')
+				.first()
+				.evaluate((el) => getComputedStyle(el).backgroundColor);
+
+		let light = '';
+		for (const theme of ['light', 'dark'] as const) {
+			await page.goto(control.route);
+			// The Gallery's layout re-applies the stored theme in a mount effect, so a `dataset`
+			// write alone is deleted again by hydration; `themes.ts:74-90` records what that cost.
+			// Write both channels, reload, and then wait on the **render** — reading `dataset`
+			// back would only report what the line above wrote.
+			await page.evaluate((t) => {
+				localStorage.setItem('winui-svelte:theme', t);
+				document.documentElement.dataset.theme = t;
+			}, theme);
+			await page.reload();
+			if (theme === 'light') light = await rendered();
+			else await expect.poll(rendered, { timeout: 5000 }).not.toBe(light);
+
+			// The flyout centres itself on its button, so a specimen near the top of the page
+			// opens a presenter whose own top edge is above the viewport — measured at y=-30 for
+			// the first specimen here. The rows outside the page photograph as white and read as
+			// an edge that never moves, which is a passing reading of nothing.
+			//
+			// The second specimen clears the viewport at this size on its own, and the first
+			// cannot be centred at all (`block: 'center'` has nowhere to scroll to at the top of
+			// a page), so the scroll below is not what the reading rests on. **The guard is**, and
+			// it is a live one: opened from the first specimen with no scroll, all four of its
+			// assertions are reachable and the top one fires.
+			const button = page.locator('.flyout-button').nth(1);
+			await button.evaluate((el) => el.scrollIntoView({ block: 'center' }));
+			await button.click();
+			const presenter = page.locator('.presenter');
+			await presenter.waitFor({ state: 'visible' });
+			await page.waitForFunction(() =>
+				document.getAnimations().every((a) => a.playState !== 'running')
+			);
+
+			const box = (await presenter.boundingBox())!;
+			const viewport = page.viewportSize()!;
+			// Four assertions rather than one `&&`, so a failure names the edge that escaped:
+			// the first reading of this took the presenter's top at y=-30 and photographed the
+			// page outside it as an edge that never moves.
+			const escaped = `${theme}: the presenter is not wholly in frame, so an edge reading is not an edge`;
+			expect(box.x, `${escaped} (left)`).toBeGreaterThanOrEqual(0);
+			expect(box.y, `${escaped} (top)`).toBeGreaterThanOrEqual(0);
+			expect(box.x + box.width, `${escaped} (right)`).toBeLessThanOrEqual(viewport.width);
+			expect(box.y + box.height, `${escaped} (bottom)`).toBeLessThanOrEqual(viewport.height);
+
+			/** Reads both edges with `background-clip` overridden, then puts the page back. */
+			const withClip = async (value: string) => {
+				const tag = await page.addStyleTag({
+					content: `.presenter { background-clip: ${value} !important; }`
+				});
+				const pixels = await edges(page, presenter);
+				await tag.evaluate((el) => (el as Element).remove());
+				return pixels;
+			};
+
+			const shipped = await edges(page, presenter);
+			expect(shipped, `${theme}: the shipped fill reaches under the presenter's stroke`).toEqual(
+				await withClip('padding-box')
+			);
+
+			// The positive control, and the shape of the defect in one line: unclipped, the stroke
+			// lies on the presenter's own uniform fill, so its two edges read the same value.
+			const unclipped = await withClip('border-box');
+			expect(
+				unclipped,
+				`${theme}: an unclipped fill changed neither edge, so this reads somewhere it cannot reach`
+			).not.toEqual(shipped);
+			expect(
+				unclipped.left,
+				`${theme}: an unclipped stroke should read one value on both edges, because the fill it lies on is uniform`
+			).toBe(unclipped.top);
+		}
+	});

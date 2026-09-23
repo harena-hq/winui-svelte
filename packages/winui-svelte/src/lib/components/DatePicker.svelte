@@ -482,7 +482,52 @@
 		border: var(--winui-DateTimeFlyoutBorderThickness) solid
 			var(--winui-DatePickerFlyoutPresenterBorderBrush);
 		border-radius: var(--winui-ControlCornerRadius);
-		background: var(--winui-DatePickerFlyoutPresenterBackground);
+		/* `padding-box`, and the flyout button's note above carries why a fill that stops at the
+		   inner border edge is the faithful one. What is different here is that no state rule
+		   took the clip away — it was never written. Upstream's presenter is one
+		   `<Border x:Name="Background">` binding `Background`, `BorderBrush` and
+		   `BorderThickness` together (`DatePicker_themeresources.xaml:276`, under the style at
+		   `DatePicker_themeresources.xaml:260`), and `BackgroundSizing` does not occur in that
+		   file at all, so the Border takes the property's default. Nor is there a route to it
+		   from outside: that Border binds four properties from the templated parent and
+		   `BackgroundSizing` is not among them, so a setter on the presenter — or on anything
+		   it derives from — reaches the control and stops there.
+
+		   The default is `InnerBorderEdge`, and for a `Border` the chain is its own:
+		   `CBorder::GetBackgroundSizing` reads the property itself
+		   (`Border.cpp:952`), not the base-class fallback at `framework.cpp:2711` that applies
+		   to types without it; the property is registered sparse with no default
+		   (`StaticMetadata.g.cpp:28973`) and is not among the exceptions the switch at
+		   `DependencyProperty.cpp:120` enumerates, so it takes the zero value of its enum,
+		   `EnumDefs.g.h:552`. Upstream writes that value out explicitly on the presenter next
+		   door — `MenuFlyout_themeresources.xaml:289` sets
+		   `BackgroundSizing="InnerBorderEdge"` on the template root of `MenuFlyoutPresenter` —
+		   and `Flyout.svelte:130` and `MenuFlyout.svelte:551` already clip their own presenter,
+		   so the idiom is not new here.
+
+		   It is not that these were the last two. `ComboBox.svelte:341` paints its dropdown's
+		   fill under a stroke upstream clips *explicitly* —
+		   `ComboBox_themeresources.xaml:590` writes `BackgroundSizing="InnerBorderEdge"` on
+		   `PopupBorder` — and `TeachingTip.svelte:348` has no clip either. Both are left, and
+		   both were invisible to the survey that found these two, because they write the border
+		   in longhands where it read the `border` shorthand. They are a wider class than this
+		   unit's and need their own reading; what is settled here is the case where upstream
+		   states nothing and the Border takes the default.
+
+		   Unclipped, the 1px `SurfaceStrokeColorFlyout` stroke composites over the presenter's
+		   own fill and so reads the same everywhere. Measured on this build at the presenter's
+		   left edge, midline: 234 light and 35 dark, against 211 and 21 once clipped, where what
+		   the stroke lies over is the page and this element's own shadow. At the top edge the
+		   same two readings are 234/35 against 226/24 — a different pair, because the shadow is
+		   not the same there.
+
+		   That the two clipped edges differ is a fact about `PopupShadow` and not about the
+		   clip, which is why the test does not assert it: with `box-shadow: none` and the clip
+		   exactly as it is here, both edges read one value again, 228 light and 25 dark. What
+		   the clip is responsible for is the pair that moved — 234 to 211 and 35 to 21 — and
+		   that pair is what `inner-border-edge.spec.ts` pins. `TimePicker.svelte` carries the
+		   same rule. */
+		background: var(--winui-DatePickerFlyoutPresenterBackground) padding-box;
 		padding: var(--winui-DateTimeFlyoutBorderPadding);
 		box-shadow: var(--winui-PopupShadow);
 		outline: none;
