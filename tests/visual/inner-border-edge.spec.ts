@@ -323,3 +323,195 @@ for (const control of PRESENTERS)
 			).toBe(unclipped.top);
 		}
 	});
+
+/**
+ * A tab header's state fills stop at the inner border edge of a border that paints nothing.
+ *
+ * The two sections above are about a translucent stroke: the fill shows *through* it, so
+ * clipping changes what the stroke composites over. This one is the other half of the same
+ * property, and it is geometry rather than compositing. `TabViewItemBorderThickness` is 1 on
+ * every side (`TabView.xaml:298`, `TabView_themeresources.xaml:267`) and
+ * `TabViewItemBorderBrush` is `SubtleFillColorTransparentBrush` (`TabView.xaml:299`,
+ * `TabView_themeresources.xaml:69`) — fully transparent. So the question is not what colour the
+ * ring composites to but whether the fill is in the ring at all: unclipped it is, and upstream
+ * leaves the tab strip showing through.
+ *
+ * Upstream's tab header is `<Grid x:Name="TabContainer">` (`TabView.xaml:562`). What it takes
+ * from the templated parent is four `{TemplateBinding}`s — Background, BorderBrush,
+ * BorderThickness, FocusVisualMargin — and CornerRadius, through a `{Binding}` to that same
+ * parent with a converter; its `Padding` is a `{ThemeResource}` and not a binding at all.
+ * `BackgroundSizing` is none of them. The string does not occur
+ * in `TabView_themeresources.xaml` at all, and the three places `TabView.xaml` writes it are the
+ * close, add and scroll buttons' presenters (`:191`, `:242`, `:599`). So the Grid takes the
+ * property's default.
+ *
+ * **A Grid reads that default from its own property**, which is the part worth writing down:
+ * `CGrid::GetBackgroundSizing` is `Grid.cpp:1692`, beside `CBorder`'s at `Border.cpp:952` and
+ * the two panels' at `StackPanel.cpp:945` and `RelativePanel.cpp:161`.
+ * `Grid_BackgroundSizing` is registered sparse with no default (`StaticMetadata.g.cpp:33173`)
+ * and is not among the exceptions the switch at `DependencyProperty.cpp:120` enumerates, so it
+ * is the zero value of its enum, `InnerBorderEdge` (`EnumDefs.g.h:552`). The base-class fallback
+ * at `framework.cpp:2711` returns that value outright and so agrees — but it is the fallback for
+ * types that do not declare the property, and a Grid declares it.
+ *
+ * **The selected tab is deliberately not here, and the reason holds in two themes of three.**
+ * Upstream's Selected state sets `TabContainer.Background` to `TabViewItemHeaderBackground`
+ * (`TabView.xaml:342`) and paints the selected fill on a separate `SelectedBackgroundPath`
+ * (`TabView.xaml:341`), which is a Path and has no border for a background to be sized against.
+ * `.tab[data-selected='true']::before` is that Path. In light and dark that brush is fully
+ * transparent, so the Grid paints nothing and there is no fill to clip; in high contrast it is
+ * `SystemColorButtonFaceColor` and the Grid does paint. Our selected rule writes `transparent`
+ * rather than the token, which is a separate and older divergence — named here so that the
+ * exclusion is not read as covering it.
+ *
+ * **What is also not here:** the resting and disabled fills carry the clip too, and in light and
+ * dark both are fully transparent, so no reading can separate them. They are visible only in
+ * high contrast, where this test does not go, and the commit that added their clip says so
+ * rather than implying they are pinned.
+ *
+ * The reading is the left and right edges on the horizontal midline, and not the top or bottom:
+ * this row of tabs lays out at a fractional `y` (173.6875 on this build), so an element
+ * screenshot is a whole device pixel taller than the element and its first row straddles the
+ * boundary. The horizontal edges are on integers and have no such half-pixel.
+ */
+
+// Adding a third state here needs one thing re-checked: `.separator` is a sibling of `.body` at
+// the tab's right edge and it spans the midline, so it would contaminate the right reading. Both
+// states below force a pseudo-class that hides it — `.tab:hover .separator` and
+// `.tab:active .separator` are `opacity: 0` — which is why it is not a problem now and would be
+// at rest.
+const TAB_STATES = ['hover', 'pressed'] as const;
+
+/** The pixels in the body's left and right border strips, on its horizontal midline. */
+async function sides(page: Page, body: Locator) {
+	const shot = await body.screenshot();
+	return page.evaluate(
+		async (url) => {
+			const image = new Image();
+			image.src = url;
+			await image.decode();
+			const canvas = document.createElement('canvas');
+			canvas.width = image.naturalWidth;
+			canvas.height = image.naturalHeight;
+			const context = canvas.getContext('2d')!;
+			context.drawImage(image, 0, 0);
+			const at = (x: number, y: number) =>
+				[...context.getImageData(x, y, 1, 1).data].slice(0, 3).join(',');
+			const y = Math.floor(image.naturalHeight / 2);
+			return { left: at(0, y), right: at(image.naturalWidth - 1, y) };
+		},
+		`data:image/png;base64,${shot.toString('base64')}`
+	);
+}
+
+test("a tab header's state fill stops at the inner border edge", async ({ page }) => {
+	// The first TabView's third tab. Not the second: tab 0 is the selected one, and a selected
+	// tab's own body carries `TabViewSelectedItemHeaderMargin` — `-1,0,-1,1`
+	// (`TabView_themeresources.xaml:269`) — so it reaches a pixel into the neighbour on each side,
+	// which is exactly the strip read here. Measured on the second tab, its left edge sits under
+	// that body and reads one value under all three clips while its right edge, which nothing
+	// overlaps, moves normally. So half the reading would be of another element, and it is the
+	// half that cannot say so.
+	const TAB = 2;
+
+	/** What the page renders for the specimen, which differs between the two themes. */
+	const rendered = () =>
+		page
+			.locator('.tab')
+			.nth(TAB)
+			.locator('.body')
+			.evaluate((el) => getComputedStyle(el).color);
+
+	let light = '';
+	for (const theme of ['light', 'dark'] as const) {
+		await page.goto('/dev/tab-view');
+		// The Gallery's layout re-applies the stored theme in a mount effect, so a `dataset` write
+		// alone is deleted again by hydration; write both channels, reload, then wait on the
+		// **render** rather than reading back what the line above wrote.
+		await page.evaluate((t) => {
+			localStorage.setItem('winui-svelte:theme', t);
+			document.documentElement.dataset.theme = t;
+		}, theme);
+		await page.reload();
+		await page.locator('.tab').first().waitFor();
+		if (theme === 'light') light = await rendered();
+		else await expect.poll(rendered, { timeout: 5000 }).not.toBe(light);
+
+		const tab = page.locator('.tab').nth(TAB);
+		const body = tab.locator('.body');
+		expect(await tab.getAttribute('data-selected'), `${theme}: the specimen is selected`).toBe(
+			null
+		);
+		expect(await tab.getAttribute('aria-disabled'), `${theme}: the specimen is disabled`).toBe(
+			null
+		);
+
+		// The guard the choice of specimen rests on, and a live one: on the second tab it fails,
+		// naming the left edge. `elementsFromPoint` returns elements and not their pseudo-elements,
+		// so what it catches is the neighbouring body's own negative margin — which is the same
+		// pixel the `::before` paints, because that `::before` is sized to it.
+		const covered = await body.evaluate((el) => {
+			const r = el.getBoundingClientRect();
+			const others = (x: number) =>
+				document
+					.elementsFromPoint(x, r.top + r.height / 2)
+					.filter((e) => e !== el && e.classList.contains('body')).length;
+			return { left: others(r.left + 0.5), right: others(r.right - 0.5) };
+		});
+		expect(covered.left, `${theme}: another body covers the left strip, so this reads it`).toBe(0);
+		expect(covered.right, `${theme}: another body covers the right strip, so this reads it`).toBe(
+			0
+		);
+
+		// The states are forced rather than driven: `.tab:active` needs the button held down, and
+		// a real press on a tab selects it, which is the one state this test is not about.
+		const cdp = await page.context().newCDPSession(page);
+		await cdp.send('DOM.enable');
+		await cdp.send('CSS.enable');
+		const { root } = await cdp.send('DOM.getDocument', { depth: -1 });
+		const { nodeIds } = await cdp.send('DOM.querySelectorAll', {
+			nodeId: root.nodeId,
+			selector: '.tab'
+		});
+
+		for (const state of TAB_STATES) {
+			await cdp.send('CSS.forcePseudoState', {
+				nodeId: nodeIds[TAB],
+				forcedPseudoClasses: state === 'hover' ? ['hover'] : ['hover', 'active']
+			});
+			expect(
+				await tab.evaluate((el, s) => el.matches(`:${s === 'pressed' ? 'active' : s}`), state),
+				`${theme}: the ${state} state did not take`
+			).toBe(true);
+
+			/** Reads both strips with `background-clip` overridden, then puts the page back. */
+			const withClip = async (value: string) => {
+				const tag = await page.addStyleTag({
+					content: `.body { background-clip: ${value} !important; }`
+				});
+				const pixels = await sides(page, body);
+				await tag.evaluate((el) => (el as Element).remove());
+				return pixels;
+			};
+
+			const shipped = await sides(page, body);
+			expect(
+				shipped,
+				`${theme}: the ${state} fill reaches into the tab's own transparent border`
+			).toEqual(await withClip('padding-box'));
+
+			// The positive control, asserted per edge: a single `not.toEqual` on the pair passes
+			// while one of the two edges is being read somewhere the fill never reaches.
+			const unclipped = await withClip('border-box');
+			expect(
+				unclipped.left,
+				`${theme}: an unclipped ${state} fill changed the left strip not at all`
+			).not.toBe(shipped.left);
+			expect(
+				unclipped.right,
+				`${theme}: an unclipped ${state} fill changed the right strip not at all`
+			).not.toBe(shipped.right);
+		}
+		await cdp.send('CSS.forcePseudoState', { nodeId: nodeIds[TAB], forcedPseudoClasses: [] });
+	}
+});

@@ -595,7 +595,55 @@
 		padding: var(--winui-TabViewItemHeaderPaddingWithCloseButton);
 		border: var(--winui-TabViewItemBorderThickness) solid transparent;
 		border-radius: var(--winui-OverlayCornerRadius) var(--winui-OverlayCornerRadius) 0 0;
-		background: var(--winui-TabViewItemHeaderBackground);
+		/* `padding-box`. Upstream's tab header is `<Grid x:Name="TabContainer">`
+		   (`TabView.xaml:562`), and what it takes from the templated parent is four
+		   `{TemplateBinding}`s — Background, BorderBrush, BorderThickness, FocusVisualMargin —
+		   plus CornerRadius, through a `{Binding}` to that same parent with a converter. Its
+		   `Padding` is not a binding at all but a `{ThemeResource}` — `TabViewItemHeaderPadding`,
+		   which is the one the comment on `padding` above says a visual state overrides.
+		   `BackgroundSizing` is none of them, and the string does not occur in
+		   `TabView_themeresources.xaml` at all. The three the template does write are the close,
+		   add and scroll buttons' presenters (`TabView.xaml:191`, `:242`, `:599`), so nothing
+		   reaches this Grid and it takes the property's default.
+
+		   The chain is the Grid's own. `CGrid::GetBackgroundSizing` reads `Grid_BackgroundSizing`
+		   itself (`Grid.cpp:1692`); the property is registered sparse with no default
+		   (`StaticMetadata.g.cpp:33173`) and is not among the exceptions the switch at
+		   `DependencyProperty.cpp:120` enumerates, so it takes the zero value of its enum —
+		   `InnerBorderEdge`, `EnumDefs.g.h:552`. `CFrameworkElement::GetBackgroundSizing`
+		   (`framework.cpp:2711`) returns that value outright, so the two agree here; it is the
+		   fallback for types that do not declare the property, and a Grid does.
+
+		   What is different from the picker presenters is that the stroke is not translucent but
+		   absent: 1px on every side (`TabView.xaml:298`,
+		   `TabView_themeresources.xaml:267`) painted with `SubtleFillColorTransparentBrush`
+		   (`TabView.xaml:299`, `TabView_themeresources.xaml:69`). So this is geometry rather than
+		   compositing — unclipped, a state's fill occupies a 1px ring where upstream leaves the
+		   tab strip showing through. Measured on this build at the body's left and right edges on
+		   the horizontal midline, on a tab neither of whose neighbours is selected: hovered 233
+		   light and 45 dark against 243 and 32 once clipped, pressed 252 and 43 against the same
+		   243 and 32.
+
+		   `background` is a shorthand, so every state rule below that paints repeats the clip:
+		   the declaration that drops it is the one that does not mention it. Four of the five
+		   rules that give this element a background do — rest, hover, pressed, disabled. The
+		   fifth is the selected rule, which writes `transparent` and so has no fill to clip; it
+		   is named here because a sentence written as a rule otherwise reads as covering it. The
+		   resting and disabled fills are themselves transparent in light and dark and opaque in
+		   high contrast, so their clip is for that theme alone.
+
+		   **The selected tab is a different element, in light and dark.** Upstream's Selected
+		   state sets `TabContainer.Background` to `TabViewItemHeaderBackground`
+		   (`TabView.xaml:342`) and paints the visible fill on a separate `SelectedBackgroundPath`
+		   (`TabView.xaml:341`) — a Path, which has no border for a background to be sized
+		   against. `.tab[data-selected='true']::before` below is that Path, and its geometry
+		   answers to the Path's rather than to this Grid's.
+
+		   In high contrast that brush is not transparent — `SystemColorButtonFaceColor` — so
+		   upstream's selected Grid does paint a fill, and does clip it. The rule below writes
+		   `transparent` instead of the token, which is a divergence older and wider than this
+		   one; it is left as it was, and the clip is not what would fix it. */
+		background: var(--winui-TabViewItemHeaderBackground) padding-box;
 		color: var(--winui-TabViewItemHeaderForeground);
 	}
 
@@ -674,7 +722,8 @@
 	}
 
 	.tab:not([data-selected='true']):hover:not([aria-disabled='true']) .body {
-		background: var(--winui-TabViewItemHeaderBackgroundPointerOver);
+		/* `padding-box`: the note on `.body` above carries the argument and the measurement. */
+		background: var(--winui-TabViewItemHeaderBackgroundPointerOver) padding-box;
 		color: var(--winui-TabViewItemHeaderForegroundPointerOver);
 	}
 	.tab:not([data-selected='true']):hover:not([aria-disabled='true']) .icon {
@@ -685,7 +734,8 @@
 		color: var(--winui-TabViewItemHeaderPointerOverCloseButtonForeground);
 	}
 	.tab:not([data-selected='true']):active:not([aria-disabled='true']) .body {
-		background: var(--winui-TabViewItemHeaderBackgroundPressed);
+		/* `padding-box`, for the reason on `.body` above. */
+		background: var(--winui-TabViewItemHeaderBackgroundPressed) padding-box;
 		color: var(--winui-TabViewItemHeaderForegroundPressed);
 	}
 	.tab:not([data-selected='true']):active:not([aria-disabled='true']) .icon {
@@ -828,7 +878,9 @@
 		color: var(--winui-TabViewItemHeaderCloseButtonForegroundPressed);
 	}
 	.tab[aria-disabled='true'] .body {
-		background: var(--winui-TabViewItemHeaderBackgroundDisabled);
+		/* `padding-box`: transparent in light and dark, `SystemColorWindowColor` in high
+		   contrast, which is the theme where this one is visible. */
+		background: var(--winui-TabViewItemHeaderBackgroundDisabled) padding-box;
 		color: var(--winui-TabViewItemHeaderForegroundDisabled);
 	}
 	.tab[aria-disabled='true'] .icon {
