@@ -94,6 +94,64 @@ async function midline(page: Page, shot: Buffer, side: 'left' | 'right' = 'left'
 	);
 }
 
+/** One screenshot's horizontal midline as raw colours, counted inward from `side`.
+ *
+ * `midline` above classifies, and its thresholds are the light theme's. High contrast needs the
+ * values themselves, because two of the four things that can appear in these columns are one
+ * colour there: `SystemControlFocusVisualSecondaryBrush` resolves to `FocusStrokeColorInnerBrush`
+ * (`generic.xaml:2886`), which HighContrast paints `SystemColorWindowColor` (`:4838`), and that
+ * is what `NavigationViewExpandedPaneBackground` is in the same theme
+ * (`NavigationView_themeresources.xaml:138`). No classifier can separate the secondary stroke
+ * from the pane behind it, so the test below reads the primary stroke and the seam and says
+ * nothing about the secondary. The collision is upstream's, not ours to repair.
+ */
+async function columns(page: Page, shot: Buffer, side: 'left' | 'right', span: number) {
+	return page.evaluate(
+		async ({ url, side, span }) => {
+			const image = new Image();
+			image.src = url;
+			await image.decode();
+			const canvas = document.createElement('canvas');
+			canvas.width = image.naturalWidth;
+			canvas.height = image.naturalHeight;
+			const context = canvas.getContext('2d')!;
+			context.drawImage(image, 0, 0);
+			const y = Math.floor(image.naturalHeight / 2);
+			const out: string[] = [];
+			for (let n = 0; n < Math.min(span, image.naturalWidth); n++) {
+				const x = side === 'left' ? n : image.naturalWidth - 1 - n;
+				const [r, g, b] = context.getImageData(x, y, 1, 1).data;
+				out.push(`rgb(${r}, ${g}, ${b})`);
+			}
+			return out;
+		},
+		{ url: `data:image/png;base64,${shot.toString('base64')}`, side, span }
+	);
+}
+
+/** What a theme resource resolves to, in the form `getImageData` reports a pixel.
+ *
+ * The sentinel is not ceremony. `color` is inherited, and `var()` with no fallback on an
+ * undefined property makes the declaration invalid at computed-value time rather than failing
+ * — so a token this repository has renamed would leave the probe at the body's colour and come
+ * back as a perfectly plausible `rgb(…)`, and every assertion below would be comparing two
+ * readings of the same wrong thing. A colour nothing in the layer emits proves the token
+ * resolved.
+ */
+async function brush(page: Page, name: string) {
+	return page.evaluate((property) => {
+		const sentinel = 'rgb(1, 2, 3)';
+		const probe = document.createElement('div');
+		probe.style.color = sentinel;
+		probe.style.color = `var(${property})`;
+		document.body.append(probe);
+		const value = getComputedStyle(probe).color;
+		probe.remove();
+		if (value === sentinel) throw new Error(`${property} resolves to nothing`);
+		return value;
+	}, name);
+}
+
 test('the row is the fill plus the button margin on every side', async ({ page }) => {
 	await page.goto(PAGE);
 	const row = selectedRow(page);
@@ -205,6 +263,73 @@ test("the band reaches the row's far end too, because the clip is the border box
 	expect(right.stroke).toEqual([0, 1]);
 	expect(right.secondary).toEqual([2]);
 	expect(right.accent).toEqual([]);
+});
+
+test("in high contrast the pane's seam covers the band's inner column, as upstream's does", async ({
+	page
+}) => {
+	await page.goto(PAGE);
+	// The Gallery owns the theme through `localStorage` and `documentElement.dataset`, the two
+	// channels `snapshotAllThemes` writes; `color-picker.spec.ts` sets a single theme the same way.
+	await page.evaluate(() => {
+		localStorage.setItem('winui-svelte:theme', 'high-contrast');
+		document.documentElement.dataset.theme = 'high-contrast';
+	});
+	// Waiting on the attribute would wait on the line above it: `dataset.theme` is what that
+	// `evaluate` just wrote, synchronously, in the same document, so the poll can only agree.
+	// What can disagree is the stylesheet. `SystemControlForegroundTransparentBrush` is
+	// `transparent` outside high contrast and `SystemColorButtonTextColor` inside it, so a theme
+	// block that has not applied — or one the Gallery's own mount effect has since replaced —
+	// still reads `rgba(0, 0, 0, 0)` here.
+	await expect
+		.poll(() => brush(page, '--winui-SystemControlForegroundTransparentBrush'))
+		.not.toBe('rgba(0, 0, 0, 0)');
+
+	const row = selectedRow(page);
+	const presenter = presenterOf(row);
+	const primary = await brush(page, '--winui-SystemControlFocusVisualPrimaryBrush');
+	const seam = await brush(page, '--winui-SystemControlForegroundTransparentBrush');
+	const pane = await brush(page, '--winui-NavigationViewExpandedPaneBackground');
+
+	// The seam is `HCPaneBorder` — `SplitView_themeresources.xaml:715`, a 1px rectangle
+	// right-aligned inside `PaneRoot` and **the last child declared there**, after the border that
+	// hosts the pane content (`:714`). It is drawn whether or not anything is focused, and reading
+	// it unfocused first is what makes the assertion below about paint order rather than about the
+	// colour happening to be there.
+	const before = await presenter.screenshot();
+	const quiet = await columns(page, before, 'right', 2);
+	// Naming the colour rather than saying "not the primary": this is the guard that the row did
+	// not arrive already focused, and a negative passes for every value but one.
+	expect(quiet[0]).toBe(pane);
+	expect(quiet[1]).toBe(seam);
+
+	await row.focus();
+	// One capture read from both ends. Two `screenshot()` calls would put a frame between the two
+	// halves of one claim, and anything that moved in it would read as a paint-order failure.
+	const shot = await presenter.screenshot();
+	const right = await columns(page, shot, 'right', 2);
+	const left = await columns(page, shot, 'left', 2);
+
+	// **This asymmetry is upstream's, and the test exists to stop it being repaired.** Both ends
+	// of the band are two columns of primary; at the right end the seam covers the inner one.
+	// XAML lands in the same place: a focus rect takes the z-order of its host
+	// (`FocusRectManager.cpp:1019-1021`), and the host is the nearest ancestor whose own layout
+	// bounds contain the rect (`:1196-1205`), which for a row is `NVIRootGrid` one hop up — the
+	// rect is the focus target's own box, the `FocusVisualMargin` that `:718` shrinks it by being
+	// `0` here, and the presenter sits at that grid's origin and is no larger than it — row 0 of
+	// the two at `NavigationView.xaml:436-440`, and the second row holds the children repeater, so
+	// an expanded row makes the grid taller and only widens the margin of success.
+	// `HCPaneBorder` is far above that host and last
+	// in its parent (`SplitView_themeresources.xaml:714-715`), so upstream's seam covers
+	// upstream's band too. `NavigationView.svelte`'s comment above `.pane` has the whole chain.
+	//
+	// Raising ours over the seam — a `z-index` on the band, or moving `HCPaneBorder` below the pane
+	// content — would read as a fix and would be a divergence. That is not hypothetical:
+	// `NavigationView.svelte` carried a note calling it a defect owed to a later unit until this
+	// test was written.
+	expect(left).toEqual([primary, primary]);
+	expect(right[0]).toBe(primary);
+	expect(right[1]).toBe(seam);
 });
 
 test('the row draws no border, because the presenter template reads none', async ({ page }) => {

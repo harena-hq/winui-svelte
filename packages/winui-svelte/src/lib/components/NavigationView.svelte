@@ -1071,10 +1071,39 @@
 		   that column and cuts nothing. Ours lost it from both ends of every row, and the band
 		   came out two columns wide against the original's three.
 
-		   In high contrast the right end still shows two, and this is not what fixes it:
-		   `.pane::after` below paints over the band's inner column, because CSS paints a
-		   pseudo-element after its host's descendants where XAML draws a focus visual in a
-		   layer above the tree. Pre-existing, and a different unit.
+		   In high contrast the band's two ends do not match, and the mismatch is upstream's. The
+		   left end draws both of the band's primary columns; at the right end `.pane::after` below
+		   — `HCPaneBorder` — covers the inner one, and the outer survives over the pane's own
+		   border. Counting what is *visible* rather than what is drawn, that is two columns at
+		   either end, because the secondary stroke is `SystemColorWindowColor` in this theme and
+		   so is the pane behind it; the `columns` helper in
+		   `navigation-view-focus-visual.spec.ts` carries the keys for that.
+
+		   `HCPaneBorder` is the **last** child of `PaneRoot`, declared after the border that hosts
+		   the pane content (`SplitView_themeresources.xaml:714-715`, and the build the reference
+		   runs agrees: `generic.xaml:35832-35838`), so it paints above everything in that content;
+		   ours is the pane's last positioned child and paints above the row for the same reason.
+		   The focus visual does not escape it in either, because **a focus rect takes the z-order
+		   of its host** — upstream's own sentence, on `FindFocusRectHost` itself
+		   (`FocusRectManager.cpp:1019-1021`), and the `LayoutTransitionElement` that carries the
+		   rect into the tree exists to inherit that z-order while keeping the transforms down to
+		   the target (`FocusRectManager.h:134-156`). The host is the nearest ancestor whose own
+		   layout bounds contain the rect (`FocusRectManager.cpp:1196-1205`, against
+		   `GetElementLayoutBoundsWithMargins`, `FocusRectNudging.h:139-152`), and for a row that
+		   is `NVIRootGrid` one hop up: the rect is the focus target's own box
+		   (`FocusRectManager.cpp:718` shrinks it by a `FocusVisualMargin` that is `0` here, for the
+		   reasons the focus-band comment in `NavigationViewItem.svelte` sets out), and the
+		   presenter sits at that grid's origin and is no larger than it — row 0 of the two at
+		   `NavigationView.xaml:436-440`, with no margin on either, which matters because
+		   `GetElementLayoutBoundsWithMargins` *enlarges* by the parent's margin and a negative one
+		   would lift the parent's origin off zero. So the containment test passes on the first hop
+		   and the pane's `ScrollView` is never reached. `HCPaneBorder` is
+		   far above that host and last in its parent, so upstream's seam covers upstream's band.
+
+		   Read from the sources above and measured against our own render on 2026-09-23 — the
+		   reference was not photographed in this theme and the commit says so — and pinned by a
+		   test, because an earlier note in this file called it a defect owed to another unit and
+		   the next reader's instinct is to repair it.
 
 		   `clip` rather than `hidden` because `overflow-clip-margin` governs only the former.
 		   Nothing is given up with the scroll container: `.pane` is not what scrolls in this
