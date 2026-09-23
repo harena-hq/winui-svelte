@@ -2282,3 +2282,73 @@ changes`.
 - **Would reconsider if**: the platform gains a way to tell a scripted focus from a user's, or
   the library grows a prop for it. A consumer that must not raise a tooltip programmatically can
   set `openOnHover={false}` today and drive `open` itself.
+
+### WD-096 — a Shape's fill stops on a half pixel, and no CSS at this scale can
+
+- **Control**: CheckBox, ItemContainer, RadioButton, ToggleSwitch and PersonPicture — every
+  element whose upstream counterpart is a `Shape` carrying both a `Fill` and a `Stroke`.
+- **WinUI does**: shrink the render geometry by the stroke thickness before drawing either.
+  `CShape::GetOutlineRect` (`shape.cpp:841`) returns `(t/2, t/2, w - t, h - t)`, and its own
+  comment at `shape.cpp:861` gives the reason — so that the stroked shape fits within the
+  element's width and height. `CRectangle::UpdateRenderGeometry` hands that rect straight to the
+  geometry (`rectangle.cpp:235`), `CEllipse` takes the same rect with the degenerate-stroke
+  check off (`ellipse.cpp:107`), and nothing
+  downstream moves it: `Stretch` defaults to `Fill` for both (`rectangle.h:30`, `ellipse.h:15`),
+  whose branch of `UpdateRectangleBoundsForStretchMode` is a no-op (`shape.cpp:903`). For a
+  20x20 box with `StrokeThickness` 1 that is the rect `(0.5, 0.5, 19, 19)`. The **stroke** is
+  centred on it and therefore spans 0 to 1, which is exactly where a 1px CSS border sits, and is
+  why this is not a stroke-placement divergence. The **fill** fills the geometry, so it stops at
+  the stroke's centreline, half a pixel into the band the stroke occupies. That the edge is
+  antialiased rather than snapped is upstream's own account of it: `CShape::GetStrokeThickness`
+  returns zero when no `Stroke` brush is set, and the comment at `shape.cpp:121` gives the
+  reason — otherwise "the fill region of the shape will be deflated, and the edge will be
+  antialiased". Deflating the fill region is exactly what a stroke does here, so the antialiased
+  edge is the documented consequence rather than an inference. And it does reach the screen. Measured on a capture of the original
+  taken for this control, at a CheckBox whose box is twenty device pixels square with a
+  one-pixel ring: the card behind it reads 243 and the box's own fill reads 229, which makes the
+  three candidate rings 127 if the fill runs under the whole band, 134 if it stops before it,
+  and 130 if it covers half. **All four edges of the ring read 130**, on every row and column of
+  the straight runs. So the half is on the screen rather than only in the arithmetic, and it is
+  the shipped render's 127 that is wrong.
+- **We do**: paint the fill to the border box, CSS's default, which runs it the whole way
+  through the band instead of stopping halfway. `background-clip: padding-box` is the other
+  reachable value and stops it before the band entirely. The two are wrong by the same half
+  pixel in opposite directions, so the default is kept and nothing in the components clips.
+- **Why accepted**: the half pixel is not expressible at the rig's scale, and that was measured
+  rather than assumed. `tests/visual/fonts.spec.ts:53` asserts that the lane's
+  `devicePixelRatio` is one, so a CSS pixel is a device pixel and the fill's edge has nowhere to
+  land between the two ends of the band. Seven constructions were tried against one specimen: a
+  pseudo-element inset by half the stroke with and without a negative `z-index`, a background
+  gradient positioned there, an inset `box-shadow`, a transform, and a gradient hard stop. Every one
+  rasterised onto the same pixel as one of the two `background-clip` values, with nothing in
+  between. The query is live rather than dead: a hard stop at `0.25px` lands on the `border-box`
+  value and one at `0.75px` on the `padding-box` value, so the renderer does resolve the offset and
+  then rounds it.
+- **What it is worth**: measured on CheckBox's own states, as the distance between the two
+  `background-clip` values at the box's left and right edges on its horizontal midline. Light: 3
+  levels at rest unchecked, 7 hovered, 17 pressed, 22 hovered checked and 39 pressed checked. Dark:
+  1, 5, 13, 20 and 36. Checked at rest is 0 in both, because there the stroke and the fill are the
+  same opaque accent and there is nothing for the band to differ about. Upstream's value is the
+  midpoint of each pair, the fill covering half the band, so the shipped render is about half of
+  each figure away from it — up to 20 levels, against a gate that admits 2
+  (`playwright.config.ts:112`). The capture above pins the hovered state rather than the mildest —
+  the box fill in it reads 229, which is `ControlAltFillColorTertiaryBrush`, the pointer-over one
+  (`CheckBox_themeresources.xaml:54`), against `ControlAltFillColorSecondaryBrush` at rest (`:53`).
+  So the pair it measures is the 7, and the shipped render sits half of that from the original: 127
+  against 130. **Halving is what the comparison with the gate has to use**, and it puts the bottom
+  of the range inside the tolerance rather than over it — under 2 levels at rest in light and under
+  1 in dark, about 3 at dark hover, and clear of it from light hover upward. **The battery still
+  could not see it if the baselines came from the original**, and that is the part worth saying:
+  Playwright calls pixelmatch with `includeAA: false`, so a pixel the heuristic reads as an
+  anti-aliased edge is dropped before the tolerance is consulted (`playwright.config.ts:103`).
+  Every pixel of this difference is the outermost ring of a rounded rectangle, which is that
+  heuristic's own subject. Baselines taken from this render are the second reason it is unseen,
+  not the first.
+- **Would reconsider if**: the lane's `devicePixelRatio` becomes 2, where half a CSS pixel is a
+  whole device pixel and every construction tried above becomes expressible. That would make the
+  half **reproducible**, which is the reason to act on it — it would not make it visible to the
+  battery, because a one-device-pixel edge ring is discarded by `includeAA: false` at any ratio,
+  so no baseline is going to raise this entry on its own. A construction that lands the edge
+  between two device pixels at a ratio of one would do the same; the seven tried do not, and the
+  gradient-stop control shows why, but the search was of constructions rather than a proof that
+  none exists.

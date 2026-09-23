@@ -198,7 +198,10 @@
 		border-radius: 50%;
 	}
 
-	/* `<Ellipse Width="20" Height="20" …>`, RadioButton_themeresources.xaml:371 and :373. */
+	/* `<Ellipse Width="20" Height="20" …>`, RadioButton_themeresources.xaml:371 and :373. Both
+	   carry a `Fill` and a `Stroke` rather than a background and a border, which is WD-096: the
+	   stroke lands where this border lands and the fill stops half a pixel short of where this
+	   one does. */
 	.outer,
 	.checked-ring {
 		width: 20px;

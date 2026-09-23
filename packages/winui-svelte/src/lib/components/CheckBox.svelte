@@ -181,10 +181,45 @@
 		pointer-events: none;
 	}
 
-	/* Upstream draws this as a `Rectangle` with a centred 1px stroke inside a 20x20 Grid, so
-	   its painted edge sits a half pixel outside the box on every side. A CSS border is drawn
-	   inside the border box instead. The half pixel is not reproduced; `UseLayoutRounding="False"`
-	   upstream means the original renders it antialiased either way. */
+	/* Upstream draws this as a `Rectangle` — `NormalRectangle`, carrying `Fill` and `Stroke`
+	   rather than a Background and a BorderBrush (`CheckBox_themeresources.xaml:603`). So the
+	   `BackgroundSizing` question the border-carrying elements in this library answer does not
+	   arise here at all. Six types declare that property — Border, ContentPresenter, Control,
+	   Grid, RelativePanel and StackPanel, five of which read it back through an override of
+	   their own (`Border.cpp:952`, `ContentPresenter.cpp:1316`, `Grid.cpp:1692`,
+	   `RelativePanel.cpp:161`, `StackPanel.cpp:945`) — and Rectangle is not among them.
+	   `CRectangle` is a `CShape` is a `CFrameworkElement` (`rectangle.h:20`, `shape.h:19`), and
+	   the base class does supply a getter (`framework.cpp:2711`), but it is a fallback no Shape
+	   reaches. It has three call sites and every one of them is guarded the same way: one is
+	   inside `CBorder` itself on a `this` that is already a Border (`Border.cpp:553`), and the
+	   other two sit in functions that open by asserting their element is a Panel, a Border or a
+	   ContentPresenter — `framework.cpp:3843` under the assert at `framework.cpp:3827`, and
+	   `Border.cpp:668` under the one at `Border.cpp:655`.
+
+	   What a Shape does instead is shrink its geometry by the stroke.
+	   `CShape::GetOutlineRect` (`shape.cpp:841`) returns the rect
+	   `(t/2, t/2, w - t, h - t)` — its own comment at `shape.cpp:861` gives the reason, that
+	   the stroked shape should fit within width and height — and
+	   `CRectangle::UpdateRenderGeometry` hands that straight to the render geometry
+	   (`rectangle.cpp:235`). `CRectangle`'s constructor sets `Stretch` to `Fill`
+	   (`rectangle.h:30`), whose branch of `UpdateRectangleBoundsForStretchMode` is a no-op
+	   (`shape.cpp:903`), so nothing moves it afterwards.
+
+	   At 20x20 with `StrokeThickness` 1 (`CheckBox_themeresources.xaml:269`) that geometry is
+	   `(0.5, 0.5, 19, 19)`, and a centred stroke on it spans 0 to 1. **The stroke therefore
+	   lands exactly where a CSS border lands, fully inside the box**, which is why nothing here
+	   is a stroke-placement divergence and the whole of the difference is in the fill.
+	   Upstream's fill stops at the stroke's centreline,
+	   0.5, where `background-clip: border-box` runs it out to 0 and `padding-box` would stop
+	   it at 1. The two CSS options are wrong by the same half pixel in opposite directions, so
+	   the default stands — and it stands because nothing else works, not because the
+	   difference is small. WD-096 carries the measurement, and it is a divergence rather than
+	   an approximation: a capture of the original reads this ring at 130 on a hovered box,
+	   where an unclipped fill computes 127 and a clipped one 134, so the half is on the screen
+	   and what ships is the 127. Seven constructions aimed at that half all rasterise onto one
+	   whole pixel or the other at this lane's `devicePixelRatio` of one. The distance from the
+	   original is half the distance between the two CSS values, which puts it inside the gate's
+	   two levels at rest and as far as twenty outside them on the pressed accent states. */
 	.box {
 		position: relative;
 		flex: none;
