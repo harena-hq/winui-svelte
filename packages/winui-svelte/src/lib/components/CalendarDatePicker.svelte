@@ -193,7 +193,7 @@
 	}
 
 	/* The border brush on the ring alone: the two-layer mask that punches out the content box,
-	   which TextBox.svelte:180 explains in full. */
+	   which TextBox.svelte:177 explains in full. */
 	.box::after {
 		content: '';
 		position: absolute;
@@ -241,8 +241,16 @@
 		text-align: center;
 	}
 
+	/* `padding-box` on each state: `background` is a shorthand, so restating the brush resets
+	   the clip the base rule sets, and upstream's `BackgroundSizing` is `InnerBorderEdge` in
+	   every state. DatePicker.svelte's note above its own three rules carries the mechanism,
+	   the citations and the measurement; here the box is a `Border` rather than a presenter
+	   (`CalendarDatePicker_themeresources.xaml:217`), with its states at
+	   `CalendarDatePicker_themeresources.xaml:103`,
+	   `CalendarDatePicker_themeresources.xaml:119` and
+	   `CalendarDatePicker_themeresources.xaml:135`. */
 	.box:hover {
-		background: var(--winui-CalendarDatePickerBackgroundPointerOver);
+		background: var(--winui-CalendarDatePickerBackgroundPointerOver) padding-box;
 	}
 
 	.box:hover .date-text {
@@ -253,7 +261,7 @@
 	}
 
 	.box:active {
-		background: var(--winui-CalendarDatePickerBackgroundPressed);
+		background: var(--winui-CalendarDatePickerBackgroundPressed) padding-box;
 	}
 
 	.box:active .date-text {
@@ -272,7 +280,7 @@
 		color: var(--winui-CalendarDatePickerHeaderForegroundDisabled);
 	}
 	.box:disabled {
-		background: var(--winui-CalendarDatePickerBackgroundDisabled);
+		background: var(--winui-CalendarDatePickerBackgroundDisabled) padding-box;
 	}
 	.box:disabled .date-text {
 		color: var(--winui-CalendarDatePickerTextForegroundDisabled);

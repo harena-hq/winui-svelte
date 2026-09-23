@@ -315,22 +315,29 @@
 	.flyout-button:hover:not(:disabled)::after {
 		background: var(--winui-TimePickerButtonBorderBrushPointerOver);
 	}
+	/* `padding-box` on each state: `background` is a shorthand, so restating the brush resets
+	   the clip the base rule sets, and upstream's `BackgroundSizing` is `InnerBorderEdge` in
+	   every state. DatePicker.svelte's note above its own three rules carries the mechanism,
+	   the citations and the measurement; this control's template is the same shape, its states at
+	   `TimePicker_themeresources.xaml:149`, `TimePicker_themeresources.xaml:162` and
+	   `TimePicker_themeresources.xaml:175`, its presenter at
+	   `TimePicker_themeresources.xaml:194`. */
 	.flyout-button:hover:not(:disabled) {
-		background: var(--winui-TimePickerButtonBackgroundPointerOver);
+		background: var(--winui-TimePickerButtonBackgroundPointerOver) padding-box;
 		color: var(--winui-TimePickerButtonForegroundPointerOver);
 	}
 	.flyout-button:active:not(:disabled)::after {
 		background: var(--winui-TimePickerButtonBorderBrushPressed);
 	}
 	.flyout-button:active:not(:disabled) {
-		background: var(--winui-TimePickerButtonBackgroundPressed);
+		background: var(--winui-TimePickerButtonBackgroundPressed) padding-box;
 		color: var(--winui-TimePickerButtonForegroundPressed);
 	}
 	.flyout-button:disabled::after {
 		background: var(--winui-TimePickerButtonBorderBrushDisabled);
 	}
 	.flyout-button:disabled {
-		background: var(--winui-TimePickerButtonBackgroundDisabled);
+		background: var(--winui-TimePickerButtonBackgroundDisabled) padding-box;
 		color: var(--winui-TimePickerButtonForegroundDisabled);
 	}
 	.flyout-button:disabled + * {
