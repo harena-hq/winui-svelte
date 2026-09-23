@@ -361,7 +361,7 @@
 	}
 
 	/* The border brush painted on the ring alone: a two-layer mask that punches out the content
-	   box, exactly as TextBox.svelte:180 explains. `inset` is the negative border width because an
+	   box, exactly as TextBox.svelte:177 explains. `inset` is the negative border width because an
 	   absolutely positioned child is placed against its parent's padding box. */
 	.flyout-button::after {
 		content: '';
@@ -387,8 +387,41 @@
 		background: var(--winui-DatePickerButtonBorderBrushPointerOver);
 	}
 
+	/* `padding-box` again on each state, and it is not a repetition. `background` is a
+	   shorthand, so a rule that restates the brush resets `background-clip` to `border-box`
+	   along with it, and the base rule's clip is gone for that state alone.
+
+	   Upstream's state storyboards change `Background`, `Foreground` and `BorderBrush` on the
+	   presenter and never `BackgroundSizing` (the three states at
+	   `DatePicker_themeresources.xaml:155`, `DatePicker_themeresources.xaml:168` and
+	   `DatePicker_themeresources.xaml:181`, against the presenter at
+	   `DatePicker_themeresources.xaml:200`). It is stronger than that: the string
+	   `BackgroundSizing` does not occur in that file at all — no attribute, no setter, no key
+	   frame, and no `{TemplateBinding BackgroundSizing}` on the presenter, where
+	   `Button_themeresources.xaml:244`, `ToggleButton_themeresources.xaml:198` and
+	   `AppBarToggleButton_themeresources.xaml:469` all carry one. So nothing a consumer sets
+	   on the control can reach the presenter, and the value is the property's default in every
+	   state: it is not among the exceptions the switch at `DependencyProperty.cpp:120`
+	   enumerates, so it takes the zero value of its enum (`EnumDefs.g.h:552`).
+
+	   The pin cannot show the renderer reading that value. `HWWalk.cpp` is not in the
+	   checkout, and the geometry read that is — `framework.cpp:3842`, choosing at
+	   `framework.cpp:3950` — is reachable only from the print path (`Border.cpp:451`,
+	   `ContentPresenter.cpp:1403`, `panel.cpp:208`). `Border.cpp:668` is a hit test. The
+	   template settles the value on its own; those two readings agree about what it means.
+
+	   Without the clip the fill paints into the 1px ring where `::after` draws the stroke, and
+	   the stroke composites over our own fill instead of over the page. Measured on this build
+	   in the dark theme, the ring pixel at the button's left edge: 64 hovered, 54 pressed, 56
+	   disabled — against 47 for all three once clipped, which is what the button already paints
+	   at rest. The light theme moves 3, 1 and 1. That the four agree once clipped is not one
+	   brush read four times: rest and hover alias `ControlElevationBorderBrush` and pressed
+	   and disabled alias `ControlStrokeColorDefaultBrush`
+	   (`DatePicker_themeresources.xaml:15`), and the gradient sits at that same stop on the
+	   midline. `CalendarDatePicker.svelte` and
+	   `TimePicker.svelte` carry the same three rules for the same reason. */
 	.flyout-button:hover:not(:disabled) {
-		background: var(--winui-DatePickerButtonBackgroundPointerOver);
+		background: var(--winui-DatePickerButtonBackgroundPointerOver) padding-box;
 		color: var(--winui-DatePickerButtonForegroundPointerOver);
 	}
 	.flyout-button:active:not(:disabled)::after {
@@ -396,7 +429,7 @@
 	}
 
 	.flyout-button:active:not(:disabled) {
-		background: var(--winui-DatePickerButtonBackgroundPressed);
+		background: var(--winui-DatePickerButtonBackgroundPressed) padding-box;
 		color: var(--winui-DatePickerButtonForegroundPressed);
 	}
 	.flyout-button:disabled::after {
@@ -404,7 +437,7 @@
 	}
 
 	.flyout-button:disabled {
-		background: var(--winui-DatePickerButtonBackgroundDisabled);
+		background: var(--winui-DatePickerButtonBackgroundDisabled) padding-box;
 		color: var(--winui-DatePickerButtonForegroundDisabled);
 	}
 	.flyout-button:disabled + * {
