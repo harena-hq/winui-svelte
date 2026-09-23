@@ -371,7 +371,15 @@
 		border: var(--winui-DateTimeFlyoutBorderThickness) solid
 			var(--winui-TimePickerFlyoutPresenterBorderBrush);
 		border-radius: var(--winui-ControlCornerRadius);
-		background: var(--winui-TimePickerFlyoutPresenterBackground);
+		/* `padding-box`: upstream's presenter is one `<Border x:Name="Background">` carrying the
+		   fill and the stroke together (`TimePicker_themeresources.xaml:274`, under the style at
+		   `TimePicker_themeresources.xaml:259`), and `BackgroundSizing` does not occur in that
+		   file, so it takes the property's default — `InnerBorderEdge`, the zero value at
+		   `EnumDefs.g.h:552`, which `CBorder::GetBackgroundSizing` reads from the property
+		   itself at `Border.cpp:952` — and the fill stops at the stroke's inner edge.
+		   `DatePicker.svelte`'s note above its own presenter carries the argument and the
+		   measurement; this presenter is the same template with the same brushes. */
+		background: var(--winui-TimePickerFlyoutPresenterBackground) padding-box;
 		padding: var(--winui-DateTimeFlyoutBorderPadding);
 		box-shadow: var(--winui-PopupShadow);
 		outline: none;
