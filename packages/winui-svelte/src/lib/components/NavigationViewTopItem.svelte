@@ -52,24 +52,29 @@
 	     takes its type from its default value rather than an annotation: svelte-package ships
 	     source, where an annotation in markup does not survive consumer parsing. -->
 	{#snippet row(props = EMPTY_TRIGGER_PROPS)}
-		<div
-			{...props}
-			role="treeitem"
-			class="item"
-			aria-selected={isSelected}
-			aria-label={!hasContent ? tooltip : undefined}
-			aria-level={1}
-			tabindex="0"
-			data-selected={isSelected}
-			data-placement={placement}
-			data-icons={icons}
-			onclick={withTriggerClick(props)}
-			onkeydown={withTriggerKeydown(props)}
-		>
-			<span class="selection-indicator"></span>
-			{#if item.glyph}<span class="icon">{String.fromCodePoint(parseInt(item.glyph, 16))}</span
-				>{/if}
-			{#if item.content}<span class="content">{item.content}</span>{/if}
+		<!-- `NavigationViewItemPresenter`, which the item's own template marks
+		     `Control.IsTemplateFocusTarget` (`NavigationView.xaml:462`) — so this box, and not
+		     the fill inside it, is where the focus visual lands. See the band's rule below. -->
+		<div class="item-presenter" data-placement={placement} data-icons={icons}>
+			<div
+				{...props}
+				role="treeitem"
+				class="item"
+				aria-selected={isSelected}
+				aria-label={!hasContent ? tooltip : undefined}
+				aria-level={1}
+				tabindex="0"
+				data-selected={isSelected}
+				data-placement={placement}
+				data-icons={icons}
+				onclick={withTriggerClick(props)}
+				onkeydown={withTriggerKeydown(props)}
+			>
+				<span class="selection-indicator"></span>
+				{#if item.glyph}<span class="icon">{String.fromCodePoint(parseInt(item.glyph, 16))}</span
+					>{/if}
+				{#if item.content}<span class="content">{item.content}</span>{/if}
+			</div>
 		</div>
 	{/snippet}
 	{#if tooltip}
@@ -81,11 +86,75 @@
 
 <style>
 	/* The row this component owns is the flex item the strip lays out, so it carries the
-	   stretch: a flex child with no height of its own fills the 48 the row is, and the item
-	   inside it then measures 48 less its own vertical margin. Writing `height: 100%` on the
-	   item instead makes it 48 *plus* the margin, which is four pixels taller than the row. */
+	   stretch: a flex child with no height of its own fills the 48 the row is, and the fill
+	   inside it then measures 48 less the presenter's vertical padding. Writing `height: 100%`
+	   on the fill instead makes it 48 *plus* that padding, four pixels taller than the row. */
 	li {
 		display: flex;
+	}
+
+	/* The focus target, and the box `NavigationViewItemButtonMargin` is *inside* rather than
+	   outside. The item's template marks the presenter (`NavigationView.xaml:462`), the marked
+	   element registers with its nearest `Control` ancestor — an unconditional walk up the
+	   parent chain (`CFrameworkElement::UpdateFocusAncestorsTarget`, `framework.cpp:890-901`),
+	   which passes `NVIRootGrid` before it finds the item — and
+	   `CFocusRectManager::ConfigureFocusElement` draws both strokes inside the bounds it is
+	   handed (`FocusRectManager.cpp:434-455`).
+
+	   The presenter's own template marks its `LayoutRoot` too
+	   (`NavigationView_themeresources.xaml:729`), and that mark is live: it registers with the
+	   presenter. What settles which one draws is the lookup rather than the walk — a focused
+	   control reads only its **own** `FocusTargetDescendant` (`uielement.cpp:6483-6500`), and
+	   the presenter is `IsTabStop="false"`, so it never becomes the focused element and its
+	   descendant is never read. The `:729` mark can never be the one that draws.
+
+	   Nothing sits between the band and the row either: the top states set the presenter's own
+	   `Margin` to `TopNavigationViewItemMargin` (`NavigationView.xaml:450`), which is `0`
+	   (`NavigationView_themeresources.xaml:246`).
+
+	   Measured on the reference 2026-09-23, keyboard focus on a top-pane row of the
+	   NavigationView page's own sample: the fill runs x 630-728 and y 301-344 while the band's
+	   outer edge is x 626-732 and y 299-346 — four outside the fill left and right, two above
+	   and below, which is `NavigationViewItemButtonMargin` exactly. The settings button is the
+	   same rule and not the exception its own style
+	   (`MUX_NavigationViewSettingsItemStyleWhenOnTopPane`) would make it: it renders through the
+	   presenter's `IconOnly` state, whose `LayoutRoot` is 36 square with `Margin="2"`
+	   (`:791-800`), so the presenter is 40 wide and the row's full 48 tall — measured 40 by 48,
+	   against a fill of 36 by 36. That style is a key nothing fills: defined twice, at `:635`
+	   and at `windows-app-sdk/generic.xaml:32769`, and referenced by neither pin. A grep would
+	   have settled it without the measurement. */
+	.item-presenter {
+		position: relative;
+		display: flex;
+		padding: var(--winui-NavigationViewItemButtonMargin);
+		border-radius: var(--winui-ControlCornerRadius);
+	}
+
+	.item-presenter[data-icons='iconOnly'] {
+		/* `LayoutRoot.Margin` is `2` in this state, not the `4,2` the template's own line
+		   carries. `align-items: center` is where XAML and CSS part: a XAML element with an
+		   explicit Height and `VerticalAlignment="Stretch"` is centred in the space it is given,
+		   and a CSS flex child with a definite cross size under `align-items: stretch` sits at
+		   the start of it. Six pixels above the button and six below on the reference, which is
+		   centred: the presenter is 48, its padding leaves 44, and a 36 fill centred in 44 sits
+		   4 from the content edge and 6 from the row's. */
+		padding: 2px;
+		align-items: center;
+	}
+
+	.item-presenter[data-placement='overflow'] {
+		/* `LayoutRoot` carries no margin in the overflow presenter's template (`:917`), so the
+		   presenter's box and the fill's are the same box. **The radii are not the same**, and
+		   that is what moving the band fixed in this placement. The focus rect takes its corner
+		   radius off the focus target by type, `Control_CornerRadius` for a `Control`
+		   (`FocusRectManager.cpp:191-199`), and the focus target is the presenter: the
+		   `NavigationViewItem` style sets `CornerRadius` to `ControlCornerRadius`
+		   (`NavigationView.xaml:432`) and the template binds it through (`:462`), while
+		   `MUX_NavigationViewItemPresenterStyleWhenOnTopPaneOverflow` (`:912-916`) sets none and
+		   its `LayoutRoot` carries none. So upstream rounds this band at 4 over a square fill.
+		   Drawn on the fill, ours was square. */
+		padding: 0;
+		width: 100%;
 	}
 
 	.item {
@@ -94,7 +163,7 @@
 		position: relative;
 		display: flex;
 		align-items: center;
-		margin: var(--winui-NavigationViewItemButtonMargin);
+		flex: 1 1 auto;
 		border-radius: var(--winui-ControlCornerRadius);
 		background: var(--winui-NavigationViewItemBackground);
 		color: var(--winui-TopNavigationViewItemForeground);
@@ -165,17 +234,12 @@
 	}
 	/* `IconOnly` — NavigationView_themeresources.xaml:791-800. The one icon-position state whose
 	   setters change the box rather than its contents, and the reason the settings button
-	   measures 36 by 36 on the reference rather than the 40 its own style names.
-
-	   `align-self: center` is where XAML and CSS part: a XAML element with an explicit Height
-	   and `VerticalAlignment="Stretch"` is centred in the space it is given, and a CSS flex
-	   child with a definite cross size under `align-items: stretch` sits at the start of it.
-	   The reference puts six pixels above the button and six below, which is centred. */
+	   measures 36 by 36 on the reference rather than the 40 its own style names. Its
+	   `LayoutRoot.Margin` and the centring it needs are on the presenter above. */
 	.item[data-icons='iconOnly'] {
-		align-self: center;
+		flex: 0 0 auto;
 		width: 36px;
 		height: 36px;
-		margin: 2px;
 	}
 	.item[data-icons='iconOnly'] .icon {
 		margin: 0 10px;
@@ -190,7 +254,7 @@
 	.item[data-icons='contentOnly'] .selection-indicator {
 		bottom: 4px;
 	}
-	.item:focus-visible::before {
+	.item-presenter:has(> .item:focus-visible)::before {
 		content: '';
 		position: absolute;
 		inset: 0;
@@ -207,7 +271,6 @@
 	.item[data-placement='overflow'] {
 		height: 36px;
 		width: 100%;
-		margin: 0;
 		padding-right: 14px;
 		border-radius: 0;
 		background: var(--winui-NavigationViewItemBackground);

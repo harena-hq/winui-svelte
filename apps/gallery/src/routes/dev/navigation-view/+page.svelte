@@ -243,7 +243,7 @@
 </div>
 
 <h2 class="winui-SubtitleTextBlockStyle">top — the pane above the content</h2>
-<div class="frame">
+<div class="frame" id="top-content">
 	<NavigationView
 		items={topContentItems}
 		selected="menu-1"
@@ -254,7 +254,7 @@
 </div>
 
 <h2 class="winui-SubtitleTextBlockStyle">top — with icons</h2>
-<div class="frame">
+<div class="frame" id="top-icons">
 	<NavigationView
 		items={topIconItems}
 		selected="menu-1"
@@ -265,7 +265,7 @@
 </div>
 
 <h2 class="winui-SubtitleTextBlockStyle">top — narrower than its items</h2>
-<div class="frame">
+<div class="frame" id="top-narrow">
 	<div class="narrow">
 		<NavigationView
 			items={topIconItems}
