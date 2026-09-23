@@ -535,12 +535,50 @@
 		border-radius: var(--winui-ControlCornerRadius);
 	}
 
+	/* **No border, and the resources for one are not an omission here.** The chain that would
+	   have rendered it is three hops and stops at the last: the `NavigationViewItem` style sets
+	   `BorderBrush` and `BorderThickness` (`NavigationView.xaml:423-424`), its template binds
+	   both onto the presenter (`:462`), and the left-pane presenter style sets them again
+	   (`NavigationView_themeresources.xaml:443-444`) — but the presenter's own template is where
+	   a `Control`'s border has to be consumed, and its `LayoutRoot` `Grid` (`:451`) reads
+	   `Background` and `CornerRadius` from the presenter and neither border property. Nor does
+	   anything else: no visual state in that template (`:450-631`) targets a border, and no
+	   non-XAML file in `controls/dev/NavigationView/` mentions either property at all. So the
+	   `1` at `:226` has plenty of setters and no renderer, which is the only sense in which it
+	   is unused.
+
+	   The per-state brushes are the same story read from the other end. Every reference to
+	   `NavigationViewItemBorderBrushPointerOver` across both pins — `NavigationView.xaml:328`
+	   and `:339`, `windows-app-sdk/generic.xaml:17706` and `:17717` — re-keys it as
+	   `ButtonBorderBrushPointerOver` for the pane's own buttons, and
+	   `NavigationViewItemBorderBrushSelected` has its definitions and no reference.
+
+	   This file drew the border anyway, and it cost two different things. Geometry in every
+	   theme: an absolutely-placed child is positioned against the padding box, so the selection
+	   indicator started a column right of the fill's edge where the reference puts it flush, the
+	   row's content was inset by the same pixel, and `padding-right` measured the ContentGrid's
+	   14 from inside the border rather than from the row's own edge, which put it at 15.
+
+	   And a **visible outline in high contrast**, which the reading this unit started from had
+	   wrong. The at-rest brush is transparent in all three themes (`:33`, `:99`, `:165`) and
+	   that is what the reading generalised from; the selected one is not. `:173` gives
+	   `NavigationViewItemBorderBrushSelected` the key
+	   `SystemControlBackgroundTransparentRevealBorderBrush`, whose name says transparent and
+	   whose HighContrast definition is `SystemColorButtonTextColor`
+	   (`windows-app-sdk/generic.xaml:4292`, against `Transparent` at `:1481`). So a selected row
+	   carried an opaque 1px outline that the original never draws — found by diffing the
+	   high-contrast baseline this change moved, not by reading. */
 	.item {
 		/* XAML's `MinHeight` and `MinWidth` include the border and the padding; CSS's
 		   `min-height` and `min-width` do not, unless the box is `border-box`. Without
 		   this line a control whose minimum comes from a WinUI resource renders that
 		   minimum *plus* its own padding and border — measured: this box came out 45px
-		   tall against the original's 32. */
+		   tall against the original's 32.
+
+		   That measurement is a bordered text input's and five other controls carry this block
+		   verbatim. Here it currently decides nothing: with the border gone and no vertical
+		   padding, `min-height` lands on the same box either way, measured. It is kept as the
+		   line the siblings carry rather than as a line this rule needs. */
 		box-sizing: border-box;
 		position: relative;
 		display: grid;
@@ -550,12 +588,9 @@
 		/* c1-allow: NavigationView_themeresources.xaml:604, the item's ContentGrid carries
 		   Margin="0,0,14,0" and no resource names the 14 */
 		padding-right: 14px;
-		border-style: solid;
-		border-width: var(--winui-NavigationViewItemBorderThickness);
 		border-radius: var(--winui-ControlCornerRadius);
 		background: var(--winui-NavigationViewItemBackground);
 		color: var(--winui-NavigationViewItemForeground);
-		border-color: var(--winui-NavigationViewItemBorderBrush);
 		cursor: pointer;
 		user-select: none;
 		/* The user agent's own `:focus-visible` ring is a second one; see Button.svelte. */
@@ -600,13 +635,11 @@
 	.item:hover {
 		background: var(--winui-NavigationViewItemBackgroundPointerOver);
 		color: var(--winui-NavigationViewItemForegroundPointerOver);
-		border-color: var(--winui-NavigationViewItemBorderBrushPointerOver);
 	}
 
 	.item:active {
 		background: var(--winui-NavigationViewItemBackgroundPressed);
 		color: var(--winui-NavigationViewItemForegroundPressed);
-		border-color: var(--winui-NavigationViewItemBorderBrushPressed);
 	}
 
 	/* Nothing in this version renders a disabled item. The rule is here because the state
@@ -614,26 +647,22 @@
 	.item[aria-disabled='true'] {
 		background: var(--winui-NavigationViewItemBackgroundDisabled);
 		color: var(--winui-NavigationViewItemForegroundDisabled);
-		border-color: var(--winui-NavigationViewItemBorderBrushDisabled);
 		cursor: default;
 	}
 
 	.item[data-selected='true'] {
 		background: var(--winui-NavigationViewItemBackgroundSelected);
 		color: var(--winui-NavigationViewItemForegroundSelected);
-		border-color: var(--winui-NavigationViewItemBorderBrushSelected);
 	}
 
 	.item[data-selected='true']:hover {
 		background: var(--winui-NavigationViewItemBackgroundSelectedPointerOver);
 		color: var(--winui-NavigationViewItemForegroundSelectedPointerOver);
-		border-color: var(--winui-NavigationViewItemBorderBrushSelectedPointerOver);
 	}
 
 	.item[data-selected='true']:active {
 		background: var(--winui-NavigationViewItemBackgroundSelectedPressed);
 		color: var(--winui-NavigationViewItemForegroundSelectedPressed);
-		border-color: var(--winui-NavigationViewItemBorderBrushSelectedPressed);
 	}
 
 	/* Absolutely placed, because in the template it lives in its own grid stacked over the

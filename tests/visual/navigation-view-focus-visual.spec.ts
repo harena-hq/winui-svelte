@@ -161,18 +161,19 @@ test('the strokes sit at the row edge and leave the indicator a column of its ow
 	//   1  primary, the inner column. 2px wide upstream.
 	//   2  secondary, 1px.
 	//   3  untouched — the pixel of clearance the margin leaves.
-	//   4  the fill's left edge.
-	//   5  the indicator, which upstream starts at 4, flush with the fill. Ours is a column in
-	//      because `.item` draws a 1px border the presenter's template never reads; owed, and
-	//      recorded in `.private/NEXT.md`. When that is fixed these become `[4, 5, 6]`.
+	//   4  the fill's left edge, and the indicator with it: `SelectionIndicator` is a child of
+	//      `LayoutRoot`, which binds no border, so it starts flush. It read 5 until this file
+	//      stopped drawing a border the presenter's template never consumed.
 	//
-	// A bound rather than an equality here would notice neither the day it is fixed nor the day
-	// it gets worse.
+	// A bound rather than an equality here would notice neither the day one of these is fixed
+	// nor the day it gets worse.
 	expect(focused.stroke).toEqual([0, 1]);
 	expect(focused.secondary).toEqual([2]);
-	expect(focused.accent).toEqual([5, 6, 7]);
-	// And the claim the unit is for, stated once in its own terms: the indicator clears the
-	// **secondary** stroke — the inner one, the one nearest it — with a column to spare.
+	expect(focused.accent).toEqual([4, 5, 6]);
+	// And the claim the first of these units was for, in its own terms: the indicator clears the
+	// **secondary** stroke — the inner one, the one nearest it — with a column to spare. That
+	// column is `NavigationViewItemButtonMargin`'s fourth pixel, and it is the whole clearance
+	// the reference has; the band is three columns and the margin is four.
 	expect(Math.min(...focused.accent) - Math.max(...focused.secondary)).toBeGreaterThanOrEqual(2);
 });
 
@@ -204,4 +205,67 @@ test("the band reaches the row's far end too, because the clip is the border box
 	expect(right.stroke).toEqual([0, 1]);
 	expect(right.secondary).toEqual([2]);
 	expect(right.accent).toEqual([]);
+});
+
+test('the row draws no border, because the presenter template reads none', async ({ page }) => {
+	await page.goto(PAGE);
+	const row = selectedRow(page);
+
+	// It belongs in this file rather than beside it: the border is what moved the indicator, and
+	// the indicator's column is what the test above pins, so the two measure one pixel from
+	// opposite sides. (It moved the indicator *away* from the band, not into it — the gap
+	// between the secondary stroke and the accent was three columns and is now two, which is
+	// the reference's. A first draft of this comment had that backwards.)
+	//
+	// Three styles set `BorderBrush` and `BorderThickness` on the way down — the item's own
+	// (`NavigationView.xaml:423-424`), the template binding onto the presenter (`:462`), and the
+	// left-pane presenter style (`NavigationView_themeresources.xaml:443-444`) — and the chain
+	// stops at the last hop: `LayoutRoot` (`:451`) binds neither, so nothing renders one.
+	//
+	// A width rather than a colour, and that is the point of the test. The at-rest brush is
+	// transparent in all three themes, which is why this went unnoticed; the **selected** one is
+	// `SystemControlBackgroundTransparentRevealBorderBrush` (`:173`), which the HighContrast
+	// dictionary defines as `SystemColorButtonTextColor` (`generic.xaml:4292`). A colour
+	// assertion in this theme would have passed over an opaque outline in another.
+	// Six rules set a border colour per state and all six are gone, so one reading is one of six.
+	// The row is selected, so at rest it is `.item[data-selected]`, hovering adds `.item:hover`
+	// and `.item[data-selected]:hover`, and pressing adds the two `:active` ones — five. The
+	// sixth, `[aria-disabled]`, is unreachable in the library rather than on this page:
+	// `NavigationViewItem.svelte` never emits the attribute, and the comment beside that rule
+	// says so.
+	//
+	// Each state also reads the background, and that is not decoration. Every state's widths are
+	// the same four zeros, so a `hover()` or a `down()` that stopped landing would keep this
+	// test green while it silently covered two states instead of five. The background is what
+	// separates them: `NavigationViewItemBackgroundSelected` and `…SelectedPressed` are one
+	// brush and `…SelectedPointerOver` is another, so rest and pressed agree and hover differs
+	// from both — two transitions, each asserted, and neither one a value this test hardcodes.
+	const read = () =>
+		row.evaluate((element) => {
+			const style = getComputedStyle(element);
+			return {
+				widths: [
+					style.borderTopWidth,
+					style.borderRightWidth,
+					style.borderBottomWidth,
+					style.borderLeftWidth
+				],
+				background: style.backgroundColor
+			};
+		});
+	const none = ['0px', '0px', '0px', '0px'];
+
+	const rest = await read();
+	expect(rest.widths).toEqual(none);
+
+	await row.hover();
+	const hovered = await read();
+	expect(hovered.widths).toEqual(none);
+	expect(hovered.background).not.toBe(rest.background);
+
+	await page.mouse.down();
+	const pressed = await read();
+	await page.mouse.up();
+	expect(pressed.widths).toEqual(none);
+	expect(pressed.background).not.toBe(hovered.background);
 });
