@@ -127,6 +127,7 @@
 			     that shares that very ordinary name. -->
 			{#snippet child({ props })}
 				<button {...props} bind:this={ref} class="trigger">
+					<span class="pill" aria-hidden="true"></span>
 					<Select.Value>
 						{#snippet child({ props, selection })}
 							<span {...props} class="value">
@@ -501,37 +502,118 @@
 	   `*ThemeBrush` families. A zero-width border with a colour on it is a declaration that
 	   looks like a decision and is not one. */
 
-	/* The selection indicator: the `Pill` Rectangle at :572 carries
-	   `Width="{StaticResource ComboBoxItemPillWidth}"`,
-	   `Height="{StaticResource ComboBoxItemPillHeight}"`,
-	   `RadiusX="{StaticResource ComboBoxItemPillCornerRadius}"`,
-	   `Fill="{ThemeResource ComboBoxItemPillFillBrush}"`, `Margin="1,0,0,0"`, and is
-	   invisible at rest (`Opacity="0"`). The four `Selected*` states set `Opacity` to 1,
-	   and `SelectedPressed` scales by `ComboBoxItemPillMinScale` (0.625). The scale has
-	   no `transition` — the upstream animation runs over
-	   `ComboBoxItemScaleAnimationDuration`, which this unit does not seed. The scale
-	   token is emitted as `px` and read back through `calc(... / 1px)` so the cascade
-	   stays editable without extending the generator's type system; see
-	   `scripts/tokens/manifest.mjs`'s `DOUBLE_LENGTHS` for the comment. */
+	/* The selection indicator, and the focus indicator: **there are two `Pill` Rectangles**
+	   and they share the `ComboBoxItemPill` style. The item's is at :759 and the trigger's
+	   at :572 — this comment used to cite :572 for the item's and hand it the trigger's
+	   `Margin="1,0,0,0"`, which the item does not have. The style (:349) sets seven things:
+	   `HorizontalAlignment="Left"`, which is what makes a `Margin` a left inset rather than
+	   an offset from a centred box; `Width` and `Height` from `ComboBoxItemPillWidth` and
+	   `…Height`; `Fill` from `ComboBoxItemPillFillBrush`; `RadiusX` and `RadiusY` from
+	   `ComboBoxItemPillCornerRadius` through the `TopLeftCornerRadiusDoubleValueConverter`
+	   and the `BottomRight` one, which is how a `CornerRadius` resource reaches two `Double`
+	   properties; and `RenderTransformOrigin="0.5,0.5"`, which is what centres the item's
+	   pressed scale. `Opacity="0"` is on each Rectangle rather than in the style. On the item
+	   the five `Selected*` states set `Opacity` to 1,
+	   and `SelectedPressed` (:721) scales by `ComboBoxItemPillMinScale` (0.625). The scale has
+	   no `transition`: the upstream animation runs over `ComboBoxItemScaleAnimationDuration`,
+	   which nothing has seeded. The token is emitted unitless and read raw, because it is a
+	   ratio rather than a length — `scripts/tokens/manifest.mjs` lists it in `DOUBLE_RATIOS`
+	   and that set's comment says why a ratio does not get a unit put on it. */
 	.pill {
 		position: absolute;
-		left: 0;
 		top: 50%;
 		translate: 0 -50%;
 		width: var(--winui-ComboBoxItemPillWidth);
 		height: var(--winui-ComboBoxItemPillHeight);
 		border-radius: var(--winui-ComboBoxItemPillCornerRadius);
 		background: var(--winui-ComboBoxItemPillFillBrush);
+	}
+
+	/* The item's sits on the left edge of its own box: `:759` carries no `Margin`, and the
+	   item writes no border, so the padding box an absolutely positioned child is offset
+	   from is the border box as well. `Opacity="0"` is transcribed as written here because
+	   the deviation below was taken only where it was measured to cost something, and this
+	   is not that place: seven of these sit in the resting document of this route's own
+	   baseline and none of them moved a pixel. */
+	.item > .pill {
+		left: 0;
 		opacity: 0;
 	}
 
-	/* The visible label inside the item. `margin-left` reserves space for the pill so a
-	   selected item's text aligns with a non-selected one's; the pill is three pixels
-	   wide plus the `Margin="1,0,0,0"` upstream adds on its right. */
+	/* The trigger's carries `Margin="1,0,0,0"` and is measured from the Grid cell, which is
+	   the border box — while `left` is measured from the padding box, one border in. Hence
+	   the subtraction. It computes to zero while the border is one pixel, which is the only
+	   width the layer emits, so nothing here can tell it from a literal `0`; write it anyway,
+	   because upstream would keep the pill one pixel from the outer edge at any border width
+	   — the Rectangle is a sibling of the Border, not a child of it — and a literal would
+	   move it by the difference.
+
+	   c1-allow: ComboBox_themeresources.xaml:572, `Margin="1,0,0,0"` — XAML writes
+	   left,top,right,bottom, so the 1 is the left inset and the rest are zero.
+
+	   Vertical centring is exact rather than approximate for the same reason and only
+	   while the reason holds: the Rectangle has a `Height` and no `VerticalAlignment`, so
+	   it centres in the cell, which is the border box; `top: 50%` centres in the padding
+	   box, and `ComboBoxBorderThemeThickness` is `1px` on all four sides in every theme —
+	   one definition, in `:root` — so the two boxes share a centre. */
+	.trigger > .pill {
+		left: calc(1px - var(--winui-ComboBoxBorderThemeThickness));
+		visibility: hidden;
+	}
+
+	/* The same `Focused` state that raises `HighlightBackground` raises the Pill, at :476
+	   against :475, and `FocusedPressed` raises both again at :490 and :491. There is no
+	   transform on either: `PillTransform` stays at `ScaleY="1"` in both states, and the
+	   scaling one is the item's `SelectedPressed`. `PointerFocused` at :504 raises nothing,
+	   which is what `:focus-visible` already means.
+
+	   **`FocusedDropDown` at :505 is the fifth state in the group and it is why both raising
+	   rules carry `:not([aria-expanded='true'])`.** Its own Storyboard only shows
+	   `PopupBorder`, but it is in `FocusStates` (the group closes at :516), so entering it
+	   ends `Focused`'s storyboard and returns `HighlightBackground` and `Pill` to
+	   `Opacity="0"`. **With the drop-down open, upstream draws neither.** That it is entered
+	   at all is the control's own decision rather than the template's, and it is written out:
+	   `ComboBox_Partial.cpp:877` tests `isDropDownOpen` *before* it looks at `FocusState`, so
+	   an open drop-down is `FocusedDropDown` however focus was acquired — a pointer-opened
+	   list is not `PointerFocused`. A rule keyed on `:focus-visible` alone draws both, because
+	   focus does not leave the trigger when the popup opens; closing it restores the attribute
+	   and with it the state.
+
+	   Nothing here disturbs the ring. The Pill occupies x = 1 to 4 measured from the border
+	   box and the ring is the border itself at x = 0 to 1, so the two share no pixel and
+	   their paint order — the Pill over the Border upstream, `.trigger::after` over the
+	   Pill here, because a pseudo-element paints after its host's children — cannot show.
+
+	   **`visibility` rather than `opacity`, and that is measured rather than preferred.**
+	   Upstream writes `Opacity="0"` and animates it to 1 over `Duration="0"`, so the two
+	   spellings are the same picture; the item's pill below keeps `opacity` because its
+	   pressed state scales it. On the trigger it cost something. A statically transparent
+	   element sitting in the resting document made Chromium give up LCD subpixel
+	   antialiasing for the text around it: `color-picker-horizontal`'s three-theme baseline
+	   moved 2538 pixels in the light theme alone, across the whole channel column of a
+	   control that renders one of these. The glyph pixels are unambiguous — `252,252,228`
+	   became `242,242,242` and `157,70,94` became `108,108,108`, subpixel triples collapsing
+	   to grey — and a few pixels on each box's rounded corners moved with them, which that
+	   cause does not explain by itself and which is left unexplained rather than assumed.
+	   `visibility: hidden` restores the baseline exactly. **Nothing in the local lane holds
+	   this**: headless Chromium on Linux does no subpixel antialiasing, so the guest baseline
+	   is the only thing that would fail if the declaration went back. */
+	.trigger:focus-visible:not([aria-expanded='true']) > .pill {
+		visibility: visible;
+	}
+
+	/* The visible label inside the item, and it reserves nothing for the pill. This carried
+	   `margin-left: 4px` until 2026-09-24, on the reading that the pill was three pixels wide
+	   plus a one-pixel `Margin` — the trigger's margin, which the item's Rectangle at :759
+	   does not have. Upstream reserves nothing either way: the item's `LayoutRoot` (:614)
+	   declares no `ColumnDefinitions`, so the Pill and the `ContentPresenter` resolve to the
+	   same cell and the pill overlaps the padding. The `ContentPresenter` carries
+	   `Margin="{TemplateBinding Padding}"`, which is `ComboBoxItemThemePadding`, so upstream's
+	   label starts eleven pixels in and stays there when the row is selected. Ours started at
+	   fifteen. */
 	.item-content {
 		flex: 1 1 auto;
 		min-width: 0;
-		margin-left: 4px;
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
@@ -549,15 +631,15 @@
 	   evidence for Button and for nothing else.
 
 	   What the template draws is the `HighlightBackground` Border at :570, taken from
-	   `Opacity="0"` to 1 by the `Focused` state at :475. The `Focused` state moves four other
-	   things and none of them is reproduced here: the `Pill` at :572, and three foregrounds
-	   of which two alias, in this pin, exactly what their resting keys alias in all three
+	   `Opacity="0"` to 1 by the `Focused` state at :475. That state moves four other things.
+	   The `Pill` at :572 is one and is reproduced above. The other three are foregrounds, of
+	   which two alias, in this pin, exactly what their resting keys alias in all three
 	   dictionaries — only the chevron's differs, and only in high contrast. */
 	.trigger:focus-visible {
 		outline: none;
 	}
 
-	.trigger:focus-visible::before {
+	.trigger:focus-visible:not([aria-expanded='true'])::before {
 		content: '';
 		position: absolute;
 		/* Under the box, the way `HighlightBackground` is under `Background` by being
@@ -668,7 +750,7 @@
 		color: var(--winui-ComboBoxItemForegroundSelected);
 	}
 
-	.item[data-selected] .pill {
+	.item[data-selected] > .pill {
 		opacity: 1;
 	}
 
@@ -684,11 +766,12 @@
 		color: var(--winui-ComboBoxItemForegroundSelectedPressed);
 	}
 
-	.item[data-selected]:active .pill {
-		/* The upstream `SelectedPressed` state animates `ScaleY` to
-		   `ComboBoxItemPillMinScale` (0.625) over `ComboBoxItemScaleAnimationDuration`;
-		   the animation is out of scope and the scale is applied instantly. The token is
-		   emitted as `px` and read back through `calc(... / 1px)`. */
+	.item[data-selected]:active > .pill {
+		/* `SelectedPressed` (:721) animates the pill's scale to `ComboBoxItemPillMinScale`
+		   over `ComboBoxItemScaleAnimationDuration`. The duration is unseeded and the
+		   animation is out of scope, so the scale applies instantly. The token is a ratio
+		   and is emitted unitless, which is why it is read raw — see `DOUBLE_RATIOS` in
+		   `scripts/tokens/manifest.mjs` for why a ratio gets no unit. */
 		scale: var(--winui-ComboBoxItemPillMinScale);
 	}
 
