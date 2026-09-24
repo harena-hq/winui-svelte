@@ -4370,13 +4370,23 @@ C5 is the mechanism for the project's central constraint: WinUI behaviour we cho
 reproduce is a recorded decision, never a silent one.
 
 **This enumeration stops at C10 and the suite does not.** `C11` (template parts and states),
-`C12` (every cited line names a file that has one) and `C13` (every portalled surface sits in
-the popup layer) are in `pnpm conform` and have no entry here — C11 and C12 landed without one
-and C13 did not add itself alone, because an entry for the newest while the two before it have
-none would make the gap read as a choice. **`scripts/conformance/run.mjs` is the list**; this
-section is a commentary on the gates that have one, and the backfill is owed. Each of the three
-carries its own reasoning in its own file, which is where the detail is; C13's also records
-what it cannot reach, and names the test that answers that half.
+`C12` (every cited line names a file that has one), `C13` (every portalled surface sits in the
+popup layer) and `C14` (no colour property reads a token that resolves to a gradient) are in
+`pnpm conform` and have no entry here — C11 and C12 landed without one, and neither C13 nor C14
+added itself alone, because an entry for the newest while the ones before it have none would
+make the gap read as a choice. **`scripts/conformance/run.mjs` is the list**; this section is a
+commentary on the gates that have one, and the backfill is owed. Each of the four carries its
+own reasoning in its own file, which is where the detail is; C13's and C14's also record what
+they cannot reach, and each names the test that answers that half.
+
+**Two documents name the gates by number, and only one of them has kept up.** This paragraph
+did: `C13` was in it at `bbaff58`, the commit that wired C13. `keyboard.md`'s apparatus table
+did not. It read `C1–C11` from `0a17908` onward — through `a1a9ce1` wiring C12 and `bbaff58`
+wiring C13, so two gates behind at its worst — and was corrected only at `04a6924`, eight
+commits after C12 landed, by a `feat(navigation-view)` commit that had no business with it.
+Nothing reads either file for a gate list, and C12 cannot reach this because neither sentence
+cites a line, so both were brought to C14 by hand. The table is the one to check when a gate
+lands.
 
 **A gate is not trusted until it has been seen to fail.** Each is probed against a planted
 violation — and against the evasions that occurred to a reviewer, not only the obvious form —

@@ -7,7 +7,15 @@
 		"noEmit": true,
 		"skipLibCheck": true,
 		"types": ["node"],
-		"allowImportingTsExtensions": true
+		"allowImportingTsExtensions": true,
+		// A spec imports a conformance gate's exported property list rather than restating it
+		// (`tests/visual/gradient-in-colour-property.spec.ts`), so that the list the gate
+		// enforces and the list the browser is asked about cannot drift apart. Without this
+		// the import is TS7016. It widens the program by exactly two files — that gate and
+		// `scripts/conformance/lib.mjs`, which it imports — counted with `--listFiles`, and
+		// `checkJs` stays off, so both are read for the types of what they export and neither
+		// is type-checked.
+		"allowJs": true
 	},
 	"include": ["tests/**/*.ts", "playwright.config.ts"]
 }
