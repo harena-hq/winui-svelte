@@ -505,12 +505,13 @@
 		   and `Flyout.svelte:130` and `MenuFlyout.svelte:551` already clip their own presenter,
 		   so the idiom is not new here.
 
-		   It is not that these were the last two. `ComboBox.svelte:341` paints its dropdown's
-		   fill under a stroke upstream clips *explicitly* —
-		   `ComboBox_themeresources.xaml:590` writes `BackgroundSizing="InnerBorderEdge"` on
-		   `PopupBorder` — and `TeachingTip.svelte:348` has no clip either. Both are left, and
-		   both were invisible to the survey that found these two, because they write the border
-		   in longhands where it read the `border` shorthand. They are a wider class than this
+		   It is not that these were the last two. ComboBox's dropdown painted its fill under a
+		   stroke upstream clips *explicitly* — `ComboBox_themeresources.xaml:590` writes
+		   `BackgroundSizing="InnerBorderEdge"` on `PopupBorder` — and `TeachingTip.svelte:348`
+		   has no clip either. Both were invisible to the survey that found these two, because
+		   they write the border in longhands where it read the `border` shorthand. The dropdown
+		   has since been closed and `ComboBox.svelte:404` carries its reading; the TeachingTip
+		   card is still open. They are a wider class than this
 		   unit's and need their own reading; what is settled here is the case where upstream
 		   states nothing and the Border takes the default.
 

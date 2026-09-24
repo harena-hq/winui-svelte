@@ -914,3 +914,224 @@ test("the AutoSuggestBox suggestion list's fill stops at the inner border edge",
 		await backdrop.evaluate((el) => (el as Element).remove());
 	}
 });
+
+/**
+ * The ComboBox trigger's fill stops at the inner border edge, and the edge is the brush.
+ *
+ * One element and two claims, because on this control they were one defect. The Border this
+ * stands for is `ComboBox_themeresources.xaml:571` — `Background`, `BorderBrush`,
+ * `BorderThickness` and `CornerRadius` all template-bound, no `BackgroundSizing` on it and none
+ * in the file outside the popup, and the same element in
+ * `ComboBox_themeresources_perf2026.xaml:525` writes none either. So the fill takes the
+ * property's default and stops at the stroke's inner edge, where CSS would run it to the border
+ * box.
+ *
+ * What kept that invisible is the second claim. `ComboBoxBorderBrush` and
+ * `ComboBoxBorderBrushPointerOver` alias `ControlElevationBorderBrush`, a gradient, and a
+ * gradient cannot be a `border-color`: the declaration parses, because `var()` defers the check,
+ * and is dropped at computed-value time, leaving the initial `currentColor`. An opaque near-black
+ * edge in light and an opaque white one in dark hide whatever the fill does beneath them.
+ * `ComboBox.svelte` now paints the brush on `.trigger::after` and lets the border reserve the
+ * width, as `Button.svelte:117` and `TextBox.svelte:189` already did, and the guest baselines
+ * moved from 27 to 228 in light and from 255 to 47 in dark.
+ *
+ * Pressed and disabled were never part of that: both alias `ControlStrokeColorDefaultBrush`
+ * (`generic.xaml:680` and `generic.xaml:681`), a solid colour, so the declaration naming them
+ * was never dropped. Their edges were wrong anyway, by the other half: the disabled specimen's
+ * left edge moves 230 to 228 in light and 56 to 47 in dark in the baselines this commit
+ * regenerates, because the stroke lay on the trigger's own unclipped fill rather than on the
+ * page. Which is why the clip is measured in every state — `background` is a shorthand, a state
+ * rule restating the brush resets the clip with it, and that is the defect the three pickers at
+ * the top of this file carried.
+ *
+ * High contrast is left out of the loop for two reasons, one measured and one structural. The
+ * stroke is opaque there, so the left edge reads `182,246,240` under both clips and the clip's
+ * positive control could not fire; and the shape assertion expects a gradient at rest, where
+ * high contrast resolves that brush to a colour. One reading is taken in that theme all the
+ * same, after the loop, because it is the only place the hover override can be falsified.
+ */
+
+const TRIGGER_STATES = ['rest', 'hover', 'pressed', 'disabled'] as const;
+type TriggerState = (typeof TRIGGER_STATES)[number];
+
+test("the ComboBox trigger's fill stops at the inner border edge in every state", async ({
+	page
+}) => {
+	await page.goto('/dev/combo-box');
+
+	const first = page.locator('.trigger').first();
+	await first.waitFor();
+	// Not framing, and not a rescue: at 720 this page settles with `scrollY` at 340 and nothing
+	// overlaps — four fresh contexts land there identically. What the grow removes is the
+	// dependence on that. Two of this route's ComboBoxes open their dropdowns, a dropdown is
+	// portalled to the body, and Floating UI places it from wherever the page has scrolled when
+	// it runs: scrolled back to the top at 720, the first one lands at 566..704, over the
+	// disabled specimen at 608..640, and `elementFromPoint` at that trigger's edge returns
+	// `.list` instead of `.trigger`. Grown to content there is no scroll to depend on, the
+	// popups sit at 736..874 and 1163..1269, and this reads what the tracked baselines read,
+	// because `snapshotAllThemes` grows the viewport too. The AutoSuggestBox section above is
+	// the other half of the same lesson: at 720 that route's popup leaves its anchor outright.
+	await growViewportToContent(page);
+	// Disabled is a prop on the control rather than `:disabled` on the button — the rule keys on
+	// `.root[data-disabled]` — so it is a different specimen and not a forced pseudo-class.
+	// Forcing it on the first trigger would measure the resting style and report it as disabled.
+	const disabled = page.locator('.root[data-disabled] .trigger');
+	await expect(disabled).toHaveCount(1);
+
+	const cdp = await page.context().newCDPSession(page);
+	await cdp.send('DOM.enable');
+	await cdp.send('CSS.enable');
+	const { root } = await cdp.send('DOM.getDocument', { depth: -1 });
+	const { nodeIds } = await cdp.send('DOM.querySelectorAll', {
+		nodeId: root.nodeId,
+		selector: '.trigger'
+	});
+	const nodeId = nodeIds[0];
+
+	const box = (state: TriggerState) => (state === 'disabled' ? disabled : first);
+
+	const enter = async (state: TriggerState) => {
+		await cdp.send('CSS.forcePseudoState', {
+			nodeId,
+			forcedPseudoClasses:
+				state === 'hover' ? ['hover'] : state === 'pressed' ? ['hover', 'active'] : []
+		});
+		// `enter` sends the whole `forcedPseudoClasses` array on every call, `[]` included, so a
+		// reordering of `TRIGGER_STATES` cannot carry one state's forcing into the next. What
+		// these guards answer is whether the forcing took at all: a CDP session holding a
+		// `nodeId` staled by a re-render reports nothing, and four readings of the resting state
+		// would be measured and named as four states.
+		if (state === 'disabled')
+			// Neither `:disabled` nor a forced class — the rule keys on `.root[data-disabled]`,
+			// so this is a second specimen that `forcePseudoState` never touches. Asking whether
+			// it is hovered is a question about an element nothing in this test moves, and it
+			// answers the same before and after any change. `cursor` is set by that rule and by
+			// no other, so it is the one reading that says the state is in force.
+			expect(
+				await disabled.evaluate((el) => getComputedStyle(el).cursor),
+				'the disabled specimen is not rendering as disabled'
+			).toBe('default');
+		else if (state === 'rest')
+			expect(
+				await first.evaluate((el) => el.matches(':hover') || el.matches(':active')),
+				'the resting state is not resting'
+			).toBe(false);
+		else
+			expect(
+				await first.evaluate((el, s) => el.matches(`:${s === 'pressed' ? 'active' : s}`), state),
+				`the ${state} state did not take`
+			).toBe(true);
+	};
+
+	/** Reads the edge with one extra declaration in force, then puts the page back. */
+	const withStyle = async (state: TriggerState, content: string) => {
+		const tag = await page.addStyleTag({ content });
+		const pixel = await ring(page, box(state));
+		await tag.evaluate((el) => (el as Element).remove());
+		return pixel;
+	};
+
+	const setTheme = (theme: string) =>
+		page.evaluate((t) => {
+			localStorage.setItem('winui-svelte:theme', t);
+			document.documentElement.dataset.theme = t;
+		}, theme);
+
+	const measure = async (theme: string) => {
+		for (const state of TRIGGER_STATES) {
+			await enter(state);
+			const shipped = await ring(page, box(state));
+			expect(shipped, `${theme}, ${state}: the shipped fill reaches into the ring`).toBe(
+				await withStyle(state, '.trigger { background-clip: padding-box !important }')
+			);
+			// The positive control, and it runs per state rather than once. The equality above
+			// compares one pixel under two clips, so it passes just as quietly when that pixel
+			// is not on the ring at all — and each state reads its own element or its own
+			// forced render, so one state proving the reading lands says nothing about the
+			// next. Unclipped, the stroke lies on the trigger's own fill instead of on the
+			// page: 228 to 237 in light, over a backdrop 9 levels lighter, and 47 to 59 in
+			// dark, where the stroke is 7.1% white over one 13 levels lighter.
+			expect(
+				await withStyle(state, '.trigger { background-clip: border-box !important }'),
+				`${theme}, ${state}: an unclipped fill changed nothing, so this reads somewhere it cannot reach`
+			).not.toBe(shipped);
+			// The other half, and it runs per state for the same reason. The two readings above
+			// are both satisfied by an edge that is merely stable across the clip — delete the
+			// ring rule outright and the band reads the page under both clips and all four
+			// equalities still pass. Hidden, the ring has to change this pixel.
+			expect(
+				await withStyle(state, '.trigger::after { display: none !important }'),
+				`${theme}, ${state}: hiding the ring changed nothing, so something else paints this edge`
+			).not.toBe(shipped);
+			// And which brush this state names. `ControlStrokeColorDefaultBrush` is also the far
+			// stop of the gradient the base rule paints, so the pixel read here — the left edge
+			// at mid-height — is 228 in light whether a pressed or disabled ring paints it or
+			// the base one does. The edge the gradient's *near* stop lands on is not: the bottom
+			// in light, the top in dark, which is the flip two themes make of one brush. The
+			// tracked baselines read that edge already and pin the disabled rule with it — the
+			// seven enabled triggers read 204 along the bottom in light and 53 along the top in
+			// dark, and the disabled one reads 228 and 47, flat on all four edges because its
+			// brush is flat. Nothing photographs the pressed rule, since no specimen is pressed.
+			// So what is asserted here is the shape rather than the value: a deleted state rule
+			// falls back to the base gradient, and a gradient is `background-image` where a
+			// colour is not. `.trigger:hover::after` is not covered in either theme measured
+			// here, and cannot be: in light and dark `ComboBoxBorderBrushPointerOver` aliases
+			// the brush the resting rule already names, so the override restates it and no
+			// pixel separates the two. High contrast is the one theme where the two keys
+			// differ, and the reading at the end of this test is there for that.
+			expect(
+				await box(state).evaluate((el) => getComputedStyle(el, '::after').backgroundImage),
+				`${theme}, ${state}: the ring is not the kind of brush this state names`
+			)[state === 'rest' || state === 'hover' ? 'toContain' : 'toBe'](
+				state === 'rest' || state === 'hover' ? 'linear-gradient' : 'none'
+			);
+		}
+
+		// Per theme, and all four sides: the border reserves the ring's width and paints
+		// nothing. This is the only thing standing between the brush and `currentColor`, which
+		// is what the declaration this unit replaced resolved to.
+		expect(
+			await first.evaluate((el) => {
+				const c = getComputedStyle(el);
+				return [c.borderTopColor, c.borderRightColor, c.borderBottomColor, c.borderLeftColor];
+			}),
+			`${theme}: the border paints a colour of its own, so the ring is not alone on this edge`
+		).toEqual(['rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, 0)']);
+	};
+
+	await setTheme('light');
+	const light = await ring(page, first);
+	await measure('light');
+
+	await setTheme('dark');
+	// The same poll the tests above use: until the stylesheet has followed the attribute the
+	// pixel is still the light one, and a second light pass would otherwise be reported as dark.
+	await expect.poll(() => ring(page, first), { timeout: 5000 }).not.toBe(light);
+	const dark = await ring(page, first);
+	await measure('dark');
+
+	// One reading in high contrast, and only this one. `.trigger:hover::after` restates the
+	// resting brush in light and in dark, so nothing there can say whether the rule is present;
+	// high contrast is where the two keys part — tokens.css:6349 resolves `ComboBoxBorderBrush`
+	// to `SystemControlForegroundBaseMediumBrush` and tokens.css:6350 resolves
+	// `ComboBoxBorderBrushPointerOver` to `SystemColorHighlightColor`. On the same pixel every
+	// other reading here uses, hovered reads `161,191,222` and the rule overridden with the
+	// resting brush reads `182,246,240`. This is the whole of the theme's coverage: the clip
+	// cannot be measured against an opaque stroke, and the shape assertion wants a gradient
+	// where this theme has a colour. The poll is the weak kind — any change off the dark
+	// reading satisfies it — and what makes that acceptable is the assertion after it: in light
+	// both of its readings are 228 and in dark both are 47, so a run that lands in any other
+	// theme fails here rather than passing quietly. Measured in all three.
+	await setTheme('high-contrast');
+	await expect.poll(() => ring(page, first), { timeout: 5000 }).not.toBe(dark);
+	await enter('hover');
+	const hovered = await ring(page, first);
+	expect(
+		await withStyle(
+			'hover',
+			'.trigger:hover::after { background: var(--winui-ComboBoxBorderBrush) !important }'
+		),
+		'high contrast, hover: the hover ring is already the resting brush, so its rule does nothing'
+	).not.toBe(hovered);
+	await enter('rest');
+});
