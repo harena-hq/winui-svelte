@@ -97,8 +97,8 @@ const ROOT = fileURLToPath(new URL('../../', import.meta.url)).replace(/[\\/]$/,
 
 const RECORD = 'data/winui-tokens.json';
 const FRAMEWORK_RECORD = 'data/winui-framework.json';
-const OUTPUT = 'packages/winui-svelte/src/lib/tokens/tokens.css';
-const RAMP_OUTPUT = 'packages/winui-svelte/src/lib/tokens/type-ramp.css';
+export const OUTPUT = 'packages/winui-svelte/src/lib/tokens/tokens.css';
+export const RAMP_OUTPUT = 'packages/winui-svelte/src/lib/tokens/type-ramp.css';
 const COMPACT_DENSITY_FILE = 'controls/dev/dll/DensityStyles/Compact.xaml';
 
 const fail = (message) => {

@@ -18,7 +18,7 @@ type Page = import('@playwright/test').Page;
  * the `Focused` state at :475. Four pixels outside the box: two of stroke, then two of fill.
  *
  * Until 2026-09-24 this component drew neither. It carried a band on `.root::before` whose `top`
- * read `ComboBoxTopHeaderMargin` — the four-value Thickness `0px 0px 8px 0px` (tokens.css:177),
+ * read `ComboBoxTopHeaderMargin` — the four-value Thickness `0px 0px 8px 0px` in tokens.css,
  * not a length, so the declaration was invalid at computed-value time and `top` fell back to its
  * initial `auto`; with `bottom: 0` and an empty pseudo-element it solved to 0px tall. Nothing in
  * the suite said so, because the only ComboBox capture is the resting route and no test had

@@ -224,8 +224,8 @@ export function sitesIn(layer, sources) {
 	};
 
 	// A token is defined once per theme block, and **a gradient in any one of them is the
-	// defect**: `ControlElevationBorderBrush` is a gradient at tokens.css:904, :3102 and :5057
-	// and a flat `var(--winui-SystemColorWindowTextColor)` at :6969. Those are four definitions
+	// defect**: `ControlElevationBorderBrush` is a gradient in three of its four definitions
+	// and a flat `var(--winui-SystemColorWindowTextColor)` in the fourth. Those four are spread
 	// over three themes — `:root`, then dark written twice, once as `[data-theme='dark']` and
 	// once as the `prefers-color-scheme` form of the same theme, then high contrast — so a
 	// `border-color` reading it is broken in two themes of the three and correct in the third.

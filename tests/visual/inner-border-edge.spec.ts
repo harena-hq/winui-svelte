@@ -1112,9 +1112,9 @@ test("the ComboBox trigger's fill stops at the inner border edge in every state"
 
 	// One reading in high contrast, and only this one. `.trigger:hover::after` restates the
 	// resting brush in light and in dark, so nothing there can say whether the rule is present;
-	// high contrast is where the two keys part — tokens.css:6363 resolves `ComboBoxBorderBrush`
-	// to `SystemControlForegroundBaseMediumBrush` and tokens.css:6364 resolves
-	// `ComboBoxBorderBrushPointerOver` to `SystemColorHighlightColor`. On the same pixel every
+	// high contrast is where the two keys part — under `:root[data-theme='high-contrast']` the
+	// token layer resolves `ComboBoxBorderBrush` to `SystemControlForegroundBaseMediumBrush`
+	// and `ComboBoxBorderBrushPointerOver` to `SystemColorHighlightColor`. On the same pixel every
 	// other reading here uses, hovered reads `161,191,222` and the rule overridden with the
 	// resting brush reads `182,246,240`. This is the whole of the theme's coverage: the clip
 	// cannot be measured against an opaque stroke, and the shape assertion wants a gradient

@@ -293,8 +293,8 @@
 		   The brush is the harder half. `ComboBoxBorderBrush` and
 		   `ComboBoxBorderBrushPointerOver` both alias `ControlElevationBorderBrush`, which
 		   is a `LinearGradientBrush` upstream and a `linear-gradient(...)` in the token
-		   layer (tokens.css:904). A gradient is not a `border-color`: `var()` defers the
-		   check to computed-value time, the declaration is invalid there, and an invalid
+		   layer. A gradient is not a `border-color`: `var()` defers the check to
+		   computed-value time, the declaration is invalid there, and an invalid
 		   non-inherited property falls back to its initial value — `currentColor`. So this
 		   rule painted the trigger's own text colour on all four edges, and nothing said
 		   so: the declaration names the right brush and is dropped after parsing. The
@@ -314,10 +314,10 @@
 	   generic.xaml:2146 defines the brush under `Default` running `StartPoint="0,0"` to
 	   `EndPoint="0,3"` with no transform, so `ControlStrokeColorSecondary` sits along the top,
 	   and generic.xaml:7747 defines it under `Light` with a `ScaleTransform ScaleY="-1"` that
-	   flips it to the bottom. The token layer mirrors that — `to bottom` at tokens.css:3102,
-	   `to top` at tokens.css:904 — and the baselines now show it: on the seven triggers that
-	   take the gradient, light reads 228 on three edges and 204 along the bottom, dark 47 on
-	   three and 53 along the top. The eighth is the disabled one, whose brush is
+	   flips it to the bottom. The token layer mirrors that — `ControlElevationBorderBrush` runs
+	   `to bottom` in both dark blocks and `to top` in `:root` — and the baselines now show it:
+	   on the seven triggers that take the gradient, light reads 228 on three edges and 204 along
+	   the bottom, dark 47 on three and 53 along the top. The eighth is disabled, its brush
 	   `ControlStrokeColorDefaultBrush` — the gradient's far stop on its own — so it reads 228
 	   and 47 flat on all four, and that is what pins its rule to a baseline.
 
@@ -584,7 +584,7 @@
 		   `padding-box` for the reason the trigger's own fill carries it at :273: the Border
 		   writes no `BackgroundSizing`, so upstream's fill stops at its inner border edge and
 		   CSS's would not. It is worth one level and only in light, where
-		   `FocusStrokeColorOuter` is `#000000e4` (tokens.css:754) and composites to 27 over
+		   `FocusStrokeColorOuter` is `#000000e4` in `:root` and composites to 27 over
 		   this fill against 26 over the page behind it; dark and high contrast paint the
 		   stroke opaque. Written because the rule is the rule, not because a test can see it
 		   — none can, and `ac7c857` and `30d5d6d` are both this same mistake in this same

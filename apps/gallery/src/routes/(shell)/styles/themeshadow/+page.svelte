@@ -74,8 +74,11 @@
 	}
 
 	/* Dark is either the attribute or the system preference with nothing overriding it —
-	   tokens.css:2150 and :3939 — so a page switching on theme in its own CSS has to write
-	   both, or it follows the app's switch and not the machine's. */
+	   tokens.css writes the dark block twice, once under `:root[data-theme='dark']` and once
+	   under `:root:not([data-theme='light']):not([data-theme='high-contrast'])` inside
+	   `@media (prefers-color-scheme: dark)`, and that pair of `:not()`s is the "with nothing
+	   overriding it". So a page switching on theme in its own CSS has to write both, or it
+	   follows the app's switch and not the machine's. */
 	:global(:root[data-theme='dark']) .sample-card {
 		box-shadow: var(--sample-shadow-dark);
 	}
