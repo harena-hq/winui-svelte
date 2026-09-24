@@ -74,13 +74,14 @@
 		...rest
 	}: AutoSuggestBoxProps = $props();
 
-	// The suggestion list is as wide as the control, which is what
-	// `AutoSuggestBox_themeresources.xaml:283` gets for free by putting the popup inside the
-	// control's own grid. bits-ui anchors its content to `Combobox.Input`, and the input is
-	// narrower than the box by the box's padding and its two buttons — measured 283 against
-	// a 336 box — so `--bits-floating-anchor-width` is the wrong number here and the box is
-	// measured instead. The popup is portalled to the body, so the value cannot be inherited
-	// through a custom property and is merged into the element's own `style` below.
+	// The suggestion list's container is as wide as the control, which upstream gets by
+	// writing the control's `ActualWidth` onto `SuggestionsContainer` from code, not from the
+	// template — the `.popup` rule's comment carries where and why. bits-ui anchors its
+	// content to `Combobox.Input`, and the input is narrower than the box by the box's
+	// padding and its two buttons — measured 283 against a 336 box — so
+	// `--bits-floating-anchor-width` is the wrong number here and the box is measured
+	// instead. The popup is portalled to the body, so a value set on the control cannot reach
+	// it through a custom property and is merged into the element's own `style` below.
 	// bits-ui types a `child` snippet's props as `Record<string, unknown>`, so a handler it
 	// put on the element is `unknown` and cannot be called without saying what it is. This
 	// says it in one place rather than at every call site.
@@ -574,19 +575,25 @@
 	/* The popup: the `SuggestionsContainer` Border at
 	   AutoSuggestBox_themeresources.xaml:283 carries the popup's `Padding`,
 	   `BorderThickness`, `BorderBrush`, `Background` and `CornerRadius` from the
-	   AutoSuggestBox's own resources, in that order. The `Margin="0,-0.5,0,-1"` upstream
-	   is a half-pixel nudge for XAML's popup placement and is not reproduced here: bits-ui
-	   positions the content with Floating UI and a negative fractional margin against a
-	   different positioner is noise, not fidelity. `OverlayCornerRadius` is the popup's
-	   own corner — distinct from the box's `ControlCornerRadius`.
+	   AutoSuggestBox's own resources, in that order, and carries no `Margin`. Neither pin
+	   writes one on it, and the code-behind's one `put_Margin` moves the right edge alone, to
+	   follow an IME candidate window (`AutoSuggestBox_Partial.cpp:1454`).
+	   `OverlayCornerRadius` is the popup's own corner — distinct from the box's
+	   `ControlCornerRadius`.
 
-	   `min-width` is the one thing the popup takes from outside its own resources. The
-	   `ScrollViewer` at :591 — no, the popup's `MaxWidth` upstream binds to the editable
-	   text box's own width, which WinUI computes as `TextControlThemeMinWidth` for a
-	   box narrower than that. bits-ui publishes the input's measured width on the content
-	   as `--bits-floating-anchor-width`, and `max()` against `TextControlThemeMinWidth`
-	   keeps the 64 the source states as the floor. Without this the popup shrinks to
-	   its longest item and the control looks nothing like the original. */
+	   The width is not a resource and is not in this rule. Upstream sets it from code, as a
+	   `Width` rather than a `MaxWidth` and off the AutoSuggestBox rather than off its text
+	   box: `put_Width(ActualWidth)` when the control's own size changes
+	   (`AutoSuggestBox_Partial.cpp:566`) and again whenever the list is resized
+	   (`AutoSuggestBox_Partial.cpp:1273`). It takes two code paths because the template
+	   gives the popup nothing: a Popup's child is measured by `CPopupRoot::MeasureOverride`
+	   alone and against an infinite constraint (`core/elements/Popup.cpp:4228`), so the grid
+	   the Popup sits in never sizes it. What ends up as wide as the control is this Border;
+	   the `ListView` inside it is inset twice — by this Border's padding, which `.popup`
+	   carries below, and by its own margin, which `.list` does. This library measures the box
+	   and writes `min-width` into the element's own `style` attribute in the markup above,
+	   because a portalled popup inherits nothing set on the control; the instance script says
+	   why it is the box that is measured and not the input. */
 	.popup {
 		/* The popup layer. `Popup.svelte`'s `.root` rule carries the whole reason; the short
 		   version is that this element is static, so the declaration paints nothing here and
