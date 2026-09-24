@@ -55,10 +55,14 @@ export const test = base.extend({
 	 * one. The worker count moves only how often that is lost.
 	 *
 	 * `goto` and `reload` are wrapped because they are the two calls in this suite that start a
-	 * document over. An in-app SvelteKit navigation — `pane-expansion.spec.ts` drives one by
-	 * clicking a shell row — does not: the client is already running and renders the new route
-	 * itself, so there is nothing here to wait for. No spec calls `goBack`, `setContent` or
-	 * `newPage`.
+	 * document over *and load this app*. An in-app SvelteKit navigation — `pane-expansion.spec.ts`
+	 * drives one by clicking a shell row — does not: the client is already running and renders
+	 * the new route itself, so there is nothing here to wait for. No spec calls `goBack` or
+	 * `newPage`. One calls `setContent`: `gradient-in-colour-property.spec.ts` writes a bare
+	 * document to ask the renderer which CSS properties refuse a gradient. That does start a
+	 * document over, and it is not an omission from the two wrapped here — the page it writes
+	 * carries no client, so there is no first write to wait for. A `setContent` that loaded this
+	 * app would belong in the wrapper with the other two.
 	 */
 	page: async ({ page }, use) => {
 		// The signal has to be **this document's**, and the obvious reading of the key is not.
