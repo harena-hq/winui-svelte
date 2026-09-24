@@ -247,6 +247,7 @@
 	   root's `winui-BodyTextBlockStyle` brings in; a `<button>`'s default is the user
 	   agent's. */
 	.trigger {
+		position: relative;
 		display: inline-flex;
 		align-items: center;
 		min-width: var(--winui-ComboBoxThemeMinWidth);
@@ -260,8 +261,70 @@
 		text-align: left;
 		cursor: pointer;
 		color: inherit;
-		background: var(--winui-ComboBoxBackground);
-		border-color: var(--winui-ComboBoxBorderBrush);
+		background: var(--winui-ComboBoxBackground) padding-box;
+		/* That Border writes no `BackgroundSizing`, and neither template file does — the
+		   string does not occur in ComboBox_themeresources.xaml or in
+		   ComboBox_themeresources_perf2026.xaml except on the popup, at :590 and :544 — so
+		   the fill takes the property's default and stops at the inner border edge. CSS
+		   stops it at the border box, hence `padding-box` above.
+
+		   The brush is the harder half. `ComboBoxBorderBrush` and
+		   `ComboBoxBorderBrushPointerOver` both alias `ControlElevationBorderBrush`, which
+		   is a `LinearGradientBrush` upstream and a `linear-gradient(...)` in the token
+		   layer (tokens.css:899). A gradient is not a `border-color`: `var()` defers the
+		   check to computed-value time, the declaration is invalid there, and an invalid
+		   non-inherited property falls back to its initial value — `currentColor`. So this
+		   rule painted the trigger's own text colour on all four edges, and nothing said
+		   so: the declaration names the right brush and is dropped after parsing. The
+		   tracked baselines read 27 in light and 255 in dark where the brush composites to
+		   228 and 47. The ring below paints it; this border only reserves its width.
+		   Button.svelte:79 and TextBox.svelte:170 carry the same pair. */
+		border-color: transparent;
+	}
+
+	/* The border brush on the ring alone. `inset` is the border width negated, so this box —
+	   placed against the trigger's padding box, as an absolutely positioned child is — lands on
+	   the trigger's border box, and `border-radius: inherit` puts the two curves on top of each
+	   other. The two mask layers are composited so the content box is punched out.
+	   Button.svelte:117 describes the technique in full.
+
+	   Which stop lands on which edge differs between the themes, and that is upstream's:
+	   generic.xaml:2146 defines the brush under `Default` running `StartPoint="0,0"` to
+	   `EndPoint="0,3"` with no transform, so `ControlStrokeColorSecondary` sits along the top,
+	   and generic.xaml:7747 defines it under `Light` with a `ScaleTransform ScaleY="-1"` that
+	   flips it to the bottom. The token layer mirrors that — `to bottom` at tokens.css:3094,
+	   `to top` at tokens.css:899 — and the baselines now show it: on the seven triggers that
+	   take the gradient, light reads 228 on three edges and 204 along the bottom, dark 47 on
+	   three and 53 along the top. The eighth is the disabled one, whose brush is
+	   `ControlStrokeColorDefaultBrush` — the gradient's far stop on its own — so it reads 228
+	   and 47 flat on all four, and that is what pins its rule to a baseline.
+
+	   High contrast is where this costs rather than pays. There the brush is a colour, so the
+	   border it replaces was valid and drew the same value; what changed is that a masked
+	   pseudo-element rounds its corners differently from a real border. That baseline moved by
+	   422 pixels and 324 of them are this — 40 per trigger, 44 on the disabled one, inside four
+	   rows of each corner and none above 31 levels. The other 98 sit on the two open dropdowns'
+	   corners, span eight rows because `OverlayCornerRadius` is twice the corner here, and are
+	   a single level each on an element this rule does not reach; playwright.config.ts:101 calls
+	   that the lane's own noise. The ColorPicker baselines are the same trade with none of it
+	   mixed in: 520 pixels over 13 triggers and 160 over 4, exactly 40 each. Button.svelte:79
+	   and TextBox.svelte:170 made this trade before this one did. */
+	.trigger::after {
+		content: '';
+		position: absolute;
+		inset: calc(-1 * var(--winui-ComboBoxBorderThemeThickness));
+		border-radius: inherit;
+		padding: var(--winui-ComboBoxBorderThemeThickness);
+		-webkit-mask:
+			linear-gradient(#000 0 0) content-box,
+			linear-gradient(#000 0 0);
+		-webkit-mask-composite: xor;
+		mask:
+			linear-gradient(#000 0 0) content-box,
+			linear-gradient(#000 0 0);
+		mask-composite: exclude;
+		pointer-events: none;
+		background: var(--winui-ComboBoxBorderBrush);
 	}
 
 	/* The visible text inside the trigger. `ComboBoxForeground` is the colour of the
@@ -463,6 +526,26 @@
 	.root:has(.trigger:focus-visible)::before {
 		content: '';
 		position: absolute;
+		/* The trigger is `position: relative` above, so that its ring can be placed against it,
+		   and that puts the trigger after this band in paint order — both positioned, both
+		   `z-index: auto`, the trigger later in the tree. This lifts the band back over it.
+		   Nothing renders it today and that is a second defect, not this one: `top` below is
+		   `ComboBoxTopHeaderMargin`, the four-value Thickness `0px 0px 8px 0px`, so the
+		   declaration is invalid and `top` falls back to `auto`; with `bottom: 0` and an empty
+		   pseudo the band is 0px tall, and the `top: 32px` a computed style reports is that
+		   height solved backwards. Given a height, the pixel one in from the trigger's left
+		   edge reads 187 in light without this line and 27 with it.
+
+		   It is the only band in the library carrying one, and that is this control's shape
+		   rather than an oversight elsewhere. Button.svelte:144 has the same ordering — band on
+		   `::before`, ring on `::after` of one element — and pays one pixel for it: focused, in
+		   light, the border box's outer pixel on /dev/button reads 237 shipped, 247 with the
+		   band lifted and 252 with the ring hidden. Its band is `inset: -3px`, outside the box
+		   the ring paints inside, so that pixel is the whole of what they share. This band is
+		   `inset: 0` and what covers it is the trigger's own fill rather than a 1px ring, which
+		   is why the same ordering costs 187 against 27 here. TextBox has no band to be under:
+		   its focus visual is the ring changing brush, at TextBox.svelte:247. */
+		z-index: 1;
 		/* `top` and `bottom` mirror the trigger's own offset from the root — the header
 		   adds the `ComboBoxTopHeaderMargin` on top, and the focus band has to clear it. */
 		top: var(--winui-ComboBoxTopHeaderMargin);
@@ -504,8 +587,11 @@
 
 	/* ----- Trigger: PointerOver ----- */
 	.trigger:hover {
-		background: var(--winui-ComboBoxBackgroundPointerOver);
-		border-color: var(--winui-ComboBoxBorderBrushPointerOver);
+		background: var(--winui-ComboBoxBackgroundPointerOver) padding-box;
+	}
+
+	.trigger:hover::after {
+		background: var(--winui-ComboBoxBorderBrushPointerOver);
 	}
 
 	.trigger:hover .value {
@@ -522,8 +608,11 @@
 
 	/* ----- Trigger: Pressed ----- */
 	.trigger:active {
-		background: var(--winui-ComboBoxBackgroundPressed);
-		border-color: var(--winui-ComboBoxBorderBrushPressed);
+		background: var(--winui-ComboBoxBackgroundPressed) padding-box;
+	}
+
+	.trigger:active::after {
+		background: var(--winui-ComboBoxBorderBrushPressed);
 	}
 
 	.trigger:active .value {
@@ -590,9 +679,12 @@
 	   pressed. `data-disabled` is on the root rather than `:disabled` because the root is
 	   a `<div>` and the trigger is a `<button>`. */
 	.root[data-disabled] .trigger {
-		background: var(--winui-ComboBoxBackgroundDisabled);
-		border-color: var(--winui-ComboBoxBorderBrushDisabled);
+		background: var(--winui-ComboBoxBackgroundDisabled) padding-box;
 		cursor: default;
+	}
+
+	.root[data-disabled] .trigger::after {
+		background: var(--winui-ComboBoxBorderBrushDisabled);
 	}
 
 	.root[data-disabled] .trigger .value {
