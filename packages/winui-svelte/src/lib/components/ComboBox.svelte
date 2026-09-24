@@ -209,10 +209,32 @@
 </div>
 
 <style>
+	/* `isolation` is for the focus highlight below, and it is what makes upstream's
+	   arrangement reachable from a pseudo-element. Upstream's `HighlightBackground` and
+	   `Background` are siblings in the template's Grid, the first painted under the second;
+	   ours is a pseudo-element of the box itself, so it needs a negative `z-index` to get
+	   underneath — and a negative `z-index` is resolved in the nearest ancestor stacking
+	   context, which without this line is the page and not this control. The highlight would
+	   then paint behind whatever background the page puts between them and be invisible.
+	   `position: relative` alone does not make one.
+
+	   It closes the control, which is a constraint on a public prop: `itemTemplate` is
+	   rendered inside the trigger at :137, so a `z-index` a caller writes in one is now
+	   capped at this element's level where it used to escape to the page. A `position: fixed`
+	   there is unaffected — `isolation` establishes a stacking context and not a containing
+	   block — and nothing in the tree passes a template at all, `ColorPicker.svelte` being the
+	   only component that renders a ComboBox.
+
+	   What it does *not* close is the highlight's own position. That visual lives four pixels
+	   outside this element, where an ancestor's `overflow` clips it and a stacking context
+	   does not; the dev harness's scroller sets `overflow-y: auto` at +layout.svelte:13, which
+	   computes `overflow-x` to `auto`, and its 24px padding on the next line is the whole of
+	   what keeps those four pixels visible there. */
 	.root {
 		display: inline-flex;
 		flex-direction: column;
 		position: relative;
+		isolation: isolate;
 	}
 
 	/* Row 0 of `DefaultComboBoxStyle` at ComboBox_themeresources.xaml:569: the
@@ -271,7 +293,7 @@
 		   The brush is the harder half. `ComboBoxBorderBrush` and
 		   `ComboBoxBorderBrushPointerOver` both alias `ControlElevationBorderBrush`, which
 		   is a `LinearGradientBrush` upstream and a `linear-gradient(...)` in the token
-		   layer (tokens.css:899). A gradient is not a `border-color`: `var()` defers the
+		   layer (tokens.css:904). A gradient is not a `border-color`: `var()` defers the
 		   check to computed-value time, the declaration is invalid there, and an invalid
 		   non-inherited property falls back to its initial value — `currentColor`. So this
 		   rule painted the trigger's own text colour on all four edges, and nothing said
@@ -292,8 +314,8 @@
 	   generic.xaml:2146 defines the brush under `Default` running `StartPoint="0,0"` to
 	   `EndPoint="0,3"` with no transform, so `ControlStrokeColorSecondary` sits along the top,
 	   and generic.xaml:7747 defines it under `Light` with a `ScaleTransform ScaleY="-1"` that
-	   flips it to the bottom. The token layer mirrors that — `to bottom` at tokens.css:3094,
-	   `to top` at tokens.css:899 — and the baselines now show it: on the seven triggers that
+	   flips it to the bottom. The token layer mirrors that — `to bottom` at tokens.css:3102,
+	   `to top` at tokens.css:904 — and the baselines now show it: on the seven triggers that
 	   take the gradient, light reads 228 on three edges and 204 along the bottom, dark 47 on
 	   three and 53 along the top. The eighth is the disabled one, whose brush is
 	   `ControlStrokeColorDefaultBrush` — the gradient's far stop on its own — so it reads 228
@@ -515,50 +537,59 @@
 		white-space: nowrap;
 	}
 
-	/* The focus visual; see Button.svelte for the shape. `ComboBox`'s style sets no
-	   `FocusVisualMargin`, so the band takes the framework default of `0` —
-	   `inset: 0` and `border-radius: inherit`, the same shape `NavigationViewItem.svelte`
-	   uses. */
+	/* The focus visual, and it is not a band. `DefaultComboBoxStyle` sets
+	   `UseSystemFocusVisuals` to `{ThemeResource IsApplicationFocusVisualKindReveal}` at
+	   ComboBox_themeresources.xaml:380, and that resource is `False` in all three of
+	   generic.xaml's dictionaries (:331, :2956, :5940) — so the framework draws no focus rect
+	   on this control and the template draws its own. `DefaultComboBoxItemStyle` sets the
+	   same property to a literal `True` at :608, which is why the popup item below *does*
+	   carry a band; the asymmetry is upstream's. Button sets the same property from a third
+	   key — `{StaticResource UseSystemFocusVisuals}` at Button_themeresources.xaml:166 and
+	   :309, which is `True` at generic.xaml:1527 — so the band at Button.svelte:144 is
+	   evidence for Button and for nothing else.
+
+	   What the template draws is the `HighlightBackground` Border at :570, taken from
+	   `Opacity="0"` to 1 by the `Focused` state at :475. The `Focused` state moves four other
+	   things and none of them is reproduced here: the `Pill` at :572, and three foregrounds
+	   of which two alias, in this pin, exactly what their resting keys alias in all three
+	   dictionaries — only the chevron's differs, and only in high contrast. */
 	.trigger:focus-visible {
 		outline: none;
 	}
 
-	.root:has(.trigger:focus-visible)::before {
+	.trigger:focus-visible::before {
 		content: '';
 		position: absolute;
-		/* The trigger is `position: relative` above, so that its ring can be placed against it,
-		   and that puts the trigger after this band in paint order — both positioned, both
-		   `z-index: auto`, the trigger later in the tree. This lifts the band back over it.
-		   Nothing renders it today and that is a second defect, not this one: `top` below is
-		   `ComboBoxTopHeaderMargin`, the four-value Thickness `0px 0px 8px 0px`, so the
-		   declaration is invalid and `top` falls back to `auto`; with `bottom: 0` and an empty
-		   pseudo the band is 0px tall, and the `top: 32px` a computed style reports is that
-		   height solved backwards. Given a height, the pixel one in from the trigger's left
-		   edge reads 187 in light without this line and 27 with it.
+		/* Under the box, the way `HighlightBackground` is under `Background` by being
+		   declared before it. `.root` carries the `isolation` this depends on. */
+		z-index: -1;
+		/* c1-allow: ComboBox_themeresources.xaml:570, `Margin="-4"` on `HighlightBackground`
+		   — four pixels outside the `Background` Border's own box. An absolutely positioned
+		   child is placed against its containing block's padding box, so the trigger's border
+		   width is added to reach that box first. */
+		inset: calc(-4px - var(--winui-ComboBoxBorderThemeThickness));
+		border: var(--winui-ComboBoxBackgroundBorderThicknessFocused) solid
+			var(--winui-ComboBoxBackgroundBorderBrushFocused);
+		/* Upstream's own radius rather than a concentric one. `ControlCornerRadius` is 4 and
+		   this box is 4 outside it, so concentric would be 8; `ComboBoxHiglightBorderCornerRadius`
+		   is 7 (:343). `Higlight` is upstream's spelling. */
+		border-radius: var(--winui-ComboBoxHiglightBorderCornerRadius);
+		/* The stroke is the outer two of the four pixels and this fill is the inner two: the
+		   box's own fill covers everything from its border box inward. In high contrast the
+		   two swap roles — the stroke resolves to `SystemControlHighlightTransparentBrush`
+		   (:143) and this fill to `SystemControlHighlightListAccentLowBrush` through
+		   `ComboBoxBackgroundUnfocused` (:142), so a focused box grows four pixels of accent
+		   with no edge.
 
-		   It is the only band in the library carrying one, and that is this control's shape
-		   rather than an oversight elsewhere. Button.svelte:144 has the same ordering — band on
-		   `::before`, ring on `::after` of one element — and pays one pixel for it: focused, in
-		   light, the border box's outer pixel on /dev/button reads 237 shipped, 247 with the
-		   band lifted and 252 with the ring hidden. Its band is `inset: -3px`, outside the box
-		   the ring paints inside, so that pixel is the whole of what they share. This band is
-		   `inset: 0` and what covers it is the trigger's own fill rather than a 1px ring, which
-		   is why the same ordering costs 187 against 27 here. TextBox has no band to be under:
-		   its focus visual is the ring changing brush, at TextBox.svelte:247. */
-		z-index: 1;
-		/* `top` and `bottom` mirror the trigger's own offset from the root — the header
-		   adds the `ComboBoxTopHeaderMargin` on top, and the focus band has to clear it. */
-		top: var(--winui-ComboBoxTopHeaderMargin);
-		bottom: 0;
-		left: 0;
-		right: 0;
-		border-radius: inherit;
-		box-shadow:
-			inset 0 0 0 var(--winui-FocusVisualPrimaryThickness)
-				var(--winui-SystemControlFocusVisualPrimaryBrush),
-			inset 0 0 0
-				calc(var(--winui-FocusVisualPrimaryThickness) + var(--winui-FocusVisualSecondaryThickness))
-				var(--winui-SystemControlFocusVisualSecondaryBrush);
+		   `padding-box` for the reason the trigger's own fill carries it at :273: the Border
+		   writes no `BackgroundSizing`, so upstream's fill stops at its inner border edge and
+		   CSS's would not. It is worth one level and only in light, where
+		   `FocusStrokeColorOuter` is `#000000e4` (tokens.css:754) and composites to 27 over
+		   this fill against 26 over the page behind it; dark and high contrast paint the
+		   stroke opaque. Written because the rule is the rule, not because a test can see it
+		   — none can, and `ac7c857` and `30d5d6d` are both this same mistake in this same
+		   component. */
+		background: var(--winui-ComboBoxBackgroundFocused) padding-box;
 		pointer-events: none;
 	}
 

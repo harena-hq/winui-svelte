@@ -1855,10 +1855,14 @@ export const SLIDER_KEYS = {
  *   `ComboBoxItemThemeGameControllerPadding`. The two non-mouse input modes are not built.
  * - **`ComboBoxArrowThemeFontSize`** — the chevron's animated source font size; irrelevant
  *   under WD-006, which renders the fallback glyph instead.
- * - **The `ComboBoxHiglightBorderCornerRadius`, `ComboBoxBackgroundBorderThicknessFocused`,
- *   and `ComboBoxPopupBorderThemeThickness`** — the highlight border, its stroke, and the
- *   popup's own border. The control never paints `HighlightBackground` or that border in this
- *   unit.
+ * - **`ComboBoxPopupBorderThemeThickness`** — the popup's own border, which this
+ *   reproduction paints from `ComboBoxDropdownBorderThickness` instead.
+ *
+ * `ComboBoxHiglightBorderCornerRadius` and `ComboBoxBackgroundBorderThicknessFocused` were
+ * in that bullet beside it, on the grounds that the control never painted
+ * `HighlightBackground`. It paints one now, so both are seeded below and read by
+ * `ComboBox.svelte`'s focus rule — the same move `CheckBoxFocusVisualMargin` made above, and
+ * for the same reason.
  * - **`ComboBoxPopupThemeTouchMinWidth`** — the popup's minimum width in touch input mode.
  * - **`ComboBoxItemScaleAnimationDuration`** — the duration the `SelectedPressed` state's
  *   pill scale runs over. The pill scales without a transition here, for the same reason
@@ -1901,6 +1905,25 @@ export const COMBOBOX_KEYS = {
 	ComboBoxBorderBrushPointerOver: 'ComboBox border, pointer over',
 	ComboBoxBorderBrushPressed: 'ComboBox border, pressed',
 	ComboBoxBorderBrushDisabled: 'ComboBox border, disabled',
+
+	// The focused highlight — the `HighlightBackground` Border at
+	// ComboBox_themeresources.xaml:570, which the `Focused` state takes from `Opacity="0"`
+	// to 1 at :475. It sits at `Margin="-4"` and is declared before the `Background` Border
+	// that covers it, so what shows is the four pixels outside the box: two of fill and two
+	// of stroke. This, and not a system focus band, is the ComboBox's focus visual —
+	// `UseSystemFocusVisuals` at :380 reads `IsApplicationFocusVisualKindReveal`, which is
+	// `False` in all three of generic.xaml's dictionaries (:331, :2956, :5940), while
+	// `DefaultComboBoxItemStyle` sets the same property to a literal `True` at :608 for the
+	// popup item. High contrast keeps the highlight and drops its outline: the stroke is
+	// `SystemControlHighlightTransparentBrush` (:143) and the fill resolves through
+	// `ComboBoxBackgroundUnfocused` (:142) to `SystemControlHighlightListAccentLowBrush`, so
+	// what a focused box grows there is four pixels of accent and no edge. That alias is why
+	// `ComboBoxBackgroundUnfocused` is emitted without being named here — the generator
+	// closes over it. `Higlight` is upstream's spelling, at :343.
+	ComboBoxBackgroundFocused: 'ComboBox focus highlight, its fill',
+	ComboBoxBackgroundBorderBrushFocused: 'ComboBox focus highlight, its stroke',
+	ComboBoxBackgroundBorderThicknessFocused: 'ComboBox focus highlight, the stroke width',
+	ComboBoxHiglightBorderCornerRadius: 'ComboBox focus highlight, its corner radius',
 
 	// The four `Foreground` brushes — the `ContentPresenter`'s colour, holding the
 	// selected item's text.
