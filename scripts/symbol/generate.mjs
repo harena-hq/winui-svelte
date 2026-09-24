@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 
 const ROOT = fileURLToPath(new URL('../../', import.meta.url)).replace(/[\\/]$/, '');
 const RECORD = 'data/winui-symbol.json';
-const OUTPUT = 'packages/winui-svelte/src/lib/symbol.ts';
+export const OUTPUT = 'packages/winui-svelte/src/lib/symbol.ts';
 
 export async function generate() {
 	const doc = JSON.parse(await readFile(join(ROOT, RECORD), 'utf8'));

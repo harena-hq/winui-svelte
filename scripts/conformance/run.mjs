@@ -12,8 +12,9 @@ import * as c11 from './c11-template-parts.mjs';
 import * as c12 from './c12-citations-resolve.mjs';
 import * as c13 from './c13-popup-layer.mjs';
 import * as c14 from './c14-gradient-in-colour-property.mjs';
+import * as c15 from './c15-generated-line-citations.mjs';
 
-const GATES = [c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14];
+const GATES = [c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, c15];
 
 const MARK = { pass: '  ok  ', fail: ' FAIL ', pending: 'pending' };
 

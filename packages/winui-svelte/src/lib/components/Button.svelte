@@ -67,15 +67,15 @@
 		padding: var(--winui-ButtonPadding);
 		border-style: solid;
 		/* `ButtonBorderThemeBrush` resolves to `ControlElevationBorderBrush` and
-		   `AccentButtonBorderBrush` to `AccentControlElevationBorderBrush`. Both are
-		   `linear-gradient(...)` in the token layer — tokens.css:252 and :262 — and a
-		   border-style declaration that named one of them as its colour would be invalid
-		   and silently dropped (a CSS gradient is not a `border-color`). The gradient
-		   is painted by `.root::after` so it sits on the ring alone — a two-layer
-		   background clipped to `border-box` paints across the whole element rather than
-		   across the ring, and an opaque fill covers it completely (accent) or shows
-		   through at 70% white (default, subtle). The transparent border reserves the
-		   ring's space. */
+		   `AccentButtonBorderBrush` to `AccentControlElevationBorderBrush`. Both are a
+		   `linear-gradient(...)` in two themes of the three and a flat
+		   `SystemColorWindowTextColor` in high contrast, so a border-style declaration
+		   naming one as its colour is invalid in two of them. The gradient is painted by
+		   `.root::after` so it sits on the ring alone — a two-layer background
+		   clipped to `border-box` paints across the whole element rather than
+		   across the ring, and an opaque fill covers it completely (accent) or
+		   shows through at 70% white (default, subtle). The transparent border
+		   reserves the ring's space. */
 		border-color: transparent;
 		border-width: var(--winui-ButtonBorderThemeThickness);
 		border-radius: var(--winui-ControlCornerRadius);

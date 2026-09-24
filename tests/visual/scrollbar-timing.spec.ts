@@ -12,9 +12,9 @@ const barOf = (orientation: Orientation) => `[data-scroll-bar][data-orientation=
 
 /**
  * The thumb's three transition delays, in milliseconds, in the order the rule lists them:
- * the geometry twice, then the colour. The tokens are written `400ms` and `500ms`
- * (`tokens.css:1249-1250`) and a browser may serialise either unit, so each entry is parsed
- * rather than compared as a string.
+ * the geometry twice, then the colour. `ScrollBarExpandBeginTime` and
+ * `ScrollBarContractBeginTime` are written `400ms` and `500ms` in the token layer and a
+ * browser may serialise either unit, so each entry is parsed rather than compared as a string.
  */
 function delaysOf(page: Page, orientation: Orientation, hovered: boolean) {
 	return page.evaluate(

@@ -3353,7 +3353,7 @@ System / Shell` moves to item 16; `item 15` occurs once in the whole of `docs/`,
     `ControlNormalAnimationDuration` 250ms, `ControlFastAnimationDuration` 167ms,
     `ControlFastAnimationAfterDuration` 168ms, `ControlFasterAnimationDuration` 83ms and
     `ControlFastOutSlowInKeySpline` as `cubic-bezier(0, 0, 0, 1)`. An earlier draft of this
-    entry said the After duration was emitted by nothing; `tokens.css:849` has it, and the
+    entry said the After duration was emitted by nothing; the token layer has it, and the
     claim was stale rather than wrong when written.
 
     **The seven pages, read in the pinned Gallery before anything was decided.**
@@ -4371,13 +4371,14 @@ reproduce is a recorded decision, never a silent one.
 
 **This enumeration stops at C10 and the suite does not.** `C11` (template parts and states),
 `C12` (every cited line names a file that has one), `C13` (every portalled surface sits in the
-popup layer) and `C14` (no colour property reads a token that resolves to a gradient) are in
-`pnpm conform` and have no entry here — C11 and C12 landed without one, and neither C13 nor C14
-added itself alone, because an entry for the newest while the ones before it have none would
-make the gap read as a choice. **`scripts/conformance/run.mjs` is the list**; this section is a
-commentary on the gates that have one, and the backfill is owed. Each of the four carries its
-own reasoning in its own file, which is where the detail is; C13's and C14's also record what
-they cannot reach, and each names the test that answers that half.
+popup layer), `C14` (no colour property reads a token that resolves to a gradient) and `C15`
+(nothing cites a line in a generated source file) are in `pnpm conform` and have no entry
+here — C11 and C12 landed without one, and none of the three after them added itself alone,
+because an entry for the newest while the ones before it have none would make the gap read as a
+choice. **`scripts/conformance/run.mjs` is the list**; this section is a commentary on the gates
+that have one, and the backfill is owed. Each of the five carries its own reasoning in its own
+file, which is where the detail is; C13's, C14's and C15's also record what they cannot reach,
+and each names the test that answers that half.
 
 **Two documents name the gates by number, and only one of them has kept up.** This paragraph
 did: `C13` was in it at `bbaff58`, the commit that wired C13. `keyboard.md`'s apparatus table
@@ -4385,8 +4386,21 @@ did not. It read `C1–C11` from `0a17908` onward — through `a1a9ce1` wiring C
 wiring C13, so two gates behind at its worst — and was corrected only at `04a6924`, eight
 commits after C12 landed, by a `feat(navigation-view)` commit that had no business with it.
 Nothing reads either file for a gate list, and C12 cannot reach this because neither sentence
-cites a line, so both were brought to C14 by hand. The table is the one to check when a gate
+cites a line, so both were brought to C15 by hand. The table is the one to check when a gate
 lands.
+
+**C15 leaves two measured backlogs, and this is their record.** The gate covers positions cited
+into the three files the token and symbol generators emit as source. It does not cover the nine
+extracted records under `data/`, which are generated the same way and renumber the same way on a
+re-extract, and one citation into them has already rotted; taking them needs the extractors to
+declare their outputs the way the two generators now do, and that citation's intent reconstructed
+first. And it does not cover the 98 positions cited into authored files of this tree — 32 of the
+83 of those that name a basename with one copy already point at content that has changed since
+they were written, three of them at a blank line. That is a worse rate than the generated case
+the gate was built for; what makes it a separate unit is that each rotted singly, in an edit a
+reviewer did open, so the answer is unlikely to be the same rule. The trigger for taking either
+is a reader following one and landing somewhere wrong, or a second measurement showing the count
+has grown.
 
 **A gate is not trusted until it has been seen to fail.** Each is probed against a planted
 violation — and against the evasions that occurred to a reviewer, not only the obvious form —
