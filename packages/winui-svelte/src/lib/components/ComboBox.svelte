@@ -514,8 +514,9 @@
 	   properties; and `RenderTransformOrigin="0.5,0.5"`, which is what centres the item's
 	   pressed scale. `Opacity="0"` is on each Rectangle rather than in the style. On the item
 	   the five `Selected*` states set `Opacity` to 1,
-	   and `SelectedPressed` (:721) scales by `ComboBoxItemPillMinScale` (0.625). The scale has
-	   no `transition`: the upstream animation runs over `ComboBoxItemScaleAnimationDuration`,
+	   and `SelectedPressed` (:721) scales by `ComboBoxItemPillMinScale` (0.625) — on `ScaleY`
+	   alone (:726), which is why the rule below writes the two-axis form. The scale has no
+	   `transition`: the upstream animation runs over `ComboBoxItemScaleAnimationDuration`,
 	   which nothing has seeded. The token is emitted unitless and read raw, because it is a
 	   ratio rather than a length — `scripts/tokens/manifest.mjs` lists it in `DOUBLE_RATIOS`
 	   and that set's comment says why a ratio does not get a unit put on it. */
@@ -767,12 +768,13 @@
 	}
 
 	.item[data-selected]:active > .pill {
-		/* `SelectedPressed` (:721) animates the pill's scale to `ComboBoxItemPillMinScale`
-		   over `ComboBoxItemScaleAnimationDuration`. The duration is unseeded and the
-		   animation is out of scope, so the scale applies instantly. The token is a ratio
-		   and is emitted unitless, which is why it is read raw — see `DOUBLE_RATIOS` in
-		   `scripts/tokens/manifest.mjs` for why a ratio gets no unit. */
-		scale: var(--winui-ComboBoxItemPillMinScale);
+		/* `SelectedPressed` (:721) animates `ScaleY` — one axis, at :726 — to
+		   `ComboBoxItemPillMinScale` over `ComboBoxItemScaleAnimationDuration`. The duration
+		   is unseeded and the animation is out of scope, so the scale applies instantly; the
+		   axis is not out of scope, hence the two-value form, which leaves the width alone.
+		   The token is a ratio and is emitted unitless, which is why it is read raw — see
+		   `DOUBLE_RATIOS` in `scripts/tokens/manifest.mjs` for why a ratio gets no unit. */
+		scale: 1 var(--winui-ComboBoxItemPillMinScale);
 	}
 
 	/* ----- Items: Disabled ----- */
