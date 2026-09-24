@@ -1,6 +1,7 @@
 import type { Locator, Page } from '@playwright/test';
 import { expect } from '@playwright/test';
 import { test } from './fixtures';
+import { growViewportToContent } from './themes';
 
 /**
  * A state's fill stops at the inner border edge, as the control's own resting fill does.
@@ -513,5 +514,210 @@ test("a tab header's state fill stops at the inner border edge", async ({ page }
 			).not.toBe(shipped.right);
 		}
 		await cdp.send('CSS.forcePseudoState', { nodeId: nodeIds[TAB], forcedPseudoClasses: [] });
+	}
+});
+
+/**
+ * The ComboBox dropdown's own fill stops at its stroke, and this template says so in a word.
+ *
+ * Nothing above reaches this element, and what it costs to establish differs from the two
+ * sections above it. The pickers' presenters take `BackgroundSizing`'s default because the
+ * string does not occur in their files at all, so the value has to be argued down a chain of
+ * registration and enum defaults. `ComboBox_themeresources.xaml:590` writes
+ * `BackgroundSizing="InnerBorderEdge"` into `PopupBorder`'s attribute list, beside the
+ * `Background`, `BorderBrush` and `BorderThickness` it binds on the same line. The claim here
+ * rests on the template and on nothing else.
+ *
+ * `ComboBoxDropDownBorderBrush` aliases `SurfaceStrokeColorFlyoutBrush`, which resolves to
+ * `#0000000f` in light and `#00000033` in dark — translucent in both, which is what makes the
+ * clip observable: unclipped, the stroke lies on the dropdown's own opaque fill and reads one
+ * value wherever the popup opens; clipped, it takes its colour from whatever is behind.
+ *
+ * **That second clause is the mechanism, and the backdrop assertions are what measure it.**
+ * The first two assertions are satisfied by any clip that merely differs from `border-box`, so
+ * on their own they would leave the unit's actual claim untested. Injecting a surface between
+ * the page and the popup's own layer must move the clipped ring and must leave the unclipped
+ * one exactly where it was — and the interior reading is the guard that says the backdrop went
+ * behind the popup rather than over it, without which both readings would be of the backdrop.
+ *
+ * Unlike the flyout presenters, the two clipped edges here cannot be compared against each
+ * other in either direction: this popup carries no shadow, the page behind it is one flat
+ * colour at this position, and so the ring reads one value clipped **and** unclipped. That is
+ * measured and not reasoned — on the tracked baselines, all four edges of both dropdowns read
+ * 234 before this clip and 228 after in light, and 35 and 25 in dark, eight readings landing
+ * on one value each. It is why the backdrop is the control rather than a collapse of two edges
+ * onto one value, and it also makes the top-edge assertion below a duplicate of the left-edge
+ * one on this build. Both are kept: what separates them is an asymmetric border, which nothing
+ * here produces today and a later `border-top-width` would introduce without a word.
+ *
+ * The route is read rather than driven. `/dev/combo-box` renders two of its eight rows with
+ * the popup bound open, so it is on the page at load; clicking a trigger would open a third
+ * and leave it ambiguous which of them a `.popup` reading took. The count is asserted.
+ *
+ * High contrast is left out for the reason the sections above leave it out: there the pair is
+ * `SystemColorButtonFaceColor` under `SystemColorButtonTextColor`, both opaque, and the
+ * positive control could not fire.
+ */
+
+/**
+ * The dropdown's left and top edge pixels — the ring its border brush paints — and one pixel
+ * inside it, two in from the left edge on the same midline, which is the dropdown's own fill.
+ */
+async function dropdown(page: Page, popup: Locator) {
+	const shot = await popup.screenshot();
+	return page.evaluate(
+		async (url) => {
+			const image = new Image();
+			image.src = url;
+			await image.decode();
+			const canvas = document.createElement('canvas');
+			canvas.width = image.naturalWidth;
+			canvas.height = image.naturalHeight;
+			const context = canvas.getContext('2d')!;
+			context.drawImage(image, 0, 0);
+			const at = (x: number, y: number) =>
+				[...context.getImageData(x, y, 1, 1).data].slice(0, 3).join(',');
+			const mid = Math.floor(image.naturalHeight / 2);
+			return {
+				left: at(0, mid),
+				top: at(Math.floor(image.naturalWidth / 2), 0),
+				inside: at(2, mid)
+			};
+		},
+		`data:image/png;base64,${shot.toString('base64')}`
+	);
+}
+
+test("the ComboBox dropdown's fill stops at the inner border edge", async ({ page }) => {
+	let light = '';
+	for (const theme of ['light', 'dark'] as const) {
+		await page.goto('/dev/combo-box');
+		await page.evaluate((t) => {
+			localStorage.setItem('winui-svelte:theme', t);
+			document.documentElement.dataset.theme = t;
+		}, theme);
+		await page.reload();
+
+		const popup = page.locator('.popup').first();
+		await popup.waitFor({ state: 'visible' });
+		// Two rows bind `open`. A third would not make `.first()` vary between runs — it is
+		// DOM order, and deterministic — it would make it steadily the wrong popup, which is
+		// the failure this assertion turns into a red rather than into a quiet reading of a
+		// render the test is not about.
+		expect(
+			await page.locator('.popup').count(),
+			'the route no longer renders exactly the two open dropdowns this reads the first of'
+		).toBe(2);
+		// **`growViewportToContent` rather than a scroll, and the difference is the surface this
+		// reads over.** The layout paints the app's background on `.window`, which is
+		// `height: 100vh; overflow: hidden`, and a portalled popup is placed into `<body>`
+		// outside that box — so scrolling the popup into view drags it past `.window`'s bottom
+		// edge and onto Chromium's default canvas. The ring then reads 240 light and 14 dark
+		// against the 228 and 25 the tracked baselines hold, because a clipped ring's value is
+		// a property of what is behind the popup. Growing the viewport is how `themes.ts`
+		// reaches the state those images were photographed in, and its own doc comment says
+		// that is what it is exported for. The default canvas is also a colour this project
+		// pins nowhere, so reading over it would leave the positive control's margin to a
+		// browser default.
+		await growViewportToContent(page);
+		// Nothing is waited on for an animation, and the absence is deliberate: `ComboBox.svelte`
+		// declares no transition, no animation and no keyframes, and `document.getAnimations()`
+		// is empty at every sample across the second after this reload. A wait on it would be
+		// true on its first evaluation on every run, which is a guard no input separates from
+		// its absence.
+
+		// And the guard that keeps it there. `.window` is the element carrying
+		// `SolidBackgroundFillColorBaseBrush`, so a dropdown hanging below it is one whose ring
+		// composites over the browser's canvas — which is what the line above prevents, stated
+		// as something a later route change can fail rather than as a comment.
+		expect(
+			await popup.evaluate((el) => {
+				const app = document.querySelector('.window')!.getBoundingClientRect();
+				const own = el.getBoundingClientRect();
+				return own.top >= app.top && own.bottom <= app.bottom;
+			}),
+			`${theme}: the dropdown hangs outside the app background, so its ring reads over the browser's default canvas and not over anything this project pins`
+		).toBe(true);
+
+		const box = (await popup.boundingBox())!;
+		const viewport = page.viewportSize()!;
+		const escaped = `${theme}: the dropdown is not wholly in frame, so an edge reading is not an edge`;
+		expect(box.x, `${escaped} (left)`).toBeGreaterThanOrEqual(0);
+		expect(box.y, `${escaped} (top)`).toBeGreaterThanOrEqual(0);
+		expect(box.x + box.width, `${escaped} (right)`).toBeLessThanOrEqual(viewport.width);
+		expect(box.y + box.height, `${escaped} (bottom)`).toBeLessThanOrEqual(viewport.height);
+
+		// The theme is polled rather than asserted, and on the render rather than on
+		// `dataset.theme`, which would only report what the write above put there. These two
+		// themes paint this fill different colours, so the reading is what can disagree — and
+		// the poll is also the wait, because a plain assertion here passes or fails on whether
+		// the stylesheet happened to have followed the attribute by the time it ran.
+		if (theme === 'light') light = (await dropdown(page, popup)).inside;
+		else
+			await expect
+				.poll(async () => (await dropdown(page, popup)).inside, { timeout: 5000 })
+				.not.toBe(light);
+
+		const shipped = await dropdown(page, popup);
+
+		/** Reads the dropdown with `background-clip` overridden, then puts the page back. */
+		const withClip = async (value: string) => {
+			const tag = await page.addStyleTag({
+				content: `.popup { background-clip: ${value} !important; }`
+			});
+			const pixels = await dropdown(page, popup);
+			await tag.evaluate((el) => (el as Element).remove());
+			return pixels;
+		};
+
+		expect(shipped, `${theme}: the shipped fill reaches under the dropdown's stroke`).toEqual(
+			await withClip('padding-box')
+		);
+
+		const unclipped = await withClip('border-box');
+		expect(
+			unclipped.left,
+			`${theme}: an unclipped fill changed the ring not at all, so this reads somewhere it cannot reach`
+		).not.toBe(shipped.left);
+		expect(
+			unclipped.top,
+			`${theme}: an unclipped fill changed the top edge not at all, so this reads somewhere it cannot reach`
+		).not.toBe(shipped.top);
+
+		// The mechanism. 999 is chosen against the single popup layer C13 gates — one value,
+		// 1000, declared in `Popup.svelte`'s `.root` rule with nothing above it — so this lands
+		// between the page and the popup, which is where the thing a translucent stroke shows
+		// through has to be. `.popup` is `position: static`, so its own `z-index` paints
+		// nothing and bits-ui mirrors the value onto the wrapper it positions; the comment
+		// above that declaration in `ComboBox.svelte` carries the whole of it.
+		const backdrop = await page.addStyleTag({
+			content: `body::before { content: ''; position: fixed; inset: 0; background: #ff0000; z-index: 999; }`
+		});
+		const behind = await dropdown(page, popup);
+		expect(
+			behind.inside,
+			`${theme}: the backdrop landed over the dropdown, not behind it, so both readings are of the backdrop`
+		).toBe(shipped.inside);
+		expect(
+			behind.left,
+			`${theme}: the clipped stroke did not follow what is behind the popup`
+		).not.toBe(shipped.left);
+		expect(
+			behind.top,
+			`${theme}: the clipped stroke did not follow what is behind the popup, at the top edge`
+		).not.toBe(shipped.top);
+
+		// The other half of the backdrop reading, and it checks a premise rather than the clip.
+		// An unclipped fill hides what is behind it only because this dropdown's fill is
+		// opaque, and it is opaque only because `AcrylicInAppFillColorDefaultBrush` emits its
+		// fallback colour rather than the material it names (WD-002). The acrylic upstream
+		// composes is the input that separates this from an assertion that cannot disagree,
+		// which is why it is worth an assertion rather than a sentence.
+		const behindUnclipped = await withClip('border-box');
+		expect(
+			{ left: behindUnclipped.left, top: behindUnclipped.top },
+			`${theme}: the backdrop reached the ring through an unclipped fill, so either it landed in front of the popup or this fill is no longer opaque`
+		).toEqual({ left: unclipped.left, top: unclipped.top });
+		await backdrop.evaluate((el) => (el as Element).remove());
 	}
 });

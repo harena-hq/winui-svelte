@@ -330,6 +330,28 @@
 	   fidelity. `OverlayCornerRadius` is the popup's own corner — distinct from the
 	   trigger's `ControlCornerRadius`.
 
+	   It also carries `BackgroundSizing="InnerBorderEdge"` in the attribute list, so the
+	   fill's clip is read off the template rather than argued from the property's default
+	   chain the way the pickers' flyout presenter needs. The fill stops at the stroke's
+	   inner edge; CSS stops it at the border box, so the declaration below says
+	   `padding-box`. What it changes is what the stroke lies on: the border colour here is
+	   `ComboBoxDropDownBorderBrush`, which aliases `SurfaceStrokeColorFlyoutBrush` and so
+	   resolves to `#0000000f` in light and `#00000033` in dark — translucent in both. An
+	   unclipped fill is therefore what shows through the ring, and the dropdown's edge reads
+	   one flat value wherever the popup is opened. Clipped, the ring takes its colour from
+	   what is behind the popup. That last step is read rather than photographed: the template
+	   settles the clip, but what the renderer then composites the stroke over is an inference,
+	   and the pin carries no render walk to confirm it — `HWWalk.cpp` is not in the checkout.
+	   No capture of the original's dropdown exists either. In high contrast both brushes
+	   are opaque, though not by way of the flyout key: that block re-points
+	   `ComboBoxDropDownBackground` and `ComboBoxDropDownBorderBrush` at
+	   `SystemControlBackgroundChromeMediumLowBrush` and
+	   `SystemControlForegroundChromeHighBrush`, which resolve to `SystemColorButtonFaceColor`
+	   and `SystemColorButtonTextColor` — the same two keys upstream's own HighContrast
+	   dictionary maps them to (`ComboBox_themeresources.xaml:168` and `:169`). So the clip
+	   cannot be observed there, and the high-contrast baseline is byte-identical across this
+	   change where light and dark are not.
+
 	   `min-width` is the one thing the popup takes from outside its own resources. The
 	   `ScrollViewer` at :591 binds `MinWidth` to `TemplateSettings.DropDownContentMinWidth`,
 	   which WinUI computes as the ComboBox's own width — so upstream's dropdown is never
@@ -344,7 +366,7 @@
 		   is read by the primitive, which mirrors it onto the wrapper it positions. */
 		z-index: 1000;
 		min-width: max(var(--bits-floating-anchor-width), var(--winui-ComboBoxPopupThemeMinWidth));
-		background: var(--winui-ComboBoxDropDownBackground);
+		background: var(--winui-ComboBoxDropDownBackground) padding-box;
 		border-style: solid;
 		border-width: var(--winui-ComboBoxDropdownBorderThickness);
 		border-color: var(--winui-ComboBoxDropDownBorderBrush);
