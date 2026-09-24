@@ -721,3 +721,196 @@ test("the ComboBox dropdown's fill stops at the inner border edge", async ({ pag
 		await backdrop.evaluate((el) => (el as Element).remove());
 	}
 });
+
+/**
+ * The AutoSuggestBox's suggestion list — and the first element in this file whose two clipped
+ * edges lie over two different surfaces because of where the control puts its popup, rather
+ * than because of a shadow.
+ *
+ * The value is `4c0e000`'s shape rather than the section above it: neither AutoSuggestBox
+ * template writes `BackgroundSizing` on `SuggestionsContainer`
+ * (`AutoSuggestBox_themeresources.xaml:283`), so the Border takes the property's default and
+ * the chain that commit walks is what settles it. The string does occur once in each file —
+ * `AutoSuggestBox_themeresources.xaml:101` and `AutoSuggestBox_themeresources_perf2026.xaml:89`
+ * — on the query button's `ContentPresenter`, near enough to this element to be read as it,
+ * which is why it is named here rather than left out.
+ *
+ * **What is new is one assertion, and the flyout-presenter section above is where to read why
+ * it was not made before.** That section asserts the same collapse this one does — forcing
+ * `border-box` must put both edges on one value, because an unclipped stroke lies on the
+ * element's own uniform fill — and then declines the converse on purpose: clipped, its two
+ * edges do differ, but they differ because `PopupShadow` is not the same above the presenter as
+ * beside it, so the assertion would go red on a shadow change with the fill perfectly faithful.
+ * Here the asymmetry has no decoration in it. This list carries no shadow, and it lands on the
+ * box it belongs to, so its sides lie over the page while its top edge lies over the box's own
+ * bottom stroke — a fact about where the control puts its popup. So the converse is asserted
+ * here, and its failure message names both of the things that can cause it. The dropdown
+ * between the two cannot make it either way: its four edges are over one flat page colour, so
+ * clipped and unclipped each collapse to a single value there and only an injected backdrop
+ * separates "the fill stops" from "the stroke shows what is behind". On the guest's
+ * baselines, unclipped, every edge reads 234 in light and 35 in dark; clipped, the sides read
+ * 228 and 25 and the top edge reads 126 and 122. Which surface that top edge is on is derived
+ * rather than assumed: every box on the route is 31 rows from its top border to its bottom
+ * one, the last one's top border is at y=741, so its bottom border is the very row the list's
+ * top ring occupies. That row is not readable in the shipped image — the list covers exactly
+ * the box's own columns there — so the 134 and 153 come off the four enabled siblings, whose
+ * bottom strokes those are, and then off inverting the composite: 126 admits 134 and nothing
+ * else, 133 giving 125 and 135 giving 127, and 122 likewise admits only 153. The page behind
+ * the sides reads 243 and 32 — and it is the side edge, not the top, that shows these are
+ * floors: 243 × 240/255 is 228.7 and the ring reads 228, where rounding would give 229. The
+ * top edge's two products are whole enough that either rule returns them. The fifth box is
+ * the disabled one, whose bottom row is 228 and 47 because it takes
+ * `TextControlBorderBrushDisabled` instead; its 31 rows still hold. The backdrop is kept and
+ * now says something it could not say above: one surface behind both edges makes the two
+ * readings agree again.
+ *
+ * `AutoSuggestBoxSuggestionsListBorderBrush` aliases `SurfaceStrokeColorFlyoutBrush`, the same
+ * `#0000000f` and `#00000033` the dropdown's does, which is what makes any of this observable.
+ * The fill is opaque only because `AcrylicBackgroundFillColorDefaultBrush` emits its fallback
+ * colour rather than the material it names (WD-002), and the interior reading under the
+ * backdrop is what holds that premise to an assertion. High contrast is left out for the
+ * reason the sections above leave it out — `SystemColorWindowTextColor` over
+ * `SystemColorButtonFaceColor`, both opaque — and its baseline is byte-identical across the
+ * change this test was written for, where light and dark are not.
+ *
+ * The route is read rather than driven, as above: `/dev/auto-suggest-box` binds one row's
+ * popup open, and the count is asserted so a second one cannot quietly become what `.first()`
+ * returns. The pixels come from `dropdown` above; to a reader of three pixels the two popups
+ * are the same element.
+ */
+test("the AutoSuggestBox suggestion list's fill stops at the inner border edge", async ({
+	page
+}) => {
+	let light = '';
+	for (const theme of ['light', 'dark'] as const) {
+		await page.goto('/dev/auto-suggest-box');
+		await page.evaluate((t) => {
+			localStorage.setItem('winui-svelte:theme', t);
+			document.documentElement.dataset.theme = t;
+		}, theme);
+		await page.reload();
+
+		const popup = page.locator('.popup').first();
+		await popup.waitFor({ state: 'visible' });
+		expect(
+			await page.locator('.popup').count(),
+			'the route no longer renders exactly the one open suggestion list this reads'
+		).toBe(1);
+		// The same hazard and the same one answer as the section above, and on this route the
+		// call does more than keep the list in frame — it is what puts the list on its anchor.
+		// `.window` is `height: 100vh; overflow: hidden`, so at the default 720 the content is
+		// clipped and Floating UI shifts the list up to keep it visible: measured at y 567..701
+		// against a box whose bottom edge falls at 731.66, so the list is a hundred and
+		// sixty-four pixels above its anchor and wholly over the page. Grown to the content it
+		// sits at 731..865, its top row inside that bottom border, and reads 126 where the
+		// unanchored one reads 228. The
+		// helper's own poll is what lands after that reposition, so a probe that reads the rect
+		// straight after `setViewportSize` still sees 567 and is measuring the wrong frame.
+		//
+		// So replacing this call with a `scrollIntoView` — which scrolls nothing here, there
+		// being no scroller to move — leaves every assertion below green on chromium-linux, and
+		// the two-surface pair passes on 228 against 227 — one level, and not from the clip:
+		// the left edge is at x=24 at both viewports, but unanchored it sits over an
+		// anti-aliased edge of the page content reading 242 rather than 243, and 242 composites
+		// to 227. The mechanism the assertion was written for is absent. On the guest the
+		// page is 1041 tall and the list is at 772..917, below the 720 fold, and the same
+		// mutation dies on the containment assertion under this one. A mutation that survives
+		// the untracked lane is not evidence about the tracked one.
+		await growViewportToContent(page);
+		expect(
+			await popup.evaluate((el) => {
+				const app = document.querySelector('.window')!.getBoundingClientRect();
+				const own = el.getBoundingClientRect();
+				return own.top >= app.top && own.bottom <= app.bottom;
+			}),
+			`${theme}: the suggestion list hangs outside the app background, so its ring reads over the browser's default canvas and not over anything this project pins`
+		).toBe(true);
+
+		const box = (await popup.boundingBox())!;
+		const viewport = page.viewportSize()!;
+		const escaped = `${theme}: the suggestion list is not wholly in frame, so an edge reading is not an edge`;
+		expect(box.x, `${escaped} (left)`).toBeGreaterThanOrEqual(0);
+		expect(box.y, `${escaped} (top)`).toBeGreaterThanOrEqual(0);
+		expect(box.x + box.width, `${escaped} (right)`).toBeLessThanOrEqual(viewport.width);
+		expect(box.y + box.height, `${escaped} (bottom)`).toBeLessThanOrEqual(viewport.height);
+
+		// Polled on the render rather than asserted on `dataset.theme`, for the reason the
+		// section above gives: the attribute only reports the write, and the poll is also the
+		// wait for the stylesheet to have followed it.
+		if (theme === 'light') light = (await dropdown(page, popup)).inside;
+		else
+			await expect
+				.poll(async () => (await dropdown(page, popup)).inside, { timeout: 5000 })
+				.not.toBe(light);
+
+		const shipped = await dropdown(page, popup);
+
+		/** Reads the list with `background-clip` overridden, then puts the page back. */
+		const withClip = async (value: string) => {
+			const tag = await page.addStyleTag({
+				content: `.popup { background-clip: ${value} !important; }`
+			});
+			const pixels = await dropdown(page, popup);
+			await tag.evaluate((el) => (el as Element).remove());
+			return pixels;
+		};
+
+		expect(shipped, `${theme}: the shipped fill reaches under the list's stroke`).toEqual(
+			await withClip('padding-box')
+		);
+
+		const unclipped = await withClip('border-box');
+		expect(
+			unclipped.left,
+			`${theme}: an unclipped fill changed the ring not at all, so this reads somewhere it cannot reach`
+		).not.toBe(shipped.left);
+		expect(
+			unclipped.top,
+			`${theme}: an unclipped fill changed the top edge not at all, so this reads somewhere it cannot reach`
+		).not.toBe(shipped.top);
+
+		// The two-surface pair, which is this section's own and needs nothing injected.
+		// Unclipped, the ring is the list's own fill seen through its stroke, so it is one
+		// value whatever an edge faces. Clipped, it is what that edge faces — and the top
+		// lands on the box's own bottom stroke while the sides face the page.
+		expect(
+			unclipped.top,
+			`${theme}: an unclipped ring reads two values on two edges, so it is not the list's own fill showing through`
+		).toBe(unclipped.left);
+		expect(
+			shipped.top,
+			`${theme}: a clipped ring reads one value over two different surfaces, so either the list no longer abuts its box or its fill still reaches the stroke`
+		).not.toBe(shipped.left);
+
+		// 999 is chosen against the single popup layer C13 gates — one value, 1000, which on
+		// this route is declared on `.popup` itself in `AutoSuggestBox.svelte` and not by
+		// `Popup.svelte`, which bits-ui's `Combobox.Portal` does not render. So this lands
+		// between the page and the popup, which is where a thing seen through a translucent
+		// stroke has to be.
+		const backdrop = await page.addStyleTag({
+			content: `body::before { content: ''; position: fixed; inset: 0; background: #ff0000; z-index: 999; }`
+		});
+		const behind = await dropdown(page, popup);
+		expect(
+			behind.inside,
+			`${theme}: the backdrop reached the list's interior, so either it landed in front of the popup or this fill is no longer opaque`
+		).toBe(shipped.inside);
+		expect(
+			behind.left,
+			`${theme}: the clipped stroke did not follow what is behind the popup`
+		).not.toBe(shipped.left);
+		// The last one is not the pair above restated, though nothing on this build separates
+		// them. It fails when the two edges disagree over *one* surface, which means the
+		// difference is in the edges themselves or in something behind one of them rather than
+		// in the two surfaces — measured with a 4px strip at `z-index: 999`, above the backdrop
+		// and below the list, behind the top edge alone: this goes red while the pair above
+		// stays green. That is the flyout presenters' case arriving here, and it is what keeps
+		// "the asymmetry is where the control puts its popup, not a decoration" a checked claim
+		// rather than a sentence in this comment.
+		expect(
+			behind.top,
+			`${theme}: one surface behind both edges still reads as two, so the top edge is not reading what is behind it`
+		).toBe(behind.left);
+		await backdrop.evaluate((el) => (el as Element).remove());
+	}
+});
