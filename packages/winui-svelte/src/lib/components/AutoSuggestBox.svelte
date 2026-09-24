@@ -581,6 +581,33 @@
 	   `OverlayCornerRadius` is the popup's own corner — distinct from the box's
 	   `ControlCornerRadius`.
 
+	   The Border sets no `BackgroundSizing`, and neither template file does: the string
+	   occurs once in each — AutoSuggestBox_themeresources.xaml:101 and
+	   AutoSuggestBox_themeresources_perf2026.xaml:89 — on the query button's
+	   `ContentPresenter`, which is a different element. So the value is the property's
+	   default, `InnerBorderEdge`, down the chain `4c0e000` walks — the fill stops at the
+	   stroke's inner edge, CSS stops it at the border box, and the declaration below says
+	   `padding-box`. Which of the two template files the pin follows does not change that,
+	   and was settled anyway: `AutoSuggestBox_themeresources_perf2026.xaml` is reached only
+	   by an app that enables `XamlChangeId::DefaultStyleOptimizations` before start
+	   (`XamlControlsResources.cpp:62`). That question reads the raw bit and nothing else
+	   (`XamlOptionalChanges_Partial.cpp:118`), the bit is clear at process start
+	   (`OptionalChangeState.cpp:9`), and nothing in the Gallery's own source calls it. In
+	   any case the two files carry this Border and its two brushes identically, so nothing
+	   here turns on which one is loaded.
+
+	   What the clip changes is what the stroke lies on.
+	   `AutoSuggestBoxSuggestionsListBorderBrush` aliases `SurfaceStrokeColorFlyoutBrush`,
+	   `#0000000f` in light and `#00000033` in dark — translucent in both, so unclipped the
+	   ring is this list's own fill seen through its stroke and reads one value on every
+	   edge, and clipped it is whatever that edge faces. Here those are two surfaces: the
+	   sides and the bottom face the page, and the top edge lands on the box's own bottom
+	   stroke — the list's top ring occupies exactly that row, which is why the clip moves it
+	   by a hundred and eight levels in light where it moves the sides by six. In
+	   high contrast both brushes are opaque — `SystemColorWindowTextColor` over
+	   `SystemColorButtonFaceColor` — so the clip cannot be seen there, and that baseline is
+	   byte-identical across this change where light and dark are not.
+
 	   The width is not a resource and is not in this rule. Upstream sets it from code, as a
 	   `Width` rather than a `MaxWidth` and off the AutoSuggestBox rather than off its text
 	   box: `put_Width(ActualWidth)` when the control's own size changes
@@ -599,7 +626,7 @@
 		   version is that this element is static, so the declaration paints nothing here and
 		   is read by the primitive, which mirrors it onto the wrapper it positions. */
 		z-index: 1000;
-		background: var(--winui-AutoSuggestBoxSuggestionsListBackground);
+		background: var(--winui-AutoSuggestBoxSuggestionsListBackground) padding-box;
 		border-style: solid;
 		border-width: var(--winui-AutoSuggestListBorderThemeThickness);
 		border-color: var(--winui-AutoSuggestBoxSuggestionsListBorderBrush);
