@@ -358,6 +358,30 @@
 	.value {
 		flex: 1 1 auto;
 		min-width: 0;
+		/* The `ContentPresenter` at :577 is the `Background` Border's sibling in one Grid row,
+		   so its `Margin="{TemplateBinding Padding}"` is measured from its cell, whose edges
+		   are the Border's outer box on three sides — while the padding this element sits
+		   inside is one border in. The negative margin hands that border back on those three
+		   sides, which puts the text at 12 from the outer edge where it was at 13, and keeps
+		   the border out of the control's height: upstream's row is the padding plus the text
+		   or `ComboBoxMinHeight`, whichever is taller, and a border added to the first made
+		   the trigger 33 pixels tall on the reference browser, whose 14-pixel text is 19 tall.
+		   Centring in what is left rounds nothing, where upstream's arrange rounds the offset
+		   to a whole pixel; that half pixel is WD-097.
+
+		   The fourth side is the column. The presenter is in column 0 and :567 makes column 1
+		   `Width="38"`, so the text stops 38 pixels plus the right padding short of the outer
+		   edge whether or not it reaches that far — which is where an overlong label is cut,
+		   and it was cut 11 pixels later while it ran on to the chevron. An auto-width control
+		   grows by 10 for it, not 11, because the left margin moves the text one pixel the
+		   other way; it is now the padding, the text and the column: `*` measures to the
+		   presenter, and the column is 38 whatever it holds. */
+		/* c1-allow: ComboBox_themeresources.xaml:567, `Width="38"` on the second
+		   `ColumnDefinition` */
+		margin: calc(-1 * var(--winui-ComboBoxBorderThemeThickness))
+			calc(38px - var(--winui-ComboBoxBorderThemeThickness))
+			calc(-1 * var(--winui-ComboBoxBorderThemeThickness))
+			calc(-1 * var(--winui-ComboBoxBorderThemeThickness));
 		color: var(--winui-ComboBoxForeground);
 		overflow: hidden;
 		text-overflow: ellipsis;
@@ -376,21 +400,37 @@
 		font-weight: var(--winui-ComboBoxPlaceholderTextThemeFontWeight);
 	}
 
-	/* The chevron: 12 by 12, right-aligned, the column 38 px wide the upstream grid
-	   reserves. The glyph is the fallback WinUI itself draws — `&#xE70D;` in
-	   `SymbolThemeFontFamily` at `FontSize="12"` per the `FontIconSource` at
-	   ComboBox_themeresources.xaml:585. The escape is six digits and lowercase so a
-	   future `content` concatenation cannot end at a stray space, the same shape
-	   `TextBox.svelte`'s delete button carries. */
+	/* The chevron: 12 by 12, right-aligned in the 38-pixel column the upstream grid
+	   declares, which the text's margin reserves rather than this box. The glyph is the
+	   fallback WinUI itself draws — `&#xE70D;` in `SymbolThemeFontFamily` at
+	   `FontSize="12"` per the `FontIconSource` at ComboBox_themeresources.xaml:585. The
+	   escape is six digits and lowercase so a future `content` concatenation cannot end
+	   at a stray space, the same shape `TextBox.svelte`'s delete button carries. */
 	.chevron {
+		/* The icon is in column 1 of the same row, not inside the `ContentPresenter`, so the
+		   padding reaches it nowhere: `VerticalAlignment="Center"` centres it on the whole
+		   row, and `HorizontalAlignment="Right"` with the margin below puts it 14 from the
+		   cell's right edge, which is the outer edge. As a flex item it was centred on the
+		   content box instead — one pixel high, because `ComboBoxPadding` puts two more
+		   pixels below than above in both densities — and 15 in. Taken out of the flow it is
+		   placed against the padding box, which is centred on the border box because the
+		   four borders are equal, and `right` gives the border back the way the Pill's `left`
+		   does. The 38-pixel column it stands in is reserved by the text's margin above. */
+		position: absolute;
+		top: 50%;
+		translate: 0 -50%;
+		/* c1-allow: ComboBox_themeresources.xaml:582, `Margin="0,0,14,0"` on the chevron */
+		right: calc(14px - var(--winui-ComboBoxBorderThemeThickness));
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
-		flex: none;
-		/* c1-allow: ComboBox_themeresources.xaml:582, `Margin="0,0,14,0"` on the chevron */
-		margin-right: 14px;
 		/* c1-allow: ComboBox_themeresources.xaml:582, `Width="12"` and `Height="12"` on
-		   the `AnimatedIcon` */
+		   the `AnimatedIcon` — whose `MinHeight="{ThemeResource ComboBoxMinHeight}"` wins
+		   over that `Height`, so upstream's element is the row's minimum tall — 32, or 24 in
+		   the compact density — with the glyph centred in it.
+		   Twelve is the same picture only because this box is centred on the trigger and
+		   the trigger's own `min-height` supplies the row's minimum; drop either and it is
+		   not. */
 		width: 12px;
 		height: 12px;
 		font-family: var(--winui-SymbolThemeFontFamily);

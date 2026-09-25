@@ -2352,3 +2352,47 @@ changes`.
   between two device pixels at a ratio of one would do the same; the seven tried do not, and the
   gradient-stop control shows why, but the search was of constructions rather than a proof that
   none exists.
+
+### WD-097 — a centred line with an odd pixel left over paints on whichever row the page decides
+
+- **Control**: ComboBox's trigger, in both densities, and in principle any single line centred
+  in a slot whose leftover is an odd number of pixels.
+- **WinUI does**: round the arranged offset. The trigger's `ContentPresenter` binds its
+  `VerticalAlignment` to `VerticalContentAlignment` (`ComboBox_themeresources.xaml:577`), which
+  the style never sets, so it takes `Control`'s default, `Center` (`CControl.h:272`).
+  `CFrameworkElement::ComputeAlignmentOffset` gives a centred child `(client − ink) / 2`
+  (`framework.cpp:2228`), and with `UseLayoutRounding` on — the default, ADR 0011 — the arrange
+  adds the row origin and the margin and rounds the sum through `LayoutRound`
+  (`framework.cpp:2107`), which is `XcpRound` (`uielement.cpp:4942`), which is `floor(x + 0.5)`
+  (`inlined.cpp:129`). The ink is 19, because the desired size is rounded too
+  (`framework.cpp:1762`) and Body's 18.62 rounds to it; unrounded it would give 5.69 and the
+  same answer. In the standard density `ComboBoxPadding` leaves a 20-pixel slot in a 32-pixel
+  row, so the offset is 5 + 0.5 and lands on 6; in the compact density the slot is 20 again,
+  inside 24 with 1 above, and 1.5 lands on 2. That is on every trigger on every page at the
+  rig's scale of one (`tests/visual/fonts.spec.ts:53`); `LayoutRoundHelper` rounds in physical
+  pixels, so at other scales the figure differs but is still whole.
+- **We do**: centre it with flexbox, which computes the same 5.5 and keeps it. Chromium has no
+  layout rounding, so the half pixel reaches paint, and which row the glyphs land on then
+  follows the label's absolute position. Measured on the ComboBox dev route on the reference
+  browser, the eight labels' absolute tops end in .1875, .78125, .375, .96875, .5625, .15625,
+  .34375 and .9375, and on the route's light baseline, of the seven triggers without an item
+  template, the three whose fraction is under a half paint a row high and the four others do
+  not. The first four paint their ink, counted as any pixel with a channel under 200, on rows
+  10–19, 11–20, 10–19 and 11–20 of their own box, and the first and fourth show the same
+  placeholder. Before 2026-09-25 all seven painted on 11–20, the rows an offset of 6 gives. The old trigger was 33 tall with a border
+  counted into its height, which made the slot 21 and the remainder even; fixing the height is
+  what exposed this.
+- **Why accepted**: the rounding needs three numbers CSS does not have at that declaration — the
+  text's height, and the top and the bottom padding separately, where `ComboBoxPadding` is one
+  shorthand token. A static half-pixel bias (`margin-top` half a pixel more, `margin-bottom` half
+  a pixel less) was considered and rejected: it lands the reference browser's 19-pixel text on 6
+  and puts every even remainder — this lane's 16-pixel text, a forced tall line — onto the half
+  pixel instead. That is fitting one font's metrics rather than reproducing the rule.
+- **What it is worth**: one row, on the triggers whose labels sit less than half a pixel past a
+  whole one. `tests/visual/combo-box-trigger-box.spec.ts` asserts the layout's unrounded top —
+  5.5 standard and 1.5 compact on the reference browser, 7 and 3 on this lane — which is what
+  the CSS computes; the painted row is not asserted, and the baselines hold whatever the page
+  decided.
+- **Would reconsider if**: the token layer emits `ComboBoxPadding`'s four sides separately, and
+  `1lh` is confirmed to resolve to the used `normal` line height in Chromium — together they are
+  the three numbers `round()` would need to put the offset on 6 itself.
