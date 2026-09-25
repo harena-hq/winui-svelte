@@ -46,7 +46,7 @@ export const title = 'nothing cites a line in a file this repository holds';
 // phrase — "the delete button's comment" carries no basename to watch. That last is now most of
 // what the 99 became, deliberately, because a name moves with its content. It follows that a
 // position into the citing file itself — "the snippet at" a bare number, naming no file — is
-// invisible; one such was found by reading and re-worded. The held set is read off the working
+// invisible; two such were found by reading and re-worded. The held set is read off the working
 // tree, so an untracked file under the walked roots joins it, which watches more; `.upstream`
 // is read the same way and is not tracked, so in a clone without the pins the shared names
 // become held and the gate is stricter, while a pin bump that adds a basename this tree also
