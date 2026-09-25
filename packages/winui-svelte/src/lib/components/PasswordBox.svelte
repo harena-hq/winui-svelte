@@ -124,9 +124,12 @@
 	     a `pointerdown` on it does not move focus to the button; only the input losing
 	     focus does. -->
 	<div class="box">
+		<!-- `autocomplete="off"`, as TextBox carries it, stops the browser's history of the field.
+		     It does not stop a password manager, which ignores `off` on a password field. -->
 		<input
 			bind:this={ref}
 			type={revealing ? 'text' : 'password'}
+			autocomplete="off"
 			bind:value
 			{placeholder}
 			{disabled}

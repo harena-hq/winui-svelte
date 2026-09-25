@@ -94,9 +94,12 @@
 				oninput={onInput}
 				rows="3"></textarea>
 		{:else}
+			<!-- `autocomplete="off"`, as AutoSuggestBox carries it: the browser's history of a field
+			     is a drop-down no WinUI text control has. -->
 			<input
 				bind:this={ref}
 				type="text"
+				autocomplete="off"
 				bind:value
 				{placeholder}
 				{readonly}
