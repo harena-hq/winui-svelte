@@ -368,10 +368,10 @@ test('a pointer lights nothing and a key lights it', async ({ page }) => {
 	expect(await pillShown(trigger), 'a click on the trigger raised the pill').toBe(false);
 
 	// A second click closes it and leaves focus where it was, which is the only way to reach
-	// pointer-focused-and-closed on this control: every pointer press opens the drop-down, and
-	// while that is open `FocusedDropDown` hides both visuals whatever acquired focus. Without
-	// this step nothing here separates `:focus` from `:focus-visible` — the open list hides the
-	// difference, and a rule keyed on the wrong one passes.
+	// pointer-focused-and-closed on this control short of holding the button down: every click
+	// opens the drop-down, and while that is open `FocusedDropDown` hides both visuals whatever
+	// acquired focus. Without this step nothing here separates `:focus` from `:focus-visible` —
+	// the open list hides the difference, and a rule keyed on the wrong one passes.
 	await trigger.click();
 	await expect(trigger).toHaveAttribute('aria-expanded', 'false');
 	expect(await trigger.evaluate((el) => el.matches(':focus-visible'))).toBe(false);
