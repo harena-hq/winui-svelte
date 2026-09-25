@@ -645,3 +645,103 @@ test('the item’s pill sits on its own left edge and only the selected row show
 	// and nothing else.
 	expect(shown, 'more than the selected row raised its pill').toBe(1);
 });
+
+test('a pressed selected row shrinks its pill over the storyboard and releases at once', async ({
+	page
+}) => {
+	await page.goto(ROUTE);
+	await growViewportToContent(page);
+	// Row 1 is plain and has a selection. The lists rows 5 and 7 render open are marked first, so
+	// the selected row found below is the one this test opened.
+	await page.evaluate(() =>
+		document
+			.querySelectorAll('[data-select-content]')
+			.forEach((el) => el.setAttribute('data-already-open', ''))
+	);
+	const trigger = page.locator('.trigger').nth(1);
+	await trigger.click();
+	await expect(trigger).toHaveAttribute('aria-expanded', 'true');
+	const selected = page.locator(
+		'[data-select-content]:not([data-already-open]) .item[data-selected]'
+	);
+	await expect(selected).toHaveCount(1);
+	const pill = selected.locator('> .pill');
+	const transition = () =>
+		pill.evaluate((el) => {
+			const style = getComputedStyle(el);
+			return {
+				property: style.transitionProperty,
+				duration: style.transitionDuration,
+				easing: style.transitionTimingFunction
+			};
+		});
+
+	// Leaving `SelectedPressed` ends its storyboard — the group declares no `VisualTransition` —
+	// so the scale is back at 1 in the frame the press ends. The states a press can be left
+	// for are `Selected` and, with the pointer still on the row, `SelectedPointerOver` — a release
+	// on this row also selects it and closes the list, so the two are read before the press — and
+	// the pill declares no transition in either. The primitive highlights the selected row when the list opens and keeps the
+	// highlight until another row takes it, so reaching plain `Selected` means moving the pointer
+	// over a different row first.
+	const other = page.locator(
+		'[data-select-content]:not([data-already-open]) .item:not([data-selected]):not([data-disabled])'
+	);
+	const otherBox = (await other.first().boundingBox())!;
+	await page.mouse.move(otherBox.x + otherBox.width / 2, otherBox.y + otherBox.height / 2);
+	await expect(selected).not.toHaveAttribute('data-highlighted');
+	expect((await transition()).duration, 'Selected').toBe('0s');
+	const box = (await selected.boundingBox())!;
+	await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+	await expect(selected).toHaveAttribute('data-highlighted');
+	expect((await transition()).duration, 'SelectedPointerOver').toBe('0s');
+
+	await page.mouse.down();
+	// The press declares one transition, on `scale` alone, with the keyframe's timing: the duration
+	// token and `KeySpline="0,0,0,1"` (ComboBox_themeresources.xaml:727). These are computed
+	// values, so they do not depend on when they are read. The token is written `167ms` and the
+	// build's minifier writes it back as `.167s`, so the comparison is against the token as the
+	// page resolves it rather than against either spelling.
+	const token = await pill.evaluate((el) =>
+		getComputedStyle(el).getPropertyValue('--winui-ComboBoxItemScaleAnimationDuration').trim()
+	);
+	const seconds = token.endsWith('ms')
+		? Number(token.slice(0, -2)) / 1000
+		: Number(token.slice(0, -1));
+	// `ComboBoxItemScaleAnimationDuration` is `00:00:00.167` at ComboBox_themeresources.xaml:330;
+	// pinned here so a mis-converted token cannot pass by agreeing with itself.
+	expect(seconds, `the duration token read as ${token}`).toBe(0.167);
+	expect(await transition()).toEqual({
+		property: 'scale',
+		duration: `${seconds}s`,
+		easing: 'cubic-bezier(0, 0, 0, 1)'
+	});
+	// And it arrives where the keyframe does, on one axis.
+	await expect.poll(() => pill.evaluate((el) => getComputedStyle(el).scale)).toBe('1 0.625');
+	await page.mouse.up();
+});
+
+test('under reduced motion the pressed pill takes no time', async ({ page }) => {
+	// The library's choice, not upstream's: a state's own keyframe animations run whatever the
+	// system animation setting. It matches `SelectorBar.svelte`, whose pill runs on the same key.
+	await page.emulateMedia({ reducedMotion: 'reduce' });
+	await page.goto(ROUTE);
+	await growViewportToContent(page);
+	await page.evaluate(() =>
+		document
+			.querySelectorAll('[data-select-content]')
+			.forEach((el) => el.setAttribute('data-already-open', ''))
+	);
+	const trigger = page.locator('.trigger').nth(1);
+	await trigger.click();
+	const selected = page.locator(
+		'[data-select-content]:not([data-already-open]) .item[data-selected]'
+	);
+	await expect(selected).toHaveCount(1);
+	const pill = selected.locator('> .pill');
+	const box = (await selected.boundingBox())!;
+	await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+	await page.mouse.down();
+	expect(await pill.evaluate((el) => getComputedStyle(el).transitionDuration)).toBe('0s');
+	expect(await pill.evaluate((el) => getComputedStyle(el).scale)).toBe('1 0.625');
+	await page.mouse.up();
+});

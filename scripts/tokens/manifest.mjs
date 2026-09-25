@@ -1840,7 +1840,7 @@ export const SLIDER_KEYS = {
  * `AnimatedIcon` whose `FallbackIconSource` at :585 is a `FontIconSource` with
  * `Glyph="&#xE70D;"`, and WD-006 accepts the static fallback. The `Pill` selector
  * indicator is a 3x16 `Rectangle` filled with `ComboBoxItemPillFillBrush` and scaled
- * by `ComboBoxItemPillMinScale` in the `SelectedPressed` state — the four
+ * by `ComboBoxItemPillMinScale` in the `SelectedPressed` state — the five
  * `Selected*` states are the only ones that set the pill's opacity to 1.
  *
  * What this list leaves out, so a gap reads as a decision rather than an oversight.
@@ -1864,9 +1864,6 @@ export const SLIDER_KEYS = {
  * `ComboBox.svelte`'s focus rule — the same move `CheckBoxFocusVisualMargin` made above, and
  * for the same reason.
  * - **`ComboBoxPopupThemeTouchMinWidth`** — the popup's minimum width in touch input mode.
- * - **`ComboBoxItemScaleAnimationDuration`** — the duration the `SelectedPressed` state's
- *   pill scale runs over. The pill scales without a transition here, for the same reason
- *   Slider's inner accent does (see the Slider tranche).
  * - **The thirty-five pre-Fluent `ComboBox*ThemeBrush` resources.** They are the
  *   `ComboBoxArrow*ThemeBrush`, `ComboBoxBackgroundThemeBrush`, `ComboBoxBorderThemeBrush`,
  *   `ComboBoxDisabled*ThemeBrush`, `ComboBoxFocused*ThemeBrush`, `ComboBoxForegroundThemeBrush`,
@@ -1985,13 +1982,13 @@ export const COMBOBOX_KEYS = {
 	ComboBoxItemForegroundSelectedDisabled: 'ComboBox item text, selected disabled',
 
 	// The selection pill: its brush, its two sizes, its corner radius, and the scale the
-	// `SelectedPressed` state animates to (here, applies instantly — see Slider's note on
-	// the same decision).
+	// `SelectedPressed` state animates to and the duration it animates over.
 	ComboBoxItemPillFillBrush: 'ComboBox item, the selection pill fill',
 	ComboBoxItemPillWidth: 'ComboBox item, the selection pill width',
 	ComboBoxItemPillHeight: 'ComboBox item, the selection pill height',
 	ComboBoxItemPillCornerRadius: 'ComboBox item, the selection pill corner radius',
 	ComboBoxItemPillMinScale: 'ComboBox item, the selection pill pressed scale',
+	ComboBoxItemScaleAnimationDuration: 'ComboBox item, how long the pressed pill takes to shrink',
 
 	// Seeded only so the EXCLUDED list below can name them — the generator stops if an
 	// EXCLUDED key is not selected. The thirty-five pre-Fluent `*ThemeBrush` resources;

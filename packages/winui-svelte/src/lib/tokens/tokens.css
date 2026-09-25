@@ -169,6 +169,7 @@
 	--winui-ComboBoxItemPillWidth: 3px;
 	--winui-ComboBoxItemPillMinScale: 0.625;
 	--winui-ComboBoxMinHeight: 32px;
+	--winui-ComboBoxItemScaleAnimationDuration: 167ms;
 	--winui-ComboBoxBorderThemeThickness: 1px;
 	--winui-ComboBoxDropdownBorderThickness: 1px;
 	--winui-ComboBoxItemThemePadding: 5px 11px 7px 11px;

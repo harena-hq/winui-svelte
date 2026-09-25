@@ -553,13 +553,12 @@
 	   and the `BottomRight` one, which is how a `CornerRadius` resource reaches two `Double`
 	   properties; and `RenderTransformOrigin="0.5,0.5"`, which is what centres the item's
 	   pressed scale. `Opacity="0"` is on each Rectangle rather than in the style. On the item
-	   the five `Selected*` states set `Opacity` to 1,
-	   and `SelectedPressed` (:721) scales by `ComboBoxItemPillMinScale` (0.625) — on `ScaleY`
-	   alone (:726), which is why the rule below writes the two-axis form. The scale has no
-	   `transition`: the upstream animation runs over `ComboBoxItemScaleAnimationDuration`,
-	   which nothing has seeded. The token is emitted unitless and read raw, because it is a
-	   ratio rather than a length — `scripts/tokens/manifest.mjs` lists it in `DOUBLE_RATIOS`
-	   and that set's comment says why a ratio does not get a unit put on it. */
+	   the five `Selected*` states set `Opacity` to 1, and `SelectedPressed` (:721) scales by
+	   `ComboBoxItemPillMinScale` (0.625) — on `ScaleY` alone (:726), which is why the rule
+	   below writes the two-axis form. The scale animates on the way down and not on the way
+	   back; the pressed rule below says why. The token is emitted unitless and read raw,
+	   because it is a ratio rather than a length — `scripts/tokens/manifest.mjs` lists it in
+	   `DOUBLE_RATIOS` and that set's comment says why a ratio does not get a unit put on it. */
 	.pill {
 		position: absolute;
 		top: 50%;
@@ -809,12 +808,38 @@
 
 	.item[data-selected]:active > .pill {
 		/* `SelectedPressed` (:721) animates `ScaleY` — one axis, at :726 — to
-		   `ComboBoxItemPillMinScale` over `ComboBoxItemScaleAnimationDuration`. The duration
-		   is unseeded and the animation is out of scope, so the scale applies instantly; the
-		   axis is not out of scope, hence the two-value form, which leaves the width alone.
+		   `ComboBoxItemPillMinScale`, hence the two-value form, which leaves the width alone.
 		   The token is a ratio and is emitted unitless, which is why it is read raw — see
 		   `DOUBLE_RATIOS` in `scripts/tokens/manifest.mjs` for why a ratio gets no unit. */
 		scale: 1 var(--winui-ComboBoxItemPillMinScale);
+		/* The keyframe at :727 reaches that scale at `ComboBoxItemScaleAnimationDuration`,
+		   167ms, along `KeySpline="0,0,0,1"`, which is a cubic Bézier with the same four
+		   control values in the same order. No `VisualTransition` is declared in the group,
+		   so leaving the state ends the storyboard and the scale is back at 1 at once:
+		   declaring the transition on this rule alone, rather than on `.pill`, is what makes
+		   the press animate and the release snap.
+
+		   Under reduced motion it does not run, by the block below, and that is this
+		   library's choice rather than upstream's. For a non-essential storyboard the visual
+		   state manager reads the system's animation setting to skip `VisualTransition` and
+		   generated storyboards to their end (`VisualStateManagerActuator.cpp:602`) and to
+		   settle a state's theme animations (:394); a state's own keyframe animations, which
+		   are all `SelectedPressed` has, are started as `StoryboardType::State` (:202) and run
+		   whatever the setting. SelectorBar's pill runs on this same key and spline upstream
+		   (`SelectorBar.xaml:109`), and `SelectorBar.svelte` turns it off under
+		   `prefers-reduced-motion`; the two do the same thing here. */
+		transition: scale var(--winui-ComboBoxItemScaleAnimationDuration)
+			/* c1-allow: ComboBox_themeresources.xaml:727, `KeySpline="0,0,0,1"` on the
+			   `SplineDoubleKeyFrame` */
+			cubic-bezier(0, 0, 0, 1);
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.item[data-selected]:active > .pill {
+			/* c1-allow: ComboBox_themeresources.xaml:727, this accessibility override replaces
+			   the `SelectedPressed` keyframe's duration, as SelectorBar's does for its pill */
+			transition-duration: 0s;
+		}
 	}
 
 	/* ----- Items: Disabled ----- */
