@@ -67,11 +67,11 @@ export const test = base.extend({
 	page: async ({ page }, use) => {
 		// The signal has to be **this document's**, and the obvious reading of the key is not.
 		// `localStorage` outlives a navigation, so a poll that only asks whether the key is set
-		// passes instantly on every navigation after the first in a context — on the reload at
-		// `color-picker-slider.spec.ts:207` above all, which is followed immediately by a
-		// keypress. Recording the write in `window` instead is per-document by construction,
-		// because the object is. Found by a cold review, after the vacuous version had passed
-		// the whole battery.
+		// passes instantly on every navigation after the first in a context — on the reload in
+		// color-picker-slider.spec.ts's Ctrl+Arrow alpha test above all, which is followed
+		// immediately by a keypress. Recording the write in `window` instead is per-document by
+		// construction, because the object is. Found by a cold review, after the vacuous version
+		// had passed the whole battery.
 		await page.addInitScript(
 			([key, signal]) => {
 				const write = Storage.prototype.setItem;
@@ -132,10 +132,10 @@ const HYDRATION_TIMEOUT = 20_000;
  *
  * The signal is the client's own write, not a timeout. The root layout's apply-and-persist effect
  * sets `winui-svelte:theme` on mount whatever the theme is, including the empty string for System
- * (`apps/gallery/src/routes/+layout.svelte:25`). Nothing writes that key server-side, and nothing
- * in this suite writes it into a document ahead of that document's own scripts — the theme writes
- * in `themes.ts` and `color-picker.spec.ts` both land after this wait has returned — so the write
- * is that effect having run.
+ * (the theme `$effect` in `apps/gallery/src/routes/+layout.svelte`). Nothing writes that key
+ * server-side, and nothing in this suite writes it into a document ahead of that document's own
+ * scripts — the theme writes in `themes.ts` and `color-picker.spec.ts` both land after this wait
+ * has returned — so the write is that effect having run.
  *
  * That is the root layout's effect and not the control's, which is a weaker claim than it looks
  * only if the two can be separated. In `svelte@5.57.0`, a template's own handlers are delegated

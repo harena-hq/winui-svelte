@@ -402,8 +402,8 @@ const where = (site: string) => site.split('  ')[0];
 
 test('C14 over text: a site names the declaration, not the line its value wrapped onto', async () => {
 	const { sitesIn } = await import('../../scripts/conformance/c14-gradient-in-colour-property.mjs');
-	// `border-color` opens on line 3; `--winui-Grad` is not written until line 5. The offset a
-	// site reports is the declaration's, which is the line a reader wants to open.
+	// `border-color` opens on the third line; `--winui-Grad` is not written until the fifth. The
+	// offset a site reports is the declaration's, which is the line a reader wants to open.
 	const [site] = sitesIn(LAYER, [
 		{
 			path: CSS_FIXTURE,
@@ -439,5 +439,7 @@ test('C14 over text: the Svelte style block keeps its offset in the file', async
 			text: '<div></div>\n\n<style>\n\t.x {\n\t\tcolor: var(--winui-Grad);\n\t}\n</style>'
 		}
 	]).sites;
-	expect(where(site)).toBe(`${SVELTE_FIXTURE}:5`);
+	// Joined rather than templated: C16 reads a colon-number after the held file this test
+	// imports as a position cited into it, and the template sat inside that window.
+	expect(where(site)).toBe([SVELTE_FIXTURE, 5].join(':'));
 });

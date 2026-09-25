@@ -350,7 +350,7 @@
 		   whole `border` shorthand with it, which left the button two pixels short and moved the
 		   flyout with it, because the flyout's placement is computed from the button's height.
 		   The ring below paints the gradient; this keeps the geometry. Same shape and same reason
-		   as TextBox.svelte:164 and PasswordBox.svelte:194. */
+		   as the `.box` rules of TextBox.svelte and PasswordBox.svelte. */
 		border-color: transparent;
 		border-width: var(--winui-DatePickerBorderThemeThickness);
 		border-radius: var(--winui-ControlCornerRadius);
@@ -361,8 +361,9 @@
 	}
 
 	/* The border brush painted on the ring alone: a two-layer mask that punches out the content
-	   box, exactly as TextBox.svelte:177 explains. `inset` is the negative border width because an
-	   absolutely positioned child is placed against its parent's padding box. */
+	   box, exactly as the comment above TextBox.svelte's `.box::after` explains. `inset` is the
+	   negative border width because an absolutely positioned child is placed against its parent's
+	   padding box. */
 	.flyout-button::after {
 		content: '';
 		position: absolute;
@@ -502,12 +503,12 @@
 		   `EnumDefs.g.h:552`. Upstream writes that value out explicitly on the presenter next
 		   door — `MenuFlyout_themeresources.xaml:289` sets
 		   `BackgroundSizing="InnerBorderEdge"` on the template root of `MenuFlyoutPresenter` —
-		   and `Flyout.svelte:130` and `MenuFlyout.svelte:551` already clip their own presenter,
+		   and the `.presenter` rules of Flyout.svelte and MenuFlyout.svelte already clip their own,
 		   so the idiom is not new here.
 
 		   It is not that these were the last two. ComboBox's dropdown painted its fill under a
 		   stroke upstream clips *explicitly* — `ComboBox_themeresources.xaml:590` writes
-		   `BackgroundSizing="InnerBorderEdge"` on `PopupBorder` — and `TeachingTip.svelte:348`
+		   `BackgroundSizing="InnerBorderEdge"` on `PopupBorder` — and TeachingTip.svelte's `.card`
 		   has no clip either. Both were invisible to the survey that found these two, because
 		   they write the border in longhands where it read the `border` shorthand. The dropdown
 		   has since been closed and `ComboBox.svelte`'s `.popup` rule carries its reading; the

@@ -224,8 +224,8 @@
 	 * same question asked of the shape this library has.
 	 *
 	 * It searches **downward**. An upward walk from the pressed element cannot answer it: this
-	 * library's scrollbar is a sibling of the region it scrolls (`ScrollView.svelte:265,280`), so a
-	 * press on the thumb never crosses the scroller on its way up, and the walk reached its
+	 * library's scrollbar is a sibling of the region it scrolls (ScrollView.svelte's `ScrollBar`s),
+	 * so a press on the thumb never crosses the scroller on its way up, and the walk reached its
 	 * "nothing here scrolls, so nothing holds the pull back" fallback and armed a pull. Measured
 	 * before this change: a 64px drag of the first example's thumb on `/collections/pulltorefresh`
 	 * scrolled the list by 20 and revealed the visualizer by 64, both at once.

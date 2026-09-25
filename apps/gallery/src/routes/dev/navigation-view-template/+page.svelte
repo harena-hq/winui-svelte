@@ -13,7 +13,7 @@
 	 *
 	 * The deep import is the surface as it stands, not a shortcut around it: `index.ts` does
 	 * not re-export `NavigationViewItem` and the package's exports map publishes every file
-	 * under `dist` (`package.json:31-36`), so this is the import a consumer writes today.
+	 * under `dist` (its `./*.svelte` entry), so this is the import a consumer writes today.
 	 * D46's naming unit is what fixes the exported set.
 	 */
 

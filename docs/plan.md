@@ -202,12 +202,12 @@ still true.
 
 **The signal has to be the document's, and the first version's was not.** `localStorage` outlives
 a navigation, so a check that only asks whether the key is set passes instantly on every
-navigation after the first in a test — the reload at `color-picker-slider.spec.ts:207` above all,
-which is followed immediately by a keypress. That version passed the whole battery: five green
-local runs, three green at ninety-six workers, and `pnpm gate` at 263 tests. A cold review found
-it by reading, and the measurement came after it rather than before: of twenty reloads driven
-under contention, **nine had not run their JavaScript when `reload()` resolved**. The wait records
-the write in `window` instead, which is per-document because the object is.
+navigation after the first in a test — the reload in `color-picker-slider.spec.ts`'s Ctrl+Arrow
+alpha test above all, which is followed immediately by a keypress. That version passed the whole
+battery: five green local runs, three green at ninety-six workers, and `pnpm gate` at 263 tests. A
+cold review found it by reading, and the measurement came after it rather than before: of twenty
+reloads driven under contention, **nine had not run their JavaScript when `reload()` resolved**. The
+wait records the write in `window` instead, which is per-document because the object is.
 
 **D53 — a baseline is compared at a 0.01 colour tolerance, and the one page whose variation that
 tolerance cannot absorb carries a counted budget.** Playwright's default `threshold` is 0.2,
@@ -1380,10 +1380,10 @@ group sizes, which no longer line up one-to-one with a version.
     Goal: **the application can say where the user is, and move them between peers.**
 
     **This is the first tranche that empties a Gallery group.** The Navigation group holds
-    five pages — `data/winui-gallery-shell.json:645` — and NavigationView is v2's, so the
-    group closes when this version does. Every tranche before it took a slice of one group or
-    reached across two, which is D22 working as designed and is also why none of them could be
-    checked against a group boundary. This one can, and the check is worth stating as a
+    five pages — its `Navigation` record in `data/winui-gallery-shell.json` — and NavigationView is
+    v2's, so the group closes when this version does. Every tranche before it took a slice of one
+    group or reached across two, which is D22 working as designed and is also why none of them could
+    be checked against a group boundary. This one can, and the check is worth stating as a
     Done-when rather than as an observation: **every control the five entries demonstrate
     exists in the library at the end of v8**, read off the five sample pages rather than off
     this heading.
@@ -1402,15 +1402,16 @@ group sizes, which no longer line up one-to-one with a version.
     conflation survived being written down and read back twice.
 
     **A fifth deliverable is already owed, and this entry is where it surfaces.**
-    `scripts/tokens/manifest.mjs:66` defers "every `Top*` key, `NavigationViewTopPane*`, and
-    the two overflow-button styles" by name to _the Navigation tranche_, which is this one.
+    The header of `scripts/tokens/manifest.mjs` defers "every `Top*` key, `NavigationViewTopPane*`,
+    and the two overflow-button styles" by name to _the Navigation tranche_, which is this one.
     Nothing in this file recorded it until this entry — the string `PaneDisplayMode` occurs
     nowhere above — and the Gallery's own page sets `PaneDisplayMode="Top"` on two samples
     (`NavigationViewPage.xaml:123,196`) and switches three more into it from code (`:309-320`).
     The top pane is on the surface the acceptance gate walks, and it is v8's.
 
     **The component states a reason for the absence, and it is not the reason.**
-    `NavigationView.svelte:31` says `Top` is missing from `NavigationViewPaneDisplayMode` "for
+    The TSDoc on `NavigationViewPaneDisplayMode` in `NavigationView.svelte` said, at `d50b02d`,
+    that `Top` is missing from it "for
     the same reason it is absent from `NavigationViewDisplayMode`". The two enums are not in
     the same position. `NavigationViewDisplayMode` is the mode the control _computed_ and
     upstream gives it three members — `Minimal | Compact | Expanded` — with no `Top` to leave
@@ -1735,8 +1736,10 @@ generics="T">` component through `pnpm --filter winui-svelte build` reaches `dis
        viewport and `ItemsPresenter`, the `Header`/`Footer` slots, `SelectionMode`, and grouped
        headers — `ListViewHeaderItem` (`generic.xaml:9131`) is fully readable, a padded
        `ContentPresenter` over a half-pixel divider inset 12 on both sides. The scrollbar is the
-       treatment `NavigationView.svelte:782-830` already worked out against
-       `ScrollBar_themeresources.xaml`; the ScrollBar control itself stays roadmap item 13.
+       treatment NavigationView.svelte's `.items-container-grid::-webkit-scrollbar` rules
+       had already worked out against `ScrollBar_themeresources.xaml` at `1dac2d5` (folded
+       into the internal ScrollBar since, by `09341ad`); the ScrollBar control itself stays roadmap
+       item 13.
 
     7. **GridView and GridViewItem.** The same presenter with its own 45-key family and its own
        geometry, plus the wrapping panel. Split from unit 6 rather than folded into it because
@@ -2908,10 +2911,11 @@ generics="T">` component through `pnpm --filter winui-svelte build` reaches `dis
     120 (`NumberBox_themeresources.xaml:34`), and because `InputBox` is `Grid.ColumnSpan="3"`
     that minimum is the whole control's.
 
-    Ours puts the 318 on the outer box (`NumberBox.svelte:244`) and the 120 on the inner input
-    (`:353`), where the outer minimum dominates and the state setter can never take effect. The
-    comment above it reads the setter backwards — it says the 120 is there so the box is wide
-    _enough_, where upstream's purpose is to let a NumberBox be narrower than a text box.
+    Ours puts the 318 on the outer box (NumberBox.svelte's `.box`) and the 120 on the inner
+    input (`.input.inline`, as of `ee3f4c2`), where the outer minimum dominates and the state setter
+    can never take effect. The comment above it reads the setter backwards — it says the 120 is
+    there so the box is wide _enough_, where upstream's purpose is to let a NumberBox be narrower
+    than a text box.
 
     **Two sentences of the paragraph above are wrong, and v14's closing entry corrects them.**
     `TextControlThemeMinWidth` is 64, not 318 — the 318 was this reproduction's own hardcode,
@@ -3421,7 +3425,7 @@ System / Shell` moves to item 16; `item 15` occurs once in the whole of `docs/`,
     **D39 — a motion value transcribed from a source site is a `c1-allow`'d literal citing that
     site, not a token.** Tokens come from dictionaries (ADR 0001) and these come from `.cpp`
     files, so a token would be inventing a resource upstream does not have. The precedent is
-    already in the library: `Button.svelte:83` writes `transition: background 83ms` under a
+    already in the library: Button.svelte's `.root` writes `transition: background 83ms` under a
     `c1-allow` naming `Button_themeresources.xaml:174`, rather than reading
     `ControlFasterAnimationDuration`, because the XAML binds a duration and not the resource.
 
@@ -3529,11 +3533,11 @@ System / Shell` moves to item 16; `item 15` occurs once in the whole of `docs/`,
     **A conformance change considered and declined.** C1's `SIZED_PROPS` covers `transition`,
     `transition-duration`, `animation` and `animation-duration` and not
     `animation-timing-function` or `transition-timing-function`, which is why
-    `ProgressBar.svelte:222` writes a `cubic-bezier` with no exemption — twenty-one such
-    declarations stand across the library and the Gallery frame. Extending the gate would mean
-    retrofitting twenty-one citations, and what it buys is bookkeeping: C1 asks whether a literal
-    carries a comment, not whether it is right. For this one class of value the instrument above
-    is the stronger check, because it photographs the curve and a wrong one fails a baseline.
+    ProgressBar.svelte's indeterminate keyframes write a `cubic-bezier` with no exemption —
+    twenty-one such declarations stand across the library and the Gallery frame. Extending the gate
+    would mean retrofitting twenty-one citations, and what it buys is bookkeeping: C1 asks whether a
+    literal carries a comment, not whether it is right. For this one class of value the instrument
+    above is the stronger check, because it photographs the curve and a wrong one fails a baseline.
     Reopen if v15 finishes and the timing functions have proved hard to keep cited.
 
     **Done-when.** Seven routes exist and are registered; twenty-seven examples render; the
@@ -3802,7 +3806,7 @@ System / Shell` moves to item 16; `item 15` occurs once in the whole of `docs/`,
 
     `Hyperlink` arrives with `TextBlock` rather than on its own. It is not a Gallery page; it is
     an inline, and three sites already carry a comment saying this library has no control for it
-    — `design/typography/+page.svelte:14`, `styles/animatedicon/+page.svelte:183`, and the two
+    — as of `1d934e2`, the typography page's markup, the animated-icon page's `.lead a`, and the two
     anchors on `styles/acrylic/+page.svelte`. `TextBlock`'s `Inlines` is where it belongs.
 
     **`TextBlock` is a component, and that is D38.** The library already emits the type ramp as
@@ -4386,13 +4390,14 @@ reproduce is a recorded decision, never a silent one.
 
 **This enumeration stops at C10 and the suite does not.** `C11` (template parts and states),
 `C12` (every cited line names a file that has one), `C13` (every portalled surface sits in the
-popup layer), `C14` (no colour property reads a token that resolves to a gradient) and `C15`
-(nothing cites a line in a generated source file) are in `pnpm conform` and have no entry
-here — C11 and C12 landed without one, and none of the three after them added itself alone,
+popup layer), `C14` (no colour property reads a token that resolves to a gradient), `C15`
+(nothing cites a line in a generated source file) and `C16` (nothing cites a line in a file
+this repository holds) are in `pnpm conform` and have no entry here — C11 and C12 landed
+without one, and none of the four after them added itself alone,
 because an entry for the newest while the ones before it have none would make the gap read as a
 choice. **`scripts/conformance/run.mjs` is the list**; this section is a commentary on the gates
-that have one, and the backfill is owed. Each of the five carries its own reasoning in its own
-file, which is where the detail is; C13's, C14's and C15's also record what they cannot reach,
+that have one, and the backfill is owed. Each of the six carries its own reasoning in its own
+file, which is where the detail is; C13's through C16's also record what they cannot reach,
 and each names the test that answers that half.
 
 **Two documents name the gates by number, and only one of them has kept up.** This paragraph
@@ -4416,6 +4421,14 @@ the gate was built for; what makes it a separate unit is that each rotted singly
 reviewer did open, so the answer is unlikely to be the same rule. The trigger for taking either
 is a reader following one and landing somewhere wrong, or a second measurement showing the count
 has grown.
+
+**Both were taken together, by `C16`, when the second measurement came in.** A day later the
+authored count stood at 39 of 83, up from 32, which is the trigger above. The answer turned out
+to be the same rule after all, over every file this repository holds rather than three —
+`data/`'s records included, since a walk of the tree needs no extractor to declare anything —
+and all 99 positions were re-pointed by name, each resolved against the commit that wrote it.
+The reasoning that made it one rule, and the two re-points of an earlier pass that had named the
+wrong declaration, are in the gate's header.
 
 **A gate is not trusted until it has been seen to fail.** Each is probed against a planted
 violation — and against the evasions that occurred to a reviewer, not only the obvious form —

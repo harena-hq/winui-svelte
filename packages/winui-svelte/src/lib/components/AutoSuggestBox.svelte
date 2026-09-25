@@ -203,7 +203,8 @@
 				{#snippet child({ props })}
 					<!-- Every element the primitive would render is rendered here instead,
 					     through its `child` snippet — the escape ADR 0004 names first. See
-					     ComboBox.svelte:114 for the rationale. -->
+					     the comment inside ComboBox.svelte's `<Select.Trigger>` for the
+					     rationale. -->
 					<!-- Both handlers call the primitive's first and then add to it. Written the
 					     other way round — `{...props}` and then a bare `onkeydown` — the later
 					     attribute replaces the one bits-ui put there, and the arrow keys stop
@@ -231,8 +232,8 @@
 			</Combobox.Input>
 			{#if showDelete}
 				<!-- `onmousedown` preventing default is what keeps this button working
-				     outside Chromium. Cited rather than restated: TextBox.svelte:109 records
-				     the full measurement. -->
+				     outside Chromium. Cited rather than restated: the comment on TextBox.svelte's
+				     delete button records the full measurement. -->
 				<button
 					type="button"
 					class="delete"
@@ -244,8 +245,8 @@
 			{/if}
 			{#if queryIcon !== undefined}
 				<!-- Same shape as the delete button: `onmousedown` preventDefault keeps it
-				     working outside Chromium (TextBox.svelte:109), and `tabindex="-1"` says
-				     what upstream's `IsTabStop="False"` says — not a focus target. The glyph
+				     working outside Chromium (TextBox.svelte's delete button), and `tabindex="-1"`
+				     says what upstream's `IsTabStop="False"` says — not a focus target. The glyph
 				     lives in the DOM rather than in `::after` so a hex string the consumer
 				     supplies reaches the rendered text without escaping it in CSS. -->
 				<button
@@ -264,7 +265,7 @@
 					<!-- `wrapperProps` is the outer wrapper Floating UI positions; pass it
 					     through first, untouched. The popup's own border, background and
 					     corner live on `props` and reach the `<div>` this control writes.
-					     The same shape ComboBox uses; see ComboBox.svelte:144 — including the
+					     The same shape ComboBox uses; see its `<Select.Content>` — including the
 					     type ramp class on the popup, which a portalled element has to carry
 					     itself because CSS inheritance follows the DOM and the portal moves
 					     it out of the root. -->
@@ -340,7 +341,7 @@
 
 	   The TextBox tranche records why the box's border is transparent and the gradient
 	   is painted on `::after`: the source brushes are gradients, and a gradient named as a
-	   `border-color` is invalid CSS. See TextBox.svelte:159. */
+	   `border-color` is invalid CSS. See the comment in TextBox.svelte's `.box`. */
 	.box {
 		/* XAML's `MinHeight` and `MinWidth` include the border and the padding; CSS's
 		   `min-height` and `min-width` do not, unless the box is `border-box`. Without
@@ -399,7 +400,8 @@
 	   rules paint, and the same reason no extra ring is needed. The four `inset` values
 	   mirror `TextControlBorderThemeThicknessFocused` — `1px 1px 2px 1px` — negated;
 	   `calc()` cannot negate a multi-value shorthand, so they are written out. See
-	   TextBox.svelte:236 for the measurement. */
+	   the comment above TextBox.svelte's `.root:focus-within .box::after` for the
+	   measurement. */
 	.root:focus-within .box {
 		border-width: var(--winui-TextControlBorderThemeThicknessFocused);
 		background: var(--winui-TextControlBackgroundFocused) padding-box;
@@ -484,8 +486,8 @@
 	/* `ButtonLayoutGrid` at AutoSuggestBox_themeresources.xaml:54 — the element the two
 	   state brushes are animated onto. Its `Margin` is `AutoSuggestBoxDeleteButtonMargin`
 	   and its `CornerRadius` is `ControlCornerRadius`, so the fill is inset from the
-	   button's box rather than filling it. TextBox.svelte:355 is the same shape against
-	   `TextBoxInnerButtonMargin`. */
+	   button's box rather than filling it. TextBox.svelte's `.delete::before` is the same shape
+	   against `TextBoxInnerButtonMargin`. */
 	.delete::before {
 		content: '';
 		position: absolute;
@@ -654,7 +656,7 @@
 	   because this control has no `AutoSuggestListViewItem*` family and the
 	   `ComboBoxItem*` family is what `DefaultListViewItemStyle` paints under the same
 	   names upstream. The same `Margin`, `CornerRadius`, `Padding` and eight brushes
-	   ComboBox's items use — see ComboBox.svelte's `border-width` at :349 for the upstream references. */
+	   ComboBox's items use — see ComboBox.svelte's `.item` for the upstream references. */
 	.item {
 		position: relative;
 		display: flex;
@@ -698,8 +700,8 @@
 		color: var(--winui-ComboBoxItemForegroundSelected);
 	}
 
-	/* The focus visual for the popup items. The ComboBox focus visual at
-	   ComboBox.svelte's `outline: none` at :438 is the model; `FocusVisualMargin="-3"` upstream at
+	/* The focus visual for the popup items. The focus visual on
+	   ComboBox.svelte's `.item:focus-visible` is the model; `FocusVisualMargin="-3"` upstream at
 	   ComboBox_themeresources.xaml:609 puts the band three pixels outside the item's
 	   border box. */
 	.item:focus-visible {

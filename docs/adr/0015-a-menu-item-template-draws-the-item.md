@@ -3,10 +3,10 @@
 ## Context
 
 `NavigationView` takes `items: NavigationViewEntry[]`, and that entry is a union of two records
-this project declared (`NavigationView.svelte:20`): a row — an `id`, a `content` string, an
-optional `glyph`, `children` (`:5-13`) — or a header, which is a string. ADR 0013 listed this
-control among the six that narrow a collection to a record type, and decided those six keep
-their record types.
+this project declared (`NavigationViewEntry` in NavigationView.svelte): a row — an `id`, a
+`content` string, an optional `glyph`, `children` (`NavigationViewItemData`) — or a header, which is
+a string. ADR 0013 listed this control among the six that narrow a collection to a record type, and
+decided those six keep their record types.
 
 A sidebar this control is meant to replace can do three things in a row past a label and an
 icon:
@@ -63,7 +63,7 @@ Its props map by ADR 0009 from that class's own members — `Icon` (`:328`), `Co
 (`:369`) — and from `IsSelected` on its base (`:315`), which a public item plainly needs and
 which "that class's own members" would otherwise exclude by construction. Three of the ten
 already have a reproduction in this control's surface: the nested submenu is
-`NavigationViewItemData.children` (`NavigationView.svelte:12`), expansion is the control's
+`NavigationViewItemData.children` (in NavigationView.svelte), expansion is the control's
 `expandedItems`, selection its `selected`. Which of the remaining seven the first
 implementation carries is the implementing unit's scope; that the component is public is this
 ADR's.
@@ -93,9 +93,9 @@ typed in `T`. The consumer's rows carry the consumer's own fields — a path, a 
 the template sees them. Nothing shipped changes: `selected` is still an `id` the consumer
 holds, `onItemInvoked` still reports one, and a call site passing plain entries infers `T` as
 the record it already had. **The parameter is defaulted — `T = NavigationViewItemData` — and
-that is not a convenience.** `NavigationViewProps` is exported (`index.ts:202`), and a consumer
-who wrote it without a type argument has written something that stops compiling the moment the
-interface takes a parameter. The default is what keeps this widening additive. This is
+that is not a convenience.** `NavigationViewProps` is exported (from the library's `index.ts`), and
+a consumer who wrote it without a type argument has written something that stops compiling the
+moment the interface takes a parameter. The default is what keeps this widening additive. This is
 ADR 0013's "a collection control is generic in its item type" reaching a seventh control
 without disturbing its "the six keep their record types", because the record is kept — as the
 constraint.
@@ -131,8 +131,8 @@ packaging rather than assuming it.
    `dist`, the emitted `.d.ts`, a compile from the packaged form, `publint`, `pnpm smoke`.
 2. **The keyboard contract becomes public surface, and the reference has said all it can.** Two
    things meet here. The narrow one: the row is a `div[role=treeitem]` with `tabindex="0"` whose
-   `keydown` handler calls `preventDefault()` on Space (`NavigationViewItem.svelte:40-46`), so
-   a text field a consumer renders inside it cannot receive a space. The DOM has that by
+   `keydown` handler calls `preventDefault()` on Space (`onkeydown` in NavigationViewItem.svelte),
+   so a text field a consumer renders inside it cannot receive a space. The DOM has that by
    construction: the event bubbles whether or not anything handled it. **XAML does not have it,
    and that much is readable from the pin** — a claim this ADR first asserted without evidence,
    then withdrew as unreadable, and which the pin answers in its own words. The control
@@ -232,7 +232,7 @@ inside the cell, and a probe against the repository's own rules says otherwise.
 `.content-presenter` declares no `position` (`NavigationViewItem.svelte`'s rule of that
 name), so an
 absolutely positioned descendant's containing block is `.item` — which is `position: relative`
-deliberately, because `.selection-indicator` is absolute against it (`:255-263`) — and an
+deliberately, because `.selection-indicator` is absolute against it — and an
 `overflow` ancestor clips nothing whose containing block is above it. The ring measured as the
 row's own box and hit-tested outside the cell at both ends. So the content branch carries all
 three behaviours.

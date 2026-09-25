@@ -143,7 +143,8 @@
 		{#if showReveal}
 			<!-- `onmousedown` preventing default is what keeps this button working outside
 			     Chromium, the same reason TextBox's delete button carries one. Cited rather
-			     than restated: TextBox.svelte:109 records the full measurement. -->
+			     than restated: the comment on TextBox.svelte's delete button records the full
+			     measurement. -->
 			<button
 				type="button"
 				class="reveal"
@@ -195,7 +196,7 @@
 		/* `TextControlBorderBrush` is a gradient (an alias onto
 		   `TextControlElevationBorderBrush`); a gradient named as a `border-color` is
 		   invalid CSS and silently dropped. The same shape TextBox carries, and the
-		   same reason `.box::after` paints the ring. See TextBox.svelte:159. */
+		   same reason `.box::after` paints the ring. See the comment in TextBox.svelte's `.box`. */
 		border-color: transparent;
 		border-width: var(--winui-TextControlBorderThemeThickness);
 		border-radius: var(--winui-ControlCornerRadius);
@@ -205,7 +206,8 @@
 
 	/* The border brush is a gradient, painted on the ring alone rather than the whole
 	   element. The mask composites the inner content-box layer with a ring layer so the
-	   content box is punched out; see TextBox.svelte:174 for the full explanation. */
+	   content box is punched out; see the comment above TextBox.svelte's `.box::after` for the full
+	   explanation. */
 	.box::after {
 		content: '';
 		position: absolute;
@@ -270,7 +272,8 @@
 	}
 	/* The four `inset` values mirror `TextControlBorderThemeThicknessFocused` — `1px 1px 2px
 	   1px` — negated. `calc()` cannot negate a multi-value shorthand, so they are written
-	   out: see TextBox.svelte:236 for the measurement. */
+	   out: see the comment above TextBox.svelte's `.root:focus-within .box::after`
+	   for the measurement. */
 	.root:focus-within .box::after {
 		inset: -1px -1px -2px -1px;
 		padding: var(--winui-TextControlBorderThemeThicknessFocused);

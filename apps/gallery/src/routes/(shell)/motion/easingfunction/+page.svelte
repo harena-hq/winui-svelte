@@ -68,7 +68,7 @@
 	     and :11133-11135 each add FontWeight="Normal" to a base, and the two bases — :11140-11149
 	     and :11106-11114 — differ only in TextTrimming, OpticalMarginAlignment, and a FontSize
 	     written literally as 14 rather than through BodyTextBlockFontSize, which is 14. The first
-	     two are in the ramp converter's IGNORED_SETTERS (scripts/tokens/generate.mjs:540-547), so a
+	     two are in the ramp converter's IGNORED_SETTERS (scripts/tokens/generate.mjs), so a
 	     generated winui-BodyRichTextBlockStyle would emit bytes that already exist under this name. -->
 	<RichTextBlock class="winui-BodyTextBlockStyle">
 		<Paragraph>- Use the Standard easing function for animating general property changes.</Paragraph

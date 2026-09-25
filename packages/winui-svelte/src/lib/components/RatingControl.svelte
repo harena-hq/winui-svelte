@@ -152,7 +152,7 @@
 		</div>
 	</div>
 	{#if caption}
-		<!-- PersonPicture.svelte:40-42 is the measured Tight precedent; TextBlock exposes no TextLineBounds yet, so this transcribes its reference-capture CSS equivalent. -->
+		<!-- PersonPicture.svelte's `.initials` is the measured Tight precedent; TextBlock exposes no TextLineBounds yet, so this transcribes its reference-capture CSS equivalent. -->
 		<span class="caption">{caption}</span>
 	{/if}
 	<!-- WD-082: no transform is written. RatingControl.cpp:380-388 uses a live, per-star composition expression; the 0.5 resting floor is reproduced by the 16px glyph size. -->

@@ -83,8 +83,8 @@
 	// does not: its four enumerants (`EnumDefs.g.h:1895-1900` — Full, TrimToCapHeight,
 	// TrimToBaseline, Tight) each want a different `text-box`, the Gallery uses one of them
 	// (`Styles/ItemTemplates.xaml:45`), and the only measured precedent in this library is
-	// PersonPicture's single `Tight` (`PersonPicture.svelte:182-188`) — so it gets a pass of its
-	// own rather than three mappings derived beside it.
+	// PersonPicture's single `Tight` (PersonPicture.svelte's `.initials`) — so it gets a pass of
+	// its own rather than three mappings derived beside it.
 </script>
 
 <script lang="ts">

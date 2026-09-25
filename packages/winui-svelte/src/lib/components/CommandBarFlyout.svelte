@@ -92,8 +92,8 @@
 				? 'primary-commands-only'
 				: 'secondary-commands-only'
 	);
-	// CommandBar.svelte:80-83 reduces `EffectiveOverflowButtonVisibility` (`:1050`) the same way,
-	// for the same three cases.
+	// CommandBar.svelte's `showOverflowButton` reduces `EffectiveOverflowButtonVisibility`
+	// (`CommandBarFlyout_themeresources.xaml:1050`) the same way, for the same three cases.
 	const showOverflowButton = $derived(
 		overflowButtonVisibility === 'visible' ||
 			(overflowButtonVisibility === 'auto' && hasSecondaryCommands)
@@ -637,10 +637,10 @@
 	   two: every setter in both is the unfiltered `CornerRadius` and the uniform
 	   `CommandBarFlyoutBorderThemeThickness`, which is to say the template's defaults, so the two
 	   states exist only to undo the two above. Ours are already the defaults — `.overflow` takes
-	   `CommandBarOverflowPresenter.svelte`'s `border` and `border-radius` (`:107`, `:109`), `.bar` its own radius — so the
-	   transcription is that these four stop matching, and a rule restating the defaults would be
-	   decoration. A XAML state group is exclusive and a CSS rule is not; the attribute is what
-	   supplies the exclusivity. */
+	   `CommandBarOverflowPresenter.svelte`'s `border` and `border-radius`, `.bar` its own radius —
+	   so the transcription is that these four stop matching, and a rule restating the defaults
+	   would be decoration. A XAML state group is exclusive and a CSS rule is not; the attribute is
+	   what supplies the exclusivity. */
 	.surface[data-view-state='both-commands'].expanded[data-side='top'] .bar {
 		border-radius: 0 0 var(--winui-OverlayCornerRadius) var(--winui-OverlayCornerRadius);
 	}
@@ -760,7 +760,7 @@
 		margin: 3px;
 	}
 
-	/* `AppBarButton.svelte:162` pins a command at `AppBarButton_themeresources.xaml:136`'s
+	/* AppBarButton.svelte's `.root` pins a command at `AppBarButton_themeresources.xaml:136`'s
 	   `Width="68"`, the icon-over-label column. This style sets `Width="NaN"` (`:120`) and floors
 	   the content at `ContentRoot`'s `MinWidth="40"` (`:285`) instead, so a flyout command is as
 	   wide as its icon and no wider. Measured before this rule: three icon-only commands were 68
@@ -774,7 +774,7 @@
 	   and the corner radius, inset by `CommandBarFlyoutAppBarEllipsisButtonInnerBorderMargin`
 	   (`:108`, `2,2,6,2` — left, top, right, bottom), so the highlight is a 36 by 36 rounded
 	   square two pixels in from the left edge and six from the right, not a 44 by 40 slab.
-	   `AppBarButton.svelte:188-193` builds its own inner border the same way. */
+	   AppBarButton.svelte's `.fill` builds its own inner border the same way. */
 	.more {
 		position: relative;
 		width: 44px;

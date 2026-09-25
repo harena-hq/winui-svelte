@@ -313,7 +313,7 @@
 	// in its first row and the children repeater in its second.
 	//
 	// **What that number was really cancelling is `offset`, and it is set to zero below
-	// instead.** `Flyout`'s own default is 4 (`Flyout.svelte:66`), measured on a
+	// instead.** `Flyout`'s own default is 4 (its `offset` prop), measured on a
 	// `Bottom`-placed flyout and not on this one; upstream places a `Right` mode flush against
 	// the anchor, `*pControlPos = anchorPos + anchorSize` with nothing added
 	// (`FlyoutBase_partial.cpp:386`, reached for `MajorPlacementMode::Right` at `:457-464`).

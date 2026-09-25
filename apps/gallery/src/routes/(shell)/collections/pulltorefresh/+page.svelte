@@ -151,9 +151,9 @@
 
 	   The brush is an alias onto `TextControlElevationBorderBrush`, which is a **gradient**, and a
 	   gradient named as a `border-color` is invalid CSS and dropped in silence — the same trap
-	   `TextBox.svelte:165-172` records. So the ring is a masked pseudo-element carrying the
-	   gradient as a background, and the border itself is transparent and there only for the pixel
-	   of layout `BorderThickness` takes. */
+	   the comment in TextBox.svelte's `.box` records. So the ring is a masked pseudo-element
+	   carrying the gradient as a background, and the border itself is transparent and there only
+	   for the pixel of layout `BorderThickness` takes. */
 	.bordered {
 		position: relative;
 		box-sizing: border-box;

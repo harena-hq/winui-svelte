@@ -282,9 +282,9 @@
 
 	   What it does *not* close is the highlight's own position. That visual lives four pixels
 	   outside this element, where an ancestor's `overflow` clips it and a stacking context
-	   does not; the dev harness's scroller sets `overflow-y: auto` at +layout.svelte:13, which
-	   computes `overflow-x` to `auto`, and its 24px padding on the next line is the whole of
-	   what keeps those four pixels visible there. */
+	   does not; the dev harness's scroller sets `overflow-y: auto` on `.dev` in
+	   `routes/dev/+layout.svelte`, which computes `overflow-x` to `auto`, and its 24px padding on
+	   the next line is the whole of what keeps those four pixels visible there. */
 	.root {
 		display: inline-flex;
 		flex-direction: column;
@@ -355,7 +355,7 @@
 		   so: the declaration names the right brush and is dropped after parsing. The
 		   tracked baselines read 27 in light and 255 in dark where the brush composites to
 		   228 and 47. The ring below paints it; this border only reserves its width.
-		   Button.svelte:79 and TextBox.svelte:170 carry the same pair. */
+		   Button.svelte's `.root` and TextBox.svelte's `.box` carry the same pair. */
 		border-color: transparent;
 	}
 
@@ -363,7 +363,7 @@
 	   placed against the trigger's padding box, as an absolutely positioned child is — lands on
 	   the trigger's border box, and `border-radius: inherit` puts the two curves on top of each
 	   other. The two mask layers are composited so the content box is punched out.
-	   Button.svelte:117 describes the technique in full.
+	   The comment above Button.svelte's `.root::after` describes the technique in full.
 
 	   Which stop lands on which edge differs between the themes, and that is upstream's:
 	   generic.xaml:2146 defines the brush under `Default` running `StartPoint="0,0"` to
@@ -384,8 +384,8 @@
 	   corners, span eight rows because `OverlayCornerRadius` is twice the corner here, and are
 	   a single level each on an element this rule does not reach; playwright.config.ts:101 calls
 	   that the lane's own noise. The ColorPicker baselines are the same trade with none of it
-	   mixed in: 520 pixels over 13 triggers and 160 over 4, exactly 40 each. Button.svelte:79
-	   and TextBox.svelte:170 made this trade before this one did. */
+	   mixed in: 520 pixels over 13 triggers and 160 over 4, exactly 40 each. Button.svelte's
+	   `.root` and TextBox.svelte's `.box` made this trade before this one did. */
 	.trigger::after {
 		content: '';
 		position: absolute;
@@ -719,8 +719,8 @@
 	   same property to a literal `True` at :608, which is why the popup item below *does*
 	   carry a band; the asymmetry is upstream's. Button sets the same property from a third
 	   key — `{StaticResource UseSystemFocusVisuals}` at Button_themeresources.xaml:166 and
-	   :309, which is `True` at generic.xaml:1527 — so the band at Button.svelte:144 is
-	   evidence for Button and for nothing else.
+	   :309, which is `True` at generic.xaml:1527 — so the band Button.svelte's
+	   `.root:focus-visible::before` draws is evidence for Button and for nothing else.
 
 	   What the template draws is the `HighlightBackground` Border at :570, taken from
 	   `Opacity="0"` to 1 by the `Focused` state at :475. That state moves four other things.
