@@ -236,10 +236,6 @@
 		opacity: 0;
 		transform: scaleX(1);
 		transform-origin: center;
-		/* c1-allow: ComboBox_themeresources.xaml:330 gives 00:00:00.167 and SelectorBar.xaml:109 gives `KeySpline="0,0,0,1"`. */
-		transition:
-			opacity 167ms cubic-bezier(0, 0, 0, 1),
-			transform 167ms cubic-bezier(0, 0, 0, 1);
 	}
 
 	.item[data-selected='true'] {
@@ -250,6 +246,41 @@
 	.item[data-selected='true'] .pill {
 		opacity: 1;
 		transform: scaleX(4);
+		/* Each of the three `Selected*` states (SelectorBar.xaml:97, :116, :133) animates
+		   `ScaleX` to 4 and `Opacity` to 1 over `ComboBoxItemScaleAnimationDuration` along
+		   `KeySpline="0,0,0,1"` — `SelectedNormal`'s keyframes are :109 and :112, the other
+		   two carry the same — and `CombinedStates` declares no `VisualTransition`. So
+		   selecting animates, moving between the three is a keyframe to where the pill
+		   already is, and deselecting ends the storyboard: the pill is back at 1 and 0 in the
+		   same frame. The transition is declared here rather than on `.pill` for that last
+		   half — on `.pill` it ran on the way out as well, which upstream never does.
+
+		   It also runs on load. `ItemContainer`, which `SelectorBarItem` derives from, calls
+		   `UpdateVisualState(true)` from `OnApplyTemplate` (`ItemContainer.cpp:76`), so an
+		   item selected when its template applies enters `SelectedNormal` and its storyboard
+		   grows the pill from 1 to 4. An element with no earlier style has nothing to
+		   transition from, so the `@starting-style` below supplies the rest values; it wins
+		   over this rule by coming after it at the same specificity. The browser has no
+		   notion of a template being applied, though, and gives an element no earlier style
+		   in two more cases upstream does not re-apply one: coming out of `display: none`
+		   (a bar inside a collapsed Expander regrows its pill on every expand, where
+		   upstream's grows on the first) and a keyed reorder that moves the node. Both
+		   replay the growth. The bar's own baseline is captured with animations finished,
+		   so it still shows the pill at 4. */
+		transition:
+			opacity var(--winui-ComboBoxItemScaleAnimationDuration)
+				/* c1-allow: SelectorBar.xaml:112, `KeySpline="0,0,0,1"` on the `Opacity` keyframe */
+				cubic-bezier(0, 0, 0, 1),
+			transform var(--winui-ComboBoxItemScaleAnimationDuration)
+				/* c1-allow: SelectorBar.xaml:109, `KeySpline="0,0,0,1"` on the `ScaleX` keyframe */
+				cubic-bezier(0, 0, 0, 1);
+	}
+
+	@starting-style {
+		.item[data-selected='true'] .pill {
+			opacity: 0;
+			transform: scaleX(1);
+		}
 	}
 
 	.item:hover:not(:disabled) {
@@ -292,7 +323,7 @@
 	}
 
 	@media (prefers-reduced-motion: reduce) {
-		.pill {
+		.item[data-selected='true'] .pill {
 			/* c1-allow: SelectorBar.xaml:109, this accessibility override replaces the selected-pill storyboard duration. */
 			transition-duration: 0s;
 		}

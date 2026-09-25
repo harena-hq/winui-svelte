@@ -1988,7 +1988,8 @@ export const COMBOBOX_KEYS = {
 	ComboBoxItemPillHeight: 'ComboBox item, the selection pill height',
 	ComboBoxItemPillCornerRadius: 'ComboBox item, the selection pill corner radius',
 	ComboBoxItemPillMinScale: 'ComboBox item, the selection pill pressed scale',
-	ComboBoxItemScaleAnimationDuration: 'ComboBox item, how long the pressed pill takes to shrink',
+	ComboBoxItemScaleAnimationDuration:
+		'ComboBox item, how long the pressed pill takes to shrink (and SelectorBar, the selected pill to grow)',
 
 	// Seeded only so the EXCLUDED list below can name them — the generator stops if an
 	// EXCLUDED key is not selected. The thirty-five pre-Fluent `*ThemeBrush` resources;
