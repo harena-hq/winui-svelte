@@ -97,7 +97,9 @@
 	// its device type, and it is still bits-ui's to open on the release. Dragged off, a touch
 	// press keeps drawing it until the finger lifts: bits-ui leaves a touch pointer its
 	// implicit capture, so the trigger hears no `pointerleave`, where upstream clears the flag
-	// as the contact moves off (:3222-3228, :3236).
+	// as the contact moves off (:3222-3228, :3236); by the same capture the lift, wherever it
+	// lands, reaches the trigger and opens the list — unless the browser took the slide as a pan
+	// and cancelled the pointer. That is WD-098; see docs/divergences.md.
 	let pressed = $state(false);
 	type TriggerProps = Record<string, unknown> & {
 		onpointerdown?: (event: PointerEvent) => void;
