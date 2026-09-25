@@ -993,9 +993,16 @@ test("the ComboBox trigger's fill stops at the inner border edge in every state"
 	const enter = async (state: TriggerState) => {
 		await cdp.send('CSS.forcePseudoState', {
 			nodeId,
-			forcedPseudoClasses:
-				state === 'hover' ? ['hover'] : state === 'pressed' ? ['hover', 'active'] : []
+			forcedPseudoClasses: state === 'hover' || state === 'pressed' ? ['hover'] : []
 		});
+		// Pressed is the component's pointer flag rather than `:active` (ComboBox.svelte's
+		// `pressed`), so it is set directly, the way the press handler sets it. A real press
+		// would leave the pointer on the trigger for every later state, against the forced
+		// `:hover`, and over the pixel this reads.
+		await first.evaluate(
+			(el, on) => (on ? el.setAttribute('data-pressed', '') : el.removeAttribute('data-pressed')),
+			state === 'pressed'
+		);
 		// `enter` sends the whole `forcedPseudoClasses` array on every call, `[]` included, so a
 		// reordering of `TRIGGER_STATES` cannot carry one state's forcing into the next. What
 		// these guards answer is whether the forcing took at all: a CDP session holding a
@@ -1013,12 +1020,15 @@ test("the ComboBox trigger's fill stops at the inner border edge in every state"
 			).toBe('default');
 		else if (state === 'rest')
 			expect(
-				await first.evaluate((el) => el.matches(':hover') || el.matches(':active')),
+				await first.evaluate((el) => el.matches(':hover') || el.hasAttribute('data-pressed')),
 				'the resting state is not resting'
 			).toBe(false);
 		else
 			expect(
-				await first.evaluate((el, s) => el.matches(`:${s === 'pressed' ? 'active' : s}`), state),
+				await first.evaluate(
+					(el, s) => (s === 'pressed' ? el.hasAttribute('data-pressed') : el.matches(`:${s}`)),
+					state
+				),
 				`the ${state} state did not take`
 			).toBe(true);
 	};
