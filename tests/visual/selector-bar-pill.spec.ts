@@ -33,8 +33,7 @@ const transitionOf = (pill: Locator) =>
 	});
 
 test('selecting animates the pill and deselecting does not', async ({ page }) => {
-	// Pinned, because a host whose system animation setting is off reports reduced motion and
-	// would turn this test into the next one.
+	// Pinned, so the reading does not depend on the host's animation setting.
 	await page.emulateMedia({ reducedMotion: 'no-preference' });
 	await page.goto(ROUTE);
 	const items = page.locator('[role="listbox"]').nth(BAR).locator('[role="option"]');
@@ -95,16 +94,16 @@ test('a bar that loads with a selection grows its pill', async ({ page }) => {
 	expect(running).toEqual(['opacity from 0', 'transform from scaleX(1)']);
 });
 
-test('under reduced motion selecting takes no time either', async ({ page }) => {
-	// The library's choice, not upstream's — a state's own keyframe animations run whatever the
-	// system animation setting — and the same one ComboBox's pressed pill makes.
+test('under reduced motion selecting still takes the storyboard’s time', async ({ page }) => {
+	// ADR 0016: `SelectedNormal`'s growth is the state's own storyboard, which the visual state
+	// manager runs whatever the system animation setting. Transitions are skipped and theme
+	// animations settled; a state's keyframes run.
 	await page.emulateMedia({ reducedMotion: 'reduce' });
 	await page.goto(ROUTE);
 	const items = page.locator('[role="listbox"]').nth(BAR).locator('[role="option"]');
 	await items.nth(1).click();
 	await expect(items.nth(1)).toHaveAttribute('data-selected', 'true');
 	const pill = items.nth(1).locator('.pill');
-	// One `0s` covers both properties: a shorter duration list repeats to fill the property list.
-	expect((await transitionOf(pill)).duration).toBe('0s');
-	expect(await pill.evaluate((el) => getComputedStyle(el).opacity)).toBe('1');
+	expect((await transitionOf(pill)).duration).toBe('0.167s, 0.167s');
+	await expect.poll(() => pill.evaluate((el) => getComputedStyle(el).opacity)).toBe('1');
 });

@@ -49,6 +49,7 @@
 
 <script lang="ts">
 	import ScrollView from './ScrollView.svelte';
+	import { scrollBehavior } from '../internal/motion';
 
 	let {
 		numberOfPages = -1, // PipsPager.idl:44-45
@@ -133,12 +134,14 @@
 	// `ScrollToCenterOfViewport` (PipsPager.cpp:240-253) brings the selected pip to the middle of
 	// the pip area with `AnimationDesired(true)` — upstream asks for an animation and names no
 	// duration, so this is the browser's own smooth scroll rather than a transcribed timing.
+	// `BringIntoViewport` animates only while the platform's animations are on (ADR 0016).
 	$effect(() => {
 		const pip = pipList?.querySelector(`[data-pip-index="${selectedPageIndex}"]`);
+		const behavior = scrollBehavior();
 		pip?.scrollIntoView(
 			orientation === 'horizontal'
-				? { block: 'nearest', inline: 'center', behavior: 'smooth' }
-				: { block: 'center', inline: 'nearest', behavior: 'smooth' }
+				? { block: 'nearest', inline: 'center', behavior }
+				: { block: 'center', inline: 'nearest', behavior }
 		);
 	});
 

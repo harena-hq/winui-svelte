@@ -957,4 +957,18 @@
 				var(--winui-CalendarViewFocusVisualSecondaryBrush);
 		pointer-events: none;
 	}
+
+	/* ADR 0016. Every change of view is a `DisplayModeStates` `VisualTransition`
+	   (CalendarView_themeresources.xaml:495-667), which the visual state manager skips to its
+	   end when the system's animations are off, delays included: the new view is simply
+	   there. */
+	@media (prefers-reduced-motion: reduce) {
+		.view-layer,
+		.calendar-view[data-display-mode='month'] .month-view,
+		.calendar-view[data-display-mode='year'] .year-view,
+		.calendar-view[data-display-mode='decade'] .decade-view {
+			transition-duration: 0s;
+			transition-delay: 0s;
+		}
+	}
 </style>

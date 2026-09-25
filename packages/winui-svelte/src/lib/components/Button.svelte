@@ -273,4 +273,14 @@
 	.root[data-variant='subtle']:disabled::after {
 		background: var(--winui-SubtleButtonBorderBrushDisabled);
 	}
+
+	/* ADR 0016. A `BrushTransition` runs only while the platform's animations are on. This one is
+	   on a `ContentPresenter` (Button_themeresources.xaml:174), which reads the switch before it
+	   sets one up (ContentPresenter.cpp:150); with it off, the new brush lands at once. */
+	@media (prefers-reduced-motion: reduce) {
+		.root,
+		.root::after {
+			transition-duration: 0s;
+		}
+	}
 </style>

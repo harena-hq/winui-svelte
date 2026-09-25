@@ -237,4 +237,14 @@
 			transform: translateX(166%);
 		}
 	}
+
+	/* ADR 0016. Entering `Paused` or `Error` is the state's own `ColorAnimation`
+	   (ProgressBar.xaml:86 and the `Paused` state after it) and keeps its time. Coming back to
+	   `Determinate` is a `VisualTransition` (:30, :35), which the visual state manager skips to
+	   its end when the system's animations are off, so the colour lands at once. */
+	@media (prefers-reduced-motion: reduce) {
+		.root:not([data-progress-state='paused']):not([data-progress-state='error']) .determinate {
+			transition-duration: 0s;
+		}
+	}
 </style>

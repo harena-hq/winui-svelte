@@ -267,6 +267,10 @@
 		border-style: solid;
 		border-color: var(--winui-ExpanderContentBorderBrush);
 		transform: translateY(0);
+		/* It runs under reduced motion too (ADR 0016). The four slides are the `ExpandStates`
+		   group's own storyboards (Expander.xaml:33, :49, :62, :78) with no `VisualTransition`,
+		   and the visual state manager does not skip a state's own storyboard when the
+		   system's animations are off. */
 		/* c1-allow: Expander.xaml:44, the opening SplineDoubleKeyFrame records 333ms and its key spline */
 		transition: transform 333ms cubic-bezier(0, 0, 0, 1);
 	}
@@ -320,12 +324,5 @@
 		transition-duration: 167ms;
 		/* c1-allow: Expander.xaml:57, the closing SplineDoubleKeyFrame records 167ms and its key spline */
 		transition-timing-function: cubic-bezier(1, 1, 0, 1);
-	}
-
-	@media (prefers-reduced-motion: reduce) {
-		.content {
-			/* c1-allow: Expander.xaml:44, this accessibility override replaces the opening storyboard duration */
-			transition-duration: 0s;
-		}
 	}
 </style>

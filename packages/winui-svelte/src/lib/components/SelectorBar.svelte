@@ -266,7 +266,11 @@
 		   (a bar inside a collapsed Expander regrows its pill on every expand, where
 		   upstream's grows on the first) and a keyed reorder that moves the node. Both
 		   replay the growth. The bar's own baseline is captured with animations finished,
-		   so it still shows the pill at 4. */
+		   so it still shows the pill at 4.
+
+		   Under reduced motion it still runs (ADR 0016): it is the `SelectedNormal` state's own
+		   storyboard, and the visual state manager skips transitions, not a state's own
+		   keyframes, when the system's animations are off. */
 		transition:
 			opacity var(--winui-ComboBoxItemScaleAnimationDuration)
 				/* c1-allow: SelectorBar.xaml:112, `KeySpline="0,0,0,1"` on the `Opacity` keyframe */
@@ -320,12 +324,5 @@
 				calc(var(--winui-FocusVisualPrimaryThickness) + var(--winui-FocusVisualSecondaryThickness))
 				var(--winui-SystemControlFocusVisualSecondaryBrush);
 		pointer-events: none;
-	}
-
-	@media (prefers-reduced-motion: reduce) {
-		.item[data-selected='true'] .pill {
-			/* c1-allow: SelectorBar.xaml:109, this accessibility override replaces the selected-pill storyboard duration. */
-			transition-duration: 0s;
-		}
 	}
 </style>

@@ -440,4 +440,14 @@
 		width: 12px;
 		height: 12px;
 	}
+
+	/* ADR 0016. The knob's slide is a `RepositionThemeAnimation` inside the `OffToOn` and
+	   `OnToOff` transitions (ToggleSwitch_themeresources.xaml:418, :423), and the visual state
+	   manager skips a transition to its end when the system's animations are off. The knob's
+	   size keyframes are the pointer states' own storyboards and keep running. */
+	@media (prefers-reduced-motion: reduce) {
+		.knob {
+			transition-duration: 0s;
+		}
+	}
 </style>

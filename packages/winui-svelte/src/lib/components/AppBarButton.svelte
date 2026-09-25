@@ -600,4 +600,13 @@
 	.root:disabled .accelerator {
 		color: var(--winui-AppBarButtonKeyboardAcceleratorTextForegroundDisabled);
 	}
+
+	/* ADR 0016. A `BrushTransition` runs only while the platform's animations are on. This one is
+	   on a `Border` (AppBarButton_themeresources.xaml:356), which reads the switch before it sets
+	   one up (Border.cpp:45); with it off, the new brush lands at once. */
+	@media (prefers-reduced-motion: reduce) {
+		.fill {
+			transition-duration: 0s;
+		}
+	}
 </style>
