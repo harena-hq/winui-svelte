@@ -27,8 +27,8 @@ type Page = import('@playwright/test').Page;
  * Every test grows the viewport to the route's content first. At 720 this page settles with
  * `scrollY` at 340 and the first trigger sits above the fold at `y = -158`, which is a clip a
  * page screenshot refuses outright; grown, there is no scroll to depend on and the geometry is
- * the one `snapshotAllThemes` photographs. `inner-border-edge.spec.ts:960` reaches the same
- * route the same way.
+ * the one `snapshotAllThemes` photographs. inner-border-edge.spec.ts's ComboBox trigger test
+ * reaches the same route the same way.
  *
  * The readings below are shapes and differences, never values, so one assertion covers three
  * themes — which matters here because the three do not agree: in high contrast the stroke is
@@ -124,9 +124,9 @@ async function light(page: Page, index: number) {
  * negative is outside. Read from a page screenshot rather than an element one, because the whole
  * subject of this spec lies outside the element.
  *
- * The horizontal edges of this layout are on integers — `inner-border-edge.spec.ts:375` records
- * the vertical half-pixel that is not — so a column offset addresses one device pixel. The
- * midline keeps every reading clear of the corner radius.
+ * The horizontal edges of this layout are on integers — the tab header test in
+ * inner-border-edge.spec.ts records the vertical half-pixel that is not — so a column offset
+ * addresses one device pixel. The midline keeps every reading clear of the corner radius.
  */
 async function midline(page: Page, trigger: Locator, offsets: number[]) {
 	const pad = 12;
@@ -337,8 +337,8 @@ test('the highlight takes upstream’s corner and not a concentric one', async (
 	// `ControlCornerRadius` is 4 and this box is 4 outside it, so a concentric corner would be 8;
 	// `ComboBoxHiglightBorderCornerRadius` is 7 (ComboBox_themeresources.xaml:343). Read from the
 	// computed style rather than a corner pixel: an element screenshot can sit half a device
-	// pixel off vertically — `inner-border-edge.spec.ts:375` — which moves a corner reading by a
-	// row, and differently on the two browsers.
+	// pixel off vertically — the tab header test in inner-border-edge.spec.ts — which moves a
+	// corner reading by a row, and differently on the two browsers.
 	await page.goto(ROUTE);
 	await growViewportToContent(page);
 	const trigger = await light(page, 0);

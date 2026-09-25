@@ -265,8 +265,9 @@ those three and not this one.
 **What none of the four could have been found by is the phrase the first sweep grepped for**,
 and the two reasons it failed them — a wrap for two of them and the wording for the other two —
 are measured in "The checkout grew and these claims did not" below. ToolTip's is the wrapping
-one: on the tree before `a8dd7f1`, `:78` ends "…restyles: there is no" and `:79` opens
-"implementation in the pin to read", so the phrase is present and no single line carries it.
+one: on the tree before `a8dd7f1`, one line of its module script ends "…restyles: there is no" and
+the next opens "implementation in the pin to read", so the phrase is present and no single line
+carries it.
 
 One candidate is left that this unit did not settle: `docs/keyboard.md`'s answer that the class
 which would decide question 9 "is not in the pin at all", where the checkout now carries
@@ -961,8 +962,9 @@ Typography page's ramp rows clamp at a 68px minimum and grow past it for the two
 where they measure 78 and 115 down a column clear of text. Those are satisfied by 25px of
 vertical padding around the sample.
 
-`apps/gallery/src/routes/(shell)/design/typography/+page.svelte:33` sets `padding: 12px 16px`,
-so ours is 24. The clamped rows are unaffected — `gallery-styles.css:31` gives them the same 68 —
+`.design-row` in `apps/gallery/src/routes/(shell)/design/typography/+page.svelte` sets
+`padding: 12px 16px`, so ours is 24. The clamped rows are unaffected — `.design-row` in
+`gallery-styles.css` gives them the same 68 —
 but Title Large comes out 77 against 78 and Display 114 against 115.
 
 Not fixed here, because 25 is an odd number for a symmetric pad and the fit cannot say whether
@@ -1032,7 +1034,8 @@ Sizes, for the controls the corrected sentences name: `ToolTip_Partial.cpp` 2584
 836, `AppBarToggleButton_Partial.cpp` 430, `AppBarSeparator_Partial.cpp` 84,
 `Flyout_partial.cpp` 112, and in `dxaml/phone/lib`, `Pivot_Partial.cpp` 4302,
 `PivotItem_Partial.cpp` 440, `PivotHeaderItem.cpp` 546. Those directories are not a discovery:
-`fetch.mjs:37-50` names each one and says what it holds — `dxaml/phone/lib` at `:50`.
+the header of `scripts/tokens/fetch.mjs` names each one and says what it holds, `dxaml/phone/lib`
+among them.
 
 **Why each pass missed what the next one found, and why no grep closes this.** The first pass
 searched the phrase it had just read — `no implementation in the pin`, which matches two files.
@@ -1043,25 +1046,26 @@ pre-fix tree, which is one pass of reading and returns thirteen of the fifteen t
 about.
 
 **Measured on `a8dd7f1^`, that phrase fails in two distinct ways and only one of them is the
-wording.** It matches three lines in two files, both documents — `docs/plan.md:737` and this
-file's `:136` and `:137` — and **not one component**, even though two of the four component
-members carry the phrase: prettier had folded it across a line break in `ToolTip.svelte` ("there
-is no" / "implementation in the pin to read") and in `Flyout.svelte` ("implementation in the" /
-"pin to read"). A line-oriented grep cannot see a phrase a formatter has wrapped. **That is C9's
-own defect, 63 minutes earlier** — `688bae1` at 16:26:32 repaired a per-line scan whose `\s*` the
-formatter wrapped, and `a8dd7f1` at 17:30:01 ran a per-line phrase search across prose the same
-formatter wraps; neither commit knew it was working in the other's corpus.
+wording.** It matches three lines in two files, both documents — the plan's line
+beginning "no implementation in the pin at all" and two in this file — and **not one component**,
+even though two of the four component members carry the phrase: prettier had folded it across a line
+break in `ToolTip.svelte` ("there is no" / "implementation in the pin to read") and in
+`Flyout.svelte` ("implementation in the" / "pin to read"). A line-oriented grep cannot see a phrase
+a formatter has wrapped. **That is C9's own defect, 63 minutes earlier** — `688bae1` at 16:26:32
+repaired a per-line scan whose `\s*` the formatter wrapped, and `a8dd7f1` at 17:30:01 ran a per-line
+phrase search across prose the same formatter wraps; neither commit knew it was working in the
+other's corpus.
 
 **The weaker token would have returned the sixteenth, and what reached the other three is
-partly on the record.** `ToolTip.svelte:79` on that tree is "implementation in the pin to read"
-— inside those 166 lines and carrying the word — so no instrument named here was too weak for
-it, and all four members carry `pin` on some line. What the phrase grep returned was the two
-documents and not one component, which is why the components arrived by other routes at all:
-`a8dd7f1`'s body attributes `CommandBar.svelte` and `Pivot.svelte` to its review rather than to
-its own search, and it names Pivot's route — that file was "pointing at a `surface.md` row this
-change rewrote", an inbound reference from the document under edit, and **not a route
-either instrument supplies.** (Both would have _returned_ Pivot's comment — it carries `pin`
-like the rest — which is the distinction: returning a line and arriving at it are different
+partly on the record.** The second of those two lines in `ToolTip.svelte`'s module script,
+"implementation in the pin to read", is inside those 166 lines and carries the word — so no
+instrument named here was too weak for it, and all four members carry `pin` on some line. What the
+phrase grep returned was the two documents and not one component, which is why the components
+arrived by other routes at all: `a8dd7f1`'s body attributes `CommandBar.svelte` and `Pivot.svelte`
+to its review rather than to its own search, and it names Pivot's route — that file was "pointing at
+a `surface.md` row this change rewrote", an inbound reference from the document under edit, and
+**not a route either instrument supplies.** (Both would have _returned_ Pivot's comment — it carries
+`pin` like the rest — which is the distinction: returning a line and arriving at it are different
 things.) `Flyout.svelte` was among the seven the pass
 found for itself — ten in that body's enumeration, three of them the review's — and how is not
 written down. Neither is what that pass ran over the components, and **this paragraph will not

@@ -31,9 +31,10 @@ import { growViewportToContent } from './themes';
  *
  * The reading is the pixel at the box's left edge, which is the ring these controls paint their
  * border brush into: the brushes are gradients, a gradient cannot be a `border-color`, so the
- * border is transparent and `::after` paints the ring (`TextBox.svelte:177` has that in full).
- * The claim is that the fill contributes nothing there, so the test forces `padding-box` and
- * asserts the pixel does not move — theme- and brush-independent, unlike asserting a colour.
+ * border is transparent and `::after` paints the ring (the comment above TextBox.svelte's
+ * `.box::after` has that in full). The claim is that the fill contributes nothing there, so the
+ * test forces `padding-box` and asserts the pixel does not move — theme- and brush-independent,
+ * unlike asserting a colour.
  *
  * **Forcing `border-box` is the positive control**, and it is what keeps the assertion from
  * being one that cannot disagree: an unclipped fill has to move that pixel, or the measurement
@@ -169,7 +170,8 @@ for (const control of CONTROLS)
 		// disagree is the render: these two themes paint this ring different colours, so until
 		// the stylesheet has followed the attribute the pixel is still the light one — and if
 		// the theme never took, this poll is what says so rather than a second light-theme pass
-		// reported as a dark one. `themes.ts:74-90` records what that costs when nobody waits.
+		// reported as a dark one. `snapshotAllThemes` in themes.ts records what that costs when
+		// nobody waits.
 		await expect.poll(() => ring(page, box), { timeout: 5000 }).not.toBe(light);
 		await measure('dark');
 	});
@@ -255,7 +257,8 @@ for (const control of PRESENTERS)
 		for (const theme of ['light', 'dark'] as const) {
 			await page.goto(control.route);
 			// The Gallery's layout re-applies the stored theme in a mount effect, so a `dataset`
-			// write alone is deleted again by hydration; `themes.ts:74-90` records what that cost.
+			// write alone is deleted again by hydration; `snapshotAllThemes` in themes.ts records
+			// what that cost.
 			// Write both channels, reload, and then wait on the **render** — reading `dataset`
 			// back would only report what the line above wrote.
 			await page.evaluate((t) => {
@@ -932,8 +935,8 @@ test("the AutoSuggestBox suggestion list's fill stops at the inner border edge",
  * and is dropped at computed-value time, leaving the initial `currentColor`. An opaque near-black
  * edge in light and an opaque white one in dark hide whatever the fill does beneath them.
  * `ComboBox.svelte` now paints the brush on `.trigger::after` and lets the border reserve the
- * width, as `Button.svelte:117` and `TextBox.svelte:189` already did, and the guest baselines
- * moved from 27 to 228 in light and from 255 to 47 in dark.
+ * width, as Button.svelte's `.root::after` and TextBox.svelte's `.box::after` already did, and the
+ * guest baselines moved from 27 to 228 in light and from 255 to 47 in dark.
  *
  * Pressed and disabled were never part of that: both alias `ControlStrokeColorDefaultBrush`
  * (`generic.xaml:680` and `generic.xaml:681`), a solid colour, so the declaration naming them

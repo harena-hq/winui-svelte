@@ -698,7 +698,7 @@
 	   this component's scope hash: a bare `:global(.close)` ties with the library's own `.root`
 	   at one class each and loses on order. Measured before this was qualified, the button came
 	   out 400px wide and in flow, which pushed the card's copy past its 320px clip. The same
-	   reasoning is written out at CopyButton.svelte:96-99. */
+	   reasoning is written out at the top of CopyButton.svelte's `<style>`. */
 	.card-detail :global(.close) {
 		position: absolute;
 		top: 8px;

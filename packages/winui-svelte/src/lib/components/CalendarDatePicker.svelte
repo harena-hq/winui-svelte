@@ -193,7 +193,7 @@
 	}
 
 	/* The border brush on the ring alone: the two-layer mask that punches out the content box,
-	   which TextBox.svelte:177 explains in full. */
+	   which the comment above TextBox.svelte's `.box::after` explains in full. */
 	.box::after {
 		content: '';
 		position: absolute;

@@ -664,9 +664,9 @@
 	   Frame it was navigated into, and this ScrollViewer is each sample Page's root.
 	   Upstream's ScrollViewer reserves layout width for an always-visible scrollbar
 	   (ScrollViewer_themeresources.xaml:31, ScrollBarSize 12 plus a 1px margin either side)
-	   where ours overlays it (ScrollView.svelte:387). Measured against 15-pagetrans.png that
-	   is 14px of the 31px by which this page's star columns come out wide; the rest is
-	   unattributed. It is the library ScrollViewer's to settle, not this page's. */
+	   where ours overlays it (ScrollView.svelte's `.bar-wrapper`). Measured against
+	   15-pagetrans.png that is 14px of the 31px by which this page's star columns come out wide;
+	   the rest is unattributed. It is the library ScrollViewer's to settle, not this page's. */
 	:global(.sample-scrollviewer) {
 		min-height: 600px;
 	}

@@ -426,7 +426,8 @@
 
 	/* ThemeTransitionPage.xaml:157 — ControlExample's Consolas inherits into its content. */
 	.popup-example {
-		/* c1-allow: ThemeTransitionPage.xaml:157; PageHeader.svelte:317-318 is the literal precedent. */
+		/* c1-allow: ThemeTransitionPage.xaml:157; PageHeader.svelte's `code` rule is the literal
+		   precedent. */
 		font-family: Consolas, monospace;
 		/* ThemeTransitionPage.xaml:158-197 — the `Button` and the `Popup` are two children of one
 		   `Grid` with no rows or columns, so both start at the cell's origin and `Margin="-75"` is

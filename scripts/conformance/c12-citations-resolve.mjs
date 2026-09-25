@@ -41,8 +41,9 @@ const MUST_RESOLVE = /\.(?:cpp|h|xaml|idl|resw|cs|svelte)$/;
 const SOURCES = ['packages/winui-svelte/src', 'apps/gallery/src', 'tests', 'scripts', 'docs'];
 // Wider than `SOURCES`, and on purpose: a citation names a manifest or a config as readily as
 // a component, and those sit at a package's root rather than under its `src`. Narrower roots
-// made `package.json:31` read as past the end of every `package.json`, because the only one
-// indexed was the smoke consumer's. `walk` skips build output and non-source files already.
+// made a line cited in the library's `package.json` read as past the end of every
+// `package.json`, because the only one indexed was the smoke consumer's. `walk` skips build
+// output and non-source files already.
 const INDEXED = ['packages', 'apps', 'tests', 'scripts', 'docs', '.upstream', 'data'];
 const CITING = /\.(svelte|ts|js|mjs|css|md)$/;
 
@@ -101,10 +102,11 @@ export async function run() {
 				// legitimately differ in length. **The failure runs both ways**, and which way
 				// depends on nothing but which copies happen to be indexed: the longest copy
 				// hides a line that is past the end of the file actually meant, and the
-				// shortest invents one that is not — `package.json:31` read as past the end of
-				// every `package.json` while the manifest it names has 65 lines, because the
-				// only copy indexed was the smoke consumer's 22-line one. What would fix it is a citation that carries
-				// enough path to name one file, and that is a convention rather than a gate.
+				// shortest invents one that is not — a line cited in the library's
+				// `package.json` read as past the end of every `package.json` while the
+				// manifest it names has 65 lines, because the only copy indexed was the smoke
+				// consumer's 22-line one. What would fix it is a citation that carries enough
+				// path to name one file, and that is a convention rather than a gate.
 				const n = Number(line);
 				const reach = await Promise.all(hits.map(async (h) => n <= (await lengthOf(h))));
 				if (!reach.some(Boolean)) {

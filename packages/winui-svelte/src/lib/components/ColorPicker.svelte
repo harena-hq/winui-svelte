@@ -108,8 +108,8 @@
 	);
 	// WinUI's `Color` is an `{A,R,G,B}` struct with no string form at all, and this library
 	// represents it as a CSS colour string — the same thing `ColorSpectrum`'s own `color` prop
-	// takes, parsed the same way (`ColorSpectrum.svelte:230-240`). One hazard follows and the
-	// prop's TSDoc repeats it: CSS's eight-digit hex is `#RRGGBBAA`, the reverse of the
+	// takes, parsed the same way (`seedFromCss` in `ColorSpectrum.svelte`). One hazard follows and
+	// the prop's TSDoc repeats it: CSS's eight-digit hex is `#RRGGBBAA`, the reverse of the
 	// `#AARRGGBB` a XAML literal writes, so a colour ported from XAML has to be reordered. Every
 	// other CSS notation is unambiguous.
 	//
@@ -750,8 +750,8 @@
 		align-self: start;
 		width: 132px;
 	}
-	/* These two rules exist only because of WD-042. `TextBox.svelte:157` floors its box at 318
-	   pixels, which is **our** number and not the pin's — upstream binds `MinWidth` to
+	/* These two rules exist only because of WD-042. TextBox.svelte's `.box` rule floors the box at
+	   318 pixels, which is **our** number and not the pin's — upstream binds `MinWidth` to
 	   `TextControlThemeMinWidth`, 64 (`generic.xaml:100`). Upstream's `Width="120"` and
 	   `Width="132"` sit comfortably above 64 and need no help there; against our 318 they are
 	   ignored, so the floor has to be lowered to the width the template asks for. Both rules

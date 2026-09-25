@@ -9,8 +9,8 @@ export const title = 'nothing cites a line in a generated source file';
 // A line number is a position, and a position holds only as long as nothing moves it. That is a
 // fair bet against a pinned checkout, which is fixed at a sha. It is a bad one against a file a
 // generator writes: seeding four keys in `scripts/tokens/manifest.mjs` renumbered 8101 of the
-// token layer's 8258 lines in one commit — the first of them lands after line 143 and everything
-// below shifted — and the diff that did it is output nobody reads. Every citation into the file
+// token layer's 8258 lines in one commit — everything below the first seeded key shifted — and
+// the diff that did it is output nobody reads. Every citation into the file
 // moved at once, silently, in a commit about a focus highlight.
 //
 // **Measured on the tree this landed in.** 3342 cited lines, and the three parts sum: 3207 into
@@ -62,9 +62,9 @@ export const title = 'nothing cites a line in a generated source file';
 // **And a generated file named by a phrase rather than by its filename is invisible**, which is
 // now this repository's dominant idiom because this commit made it so: eight of the ten rewritten
 // sentences no longer name the file at all, so a number added back into any of them would pass.
-// This comment is the demonstration — "the token layer's 8258 lines", "lands after line 143",
-// "cites 173" are all positions in generated output written in prose, and the gate they sit in
-// cannot see one of them. They are true of the tree at `daf565d` and are stated as history
+// This comment is the demonstration — "the token layer's 8258 lines" and "cites 173" are both
+// positions in generated output written in prose, and the gate they sit in
+// cannot see either. They are true of the tree at `daf565d` and are stated as history
 // rather than as addresses, which is the only thing keeping them honest.
 //
 // **And nothing here reads a commit message**, which is where this repository does much of its
@@ -85,14 +85,13 @@ export const title = 'nothing cites a line in a generated source file';
 // reviewed diff containing none of them. What makes the exemption safe today is that nothing has
 // bumped them, not that nothing can.
 //
-// **The thirteenth is outside the rule, and the boundary is deliberate.** This watches what the
-// two generators emit as *source* — the stylesheets and the symbol map the package ships. The
-// nine records under `data/` are generated too, by the extractors C8 answers for, and they
-// renumber wholesale on a re-extract in exactly the same way; `docs/plan.md` cites one of them
-// by position and that citation has already rotted. Bringing them in needs the extractors to
-// declare their outputs the way the two generators now do, and needs that citation's intent
-// reconstructed before it can be rewritten, so it is the next unit rather than this one — named
-// here so the gap reads as a decision.
+// **The thirteenth is outside this rule and inside C16's.** This watches what the two generators
+// emit as *source* — the stylesheets and the symbol map the package ships. The nine records
+// under `data/` are generated too, by the extractors C8 answers for, and renumber wholesale on a
+// re-extract in exactly the same way. They were left out here because the extractors do not
+// declare their outputs; C16 reaches them without asking, because it watches every file this
+// repository holds, and `docs/plan.md`'s one rotted citation into them was re-pointed by name
+// in the commit that wired C16.
 //
 // **There is no exemption channel**, unlike C1's `c1-allow:` or C5's declared divergences, and
 // that is a decision rather than an omission: all three generated files are name-indexed —
@@ -101,18 +100,15 @@ export const title = 'nothing cites a line in a generated source file';
 // without stable names inside it would need an exemption, and would not take this rule as
 // written.
 //
-// **The authored side is left out on blast radius, not on readership** — and not on rate either,
-// which runs the other way. Of the 98 citations into authored files of this tree, 83 name a
-// basename with exactly one copy, and **32 of those 83 point at content that has changed** since
-// the citation was written — one component sends a reader to another's line "for the full
-// explanation" and lands on a `color` declaration, and three more name blank lines. (Their
-// positions are not written out here, for the reason the whole paragraph is about.) A reviewer
-// reading the edit is plainly not catching them. What separates
-// the generated case is not that there are fewer of them — 32 in 83 is a worse rate than 6 in
-// 17 — but that one fourteen-line seed moves 8101 positions at once, in a diff no reviewer opens
-// and no reading of the citing file could have caught. The authored 32 accumulated one at a time
-// across reviewed edits, each in principle catchable, and they want their own unit rather than
-// this rule stretched over them.
+// **The authored side was left out on blast radius, not on readership**, and not on rate either,
+// which runs the other way. On the tree this landed in, 83 of the 98 citations into authored
+// files named a basename with exactly one copy, and **32 of those 83 pointed at content that had
+// changed** since the citation was written — a worse rate than 6 in 17. What separated the
+// generated case was that one fourteen-line seed moves 8101 positions at once, in a diff no
+// reviewer opens. The authored ones accumulated one at a time across reviewed edits, so they
+// were deferred to their own unit with a trigger: a second measurement showing the count had
+// grown. A day later it had, to 39, and that unit is C16 — the same rule, over every file
+// this repository holds, reusing `citationsIn` below.
 //
 // `tests/visual/generated-line-citation.spec.ts` is the half a passing run cannot show: every
 // form is planted there against `citationsIn`, including the evasions two reviewers reached for
@@ -160,9 +156,10 @@ const FILE =
 //
 // **The English spelling is the loosest of the three and it is a known false positive.** `line`
 // is an ordinary noun, and a sentence that mentions a generated file and then a drawn line, or
-// the line a declaration opens on, is flagged. `gradient-in-colour-property.spec.ts` already
-// writes "`border-color` opens on line 3", and escapes only because the name beside it is a
-// constant rather than the literal. When one does fire, the answer is to re-word the sentence:
+// the line a declaration opens on, is flagged. `gradient-in-colour-property.spec.ts` wrote one
+// such sentence and escaped only because the name beside it was a constant rather than the
+// literal; C16, which watches that spec's own import path, caught it, and it now counts its
+// lines in words. When one does fire, the answer is to re-word the sentence:
 // the alternative is leaving the plainest spelling of a position as the way around the rule.
 const POSITION = /(?:(?<![\w)]):|#L|\b[Ll]ines? )(\d+)(?![\dA-Za-z])/g;
 
@@ -177,8 +174,9 @@ const POSITION = /(?:(?<![\w)]):|#L|\b[Ll]ines? )(\d+)(?![\dA-Za-z])/g;
 //
 // **The false positive it accepts** is the mirror of the idiom it catches: a number elided from
 // an *earlier*-named file, landing after a generated mention in the same sentence, is read as
-// the generated file's. This repository writes that shape — `ComboBox.svelte` has "…for the
-// reason the trigger's own fill carries it at :273" — and nothing hits it today only because no
+// the generated file's. This repository writes that shape — ComboBox's focus highlight explains its
+// `padding-box` by "the reason the trigger's own fill carries it at" and a bare number — and
+// nothing hits it today only because no
 // such sentence also names a generated file. When one does it will be a false failure, and the
 // answer then is to re-word the sentence rather than to widen the window.
 const CAP = 240;
@@ -189,7 +187,7 @@ const SENTENCE = /\.(\s|$)/;
  * is a set of basenames; `files` is `{ path, text }` records. Pure, so the spec can hand it text
  * that would be a violation if it were written in the tree.
  */
-export function citationsIn(generated, files) {
+export function citationsIn(generated, files, kind = 'generated output') {
 	const sites = [];
 	let mentions = 0;
 
@@ -212,8 +210,8 @@ export function citationsIn(generated, files) {
 			for (const found of window.matchAll(POSITION))
 				sites.push(
 					found.index === 0
-						? `${at}  cites ${match[0]}${found[0]}, a position in generated output`
-						: `${at}  cites ${match[0]} and then ${found[0].trim()}, a position in generated output`
+						? `${at}  cites ${match[0]}${found[0]}, a position in ${kind}`
+						: `${at}  cites ${match[0]} and then ${found[0].trim()}, a position in ${kind}`
 				);
 		}
 	}
@@ -221,8 +219,14 @@ export function citationsIn(generated, files) {
 	return { sites, mentions };
 }
 
-const CITING = /\.(svelte|ts|js|mjs|css|md)$/;
-const SOURCES = ['packages/winui-svelte/src', 'apps/gallery/src', 'tests', 'scripts', 'docs'];
+export const CITING = /\.(svelte|ts|js|mjs|css|md)$/;
+export const SOURCES = [
+	'packages/winui-svelte/src',
+	'apps/gallery/src',
+	'tests',
+	'scripts',
+	'docs'
+];
 
 export async function run() {
 	const files = [];

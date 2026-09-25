@@ -297,7 +297,8 @@
 	   across a wider slot. So under a header wider than 32 the track stays 14 from the left edge
 	   rather than centring in the header's width. Measured on the harness before this line: a
 	   stretched container was 35 wide and put the 4px track at 15.5, one pixel right of every
-	   other specimen. `Slider.svelte:478-489` carries the same pair for the same reason. */
+	   other specimen. Slider.svelte's vertical `.container` rule carries the same pair for the
+	   same reason. */
 	.root[data-orientation='vertical'] .container {
 		flex: 1 1 auto;
 		flex-direction: column;

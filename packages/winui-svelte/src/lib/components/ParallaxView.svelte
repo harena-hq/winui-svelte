@@ -101,8 +101,8 @@
 	/** The scroller and every box down to where its content begins.
 	 *
 	 * A `ResizeObserver` on the viewport does not see content growing inside a fixed viewport,
-	 * which is why `ScrollView.svelte:224-233` observes its own content element beside it. Here
-	 * the source is somebody else's control and its content element has no name, so follow the
+	 * which is why ScrollView.svelte's `ResizeObserver` observes its own content element beside it.
+	 * Here the source is somebody else's control and its content element has no name, so follow the
 	 * single-child chain down to the first box that branches. Measured: without this, the
 	 * Gallery's first example sat frozen at the offset a zero-extent scroller produces, because
 	 * the `ListView`'s rows are laid out after this effect first runs and the only box that

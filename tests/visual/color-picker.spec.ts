@@ -10,14 +10,15 @@ const VALUE = '96';
 
 // One budget for the whole file, because every test here opens the same expensive page.
 // `/dev/color-picker` is 9014 pixels of fifteen specimens holding thirteen `ColorSpectrum`s,
-// and a spectrum paints its gradient pixel by pixel (`ColorSpectrum.svelte:280-305`, which is
-// what upstream's `SpectrumBrush` does). Two measurements set this number. Hydration alone is
-// 6.6s on a cold load, and longer under sixteen workers. The three-theme capture crossed 30s at
-// the third theme's viewport resize with the first two already photographed. A per-expectation
-// timeout cannot fix either one: the slider test below died at exactly 30s waiting for an
-// attribute it had been given 30s to wait for, because the test's own budget was the same
-// number. Splitting the route would be the other answer and is a harness unit of its own —
-// every specimen here is a branch this control has, so the page is not the thing that is wrong.
+// and a spectrum paints its gradient pixel by pixel (the `$effect` that draws
+// ColorSpectrum.svelte's canvas, which is what upstream's `SpectrumBrush` does). Two measurements
+// set this number. Hydration alone is 6.6s on a cold load, and longer under sixteen workers. The
+// three-theme capture crossed 30s at the third theme's viewport resize with the first two already
+// photographed. A per-expectation timeout cannot fix either one: the slider test below died at
+// exactly 30s waiting for an attribute it had been given 30s to wait for, because the test's own
+// budget was the same number. Splitting the route would be the other answer and is a harness unit
+// of its own — every specimen here is a branch this control has, so the page is not the thing
+// that is wrong.
 test.describe.configure({ timeout: 120_000 });
 
 test('ColorPicker in three themes', async ({ page }) => {

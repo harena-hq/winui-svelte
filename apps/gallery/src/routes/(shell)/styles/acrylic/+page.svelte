@@ -121,7 +121,7 @@
 			>. Acrylic Brush uses in-app acrylic. See
 			<!-- AcrylicPage.xaml:45 and AcrylicPage.xaml.cs:58-61 — a Click handler rather than a
 			     NavigateUri, and what it navigates to is the SystemBackdrops item. The cast is the
-			     one the shell's own layout makes at (shell)/+layout.svelte:29: an item id is a path
+			     one the shell's own layout makes in `chooseSuggestion`: an item id is a path
 			     the record produces, not a route literal the compiler knows, and today this one is
 			     still served by the [...path] placeholder route. -->
 			<Hyperlink navigateUri={resolve('/styles/systembackdrops' as `/${string}`)}

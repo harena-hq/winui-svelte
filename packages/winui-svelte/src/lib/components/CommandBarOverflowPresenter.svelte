@@ -70,18 +70,18 @@
 		   onto the wrapper it positions.
 
 		   **Inline it is not inert, and an earlier version of this comment said it was.**
-		   `CommandBarFlyout.svelte:259` renders this component as a direct child of its
-		   `.surface`, which is `display: grid` (`:285`), and **a grid item's `z-index` applies
+		   CommandBarFlyout.svelte renders this component as a direct child of its
+		   `.surface`, which is `display: grid`, and **a grid item's `z-index` applies
 		   and establishes a stacking context whatever its `position` is**. So inline this box
 		   is painted in the positive-z layer, above its sibling `.bar`.
 
 		   Checked, and it changes nothing drawn. The two are adjacent grid rows that abut:
 		   `CommandBarOverflowPresenterMargin` sits on `.items` below, not on this element, and
 		   neither margin is negative. The overflow's shadow is suppressed where it would cross
-		   the seam (`CommandBarFlyout.svelte:755`). The `ExpandedUp` state gives the overflow
-		   `order: -1` (`:649`), and grid paints in order-modified document order, so that state
-		   really does reverse which of the two is on top — with no geometric overlap, nothing
-		   renders differently either way.
+		   the seam (`.surface :global(.overflow)` in CommandBarFlyout.svelte). The `ExpandedUp`
+		   state gives the overflow `order: -1`, and grid paints in order-modified document order,
+		   so that state really does reverse which of the two is on top — with no geometric overlap,
+		   nothing renders differently either way.
 
 		   The lane agrees as far as it reaches: the full battery ran with this declaration in
 		   place and **no baseline moved**, this component's three among them. How far that

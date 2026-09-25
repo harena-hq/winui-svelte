@@ -122,8 +122,8 @@
 	// Chains the machine's own handler first, then writes back through `onValueChange`.
 	// The same shape AutoSuggestBox's `Combobox.Input` carries, and the same rule:
 	// writing a bare `oninput` after `{...props}` would replace the one the primitive put
-	// there and the controlled-value wiring would silently stop seeing keystrokes. See
-	// AutoSuggestBox.svelte:177 for the measurement.
+	// there and the controlled-value wiring would silently stop seeing keystrokes. See the
+	// comment beside AutoSuggestBox.svelte's `Combobox.Input` for the measurement.
 	function onInput(event: Event) {
 		const handler = (api.getInputProps() as { oninput?: ((event: Event) => void) | undefined })
 			.oninput;
@@ -173,9 +173,9 @@
 		{#if showSpin}
 			<!-- `IsTabStop="False"` on both spin buttons, for TextBox's delete-button reason:
 			     the input is the focus target, and a tab stop inside the box would break
-			     arrow-key traversal upstream expects. Cited rather than restated:
-			     TextBox.svelte:109 records the measurement. The two handlers call the
-			     machine's first and then add nothing: the button's repeat-on-hold is the
+			     arrow-key traversal upstream expects. Cited rather than restated: the
+			     comment on TextBox.svelte's delete button records the measurement. The two handlers
+			     call the machine's first and then add nothing: the button's repeat-on-hold is the
 			     machine's, not a timer here. `getIncrementTriggerProps()` and
 			     `getDecrementTriggerProps()` carry every handler and data attribute the
 			     state needs. The `disabled` attribute makes both buttons inert when the
@@ -219,7 +219,7 @@
 	/* The box: `NumberBox.xaml:27` reads the same `TextControl*` family TextBox reads in the
 	   same four states, and the box itself — its border, background, foreground and the
 	   masked gradient ring — is TextBox's, repeated. The same comments and the same
-	   measurement: see TextBox.svelte:138.
+	   measurement: see TextBox.svelte's `<style>`.
 
 	   No focus visual on the box: `NumberBox_themeresources.xaml` names neither
 	   `UseSystemFocusVisuals` nor `FocusVisualMargin`, so it never opts in — and the
@@ -253,7 +253,7 @@
 		   (aliases onto `TextControlElevationBorderBrush` and `…FocusedBrush`). A gradient
 		   named as a `border-color` is invalid CSS and silently dropped. The gradient is
 		   painted by `.box::after` so it sits on the ring alone — the same shape TextBox
-		   carries. See TextBox.svelte:159 for the full explanation. */
+		   carries. See the comment in TextBox.svelte's `.box` for the full explanation. */
 		border-color: transparent;
 		border-width: var(--winui-TextControlBorderThemeThickness);
 		border-radius: var(--winui-ControlCornerRadius);
@@ -318,7 +318,8 @@
 	}
 	/* The four `inset` values mirror `TextControlBorderThemeThicknessFocused` — `1px 1px 2px
 	   1px` — negated; `calc()` cannot negate a multi-value shorthand, so they are written
-	   out. See TextBox.svelte:236 for the measurement. */
+	   out. See the comment above TextBox.svelte's `.root:focus-within .box::after`
+	   for the measurement. */
 	.root:focus-within .box::after {
 		inset: -1px -1px -2px -1px;
 		padding: var(--winui-TextControlBorderThemeThicknessFocused);
@@ -331,7 +332,7 @@
 	   padding. Put it on the box instead and the spin button's
 	   `VerticalAlignment="Stretch"` stacks with it: measured 41px against the original's
 	   32 on the reference guest. The same shape AutoSuggestBox carries and the same
-	   reason: see AutoSuggestBox.svelte:381 for the measurement.
+	   reason: see AutoSuggestBox.svelte's `.input` for the measurement.
 
 	   `min-height: 0` and `max-height: 100%` cap the input at the box's content-area
 	   height. Without them the input grows past 30px to fit the row, and the box comes
@@ -467,8 +468,8 @@
 		   `border-color` and the declaration is silently dropped, so the border falls
 		   back to `currentColor` (here `RepeatButtonForeground`, near-black) and the
 		   buttons render with heavy black edges. The gradient is painted by
-		   `.spin-up::before` / `.spin-down::before` so it sits on the ring alone. See
-		   Button.svelte:69 for the full explanation. */
+		   `.spin-up::before` / `.spin-down::before` so it sits on the ring alone. See the
+		   comment in Button.svelte's `.root` for the full explanation. */
 		border-color: transparent;
 		border-radius: var(--winui-ControlCornerRadius);
 		background: var(--winui-RepeatButtonBackground);
@@ -496,13 +497,13 @@
 	   gradient cannot be a `border-color`. `::after` is already taken by the glyph, so
 	   the ring goes on `::before`. The mask is two layers composited so the content box
 	   is punched out, leaving the ring visible — the same technique `.box::after` uses
-	   just above and Button.svelte:113 describes in full. `inset` is the border
-	   thickness negated so the ring's box is the button's border box, and `border-radius:
-	   inherit` puts the two curves on top of each other.
+	   just above and the comment above Button.svelte's `.root::after` describes in full. `inset` is
+	   the border thickness negated so the ring's box is the button's border box, and
+	   `border-radius: inherit` puts the two curves on top of each other.
 
 	   `inset` is written out, not `calc(-1 * var(--winui-NumberBoxSpinButtonBorderThickness))`,
-	   because `calc()` cannot negate a multi-value shorthand. See TextBox.svelte:242 for
-	   the same shape and the same reason. */
+	   because `calc()` cannot negate a multi-value shorthand. See the comment above
+	   TextBox.svelte's `.root:focus-within .box::after` for the same shape and the same reason. */
 	.spin-up::before,
 	.spin-down::before {
 		content: '';

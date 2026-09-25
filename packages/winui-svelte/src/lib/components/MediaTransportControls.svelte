@@ -772,9 +772,9 @@
 	/* `progress-slider`, `buffering-progress`, `command-button` and `volume-slider` are class
 	   props handed to other components. A class passed across a component boundary carries no
 	   scope hash, so it is reached through `:global` under a local ancestor — the construction
-	   `TeachingTip.svelte`'s `.commands > .action` rule at `:434` already uses. Measured before this was written: without it the
-	   command buttons keep AppBarButton's own 68px width and the panel comes out 98 tall
-	   against the reference's 101. */
+	   `TeachingTip.svelte`'s `.commands > :global(.action)` rule already uses. Measured before this
+	   was written: without it the command buttons keep AppBarButton's own 68px width and the panel
+	   comes out 98 tall against the reference's 101. */
 	.timeline :global(.progress-slider) {
 		grid-row: 1;
 		grid-column: 1;

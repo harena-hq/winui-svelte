@@ -185,7 +185,7 @@
 
 		   **The two that are not floating layers are this one and `ContentDialog`**, and theirs
 		   applies where it sits. This component renders `Popover.ContentStatic` and writes the
-		   `child` snippet at `:94`; the snippet that would carry a wrapper is the primitive's
+		   `{#snippet child}` below; the snippet that would carry a wrapper is the primitive's
 		   own `popper`, one layer in inside bits-ui's `popover-content-static` component, and
 		   it hands `props` alone — so no `wrapperProps` reaches here at all. (No line number:
 		   C12 requires a cited `.svelte` to resolve and a dependency's does not, which is the

@@ -524,9 +524,9 @@ export const APPBARBUTTON_KEYS = {
 	// What that reasoning did not cover is three keys whose whole value is a reference to
 	// this one: `BreadcrumbBarItemThemeFontSize`, `CalendarViewDayItemFontSize` and
 	// `CalendarViewMonthYearItemFontSize`. While it was excluded, all three held the
-	// guaranteed-invalid value, so `BreadcrumbBar.svelte:216` and `:251` and
-	// `CalendarView.svelte:875` each read a font size that was invalid at computed-value time
-	// and fell back to `inherit`. Measured on the reference guest: the property came back
+	// guaranteed-invalid value, so BreadcrumbBar.svelte's `.root` and `.drop-row`
+	// and CalendarView.svelte's `.main` each read a font size that was invalid at computed-value
+	// time and fell back to `inherit`. Measured on the reference guest: the property came back
 	// empty and the rendered size was 14px by inheritance, which is the right number by luck
 	// rather than by the declaration. C9 does not catch it, because the name each component
 	// reads *is* emitted and C9 does not follow a token into its own value.
@@ -3186,7 +3186,7 @@ export const SYSTEM_COLORS = {
  * reason.
  *
  * The two stack values are kept in step: the `Text` row here is the same stack
- * `scripts/tokens/generate.mjs:590` builds for the type ramp's Text face, and ADR 0003
+ * `style()` in `scripts/tokens/generate.mjs` builds for the type ramp's Text face, and ADR 0003
  * fixes both — a future change to one is a change to the other.
  *
  * The values are ADR 0003's decision, not a new one: reference the family by name and embed

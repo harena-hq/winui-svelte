@@ -617,7 +617,7 @@
 	   `BackgroundSizing="InnerBorderEdge"` upstream is CSS's `background-clip:
 	   padding-box`; without it, a 1px border lets the background reach into the
 	   border ring and the ring renders with two colours. The `padding-box` clip
-	   is what `TextBox.svelte:176` writes for the same reason.
+	   is what TextBox.svelte's `.box` writes for the same reason.
 
 	   `max-width` is the pop-up's own, not a floor: `MaxWidth` is a ceiling, not
 	   a `MinWidth`, and the tooltip content wraps within it. The width itself

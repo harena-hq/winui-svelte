@@ -1300,7 +1300,8 @@ changes`.
 - **Why accepted**: both of upstream's keys are defined only in
   `.upstream/windows-app-sdk/generic.xaml` (`:1113`, `:3927`, `:6723`; `:276`, `:2903`, `:5887`;
   and `:264`, `:2889`, `:5873` respectively), and the token extractor reads only
-  `microsoft-ui-xaml/controls/dev/**/*_themeresources*.xaml` — `scripts/tokens/extract.mjs:12`.
+  `microsoft-ui-xaml/controls/dev/**/*_themeresources*.xaml` — `SOURCE` in
+  `scripts/tokens/extract.mjs`.
   Widening that source set is a change to the token layer, not to a page. The two substitutes
   are the modern flyout pair, defined in all three themes.
 - **Would reconsider if**: the token layer grows a source for the app SDK's own dictionary.
@@ -1974,8 +1975,8 @@ changes`.
   `:198`), and swap the hex box's between "RGB hex" and "HSV hex" with the representation
   (`:775-791`).
 - **We do**: render the visible label beside each box with no programmatic association.
-  `TextBox` spreads `...rest` onto its root `<div>` (`TextBox.svelte:74`) and `ComboBox` onto
-  its root `<div>` (`ComboBox.svelte:87-91`), so an `aria-label` passed from `ColorPicker`
+  `TextBox` spreads `...rest` onto its root `<div>` (`TextBox.svelte`'s markup) and `ComboBox`
+  onto its root `<div>` (`ComboBox.svelte`'s), so an `aria-label` passed from `ColorPicker`
   reaches a wrapper with no role rather than the `<input>` or the trigger.
 - **Why accepted**: naming them means giving `TextBox` and `ComboBox` a way to forward
   attributes to their inner interactive element, which changes two shipped components' public
@@ -2315,7 +2316,7 @@ changes`.
   reachable value and stops it before the band entirely. The two are wrong by the same half
   pixel in opposite directions, so the default is kept and nothing in the components clips.
 - **Why accepted**: the half pixel is not expressible at the rig's scale, and that was measured
-  rather than assumed. `tests/visual/fonts.spec.ts:53` asserts that the lane's
+  rather than assumed. `tests/visual/fonts.spec.ts`'s family test asserts that the lane's
   `devicePixelRatio` is one, so a CSS pixel is a device pixel and the fill's edge has nowhere to
   land between the two ends of the band. Seven constructions were tried against one specimen: a
   pseudo-element inset by half the stroke with and without a negative `z-index`, a background
@@ -2369,8 +2370,8 @@ changes`.
   same answer. In the standard density `ComboBoxPadding` leaves a 20-pixel slot in a 32-pixel
   row, so the offset is 5 + 0.5 and lands on 6; in the compact density the slot is 20 again,
   inside 24 with 1 above, and 1.5 lands on 2. That is on every trigger on every page at the
-  rig's scale of one (`tests/visual/fonts.spec.ts:53`); `LayoutRoundHelper` rounds in physical
-  pixels, so at other scales the figure differs but is still whole.
+  rig's scale of one (asserted in `tests/visual/fonts.spec.ts`); `LayoutRoundHelper` rounds in
+  physical pixels, so at other scales the figure differs but is still whole.
 - **We do**: centre it with flexbox, which computes the same 5.5 and keeps it. Chromium has no
   layout rounding, so the half pixel reaches paint, and which row the glyphs land on then
   follows the label's absolute position. Measured on the ComboBox dev route on the reference
