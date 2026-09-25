@@ -148,6 +148,7 @@
 	--winui-ComboBoxForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
 	--winui-ComboBoxForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
 	--winui-ComboBoxForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+	--winui-ComboBoxForegroundFocusedPressed: var(--winui-TextFillColorPrimaryBrush);
 	--winui-ComboBoxHeaderForeground: var(--winui-TextFillColorPrimaryBrush);
 	--winui-ComboBoxHeaderForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
 	--winui-ComboBoxPlaceHolderForeground: var(--winui-TextFillColorSecondaryBrush);
@@ -159,6 +160,10 @@
 	--winui-ComboBoxBorderBrushDisabled: var(--winui-ControlStrokeColorDefaultBrush);
 	--winui-ComboBoxDropDownGlyphForeground: var(--winui-TextFillColorSecondaryBrush);
 	--winui-ComboBoxDropDownGlyphForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+	--winui-ComboBoxDropDownGlyphForegroundFocused: var(--winui-TextFillColorSecondaryBrush);
+	--winui-ComboBoxDropDownGlyphForegroundFocusedPressed: var(
+		--winui-SystemControlHighlightAltBaseMediumHighBrush
+	);
 	--winui-ComboBoxDropDownForeground: var(--winui-TextFillColorPrimaryBrush);
 	--winui-ComboBoxDropDownBackground: var(--winui-AcrylicInAppFillColorDefaultBrush);
 	--winui-ComboBoxDropDownBorderBrush: var(--winui-SurfaceStrokeColorFlyoutBrush);
@@ -2396,6 +2401,7 @@
 	--winui-ComboBoxForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
 	--winui-ComboBoxForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
 	--winui-ComboBoxForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+	--winui-ComboBoxForegroundFocusedPressed: var(--winui-TextFillColorPrimaryBrush);
 	--winui-ComboBoxHeaderForeground: var(--winui-TextFillColorPrimaryBrush);
 	--winui-ComboBoxHeaderForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
 	--winui-ComboBoxPlaceHolderForeground: var(--winui-TextFillColorSecondaryBrush);
@@ -2407,6 +2413,10 @@
 	--winui-ComboBoxBorderBrushDisabled: var(--winui-ControlStrokeColorDefaultBrush);
 	--winui-ComboBoxDropDownGlyphForeground: var(--winui-TextFillColorSecondaryBrush);
 	--winui-ComboBoxDropDownGlyphForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+	--winui-ComboBoxDropDownGlyphForegroundFocused: var(--winui-TextFillColorSecondaryBrush);
+	--winui-ComboBoxDropDownGlyphForegroundFocusedPressed: var(
+		--winui-SystemControlHighlightAltBaseMediumHighBrush
+	);
 	--winui-ComboBoxDropDownForeground: var(--winui-TextFillColorPrimaryBrush);
 	--winui-ComboBoxDropDownBackground: var(--winui-AcrylicInAppFillColorDefaultBrush);
 	--winui-ComboBoxDropDownBorderBrush: var(--winui-SurfaceStrokeColorFlyoutBrush);
@@ -4316,6 +4326,7 @@
 		--winui-ComboBoxForegroundPointerOver: var(--winui-TextFillColorPrimaryBrush);
 		--winui-ComboBoxForegroundPressed: var(--winui-TextFillColorSecondaryBrush);
 		--winui-ComboBoxForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+		--winui-ComboBoxForegroundFocusedPressed: var(--winui-TextFillColorPrimaryBrush);
 		--winui-ComboBoxHeaderForeground: var(--winui-TextFillColorPrimaryBrush);
 		--winui-ComboBoxHeaderForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
 		--winui-ComboBoxPlaceHolderForeground: var(--winui-TextFillColorSecondaryBrush);
@@ -4327,6 +4338,10 @@
 		--winui-ComboBoxBorderBrushDisabled: var(--winui-ControlStrokeColorDefaultBrush);
 		--winui-ComboBoxDropDownGlyphForeground: var(--winui-TextFillColorSecondaryBrush);
 		--winui-ComboBoxDropDownGlyphForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
+		--winui-ComboBoxDropDownGlyphForegroundFocused: var(--winui-TextFillColorSecondaryBrush);
+		--winui-ComboBoxDropDownGlyphForegroundFocusedPressed: var(
+			--winui-SystemControlHighlightAltBaseMediumHighBrush
+		);
 		--winui-ComboBoxDropDownForeground: var(--winui-TextFillColorPrimaryBrush);
 		--winui-ComboBoxDropDownBackground: var(--winui-AcrylicInAppFillColorDefaultBrush);
 		--winui-ComboBoxDropDownBorderBrush: var(--winui-SurfaceStrokeColorFlyoutBrush);
@@ -6358,6 +6373,7 @@
 	--winui-ComboBoxForegroundPointerOver: var(--winui-SystemControlForegroundBaseHighBrush);
 	--winui-ComboBoxForegroundPressed: var(--winui-SystemControlForegroundBaseHighBrush);
 	--winui-ComboBoxForegroundDisabled: var(--winui-SystemControlDisabledBaseMediumLowBrush);
+	--winui-ComboBoxForegroundFocusedPressed: var(--winui-SystemControlForegroundBaseHighBrush);
 	--winui-ComboBoxHeaderForeground: var(--winui-SystemControlForegroundBaseHighBrush);
 	--winui-ComboBoxHeaderForegroundDisabled: var(--winui-SystemControlDisabledBaseMediumLowBrush);
 	--winui-ComboBoxPlaceHolderForeground: var(--winui-SystemControlPageTextBaseMediumBrush);
@@ -6372,6 +6388,10 @@
 	--winui-ComboBoxDropDownGlyphForeground: var(--winui-SystemColorButtonTextColor);
 	--winui-ComboBoxDropDownGlyphForegroundDisabled: var(
 		--winui-SystemControlDisabledBaseMediumLowBrush
+	);
+	--winui-ComboBoxDropDownGlyphForegroundFocused: var(--winui-SystemControlForegroundBaseHighBrush);
+	--winui-ComboBoxDropDownGlyphForegroundFocusedPressed: var(
+		--winui-SystemControlForegroundBaseHighBrush
 	);
 	--winui-ComboBoxDropDownForeground: var(--winui-SystemControlForegroundBaseHighBrush);
 	--winui-ComboBoxDropDownBackground: var(--winui-SystemControlBackgroundChromeMediumLowBrush);

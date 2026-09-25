@@ -748,3 +748,80 @@ test('under reduced motion the pressed pill still takes the storyboard’s time'
 	await expect.poll(() => pill.evaluate((el) => getComputedStyle(el).scale)).toBe('1 0.625');
 	await page.mouse.up();
 });
+
+/*
+ * The focus states' own brushes. A property holds one animation at a time, the one begun last
+ * takes it (see the comment on these rules in ComboBox.svelte), and a press on a
+ * keyboard-focused trigger begins `Pressed` and then `FocusedPressed`
+ * (ComboBox_Partial.cpp:850-905) — so while it is held, the focus state's brushes show.
+ */
+
+/** What `var(--winui-<token>)` computes to as a colour, on an element beside `near`. */
+const tokenColour = (near: Locator, token: string) =>
+	near.evaluate((el, token) => {
+		const probe = document.createElement('span');
+		probe.style.color = `var(--winui-${token})`;
+		el.parentElement!.append(probe);
+		const value = getComputedStyle(probe).color;
+		probe.remove();
+		return value;
+	}, token);
+
+const colourOf = (element: Locator) => element.evaluate((el) => getComputedStyle(el).color);
+
+test('a keyboard-focused trigger held down paints FocusedPressed’s three brushes', async ({
+	page
+}) => {
+	await page.goto(ROUTE);
+	await growViewportToContent(page);
+	// Light, where each of the three differs from `Pressed`'s: the content Primary against
+	// Secondary, the placeholder Secondary against Tertiary, the chevron its own brush against
+	// none. The first trigger shows its placeholder and the second a selection.
+	for (const [index, part, token, pressedToken, restToken] of [
+		[
+			0,
+			'.placeholder',
+			'ComboBoxPlaceHolderForegroundFocusedPressed',
+			'ComboBoxPlaceHolderForegroundPressed',
+			'ComboBoxPlaceHolderForeground'
+		],
+		[
+			1,
+			'.value',
+			'ComboBoxForegroundFocusedPressed',
+			'ComboBoxForegroundPressed',
+			'ComboBoxForeground'
+		],
+		[
+			1,
+			'.chevron',
+			'ComboBoxDropDownGlyphForegroundFocusedPressed',
+			'ComboBoxDropDownGlyphForeground',
+			'ComboBoxDropDownGlyphForeground'
+		]
+	] as const) {
+		const trigger = await light(page, index);
+		const element = trigger.locator(part);
+		await expect(element).toHaveCount(1);
+		const focusedPressed = await tokenColour(trigger, token);
+		expect(focusedPressed, `${part}: nothing here could disagree`).not.toBe(
+			await tokenColour(trigger, pressedToken)
+		);
+		// Focused alone paints what rest does. For the chevron, a rule that forgot the press
+		// shows here; `.value` and `.placeholder` alias the same colour focused, pressed or not,
+		// so for them that mistake has no pixel to show.
+		expect(await colourOf(element), `${part}, focused and not pressed`).toBe(
+			await tokenColour(trigger, restToken)
+		);
+		const box = (await trigger.boundingBox())!;
+		await page.mouse.move(box.x + box.width / 3, box.y + box.height / 2);
+		await page.mouse.down();
+		// The press has to leave the keyboard's focus state in place, or this is `Pressed`.
+		expect(await trigger.evaluate((el) => el.matches(':focus-visible'))).toBe(true);
+		await expect(trigger).toHaveAttribute('data-pressed');
+		expect(await colourOf(element), part).toBe(focusedPressed);
+		await page.mouse.move(box.x + box.width / 3, box.y + box.height + 120);
+		await page.mouse.up();
+		await expect(trigger).toHaveAttribute('aria-expanded', 'false');
+	}
+});

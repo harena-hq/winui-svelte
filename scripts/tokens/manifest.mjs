@@ -1922,25 +1922,31 @@ export const COMBOBOX_KEYS = {
 	ComboBoxBackgroundBorderThicknessFocused: 'ComboBox focus highlight, the stroke width',
 	ComboBoxHiglightBorderCornerRadius: 'ComboBox focus highlight, its corner radius',
 
-	// The four `Foreground` brushes — the `ContentPresenter`'s colour, holding the
+	// The five `Foreground` brushes — the `ContentPresenter`'s colour, holding the
 	// selected item's text.
 	ComboBoxForeground: 'ComboBox foreground, at rest',
 	ComboBoxForegroundPointerOver: 'ComboBox foreground, pointer over',
 	ComboBoxForegroundPressed: 'ComboBox foreground, pressed',
 	ComboBoxForegroundDisabled: 'ComboBox foreground, disabled',
+	ComboBoxForegroundFocusedPressed: 'ComboBox foreground, focused and pressed',
 
 	// The header in both states, and the placeholder at rest and pressed (the focus state is
 	// its own column). `ComboBoxPlaceHolderForegroundFocusedPressed` is the placeholder colour
-	// the `FocusedPressed` state drives; it is seeded, and no rule reads it yet.
+	// the `FocusedPressed` state drives, over `Pressed`'s.
 	ComboBoxHeaderForeground: 'ComboBox header text, at rest',
 	ComboBoxHeaderForegroundDisabled: 'ComboBox header text, disabled',
 	ComboBoxPlaceHolderForeground: 'ComboBox placeholder text, at rest',
 	ComboBoxPlaceHolderForegroundPressed: 'ComboBox placeholder text, pressed',
 	ComboBoxPlaceHolderForegroundFocusedPressed: 'ComboBox placeholder text, focused and pressed',
 
-	// The chevron in both states.
+	// The chevron at rest, disabled, and in the two focus states that name a brush of their
+	// own: `Focused`'s is a different key from rest's in high contrast only, and resolves to
+	// the same colour there; `FocusedPressed`'s is a different key in every theme, and a
+	// different colour outside high contrast.
 	ComboBoxDropDownGlyphForeground: 'ComboBox chevron, at rest',
 	ComboBoxDropDownGlyphForegroundDisabled: 'ComboBox chevron, disabled',
+	ComboBoxDropDownGlyphForegroundFocused: 'ComboBox chevron, keyboard focused',
+	ComboBoxDropDownGlyphForegroundFocusedPressed: 'ComboBox chevron, focused and pressed',
 
 	// The popup and its list: the popup's `Background`, `BorderBrush`, four layout keys, the
 	// list's `Foreground`, and the two layout keys the list's `ScrollViewer` and items reach.

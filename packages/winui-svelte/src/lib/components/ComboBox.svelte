@@ -443,8 +443,8 @@
 	/* The placeholder, visible only when the trigger has no selection. Its colour and
 	   weight both come from their own resources — `PlaceholderForeground` and
 	   `PlaceholderTextThemeFontWeight` — neither of which is the rest `Foreground`. Rest is
-	   this rule and `Pressed` is `.trigger[data-pressed] .placeholder` below; the focus
-	   states' brushes (`ComboBox_themeresources.xaml:473-499`) have no rule yet. */
+	   this rule, `Pressed` is `.trigger[data-pressed] .placeholder` below, and
+	   `FocusedPressed` is with the focus states' brushes after it. */
 	.placeholder {
 		color: var(--winui-ComboBoxPlaceHolderForeground);
 		font-weight: var(--winui-ComboBoxPlaceholderTextThemeFontWeight);
@@ -724,7 +724,8 @@
 	   `Opacity="0"` to 1 by the `Focused` state at :475. That state moves four other things.
 	   The `Pill` at :572 is one and is reproduced above. The other three are foregrounds, of
 	   which two alias, in this pin, exactly what their resting keys alias in all three
-	   dictionaries — only the chevron's differs, and only in high contrast. */
+	   dictionaries — only the chevron's differs, and only in high contrast, where it resolves
+	   to the same colour. Its rule is with the `FocusedPressed` brushes, below. */
 	.trigger:focus-visible {
 		outline: none;
 	}
@@ -827,6 +828,37 @@
 		color: var(--winui-ComboBoxPlaceHolderForegroundPressed);
 	}
 
+	/* ----- Trigger: the focus states' brushes. `Focused` (ComboBox_themeresources.xaml:473) and
+	   `FocusedPressed` (:488) are in `FocusStates`, and each animates the same three foregrounds
+	   `CommonStates` does. A property holds one animation at a time
+	   (`CTimeManager::SetAnimationOnProperty`, TimeManager.cpp:94-120, and the setter path that
+	   clears it for the same reason, VisualStateSetterHelper.cpp:126-142), and the one begun last
+	   takes it: `CStoryboard::Begin` begins each child synchronously, and `CAnimation::OnBegin`
+	   registers itself and calls `TakeControlOfTarget`, which releases the animation it replaces
+	   (`dxaml/xcp/core/animation/storyboard.cpp` and `animation.cpp` at the pinned commit, outside
+	   the sparse checkout). A press on a keyboard-focused trigger begins `Pressed` and then
+	   `FocusedPressed` in one `UpdateVisualState`, `CommonStates` first
+	   (ComboBox_Partial.cpp:850-905), so the focus state's three brushes are what show. Of
+	   `Focused`'s three keys only the chevron's differs from rest's, and only in high contrast,
+	   where the two resolve to the same button text colour; its rule is here for the key, and
+	   changes no pixel in this pin. `PointerOver` animates no chevron brush, so neither rule gives
+	   way under hover. Keyed like the Pill, on `:focus-visible` and a closed list. ----- */
+	.trigger:focus-visible:not([aria-expanded='true']) .chevron {
+		color: var(--winui-ComboBoxDropDownGlyphForegroundFocused);
+	}
+
+	.trigger[data-pressed]:focus-visible:not([aria-expanded='true']) .value {
+		color: var(--winui-ComboBoxForegroundFocusedPressed);
+	}
+
+	.trigger[data-pressed]:focus-visible:not([aria-expanded='true']) .placeholder {
+		color: var(--winui-ComboBoxPlaceHolderForegroundFocusedPressed);
+	}
+
+	.trigger[data-pressed]:focus-visible:not([aria-expanded='true']) .chevron {
+		color: var(--winui-ComboBoxDropDownGlyphForegroundFocusedPressed);
+	}
+
 	/* ----- Items: PointerOver (`data-highlighted` is bits-ui's hover/active key) ----- */
 	.item[data-highlighted] {
 		background: var(--winui-ComboBoxItemBackgroundPointerOver);
@@ -900,9 +932,10 @@
 	}
 
 	/* ----- Trigger: Disabled — written last so the four disabled brushes win over `:hover`
-	   and `data-pressed`. A disabled trigger must not light up under the pointer or while being
-	   pressed. `data-disabled` is on the root rather than `:disabled` because the root is
-	   a `<div>` and the trigger is a `<button>`. */
+	   and `data-pressed`. The `FocusedPressed` rules outweigh these and need not lose to them,
+	   since a disabled `<button>` takes no focus. A disabled trigger must not light up under the
+	   pointer or while being pressed. `data-disabled` is on the root rather than `:disabled`
+	   because the root is a `<div>` and the trigger is a `<button>`. */
 	.root[data-disabled] .trigger {
 		background: var(--winui-ComboBoxBackgroundDisabled) padding-box;
 		cursor: default;
