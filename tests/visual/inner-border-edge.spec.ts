@@ -975,7 +975,11 @@ test("the ComboBox trigger's fill stops at the inner border edge in every state"
 	// Disabled is a prop on the control rather than `:disabled` on the button — the rule keys on
 	// `.root[data-disabled]` — so it is a different specimen and not a forced pseudo-class.
 	// Forcing it on the first trigger would measure the resting style and report it as disabled.
-	const disabled = page.locator('.root[data-disabled] .trigger');
+	// The route has two disabled triggers; this reads the one carrying a selection, the
+	// `disabled` row, and not the one drawing its placeholder.
+	const disabled = page
+		.locator('.root[data-disabled] .trigger')
+		.filter({ hasNot: page.locator('.placeholder') });
 	await expect(disabled).toHaveCount(1);
 
 	const cdp = await page.context().newCDPSession(page);

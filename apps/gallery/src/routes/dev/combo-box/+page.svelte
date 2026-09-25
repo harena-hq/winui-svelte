@@ -4,10 +4,12 @@
 
 	/*
 	 * The component's own harness, not part of the Gallery reproduction: `/dev/` is where
-	 * each control gets a page to be photographed on, and nothing links to it. The eight
+	 * each control gets a page to be photographed on, and nothing links to it. The nine
 	 * rows below exercise the surface the unit names: nothing selected, a selection,
 	 * a header and a description, a disabled item, disabled, and an open popup so the
-	 * list reaches the snapshot, an item template, and an item template, open.
+	 * list reaches the snapshot, an item template, an item template, open, and, below the
+	 * last spacer, disabled with nothing selected, the one row that draws the disabled
+	 * placeholder.
 	 */
 
 	const colours: ComboBoxProps['items'] = [
@@ -51,9 +53,10 @@
 
 <h1 class="winui-TitleTextBlockStyle">ComboBox</h1>
 <p class="winui-BodyTextBlockStyle">
-	Eight rows, in the order the unit names them: placeholder, a selection, a header and a
-	description, an item that is itself disabled, the control as a whole disabled, and the popup open
-	so the list reaches the snapshot, an item template, and an item template, open.
+	Nine rows: placeholder, a selection, a header and a description, an item that is itself disabled,
+	the control as a whole disabled, the popup open so the list reaches the snapshot, an item
+	template, an item template, open, and the control disabled with nothing selected, the only row
+	that shows the disabled placeholder.
 </p>
 
 <h2 class="winui-SubtitleTextBlockStyle">placeholder</h2>
@@ -119,13 +122,19 @@
 
 <div class="tail"></div>
 
+<h2 class="winui-SubtitleTextBlockStyle">disabled, showing its placeholder</h2>
+<div class="row">
+	<ComboBox items={colours} placeholder="Pick a colour" disabled />
+</div>
+
 <style>
-	/* Two rows hold an open popup in the snapshot, and each needs 220 of clearance under it
-	   for a different reason. Under the last one, without room below it Floating UI flips the
-	   popup upward over the row above and hides that row from the baseline. Under the `open`
-	   row, the popup does not flip — it opens downward across the two rows that follow, and
-	   measured before this spacer it covered the `an item template` heading and the whole of
-	   its trigger, which is the one row that shows a template reaching the trigger. */
+	/* Two rows hold an open popup in the snapshot, and each needs 220 of clearance under it for a
+	   different reason. Under the templated one, without room below it Floating UI flips the popup
+	   upward over the row above and hides that row from the baseline; the same spacer keeps that
+	   popup off the disabled row placed after it. Under the `open` row, the popup does not flip —
+	   it opens downward across the two rows that follow, and measured before this spacer it covered
+	   the `an item template` heading and the whole of its trigger, which is the one row that shows
+	   a template reaching the trigger. */
 	.tail {
 		height: 220px;
 	}

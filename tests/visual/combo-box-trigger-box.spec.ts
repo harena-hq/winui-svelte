@@ -38,7 +38,7 @@ const CHEVRON_COLUMN = 38;
 /** `Margin="0,0,14,0"` on the `DropDownGlyph` at :582. */
 const CHEVRON_RIGHT = 14;
 
-const COUNT = 8;
+const COUNT = 9;
 
 /** The only row whose root is not its trigger: a header above, a description below. */
 const HEADERED = 2;

@@ -37,7 +37,7 @@ type Page = import('@playwright/test').Page;
 
 const ROUTE = '/dev/combo-box';
 
-/** The triggers on the route that can take focus. Index 4 is the disabled row, which declines. */
+/** The triggers on the route that can take focus. Indexes 4 and 8 are disabled and decline. */
 const ENABLED = [0, 1, 2, 3, 5, 6, 7];
 
 /**
