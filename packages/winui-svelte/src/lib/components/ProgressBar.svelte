@@ -92,7 +92,7 @@
 		>
 			<div class="clip">
 				<div class="track"></div>
-				<div class="determinate" style:width="{percent}%"></div>
+				<div class="determinate" style:width="round({percent}%, 1px)"></div>
 				<div class="indeterminate one"></div>
 				<div class="indeterminate two"></div>
 			</div>
@@ -111,10 +111,13 @@
 		box-sizing: border-box;
 	}
 
+	/* A size container, so the indeterminate keyframes below can travel in `cqw` — a share of
+	   the bar — rather than in `%` of an indicator whose width is now rounded. */
 	.clip {
 		position: relative;
 		height: var(--winui-ProgressBarMinHeight);
 		overflow: hidden;
+		container-type: inline-size;
 	}
 
 	.track {
@@ -140,12 +143,23 @@
 		opacity: 0;
 	}
 
+	/* The widths are whole pixels, at a device pixel ratio of 1. Upstream sets each indicator's
+	   `Width` from code — `maxIndicatorWidth * 0.4`, `* 0.6`, the whole of it for a paused or
+	   errored indeterminate bar, and the value's share of it for the determinate one
+	   (ProgressBar.cpp:174-196) — and layout rounding rounds a set `Width` before measure
+	   (framework.cpp:1234) through `CUIElement::LayoutRound` (uielement.cpp:4940), which is
+	   `XcpRound`, `floor(x + 0.5)` (inlined.cpp:127): the nearest pixel, halves up, as CSS
+	   `round()` does. A percentage keeps the fraction: a quarter of a 130-pixel bar is 32.5 here
+	   and 33 there. Upstream rounds to the rasterisation scale's pixel; this rounds to the CSS
+	   pixel, which is the same thing only at a ratio of 1. The travel of the indeterminate
+	   animation is not rounded upstream — its positions come from the unrounded width (:216-230) —
+	   and is not here: see the keyframes. */
 	.one {
-		width: 40%;
+		width: round(40%, 1px);
 	}
 
 	.two {
-		width: 60%;
+		width: round(60%, 1px);
 	}
 
 	.determinate {
@@ -202,7 +216,7 @@
 
 	.root[data-progress-state='indeterminate-paused'] .two,
 	.root[data-progress-state='indeterminate-error'] .two {
-		width: 100%;
+		width: round(100%, 1px);
 		opacity: 1;
 		transform: translateX(0);
 		animation-name: none;
@@ -216,25 +230,31 @@
 		background: var(--winui-ProgressBarErrorForegroundColor);
 	}
 
+	/* `ContainerAnimationStartPosition` and the three beside it (ProgressBar.cpp:226-230): -1 and
+	   3 times the 40% indicator's unrounded width, -1.5 and 1.66 times the 60% one's — so -40,
+	   120, -90 and 99.6 hundredths of the bar, written against the bar (`cqw`, `.clip` is the
+	   container) rather than against the indicator's own rounded width. The bar here is the
+	   content box; upstream's is the bordered `LayoutRoot` (:216), which differs by the border
+	   in high contrast — a gap older than these units. */
 	@keyframes indicator-one {
 		0% {
-			transform: translateX(-100%);
+			transform: translateX(-40cqw);
 			animation-timing-function: cubic-bezier(0.4, 0, 0.6, 1);
 		}
 		75%,
 		100% {
-			transform: translateX(300%);
+			transform: translateX(120cqw);
 		}
 	}
 
 	@keyframes indicator-two {
 		0%,
 		37.5% {
-			transform: translateX(-150%);
+			transform: translateX(-90cqw);
 			animation-timing-function: cubic-bezier(0.4, 0, 0.6, 1);
 		}
 		100% {
-			transform: translateX(166%);
+			transform: translateX(99.6cqw);
 		}
 	}
 
