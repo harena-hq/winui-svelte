@@ -1930,13 +1930,14 @@ export const COMBOBOX_KEYS = {
 	ComboBoxForegroundDisabled: 'ComboBox foreground, disabled',
 	ComboBoxForegroundFocusedPressed: 'ComboBox foreground, focused and pressed',
 
-	// The header in both states, and the placeholder at rest and pressed (the focus state is
-	// its own column). `ComboBoxPlaceHolderForegroundFocusedPressed` is the placeholder colour
-	// the `FocusedPressed` state drives, over `Pressed`'s.
+	// The header in both states, and the placeholder at rest, pressed and disabled (the focus
+	// state is its own column). `ComboBoxPlaceHolderForegroundFocusedPressed` is the placeholder
+	// colour the `FocusedPressed` state drives, over `Pressed`'s.
 	ComboBoxHeaderForeground: 'ComboBox header text, at rest',
 	ComboBoxHeaderForegroundDisabled: 'ComboBox header text, disabled',
 	ComboBoxPlaceHolderForeground: 'ComboBox placeholder text, at rest',
 	ComboBoxPlaceHolderForegroundPressed: 'ComboBox placeholder text, pressed',
+	ComboBoxPlaceHolderForegroundDisabled: 'ComboBox placeholder text, disabled',
 	ComboBoxPlaceHolderForegroundFocusedPressed: 'ComboBox placeholder text, focused and pressed',
 
 	// The chevron at rest, disabled, and in the two focus states that name a brush of their

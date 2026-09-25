@@ -931,7 +931,7 @@
 		color: var(--winui-ComboBoxItemForegroundSelectedDisabled);
 	}
 
-	/* ----- Trigger: Disabled — written last so the four disabled brushes win over `:hover`
+	/* ----- Trigger: Disabled — written last so the five disabled brushes win over `:hover`
 	   and `data-pressed`. The `FocusedPressed` rules outweigh these and need not lose to them,
 	   since a disabled `<button>` takes no focus. A disabled trigger must not light up under the
 	   pointer or while being pressed. `data-disabled` is on the root rather than `:disabled`
@@ -949,8 +949,11 @@
 		color: var(--winui-ComboBoxForegroundDisabled);
 	}
 
+	/* `Disabled` gives the placeholder its own brush (ComboBox_themeresources.xaml:464), where
+	   rest's was painted here until 2026-09-25 — nothing showed it, because the only disabled
+	   specimen had a selection. */
 	.root[data-disabled] .trigger .placeholder {
-		color: var(--winui-ComboBoxPlaceHolderForeground);
+		color: var(--winui-ComboBoxPlaceHolderForegroundDisabled);
 	}
 
 	.root[data-disabled] .trigger .chevron {
