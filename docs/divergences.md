@@ -2396,3 +2396,33 @@ changes`.
 - **Would reconsider if**: the token layer emits `ComboBoxPadding`'s four sides separately, and
   `1lh` is confirmed to resolve to the used `normal` line height in Chromium — together they are
   the three numbers `round()` would need to put the offset on 6 itself.
+
+### WD-098 — a touch that slides off a ComboBox stays pressed, and its lift still opens the list
+
+- **Control**: ComboBox's trigger, under touch only. Mouse and pen follow upstream.
+- **WinUI does**: end the press as the contact leaves the control. `OnPointerMoved` clears
+  `m_bIsPressed` when the pointer stops being over the control (`ComboBox_Partial.cpp:3222-3228`),
+  and `OnPointerExited` clears it too (:3236). `CommonStates` then leaves `Pressed` (:859), and a
+  release that finds the flag cleared does not open the list (:3458, :3529).
+- **We do**: keep the press. bits-ui 2.19's trigger leaves a touch pointer its implicit capture —
+  its press handler returns for touch before it releases capture (`select.svelte.js:740-746`) —
+  so the trigger hears no `pointerleave` while the contact is down, and `Pressed` holds until the
+  finger lifts. By the same capture the lift is delivered to the trigger wherever it lands, and
+  bits-ui's touch release opens the list (:758-769). All of that holds only while the browser does
+  not take the slide as a pan: the trigger sets no `touch-action`, and bits-ui's `preventDefault`
+  on the press does not stop one, so where the page can scroll along the slide the browser sends
+  `pointercancel`, the press is cleared, no release follows, and the result is upstream's. None
+  of this was observed: the harness has no touch screen.
+- **Why accepted**: releasing the capture ourselves would reach into the one branch bits-ui keeps
+  for touch, whose purpose is to keep a list from opening under a finger that meant to scroll,
+  and the reference machine has no touch input to check the result against.
+- **What it is worth**: a finger that lands on a trigger and slides off it before lifting, where
+  the page cannot scroll that way or an ancestor sets a `touch-action` that forbids that pan,
+  leaves the trigger drawn pressed and then opens the list, where upstream would do neither. A
+  cancelled contact clears `Pressed` (`tests/visual/combo-box-open.spec.ts`). A touch that lifts
+  where it landed matches upstream: for the non-editable ComboBox this library renders, upstream
+  opens on the release under touch as under a mouse (`PerformPointerUpAction`, :3529); its
+  open-on-focus path for touch (:2365-2369) is inside the editable-only branch of `OnGotFocus`
+  (:2308).
+- **Would reconsider if**: a touch device can drive the reference Gallery, or bits-ui releases the
+  capture for touch itself.
