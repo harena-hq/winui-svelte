@@ -108,8 +108,9 @@ export async function snapshotAllThemes(
 		// level that a page whose anti-aliasing genuinely moves between renders cannot be absorbed
 		// there without re-opening the hole that line closes. A count is the narrower instrument:
 		// it raises how many differing pixels this one page may carry, leaving what counts as a
-		// differing pixel where every other page has it. Only `path.spec.ts` carries one, and it
-		// states both the noise it was measured against and what it gives up.
+		// differing pixel where every other page has it. Two pages carry one, `path.spec.ts` and
+		// the MediaTransportControls capture in `media-player-element.spec.ts`, and each states
+		// the noise it was measured against and what it gives up.
 		await expect(page.locator('body')).toHaveScreenshot(`${component}-${theme}.png`, options);
 	}
 }
