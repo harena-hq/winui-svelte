@@ -209,8 +209,12 @@
 					     attribute replaces the one bits-ui put there, and the arrow keys stop
 					     moving through the suggestions and Escape stops closing the list, with
 					     nothing failing loudly enough to notice. -->
+					<!-- `autocomplete="off"` after the spread: bits-ui sets none, and without it the
+					     browser drops its own history of the field under the box — a list the
+					     original Gallery's search box does not show. -->
 					<input
 						{...props}
+						autocomplete="off"
 						bind:this={ref}
 						class="input"
 						oninput={(event) => {
