@@ -151,6 +151,7 @@
 	--winui-ComboBoxHeaderForeground: var(--winui-TextFillColorPrimaryBrush);
 	--winui-ComboBoxHeaderForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
 	--winui-ComboBoxPlaceHolderForeground: var(--winui-TextFillColorSecondaryBrush);
+	--winui-ComboBoxPlaceHolderForegroundPressed: var(--winui-TextFillColorTertiaryBrush);
 	--winui-ComboBoxPlaceHolderForegroundFocusedPressed: var(--winui-TextFillColorSecondaryBrush);
 	--winui-ComboBoxBorderBrush: var(--winui-ControlElevationBorderBrush);
 	--winui-ComboBoxBorderBrushPointerOver: var(--winui-ControlElevationBorderBrush);
@@ -2398,6 +2399,7 @@
 	--winui-ComboBoxHeaderForeground: var(--winui-TextFillColorPrimaryBrush);
 	--winui-ComboBoxHeaderForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
 	--winui-ComboBoxPlaceHolderForeground: var(--winui-TextFillColorSecondaryBrush);
+	--winui-ComboBoxPlaceHolderForegroundPressed: var(--winui-TextFillColorTertiaryBrush);
 	--winui-ComboBoxPlaceHolderForegroundFocusedPressed: var(--winui-TextFillColorSecondaryBrush);
 	--winui-ComboBoxBorderBrush: var(--winui-ControlElevationBorderBrush);
 	--winui-ComboBoxBorderBrushPointerOver: var(--winui-ControlElevationBorderBrush);
@@ -4317,6 +4319,7 @@
 		--winui-ComboBoxHeaderForeground: var(--winui-TextFillColorPrimaryBrush);
 		--winui-ComboBoxHeaderForegroundDisabled: var(--winui-TextFillColorDisabledBrush);
 		--winui-ComboBoxPlaceHolderForeground: var(--winui-TextFillColorSecondaryBrush);
+		--winui-ComboBoxPlaceHolderForegroundPressed: var(--winui-TextFillColorTertiaryBrush);
 		--winui-ComboBoxPlaceHolderForegroundFocusedPressed: var(--winui-TextFillColorSecondaryBrush);
 		--winui-ComboBoxBorderBrush: var(--winui-ControlElevationBorderBrush);
 		--winui-ComboBoxBorderBrushPointerOver: var(--winui-ControlElevationBorderBrush);
@@ -6358,6 +6361,7 @@
 	--winui-ComboBoxHeaderForeground: var(--winui-SystemControlForegroundBaseHighBrush);
 	--winui-ComboBoxHeaderForegroundDisabled: var(--winui-SystemControlDisabledBaseMediumLowBrush);
 	--winui-ComboBoxPlaceHolderForeground: var(--winui-SystemControlPageTextBaseMediumBrush);
+	--winui-ComboBoxPlaceHolderForegroundPressed: var(--winui-SystemControlPageTextBaseMediumBrush);
 	--winui-ComboBoxPlaceHolderForegroundFocusedPressed: var(
 		--winui-SystemControlPageTextBaseMediumBrush
 	);

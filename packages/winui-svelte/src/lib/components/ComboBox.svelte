@@ -88,19 +88,27 @@
 	// bits-ui's `pointerup` already, and a press while the list is open still reaches bits-ui,
 	// which closes it. The `ctrlKey` gate is bits-ui's (`select.svelte.js:747-749`), kept so a
 	// Ctrl-click does here what it did before; upstream has no such condition.
-	let pressed = false;
+	//
+	// The same flag is what draws `Pressed`, as `m_bIsPressed` is upstream: once `Disabled`
+	// and the inline `Highlighted` are ruled out, `CommonStates` picks `Pressed` on it alone
+	// (:850-859), so a mouse or pen press dragged off the control stops drawing it. CSS
+	// `:active` holds while the button is down wherever the pointer goes. A touch press draws
+	// it too, since the press handler asks the pointer's `IsLeftButtonPressed` (:3298) and not
+	// its device type, and it is still bits-ui's to open on the release. Dragged off, a touch
+	// press keeps drawing it until the finger lifts: bits-ui leaves a touch pointer its
+	// implicit capture, so the trigger hears no `pointerleave`, where upstream clears the flag
+	// as the contact moves off (:3222-3228, :3236).
+	let pressed = $state(false);
 	type TriggerProps = Record<string, unknown> & {
 		onpointerdown?: (event: PointerEvent) => void;
 		onpointerup?: (event: PointerEvent) => void;
 	};
-	function opensOnRelease(event: PointerEvent) {
-		return (
-			!disabled && !open && event.pointerType !== 'touch' && event.button === 0 && !event.ctrlKey
-		);
+	function presses(event: PointerEvent) {
+		return !disabled && !open && event.button === 0 && !event.ctrlKey;
 	}
 	function triggerPointerDown(props: TriggerProps, event: PointerEvent) {
-		pressed = opensOnRelease(event);
-		if (!pressed) return props.onpointerdown?.(event);
+		pressed = presses(event);
+		if (!pressed || event.pointerType === 'touch') return props.onpointerdown?.(event);
 		// What bits-ui's handler does before it opens (`select.svelte.js:743-746`): a pointer
 		// holding implicit capture would never leave the trigger, and its release would land
 		// here wherever it lifted.
@@ -109,7 +117,7 @@
 	}
 	function triggerPointerUp(props: TriggerProps, event: PointerEvent) {
 		props.onpointerup?.(event);
-		if (pressed && opensOnRelease(event)) props.onpointerdown?.(event);
+		if (pressed && event.pointerType !== 'touch' && presses(event)) props.onpointerdown?.(event);
 		pressed = false;
 	}
 
@@ -163,6 +171,7 @@
 			{#snippet child({ props })}
 				<button
 					{...props}
+					data-pressed={pressed || undefined}
 					onpointerdown={(event) => triggerPointerDown(props, event)}
 					onpointerup={(event) => triggerPointerUp(props, event)}
 					onpointerleave={() => (pressed = false)}
@@ -433,11 +442,9 @@
 
 	/* The placeholder, visible only when the trigger has no selection. Its colour and
 	   weight both come from their own resources — `PlaceholderForeground` and
-	   `PlaceholderTextThemeFontWeight` — neither of which is the rest `Foreground`. The
-	   focused-pressed state of the placeholder carries its own brush, but the trigger
-	   reads it through a `Binding` rather than through a `VisualState` selector, so
-	   picking the right focus selector requires the focus visual on the trigger below.
-	   Reproducing the two brushes here is the closest equivalent the scoped CSS has. */
+	   `PlaceholderTextThemeFontWeight` — neither of which is the rest `Foreground`. Rest is
+	   this rule and `Pressed` is `.trigger[data-pressed] .placeholder` below; the focus
+	   states' brushes (`ComboBox_themeresources.xaml:473-499`) have no rule yet. */
 	.placeholder {
 		color: var(--winui-ComboBoxPlaceHolderForeground);
 		font-weight: var(--winui-ComboBoxPlaceholderTextThemeFontWeight);
@@ -802,17 +809,22 @@
 		color: var(--winui-ComboBoxDropDownGlyphForeground);
 	}
 
-	/* ----- Trigger: Pressed ----- */
-	.trigger:active {
+	/* ----- Trigger: Pressed (ComboBox_themeresources.xaml:430) — keyed on `data-pressed`,
+	   the pointer flag the script keeps, not on `:active`; see `pressed`. ----- */
+	.trigger[data-pressed] {
 		background: var(--winui-ComboBoxBackgroundPressed) padding-box;
 	}
 
-	.trigger:active::after {
+	.trigger[data-pressed]::after {
 		background: var(--winui-ComboBoxBorderBrushPressed);
 	}
 
-	.trigger:active .value {
+	.trigger[data-pressed] .value {
 		color: var(--winui-ComboBoxForegroundPressed);
+	}
+
+	.trigger[data-pressed] .placeholder {
+		color: var(--winui-ComboBoxPlaceHolderForegroundPressed);
 	}
 
 	/* ----- Items: PointerOver (`data-highlighted` is bits-ui's hover/active key) ----- */
@@ -888,7 +900,7 @@
 	}
 
 	/* ----- Trigger: Disabled — written last so the four disabled brushes win over `:hover`
-	   and `:active`. A disabled trigger must not light up under the pointer or while being
+	   and `data-pressed`. A disabled trigger must not light up under the pointer or while being
 	   pressed. `data-disabled` is on the root rather than `:disabled` because the root is
 	   a `<div>` and the trigger is a `<button>`. */
 	.root[data-disabled] .trigger {

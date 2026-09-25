@@ -1929,13 +1929,13 @@ export const COMBOBOX_KEYS = {
 	ComboBoxForegroundPressed: 'ComboBox foreground, pressed',
 	ComboBoxForegroundDisabled: 'ComboBox foreground, disabled',
 
-	// The header in both states, and the placeholder in the two states this control
-	// paints (the focus state is its own column). `ComboBoxPlaceHolderForegroundFocusedPressed`
-	// is the placeholder colour the `FocusedPressed` state drives; the trigger reaches it
-	// when it has focus and is pressed.
+	// The header in both states, and the placeholder at rest and pressed (the focus state is
+	// its own column). `ComboBoxPlaceHolderForegroundFocusedPressed` is the placeholder colour
+	// the `FocusedPressed` state drives; it is seeded, and no rule reads it yet.
 	ComboBoxHeaderForeground: 'ComboBox header text, at rest',
 	ComboBoxHeaderForegroundDisabled: 'ComboBox header text, disabled',
 	ComboBoxPlaceHolderForeground: 'ComboBox placeholder text, at rest',
+	ComboBoxPlaceHolderForegroundPressed: 'ComboBox placeholder text, pressed',
 	ComboBoxPlaceHolderForegroundFocusedPressed: 'ComboBox placeholder text, focused and pressed',
 
 	// The chevron in both states.
