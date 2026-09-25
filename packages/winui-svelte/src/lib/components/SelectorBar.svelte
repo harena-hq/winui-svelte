@@ -56,6 +56,24 @@
 		...rest
 	}: SelectorBarProps = $props();
 
+	// The pill's growth on load is keyed on this rather than on `@starting-style` alone. With
+	// `@starting-style` alone, the reference machine started no transition at all — not one
+	// `transitionrun` — on 6 of 20 loads of `/dev/selector-bar`, for pills already in the
+	// prerendered page; the likeliest reading is that an element styled in the document's first
+	// style pass has no starting style applied. Two frames after mount, so the pill has been
+	// styled at rest once before the flag moves it; see the `.root:not([data-applied])` rule.
+	let applied = $state(false);
+	$effect(() => {
+		let second = 0;
+		const first = requestAnimationFrame(() => {
+			second = requestAnimationFrame(() => (applied = true));
+		});
+		return () => {
+			cancelAnimationFrame(first);
+			cancelAnimationFrame(second);
+		};
+	});
+
 	const isItemDisabled = (item: SelectorBarItemData) => disabled || item.disabled === true;
 	const isSelected = (item: SelectorBarItemData) => item.id === selected;
 	const hasSelectedItem = () => items.some((item) => isSelected(item) && !isItemDisabled(item));
@@ -132,6 +150,7 @@
 	bind:this={ref}
 	class={['root', className]}
 	{style}
+	data-applied={applied || undefined}
 	role="listbox"
 	aria-orientation="horizontal"
 	onfocusin={handleFocusIn}
@@ -256,17 +275,18 @@
 		   half — on `.pill` it ran on the way out as well, which upstream never does.
 
 		   It also runs on load. `ItemContainer`, which `SelectorBarItem` derives from, calls
-		   `UpdateVisualState(true)` from `OnApplyTemplate` (`ItemContainer.cpp:76`), so an
-		   item selected when its template applies enters `SelectedNormal` and its storyboard
-		   grows the pill from 1 to 4. An element with no earlier style has nothing to
-		   transition from, so the `@starting-style` below supplies the rest values; it wins
-		   over this rule by coming after it at the same specificity. The browser has no
-		   notion of a template being applied, though, and gives an element no earlier style
-		   in two more cases upstream does not re-apply one: coming out of `display: none`
-		   (a bar inside a collapsed Expander regrows its pill on every expand, where
-		   upstream's grows on the first) and a keyed reorder that moves the node. Both
-		   replay the growth. The bar's own baseline is captured with animations finished,
-		   so it still shows the pill at 4.
+		   `UpdateVisualState(true)` from `OnApplyTemplate` (`ItemContainer.cpp:76`), so an item
+		   selected when its template applies enters `SelectedNormal` and its storyboard grows the
+		   pill from 1 to 4. On load that is the `data-applied` rule below: the pill is held at its
+		   rest values until the bar has been styled once, then released. An element inserted later
+		   has no earlier style to transition from, and the `@starting-style` below supplies the
+		   rest values for it; it wins over this rule by coming after it at the same specificity.
+		   The browser has no notion of a template being applied, though, and gives an element no
+		   earlier style in two more cases upstream does not re-apply one: coming out of `display:
+		   none` (a bar inside a collapsed Expander regrows its pill on every expand, where
+		   upstream's grows on the first) and a keyed reorder that moves the node. Both replay the
+		   growth. The bar's own baseline is captured with animations finished, so it still shows
+		   the pill at 4.
 
 		   Under reduced motion it still runs (ADR 0016): it is the `SelectedNormal` state's own
 		   storyboard, and the visual state manager skips transitions, not a state's own
@@ -282,6 +302,17 @@
 
 	@starting-style {
 		.item[data-selected='true'] .pill {
+			opacity: 0;
+			transform: scaleX(1);
+		}
+	}
+
+	/* Until the bar has been styled once, a selected pill holds the rest values its storyboard
+	   starts from; when `data-applied` arrives, the selected rule takes over and the transition
+	   runs, on every load. Only where script runs, since only script brings the flag; a page
+	   whose script is slow or fails shows the selection by its brushes alone until then. */
+	@media (scripting: enabled) {
+		.root:not([data-applied]) .item[data-selected='true'] .pill {
 			opacity: 0;
 			transform: scaleX(1);
 		}
