@@ -411,4 +411,26 @@
 		gap: 6px;
 		margin: 12px;
 	}
+
+	/* ADR 0016, applied to this page: each implicit transition the sample sets —
+	   `OpacityTransition`, `RotationTransition`, `ScaleTransition`, `TranslationTransition` — plays
+	   only while the switch is on, which the property's setter reads
+	   (`components/elements/UIElement.cpp`: `SetTranslation` :2146, `SetRotation` :2239, `SetScale`
+	   :2319, `BeforeSetLocalOpacity` :2589), and so do the two `BrushTransition`s behind the
+	   background samples, one on a `ContentPresenter` and one on a `Grid`
+	   (ContentPresenter.cpp:150, panel.cpp:71). So under `prefers-reduced-motion` every change here
+	   lands at once. `!important`, because this is one rule for every transitioning element on the
+	   page, over rules of every weight. `.opacity-rectangle` is named apart because the Rectangle
+	   component renders it. */
+	@media (prefers-reduced-motion: reduce) {
+		*,
+		*::before,
+		*::after,
+		:global(.opacity-rectangle) {
+			animation-duration: 0s !important;
+			animation-delay: 0s !important;
+			transition-duration: 0s !important;
+			transition-delay: 0s !important;
+		}
+	}
 </style>

@@ -73,17 +73,44 @@ ways.
 | ProgressRing, RefreshContainer, RefreshVisualizer, AnimatedVisualPlayer | spin, settle, playback                | composition animations started in code, which read no switch                                                   | runs                                         |
 | ParallaxView                                                            | scroll-linked offset                  | an expression tied to the scroll position, not a timed animation                                               | n/a                                          |
 
+**The Gallery's motion pages follow the same rule.** Their samples run on the same mechanisms:
+
+- The theme-transition samples are layout transitions, whose registration the switch gates
+  (LayoutTransition.cpp:219-245). So is the page-transition sample's `NavigationThemeTransition`:
+  the sample's Frame declares it in `ContentTransitions`, and it reaches each page through the
+  inherited collection (:1513-1527, :1590-1596).
+- With the switch off, a connected animation still plays, at 1ms, so that its `Completed`
+  fires (ConnectedAnimationService.cpp:317-323).
+- Each implicit transition — opacity, rotation, scale, translation — plays only while the
+  switch is on, which the property's setter reads (`components/elements/UIElement.cpp` :2146,
+  :2239, :2319, :2589). So do the two brush transitions in the background samples.
+- The easing sample and the Gallery's copy button begin their storyboards from code.
+  `Storyboard.Begin` is not the visual state manager's, and none of the pin's
+  `core/animation` sources (29 files, fetched at the pinned commit) reads the switch, so they
+  run.
+- The composition sample starts its animations with `UIElement.StartAnimation`
+  (`components/elements/UIElement.cpp:2690`), which hands them to `FacadeAnimationHelper`.
+  Neither reads the switch, so they run too.
+
+The theme-transition, page-transition, connected-animation and implicit-transition pages carry
+a reduce block. The easing sample, the copy button and the composition sample keep their
+motion. The dev routes' capture aids are test harness, not reproduction, and are outside this
+record.
+
 `tests/visual/reduced-motion.spec.ts` reads the computed transition on every element each
 selector matches, under both preferences, delays included. It records the behaviour each smooth
 scroll asks for. The ComboBox and SelectorBar pill specs read their own states.
+`tests/visual/reduced-motion-gallery.spec.ts` drives each Gallery demo and counts what is still
+running a frame later, with and without the preference. Where a page finishes its work on
+`animationend`, it also reads the end state, which an animation removed rather than shortened
+would never reach.
 
 **Not verified:**
 
 - That Chromium on Windows derives `prefers-reduced-motion` from the same setting. The
   reference guest's settings are not changed, so the battery never exercises the switch-off
   path against the original. The tests read computed styles under an emulated media query.
-- That nothing else in the library reads the switch. The Gallery's own pages, including the
-  motion samples and the dev routes' capture aids, are outside this record.
+- That nothing else in the library reads the switch.
 
 ## Status
 

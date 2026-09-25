@@ -960,4 +960,24 @@
 		-webkit-box-orient: vertical;
 		overflow: hidden;
 	}
+
+	/* ADR 0016, applied to this page: with the switch off, `ConnectedAnimationService` still plays
+	   a connected animation, at 1ms, so that its `Completed` still fires
+	   (ConnectedAnimationService.cpp:317-323), and the page's navigation transitions are layout
+	   transitions, whose registration the switch gates (LayoutTransition.cpp:219-245). So under
+	   `prefers-reduced-motion` every motion here lands at its end at once. Durations and delays go
+	   to zero rather than the animations to `none`, because the page listens for `animationend`,
+	   which a zero-length animation still fires — the same reason upstream keeps its 1ms.
+	   `!important`, because this is one rule for every animated element on the page, over rules of
+	   every weight. */
+	@media (prefers-reduced-motion: reduce) {
+		*,
+		*::before,
+		*::after {
+			animation-duration: 0s !important;
+			animation-delay: 0s !important;
+			transition-duration: 0s !important;
+			transition-delay: 0s !important;
+		}
+	}
 </style>
