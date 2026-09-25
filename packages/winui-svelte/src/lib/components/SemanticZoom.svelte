@@ -225,4 +225,20 @@
 		/* c1-allow: `FontSize="4"` on ZoomOutButton, generic.xaml:9775. */
 		font-size: 4px;
 	}
+
+	/* ADR 0016. The two fades are theme animations inside the states' own storyboards
+	   (`generic.xaml:9658-9673`), and when the system's animations are off the visual state
+	   manager settles a destination state's theme animations rather than running them
+	   (VisualStateManagerActuator.cpp:390-397). */
+	@media (prefers-reduced-motion: reduce) {
+		.presenter {
+			transition-duration: 0s;
+		}
+
+		/* A settled animation has no delay either: the leaving view is hidden at once rather
+		   than transparent and still hit-testable for the fade it no longer runs. */
+		.presenter:not([data-active='true']) {
+			transition-delay: 0s;
+		}
+	}
 </style>

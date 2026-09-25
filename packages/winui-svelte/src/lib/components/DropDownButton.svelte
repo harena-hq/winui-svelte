@@ -164,4 +164,14 @@
 		/* DropDownButton.xaml:83 explicitly uses `ButtonForegroundDisabled` for the chevron. */
 		color: var(--winui-ButtonForegroundDisabled);
 	}
+
+	/* ADR 0016. A `BrushTransition` runs only while the platform's animations are on. This one is
+	   on a `Grid` (DropDownButton.xaml:23), which reads the switch before it sets one up
+	   (panel.cpp:71); with it off, the new brush lands at once. */
+	@media (prefers-reduced-motion: reduce) {
+		.root,
+		.root::after {
+			transition-duration: 0s;
+		}
+	}
 </style>

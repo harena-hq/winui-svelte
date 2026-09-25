@@ -197,4 +197,14 @@
 	.root:disabled::after {
 		background: var(--winui-RepeatButtonBorderBrushDisabled);
 	}
+
+	/* ADR 0016. A `BrushTransition` runs only while the platform's animations are on. This one is
+	   on a `ContentPresenter` (RepeatButton_themeresources.xaml:98), which reads the switch before
+	   it sets one up (ContentPresenter.cpp:150); with it off, the new brush lands at once. */
+	@media (prefers-reduced-motion: reduce) {
+		.root,
+		.root::after {
+			transition-duration: 0s;
+		}
+	}
 </style>

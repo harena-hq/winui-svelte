@@ -1343,13 +1343,6 @@
 		transition-property: none;
 	}
 
-	@media (prefers-reduced-motion: reduce) {
-		.pane,
-		.shadow-caster {
-			transition-duration: 0s;
-		}
-	}
-
 	/* `ColumnDefinition1`, the width of the column the pane sits in — which is not the pane's
 	   own width, and that is the distinction the template keeps and this control had lost. The
 	   pane is `OpenPaneLength` in every state; the column under it is `CompactPaneGridLength`
@@ -1793,5 +1786,23 @@
 	.root[data-collapsed='true'] .pane :global(.item .content-presenter),
 	.root[data-collapsed='true'] .pane :global(.item .expand-chevron) {
 		display: none;
+	}
+
+	/* ADR 0016. The pane's moves are the split view's `DisplayModeStates` transitions
+	   (SplitView_themeresources.xaml:54-541) and the shadow's are the `PaneOverlayGroup`
+	   transitions (NavigationView.xaml:95, :109), and the visual state manager skips a
+	   transition to its end when the system's animations are off. The block is last and names
+	   every rule above that sets a duration: written earlier with `.pane` and `.shadow-caster`
+	   alone, it lost to the heavier rules and to the later one, and held on 2 of the route's 9
+	   panes and none of its 9 shadows. */
+	@media (prefers-reduced-motion: reduce) {
+		.pane,
+		.root[data-pane-open='true'][data-display-mode='compact'] .pane,
+		.root[data-pane-open='true'][data-display-mode='minimal'] .pane,
+		.root[data-display-mode='expanded'] .pane,
+		.shadow-caster,
+		.root[data-overlay='true'] .shadow-caster {
+			transition-duration: 0s;
+		}
 	}
 </style>

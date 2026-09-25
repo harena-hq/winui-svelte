@@ -230,4 +230,26 @@
 		position: absolute;
 		inset: 0;
 	}
+
+	/* ADR 0016. Every opening and closing of the pane is a `DisplayModeStates`
+	   `VisualTransition` (SplitView_themeresources.xaml:54-541), which the visual state manager
+	   skips to its end when the system's animations are off. Each rule above that sets a
+	   duration is named again here, because they differ in specificity and the last one of
+	   equal weight is the one that holds. */
+	@media (prefers-reduced-motion: reduce) {
+		.root,
+		.root[data-pane-open][data-display-mode='inline'],
+		.root[data-pane-open][data-display-mode='compactInline'],
+		.root:not([data-pane-open])[data-display-mode='inline'],
+		.root:not([data-pane-open])[data-display-mode='compactInline'],
+		.pane,
+		.root[data-pane-open][data-display-mode='overlay'] .pane,
+		.root[data-pane-open][data-display-mode='compactOverlay'] .pane,
+		.root[data-pane-open][data-display-mode='inline'] .pane,
+		.root[data-pane-open][data-display-mode='compactInline'] .pane,
+		.root:not([data-pane-open])[data-display-mode='inline'] .pane,
+		.root:not([data-pane-open])[data-display-mode='compactInline'] .pane {
+			transition-duration: 0s;
+		}
+	}
 </style>

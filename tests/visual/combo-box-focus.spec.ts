@@ -720,9 +720,12 @@ test('a pressed selected row shrinks its pill over the storyboard and releases a
 	await page.mouse.up();
 });
 
-test('under reduced motion the pressed pill takes no time', async ({ page }) => {
-	// The library's choice, not upstream's: a state's own keyframe animations run whatever the
-	// system animation setting. It matches `SelectorBar.svelte`, whose pill runs on the same key.
+test('under reduced motion the pressed pill still takes the storyboard’s time', async ({
+	page
+}) => {
+	// ADR 0016: a state's own keyframe animations run whatever the system animation setting
+	// (`VisualStateManagerActuator.cpp:202`); the skip at :602 is for transition and generated
+	// storyboards.
 	await page.emulateMedia({ reducedMotion: 'reduce' });
 	await page.goto(ROUTE);
 	await growViewportToContent(page);
@@ -741,7 +744,7 @@ test('under reduced motion the pressed pill takes no time', async ({ page }) => 
 	const box = (await selected.boundingBox())!;
 	await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
 	await page.mouse.down();
-	expect(await pill.evaluate((el) => getComputedStyle(el).transitionDuration)).toBe('0s');
-	expect(await pill.evaluate((el) => getComputedStyle(el).scale)).toBe('1 0.625');
+	expect(await pill.evaluate((el) => getComputedStyle(el).transitionDuration)).toBe('0.167s');
+	await expect.poll(() => pill.evaluate((el) => getComputedStyle(el).scale)).toBe('1 0.625');
 	await page.mouse.up();
 });

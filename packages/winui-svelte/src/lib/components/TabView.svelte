@@ -73,6 +73,8 @@
 </script>
 
 <script lang="ts">
+	import { scrollBehavior } from '../internal/motion';
+
 	let {
 		items,
 		selected = $bindable(null),
@@ -189,7 +191,8 @@
 
 	function scrollBy(direction: number) {
 		// `c_scrollAmount` is 50 (`TabView.cpp:30`); its two click handlers are `:1103-1117`.
-		viewport?.scrollBy({ left: direction * 50, behavior: 'smooth' });
+		// `ChangeView` animates only while the platform's animations are on (ADR 0016).
+		viewport?.scrollBy({ left: direction * 50, behavior: scrollBehavior() });
 	}
 
 	function stopRepeat() {

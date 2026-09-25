@@ -480,4 +480,23 @@
 	.scroll-bar.disabled .panning-thumb {
 		background: var(--winui-ScrollBarPanningThumbBackgroundDisabled);
 	}
+
+	/* ADR 0016. With the system's animations off, upstream does not play `Expanded` and the
+	   `Expanded`-to-`Collapsed` transition at all: it asks for `ExpandedWithoutAnimation` and
+	   `CollapsedWithoutAnimation` instead (ScrollBar_Partial.cpp:754-775), whose animations
+	   keep each `BeginTime` and have a zero `Duration` (ScrollBar_themeresources.xaml:600-670).
+	   So the rail still waits before it expands and before it contracts, and then snaps. The
+	   thumb's colour is left as it is: neither state pair animates it. */
+	@media (prefers-reduced-motion: reduce) {
+		.track,
+		.arrow {
+			transition-duration: 0s;
+		}
+
+		.thumb,
+		.scroll-bar[data-orientation='vertical']:hover .thumb,
+		.scroll-bar[data-orientation='horizontal']:hover .thumb {
+			transition-duration: 0s, 0s, var(--winui-ScrollBarColorChangeDuration);
+		}
+	}
 </style>

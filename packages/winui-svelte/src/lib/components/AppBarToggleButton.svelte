@@ -780,4 +780,14 @@
 	.root[data-view-state^='overflow'][data-checked='true']:disabled .accelerator {
 		color: var(--winui-AppBarToggleButtonKeyboardAcceleratorTextForegroundCheckedDisabled);
 	}
+
+	/* ADR 0016. A `BrushTransition` runs only while the platform's animations are on. This one is
+	   on a `Border` (AppBarToggleButton_themeresources.xaml:471), which reads the switch before it
+	   sets one up (Border.cpp:45); with it off, the new brush lands at once. */
+	@media (prefers-reduced-motion: reduce) {
+		.fill,
+		.fill::after {
+			transition-duration: 0s;
+		}
+	}
 </style>

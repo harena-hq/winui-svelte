@@ -862,27 +862,16 @@
 		   declaring the transition on this rule alone, rather than on `.pill`, is what makes
 		   the press animate and the release snap.
 
-		   Under reduced motion it does not run, by the block below, and that is this
-		   library's choice rather than upstream's. For a non-essential storyboard the visual
-		   state manager reads the system's animation setting to skip `VisualTransition` and
-		   generated storyboards to their end (`VisualStateManagerActuator.cpp:602`) and to
-		   settle a state's theme animations (:394); a state's own keyframe animations, which
-		   are all `SelectedPressed` has, are started as `StoryboardType::State` (:202) and run
-		   whatever the setting. SelectorBar's pill runs on this same key and spline upstream
-		   (`SelectorBar.xaml:109`), and `SelectorBar.svelte` turns it off under
-		   `prefers-reduced-motion`; the two do the same thing here. */
+		   Under reduced motion it still runs, as upstream's does (ADR 0016). For a
+		   non-essential storyboard the visual state manager reads the system's animation
+		   setting to skip `VisualTransition` and generated storyboards to their end
+		   (`VisualStateManagerActuator.cpp:602`) and to settle a state's theme animations
+		   (:394); a state's own keyframe animations, which are all `SelectedPressed` has, are
+		   started as `StoryboardType::State` (:202) and run whatever the setting. */
 		transition: scale var(--winui-ComboBoxItemScaleAnimationDuration)
 			/* c1-allow: ComboBox_themeresources.xaml:727, `KeySpline="0,0,0,1"` on the
 			   `SplineDoubleKeyFrame` */
 			cubic-bezier(0, 0, 0, 1);
-	}
-
-	@media (prefers-reduced-motion: reduce) {
-		.item[data-selected]:active > .pill {
-			/* c1-allow: ComboBox_themeresources.xaml:727, this accessibility override replaces
-			   the `SelectedPressed` keyframe's duration, as SelectorBar's does for its pill */
-			transition-duration: 0s;
-		}
 	}
 
 	/* ----- Items: Disabled ----- */
