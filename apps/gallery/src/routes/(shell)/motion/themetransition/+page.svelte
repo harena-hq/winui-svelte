@@ -500,4 +500,24 @@
 			theme-surface-out 167ms cubic-bezier(0, 0, 0, 1) forwards,
 			theme-fade-out 83ms linear forwards;
 	}
+
+	/* ADR 0016, applied to this page: the sample's theme transitions are layout transitions, whose
+	   registration the switch gates (LayoutTransition.cpp:219-245). So under
+	   `prefers-reduced-motion` every motion here lands at its end at once. Durations and delays go
+	   to zero rather than the animations to `none`, because the page listens for `animationend`,
+	   which a zero-length animation still fires. `!important`, because this is one rule for every
+	   animated element on the page, over rules of every weight; the two `:global` selectors are the
+	   rectangles the Rectangle component renders, which this page animates. */
+	@media (prefers-reduced-motion: reduce) {
+		*,
+		*::before,
+		*::after,
+		:global(.entrance-rectangle),
+		:global(.reposition-subject) {
+			animation-duration: 0s !important;
+			animation-delay: 0s !important;
+			transition-duration: 0s !important;
+			transition-delay: 0s !important;
+		}
+	}
 </style>
