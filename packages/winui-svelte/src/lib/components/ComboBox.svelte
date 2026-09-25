@@ -78,6 +78,41 @@
 		...rest
 	}: ComboBoxProps = $props();
 
+	// Upstream opens the list when a left press on the control is released on it, not when it
+	// goes down: `OnPointerPressed` (ComboBox_Partial.cpp:3310) only sets `m_bIsPressed` and
+	// draws `Pressed`, and `OnPointerReleased` (:3426) opens through `PerformPointerUpAction`
+	// (:3529) if that flag is still set. Leaving the control clears it (`OnPointerExited`,
+	// :3236), so a press dragged off and back does not open. bits-ui 2.19's trigger opens on
+	// a mouse or pen `pointerdown` instead, so the press is held back here and replayed into
+	// bits-ui's own handler on the release, which opens from the same code path. Touch is
+	// bits-ui's `pointerup` already, and a press while the list is open still reaches bits-ui,
+	// which closes it. The `ctrlKey` gate is bits-ui's (`select.svelte.js:747-749`), kept so a
+	// Ctrl-click does here what it did before; upstream has no such condition.
+	let pressed = false;
+	type TriggerProps = Record<string, unknown> & {
+		onpointerdown?: (event: PointerEvent) => void;
+		onpointerup?: (event: PointerEvent) => void;
+	};
+	function opensOnRelease(event: PointerEvent) {
+		return (
+			!disabled && !open && event.pointerType !== 'touch' && event.button === 0 && !event.ctrlKey
+		);
+	}
+	function triggerPointerDown(props: TriggerProps, event: PointerEvent) {
+		pressed = opensOnRelease(event);
+		if (!pressed) return props.onpointerdown?.(event);
+		// What bits-ui's handler does before it opens (`select.svelte.js:743-746`): a pointer
+		// holding implicit capture would never leave the trigger, and its release would land
+		// here wherever it lifted.
+		const target = event.target as Element | null;
+		if (target?.hasPointerCapture(event.pointerId)) target.releasePointerCapture(event.pointerId);
+	}
+	function triggerPointerUp(props: TriggerProps, event: PointerEvent) {
+		props.onpointerup?.(event);
+		if (pressed && opensOnRelease(event)) props.onpointerdown?.(event);
+		pressed = false;
+	}
+
 	// `bits-ui`'s Select uses a `value` typed as `string | undefined` upstream and the
 	// component contract here narrows it to `string`. A consumer clearing the selection
 	// passes `''`; the empty string is the only falsy value the trigger shows as "nothing
@@ -126,7 +161,15 @@
 			     out of the selector, and `.trigger` then matches every element in the application
 			     that shares that very ordinary name. -->
 			{#snippet child({ props })}
-				<button {...props} bind:this={ref} class="trigger">
+				<button
+					{...props}
+					onpointerdown={(event) => triggerPointerDown(props, event)}
+					onpointerup={(event) => triggerPointerUp(props, event)}
+					onpointerleave={() => (pressed = false)}
+					onpointercancel={() => (pressed = false)}
+					bind:this={ref}
+					class="trigger"
+				>
 					<span class="pill" aria-hidden="true"></span>
 					<Select.Value>
 						{#snippet child({ props, selection })}
