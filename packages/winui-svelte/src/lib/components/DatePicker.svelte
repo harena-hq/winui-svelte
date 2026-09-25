@@ -510,9 +510,9 @@
 		   `BackgroundSizing="InnerBorderEdge"` on `PopupBorder` — and `TeachingTip.svelte:348`
 		   has no clip either. Both were invisible to the survey that found these two, because
 		   they write the border in longhands where it read the `border` shorthand. The dropdown
-		   has since been closed and `ComboBox.svelte:404` carries its reading; the TeachingTip
-		   card is still open. They are a wider class than this
-		   unit's and need their own reading; what is settled here is the case where upstream
+		   has since been closed and `ComboBox.svelte`'s `.popup` rule carries its reading; the
+		   TeachingTip card is still open. They are a wider class than this unit's and need
+		   their own reading; what is settled here is the case where upstream
 		   states nothing and the Border takes the default.
 
 		   Unclipped, the 1px `SurfaceStrokeColorFlyout` stroke composites over the presenter's

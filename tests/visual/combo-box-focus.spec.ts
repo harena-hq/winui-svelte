@@ -508,23 +508,15 @@ test('lighting the pill moves no text', async ({ page }) => {
 			)
 		).replace('px', '')
 	);
-	const border = Number(
-		(
-			await page.evaluate(() =>
-				getComputedStyle(document.documentElement)
-					.getPropertyValue('--winui-ComboBoxBorderThemeThickness')
-					.trim()
-			)
-		).replace('px', '')
-	);
 	const trigger = page.locator('.trigger').first();
 	const value = trigger.locator('.value');
-	// The label's offset from the control's outer edge is its border plus its padding, and
-	// the pill is inside both.
+	// The label's offset from the control's outer edge is the padding alone — the presenter's
+	// margin is measured from the cell, which the stroke does not narrow — and the pill, one
+	// pixel in and three wide, is inside it. combo-box-trigger-box.spec.ts measures every row.
 	const inset = async () => (await value.boundingBox())!.x - (await trigger.boundingBox())!.x;
-	expect(await inset(), 'the label did not start at the control’s padding').toBe(border + padding);
+	expect(await inset(), 'the label did not start at the control’s padding').toBe(padding);
 	await light(page, 0);
-	expect(await inset(), 'the label moved when the pill lit').toBe(border + padding);
+	expect(await inset(), 'the label moved when the pill lit').toBe(padding);
 });
 
 test('the disabled row carries a pill and never lights it', async ({ page }) => {

@@ -3286,6 +3286,20 @@ System / Shell` moves to item 16; `item 15` occurs once in the whole of `docs/`,
     | `ControlExample`'s options pane is 233 wide at x 1330 against 232 at x 1331, `#fcfcfc` against `#fbfbfb`  | `.options` is content-box with `border-width: 0 0 0 1px`; three baselines move, and it does not show at every pane width |
     | unstyled text is the browser's 16px in both densities                                                     | XAML's own TextBlock default, which is in neither pin                                                                    |
 
+    **The ComboBox row was settled on 2026-09-25.** Its column figure was right to a border:
+    the text ran on to the chevron where upstream stops it at the 38-pixel column, though the
+    row's 12 plus 14 left out the border and the text stopped 27 from the edge. An auto-width
+    control was 10 narrower than upstream's for it, not 11, because the same border also
+    started the text one pixel late. Its height figure was not right. The trigger measured 33
+    tall against 32 on the reference browser, the row's 34 has no measurement behind it here,
+    and the cause was one border rather than a column: upstream's `ContentPresenter` and
+    `DropDownGlyph` are siblings of the `Background` Border in one Grid row, so their margins
+    count from its outer edge, and this reproduction had put the padding inside its own
+    border. The text started at 13 against 12, and the chevron sat 15 from the right against
+    14 and a pixel high, centred on the content box. `combo-box-trigger-box.spec.ts` measures
+    all five in both densities, and nine tracked baselines moved with them, three specs in
+    three themes. Fixing the height exposed a half pixel the old height hid, which is WD-097.
+
     **A correction to this entry's own first reading of the line height.** It called the line
     height "the version's one unexplained geometry" and put it in the table above as a fix still
     to be derived. It is neither unexplained nor owed: **ADR 0011 decided it and WD-018 records
