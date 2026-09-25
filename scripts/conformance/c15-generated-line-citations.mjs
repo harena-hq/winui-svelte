@@ -174,11 +174,11 @@ const POSITION = /(?:(?<![\w)]):|#L|\b[Ll]ines? )(\d+)(?![\dA-Za-z])/g;
 //
 // **The false positive it accepts** is the mirror of the idiom it catches: a number elided from
 // an *earlier*-named file, landing after a generated mention in the same sentence, is read as
-// the generated file's. This repository writes that shape — ComboBox's focus highlight explains its
-// `padding-box` by "the reason the trigger's own fill carries it at" and a bare number — and
-// nothing hits it today only because no
-// such sentence also names a generated file. When one does it will be a false failure, and the
-// answer then is to re-word the sentence rather than to widen the window.
+// the generated file's. This repository writes that shape — ComboBox's focus highlight gives
+// `ComboBoxHiglightBorderCornerRadius` as 7 and then a bare number into the pin's
+// `ComboBox_themeresources.xaml`, which it named a comment earlier — and nothing hits it today
+// only because no such sentence also names a generated file. When one does it will be a false
+// failure, and the answer then is to re-word the sentence rather than to widen the window.
 const CAP = 240;
 const SENTENCE = /\.(\s|$)/;
 

@@ -756,7 +756,7 @@
 		   `ComboBoxBackgroundUnfocused` (:142), so a focused box grows four pixels of accent
 		   with no edge.
 
-		   `padding-box` for the reason the trigger's own fill carries it at :273: the Border
+		   `padding-box` for the reason `.trigger`'s own fill carries it: the Border
 		   writes no `BackgroundSizing`, so upstream's fill stops at its inner border edge and
 		   CSS's would not. It is worth one level and only in light, where
 		   `FocusStrokeColorOuter` is `#000000e4` in `:root` and composites to 27 over
