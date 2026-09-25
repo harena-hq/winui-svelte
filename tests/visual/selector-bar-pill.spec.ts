@@ -68,18 +68,21 @@ test('a bar that loads with a selection grows its pill', async ({ page }) => {
 	// selected item enters `SelectedNormal` as it loads and its storyboard runs from the pill's
 	// rest values. Animation playback is frozen through the DevTools protocol before the page
 	// loads, so the transition the load starts is still there to be read, however long the
-	// machine takes to get to the read.
+	// machine takes to get to the read. Until the component held the pill back itself this read
+	// nothing on 7 of 30 loads on the reference machine. In a separate 20, a `transitionrun`
+	// listener installed before the page parsed heard none on 6: the transition had not started.
 	await page.emulateMedia({ reducedMotion: 'no-preference' });
 	const session = await page.context().newCDPSession(page);
 	await session.send('Animation.enable');
 	await session.send('Animation.setPlaybackRate', { playbackRate: 0 });
 	await page.goto(ROUTE);
-	const pill = page
-		.locator('[role="listbox"]')
-		.nth(BAR)
-		.locator('[role="option"][data-selected="true"] .pill');
+	const bar = page.locator('[role="listbox"]').nth(BAR);
+	const pill = bar.locator('[role="option"][data-selected="true"] .pill');
+	// The flag is set two frames after the component mounts, later than the fixture's own
+	// hydration signal, and the transition starts when it lands.
+	await expect(bar).toHaveAttribute('data-applied');
 	// Where each transition starts, not only that it exists: from the pill's rest values, which
-	// is what the `@starting-style` supplies and what upstream's storyboard starts from. A
+	// is what the `data-applied` rule holds it at and what upstream's storyboard starts from. A
 	// transition begun for any other reason, or from any other value, fails here.
 	const running = await pill.evaluate((el) =>
 		el
@@ -92,6 +95,17 @@ test('a bar that loads with a selection grows its pill', async ({ page }) => {
 			.sort()
 	);
 	expect(running).toEqual(['opacity from 0', 'transform from scaleX(1)']);
+
+	// What makes that happen on every load rather than on the loads the parser happened to race:
+	// until the bar carries `data-applied`, a selected pill is held at its rest values. Read
+	// with transitions off, so this is the rule and not the clock.
+	const held = await pill.evaluate((el) => {
+		(el as HTMLElement).style.transition = 'none';
+		el.closest('[data-applied]')!.removeAttribute('data-applied');
+		const style = getComputedStyle(el);
+		return `${style.opacity} ${style.transform}`;
+	});
+	expect(held).toBe('0 matrix(1, 0, 0, 1, 0, 0)');
 });
 
 test('under reduced motion selecting still takes the storyboard’s time', async ({ page }) => {

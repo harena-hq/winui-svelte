@@ -145,7 +145,8 @@ const HYDRATION_TIMEOUT = 20_000;
  * (`src/internal/client/reactivity/batch.js:819`). So the handlers are up before any of those
  * effects; and the effects of one batch run synchronously, which a `waitForFunction` polling
  * from outside the page cannot observe the middle of. What this does not cover is work deferred
- * to a *later* batch than the root layout's, which nothing here has.
+ * to a *later* batch than the root layout's, or to a later frame: SelectorBar sets `data-applied`
+ * two animation frames after it mounts, and a test about its load reads that attribute itself.
  */
 async function hydrated(page: Page) {
 	try {
