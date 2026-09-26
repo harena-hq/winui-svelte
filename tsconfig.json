@@ -11,10 +11,11 @@
 		// A spec imports a conformance gate's exported property list rather than restating it
 		// (`tests/visual/gradient-in-colour-property.spec.ts`), so that the list the gate
 		// enforces and the list the browser is asked about cannot drift apart. Without this
-		// the import is TS7016. It widens the program by exactly two files — that gate and
-		// `scripts/conformance/lib.mjs`, which it imports — counted with `--listFiles`, and
-		// `checkJs` stays off, so both are read for the types of what they export and neither
-		// is type-checked.
+		// the import is TS7016. It widens the program by every `.mjs` a spec imports and all
+		// that those import — since `tests/visual/gate-list.spec.ts` imports the gate list,
+		// every gate and the scripts those import, 32 files counted with `--listFiles` on
+		// 2026-09-26 — and `checkJs` stays off, so each is read for the types of what it
+		// exports and none is type-checked.
 		"allowJs": true
 	},
 	"include": ["tests/**/*.ts", "playwright.config.ts"]
