@@ -89,7 +89,7 @@
 		{#snippet children(props)}
 			<!-- Not a `TextBox`: what this row is for is the element type Chromium treats
 			     specially, and the plain input is that element with nothing else in the way. -->
-			<input {...props} id="text-trigger" type="text" value="Text" />
+			<input {...props} id="text-trigger" type="text" value="Text" autocomplete="off" />
 		{/snippet}
 	</ToolTip>
 </div>

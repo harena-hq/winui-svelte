@@ -43,7 +43,7 @@
 		onPaneToggleRequested={paneToggle('row 1')}
 	>
 		{#snippet content()}
-			<input type="search" placeholder="Search" />
+			<input type="search" placeholder="Search" autocomplete="off" />
 		{/snippet}
 	</TitleBar>
 </div>
@@ -60,7 +60,7 @@
 		onPaneToggleRequested={paneToggle('row 2')}
 	>
 		{#snippet content()}
-			<input type="search" placeholder="Search" />
+			<input type="search" placeholder="Search" autocomplete="off" />
 		{/snippet}
 	</TitleBar>
 </div>
@@ -69,7 +69,7 @@
 <div class="frame">
 	<TitleBar title="WinUI Gallery" subtitle="Preview" iconGlyph="E790">
 		{#snippet content()}
-			<input type="search" placeholder="Search" />
+			<input type="search" placeholder="Search" autocomplete="off" />
 		{/snippet}
 	</TitleBar>
 </div>
@@ -83,7 +83,7 @@
 <div class="frame">
 	<TitleBar>
 		{#snippet content()}
-			<input type="search" placeholder="Search" />
+			<input type="search" placeholder="Search" autocomplete="off" />
 		{/snippet}
 	</TitleBar>
 </div>
