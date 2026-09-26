@@ -81,7 +81,12 @@
 				     than invoking the row. The field does **not** stop a click, so clicking it
 				     also invokes the row — WD-090, asserted in both directions by the spec. -->
 				<NavigationViewItem tag={entry.id} content={entry.content} glyph={entry.glyph}>
-					<input class="tpl-rename" aria-label="Rename" bind:value={renameValue} />
+					<input
+						class="tpl-rename"
+						aria-label="Rename"
+						autocomplete="off"
+						bind:value={renameValue}
+					/>
 				</NavigationViewItem>
 			{:else if entry.id === 'commands'}
 				<!-- The per-row command shape: the button stops the click, which is how a

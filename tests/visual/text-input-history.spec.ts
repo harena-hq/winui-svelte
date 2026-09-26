@@ -15,6 +15,11 @@ const ROUTES = [
 	// NumberBox's input gets the attribute from zag and had it before this change: a guard
 	// against losing it, not one of the cases the change fixed.
 	'/dev/number-box',
+	// Dev fixtures that put a raw input where a consumer's content goes. They carry the
+	// attribute too, so a list seen on one of these routes cannot be the fixture's own.
+	'/dev/title-bar',
+	'/dev/tool-tip-input-mode',
+	'/dev/navigation-view-template',
 	// The shell's own search box, where the list was first seen.
 	'/basicinput/button'
 ];
