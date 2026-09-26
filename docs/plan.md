@@ -4391,23 +4391,26 @@ reproduce is a recorded decision, never a silent one.
 **This enumeration stops at C10 and the suite does not.** `C11` (template parts and states),
 `C12` (every cited line names a file that has one), `C13` (every portalled surface sits in the
 popup layer), `C14` (no colour property reads a token that resolves to a gradient), `C15`
-(nothing cites a line in a generated source file) and `C16` (nothing cites a line in a file
-this repository holds) are in `pnpm conform` and have no entry here — C11 and C12 landed
-without one, and none of the four after them added itself alone,
-because an entry for the newest while the ones before it have none would make the gap read as a
-choice. **`scripts/conformance/run.mjs` is the list**; this section is a commentary on the gates
-that have one, and the backfill is owed. Each of the six carries its own reasoning in its own
-file, which is where the detail is; C13's through C16's also record what they cannot reach,
-and each names the test that answers that half.
+(nothing cites a line in a generated source file), `C16` (nothing cites a line in a file this
+repository holds) and `C17` (the gate list is every gate file, in order) are in `pnpm conform`
+and have no entry here — C11 and C12 landed without one, and none of the five after them added
+itself alone, because an entry for the newest while the ones before it have none would make the
+gap read as a choice. **`scripts/conformance/gates.mjs` is the list**, and `C17` holds it to the
+files beside it; this section is a commentary on the gates that have one, and the backfill is
+owed. Each of the seven carries its own reasoning in its own file, which is where the detail
+is; C13's through C17's also record what they cannot reach, and each names the test that
+answers that half where one does; C17's other gaps, and the two documents it reads, are left
+to hand.
 
-**Two documents name the gates by number, and only one of them has kept up.** This paragraph
+**Two documents name the gates by number, and only one of them kept up.** The enumeration above
 did: `C13` was in it at `bbaff58`, the commit that wired C13. `keyboard.md`'s apparatus table
 did not. It read `C1–C11` from `0a17908` onward — through `a1a9ce1` wiring C12 and `bbaff58`
 wiring C13, so two gates behind at its worst — and was corrected only at `04a6924`, eight
 commits after C12 landed, by a `feat(navigation-view)` commit that had no business with it.
-Nothing reads either file for a gate list, and C12 cannot reach this because neither sentence
-cites a line, so both were brought to C15 by hand. The table is the one to check when a gate
-lands.
+Nothing read either file for a gate list, and C12 cannot reach this because neither sentence
+cites a line, so both were brought to C15 by hand. **`C17` now reads the table**: its row has
+to name `C1` through the last gate the list holds, so a gate that lands without it fails the
+seal. The row's descriptions, and the enumeration above, are still kept by hand.
 
 **C15 leaves two measured backlogs, and this is their record.** The gate covers positions cited
 into the three files the token and symbol generators emit as source. It does not cover the nine
