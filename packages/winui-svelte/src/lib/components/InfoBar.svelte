@@ -199,14 +199,22 @@
 	/* No type-ramp class on the root. `InfoBar.xaml:113` and `:114` set FontSize and
 	   FontWeight on the Title and Message TextBlocks and no `Style`, so neither takes the
 	   Body ramp's 20px line height — the platform default is what the original draws, and
-	   it measures 18px at this size on the reference guest. */
+	   it measures 18px at this size on the reference guest.
+
+	   Every fill rule on the root carries `padding-box`. `ContentRoot` (`InfoBar.xaml:15`)
+	   is a Border that sets no `BackgroundSizing`, so it takes the default, `InnerBorderEdge`:
+	   the fill stops at the stroke's inner edge, and the stroke — `InfoBarBorderBrush`,
+	   which in light and dark is `CardStrokeColorDefault` and translucent — lies on the
+	   page rather than on the severity fill. The severity rules below restate the clip
+	   because `background` is a shorthand, and a rule naming only the brush resets
+	   `background-clip` with it. */
 	.root {
 		display: block;
 		border-style: solid;
 		border-width: var(--winui-InfoBarBorderThickness);
 		border-color: var(--winui-InfoBarBorderBrush);
 		border-radius: var(--winui-ControlCornerRadius);
-		background: var(--winui-InfoBarInformationalSeverityBackgroundBrush);
+		background: var(--winui-InfoBarInformationalSeverityBackgroundBrush) padding-box;
 		color: var(--winui-InfoBarTitleForeground);
 		font-family: var(--winui-ContentControlThemeFontFamily);
 		font-size: var(--winui-InfoBarMessageFontSize);
@@ -222,15 +230,15 @@
 	}
 
 	.root[data-severity='success'] {
-		background: var(--winui-InfoBarSuccessSeverityBackgroundBrush);
+		background: var(--winui-InfoBarSuccessSeverityBackgroundBrush) padding-box;
 	}
 
 	.root[data-severity='warning'] {
-		background: var(--winui-InfoBarWarningSeverityBackgroundBrush);
+		background: var(--winui-InfoBarWarningSeverityBackgroundBrush) padding-box;
 	}
 
 	.root[data-severity='error'] {
-		background: var(--winui-InfoBarErrorSeverityBackgroundBrush);
+		background: var(--winui-InfoBarErrorSeverityBackgroundBrush) padding-box;
 	}
 
 	.content-root {

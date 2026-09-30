@@ -1177,7 +1177,7 @@ test("the ComboBox trigger's fill stops at the inner border edge in every state"
 
 const CLOSE_STATES = ['hover', 'pressed'] as const;
 
-/** The first five pixels of the close button's horizontal midline, as `r,g,b`, from its left. */
+/** The first five pixels of an element's horizontal midline, as `r,g,b`, from its left. */
 async function midline(page: Page, fill: Locator) {
 	const shot = await fill.screenshot();
 	return page.evaluate(
@@ -1304,5 +1304,101 @@ test("the TeachingTip close button's fill stops at the inner border edge", async
 			).not.toBe(shipped.edge);
 		}
 		await cdp.send('CSS.forcePseudoState', { nodeId: nodeIds[0], forcedPseudoClasses: [] });
+	}
+});
+
+/**
+ * The InfoBar's fill stops at the inner border edge, so its stroke lies on the page.
+ *
+ * `ContentRoot` (`InfoBar.xaml:15`) is a Border carrying the severity fill, the control's
+ * `BorderBrush` and `BorderThickness`, and no `BackgroundSizing`: the string occurs in neither
+ * `InfoBar.xaml` nor `InfoBar_themeresources.xaml`. So it takes the property's default,
+ * `InnerBorderEdge`, down the chain the pickers' section at the top of this file sets out. Of
+ * `ContentRoot`, the severity states set only `Background` (`InfoBar.xaml:21`, `:29` and
+ * `:37`), which is why `.root` carries the clip on all four of its fill rules.
+ *
+ * `InfoBarBorderBrush` aliases `CardStrokeColorDefaultBrush`, `#0000000f` in light and
+ * `#00000019` in dark. So unclipped, the 1px ring is that stroke over the severity fill and
+ * reads a different value per severity; clipped, it is the stroke over the page, and the four
+ * severities read one value. That sameness is asserted here, beside the pair it rests on: the
+ * shipped edge equals the edge under a forced `padding-box`, and a forced `border-box` moves
+ * it. Measured on the route's severity row under Chromium on Linux, success's edge reads
+ * `209,231,208` unclipped against `228,228,228` clipped in light, and `51,55,24` against
+ * `28,28,28` in dark; informational's moves by one level in light, 229 to 228.
+ *
+ * High contrast is left out: the stroke is opaque there — informational's and success's edges
+ * each read one value under both clips — so the positive control could not fire.
+ */
+
+const SEVERITIES = ['informational', 'success', 'warning', 'error'] as const;
+
+test("the InfoBar's fill stops at the inner border edge, so every severity's stroke reads one value", async ({
+	page
+}) => {
+	let light = '';
+	for (const theme of ['light', 'dark'] as const) {
+		await page.goto('/dev/info-bar');
+		// Both channels and a reload, then a wait on the render, for the reason the tab header
+		// section gives.
+		await page.evaluate((t) => {
+			localStorage.setItem('winui-svelte:theme', t);
+			document.documentElement.dataset.theme = t;
+		}, theme);
+		await page.reload();
+
+		// The route's severity row. Every InfoBar carries `data-severity`, and the others are
+		// informational, so the first of each value is the row's.
+		const bars = SEVERITIES.map((s) => page.locator(`.root[data-severity='${s}']`).first());
+		await bars[0].waitFor();
+		const rendered = () => bars[1].evaluate((el) => getComputedStyle(el).backgroundColor);
+		if (theme === 'light') light = await rendered();
+		else await expect.poll(rendered, { timeout: 5000 }).not.toBe(light);
+		await page.waitForFunction(() =>
+			document.getAnimations().every((a) => a.playState !== 'running')
+		);
+
+		/** Each bar's left edge pixel and the pixel two in from it, in severity order. */
+		const readAll = async () => {
+			const out: { edge: string; inside: string }[] = [];
+			for (const bar of bars) {
+				const row = await midline(page, bar);
+				out.push({ edge: row[0], inside: row[2] });
+			}
+			return out;
+		};
+		/** Reads every bar with `background-clip` overridden, then puts the page back. */
+		const withClip = async (value: string) => {
+			const tag = await page.addStyleTag({
+				content: `.root[data-severity] { background-clip: ${value} !important; }`
+			});
+			const pixels = await readAll();
+			await tag.evaluate((el) => (el as Element).remove());
+			return pixels;
+		};
+
+		const shipped = await readAll();
+		expect(shipped, `${theme}: a severity fill runs under the bar's stroke`).toEqual(
+			await withClip('padding-box')
+		);
+		const unclipped = await withClip('border-box');
+		for (const [i, severity] of SEVERITIES.entries()) {
+			if (i > 0)
+				expect(
+					shipped[i].edge,
+					`${theme}: the ${severity} stroke differs from the informational one, so it is not lying on the page`
+				).toBe(shipped[0].edge);
+			// Reading inside the fill would satisfy the line above for any clip on a page whose
+			// four fills matched; they do not, and this says the edge is not the fill.
+			expect(
+				shipped[i].edge,
+				`${theme}: the ${severity} edge reads the fill, so it is not the stroke`
+			).not.toBe(shipped[i].inside);
+			// The positive control, per severity: an unclipped fill has to move the edge, or the
+			// reading is somewhere the fill never reaches.
+			expect(
+				unclipped[i].edge,
+				`${theme}: an unclipped ${severity} fill changed the edge not at all`
+			).not.toBe(shipped[i].edge);
+		}
 	}
 });
