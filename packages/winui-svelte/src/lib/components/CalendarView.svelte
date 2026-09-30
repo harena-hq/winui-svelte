@@ -750,12 +750,19 @@
 		color: var(--winui-CalendarViewCalendarItemForeground);
 	}
 
-	.item-chrome:hover {
+	/* A disabled item is neither hovered nor pressed. The chrome's stroke chain does not ask
+	   whether a plain item is enabled (`GetItemBorderBrush`, CalendarViewBaseItemChrome.cpp:1384,
+	   :1395); what keeps the pointer off it is hit testing, whose tree walk passes over an
+	   element that is not enabled unless its caller asks for disabled elements
+	   (`IsEnabledAndVisibleForHitTest`, uielement.cpp:2353, called at :13442). Within the pinned
+	   checkout only diagnostics ask; the pointer input processor that calls the walk is outside
+	   it. */
+	.item-chrome:not([data-disabled]):hover {
 		border-color: var(--winui-CalendarViewHoverBorderBrush);
 		background: var(--winui-CalendarViewCalendarItemHoverBackground) padding-box;
 	}
 
-	.item-chrome:active {
+	.item-chrome:not([data-disabled]):active {
 		border-color: var(--winui-CalendarViewPressedBorderBrush);
 		background: var(--winui-CalendarViewCalendarItemPressedBackground) padding-box;
 		color: var(--winui-CalendarViewPressedForeground);

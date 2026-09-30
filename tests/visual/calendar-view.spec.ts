@@ -141,3 +141,88 @@ test("an out-of-scope item yields to disabled, today and a selected day's text",
 		).toEqual({ background: outPlainHere.background, color: inMonthSelected.color });
 	}
 });
+
+/**
+ * A disabled item is neither hovered nor pressed.
+ *
+ * Upstream's stroke chain does not ask whether a plain item is enabled (`GetItemBorderBrush`,
+ * `CalendarViewBaseItemChrome.cpp:1384`, `:1395`); the pointer is kept off a disabled item by hit
+ * testing, whose tree walk passes over an element that is not enabled unless its caller asks for
+ * disabled elements (`IsEnabledAndVisibleForHitTest`, `uielement.cpp:2353`, called at `:13442`).
+ * Within the pinned checkout only diagnostics ask; the pointer input processor that calls the
+ * walk is outside it. The component's hover and pressed rules used to set the stroke on every
+ * item, so a disabled day took the hover stroke under the pointer and the pressed stroke with
+ * the button held.
+ *
+ * Each day is read at rest, under the pointer, and with the button held. The stroke is what
+ * leaked; the fill and the text are read too, because the disabled rule used to hold them only by
+ * coming later than the hover and pressed rules at the same specificity, and a reordering would
+ * have leaked them. An enabled day in the same calendar is read first, and every value the hover
+ * and pressed rules set is asserted to change on it, so each comparison that could leak is able
+ * to disagree. The calendar selects on click, after the button is released, so the enabled day's
+ * pressed read is the plain pressed state.
+ */
+test('a disabled item is neither hovered nor pressed', async ({ page }) => {
+	await page.clock.setFixedTime(new Date('2026-09-02T12:00:00Z'));
+	await page.goto('/dev/calendar-view');
+	await page.evaluate(() => {
+		localStorage.setItem('winui-svelte:theme', 'light');
+		document.documentElement.dataset.theme = 'light';
+	});
+	await page.reload();
+	await expect
+		.poll(() => page.evaluate(() => document.documentElement.dataset.theme ?? ''))
+		.toBe('light');
+
+	/** The item's top stroke, fill and text at rest, under the pointer, and with the button held. */
+	const looks = async (item: Locator) => {
+		const look = () =>
+			item.evaluate((el) => {
+				const style = getComputedStyle(el);
+				return {
+					stroke: style.borderTopColor,
+					fill: style.backgroundColor,
+					text: style.color
+				};
+			});
+		await item.scrollIntoViewIfNeeded();
+		await page.mouse.move(0, 0);
+		const rest = await look();
+		await item.hover();
+		const hover = await look();
+		await page.mouse.down();
+		const pressed = await look();
+		await page.mouse.up();
+		await page.mouse.move(0, 0);
+		return { rest, hover, pressed };
+	};
+
+	// The fixture's range is the 1st to the 15th, so the 16th onward is disabled.
+	const bounded = page
+		.locator('h2', { hasText: /^minimum and maximum dates$/ })
+		.locator('xpath=following-sibling::div[1]')
+		.locator('.calendar-view');
+	const enabled = await looks(
+		bounded
+			.locator(
+				'.day:not([data-outside-month]):not([data-today]):not([data-selected]):not([data-disabled])'
+			)
+			.first()
+	);
+	expect(enabled.hover.stroke, 'the hover stroke is the resting one').not.toBe(enabled.rest.stroke);
+	expect(enabled.hover.fill, 'the hover fill is the resting one').not.toBe(enabled.rest.fill);
+	expect(enabled.pressed.stroke, 'the pressed stroke is the resting one').not.toBe(
+		enabled.rest.stroke
+	);
+	expect(enabled.pressed.fill, 'the pressed fill is the resting one').not.toBe(enabled.rest.fill);
+	expect(enabled.pressed.text, 'the pressed text is the resting one').not.toBe(enabled.rest.text);
+
+	const disabled = await looks(
+		bounded.locator('.day[data-disabled]:not([data-outside-month]):not([data-today])').first()
+	);
+	expect(disabled, 'a disabled day changed under the pointer').toEqual({
+		rest: disabled.rest,
+		hover: disabled.rest,
+		pressed: disabled.rest
+	});
+});
