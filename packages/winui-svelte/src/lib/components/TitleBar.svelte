@@ -234,7 +234,15 @@
 		flex: 0 0 auto;
 	}
 
+	/* Columns 1 and 2 are `Auto` — TitleBar.xaml:172, :174. A grid measures a cell in an `Auto`
+	   column at an unbounded width (`CGrid::MeasureCell`, Grid.cpp:435-440), raises the column's
+	   minimum to the width the cell asks for (`CGrid::MeasureCellsGroup`, :361), and in arrange
+	   gives no column less than its minimum however far the row overflows
+	   (`CGrid::SetFinalSize`, :1415, :1434), so the buttons keep their width however narrow the
+	   bar is. With the default `flex-shrink: 1` they gave way alongside the content: in the
+	   Gallery's shell at 300, both were about 21 pixels wide. */
 	.title-button {
+		flex: 0 0 auto;
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;

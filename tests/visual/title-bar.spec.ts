@@ -76,3 +76,50 @@ test('the title bar goes compact when its content stops fitting', async ({ page 
 	expect(await mode(), `the bar stayed compact back at ${threshold}`).toBe('expanded');
 	await expect(title).toBeVisible();
 });
+
+/**
+ * The back and pane-toggle buttons keep their width however narrow the bar is.
+ *
+ * Both sit in `Auto` columns (`TitleBar.xaml:172`, `:174`). A grid measures a cell in an `Auto`
+ * column at an unbounded width (`CGrid::MeasureCell`, `Grid.cpp:435-440`), raises the column's
+ * minimum to the width the cell asks for (`CGrid::MeasureCellsGroup`, `:361`), and in arrange
+ * gives no column less than its minimum (`CGrid::SetFinalSize`, `:1415`, `:1434`), so what gives
+ * way in a narrow bar is the content's `*` column. The buttons used to shrink with it: at 300 both
+ * were about 21 pixels wide.
+ *
+ * The Gallery's shell is the fixture, one page in so that the back button shows. Each button's
+ * width is read at 800, where it is asserted to be its token's, and again at 300, where the
+ * content is asserted to overflow its column, so the row is short of room when the second read is
+ * taken.
+ */
+test('the title buttons keep their width in a narrow bar', async ({ page }) => {
+	await page.setViewportSize({ width: 800, height: 720 });
+	await page.goto('/');
+	const bar = page.locator('[data-height][data-display-mode]');
+	// The item's text begins with its icon's glyph.
+	await page.locator('[role=treeitem]:visible', { hasText: /\bAll\s*$/ }).click();
+	await expect(bar.locator('.back-button')).toBeVisible();
+
+	const widths = () =>
+		bar
+			.locator('.title-button')
+			.evaluateAll((buttons) => buttons.map((b) => b.getBoundingClientRect().width));
+	const wide = await widths();
+	expect(wide, 'the back and pane-toggle buttons are not both shown').toHaveLength(2);
+	const tokens = await bar.evaluate((el) =>
+		['--winui-TitleBarBackButtonWidth', '--winui-TitleBarPaneToggleButtonWidth'].map((name) =>
+			parseFloat(getComputedStyle(el).getPropertyValue(name))
+		)
+	);
+	expect(wide, 'a title button is not its token width at 800').toEqual(tokens);
+
+	await page.setViewportSize({ width: 300, height: 720 });
+	await page.evaluate(
+		() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)))
+	);
+	expect(
+		await bar.locator('.content-presenter').evaluate((el) => el.scrollWidth > el.clientWidth),
+		'the content fits at 300, so nothing presses on the buttons'
+	).toBe(true);
+	expect(await widths(), 'a title button gave way').toEqual(wide);
+});
