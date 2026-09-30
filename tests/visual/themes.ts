@@ -69,7 +69,18 @@ export async function snapshotAllThemes(
 	path: string,
 	options?: { animations?: 'allow' | 'disabled'; maxDiffPixels?: number }
 ) {
+	// Every theme starts from the viewport the page was given, not the one the previous pass grew
+	// it to. Left grown, only the first theme loaded at the default size and the other two loaded
+	// at the page's full height, and that is not the same page: `Viewbox-dark.png` went 664
+	// pixels different by a raw compare (18 past the comparator's anti-aliasing allowance),
+	// deterministically, at the edges of the bitmap the Viewbox samples scale, while light passed.
+	// Measured on the reference guest by loading the dark route both ways, with nothing else
+	// changed: 0 pixels against the baseline from the default size, 664 from the full height.
+	// Why the load-time size reaches a scaled bitmap's filtering — the order of image decode
+	// against the control applying its transform is the likely answer — is not measured.
+	const initial = page.viewportSize()!;
 	for (const theme of THEMES) {
+		await page.setViewportSize(initial);
 		await page.goto(path);
 		// Set the theme through the channel the app owns as well as the one the screenshot
 		// reads, then prove it stuck. The Gallery's layout applies `theme` to
