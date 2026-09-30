@@ -211,9 +211,31 @@
 </div>
 
 <style>
+	/* The template's root `Grid` redefines the resting, pointer-over and pressed `RepeatButton*`
+	   brushes for everything inside it (`NumberBox.xaml:61-102`), mapping each to the
+	   `TextControlButton*` brush of the same state, the same way in all three theme dictionaries
+	   (:65-74, :77-86, :89-98). The spin buttons are inside it, so their `RepeatButton` style
+	   resolves these rather than the global ones: no fill at rest, a subtle one under the pointer in
+	   light and dark, and a transparent border. `.root` is that `Grid`. The disabled background and
+	   foreground are not redefined, and stay the global ones; the disabled border brush is, to the
+	   resting `TextControlButtonBorderBrush` (:74). The compact placement's popup repeats the same
+	   redefinitions on its own root (:121-162); that placement is not built here, and if its popup
+	   renders outside `.root` it will need them on its own root. */
 	.root {
 		display: flex;
 		flex-direction: column;
+		--winui-RepeatButtonBackground: var(--winui-TextControlButtonBackground);
+		--winui-RepeatButtonBackgroundPointerOver: var(--winui-TextControlButtonBackgroundPointerOver);
+		--winui-RepeatButtonBackgroundPressed: var(--winui-TextControlButtonBackgroundPressed);
+		--winui-RepeatButtonForeground: var(--winui-TextControlButtonForeground);
+		--winui-RepeatButtonForegroundPointerOver: var(--winui-TextControlButtonForegroundPointerOver);
+		--winui-RepeatButtonForegroundPressed: var(--winui-TextControlButtonForegroundPressed);
+		--winui-RepeatButtonBorderBrush: var(--winui-TextControlButtonBorderBrush);
+		--winui-RepeatButtonBorderBrushPointerOver: var(
+			--winui-TextControlButtonBorderBrushPointerOver
+		);
+		--winui-RepeatButtonBorderBrushPressed: var(--winui-TextControlButtonBorderBrushPressed);
+		--winui-RepeatButtonBorderBrushDisabled: var(--winui-TextControlButtonBorderBrush);
 	}
 
 	/* The box: `NumberBox.xaml:27` reads the same `TextControl*` family TextBox reads in the
@@ -416,7 +438,7 @@
 	/* The spin buttons. `NumberBoxSpinButtonStyle` at NumberBox.xaml:182 is
 	   `BasedOn` the default `RepeatButton` style, so the brushes it paints come from the
 	   `RepeatButton*` families: `Background`, `Foreground` and `BorderBrush` in the four
-	   `CommonStates` (Normal, PointerOver, Pressed, Disabled).
+	   `CommonStates` (Normal, PointerOver, Pressed, Disabled), as `.root` redefines them.
 
 	   Upstream places the two buttons side by side in adjacent columns of the same row
 	   (`NumberBox.xaml:174` and `:175`); the input spans all three columns and the
@@ -463,12 +485,12 @@
 		position: relative;
 		border-style: solid;
 		border-width: var(--winui-NumberBoxSpinButtonBorderThickness);
-		/* `RepeatButtonBorderBrush` resolves to `ControlElevationBorderBrush`, a
-		   `linear-gradient(...)` in the token layer — a CSS gradient is not a valid
-		   `border-color` and the declaration is silently dropped, so the border falls
-		   back to `currentColor` (here `RepeatButtonForeground`, near-black) and the
-		   buttons render with heavy black edges. The gradient is painted by
-		   `.spin-up::before` / `.spin-down::before` so it sits on the ring alone. See the
+		/* The border brush is painted by `.spin-up::before` / `.spin-down::before`, not by
+		   `border-color`. Inside `.root` it is the solid `TextControlButtonBorderBrush`, but in
+		   light and dark the global `RepeatButtonBorderBrush` it stands in for is
+		   `ControlElevationBorderBrush`, a `linear-gradient(...)` in the token layer, and a
+		   gradient is not a valid `border-color`: the declaration is silently dropped and the
+		   border falls back to `currentColor`. The ring on `::before` paints either. See the
 		   comment in Button.svelte's `.root` for the full explanation. */
 		border-color: transparent;
 		border-radius: var(--winui-ControlCornerRadius);
