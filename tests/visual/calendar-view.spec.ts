@@ -226,3 +226,235 @@ test('a disabled item is neither hovered nor pressed', async ({ page }) => {
 		pressed: disabled.rest
 	});
 });
+
+/**
+ * A hovered or pressed item takes the brush the chrome picks for its state.
+ *
+ * The chrome walks an item's states in one order for each brush. For the stroke, today first,
+ * which in the rounded chrome gives an enabled item no stroke at all, then selected, then pressed
+ * and hovered (`GetItemBorderBrush`, `CalendarViewBaseItemChrome.cpp:1342`, `:1373`, `:1377`,
+ * `:1388`, `:1399`). For the fill, today, whose hover and press have fills of their own (`:1474`,
+ * `:1478`), then out of scope, which under the pointer takes the plain item's hover and pressed
+ * fills (`:1489`, `:1493`, `:1497`, and the plain item's at `:1506`, `:1510`). For the text,
+ * today (`:1574`), then selected, then pressed, out of scope or not, then hovered out of scope,
+ * then the plain item's (`GetTextBlockForeground`, `:1585`, `:1589`, `:1600`, `:1604`, `:1611`,
+ * `:1620`). At rest the same walk ends at the resting brushes: `:1381`, `:1414`, `:1482`,
+ * `:1501`, `:1514`, `:1574`, `:1593`, `:1615` and `:1620`. The component states each of those
+ * as a CSS rule, and which one wins under the pointer is a matter of specificity and source order
+ * that a rest-state read does not exercise. Today's missing stroke is drawn as the plain item's,
+ * `CalendarItemBorderBrush`, which is transparent in every theme.
+ *
+ * Each case names a calendar on the route, an item in it, and the three brushes, as theme
+ * resources, expected on it at rest, under the pointer and with the button held. The button is
+ * released at the page's corner, in the route's gutter, so the click lands on an ancestor of the
+ * item and no case selects a day or drills into a month.
+ *
+ * Each read under the pointer is compared with the brushes that would show if its rule lost to
+ * one it outranks or ties: the item's own at rest; the plain item's in the same pointer state;
+ * with the button held, the item's own hover brush, since a held button is also hovering and
+ * upstream's "Pressed VS Hovered, Pressed wins" (`:1371`, `:1384`) is source order here; and for
+ * today selected, the selected item's in the same state, since today wins over selected
+ * (`:1342`). Every such pair
+ * is asserted to differ in at least one of the three themes, so a comparison that could not
+ * disagree fails here rather than passing, and so does trimming the themes to ones where a pair
+ * is equal. Two pairs are equal in every theme, are listed by name, and are asserted to stay
+ * equal: the selected pressed stroke is the plain pressed stroke, and the selected hover text is
+ * the selected resting text, so those two reads cannot tell the selected pressed stroke from the
+ * plain one, nor the selected hover text from the resting one.
+ */
+test('a hovered or pressed item takes the brush the chrome picks for its state', async ({
+	page
+}) => {
+	// The 8th, so that the fixture's "today and selected" calendar has an item in both states.
+	await page.clock.setFixedTime(new Date('2026-09-08T12:00:00Z'));
+
+	type Brushes = [stroke: string, fill: string, text: string];
+	type State = 'hover' | 'pressed';
+	type Case = {
+		heading: string;
+		item: string;
+		previous?: boolean;
+		rest: Brushes;
+		/** The state this case's rules outrank, if not only the plain item's. */
+		outranks?: Record<State, Brushes>;
+	} & Record<State, Brushes>;
+	const plain: Record<State, Brushes> = {
+		hover: ['HoverBorderBrush', 'CalendarItemHoverBackground', 'CalendarItemForeground'],
+		pressed: ['PressedBorderBrush', 'CalendarItemPressedBackground', 'PressedForeground']
+	};
+	const outOfScope: Omit<Case, 'heading' | 'item'> = {
+		rest: ['CalendarItemBorderBrush', 'OutOfScopeBackground', 'OutOfScopeForeground'],
+		hover: ['HoverBorderBrush', 'CalendarItemHoverBackground', 'OutOfScopeHoverForeground'],
+		pressed: ['PressedBorderBrush', 'CalendarItemPressedBackground', 'OutOfScopePressedForeground']
+	};
+	const selected: Record<State, Brushes> = {
+		hover: ['SelectedHoverBorderBrush', 'CalendarItemHoverBackground', 'SelectedHoverForeground'],
+		pressed: [
+			'SelectedPressedBorderBrush',
+			'CalendarItemPressedBackground',
+			'SelectedPressedForeground'
+		]
+	};
+	const today: Omit<Case, 'heading' | 'item'> = {
+		rest: ['CalendarItemBorderBrush', 'TodayBackground', 'TodayForeground'],
+		hover: ['CalendarItemBorderBrush', 'TodayHoverBackground', 'TodayForeground'],
+		pressed: ['CalendarItemBorderBrush', 'TodayPressedBackground', 'TodayForeground']
+	};
+	// In the order they run: the selected day in the month comes before the same calendar goes
+	// back a month for the one out of scope.
+	const cases: Case[] = [
+		{
+			heading: 'default',
+			item: '.day[data-outside-month]:not([data-today]):not([data-selected]):not([data-disabled])',
+			...outOfScope
+		},
+		{ heading: 'default', item: '.day[data-today]', ...today },
+		{
+			heading: 'today and selected',
+			item: '.day[data-today][data-selected]',
+			...today,
+			outranks: selected
+		},
+		{
+			heading: 'selectionMode=multiple',
+			item: '.day[data-selected]:not([data-outside-month]):not([data-today])',
+			rest: ['SelectedBorderBrush', 'CalendarItemBackground', 'SelectedForeground'],
+			...selected
+		},
+		{
+			heading: 'selectionMode=multiple',
+			item: '.day[data-selected][data-outside-month]',
+			previous: true,
+			rest: ['SelectedBorderBrush', 'OutOfScopeBackground', 'SelectedForeground'],
+			...selected
+		},
+		{
+			heading: 'displayMode="year"',
+			item: '.year-decade-cell:not(.out-of-scope) .item-chrome:not([data-today])',
+			rest: ['CalendarItemBorderBrush', 'CalendarItemBackground', 'CalendarItemForeground'],
+			...plain
+		},
+		{
+			heading: 'displayMode="year"',
+			item: '.year-decade-cell.out-of-scope .item-chrome',
+			...outOfScope
+		},
+		{
+			heading: 'displayMode="decade"',
+			item: '.year-decade-cell.out-of-scope .item-chrome',
+			...outOfScope
+		}
+	];
+	/** Pairs of theme resources that are the same colour in every theme. */
+	const equalEverywhere = [
+		'SelectedPressedBorderBrush = PressedBorderBrush',
+		'SelectedHoverForeground = SelectedForeground'
+	];
+
+	/** The route's CalendarView whose `.row` follows the heading with this text. */
+	const under = (heading: string) =>
+		page
+			.locator('h2', { hasText: new RegExp(`^${heading.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`) })
+			.locator('xpath=following-sibling::div[1]')
+			.locator('.calendar-view');
+	const look = (item: Locator) =>
+		item.evaluate((el): Brushes => {
+			const style = getComputedStyle(el);
+			return [style.borderTopColor, style.backgroundColor, style.color];
+		});
+	// A name that is not a theme resource resolves to this rather than to the inherited text.
+	const UNKNOWN = 'rgb(1, 2, 3)';
+	/** Each theme resource as the colour it resolves to beside the item. */
+	const resolve = async (item: Locator, names: Brushes) => {
+		const colours = await item.evaluate(
+			(el, [names, unknown]) =>
+				names.map((name) => {
+					const probe = document.createElement('div');
+					probe.style.color = `var(--winui-CalendarView${name}, ${unknown})`;
+					el.parentElement!.append(probe);
+					const colour = getComputedStyle(probe).color;
+					probe.remove();
+					return colour;
+				}) as Brushes,
+			[names, UNKNOWN] as const
+		);
+		expect(colours, `${names.join(', ')}: not all theme resources`).not.toContain(UNKNOWN);
+		return colours;
+	};
+
+	/** Every rival pair, and whether any theme so far has told it apart. */
+	const toldApart = new Map<string, boolean>();
+	const listedApart = new Map<string, boolean>();
+	for (const theme of ['light', 'dark', 'high-contrast'] as const) {
+		await page.goto('/dev/calendar-view');
+		await page.evaluate((t) => {
+			localStorage.setItem('winui-svelte:theme', t);
+			document.documentElement.dataset.theme = t;
+		}, theme);
+		await page.reload();
+		await expect
+			.poll(() => page.evaluate(() => document.documentElement.dataset.theme ?? ''))
+			.toBe(theme);
+
+		for (const c of cases) {
+			const view = under(c.heading);
+			if (c.previous) {
+				await view.locator('.nav.previous').first().click();
+				await page.waitForFunction(() =>
+					document
+						.getAnimations()
+						.every(
+							(a) => a.playState !== 'running' || a.effect?.getTiming().iterations === Infinity
+						)
+				);
+			}
+			const item = view.locator(c.item).locator('visible=true').first();
+			const what = `${theme}, ${c.heading}, ${c.item}`;
+			await expect(item, `${what}: no such item`).toBeVisible();
+			await item.scrollIntoViewIfNeeded();
+
+			await page.mouse.move(0, 0);
+			const rest = await resolve(item, c.rest);
+			expect(await look(item), `${what}, at rest`).toEqual(rest);
+			let hovered: Brushes | undefined;
+			for (const state of ['hover', 'pressed'] as const) {
+				if (state === 'hover') await item.hover();
+				else await page.mouse.down();
+				const want = await resolve(item, c[state]);
+				expect(await look(item), `${what}, ${state}`).toEqual(want);
+
+				const rivals: [Brushes, Brushes][] = [
+					[c.rest, rest],
+					[plain[state], await resolve(item, plain[state])]
+				];
+				if (state === 'pressed') rivals.push([c.hover, hovered!]);
+				if (c.outranks) rivals.push([c.outranks[state], await resolve(item, c.outranks[state])]);
+				for (const [rival, colours] of rivals)
+					for (const i of [0, 1, 2]) {
+						if (c[state][i] === rival[i]) continue;
+						const pair = `${c[state][i]} = ${rival[i]}`;
+						const seen = equalEverywhere.includes(pair) ? listedApart : toldApart;
+						const key = `${c.heading}, ${c.item}, ${state}: ${pair}`;
+						seen.set(key, (seen.get(key) ?? false) || want[i] !== colours[i]);
+					}
+				hovered = want;
+			}
+			await page.mouse.move(0, 0);
+			await page.mouse.up();
+		}
+	}
+	expect(toldApart.size, 'no pair was compared').toBeGreaterThan(0);
+	expect(
+		[...toldApart].filter(([, apart]) => !apart).map(([key]) => key),
+		'pairs no theme tells apart'
+	).toEqual([]);
+	expect(
+		[...listedApart].filter(([, apart]) => apart).map(([key]) => key),
+		'pairs listed as equal everywhere that a theme told apart'
+	).toEqual([]);
+	for (const pair of equalEverywhere)
+		expect(
+			[...listedApart.keys()].some((key) => key.endsWith(`: ${pair}`)),
+			`${pair}: listed but never compared`
+		).toBe(true);
+});
