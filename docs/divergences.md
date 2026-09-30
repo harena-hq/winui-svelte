@@ -142,36 +142,6 @@ surface are painted the same way.
 
 ---
 
-### WD-005 — TitleBar never collapses its title to make room for content
-
-- **Control**: `TitleBar`.
-- **WinUI does**: switch into a `Compact` visual state when the content's desired width
-  exceeds its column's actual width. `TitleBar::OnSizeChanged` watches the two values and,
-  once the gap closes, collapses the title and the subtitle and re-aligns the content to
-  the left with the `TitleBarCompactContentMargin`. The control returns to its default
-  state when the gap reopens. There is no threshold width anywhere — the rule is a
-  comparison performed at layout time.
-- **We do**: render the title and the content together, always, regardless of how tight the
-  row gets. `data-height` is the only row-level state we emit, and it answers a different
-  question (`Content`, `LeftHeader` and `RightHeader` are all absent → compact, else
-  expanded); it is not a function of the title fitting.
-- **Why accepted**: the comparison WinUI performs requires reading the content's desired
-  width against its column's actual width, which means measuring one element against the
-  layout the others have already taken. In flex that is a `ResizeObserver` on the content
-  cell, a second pass of width accounting, and the new width pushed through every layout-
-  dependent declaration on the title and the subtitle. That is the cost of a feature whose
-  visible result on the Gallery's own pages is none — the search box the Gallery places in
-  the content slot is narrow enough not to push the title out under every breakpoint the
-  page ships at. Building it now means adding a ResizeObserver and a state machine to a
-  page that renders correctly without them.
-- **Would reconsider if**: a viewport this project cares about gets narrow enough for the
-  content to push the title out. The Gallery's search box has a maximum width and the
-  window a minimum one, so today the two never meet; the day they do, the title is clipped
-  where WinUI would have hidden it, and that is a fidelity loss a user can reach. The entry
-  is then deleted rather than amended, because the comparison WinUI performs is the fix.
-
----
-
 ### WD-006 — an animated icon renders as the static glyph WinUI falls back to
 
 - **Control**: `NavigationView`'s settings item, `TitleBar`'s back and pane-toggle buttons,
