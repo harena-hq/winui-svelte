@@ -1199,6 +1199,32 @@ async function midline(page: Page, fill: Locator) {
 	);
 }
 
+/**
+ * Which of `midline`'s five columns an element's left stroke lands in, found by painting the
+ * stroke opaque red for one screenshot. An element at a fractional x has its 1px stroke snapped
+ * to a column the browser chooses: the first under Chromium on Linux and the second on the
+ * reference guest, measured on the TeachingTip close button and the MediaTransportControls
+ * panel. A test that assumes the first column reads the surface outside the element there.
+ */
+async function strokeColumn(page: Page, element: Locator, selector: string, label: string) {
+	const locate = await page.addStyleTag({
+		content: `${selector} { border-color: rgb(255, 0, 0) !important; }`
+	});
+	const redness = (await midline(page, element)).map((pixel) => {
+		const [r, g] = pixel.split(',').map(Number);
+		return r - g;
+	});
+	await locate.evaluate((el) => (el as Element).remove());
+	const column = redness.indexOf(Math.max(...redness));
+	expect(
+		redness[column],
+		`${label}: no pixel of the midline is the painted stroke`
+	).toBeGreaterThan(200);
+	// `midline` reads five columns, and a caller reads the inside two past the edge.
+	expect(column, `${label}: the stroke is past the columns this reads`).toBeLessThanOrEqual(2);
+	return column;
+}
+
 test("the TeachingTip close button's fill stops at the inner border edge", async ({ page }) => {
 	let light = '';
 	for (const theme of ['light', 'dark'] as const) {
@@ -1242,27 +1268,10 @@ test("the TeachingTip close button's fill stops at the inner border edge", async
 			await page.locator('.close').count()
 		);
 
-		// The stroke's column is found rather than assumed. The button sits at a fractional x,
-		// and which column of its screenshot the 1px stroke lands in depends on how the browser
-		// snaps it — the first under Chromium on Linux, the second on the reference guest. Read
-		// at the first on the guest, the edge and the inside were both the card, and the clip
-		// assertion below compared the card with itself and passed. So the stroke is painted
-		// opaque red once, and the column that turns reddest is the edge.
-		const locate = await page.addStyleTag({
-			content: '.close-fill { border-color: rgb(255, 0, 0) !important; }'
-		});
-		const redness = (await midline(page, fill)).map((pixel) => {
-			const [r, g] = pixel.split(',').map(Number);
-			return r - g;
-		});
-		await locate.evaluate((el) => (el as Element).remove());
-		const column = redness.indexOf(Math.max(...redness));
-		expect(
-			redness[column],
-			`${theme}: no pixel of the midline is the painted stroke`
-		).toBeGreaterThan(200);
-		// `midline` reads five columns and the inside is two past the edge.
-		expect(column, `${theme}: the stroke is past the columns this reads`).toBeLessThanOrEqual(2);
+		// The stroke's column is found rather than assumed; `strokeColumn` says why. Read at the
+		// first column on the reference guest, the edge and the inside were both the card, and
+		// the clip assertion below compared the card with itself and passed.
+		const column = await strokeColumn(page, fill, '.close-fill', theme);
 		const closeEdge = async () => {
 			const row = await midline(page, fill);
 			return { edge: row[column], inside: row[column + 2] };
@@ -1400,5 +1409,85 @@ test("the InfoBar's fill stops at the inner border edge, so every severity's str
 				`${theme}: an unclipped ${severity} fill changed the edge not at all`
 			).not.toBe(shipped[i].edge);
 		}
+	}
+});
+
+/**
+ * The MediaTransportControls panel's fill stops at the inner border edge.
+ *
+ * `ControlPanelGrid` (`MediaTransportControls_themeresources.xaml:263`) is a Grid that takes a
+ * fill, `MediaTransportControlsBorderBrush` and a 1px `BorderThickness`, and sets no
+ * `BackgroundSizing` — the string occurs nowhere in that file. A Grid reads the default from its
+ * own property, as the tab header section says, so the fill stops at the stroke's inner edge.
+ *
+ * The stroke aliases `SurfaceStrokeColorFlyoutBrush`, `#0000000f` in light and `#00000033` in
+ * dark, and the fill, `AcrylicInAppFillColorDefaultBrush`, resolves to an opaque colour in this
+ * token layer. So unclipped, the ring is the stroke over the panel's own fill; clipped, it is the
+ * stroke over what is behind the panel. Measured on the route's first panel under Chromium on
+ * Linux: the edge reads 234 unclipped against 237 clipped in light, and 35 against 34 in dark —
+ * one level, which is all the margin the dark positive control has. The inside reads 249 and 44.
+ *
+ * High contrast is left out: the edge read one value under both clips there, so the positive
+ * control could not fire.
+ */
+test("the MediaTransportControls panel's fill stops at the inner border edge", async ({ page }) => {
+	let light = '';
+	for (const theme of ['light', 'dark'] as const) {
+		await page.goto('/dev/media-transport-controls');
+		// Both channels and a reload, then a wait on the render, for the reason the tab header
+		// section gives.
+		await page.evaluate((t) => {
+			localStorage.setItem('winui-svelte:theme', t);
+			document.documentElement.dataset.theme = t;
+		}, theme);
+		await page.reload();
+
+		// The route's first panel; every panel on it carries the same rule.
+		const panel = page.locator('.control-panel').first();
+		await panel.waitFor();
+		const rendered = () => panel.evaluate((el) => getComputedStyle(el).backgroundColor);
+		if (theme === 'light') light = await rendered();
+		else await expect.poll(rendered, { timeout: 5000 }).not.toBe(light);
+		// The route's loading and buffering rows run an indeterminate bar that never finishes,
+		// so the wait is for every finite animation; the bars are in other panels.
+		await page.waitForFunction(() =>
+			document
+				.getAnimations()
+				.every((a) => a.playState !== 'running' || a.effect?.getTiming().iterations === Infinity)
+		);
+
+		// The stroke's column is found rather than assumed; `strokeColumn` says why. Read at the
+		// first column on the reference guest, the edge was the page under both clips and the
+		// positive control below failed.
+		const column = await strokeColumn(page, panel, '.control-panel', theme);
+
+		/** The panel's edge pixel and the pixel two in from it, on its midline. */
+		const read = async () => {
+			const row = await midline(page, panel);
+			return { edge: row[column], inside: row[column + 2] };
+		};
+		/** Reads the panel with `background-clip` overridden, then puts the page back. */
+		const withClip = async (value: string) => {
+			const tag = await page.addStyleTag({
+				content: `.control-panel { background-clip: ${value} !important; }`
+			});
+			const pixels = await read();
+			await tag.evaluate((el) => (el as Element).remove());
+			return pixels;
+		};
+
+		const shipped = await read();
+		expect(shipped, `${theme}: the panel's fill runs under its stroke`).toEqual(
+			await withClip('padding-box')
+		);
+		expect(shipped.edge, `${theme}: the edge reads the fill, so it is not the stroke`).not.toBe(
+			shipped.inside
+		);
+		// The positive control: an unclipped fill has to move the edge, or the reading is
+		// somewhere the fill never reaches.
+		expect(
+			(await withClip('border-box')).edge,
+			`${theme}: an unclipped fill changed the edge not at all`
+		).not.toBe(shipped.edge);
 	}
 });
