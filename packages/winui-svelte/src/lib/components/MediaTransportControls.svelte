@@ -735,8 +735,11 @@
 		box-sizing: border-box;
 		overflow: hidden;
 		/* MediaTransportControls_themeresources.xaml:263 — ControlPanelGrid's fill, border and
-		   radius; CornerRadius is the Style's OverlayCornerRadius at :72 via TemplateBinding. */
-		background: var(--winui-MediaTransportControlsPanelBackground);
+		   radius; CornerRadius is the Style's OverlayCornerRadius at :72 via TemplateBinding.
+		   The fill carries `padding-box`: that Grid sets no `BackgroundSizing` and takes a
+		   Grid's default, `InnerBorderEdge`, so the stroke — translucent in light and dark —
+		   lies on what is behind the panel rather than on its fill. */
+		background: var(--winui-MediaTransportControlsPanelBackground) padding-box;
 		border: var(--winui-MediaTransportControlsBorderThickness) solid
 			var(--winui-MediaTransportControlsBorderBrush);
 		border-radius: var(--winui-OverlayCornerRadius);
