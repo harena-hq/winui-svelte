@@ -2397,3 +2397,44 @@ changes`.
   (:2308).
 - **Would reconsider if**: a touch device can drive the reference Gallery, or bits-ui releases the
   capture for touch itself.
+
+### WD-099 — a title set while the bar is compact stays hidden here, where upstream shows it
+
+- **Control**: TitleBar, in its `Compact` display mode.
+- **WinUI does**: show the title when a non-empty `Title` is set while the bar is compact, and the
+  subtitle when `Subtitle` is. Two visual state groups set the title's visibility:
+  `TitleTextGroup`'s `TitleTextVisible` sets it `Visible` (`TitleBar.xaml:80-84`) and
+  `DisplayModeGroup`'s `Compact` sets it `Collapsed` (:149-156). The subtitle's groups do the same
+  (`SubtitleTextGroup`, :93-106, and `Compact` at :152). A state's setters are applied as the
+  property's animated value (`VisualStateSetterHelper.cpp:186`), and a property has one animated
+  value, which the next setter overwrites (`ModifiedValue.cpp:57-71`), so the last one applied is
+  the one that shows. A non-empty `Title` reaches `UpdateTitle` (`TitleBar.cpp:128-133`, then
+  `HandleTitleChange` at :100), which goes to `TitleTextVisible` with no check for compact (:515),
+  and `Subtitle` reaches `UpdateSubtitle` the same way (:135-137, :554). Whichever state the group
+  was in, `Visible` is applied after `Compact`'s `Collapsed`: from another state,
+  `ChangeVisualState` applies it (`VisualStateManagerActuator.cpp:199`), and the left state's setter
+  on the same property is not cleared after it (:243-249); from `TitleTextVisible` itself, going to
+  it again without transitions applies its setters again (`CVisualStateManager2.cpp:131-142`), on
+  the next tick (`VisualStateManagerActuator.cpp:378`, `VisualStateSetterHelper.cpp:174-177`,
+  :207-215). That the deferred set runs rests on the header's own description
+  (`DeferredAnimationOperation.h:12-14`); its body is not in the pin.
+- **We do**: keep them hidden. The compact rule hides the title and the subtitle from the display
+  mode alone, whatever their text.
+- **Why accepted**: every other path upstream takes while the bar is compact keeps them hidden. The
+  window-activation handler, which goes to the title's and subtitle's visible or deactivated states,
+  checks `m_isCompact` first (`TitleBar.cpp:224-236`); `OnApplyTemplate` calls `UpdateTitle` and
+  `UpdateSubtitle` unguarded (:80-81), but runs before the bar can go compact, or after a new
+  template has dropped the `Compact` state; and leaving `Compact` calls `UpdateTitle` and
+  `UpdateSubtitle` (:185-186), without which the title would stay hidden: leaving a state clears its
+  setters' animated value (`VisualStateManagerActuator.cpp:249`, `VisualStateSetterHelper.cpp:192`),
+  which drops the title to its template value, `Collapsed` (`TitleBar.xaml:235`, and :250 for the
+  subtitle). The unguarded path reads as an omission, and reproducing it would give the title back
+  the room the bar went compact to give the content.
+- **What it is worth**: an app that sets `Title` or `Subtitle` while its bar is compact sees the
+  text upstream, beside a narrower content column, until the bar is widened past its threshold, and
+  sees nothing here. Not observed on the reference machine. The Gallery's shell sets its title once
+  (`MainWindow.xaml:25`, in the pinned Gallery), but its TitleBar sample binds both to text boxes
+  and gives the bar content (`TitleBarPage.xaml:40-46`, :61-68), so if narrowing that page makes the
+  bar compact, typing a title would show it; that was not tried.
+- **Would reconsider if**: that page shows the title staying hidden, or upstream adds the check to
+  `UpdateTitle` — either way this entry is deleted — or upstream is seen to show it on purpose.

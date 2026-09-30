@@ -386,7 +386,9 @@
 
 	/* `DisplayModeGroup`'s `Compact` state, TitleBar.xaml:149-156: the title and the subtitle
 	   collapse, and the content moves to the left with a margin on its right, so content wider
-	   than the column is clipped on the right rather than on both sides. */
+	   than the column is clipped on the right rather than on both sides. WD-099: they stay
+	   collapsed when their text is set, where upstream's `UpdateTitle` and `UpdateSubtitle` show
+	   them. See docs/divergences.md. */
 	.root[data-display-mode='compact'] .title,
 	.root[data-display-mode='compact'] .subtitle {
 		display: none;
