@@ -761,18 +761,33 @@
 		color: var(--winui-CalendarViewPressedForeground);
 	}
 
+	/* Out of scope ranks below disabled and today in the chrome's own order: its fill is chosen
+	   after both (`GetItemBackgroundBrush`, CalendarViewBaseItemChrome.cpp:1455, :1466, :1489)
+	   and so is its text (`GetTextBlockForeground`, :1551, :1566, :1607), and the text of a
+	   selected item too (:1581). These rules outrank the ones for those states, so each passes
+	   over an item in one of them rather than covering it; a month or a year is never selected. */
 	.calendar-view[data-out-of-scope-enabled]
 		.year-decade-cell.out-of-scope
-		.item-chrome:not(:hover):not(:active) {
+		.item-chrome:not([data-disabled]):not(.calendar-view[data-today-highlighted] [data-today]):not(
+			:hover
+		):not(:active) {
 		background: var(--winui-CalendarViewOutOfScopeBackground) padding-box;
 		color: var(--winui-CalendarViewOutOfScopeForeground);
 	}
 
-	.calendar-view[data-out-of-scope-enabled] .year-decade-cell.out-of-scope .item-chrome:hover {
+	.calendar-view[data-out-of-scope-enabled]
+		.year-decade-cell.out-of-scope
+		.item-chrome:not([data-disabled]):not(
+			.calendar-view[data-today-highlighted] [data-today]
+		):hover {
 		color: var(--winui-CalendarViewOutOfScopeHoverForeground);
 	}
 
-	.calendar-view[data-out-of-scope-enabled] .year-decade-cell.out-of-scope .item-chrome:active {
+	.calendar-view[data-out-of-scope-enabled]
+		.year-decade-cell.out-of-scope
+		.item-chrome:not([data-disabled]):not(
+			.calendar-view[data-today-highlighted] [data-today]
+		):active {
 		color: var(--winui-CalendarViewOutOfScopePressedForeground);
 	}
 
@@ -892,16 +907,34 @@
 		font-size: var(--winui-CalendarViewFirstOfMonthLabelFontSize);
 	}
 
-	.calendar-view[data-out-of-scope-enabled] .day[data-outside-month]:not(:hover):not(:active) {
+	/* The same order as the year-decade rules above, and a day can be selected, so the fill and
+	   the text are separate rules: a selected day out of scope takes the out-of-scope fill and
+	   the selected text. */
+	.calendar-view[data-out-of-scope-enabled]
+		.day[data-outside-month]:not([data-disabled]):not(
+			.calendar-view[data-today-highlighted] [data-today]
+		):not(:hover):not(:active) {
 		background: var(--winui-CalendarViewOutOfScopeBackground) padding-box;
+	}
+
+	.calendar-view[data-out-of-scope-enabled]
+		.day[data-outside-month]:not([data-disabled]):not(
+			.calendar-view[data-today-highlighted] [data-today]
+		):not([data-selected]):not(:hover):not(:active) {
 		color: var(--winui-CalendarViewOutOfScopeForeground);
 	}
 
-	.calendar-view[data-out-of-scope-enabled] .day[data-outside-month]:hover {
+	.calendar-view[data-out-of-scope-enabled]
+		.day[data-outside-month]:not([data-disabled]):not(
+			.calendar-view[data-today-highlighted] [data-today]
+		):not([data-selected]):hover {
 		color: var(--winui-CalendarViewOutOfScopeHoverForeground);
 	}
 
-	.calendar-view[data-out-of-scope-enabled] .day[data-outside-month]:active {
+	.calendar-view[data-out-of-scope-enabled]
+		.day[data-outside-month]:not([data-disabled]):not(
+			.calendar-view[data-today-highlighted] [data-today]
+		):not([data-selected]):active {
 		color: var(--winui-CalendarViewOutOfScopePressedForeground);
 	}
 
