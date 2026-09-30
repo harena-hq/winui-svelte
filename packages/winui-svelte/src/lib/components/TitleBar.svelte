@@ -52,9 +52,6 @@
 		...rest
 	}: TitleBarProps = $props();
 
-	// WD-005: WinUI hides the title when the content stops fitting; we do not. See
-	// docs/divergences.md.
-	//
 	// `TitleBar.cpp`'s `UpdateHeight` is one rule — compact when `Content`, `LeftHeader`
 	// and `RightHeader` are all absent. This component has no `LeftHeader`, so the
 	// condition reduces to the other two. Keyed on a data attribute rather than a CSS
@@ -62,6 +59,37 @@
 	const height = $derived(
 		content === undefined && rightHeader === undefined ? 'compact' : 'expanded'
 	);
+
+	// `TitleBar.cpp`'s `OnSizeChanged`: the first time the content's desired width reaches
+	// its column's, the bar goes to `Compact` and remembers its own width, and it goes back
+	// to `Expanded` only once it is at least that wide again. A desired width in XAML is
+	// clamped to the space offered, so reaching the column means wanting at least all of it;
+	// the nearest thing the page can read is overflow, a content presenter that scrolls
+	// further than it shows. Three cases fall apart from the original: an exact fit stays
+	// expanded, overflow while the content is still centred counts only its right half, and
+	// content that absorbs its own overflow — shrinking below its content, or clipping or
+	// scrolling itself — never goes compact, where the original would.
+	let contentPresenter = $state<HTMLElement | null>(null);
+	let displayMode = $state<'expanded' | 'compact'>('expanded');
+	let compactModeThresholdWidth = 0;
+
+	$effect(() => {
+		const root = ref;
+		const presenter = contentPresenter;
+		if (!root || !presenter) return;
+		const observer = new ResizeObserver(([entry]) => {
+			const width = entry.contentRect.width;
+			if (!compactModeThresholdWidth && presenter.scrollWidth > presenter.clientWidth) {
+				compactModeThresholdWidth = width;
+				displayMode = 'compact';
+			} else if (displayMode === 'compact' && width >= compactModeThresholdWidth) {
+				compactModeThresholdWidth = 0;
+				displayMode = 'expanded';
+			}
+		});
+		observer.observe(root);
+		return () => observer.disconnect();
+	});
 
 	function handleBack() {
 		if (!backButtonEnabled) return;
@@ -86,7 +114,14 @@
 	}
 </script>
 
-<div bind:this={ref} class={['root', className]} {style} data-height={height} {...rest}>
+<div
+	bind:this={ref}
+	class={['root', className]}
+	{style}
+	data-height={height}
+	data-display-mode={displayMode}
+	{...rest}
+>
 	<div class="left-padding"></div>
 
 	<!-- Both tooltips are attached in `TitleBar.cpp` rather than in the template — the
@@ -144,7 +179,7 @@
 	{/if}
 
 	{#if content}
-		<div class="content-presenter">{@render content()}</div>
+		<div bind:this={contentPresenter} class="content-presenter">{@render content()}</div>
 	{/if}
 
 	{#if rightHeader}
@@ -339,6 +374,19 @@
 		/* The column is `*` — TitleBar.xaml:186 — and its content keeps its own width, so
 		   a window narrow enough clips the content rather than squeezing it. */
 		overflow: hidden;
+	}
+
+	/* `DisplayModeGroup`'s `Compact` state, TitleBar.xaml:149-156: the title and the subtitle
+	   collapse, and the content moves to the left with a margin on its right, so content wider
+	   than the column is clipped on the right rather than on both sides. */
+	.root[data-display-mode='compact'] .title,
+	.root[data-display-mode='compact'] .subtitle {
+		display: none;
+	}
+
+	.root[data-display-mode='compact'] .content-presenter {
+		justify-content: flex-start;
+		margin: var(--winui-TitleBarCompactContentMargin);
 	}
 
 	.right-header {
