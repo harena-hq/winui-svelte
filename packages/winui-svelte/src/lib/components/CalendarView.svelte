@@ -742,25 +742,29 @@
 		/* c1-allow: CalendarView_themeresources.xaml:311 — CalendarItemBorderThickness="1". */
 		border: 1px solid var(--winui-CalendarViewCalendarItemBorderBrush);
 		border-radius: 50%;
-		background: var(--winui-CalendarViewCalendarItemBackground);
+		/* The chrome draws its circle as a `CBorder` it creates itself and never gives a
+		   `BackgroundSizing` (`EnsureOuterBorder`, CalendarViewBaseItemChrome.cpp:1730), so the
+		   fill stops at the stroke's inner edge, and `background` is a shorthand: every rule
+		   below that sets it restates the clip. Today's rules are the exception and say why. */
+		background: var(--winui-CalendarViewCalendarItemBackground) padding-box;
 		color: var(--winui-CalendarViewCalendarItemForeground);
 	}
 
 	.item-chrome:hover {
 		border-color: var(--winui-CalendarViewHoverBorderBrush);
-		background: var(--winui-CalendarViewCalendarItemHoverBackground);
+		background: var(--winui-CalendarViewCalendarItemHoverBackground) padding-box;
 	}
 
 	.item-chrome:active {
 		border-color: var(--winui-CalendarViewPressedBorderBrush);
-		background: var(--winui-CalendarViewCalendarItemPressedBackground);
+		background: var(--winui-CalendarViewCalendarItemPressedBackground) padding-box;
 		color: var(--winui-CalendarViewPressedForeground);
 	}
 
 	.calendar-view[data-out-of-scope-enabled]
 		.year-decade-cell.out-of-scope
 		.item-chrome:not(:hover):not(:active) {
-		background: var(--winui-CalendarViewOutOfScopeBackground);
+		background: var(--winui-CalendarViewOutOfScopeBackground) padding-box;
 		color: var(--winui-CalendarViewOutOfScopeForeground);
 	}
 
@@ -773,27 +777,34 @@
 	}
 
 	.calendar-view[data-today-highlighted] .item-chrome[data-today] {
-		/* The rounded chrome gives today a background ring, not a border brush. */
+		/* The rounded chrome gives today a background ring, not a border brush. With no brush
+		   it gives the circle no thickness either (`SetOuterBorderThickness`,
+		   CalendarViewBaseItemChrome.cpp:1899), so today's fill reaches the outer edge and
+		   these three rules clip to the border box. */
 		border-color: var(--winui-CalendarViewCalendarItemBorderBrush);
-		background: var(--winui-CalendarViewTodayBackground);
+		background: var(--winui-CalendarViewTodayBackground) border-box;
 		color: var(--winui-CalendarViewTodayForeground);
 	}
 
 	.calendar-view[data-today-highlighted] .item-chrome[data-today]:hover {
-		background: var(--winui-CalendarViewTodayHoverBackground);
+		background: var(--winui-CalendarViewTodayHoverBackground) border-box;
 	}
 
 	.calendar-view[data-today-highlighted] .item-chrome[data-today]:active {
-		background: var(--winui-CalendarViewTodayPressedBackground);
+		background: var(--winui-CalendarViewTodayPressedBackground) border-box;
 	}
 
 	.item-chrome[data-disabled] {
-		background: var(--winui-CalendarViewCalendarItemDisabledBackground);
+		background: var(--winui-CalendarViewCalendarItemDisabledBackground) padding-box;
 		color: var(--winui-CalendarViewDisabledForeground);
 	}
 
 	.calendar-view[data-today-highlighted] .item-chrome[data-disabled][data-today] {
-		background: var(--winui-CalendarViewTodayDisabledBackground);
+		/* Disabled, today does get a brush, `SelectedDisabledBorderBrush`
+		   (CalendarViewBaseItemChrome.cpp:1349), so its circle has a thickness again and the
+		   fill stops inside it. */
+		border-color: var(--winui-CalendarViewSelectedDisabledBorderBrush);
+		background: var(--winui-CalendarViewTodayDisabledBackground) padding-box;
 	}
 
 	.year-decade-main,
@@ -882,7 +893,7 @@
 	}
 
 	.calendar-view[data-out-of-scope-enabled] .day[data-outside-month]:not(:hover):not(:active) {
-		background: var(--winui-CalendarViewOutOfScopeBackground);
+		background: var(--winui-CalendarViewOutOfScopeBackground) padding-box;
 		color: var(--winui-CalendarViewOutOfScopeForeground);
 	}
 

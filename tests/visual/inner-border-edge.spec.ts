@@ -1571,3 +1571,146 @@ test("the NavigationView content area's fill stops at the inner border edge", as
 		).not.toBe(shipped.edge);
 	}
 });
+
+/**
+ * A CalendarView item's fill stops at the inner border edge, except today's.
+ *
+ * The item chrome is not a template. `CCalendarViewBaseItemChrome` draws its circle as a
+ * `CBorder` it creates in code (`EnsureOuterBorder`, `CalendarViewBaseItemChrome.cpp:1730`).
+ * Every property the file sets on it is one of five — hit testing, fill, radius, thickness and
+ * brush, at `:1732`, `:1839`, `:1876`, `:1926` and `:1953` — and `BackgroundSizing` is not among
+ * them, so the circle takes the `Border` default and its fill stops at the stroke's inner edge.
+ *
+ * In light and dark the chrome gives a hovered or pressed item one brush for the stroke and the
+ * fill — `SubtleFillColorSecondary` and `SubtleFillColorTertiary`, both translucent there — as
+ * the TeachingTip close button's style does. So unclipped, the 1px ring is that brush laid over
+ * itself; clipped, it is the brush once over the page. Measured on the route's first plain day on
+ * the reference guest: hovered, the edge reads 239 unclipped against 247 clipped in light and 54
+ * against 42 in dark; pressed, 245 against 250 and 45 against 38. The inside reads within one
+ * level of the clipped edge, not always equal to it — a circle's edge pixel is partly outside
+ * the circle — so the sameness the TeachingTip section asserts is not asserted here.
+ *
+ * Today is the exception, and the reason is the thickness rather than the clip. The chrome gives
+ * an enabled today no border brush (`GetItemBorderBrush`, `:1343`), and with no brush it gives the
+ * circle no thickness (`SetOuterBorderThickness`, `:1899`), so today's fill reaches the outer
+ * edge. This project keeps the 1px border and leaves it transparent, so today's rules clip to the
+ * border box, and the same pair of readings runs the other way: the shipped edge equals a forced
+ * `border-box`, and a forced `padding-box` moves it — to the page, 255 in light and 30 in dark.
+ *
+ * High contrast is left out: a hovered item's stroke is opaque there, and its edge read one value
+ * under both clips, so the positive control could not fire.
+ *
+ * The out-of-scope, disabled and disabled-today clips are not read. No route renders a disabled
+ * today. The other two fills are transparent in light and dark, and in high contrast the
+ * out-of-scope fill is one level from the page, so its edge moves by one level between the two
+ * clips — which is what moved every out-of-month ring in the two high-contrast calendar
+ * baselines, and is too thin a margin to rest an assertion on.
+ */
+
+/** A day with none of the states whose rules change the brushes: not today, not selected, not
+ *  disabled and inside the month. */
+const PLAIN_DAY =
+	'.day:not([data-today]):not([data-selected]):not([data-disabled]):not([data-outside-month])';
+const DAY_STATES = ['hover', 'pressed'] as const;
+
+test("a CalendarView item's fill stops at the inner border edge, and today's reaches the outer", async ({
+	page
+}) => {
+	// Today is highlighted, so the date is fixed as `calendar-view.spec.ts` fixes it.
+	await page.clock.setFixedTime(new Date('2026-09-08T12:00:00Z'));
+	let light = '';
+	for (const theme of ['light', 'dark'] as const) {
+		await page.goto('/dev/calendar-view');
+		// Both channels and a reload, then a wait on the render, for the reason the tab header
+		// section gives.
+		await page.evaluate((t) => {
+			localStorage.setItem('winui-svelte:theme', t);
+			document.documentElement.dataset.theme = t;
+		}, theme);
+		await page.reload();
+
+		// The route's first plain day and its first today, both in the first CalendarView.
+		const day = page.locator(PLAIN_DAY).first();
+		const today = page.locator('.day[data-today]').first();
+		await day.waitFor();
+		const rendered = () => day.evaluate((el) => getComputedStyle(el).color);
+		if (theme === 'light') light = await rendered();
+		else await expect.poll(rendered, { timeout: 5000 }).not.toBe(light);
+		// Every finite animation, as the MediaTransportControls section waits.
+		await page.waitForFunction(() =>
+			document
+				.getAnimations()
+				.every((a) => a.playState !== 'running' || a.effect?.getTiming().iterations === Infinity)
+		);
+
+		// Forced rather than driven, as the sections above do: a real press selects the day.
+		// `DOM.querySelector` and `page.locator` agree on the first plain day only while the two
+		// count the same elements, so the count is asserted.
+		const cdp = await page.context().newCDPSession(page);
+		await cdp.send('DOM.enable');
+		await cdp.send('CSS.enable');
+		const { root } = await cdp.send('DOM.getDocument', { depth: -1 });
+		const { nodeIds } = await cdp.send('DOM.querySelectorAll', {
+			nodeId: root.nodeId,
+			selector: PLAIN_DAY
+		});
+		expect(nodeIds.length, `${theme}: CDP and the page count different plain days`).toBe(
+			await page.locator(PLAIN_DAY).count()
+		);
+
+		/** An item's edge pixel and the pixel two in from it, read under `background-clip`
+		 *  overridden when `value` is given, with the page put back after. */
+		const reader = (item: Locator, selector: string, column: number) => async (value?: string) => {
+			const tag = value
+				? await page.addStyleTag({
+						content: `${selector} { background-clip: ${value} !important; }`
+					})
+				: undefined;
+			const row = await midline(page, item);
+			await tag?.evaluate((el) => (el as Element).remove());
+			return { edge: row[column], inside: row[column + 2] };
+		};
+
+		// The stroke's column is found rather than assumed; `strokeColumn` says why.
+		const read = reader(day, PLAIN_DAY, await strokeColumn(page, day, PLAIN_DAY, theme));
+		for (const state of DAY_STATES) {
+			await cdp.send('CSS.forcePseudoState', {
+				nodeId: nodeIds[0],
+				forcedPseudoClasses: state === 'hover' ? ['hover'] : ['hover', 'active']
+			});
+			expect(
+				await day.evaluate((el, s) => el.matches(s === 'pressed' ? ':active' : ':hover'), state),
+				`${theme}: the ${state} state did not take`
+			).toBe(true);
+
+			const shipped = await read();
+			expect(shipped, `${theme}: the ${state} fill runs under the day's stroke`).toEqual(
+				await read('padding-box')
+			);
+			// The positive control: an unclipped fill has to move the edge, or the reading is
+			// somewhere the fill never reaches.
+			expect(
+				(await read('border-box')).edge,
+				`${theme}: an unclipped ${state} fill changed the edge not at all`
+			).not.toBe(shipped.edge);
+		}
+		await cdp.send('CSS.forcePseudoState', { nodeId: nodeIds[0], forcedPseudoClasses: [] });
+
+		// Today, the other way round.
+		const todayRead = reader(
+			today,
+			'.day[data-today]',
+			await strokeColumn(page, today, '.day[data-today]', `${theme} today`)
+		);
+		const shipped = await todayRead();
+		expect(shipped, `${theme}: today's fill stops short of the outer edge`).toEqual(
+			await todayRead('border-box')
+		);
+		// The positive control: a clipped fill has to move the edge, or the reading is somewhere
+		// the fill covers under both clips.
+		expect(
+			(await todayRead('padding-box')).edge,
+			`${theme}: a clipped fill changed today's edge not at all`
+		).not.toBe(shipped.edge);
+	}
+});
