@@ -1723,12 +1723,16 @@
 		inset: 0;
 	}
 
+	/* `NavigationView.xaml:392` — ContentGrid. The fill carries `padding-box`: that Grid sets
+	   no `BackgroundSizing` and takes a Grid's default, `InnerBorderEdge`, so the stroke —
+	   translucent in light and dark, as the fill is — lies on the page rather than on the
+	   fill. */
 	.content-grid {
 		flex: 1 1 auto;
 		min-width: 0;
 		display: flex;
 		flex-direction: column;
-		background: var(--winui-NavigationViewContentBackground);
+		background: var(--winui-NavigationViewContentBackground) padding-box;
 		border-style: solid;
 		border-width: var(--winui-NavigationViewContentGridBorderThickness);
 		border-color: var(--winui-NavigationViewContentGridBorderBrush);

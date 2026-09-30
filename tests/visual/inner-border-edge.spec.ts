@@ -1491,3 +1491,83 @@ test("the MediaTransportControls panel's fill stops at the inner border edge", a
 		).not.toBe(shipped.edge);
 	}
 });
+
+/**
+ * The NavigationView content area's fill stops at the inner border edge.
+ *
+ * `ContentGrid` (`NavigationView.xaml:392`) is a Grid that takes a fill, a stroke and a
+ * thickness and sets no `BackgroundSizing` — the string occurs in neither `NavigationView.xaml`
+ * nor `NavigationView_themeresources.xaml`. A Grid reads the default from its own property, as
+ * the tab header section says, so the fill stops at the stroke's inner edge.
+ *
+ * Both brushes are translucent in light and dark: the fill, `LayerFillColorDefaultBrush`, is
+ * `#ffffff80` and `#3a3a3a4c`, and the stroke, `CardStrokeColorDefaultBrush`, is `#0000000f` and
+ * `#00000019`. So unclipped, the 1px ring is the stroke over the fill over the page; clipped, it
+ * is the stroke over the page. Measured on the route's first NavigationView under Chromium on
+ * Linux: the left edge reads 234 unclipped against 228 clipped in light and 35 against 28 in
+ * dark, and the Gallery's own content area moves the same way. The inside reads 249 and 39.
+ *
+ * High contrast is left out: the stroke is `SystemControlTransparentBrush` there, and the edge
+ * read one value under both clips, so the positive control could not fire.
+ */
+test("the NavigationView content area's fill stops at the inner border edge", async ({ page }) => {
+	let light = '';
+	for (const theme of ['light', 'dark'] as const) {
+		await page.goto('/dev/navigation-view');
+		// Both channels and a reload, then a wait on the render, for the reason the tab header
+		// section gives.
+		await page.evaluate((t) => {
+			localStorage.setItem('winui-svelte:theme', t);
+			document.documentElement.dataset.theme = t;
+		}, theme);
+		await page.reload();
+
+		// The route's first NavigationView. It sets no `paneDisplayMode`, so it resolves from its
+		// width, to expanded at this project's viewport, where the content area's stroke is on its
+		// left and top edges; in minimal mode it would be the top edge alone, and `strokeColumn`
+		// would fail rather than read past it.
+		const content = page.locator('.content-grid').first();
+		await content.waitFor();
+		const rendered = () => content.evaluate((el) => getComputedStyle(el).backgroundColor);
+		if (theme === 'light') light = await rendered();
+		else await expect.poll(rendered, { timeout: 5000 }).not.toBe(light);
+		// Every finite animation, as the MediaTransportControls section waits: this route runs no
+		// indeterminate one today, and one it gained could not hold the wait open.
+		await page.waitForFunction(() =>
+			document
+				.getAnimations()
+				.every((a) => a.playState !== 'running' || a.effect?.getTiming().iterations === Infinity)
+		);
+
+		const column = await strokeColumn(page, content, '.content-grid', theme);
+
+		/** The content area's left edge pixel and the pixel two in from it, on its midline. */
+		const read = async () => {
+			const row = await midline(page, content);
+			return { edge: row[column], inside: row[column + 2] };
+		};
+		/** Reads the content area with `background-clip` overridden, then puts the page back. */
+		const withClip = async (value: string) => {
+			const tag = await page.addStyleTag({
+				content: `.content-grid { background-clip: ${value} !important; }`
+			});
+			const pixels = await read();
+			await tag.evaluate((el) => (el as Element).remove());
+			return pixels;
+		};
+
+		const shipped = await read();
+		expect(shipped, `${theme}: the content area's fill runs under its stroke`).toEqual(
+			await withClip('padding-box')
+		);
+		expect(shipped.edge, `${theme}: the edge reads the fill, so it is not the stroke`).not.toBe(
+			shipped.inside
+		);
+		// The positive control: an unclipped fill has to move the edge, or the reading is
+		// somewhere the fill never reaches.
+		expect(
+			(await withClip('border-box')).edge,
+			`${theme}: an unclipped fill changed the edge not at all`
+		).not.toBe(shipped.edge);
+	}
+});
