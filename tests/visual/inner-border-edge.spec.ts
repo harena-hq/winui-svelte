@@ -1152,3 +1152,157 @@ test("the ComboBox trigger's fill stops at the inner border edge in every state"
 	).not.toBe(hovered);
 	await enter('rest');
 });
+
+/**
+ * The TeachingTip's close button stops its fill at the inner border edge, and here the style
+ * says so in a setter.
+ *
+ * `AlternateCloseButtonStyle` sets `BackgroundSizing` to `InnerBorderEdge`
+ * (`TeachingTip_themeresources.xaml:102`) and its template's `ContentPresenter` binds it
+ * (`TeachingTip_themeresources.xaml:165`), so the claim rests on the style rather than on the
+ * property's default. `.close-fill` is that presenter.
+ *
+ * In light and dark the style gives the stroke and the fill one brush in each state —
+ * `SubtleFillColorSecondary` on hover and `SubtleFillColorTertiary` pressed, both translucent
+ * there. So unclipped, the 1px ring is that brush laid over itself; clipped, it is the brush
+ * once over the card, which is what the inside of the button is too. Measured on the first
+ * tip's button: hovered, the edge reads 232 unclipped against 240 clipped in light and 64
+ * against 52 in dark; pressed, 238 against 243 and 56 against 48. The inside reads the clipped
+ * value in all four.
+ *
+ * Rest is left out because both brushes are `SubtleFillColorTransparent` there and the
+ * positive control could not fire, and high contrast because there every brush in the style is
+ * an opaque system colour.
+ */
+
+const CLOSE_STATES = ['hover', 'pressed'] as const;
+
+/** The first five pixels of the close button's horizontal midline, as `r,g,b`, from its left. */
+async function midline(page: Page, fill: Locator) {
+	const shot = await fill.screenshot();
+	return page.evaluate(
+		async (url) => {
+			const image = new Image();
+			image.src = url;
+			await image.decode();
+			const canvas = document.createElement('canvas');
+			canvas.width = image.naturalWidth;
+			canvas.height = image.naturalHeight;
+			const context = canvas.getContext('2d')!;
+			context.drawImage(image, 0, 0);
+			const y = Math.floor(image.naturalHeight / 2);
+			return [0, 1, 2, 3, 4].map((x) =>
+				[...context.getImageData(x, y, 1, 1).data].slice(0, 3).join(',')
+			);
+		},
+		`data:image/png;base64,${shot.toString('base64')}`
+	);
+}
+
+test("the TeachingTip close button's fill stops at the inner border edge", async ({ page }) => {
+	let light = '';
+	for (const theme of ['light', 'dark'] as const) {
+		await page.goto('/dev/teaching-tip');
+		// Both channels and a reload, then a wait on the render, for the reason the tab header
+		// section gives.
+		await page.evaluate((t) => {
+			localStorage.setItem('winui-svelte:theme', t);
+			document.documentElement.dataset.theme = t;
+		}, theme);
+		await page.reload();
+
+		// The first tip on the route. It sets no `closeButtonContent`, so its header carries the
+		// alternate close button; the route's later tips are not needed.
+		const close = page.locator('.close').first();
+		const fill = close.locator('.close-fill');
+		await fill.waitFor();
+		const rendered = () => fill.evaluate((el) => getComputedStyle(el).color);
+		if (theme === 'light') light = await rendered();
+		else await expect.poll(rendered, { timeout: 5000 }).not.toBe(light);
+		// The dark pass repaints after first paint, which starts transitions on the page — twelve
+		// under Chromium on Linux — and none may still be running while one reading is compared
+		// with the next. This is the flyout presenter section's form rather than awaiting each
+		// `finished`, which rejects when a transition is cancelled.
+		await page.waitForFunction(() =>
+			document.getAnimations().every((a) => a.playState !== 'running')
+		);
+
+		// Forced rather than driven, as the sections above do: a real press on this button
+		// closes the tip. `DOM.querySelectorAll` and `page.locator` agree on the first `.close`
+		// only while the two count the same elements, so the count is asserted.
+		const cdp = await page.context().newCDPSession(page);
+		await cdp.send('DOM.enable');
+		await cdp.send('CSS.enable');
+		const { root } = await cdp.send('DOM.getDocument', { depth: -1 });
+		const { nodeIds } = await cdp.send('DOM.querySelectorAll', {
+			nodeId: root.nodeId,
+			selector: '.close'
+		});
+		expect(nodeIds.length, `${theme}: CDP and the page count different close buttons`).toBe(
+			await page.locator('.close').count()
+		);
+
+		// The stroke's column is found rather than assumed. The button sits at a fractional x,
+		// and which column of its screenshot the 1px stroke lands in depends on how the browser
+		// snaps it — the first under Chromium on Linux, the second on the reference guest. Read
+		// at the first on the guest, the edge and the inside were both the card, and the clip
+		// assertion below compared the card with itself and passed. So the stroke is painted
+		// opaque red once, and the column that turns reddest is the edge.
+		const locate = await page.addStyleTag({
+			content: '.close-fill { border-color: rgb(255, 0, 0) !important; }'
+		});
+		const redness = (await midline(page, fill)).map((pixel) => {
+			const [r, g] = pixel.split(',').map(Number);
+			return r - g;
+		});
+		await locate.evaluate((el) => (el as Element).remove());
+		const column = redness.indexOf(Math.max(...redness));
+		expect(
+			redness[column],
+			`${theme}: no pixel of the midline is the painted stroke`
+		).toBeGreaterThan(200);
+		// `midline` reads five columns and the inside is two past the edge.
+		expect(column, `${theme}: the stroke is past the columns this reads`).toBeLessThanOrEqual(2);
+		const closeEdge = async () => {
+			const row = await midline(page, fill);
+			return { edge: row[column], inside: row[column + 2] };
+		};
+
+		for (const state of CLOSE_STATES) {
+			await cdp.send('CSS.forcePseudoState', {
+				nodeId: nodeIds[0],
+				forcedPseudoClasses: state === 'hover' ? ['hover'] : ['hover', 'active']
+			});
+			expect(
+				await close.evaluate((el, s) => el.matches(s === 'pressed' ? ':active' : ':hover'), state),
+				`${theme}: the ${state} state did not take`
+			).toBe(true);
+
+			/** Reads the edge with `background-clip` overridden, then puts the page back. */
+			const withClip = async (value: string) => {
+				const tag = await page.addStyleTag({
+					content: `.close-fill { background-clip: ${value} !important; }`
+				});
+				const pixels = await closeEdge();
+				await tag.evaluate((el) => (el as Element).remove());
+				return pixels;
+			};
+
+			const shipped = await closeEdge();
+			expect(shipped, `${theme}: the ${state} fill runs under the close button's stroke`).toEqual(
+				await withClip('padding-box')
+			);
+			expect(
+				shipped.edge,
+				`${theme}: the ${state} edge is not the brush once over the card, as the inside is`
+			).toBe(shipped.inside);
+			// The positive control: an unclipped fill has to move the edge, or the reading is
+			// somewhere the fill never reaches.
+			expect(
+				(await withClip('border-box')).edge,
+				`${theme}: an unclipped ${state} fill changed the edge not at all`
+			).not.toBe(shipped.edge);
+		}
+		await cdp.send('CSS.forcePseudoState', { nodeId: nodeIds[0], forcedPseudoClasses: [] });
+	}
+});

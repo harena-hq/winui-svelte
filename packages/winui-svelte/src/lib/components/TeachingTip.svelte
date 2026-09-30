@@ -502,7 +502,15 @@
 	}
 
 	/* TeachingTip_themeresources.xaml:95 and :96 — the 40px box and the 16px glyph — and :101,
-	   the `AlternateCloseButtonStyle` the three state rules below read. */
+	   the `AlternateCloseButtonStyle` the three state rules below read.
+
+	   Each of the three carries `padding-box`. That style sets `BackgroundSizing` to
+	   `InnerBorderEdge` (:102) and its `ContentPresenter`, which this element stands for, binds
+	   it (:165), so upstream's fill stops at the stroke's inner edge where CSS's default runs
+	   it under the stroke. In light and dark the stroke and the fill are one brush in each
+	   state, translucent on hover and pressed, so unclipped the ring is that brush laid over
+	   itself. The clip is restated on every rule because `background` is a shorthand, and a
+	   rule naming only the brush resets `background-clip` with it. */
 	.close-fill {
 		box-sizing: border-box;
 		display: flex;
@@ -514,7 +522,7 @@
 		border-width: var(--winui-TeachingTipAlternateCloseButtonBorderThickness);
 		border-color: var(--winui-TeachingTipAlternateCloseButtonBorderBrush);
 		border-radius: var(--winui-ControlCornerRadius);
-		background: var(--winui-TeachingTipAlternateCloseButtonBackground);
+		background: var(--winui-TeachingTipAlternateCloseButtonBackground) padding-box;
 		color: var(--winui-TeachingTipAlternateCloseButtonForeground);
 		font-family: var(--winui-SymbolThemeFontFamily);
 		font-size: var(--winui-TeachingTipAlternateCloseButtonGlyphSize);
@@ -523,14 +531,14 @@
 
 	/* TeachingTip_themeresources.xaml:101 — pointer-over close-button resources. */
 	.close:hover .close-fill {
-		background: var(--winui-TeachingTipAlternateCloseButtonBackgroundPointerOver);
+		background: var(--winui-TeachingTipAlternateCloseButtonBackgroundPointerOver) padding-box;
 		border-color: var(--winui-TeachingTipAlternateCloseButtonBorderBrushPointerOver);
 		color: var(--winui-TeachingTipAlternateCloseButtonForegroundPointerOver);
 	}
 
 	/* TeachingTip_themeresources.xaml:101 — pressed close-button resources. */
 	.close:active .close-fill {
-		background: var(--winui-TeachingTipAlternateCloseButtonBackgroundPressed);
+		background: var(--winui-TeachingTipAlternateCloseButtonBackgroundPressed) padding-box;
 		border-color: var(--winui-TeachingTipAlternateCloseButtonBorderBrushPressed);
 		color: var(--winui-TeachingTipAlternateCloseButtonForegroundPressed);
 	}
