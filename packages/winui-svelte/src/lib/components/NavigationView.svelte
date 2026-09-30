@@ -1746,10 +1746,14 @@
 		margin: var(--winui-NavigationViewMinimalContentMargin);
 	}
 
+	/* `TopNavigationMinimal` (NavigationView.xaml:25) sets ContentGrid's thickness, radius and
+	   margin and leaves its brush, so the stroke is the base rule's
+	   `NavigationViewContentGridBorderBrush`. `NavigationViewItemSeparatorForeground` is the
+	   pane's stroke (`RootSplitView`, :289), not this one; `TopNavGrid` (:214) names it too
+	   but sets no thickness, so the top pane draws no line of its own. */
 	.root[data-pane-display-mode='top'] .content-grid {
 		margin: var(--winui-TopNavigationViewContentMargin);
 		border-style: solid;
-		border-color: var(--winui-NavigationViewItemSeparatorForeground);
 		border-width: var(--winui-TopNavigationViewContentGridBorderThickness);
 		border-radius: var(--winui-TopNavigationViewContentGridCornerRadius);
 	}
