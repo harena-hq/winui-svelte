@@ -165,8 +165,8 @@ question with one answer.
 3. Is the add-tab button reachable by arrow from the last tab, or only by Tab?
 4. At the first and last tab, do the arrows wrap or stop?
 5. Does arrowing between tabs change the selected tab, or only focus?
-6. With more tabs than fit, does arrowing to an off-screen tab scroll it into view? (This is
-   WD-024's subject, and it is a keyboard question as much as a layout one.)
+6. With more tabs than fit, does arrowing to an off-screen tab scroll it into view? (It is a
+   keyboard question as much as a layout one.)
 
 ### The rule the list follows
 
@@ -493,8 +493,9 @@ Pressed by hand on the reference guest on 2026-10-01, on the `TabView` page's fi
 (`TabViewPage.xaml:18-25`, its three documents added at `TabViewPage.xaml.cs:38-41` and named at
 `:65`): `Document 0` selected, and the add-tab button. Each step was photographed. Our column was
 measured on `/dev/tab-view`'s first strip, the Gallery's own, by pressing the same keys. No key
-was pressed that closes or adds a tab, so **question 6 was not pressed**: answering it needs more
-tabs than fit, and the reference's sample does not have them until one is added.
+was pressed that closes or adds a tab, so **question 6 was not pressed** in that sitting:
+answering it needs more tabs than fit, and the reference's sample does not have them until one
+is added.
 
 1. **One press reaches the strip, and it lands on a tab.** From the page's last header button,
    Tab lands on `Document 0`, the next on the add-tab button, the next leaves the sample.
@@ -511,7 +512,7 @@ tabs than fit, and the reference's sample does not have them until one is added.
    from the first tab reaches the add button, then the last tab's close button. **We** stop at
    both ends.
 5. **No arrow press changed the selection.** **We** do the same.
-6. Not pressed; see above.
+6. Not pressed in that sitting; see above, and the second sitting below.
 
 The pin says the same order in a comment: tab, its close button, the next tab and so on, then the
 add-tab button, then back to the first tab (`TabView.cpp:1439`), with the wrap at `:1487-1494`. A
@@ -527,12 +528,31 @@ that case was not pressed. A selection change also moves the remembered item, by
 selected one the last focused (`Selector_Partial.cpp:990`, `:2397`); the only press bearing on it
 was the click on `Document 1`, which focused the tab as well, so that was not separated either.
 
+**Question 6, a second sitting the same day.** Nine tabs were added with the add button, which
+does not select what it adds, until the strip overflowed with `Document 0` still selected. Right
+from `Document 0`, twenty presses, put focus on the eleventh tab, which the strip had cut off at
+its right edge, and the strip had scrolled the least it takes to show that tab whole; two more
+presses reached the last tab and the strip's end. The selection stayed on `Document 0`
+throughout, scrolled partly out of view on the left. The sample was reset by leaving the page and
+coming back, and compared equal to its first photograph. **We** left the scroll to the browser's
+`focus()`, and measured in our strip it did not do the same: the last tab, 50 pixels past the
+edge, was left there, and a tab wholly out of view was centred. **Built the same day**: the arrow
+walk and Home and End focus without the browser's scroll and bring the element in the least
+distance. Tab into the strip still takes the browser's scroll, and the arrows no longer
+scroll the page to show a strip partly off its edge; neither was pressed. The press
+did not separate the other case upstream's source states — a selection, and a change in the
+items presenter's size, bringing the _selected_ tab in (`BringSelectedTabIntoView`,
+`TabView.cpp:748`) — because every selection the press could make was of a tab already in view;
+that half was built from the source, and `tab-view-scroll.spec.ts` tests both.
+
 ### What this decided
 
 The three differences are all the second outcome below: the original's model is reachable on
 the web, so each is a defect for the release's punch list rather than a divergence to record.
 **Built on 2026-10-01**: the add button joined the arrows, the ends wrap, and the strip's Tab
 stop is the tab focus last visited, and `tab-view.spec.ts` presses all three.
+Question 6's answer, from the second sitting, is one more difference of the same kind, built as
+described there and tested in `tab-view-scroll.spec.ts`.
 
 ## What an observation decides
 

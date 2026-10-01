@@ -63,7 +63,6 @@
 	}
 
 	// WD-023: dragging, reordering, tear-out, and browser-owned Ctrl+Tab are intentionally absent;
-	// WD-024: selection leaves the scroll offset where the user put it; see docs/divergences.md.
 	// AddTabButtonCommand and AddTabButtonCommandParameter are XAML ICommand plumbing for the click;
 	// `onAddTabButtonClick` is the web surface. TabStripHeaderTemplate and TabStripFooterTemplate
 	// are DataTemplates, folded into their snippets by ADR 0012. TabViewListView is a template-private
@@ -73,6 +72,7 @@
 </script>
 
 <script lang="ts">
+	import { untrack } from 'svelte';
 	import { scrollBehavior } from '../internal/motion';
 
 	let {
@@ -141,7 +141,22 @@
 		const index = focusOrder.indexOf(from);
 		if (index === -1) return;
 		const next = focusOrder[(index + step + focusOrder.length) % focusOrder.length];
-		document.getElementById(next)?.focus();
+		focusInStrip(next);
+	}
+
+	// A focused element is scrolled fully into view, the least distance it takes: pressed on the
+	// reference on 2026-10-01, arrowing onto tabs past the strip's edge brought each one wholly in.
+	// The browser's own scroll on `focus()` did not, measured in this strip: a tab 50 pixels past
+	// the edge was left there, and one wholly out of view was centred. So it is turned off and this
+	// does it. Only the strip scrolls, and `preventScroll` keeps the page still as well; upstream's
+	// request bubbles on to the page's ScrollViewer, which the Gallery handles only on its
+	// SizeToContent samples (`TabViewPage.xaml:179`), against a scroll on load
+	// (`TabViewPage.xaml.cs:44-49`). Not pressed: a strip partly off the page's own edge.
+	function focusInStrip(id: string | undefined) {
+		const element = id ? document.getElementById(id) : null;
+		if (!element) return;
+		element.focus({ preventScroll: true });
+		if (viewport?.contains(element)) bringIntoView(element, 0);
 	}
 
 	// The strip is one Tab stop, and the stop is the tab focus last visited: `TabNavigation="Once"`
@@ -161,9 +176,8 @@
 		else if (event.key === 'ArrowRight') moveFocus(here, 1);
 		// Home and End were not pressed on the original; they keep to the tabs and their close
 		// buttons, as they did before the add button joined the arrows.
-		else if (event.key === 'Home') document.getElementById(focusOrder[0] ?? '')?.focus();
-		else if (event.key === 'End')
-			document.getElementById(focusOrder.filter((id) => id !== addId).at(-1) ?? '')?.focus();
+		else if (event.key === 'Home') focusInStrip(focusOrder[0]);
+		else if (event.key === 'End') focusInStrip(focusOrder.filter((id) => id !== addId).at(-1));
 		else return false;
 
 		event.preventDefault();
@@ -241,13 +255,87 @@
 		}, 50);
 	}
 
+	/**
+	 * `BringSelectedTabIntoView` (`TabView.cpp:748`): scroll the strip the least it takes to show
+	 * the selected tab, whose target is its own width and 2 more, `c_targetRectWidthIncrement`
+	 * (`TabViewItem.h:120`), "to avoid cutting off the end of the Tab" (`TabViewItem.cpp:627-629`).
+	 * A target wider than the strip keeps its left edge in view. It animates as the scroll
+	 * buttons' `ChangeView` does, only while the platform's animations are on (ADR 0016).
+	 */
+	function bringSelectedTabIntoView() {
+		const tab = current === null ? null : document.getElementById(tabId(current));
+		// c1-allow: TabViewItem.h:120, c_targetRectWidthIncrement = 2
+		if (tab) bringIntoView(tab, 2);
+	}
+
+	function bringIntoView(element: HTMLElement, extra: number) {
+		if (!viewport) return;
+		const view = viewport.getBoundingClientRect();
+		const box = element.getBoundingClientRect();
+		const before = box.left - view.left;
+		const after = box.right + extra - view.right;
+		const delta = before < 0 ? before : after > 0 ? Math.min(after, before) : 0;
+		if (Math.abs(delta) > 0.5) viewport.scrollBy({ left: delta, behavior: scrollBehavior() });
+	}
+
+	// Becoming selected brings a tab into view (`TabViewItem.cpp:151-154`), and so does a change
+	// in the items presenter's size (`OnItemsPresenterSizeChanged`, `TabView.cpp:736-746`) — the
+	// presenter's and not the strip's: it sits inside the ScrollViewer, so while the tabs overflow
+	// its width is theirs, and a strip resized around tabs already at their minimum leaves it
+	// alone. The strip's scrollable width stands in for it, because `.list` is as wide as the strip
+	// whatever it holds. A removal holds it still: it sets `m_updateTabWidthOnPointerLeave`
+	// (`:782`), under which a size change brings nothing in, and the pointer leaving
+	// `TabContainerGrid` clears it (`:620-631`). Leaving re-runs upstream's `UpdateTabWidths`,
+	// which these widths have already followed, so here it only clears the flag — and nothing is
+	// lost by that, since tabs that overflow sit at their minimum width in `equal` mode and tabs
+	// that could widen on leaving already fit, while the other two modes leave a tab's width to its
+	// content (`UpdateTabWidths` leaves it NaN for both, `TabView.cpp:1140`, applied at
+	// `:1324-1336`). A mode that did change on leaving would have to bring the selection in then.
+	let removalPending = false;
+	let previousIds = new Set<string>();
+	let itemsWidth = 0;
+	$effect.pre(() => {
+		const ids = new Set(items.map((item) => item.id));
+		if ([...previousIds].some((id) => !ids.has(id))) removalPending = true;
+		previousIds = ids;
+	});
+	// The selected tab's flare reaches 4 past it, so a new selection can move the content's edge
+	// without any tab changing size; it is recorded here so that a later measure does not read
+	// that as the items resizing.
+	$effect(() => {
+		void current;
+		bringSelectedTabIntoView();
+		untrack(() => (itemsWidth = contentWidth()));
+	});
+
+	const contentWidth = () => viewport?.scrollWidth ?? itemsWidth;
+
+	function measureItems() {
+		const width = contentWidth();
+		if (Math.abs(width - itemsWidth) < 0.5) return;
+		itemsWidth = width;
+		if (!removalPending) bringSelectedTabIntoView();
+	}
+
+	function leaveStrip() {
+		removalPending = false;
+	}
+
 	$effect(() => {
 		if (!viewport) return;
-		const list = viewport.firstElementChild;
-		const observer = new ResizeObserver(syncScroll);
+		// Re-observed whenever the items change, so each tab's own size is watched as well. The ids
+		// are read one by one, so a consumer's in-place `push` is seen as well as a new array.
+		for (const item of items) void item.id;
+		const observer = new ResizeObserver(() => {
+			syncScroll();
+			measureItems();
+		});
 		observer.observe(viewport);
-		if (list) observer.observe(list);
-		syncScroll();
+		for (const tab of viewport.querySelectorAll('[role=tab]')) observer.observe(tab);
+		untrack(() => {
+			syncScroll();
+			measureItems();
+		});
 		// Showing the buttons only shrinks the viewport, which cannot turn an overflow into a fit,
 		// and hiding them only grows it, so these observations cannot oscillate.
 		return () => observer.disconnect();
@@ -264,7 +352,13 @@
 	{style}
 	{...rest}
 >
-	<div class="strip">
+	<!-- `TabContainerGrid` (TabView.xaml:29), whose `PointerExited` ends a run of removals. The
+	     handler only notices where the pointer went; it makes nothing interactive, so the strip
+	     takes no role for it. -->
+	<!-- eslint-disable svelte/no-unused-svelte-ignore -->
+	<!-- svelte-ignore a11y_no_static_element_interactions -->
+	<div class="strip" onpointerleave={leaveStrip}>
+		<!-- eslint-enable svelte/no-unused-svelte-ignore -->
 		<div class="line"></div>
 		{#if tabStripHeader}<div class="strip-header">{@render tabStripHeader()}</div>{/if}
 		<div class="scroller">
