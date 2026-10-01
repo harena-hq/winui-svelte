@@ -437,9 +437,9 @@ It said there is no way to ask for focus without `:focus-visible` — `focus({ f
 is that way, and `CommandBarFlyout` in this same package had been using it for a day. And it said
 the behaviour lost was Enter-activates-the-default-button, which never depended on focus:
 `ProcessLayoutRootKey` (`:1761`) handles Enter at the layout root and clicks the default button if
-it is enabled, wherever focus is. That last one is a real gap and is still open; it is recorded in
-`docs/surface.md` with the rest of this control's code-behind, not here, because nothing about it
-has been declined.
+it is enabled, wherever focus is — unless focus is on something that takes Enter itself. That
+last one was a real gap; it was recorded in `docs/surface.md` with the rest of this control's
+code-behind, not here, because nothing about it had been declined, and it was built on 2026-10-01.
 
 ---
 

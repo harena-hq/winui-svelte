@@ -780,11 +780,31 @@ visual. This library reproduces the order and declines the visual with
 `ProcessLayoutRootKey` (`:1736`) is the other, and it is a **layout-root** handler rather than a
 focus one: Escape runs `ExecuteCloseAction` (`:2063`), which invokes the close button so that
 `CloseButtonClick` fires and the result is `None`, and Enter clicks `DefaultButton` if it is
-enabled (`:1761`) — from anywhere in the dialog, whatever holds focus. Neither is reproduced.
-Measured 2026-09-18 on `/dev/content-dialog`: Enter leaves the dialog open, and Escape closes it
-through the primitive's own handler, which does not run `onCloseButtonClick`. That is the
-outstanding half of this control and it is a unit of its own, not a divergence — nothing about
-it has been declined.
+enabled (`:1761`) — from anywhere in the dialog, except where focus is on something that takes
+Enter itself, since the handler is a plain `KeyDown` subscription (`:224-226`) and sees only keys nothing
+below it handled. Neither was reproduced:
+measured 2026-09-18 on `/dev/content-dialog`, Enter left the dialog open, and Escape closed it
+through the primitive's own handler, which does not run `onCloseButtonClick`. **Built on
+2026-10-01**, after pressing the Gallery's two dialogs on the reference: Enter on the content's
+CheckBox saved, Enter on a focused `Cancel` cancelled, Enter with no default button did nothing,
+and Escape closed both. `content-dialog-keys.spec.ts` presses each. The same unit made a button's
+close reach `onOpenChange`, which had heard Escape and never a button.
+
+What takes Enter first is a list on the web, `TAKES_ENTER` beside the handler: the elements whose
+own activation is Enter, and any control that calls `preventDefault`. `AutoSuggestBox` became one
+of those in the same unit, because upstream marks Enter handled whatever the box did with it
+(`AutoSuggestBox_Partial.cpp:1149-1165`); before, Enter in a box inside a dialog submitted the
+query and clicked the default button too. The box's Enter no longer submits a surrounding `<form>`
+either, which upstream has no counterpart for. An Enter that commits an IME composition is not a
+press. **Two questions stay open.** Escape has no such list: the primitive's escape layer listens
+on the document, prevents the key itself and passes the dialog a copy, so a control's own
+`preventDefault` does not keep Escape without more plumbing — upstream's `AutoSuggestBox` takes
+Escape with its list closed (`AutoSuggestBox_Partial.cpp:1134-1145`), and here the dialog closes
+instead. And the list names `a[href]`, which `HyperlinkButton` is entitled to as a `ButtonBase`,
+but which an inline `Hyperlink` with a target is too: upstream's `Hyperlink` acts on Enter at keyup
+and its key listeners never mark the key handled (`Hyperlink.cpp:343-384`, searched for `Handled`),
+so read from source the dialog's default button would fire as well. Not pressed; no Gallery dialog
+holds a link.
 
 ### TeachingTip — v6 unit 046a
 
