@@ -135,7 +135,7 @@
 
 			     IsBackButtonVisible is left at its default, so at the reference width the pane opens
 			     with a disabled back button above the toggle, as the original's does. Narrower, the
-			     control goes minimal, where ours draws none yet — WD-037. -->
+			     control goes minimal and draws it beside the toggle instead. -->
 			<NavigationView items={MENU} settingsVisible={false} style="align-self: stretch" />
 		</div>
 	</ControlExample>

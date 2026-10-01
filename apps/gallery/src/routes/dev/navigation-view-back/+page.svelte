@@ -54,10 +54,39 @@
 </div>
 <pre class="log" id="requests">{requests}</pre>
 
-<h2 class="winui-SubtitleTextBlockStyle">minimal — not drawn yet (WD-037)</h2>
+<!-- The minimal frames carry a header, because the room the buttons take beside it is part of
+     what a minimal pane changes. -->
+<h2 class="winui-SubtitleTextBlockStyle">minimal — the default</h2>
 <div class="frame" id="minimal">
 	<NavigationView {items} selected="home" paneDisplayMode="leftMinimal">
+		{#snippet header()}Header{/snippet}
 		<p class="winui-BodyTextBlockStyle">Content sits under the toggle.</p>
+	</NavigationView>
+</div>
+
+<h2 class="winui-SubtitleTextBlockStyle">minimal — collapsed</h2>
+<div class="frame" id="minimal-collapsed">
+	<NavigationView
+		{items}
+		selected="home"
+		paneDisplayMode="leftMinimal"
+		backButtonVisible="collapsed"
+	>
+		{#snippet header()}Header{/snippet}
+		<p class="winui-BodyTextBlockStyle">Content sits under the toggle.</p>
+	</NavigationView>
+</div>
+
+<h2 class="winui-SubtitleTextBlockStyle">minimal — no toggle</h2>
+<div class="frame" id="minimal-no-toggle">
+	<NavigationView
+		{items}
+		selected="home"
+		paneDisplayMode="leftMinimal"
+		paneToggleButtonVisible={false}
+	>
+		{#snippet header()}Header{/snippet}
+		<p class="winui-BodyTextBlockStyle">Content sits under the back button.</p>
 	</NavigationView>
 </div>
 

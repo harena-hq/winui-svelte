@@ -140,7 +140,8 @@
 		 * IsBackButtonVisible, whose default is `'auto'` (`NavigationView.idl:244`), so a
 		 * control that says nothing about it draws a back button. An app whose title bar
 		 * carries one sets `'collapsed'`, as the Gallery's own window does
-		 * (`MainWindow.xaml:142`). A minimal pane draws none yet — WD-037.
+		 * (`MainWindow.xaml:142`). A minimal pane draws it beside the toggle, and swaps it for a
+		 * close button while the pane is open.
 		 */
 		backButtonVisible?: NavigationViewBackButtonVisible;
 		/** IsBackEnabled — false by default, which draws the button disabled. */
@@ -440,13 +441,36 @@
 	// Icons only, labels and chevrons hidden.
 	const collapsed = $derived(!paneOpen && mode !== 'minimal');
 
+	// A left pane in minimal mode, which is the one `SplitView` that overlays: `IsOverlay()`
+	// (NavigationView.cpp:1830-1834) asks for `Overlay`, and compact's `CompactOverlay` is not it.
+	// A top pane's `mode` is minimal too, and it is excluded by name. Upstream's `:1858` does not
+	// exclude it, but it closes the pane on entering top (`:4425`); a consumer that holds
+	// `paneOpen` true on a top pane keeps its back button here where upstream would hide it.
+	const minimalLeft = $derived(!isTop && mode === 'minimal');
+
 	// `ShouldShowBackOrCloseButton` — NavigationView.cpp:1892-1895 — with the Xbox exception
-	// dropped. Upstream draws the back button in a left pane above the toggle and in a top pane
-	// over the row's first column; a minimal pane draws it beside the toggle instead, swaps it
-	// for a close button while open (`:1854-1890`), and moves the header, none of which is here
-	// yet — WD-037.
-	const backButtonShown = $derived(
-		backButtonVisible !== 'collapsed' && (isTop || mode !== 'minimal')
+	// dropped, and the two callers that split it. `ShouldShowBackButton` hides the back button in
+	// a minimal pane while it is open (`:1858`); `ShouldShowCloseButton` shows the close button
+	// in exactly that case (`:1869-1890`), so the two are never drawn together.
+	const backOrCloseShown = $derived(backButtonVisible !== 'collapsed');
+	const backButtonShown = $derived(backOrCloseShown && !(minimalLeft && paneOpen));
+	const closeButtonShown = $derived(backOrCloseShown && minimalLeft && paneOpen);
+
+	// `ContentLeftPadding`'s width (NavigationView.cpp:4704): the room the buttons take beside
+	// the header, which only a minimal left pane leaves there (`:4650-4652`). The toggle's part is
+	// `GetPaneToggleButtonWidth`, the `PaneToggleButtonWidth` resource (`:4663`); the back
+	// button's is its own `Width`, `SmallerPaneToggleButtonWidth` (`:4680`, `:1821`); the close
+	// button's is the style's `NavigationBackButtonWidth` (`:4696-4697`).
+	const contentLeftPadding = $derived(
+		minimalLeft
+			? [
+					paneToggleButtonVisible && 'var(--winui-PaneToggleButtonWidth)',
+					backButtonShown && '(var(--winui-NavigationViewCompactPaneLength) - 8px)',
+					closeButtonShown && 'var(--winui-NavigationBackButtonWidth)'
+				]
+					.filter(Boolean)
+					.join(' + ')
+			: ''
 	);
 
 	// What the pane decided, published once for every row under it rather than pushed down
@@ -683,13 +707,26 @@
 	     opened. The two conditions that do reach it are NavigationView.cpp:4398's
 	     `IsPaneToggleButtonVisible() && !IsTopNavigationView()`. The holder is drawn while either
 	     of its buttons is. -->
-	{#if backButtonShown || (!isTop && paneToggleButtonVisible)}
-		<div class="button-holder-grid">
+	{#if backButtonShown || closeButtonShown || (!isTop && paneToggleButtonVisible)}
+		<!-- `data-toggle-offset` is the margin `UpdateTitleBarPadding` gives the toggle
+		     (NavigationView.cpp:4927-4941): down by the back button's height in a pane that does
+		     not overlay, right by its width in one that does — and right too while the close
+		     button stands where the back button was. -->
+		<div
+			class="button-holder-grid"
+			data-toggle-offset={backButtonShown
+				? minimalLeft
+					? 'beside'
+					: 'below'
+				: closeButtonShown
+					? 'beside'
+					: undefined}
+		>
 			<!-- `NavigationViewBackButton`, NavigationView.xaml:187. It shares the holder's one cell
-			     with the toggle, and upstream separates the two by giving the toggle a top margin of
-			     the back button's height (NavigationView.cpp:4935); a column puts the toggle in the
-			     same place. Disabled is the template's `IsEnabled` binding to `IsBackEnabled`, so a
-			     disabled button is no Tab stop. WD-101: no tooltip; see docs/divergences.md. -->
+			     with the toggle, and upstream separates the two by the toggle's margin alone, so
+			     the three buttons here are stacked in one grid cell as well. Disabled is the
+			     template's `IsEnabled` binding to `IsBackEnabled`, so a disabled button is no Tab
+			     stop. WD-101: no tooltip; see docs/divergences.md. -->
 			{#if backButtonShown}
 				<button
 					type="button"
@@ -697,6 +734,18 @@
 					aria-label="Back"
 					disabled={!backEnabled}
 					onclick={() => onBackRequested?.()}
+				></button>
+			{/if}
+			<!-- `NavigationViewCloseButton`, NavigationView.xaml:192 — the back button's style and
+			     glyph, its automation name `NavigationCloseButtonName` ("Close",
+			     Strings/en-us/Resources.resw:148), and the toggle's own click handler
+			     (NavigationView.cpp:652), which closes a pane that is open. WD-101: no tooltip. -->
+			{#if closeButtonShown}
+				<button
+					type="button"
+					class="close-button"
+					aria-label="Close"
+					onclick={() => setPaneOpen(false)}
 				></button>
 			{/if}
 			{#if !isTop && paneToggleButtonVisible}
@@ -750,7 +799,7 @@
 				<!-- Row 1 of PaneContentGrid (NavigationView.xaml:294), which the template leaves at 0
 				     and `UpdateBackAndCloseButtonsVisibility` sets to the back button's height while one
 				     is shown in a pane that is not overlaying (NavigationView.cpp:4730-4746). -->
-				{#if backButtonShown}
+				{#if backButtonShown && !minimalLeft}
 					<div class="back-button-row" aria-hidden="true"></div>
 				{/if}
 				<!-- NavigationView.xaml:296, PaneContentGridToggleButtonRow. The button is
@@ -889,7 +938,15 @@
 
 	<div class="content-grid">
 		{#if header}
-			<div class="header-content">{@render header()}</div>
+			<!-- Row 1 of ContentGrid (NavigationView.xaml:403-404): `ContentLeftPadding` in the
+			     `Auto` column and `HeaderContent` in the `*` one. -->
+			<div class="header-row">
+				<div
+					class="content-left-padding"
+					style:width={contentLeftPadding ? `calc(${contentLeftPadding})` : undefined}
+				></div>
+				<div class="header-content">{@render header()}</div>
+			</div>
 		{/if}
 		<div class="content-presenter">
 			{#if children}{@render children()}{/if}
@@ -1573,10 +1630,14 @@
 		left: 0;
 		top: 0;
 		z-index: 100;
-		display: flex;
-		/* The back button above the toggle: see the markup. */
-		flex-direction: column;
-		align-items: flex-start;
+		/* One cell, as `ButtonHolderGrid` has: its buttons are stacked in it, and only the
+		   toggle's margin below keeps them apart. `start` stands in for the toggle's
+		   `HorizontalAlignment="Center"` (NavigationView.xaml:197), because the cell is as wide as
+		   the widest margin box and the toggle's is that one, or ties it, in every arrangement
+		   the holder takes. */
+		display: grid;
+		align-items: start;
+		justify-items: start;
 		margin: var(--winui-NavigationViewButtonHolderGridMargin);
 		/* Two Grids with no `Background` between the root and the button — `PaneToggleButtonGrid`
 		   and this one — and a XAML Grid with no brush is not a hit-test target. Sized to the
@@ -1584,6 +1645,22 @@
 		   and without this that strip would be caught here instead of falling through to the
 		   pane. The paint turns hit-testing back on for itself. */
 		pointer-events: none;
+	}
+
+	.button-holder-grid > * {
+		grid-area: 1 / 1;
+	}
+
+	/* `c_backButtonHeight` and `c_backButtonWidth`, NavigationView.cpp:88-89 — constants of the
+	   control's code, so there is no token to read. The markup says which one applies. */
+	.button-holder-grid[data-toggle-offset='below'] .pane-toggle {
+		/* c1-allow: NavigationView.cpp:4935, c_backButtonHeight = 40 */
+		margin-top: 40px;
+	}
+
+	.button-holder-grid[data-toggle-offset='beside'] .pane-toggle {
+		/* c1-allow: NavigationView.cpp:4931, :4940, c_backButtonWidth = 40 */
+		margin-left: 40px;
 	}
 
 	/* `NavigationBackButtonNormalStyle`, NavigationBackButton.xaml:3. Its `Width` setter is
@@ -1597,7 +1674,8 @@
 	   Photographed on the reference, with the NavigationView page's "Back button enabled" option
 	   set and the button reached by Shift+Tab: a band of 46 by 42 around the 40 by 36 box.
 	   Content alignment is Center on both axes (`NavigationBackButton.xaml:10-11`). */
-	.back-button {
+	.back-button,
+	.close-button {
 		position: relative;
 		display: inline-flex;
 		align-items: center;
@@ -1623,13 +1701,15 @@
 
 	/* The `FallbackIconSource` of the template's `AnimatedIcon` (NavigationBackButton.xaml:60-62),
 	   drawn with no animation between states — the same reading as WD-006 for the title bar's. */
-	.back-button::before {
+	.back-button::before,
+	.close-button::before {
 		/* c1-allow: NavigationBackButton.xaml:13, Content="&#xE72B;" */
 		content: '\e72b';
 		display: block;
 	}
 
-	.back-button:focus-visible::after {
+	.back-button:focus-visible::after,
+	.close-button:focus-visible::after {
 		content: '';
 		position: absolute;
 		/* c1-allow: generic.xaml:27636 (windows-app-sdk), DefaultButtonStyle FocusVisualMargin="-3" */
@@ -1645,20 +1725,40 @@
 		pointer-events: none;
 	}
 
-	.back-button:hover:not(:disabled) {
+	.back-button:hover:not(:disabled),
+	.close-button:hover:not(:disabled) {
 		background: var(--winui-NavigationViewButtonBackgroundPointerOver);
 		color: var(--winui-NavigationViewButtonForegroundPointerOver);
 	}
 
-	.back-button:active:not(:disabled) {
+	.back-button:active:not(:disabled),
+	.close-button:active:not(:disabled) {
 		background: var(--winui-NavigationViewButtonBackgroundPressed);
 		color: var(--winui-NavigationViewButtonForegroundPressed);
 	}
 
 	/* The `Disabled` state changes the glyph's colour and nothing else (NavigationBackButton.xaml:49-55). */
-	.back-button:disabled {
+	.back-button:disabled,
+	.close-button:disabled {
 		color: var(--winui-NavigationViewButtonForegroundDisabled);
 		cursor: default;
+	}
+
+	/* `NavigationBackButtonSmallStyle` (NavigationBackButton.xaml:69-71), which both minimal
+	   states set (NavigationView.xaml:19, :35): the right margin of 4 goes. The toggle's box starts
+	   at 40 and overlaps the button by 4; its paint, inset 4 by its own padding, starts at the
+	   button's right edge. Nothing else moves: the holder is out of flow, and where the toggle
+	   is drawn its margin box sizes the cell anyway. */
+	.root[data-display-mode='minimal']:not([data-pane-display-mode='top']) .back-button {
+		/* c1-allow: NavigationBackButton.xaml:70, Margin="4,2,0,2" */
+		margin: 2px 0 2px 4px;
+	}
+
+	/* `NavigationViewCloseButton` takes the style as it is (NavigationView.xaml:192), with no
+	   template binding over its `Width`, so it is the style's 40 where the back button's is
+	   `SmallerPaneToggleButtonWidth`. */
+	.close-button {
+		width: var(--winui-NavigationBackButtonWidth);
 	}
 
 	/* `c_backButtonHeight`, NavigationView.cpp:88, written to the row at :4737. A constant of the
@@ -1911,8 +2011,19 @@
 		border-radius: var(--winui-TopNavigationViewContentGridCornerRadius);
 	}
 
-	.header-content {
+	.header-row {
 		flex: 0 0 auto;
+		display: flex;
+	}
+
+	/* The `Auto` column, sized by its one child: 0 wide unless the script gives it a width. */
+	.content-left-padding {
+		flex: 0 0 auto;
+	}
+
+	.header-content {
+		flex: 1 1 auto;
+		min-width: 0;
 		margin: var(--winui-NavigationViewHeaderMargin);
 	}
 

@@ -160,9 +160,9 @@ surface are painted the same way.
   animators, and its `Markers()` map at `:730` names six segments between `Normal`,
   `PointerOver` and `Pressed`.
 - **We do**: render each `FallbackIconSource`'s glyph — `Symbol::Setting` as E713, the
-  navigation back button's E72B, the two title bar glyphs, CheckBox's E73E and E9AE, Expander's
-  E70D and E70E, and DropDownButton's and SplitButton's E96E — with no transition between
-  pointer states.
+  navigation back and close buttons' E72B, the two title bar glyphs, CheckBox's E73E and
+  E9AE, Expander's E70D and E70E, and DropDownButton's and SplitButton's E96E — with no
+  transition between pointer states.
 
   **The glyph is not always the same shape as the animation's frame, and Expander is where
   that was first measured.** Its chevron is `AnimatedChevronUpDownSmallVisualSource`, which
@@ -873,34 +873,6 @@ has been declined.
 - **Would reconsider if**: the cost of a wheel handler that forwards to the viewport is ever
   weighed against a reader who notices. It is three lines; what stopped it here is that no unit
   of this version had it in scope.
-
----
-
-### WD-037 — a minimal NavigationView draws no back button
-
-- **Control**: `NavigationView`, in a minimal pane — `paneDisplayMode="leftMinimal"`, or `'auto'`
-  at a width under the compact threshold. Expanded, compact and top panes draw the button.
-- **WinUI does**: default `IsBackButtonVisible` to `Auto` (`NavigationView.idl:244`), which is
-  `Visible` except on an Xbox (`NavigationView.cpp:1892-1895`), in every display mode. A minimal
-  left pane is one whose `SplitView` is in `Overlay` — a top pane is too, and draws the button
-  over its own column — and there the button changes place and company. It sits beside the toggle
-  rather than above it: the toggle takes a left margin of the button's width instead of a top one
-  (`:4931`), and the content's left padding grows by it too (`:4680`, written at `:4704`). `:4615`
-  adds that width to a local `width`, but `togglePaneButtonWidth` — copied from it at `:4605` — is
-  what `:4634` writes onto the toggle, so the toggle does not grow there. The template swaps in
-  `NavigationBackButtonSmallStyle` (`NavigationView.xaml:19`, `:35`), which drops the right margin
-  (`NavigationBackButton.xaml:69-71`). While the pane is open the back button is hidden
-  (`NavigationView.cpp:1858`) and `NavigationViewCloseButton` takes its place
-  (`ShouldShowCloseButton`, `:1869-1890`), so the pane can be closed from where the back button
-  was.
-- **We do**: draw neither button in a minimal pane. The toggle stays at the pane's left edge, and
-  the header and content do not move.
-- **Why accepted**: the left and top panes were the unit that gave the control the member, and a
-  minimal pane is a second layout of it — beside rather than above, a second button with its own
-  visibility rule, and padding that reaches the header — with a test of its own. It was split off
-  rather than left out of the record.
-- **Would reconsider if**: the next NavigationView unit; the entry is deleted when a minimal pane
-  draws both buttons where upstream does.
 
 ---
 
@@ -2406,19 +2378,22 @@ changes`.
 - **Would reconsider if**: the desired width of a WinUI text box is traced to the pixel, at which
   point the controls size themselves and the shell's explicit width goes.
 
-### WD-101 — NavigationView's back and pane-toggle buttons show no tooltip
+### WD-101 — NavigationView's back, close and pane-toggle buttons show no tooltip
 
-- **Control**: `NavigationView`'s back button and pane toggle.
-- **WinUI does**: give both a tooltip. The back button's is a `ToolTip` part in the template
-  (`NavigationView.xaml:188-190`) whose content is set to the localized "Back" on applying the
-  template (`NavigationView.cpp:643-647`); the toggle's is created in
-  `SetPaneToggleButtonAutomationName` (`:1900-1919`) with the same text as its automation name,
-  which changes with `IsPaneOpen`.
-- **We do**: give each an `aria-label` — "Back", and "Open navigation" or "Close navigation" —
-  and no tooltip.
-- **Why accepted**: the toggle had none before the back button existed, and the back button was
-  given the toggle's treatment rather than a second one. Wrapping both in this library's
-  `ToolTip` is a change to how the two buttons take their pointer and focus events, which is
-  its own unit, with the keyboard and pointer tests that `ToolTip`'s other triggers have.
+- **Control**: `NavigationView`'s back button, close button and pane toggle.
+- **WinUI does**: give all three a tooltip. The back button's is a `ToolTip` part in the
+  template (`NavigationView.xaml:188-190`) whose content is set to the localized "Back"
+  on applying the template (`NavigationView.cpp:643-647`); the close button's is another
+  (`NavigationView.xaml:193-195`), set to "Close Navigation"
+  (`NavigationView.cpp:657-661`); the toggle's is created in
+  `SetPaneToggleButtonAutomationName` (`:1900-1919`) with the same text as its automation
+  name, which changes with `IsPaneOpen`.
+- **We do**: give each an `aria-label` — "Back", "Close", and "Open navigation" or "Close
+  navigation" — and no tooltip.
+- **Why accepted**: the toggle had none before the back button existed, and the back
+  button was given the toggle's treatment rather than a second one, and the close button
+  the back button's. Wrapping all three in this library's `ToolTip` is a change to how the
+  three buttons take their pointer and focus events, which is its own unit, with the
+  keyboard and pointer tests that `ToolTip`'s other triggers have.
 - **Would reconsider if**: the next NavigationView unit, or a consumer whose users meet an
   unlabelled glyph button.
