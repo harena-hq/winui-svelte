@@ -1036,53 +1036,6 @@ Examples 3 and 4 are this entry's.
 
 ---
 
-### WD-042 — four text controls floor at 318 pixels, where WinUI floors at 64
-
-- **Control**: `TextBox`, `AutoSuggestBox`, `PasswordBox`, `NumberBox`.
-- **WinUI does**: bind `MinWidth` to `TextControlThemeMinWidth`
-  (`TextBox_themeresources.xaml:193`, `PasswordBox_themeresources.xaml:190`), which the
-  framework dictionary defines as **64** in all three themes (`generic.xaml:100`, `:3727`,
-  `:5709`). A text control narrower than 64 is what upstream refuses; anything above it is
-  the container's business, because the default style sets no `Width` and leaves
-  `HorizontalAlignment` at Stretch.
-- **We do**: write `min-width: 318px`, so none of the four can be narrower than 318 whatever
-  its container says.
-- **Why accepted**: only until the unit that removes it. This is a defect rather than a
-  choice, and it is recorded here rather than fixed in place because the fix moves the four
-  controls' baselines in three themes each and wants its own measurement pass.
-- **Where 318 came from**: it is the width the Gallery's title-bar `AutoSuggestBox` has at
-  the reference window size. That control is `HorizontalAlignment="Stretch"` with
-  `MaxWidth="580"` (`MainWindow.xaml:42-45`), so 318 is the space it was given, not a floor it
-  asserts — the two were conflated when the value was first measured. The comments that
-  carried that measurement also cited a file which no longer exists: the Gallery's own
-  `SearchBox` component, deleted when the title bar started using the published control. Those
-  three comments no longer cite it — C12 found the one that named a line, and the two that only
-  named the component were corrected beside it.
-- **What it costs, measured**: the Compact Sizing page shows it. Upstream that page's form is
-  296 wide, because `ControlExample`'s presenter aligns its content left, the StackPanel is
-  therefore content-sized, and the widest child asking for a width is the DatePicker at 296 —
-  the first TextBox runs x370 to x666 on the reference. Ours comes out 318, and the DatePicker
-  beside those text boxes, still at 296, is the proof that 318 is the intruder. Every other
-  geometry on that page matches: the same x370 origin, the same 75-pixel field pitch, the same
-  32-pixel control height.
-
-  The Easing Functions page is a second witness, and a wider one. There the two `NumberBox`es
-  live in `ControlExample`'s options pane, whose width is its content's, so the 318 does not
-  merely widen a form — it widens the pane and takes the space out of the example beside it.
-  Upstream's exponent box is about 62 pixels; ours is 316, and the pane grows from roughly 95
-  to 334. The unit that removes the floor therefore has two kinds of site to measure, not one:
-  a control inside a content-sized panel, and a control that is itself sizing its container.
-
-- **Would reconsider if**: nothing — the direction is settled, and the question of whether any
-  Gallery page laid itself out around the 318 is answered: none does, and one is laid out
-  wrongly by it. `var(--winui-TextControlThemeMinWidth)` is what the four declarations become.
-  What the unit that makes that change still owes is the dev-route baselines — twelve move, and
-  an unconstrained `TextBox` at a 64-pixel floor may leave a harness route no longer catching
-  what it was built to catch, so those routes may need an explicit width first. That is why
-  this is a unit and not a one-line edit.
-
----
-
 ### WD-043 — the local theme example changes the whole page's theme
 
 - **Control**: the Implicit Transitions Gallery page, `Implicitly animate when the Grid's theme
@@ -2438,3 +2391,30 @@ changes`.
   bar compact, typing a title would show it; that was not tried.
 - **Would reconsider if**: that page shows the title staying hidden, or upstream adds the check to
   `UpdateTitle` — either way this entry is deleted — or upstream is seen to show it on purpose.
+
+### WD-100 — a text control sized by its content takes its input's default width
+
+- **Control**: `TextBox`, `AutoSuggestBox`, `PasswordBox`, wherever the container lets the control
+  size to its content rather than stretching it. `NumberBox` is not one: its input is `width: 0`,
+  so content-sized it comes out at its floor, 64, or 120 with inline spin buttons.
+- **WinUI does**: measure the box from its template. In `TextBox`'s, the content `ScrollViewer`
+  and the placeholder `TextBlock` share a row, the placeholder spanning both columns
+  (`TextBox_themeresources.xaml:337`, `:338`), and `AutoSuggestBox`'s inner text box has a
+  template and a `MinWidth` setter of its own (`AutoSuggestBox_themeresources.xaml:29`, `:30`,
+  `:45`). What that measure comes to has not been traced, only observed on the Gallery's
+  title-bar search box: 320 wide at the reference's 1600-pixel window, with its placeholder
+  showing and with "Storage pickers" and "Easing Functions" typed in, and 318 in the earlier
+  captures at a narrower window — so it is not simply the placeholder's width.
+- **We do**: content-sized, take the text element's intrinsic width — an `<input>`'s or a
+  `<textarea>`'s default of about twenty characters, whatever the text — with
+  `TextControlThemeMinWidth`'s 64 under it. The same search
+  box comes out 199, so the Gallery's shell holds 318 explicitly.
+- **Why accepted**: until a unit traces the measure. `field-sizing: content` is the obvious CSS
+  and is not the answer on its own: injected on the same page it brings the search box to 237,
+  and nothing in the template accounts for the rest.
+- **What it is worth**: a text control in a content-sized container — a horizontal row, a grid
+  column sized to its content — comes out at twenty characters' width where the original's own
+  measure applies. A control that stretches renders at the stretched width; anything that reads
+  its desired width, such as a title bar deciding when to go compact, still reads ours.
+- **Would reconsider if**: the desired width of a WinUI text box is traced to the pixel, at which
+  point the controls size themselves and the shell's explicit width goes.

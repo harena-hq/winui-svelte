@@ -46,14 +46,9 @@
 		<div class="example">
 			<!-- MapControlPage.xaml:36-44 — a horizontal StackPanel of Spacing 8. -->
 			<div class="token-row">
-				<!-- WD-042. MapControlPage.xaml:37-42 gives the box `MinWidth="200"` and the original
-				     renders exactly that — measured, x 370..570 on the reference guest. This one
-				     renders 318, because PasswordBox.svelte's `.box` rule floors the box at a
-				     number that is this library's own rather than the pin's, and a floor on an
-				     inner element is not reachable from a `style` a consumer passes to the root.
-				     The 200 is written anyway: it is the source's number, and it becomes the
-				     rendered one the day that floor goes. The button that follows sits 118px right
-				     of the original's. -->
+				<!-- MapControlPage.xaml:37-42 gives the box `MinWidth="200"` and the original
+				     renders exactly that — measured, x 370..570 on the reference guest, and so
+				     does this one. -->
 				<PasswordBox
 					bind:value={token}
 					placeholder="Map service token"

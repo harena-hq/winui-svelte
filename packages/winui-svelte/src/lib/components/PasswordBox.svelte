@@ -185,10 +185,8 @@
 		position: relative;
 		display: flex;
 		align-items: stretch;
-		/* c1-allow: WD-042 — PasswordBox_themeresources.xaml:190 binds MinWidth to
-		   TextControlThemeMinWidth, which generic.xaml:100 defines as 64. 318 is not that floor
-		   and is kept only until the unit that removes it; see docs/divergences.md. */
-		min-width: 318px;
+		/* PasswordBox_themeresources.xaml:190 binds MinWidth to this token, 64 in all three themes. */
+		min-width: var(--winui-TextControlThemeMinWidth);
 		/* PasswordBox_themeresources.xaml:190 binds MinHeight to this token. */
 		min-height: var(--winui-TextControlThemeMinHeight);
 		padding: var(--winui-TextControlThemePadding);

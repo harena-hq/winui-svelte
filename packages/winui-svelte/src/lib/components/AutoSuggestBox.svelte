@@ -352,11 +352,9 @@
 		position: relative;
 		display: flex;
 		align-items: stretch;
-		/* c1-allow: WD-042 — TextBox_themeresources.xaml:193 binds MinWidth to
-		   TextControlThemeMinWidth, which generic.xaml:100 defines as 64. 318 is not that floor
-		   and is kept only until the unit that removes it; see docs/divergences.md. */
-		min-width: 318px;
-		/* TextBox_themeresources.xaml:192 binds MinHeight to this token. */
+		/* AutoSuggestBox_themeresources.xaml:30 binds MinWidth to this token, 64 in all three
+		   themes, and :31 binds MinHeight to the next one. */
+		min-width: var(--winui-TextControlThemeMinWidth);
 		min-height: var(--winui-TextControlThemeMinHeight);
 		border-style: solid;
 		border-color: transparent;
@@ -531,8 +529,8 @@
 	   The fill is painted on `::before` rather than on the button itself so the inner
 	   margin and the rounded corners track the source — `.query::before` below is where
 	   both are written. This used to point at a measurement in `SearchBox.svelte`, a
-	   component the Gallery deleted when its title bar took the published control; the
-	   deletion is recorded in WD-042 and the pointer had outlived the file. */
+	   component the Gallery deleted when its title bar took the published control, and the
+	   pointer had outlived the file. */
 	.query {
 		position: relative;
 		display: flex;

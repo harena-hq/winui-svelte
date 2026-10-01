@@ -163,6 +163,7 @@
 					bind:value={singleFileType}
 					style="width: 200px"
 				/><TextBox
+					class="stretch"
 					header="Commit button text"
 					placeholder="Open"
 					bind:value={singleCommit}
@@ -202,6 +203,7 @@
 					bind:value={multipleFileType}
 					style="width: 200px"
 				/><TextBox
+					class="stretch"
 					header="Commit button text"
 					placeholder="Open"
 					bind:value={multipleCommit}
@@ -253,7 +255,12 @@
 					items={EXTENSION_ITEMS}
 					bind:value={defaultExtension}
 					style="width: 200px"
-				/><TextBox header="Suggested file name" bind:value={suggestedName} /><TextBox
+				/><TextBox
+					class="stretch"
+					header="Suggested file name"
+					bind:value={suggestedName}
+				/><TextBox
+					class="stretch"
 					header="Commit button text"
 					placeholder="Save"
 					bind:value={saveCommit}
@@ -301,6 +308,7 @@
 		</div>
 		{#snippet options()}<div class="column">
 				<TextBox
+					class="stretch"
 					header="Commit button text"
 					placeholder="Select Folder"
 					bind:value={folderCommit}
@@ -362,6 +370,13 @@
 		flex-direction: column;
 		align-items: flex-start;
 		gap: 8px;
+	}
+	/* A StackPanel stretches each child whose own HorizontalAlignment is Stretch, which a TextBox's
+	   is and a ComboBox's or a CheckBox's is not, so the options' text boxes take the column's
+	   width — the 200 its ComboBoxes set (measured, x1347..1546 on the reference) — and the
+	   ComboBoxes and CheckBoxes keep their own. */
+	.column :global(.stretch) {
+		align-self: stretch;
 	}
 	.plain {
 		margin: 0;

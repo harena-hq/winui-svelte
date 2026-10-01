@@ -103,11 +103,8 @@
 	   The StackPanel is content-sized, because ControlExample's presenter aligns its content
 	   left, so the form is as wide as its widest child wants to be. Upstream that is the
 	   DatePicker at 296, and every other control stretches to it: measured on the reference,
-	   the first TextBox runs x370 to x666. Ours comes out 318 instead, because WD-042's
-	   `min-width: 318px` on the four text controls overrides the 296 — this page is the one
-	   that shows it, and the DatePicker beside them, still at 296, is the proof. Everything
-	   else here matches the reference: the same x370 origin, the same 75-pixel field pitch,
-	   the same 32-pixel control height. */
+	   the first TextBox runs x370 to x666, and so does ours. The same x370 origin, the same
+	   75-pixel field pitch and the same 32-pixel control height match too. */
 	.form {
 		display: flex;
 		flex-direction: column;
