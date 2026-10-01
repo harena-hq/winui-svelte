@@ -225,7 +225,13 @@
 						}}
 						onkeydown={(event) => {
 							chain(props.onkeydown, event);
-							if (event.key === 'Enter') submit();
+							// Upstream marks Enter handled whatever it did with it
+							// (`AutoSuggestBox_Partial.cpp:1149-1165`), so nothing above the box —
+							// a `ContentDialog`'s default button — acts on it too.
+							if (event.key === 'Enter') {
+								event.preventDefault();
+								submit();
+							}
 						}}
 					/>
 				{/snippet}

@@ -128,9 +128,53 @@
 		[primaryButtonText, secondaryButtonText, closeButtonText].filter(Boolean).length
 	);
 
+	// Every close reaches `onOpenChange`, which is the promise its doc makes. A button's click set
+	// `open` and nothing else, so the callback heard Escape and never a button.
 	function dismiss(callback?: () => void) {
 		callback?.();
 		open = false;
+		onOpenChange?.(false);
+	}
+
+	// `ContentDialog::ExecuteCloseAction` (`ContentDialog_Partial.cpp:2063`), which Escape runs: a
+	// close button that is there and enabled is clicked, so `CloseButtonClick` fires and the
+	// result is `None`; with none, the dialog only hides.
+	function executeCloseAction() {
+		if (closeRef && !closeRef.disabled) closeRef.click();
+		else dismiss();
+	}
+
+	// What takes Enter for itself before it reaches the layout root. A XAML button handles the key
+	// and marks it handled (`ButtonBase_Partial.cpp:449-467`), and the root's handler never sees
+	// it — pressed on the reference on 2026-10-01: Enter on the focused `Cancel` cancelled, where
+	// Enter on the focused CheckBox clicked the default button, because a CheckBox does not take
+	// Enter. On the web the elements whose own activation is Enter are these, and a control that
+	// handles the key itself says so with `preventDefault`.
+	//
+	// Escape has no such list. The primitive's escape layer listens on the document, calls
+	// `preventDefault` itself and hands `onEscapeKeydown` a copy, so a control's own
+	// `preventDefault` does not keep Escape from it, and would not without the layout root carrying
+	// that fact across — where upstream's `AutoSuggestBox` takes Escape even with its list closed
+	// (`AutoSuggestBox_Partial.cpp:1134-1145`), here the dialog closes. Recorded in
+	// `docs/surface.md` beside this handler.
+	const TAKES_ENTER =
+		'button, a[href], area[href], summary, textarea, select, [contenteditable]:not([contenteditable="false"]), input[type="button"], input[type="submit"], input[type="reset"], input[type="image"], input[type="file"], input[type="color"], audio[controls], video[controls]';
+
+	// `ProcessLayoutRootKey` (`ContentDialog_Partial.cpp:1736`), its Enter half (`:1761`): the
+	// default button is clicked if it is enabled, wherever focus is in the dialog, unless focus is
+	// on something that takes Enter itself. Pressed on the reference on 2026-10-01: with focus on
+	// the content's CheckBox, Enter saved; with no default button, Enter did nothing. An Enter that
+	// commits an IME composition belongs to the input method, which is still holding the text, and
+	// is not a press of the dialog's.
+	function onLayoutRootKeydown(event: KeyboardEvent) {
+		if (event.key !== 'Enter' || event.defaultPrevented) return;
+		if (event.isComposing || event.keyCode === 229) return;
+		const taker = event.target instanceof Element ? event.target.closest(TAKES_ENTER) : null;
+		if (taker && (event.currentTarget as Element).contains(taker)) return;
+		const button = defaultButtonRef;
+		if (!button || button.disabled) return;
+		event.preventDefault();
+		button.click();
 	}
 
 	let contentRef = $state<HTMLElement | null>(null);
@@ -208,9 +252,19 @@
 				<div {...props} class="smoke"></div>
 			{/snippet}
 		</Dialog.Overlay>
-		<div class="layout">
+		<!-- `LayoutRoot`, whose `KeyDown` is upstream's (`ContentDialog_Partial.cpp:224-226`). -->
+		<!-- eslint-disable svelte/no-unused-svelte-ignore -->
+		<!-- svelte-ignore a11y_no_static_element_interactions -->
+		<div class="layout" onkeydown={onLayoutRootKeydown}>
+			<!-- eslint-enable svelte/no-unused-svelte-ignore -->
 			<Dialog.Content
 				interactOutsideBehavior="ignore"
+				onEscapeKeydown={(event) => {
+					// The primitive would close the dialog itself and skip the close button; this is
+					// `ProcessLayoutRootKey`'s Escape half (`:1747-1760`) instead.
+					event.preventDefault();
+					executeCloseAction();
+				}}
 				onOpenAutoFocus={(event) => {
 					// The primitive focuses the first focusable descendant with a plain `focus()`,
 					// which is the right element in the Gallery's dialog and lights it. Cancel that
