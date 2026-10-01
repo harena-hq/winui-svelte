@@ -1,7 +1,10 @@
 <script lang="ts" module>
 	import type { Snippet } from 'svelte';
 
-	/** `ContentDialogButton`, lower-cased. Which command button is drawn as the accent one. */
+	/**
+	 * `ContentDialogButton`, lower-cased. Which command button Enter clicks, and which is drawn as
+	 * the accent one while no other command button holds focus.
+	 */
 	export type ContentDialogButton = 'none' | 'primary' | 'secondary' | 'close';
 
 	export interface ContentDialogProps {
@@ -196,6 +199,24 @@
 					: null
 	);
 
+	// `DefaultButtonStates` (`ContentDialog_Partial.cpp:398-440`): the default button is drawn as
+	// the accent one while focus is outside the command area, and inside it only while the
+	// default button itself holds focus. Upstream re-reads focus on every `GotFocus` of the layout
+	// root (`:232-238`), so this is the element the last `focusin` there reached. Pressed on the
+	// reference on 2026-10-01: Tab from the CheckBox to `Save` kept its accent, on to
+	// `Don't Save` and `Cancel` dropped it, and Shift+Tab back to `Save` and to the CheckBox drew
+	// it again.
+	let focusedElement = $state<Element | null>(null);
+	let commandsRef = $state<HTMLElement | null>(null);
+	function drawnAsDefault(button: 'primary' | 'secondary' | 'close') {
+		if (defaultButton !== button) return false;
+		const inCommandArea = focusedElement !== null && !!commandsRef?.contains(focusedElement);
+		return !inCommandArea || focusedElement === defaultButtonRef;
+	}
+	function onLayoutRootFocusIn(event: FocusEvent) {
+		focusedElement = event.target instanceof Element ? event.target : null;
+	}
+
 	// `wasFocusSet` is an out-parameter of each `SetFocusedElement` call below rather than an
 	// assumption that it worked, and reading `document.activeElement` back is that
 	// out-parameter: `.focus()` on a hidden or unrendered element is a silent no-op, which no
@@ -255,7 +276,7 @@
 		<!-- `LayoutRoot`, whose `KeyDown` is upstream's (`ContentDialog_Partial.cpp:224-226`). -->
 		<!-- eslint-disable svelte/no-unused-svelte-ignore -->
 		<!-- svelte-ignore a11y_no_static_element_interactions -->
-		<div class="layout" onkeydown={onLayoutRootKeydown}>
+		<div class="layout" onkeydown={onLayoutRootKeydown} onfocusin={onLayoutRootFocusIn}>
 			<!-- eslint-enable svelte/no-unused-svelte-ignore -->
 			<Dialog.Content
 				interactOutsideBehavior="ignore"
@@ -294,11 +315,11 @@
 							</div>
 						</div>
 						{#if buttonCount > 0}
-							<div class="commands" data-count={buttonCount}>
+							<div class="commands" data-count={buttonCount} bind:this={commandsRef}>
 								{#if primaryButtonText}
 									<Button
 										bind:ref={primaryRef}
-										variant={defaultButton === 'primary' ? 'accent' : 'default'}
+										variant={drawnAsDefault('primary') ? 'accent' : 'default'}
 										disabled={primaryButtonDisabled}
 										onclick={() => dismiss(onPrimaryButtonClick)}
 									>
@@ -308,7 +329,7 @@
 								{#if secondaryButtonText}
 									<Button
 										bind:ref={secondaryRef}
-										variant={defaultButton === 'secondary' ? 'accent' : 'default'}
+										variant={drawnAsDefault('secondary') ? 'accent' : 'default'}
 										disabled={secondaryButtonDisabled}
 										onclick={() => dismiss(onSecondaryButtonClick)}
 									>
@@ -318,7 +339,7 @@
 								{#if closeButtonText}
 									<Button
 										bind:ref={closeRef}
-										variant={defaultButton === 'close' ? 'accent' : 'default'}
+										variant={drawnAsDefault('close') ? 'accent' : 'default'}
 										onclick={() => dismiss(onCloseButtonClick)}
 									>
 										{closeButtonText}
