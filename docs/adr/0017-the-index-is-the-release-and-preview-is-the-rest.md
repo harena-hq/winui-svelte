@@ -68,8 +68,9 @@ not. `NavigationViewItem` had no baseline of its own, so the implementing unit g
 
 **`pnpm smoke` imports from both entries**: it places every one of the release's components from
 the root and four held-back ones from `preview`, and a build that imports a held-back component
-from the root fails. Placed means compiled and bundled: the consumer is untyped and its browser
-bundle is never run, so a misspelled prop builds green.
+from the root fails. Placed means compiled, bundled and type-checked against the published
+types, so a value of the wrong type fails; the browser bundle is never run, and most props
+interfaces take any name, so a misspelled prop still passes.
 
 **A component moves into the index by a recorded decision** — a row in `plan.md`'s table naming
 it, with the reason. That is a review convention: no gate ties an index name to a row, and C4's

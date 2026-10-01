@@ -143,6 +143,10 @@ async function runPositive(workdir, tarball) {
 	await assertNotTheWorkspace(directory);
 	await assertPublishedSurface(directory);
 
+	log('positive: type-checking the consumer against the published types');
+	const check = await runCommand('pnpm', ['run', 'check'], directory);
+	assertExit(check, 0, 'positive pnpm run check');
+
 	log('positive: building the browser bundle');
 	const build = await runCommand('pnpm', ['run', 'build'], directory);
 	assertExit(build, 0, 'positive pnpm run build');
@@ -282,6 +286,72 @@ async function runRootRejects(workdir, tarball, name, label) {
 	}
 }
 
+// The type gate's negative cases. The positive check passing proves nothing on its own: a
+// consumer whose components typed as `any`, or that the check never read, would pass it too. Each case is one
+// line the published types refuse, and the check has to fail with exactly one error, on that
+// line, saying what the case says. A props interface that ends in an index signature takes a
+// misspelled prop name, so the cases are a known prop given a value its type refuses, and a
+// required prop left out.
+const TYPE_ERRORS = [
+	{
+		label: 'type error',
+		what: 'a prop value the published type refuses',
+		markup: `import { InfoBar } from 'winui-svelte';\n</script>\n\n<InfoBar severity="notASeverity" title="Smoke" />`,
+		message: `Type '"notASeverity"' is not assignable to type`
+	},
+	{
+		label: 'missing prop',
+		what: 'a component without a required prop',
+		markup: `import { TabView } from 'winui-svelte';\n</script>\n\n<TabView />`,
+		message: `Property 'items' is missing`
+	}
+];
+
+// `--output machine` in the consumer's `check` script is what makes this readable: without it
+// svelte-check picks its format from the environment, and its human-verbose format, the fallback
+// outside `CLAUDECODE=1`, prints each diagnostic's surrounding source, which would echo the
+// offending line into any other error. A machine diagnostic is
+// `<time> ERROR "<file>" <line>:<column> "<message>"`, the file and the message JSON strings.
+const DIAGNOSTIC = /^\d+ (ERROR|WARNING) ("(?:[^"\\]|\\.)*") (\d+):\d+ (".*")$/gm;
+
+async function runTypeError(workdir, tarball, { label, what, markup, message }) {
+	const directory = path.join(workdir, label.replaceAll(' ', '-'));
+	await prepareConsumer(directory, tarball);
+	await writeFile(path.join(directory, 'src/App.svelte'), `<script lang="ts">\n\t${markup}\n`);
+
+	log(`${label}: installing the consumer`);
+	const install = await installConsumer(directory);
+	assertExit(install, 0, `${label} pnpm install`);
+
+	log(`${label}: type-checking ${what}`);
+	const check = await runCommand('pnpm', ['run', 'check'], directory);
+	if (check.exitCode === 0) {
+		throw new Error(
+			`expected the type check to refuse ${what}, but it exited 0; output: ${compactOutput(check)}`
+		);
+	}
+	const errors = [...commandOutput(check).matchAll(DIAGNOSTIC)]
+		.filter(([, severity]) => severity === 'ERROR')
+		.map(([, , file, line, text]) => ({
+			file: JSON.parse(file).replaceAll('\\', '/'),
+			line: Number(line),
+			text: JSON.parse(text)
+		}));
+	const [only] = errors;
+	// The written file is the script's opening tag, the import, its closing tag, a blank line and
+	// the element, so the element is on the fifth line.
+	if (
+		errors.length !== 1 ||
+		only.file !== 'src/App.svelte' ||
+		only.line !== 5 ||
+		!only.text.includes(message)
+	) {
+		throw new Error(
+			`expected exactly one error, on the element the case wrote, saying ${message}, but found: ${compactOutput(check)}`
+		);
+	}
+}
+
 async function main() {
 	let workdir;
 	let failure;
@@ -297,6 +367,7 @@ async function main() {
 		await runPositive(workdir, tarball);
 		await runRootRejects(workdir, tarball, UNKNOWN_EXPORT, 'unknown export');
 		await runRootRejects(workdir, tarball, HELD_BACK_EXPORT, 'held-back export');
+		for (const typeError of TYPE_ERRORS) await runTypeError(workdir, tarball, typeError);
 	} catch (error) {
 		failure = error;
 	} finally {

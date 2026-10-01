@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import {
 		Button,
 		ComboBox,
@@ -26,8 +26,12 @@
 	// public prop surfaces are fixed by use", and a prop surface is fixed by use at a usage site:
 	// prop names, snippet names and which members are required are what a consumer discovers,
 	// and importing a component without mounting it discovers none of them. So every one of the
-	// eighteen is placed with its required props and a few common ones. Placed is all it is: this
-	// file is untyped and its browser bundle is never run, so a misspelled prop still builds.
+	// eighteen is placed with its required props and a few common ones, and the file is
+	// type-checked against the package's published types. That refuses a value of the wrong type
+	// and a missing required prop. It does not refuse a misspelled prop, because most props
+	// interfaces end in an index signature, and the browser bundle is never run. Nor does it check
+	// the package's `.d.ts` themselves (`skipLibCheck`, as in every tsconfig here), so a
+	// declaration that failed to resolve would read as `any`.
 	//
 	// The imports come from both entries (ADR 0017): `winui-svelte` for the eighteen it releases,
 	// `winui-svelte/preview` for four of those it does not. That makes the build resolve both entries
