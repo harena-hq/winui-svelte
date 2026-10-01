@@ -286,6 +286,10 @@ nested inside a tab trigger. So the button is reachable by Tab and not by arrow 
 is a property of the standard roving-tabindex pattern rather than of any one library.
 Recorded here once the control is built and the behaviour is observed rather than predicted._
 
+_It was not recorded, because it did not happen: TabView was built without a primitive, and
+its arrow order is the original's, close buttons and add-tab button included — pressed on the
+reference on 2026-10-01 (`docs/keyboard.md`, the `TabView` observation)._
+
 ---
 
 ### WD-010 — changing ExpandDirection while expanded redraws both corners

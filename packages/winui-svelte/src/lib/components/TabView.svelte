@@ -118,32 +118,52 @@
 	const hasCloseButton = (item: TabViewItemData) =>
 		isClosable(item) && (closeButtonOverlayMode !== 'onPointerOver' || item.id === current);
 
-	// The strip's arrow order, measured on the original: Left from the selected tab moves focus
-	// to the *previous tab's close button*, and the selection does not follow. So the order is
-	// tab, close, tab, close … and Left and Right walk it. `TabView.cpp:1582-1586` handles the
-	// two keys; `IsTabStop="False"` on the close button (`TabView.xaml:576`) keeps it out of the
-	// Tab order, not out of this one.
-	const focusOrder = $derived(
-		items.flatMap((item) =>
+	// The strip's arrow order, pressed on the original (`docs/keyboard.md`, the `TabView`
+	// observation) and stated by the pin's own comment (`TabView.cpp:1439`): each tab, then its
+	// close button, then the add-tab button, and from there back to the first tab — the arrows
+	// wrap at both ends (`:1487-1494`), and the selection does not follow. A tab's Left and Right
+	// reach it through `TabViewItem.cpp:578-597`, the add button's through `OnAddButtonKeyDown`
+	// (`TabView.cpp:1578`). `IsTabStop="False"` on the close button (`TabView.xaml:576`) keeps it
+	// out of the Tab order, not out of this one.
+	const addId = `${uid}-add`;
+	const focusOrder = $derived([
+		...items.flatMap((item) =>
 			isItemDisabled(item)
 				? []
 				: hasCloseButton(item)
 					? [tabId(item.id), closeId(item.id)]
 					: [tabId(item.id)]
-		)
-	);
+		),
+		...(addTabButtonVisible && !disabled ? [addId] : [])
+	]);
 
 	function moveFocus(from: string, step: number) {
 		const index = focusOrder.indexOf(from);
-		const next = index === -1 ? undefined : focusOrder[index + step];
-		if (next !== undefined) document.getElementById(next)?.focus();
+		if (index === -1) return;
+		const next = focusOrder[(index + step + focusOrder.length) % focusOrder.length];
+		document.getElementById(next)?.focus();
 	}
+
+	// The strip is one Tab stop, and the stop is the tab focus last visited: `TabNavigation="Once"`
+	// on the tab list (`TabView.xaml:54`), which `ListViewBase` implements as tabbing back into the
+	// previously visited item (`ListViewBase_Partial.cpp:1361-1364`). It remembers an item, so a
+	// close button that had focus remembers its tab, and a change of selection moves it too, as
+	// `Selector` does when the selection changes (`Selector_Partial.cpp:990`, `:2397`): the
+	// remembered tab is derived from the selection and overwritten by focus, so until a tab is
+	// visited the stop is the selected one.
+	let remembered = $derived<string | null>(current);
+	const entry = $derived(
+		items.some((item) => item.id === remembered && !isItemDisabled(item)) ? remembered : current
+	);
 
 	function walk(event: KeyboardEvent, here: string) {
 		if (event.key === 'ArrowLeft') moveFocus(here, -1);
 		else if (event.key === 'ArrowRight') moveFocus(here, 1);
+		// Home and End were not pressed on the original; they keep to the tabs and their close
+		// buttons, as they did before the add button joined the arrows.
 		else if (event.key === 'Home') document.getElementById(focusOrder[0] ?? '')?.focus();
-		else if (event.key === 'End') document.getElementById(focusOrder.at(-1) ?? '')?.focus();
+		else if (event.key === 'End')
+			document.getElementById(focusOrder.filter((id) => id !== addId).at(-1) ?? '')?.focus();
 		else return false;
 
 		event.preventDefault();
@@ -275,12 +295,13 @@
 							role="tab"
 							id={tabId(item.id)}
 							data-closable={isClosable(item) || undefined}
-							tabindex={item.id === current ? 0 : -1}
+							tabindex={item.id === entry ? 0 : -1}
 							aria-selected={item.id === current}
 							aria-disabled={isItemDisabled(item) || undefined}
 							aria-controls={panelId}
 							data-selected={item.id === current || undefined}
 							onclick={() => select(item)}
+							onfocusin={() => (remembered = item.id)}
 							onkeydown={(event) => handleKeydown(event, item)}
 						>
 							<div class="body">
@@ -345,8 +366,12 @@
 				<button
 					type="button"
 					class="add"
+					id={addId}
 					aria-label="Add New Tab"
 					{disabled}
+					onkeydown={(event) => {
+						if (walk(event, addId)) event.stopPropagation();
+					}}
 					onclick={() => onAddTabButtonClick?.()}>{addGlyph}</button
 				>
 			</div>
