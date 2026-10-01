@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Hyperlink, Paragraph, RichTextBlock } from 'winui-svelte';
+	import { Hyperlink, Paragraph, RichTextBlock } from 'winui-svelte/preview';
 	import { typographyRows } from '$lib/design';
 	import ControlExample from '$lib/frame/ControlExample.svelte';
 	import ItemPage from '$lib/frame/ItemPage.svelte';

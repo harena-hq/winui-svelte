@@ -26,6 +26,11 @@
 			"svelte": "./dist/index.js",
 			"default": "./dist/index.js"
 		},
+		"./preview": {
+			"types": "./dist/preview.d.ts",
+			"svelte": "./dist/preview.js",
+			"default": "./dist/preview.js"
+		},
 		"./tokens.css": "./dist/tokens/tokens.css",
 		"./type-ramp.css": "./dist/tokens/type-ramp.css",
 		"./*.svelte": {

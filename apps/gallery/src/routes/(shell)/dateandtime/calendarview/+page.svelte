@@ -5,7 +5,7 @@
 		ComboBox,
 		type CalendarViewProps,
 		type ComboBoxProps
-	} from 'winui-svelte';
+	} from 'winui-svelte/preview';
 	import ControlExample from '$lib/frame/ControlExample.svelte';
 	import ItemPage from '$lib/frame/ItemPage.svelte';
 	import { languages } from '$lib/languages';

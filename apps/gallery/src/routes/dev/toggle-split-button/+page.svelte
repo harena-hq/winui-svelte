@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { ToggleSplitButton } from 'winui-svelte';
+	import { ToggleSplitButton } from 'winui-svelte/preview';
 
 	const items = [
 		{ id: 'red', text: 'Red' },

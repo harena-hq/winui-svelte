@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { TreeView } from 'winui-svelte';
+	import { TreeView } from 'winui-svelte/preview';
 
 	interface Node {
 		id: string;

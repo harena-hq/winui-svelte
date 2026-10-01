@@ -3,7 +3,7 @@
 	import { afterNavigate, goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import { resolve } from '$app/paths';
-	import { AutoSuggestBox, NavigationView, ScrollView, TitleBar } from 'winui-svelte';
+	import { AutoSuggestBox, NavigationView, ScrollView, TitleBar } from 'winui-svelte/preview';
 	import {
 		QUERY_GLYPH,
 		ancestorsOf,

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Border, Viewbox } from 'winui-svelte';
+	import { Border, Viewbox } from 'winui-svelte/preview';
 </script>
 
 <svelte:head><title>Viewbox — harness</title></svelte:head>

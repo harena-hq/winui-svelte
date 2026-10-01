@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { NavigationView, type NavigationViewEntry } from 'winui-svelte';
+	import { NavigationView, type NavigationViewEntry } from 'winui-svelte/preview';
 
 	/*
 	 * The component's own harness, not part of the Gallery reproduction: `/dev/` is where

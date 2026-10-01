@@ -67,8 +67,10 @@ whether or not it is released, and it fails if the index exports a component `pr
 not. `NavigationViewItem` has no baseline of its own today, so the implementing unit gives it
 one.
 
-**`pnpm smoke` mounts the release from the root and resolves `preview`**, and a build that
-imports a held-back component from the root fails.
+**`pnpm smoke` imports from both entries**: it mounts six of the release's components from the
+root and four held-back ones from `preview`, and a build that imports a held-back component from
+the root fails. Its consumer was written for one tranche, and mounting the rest of the release
+there is owed rather than done.
 
 **A component moves into the index by a recorded decision** — a row in `plan.md`'s table naming
 it, with the reason. That is a review convention: no gate ties an index name to a row, and C4's

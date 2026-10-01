@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { ScrollViewer } from 'winui-svelte';
+	import { ScrollViewer } from 'winui-svelte/preview';
 </script>
 
 <svelte:head><title>ScrollViewer — harness</title></svelte:head>

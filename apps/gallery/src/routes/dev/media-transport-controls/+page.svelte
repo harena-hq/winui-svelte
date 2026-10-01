@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { MediaTransportControls } from 'winui-svelte';
+	import { MediaTransportControls } from 'winui-svelte/preview';
 </script>
 
 <svelte:head><title>MediaTransportControls — harness</title></svelte:head>

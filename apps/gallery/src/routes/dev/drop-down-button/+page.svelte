@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { DropDownButton, MenuFlyout } from 'winui-svelte';
+	import { DropDownButton, MenuFlyout } from 'winui-svelte/preview';
 
 	const items = [
 		{ id: 'send', text: 'Send', glyph: 'E725' },

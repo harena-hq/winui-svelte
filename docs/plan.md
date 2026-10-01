@@ -4240,8 +4240,9 @@ Automated, and a unit that fails one cannot be sealed.
   it was adding the second record file and would have been sealing its own gate.
 
 - **C3 — layer separation.** `packages/winui-svelte` must not import from `apps/gallery`.
-- **C4 — three themes, always.** Every exported component renders under light, dark and high
-  contrast in the snapshot suite. A component that only works in one theme cannot land.
+- **C4 — three themes, always.** Every component `preview.ts` exports renders under light, dark
+  and high contrast in the snapshot suite, released or not, and every component `index.ts`
+  releases is one of them (ADR 0017). A component that only works in one theme cannot land.
 
   **It says nothing about engines, and that gap has already cost a defect.** Baselines are
   taken on Edge because that is where the fonts resolve (D6), so every snapshot is Chromium.

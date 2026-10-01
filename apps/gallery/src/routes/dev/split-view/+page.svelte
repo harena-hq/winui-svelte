@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { SplitView } from 'winui-svelte';
+	import { SplitView } from 'winui-svelte/preview';
 </script>
 
 <svelte:head><title>SplitView — harness</title></svelte:head>

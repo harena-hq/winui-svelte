@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Run, Span, TextBlock } from 'winui-svelte';
+	import { Run, Span, TextBlock } from 'winui-svelte/preview';
 </script>
 
 <svelte:head><title>Span — harness</title></svelte:head>

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { InlineUIContainer, Paragraph, RichTextBlock, Run } from 'winui-svelte';
+	import { InlineUIContainer, Paragraph, RichTextBlock, Run } from 'winui-svelte/preview';
 </script>
 
 <svelte:head><title>InlineUIContainer — harness</title></svelte:head>

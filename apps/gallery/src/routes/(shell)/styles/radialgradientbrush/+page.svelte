@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { ComboBox, Slider } from 'winui-svelte';
-	import type { ComboBoxProps } from 'winui-svelte';
+	import { ComboBox, Slider } from 'winui-svelte/preview';
+	import type { ComboBoxProps } from 'winui-svelte/preview';
 	import ControlExample from '$lib/frame/ControlExample.svelte';
 	import ItemPage from '$lib/frame/ItemPage.svelte';
 	import { sampleOf } from '$lib/samples';

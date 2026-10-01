@@ -1,5 +1,5 @@
 <script lang="ts" module>
-	import type { ComboBoxProps } from 'winui-svelte';
+	import type { ComboBoxProps } from 'winui-svelte/preview';
 
 	type BackdropType = 'acrylic' | 'mica' | 'micaAlt';
 
@@ -21,7 +21,7 @@
 </script>
 
 <script lang="ts">
-	import { Button, ComboBox, Slider, SystemBackdropElement } from 'winui-svelte';
+	import { Button, ComboBox, Slider, SystemBackdropElement } from 'winui-svelte/preview';
 	import ControlExample from '$lib/frame/ControlExample.svelte';
 	import ItemPage from '$lib/frame/ItemPage.svelte';
 	import { sampleOf, textOf } from '$lib/samples';

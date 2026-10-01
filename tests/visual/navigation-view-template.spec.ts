@@ -2,8 +2,9 @@ import { expect, test } from './fixtures';
 
 // ADR 0015's `menuItemTemplate`: the control hands each entry to a snippet the consumer wrote,
 // and the snippet draws the row. Nothing here is a screenshot — every assertion is about which
-// element drew a row and what an event did, so `/dev/navigation-view-template` carries no
-// baseline and `/dev/navigation-view` stays the page the three tracked ones describe.
+// element drew a row and what an event did. The page's three-theme baseline is
+// `navigation-view-item.spec.ts`'s, and `/dev/navigation-view` stays the page the control's own
+// three describe.
 //
 // Two of these are the first tests of decisions taken without a press to measure. The space
 // typed into a field inside a row is the case ADR 0015's deferred item 2 exists for and the one

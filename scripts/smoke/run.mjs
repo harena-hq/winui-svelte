@@ -240,36 +240,44 @@ async function assertPublishedSurface(directory) {
 }
 
 const UNKNOWN_EXPORT = 'NotAControl';
+// A component the library builds and the release holds back (ADR 0017): `preview` exports it and
+// the root must not.
+const HELD_BACK_EXPORT = 'Flyout';
 
-async function runUnknownExport(workdir, tarball) {
+async function runRootRejects(workdir, tarball, name, label) {
 	// The negative case. It has to be about this package rather than about the package
 	// manager: pnpm auto-installs a missing peer, so deleting one from the consumer changes
 	// nothing, and a consumer that imports only components with no peer of their own builds
 	// green either way. Both were measured here before this shape was chosen. Importing a
 	// name the package does not export is the failure the package itself owns, and it is
 	// what proves the positive build resolved against the tarball's entry point instead of
-	// quietly emitting nothing.
-	const directory = path.join(workdir, 'unknown-export');
+	// quietly emitting nothing. The held-back case is the same build with a component the
+	// package does build, which `preview` exports and the root must not (ADR 0017): it is what
+	// proves the release is narrower than the preview.
+	const directory = path.join(workdir, label.replaceAll(' ', '-'));
 	await prepareConsumer(directory, tarball);
 	await writeFile(
 		path.join(directory, 'src/App.svelte'),
-		`<script>\n\timport { ${UNKNOWN_EXPORT} } from 'winui-svelte';\n</script>\n\n<${UNKNOWN_EXPORT} />\n`
+		`<script>\n\timport { ${name} } from 'winui-svelte';\n</script>\n\n<${name} />\n`
 	);
 
-	log('unknown export: installing the consumer');
+	log(`${label}: installing the consumer`);
 	const install = await installConsumer(directory);
-	assertExit(install, 0, 'unknown-export pnpm install');
+	assertExit(install, 0, `${label} pnpm install`);
 
-	log('unknown export: building against a name the package does not export');
+	log(`${label}: building against a name the package root does not export`);
 	const build = await runCommand('pnpm', ['run', 'build'], directory);
 	if (build.exitCode === 0) {
 		throw new Error(
-			`expected the build to fail on the missing export ${UNKNOWN_EXPORT}, but it exited 0; output: ${compactOutput(build)}`
+			`expected the build to fail on the missing export ${name}, but it exited 0; output: ${compactOutput(build)}`
 		);
 	}
-	if (!commandOutput(build).includes(UNKNOWN_EXPORT)) {
+	// The bundler's own words for a missing export, with the name quoted, rather than the name
+	// alone: `Flyout` is also in `MenuFlyout`, and in the path of a module the root does reach,
+	// so a build that failed for another reason could still mention it.
+	if (!commandOutput(build).includes(`"${name}" is not exported by`)) {
 		throw new Error(
-			`expected the failed build to name ${UNKNOWN_EXPORT}, but found: ${compactOutput(build)}`
+			`expected the failed build to say "${name}" is not exported, but found: ${compactOutput(build)}`
 		);
 	}
 }
@@ -287,7 +295,8 @@ async function main() {
 		const tarball = await packLibrary(workdir);
 
 		await runPositive(workdir, tarball);
-		await runUnknownExport(workdir, tarball);
+		await runRootRejects(workdir, tarball, UNKNOWN_EXPORT, 'unknown export');
+		await runRootRejects(workdir, tarball, HELD_BACK_EXPORT, 'held-back export');
 	} catch (error) {
 		failure = error;
 	} finally {

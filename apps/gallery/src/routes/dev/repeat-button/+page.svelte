@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { RepeatButton } from 'winui-svelte';
+	import { RepeatButton } from 'winui-svelte/preview';
 	/* The component's own harness, not part of the Gallery reproduction: `/dev/` is where each control gets a page to be photographed on, and nothing links to it. */
 </script>
 

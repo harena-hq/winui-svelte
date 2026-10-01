@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { TreeViewItem } from 'winui-svelte';
+	import { TreeViewItem } from 'winui-svelte/preview';
 </script>
 
 <svelte:head><title>TreeViewItem — harness</title></svelte:head>

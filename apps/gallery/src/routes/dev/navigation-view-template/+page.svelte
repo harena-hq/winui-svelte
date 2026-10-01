@@ -1,20 +1,22 @@
 <script lang="ts">
-	import { NavigationView, type NavigationViewEntry } from 'winui-svelte';
-	import NavigationViewItem from 'winui-svelte/components/NavigationViewItem.svelte';
+	import {
+		NavigationView,
+		NavigationViewItem,
+		type NavigationViewEntry
+	} from 'winui-svelte/preview';
 
 	/*
 	 * `menuItemTemplate` — ADR 0015's second half — on its own harness.
 	 *
-	 * **Nothing photographs this page**, and that is deliberate rather than an omission:
-	 * every assertion here is about which element drew a row and what an event did, and
-	 * `navigation-view-template.spec.ts` reads both from the DOM. `/dev/navigation-view` is
-	 * the page with the three tracked baselines, and it draws no template, so the control's
-	 * own rows stay the thing the baselines describe.
+	 * This page is `NavigationViewItem`'s three-theme baseline, because it is the one page where
+	 * a consumer's template draws the rows (`navigation-view-item.spec.ts`). The assertions about
+	 * which element drew a row and what an event did are read from the DOM by
+	 * `navigation-view-template.spec.ts`. `/dev/navigation-view` draws no template, so its three
+	 * baselines stay about the control's own rows.
 	 *
-	 * The deep import is the surface as it stands, not a shortcut around it: `index.ts` does
-	 * not re-export `NavigationViewItem` and the package's exports map publishes every file
-	 * under `dist` (its `./*.svelte` entry), so this is the import a consumer writes today.
-	 * D46's naming unit is what fixes the exported set.
+	 * `NavigationViewItem` is in the release with `NavigationView` (ADR 0015, ADR 0017); like
+	 * every Gallery page that imports a component either entry exports, this one imports from
+	 * `winui-svelte/preview`.
 	 */
 
 	/** A consumer's own row type: the record as the bound, plus a field of its own. */
@@ -167,8 +169,8 @@
 	}
 
 	/* Nothing below reproduces anything. The consumer's snippet owns what it draws, and this
-	   page is the consumer — so these are the harness's numbers, not upstream's, and no
-	   baseline reads them. */
+	   page is the consumer — so these are the harness's numbers, not upstream's. The
+	   `NavigationViewItem` baseline photographs this whole page, so changing them re-baselines it. */
 	.tpl-header {
 		padding: 8px 16px;
 		color: var(--winui-TextFillColorSecondaryBrush);

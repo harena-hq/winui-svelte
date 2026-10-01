@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Line } from 'winui-svelte';
+	import { Line } from 'winui-svelte/preview';
 
 	// LinePage.xaml:29, :105, :168 — the Line page strokes its three shapes SteelBlue, Black and
 	// DarkGoldenRod. A shape's brushes are values its caller supplies, so these are a sample's

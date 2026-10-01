@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { AppBarButton } from 'winui-svelte';
+	import { AppBarButton } from 'winui-svelte/preview';
 </script>
 
 <svelte:head><title>AppBarButton — harness</title></svelte:head>

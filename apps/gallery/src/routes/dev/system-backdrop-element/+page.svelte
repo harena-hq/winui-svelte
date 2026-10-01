@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { SystemBackdropElement } from 'winui-svelte';
+	import { SystemBackdropElement } from 'winui-svelte/preview';
 </script>
 
 <svelte:head><title>SystemBackdropElement — harness</title></svelte:head>

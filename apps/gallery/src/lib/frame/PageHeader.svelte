@@ -25,7 +25,7 @@
 		Flyout,
 		HyperlinkButton,
 		ToggleButton
-	} from 'winui-svelte';
+	} from 'winui-svelte/preview';
 	import CopyButton from './CopyButton.svelte';
 
 	let { item, class: className, style, ref = $bindable(null), ...rest }: PageHeaderProps = $props();

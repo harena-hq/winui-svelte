@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Button, RadioButton, RadioButtons, ScrollViewer } from 'winui-svelte';
+	import { Button, RadioButton, RadioButtons, ScrollViewer } from 'winui-svelte/preview';
 	import { linearEasing } from '$lib/easing';
 	import ControlExample from '$lib/frame/ControlExample.svelte';
 	import ItemPage from '$lib/frame/ItemPage.svelte';

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Button, Hyperlink, Image, PasswordBox } from 'winui-svelte';
+	import { Button, Hyperlink, Image, PasswordBox } from 'winui-svelte/preview';
 	import ControlExample from '$lib/frame/ControlExample.svelte';
 	import ItemPage from '$lib/frame/ItemPage.svelte';
 	import NotApplicablePanel from '$lib/frame/NotApplicablePanel.svelte';

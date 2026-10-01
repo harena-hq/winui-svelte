@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { NavigationView, type NavigationViewEntry } from 'winui-svelte';
+	import { NavigationView, type NavigationViewEntry } from 'winui-svelte/preview';
 
 	/*
 	 * The pane's keyboard ring: which row Tab lands on, and where the arrows, Home and End go

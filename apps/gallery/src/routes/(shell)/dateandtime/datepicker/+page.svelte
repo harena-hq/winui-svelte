@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { DatePicker } from 'winui-svelte';
+	import { DatePicker } from 'winui-svelte/preview';
 	import { SvelteDate } from 'svelte/reactivity';
 	import ControlExample from '$lib/frame/ControlExample.svelte';
 	import ItemPage from '$lib/frame/ItemPage.svelte';

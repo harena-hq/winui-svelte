@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { NavigationView, type NavigationViewEntry } from 'winui-svelte';
+	import { NavigationView, type NavigationViewEntry } from 'winui-svelte/preview';
 
 	/*
 	 * The rail's children flyout — `ChildrenFlyout` — and the expansion memory beside it.
