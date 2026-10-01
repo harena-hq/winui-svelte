@@ -90,6 +90,7 @@ pnpm workspace. The library is publishable and imposes no build tooling on its c
 | D51 | C6 reads the source the package is built from; `pnpm smoke` answers the consumer contract               | this file, "Conformance gates"    |
 | D52 | ContentDialog focuses content, then `DefaultButton`, then a command button, and lights none of them     | docs/surface.md, ContentDialog    |
 | D53 | Baselines compare at a 0.01 colour tolerance, and one unstable page gets a counted pixel budget         | this file, "Verification"         |
+| D54 | The first release is eighteen components in the index; `preview` exports the rest                       | docs/adr/0017                     |
 
 ## Verification
 
@@ -4167,12 +4168,13 @@ Every exported component named against the evidence that sealed it, and any whos
 is a dev route re-photographed against the original on the reference guest. v18's last unit runs
 it; a release is cut when it passes. D37.
 
-**The first release exports a subset of what is built, and that is D46.** The gate's sentence
-above was written when "exported" and "built" were the same set; they are not, and the release
-is not the moment every sealed control becomes public. A component ships when it has been
-polished, which is a later and stricter bar than the one that sealed it — sealing says _this
-matches the original on the surface that was photographed_, and shipping says _a consumer can
-hold this_. The two were only ever the same because nothing had been deliberately held back.
+**The first release exports a subset of what is built, and that is D46.** D54 amends it, in the
+two paragraphs below. The gate's sentence above was written when "exported" and "built" were
+the same set; they are not, and the release is not the moment every sealed control becomes
+public. A component ships when it has been polished, which is a later and stricter bar than the
+one that sealed it — sealing says _this matches the original on the surface that was
+photographed_, and shipping says _a consumer can hold this_. The two were only ever the same
+because nothing had been deliberately held back.
 
 **Why hold anything back, when it is already written.** ADR 0009 makes a prop surface as
 unchangeable as ADR 0006 makes a token name: once a consumer imports it, changing it costs them
@@ -4185,16 +4187,19 @@ until there is a reason to publish it, rather than public until there is a reaso
 exported set, which is what makes v18's last unit affordable. C4 follows on its own — it reads
 "every exported component is snapshotted in all three themes", so a component that is not
 exported leaves its numerator without the gate script changing; the count drops from 79 to
-whatever the first release holds. Nothing about a held-back component's own unit changes: it is
-still sealed against the original, still photographed in three themes, still carries its
-`Reviewed:` trailer. It is only not in `index.ts`.
+whatever the first release holds. **D54 amends that last sentence**: the held-back components
+stay in the Gallery, so C4 reads `preview.ts`, which exports every component a consumer places,
+and keeps all of them to a three-theme baseline (ADR 0017). Nothing about a held-back
+component's own unit changes: it is still sealed against the original, still photographed in
+three themes, still carries its `Reviewed:` trailer. It is only not in `index.ts`.
 
 **The list is not decided here, and deciding it now would be deciding it twice.** Which
 components clear the polish bar is a function of what v18's punch list turns up — every `what
 this version owes` table from v4 onward, plus `docs/surface.md`'s sweep of the half of each
 control that lives in its code-behind. A list written before that sweep is a list the sweep
-invalidates. **v18 names the set**, as the unit before the gate runs, and the gate then measures
-against it.
+invalidates. **v18 names the set**, as the unit before the gate runs, and the gate then
+measures against it. **It has: D54 names eighteen components, and ADR 0017 records why and how,
+including the change to this paragraph's polish criterion.**
 
 ### Final — the acceptance gate
 
