@@ -258,32 +258,6 @@ surface are painted the same way.
 
 ---
 
-### WD-009 — the toggle switch cannot be dragged
-
-- **Control**: `ToggleSwitch`.
-- **WinUI does**: make the knob draggable. `ToggleSwitch_themeresources.xaml:191` sets
-  `ManipulationMode="System,TranslateX"`; the template carries a `SwitchThumb` whose own
-  template is a transparent rectangle spanning the whole switch area; and `ToggleStates` has
-  a third state, `Dragging`, with two transitions of its own — `DraggingToOnTransition` and
-  `DraggingToOffTransition` — that carry the knob to whichever end it was released nearest.
-  Pressing the knob and moving the pointer therefore drags it along the track, and releasing
-  it commits or reverts.
-- **We do**: toggle on click and on keyboard activation. A press-and-drag is a click that
-  toggles once, from wherever the pointer is released inside the control.
-- **Why accepted**: the drag is not a style, it is a gesture with its own state machine —
-  a pointer capture, a per-frame offset, a release threshold, and three
-  `TemplateSettings.Knob*Offset` values that WinUI computes in C++ from the knob's measured
-  position. None of those is in the dictionary this project reads. Reproducing it means
-  writing the state machine from scratch and inventing the threshold, which is the class of
-  invention this registry exists to keep out of the code. The visible result of a drag —
-  the switch ends on or off — is reachable by the click that this does implement.
-- **Would reconsider if**: this library grows a gesture layer for the controls that need one
-  on their own account — Slider's thumb and ScrollView's panning are the same shape — and
-  the release threshold can be measured against the original rather than chosen. The entry
-  is deleted then; a switch that drags is a switch that drags.
-
----
-
 _Eight entries. The next is expected to be TabView's arrow-key traversal. Every surveyed
 primitive library — bits-ui, Zag and therefore Ark, and Melt — builds its roving-focus
 candidate set by querying for a role or data attribute, which cannot match a close button
