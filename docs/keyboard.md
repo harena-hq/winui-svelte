@@ -20,8 +20,9 @@ above.
 
 1. **Windows 11** — what the machine does. The standard.
 2. **The pin's source** — evidence about the machine, and the best available without it. Still
-   silent on much of what a person experiences: `TabView.cpp:1580-1589` says which keys are
-   handled and says nothing about where focus lands when the strip is first entered.
+   silent on much of what a person experiences: `TabViewItem.cpp:578-597` and
+   `TabView.cpp:1578-1591` say which keys are handled and say nothing about where focus lands
+   when the strip is first entered.
 3. **The web's own pattern** — WAI-ARIA's, as a primitive library implements it. Very likely
    the more standard behaviour _on the web_, and not evidence about Windows 11 at all.
 
@@ -72,7 +73,11 @@ because what it argued for is what the answer then cost.
   keeps the close button out of the Tab order. That is a much better provenance than WD-004's —
   and it still does not say what a person experiences, because it does not say where focus lands
   when the strip is first entered, what happens at the ends, whether the add button is reachable
-  by arrow at all, or whether selection follows focus.
+  by arrow at all, or whether selection follows focus. **Pressed on 2026-10-01**: that the add
+  button is outside the arrow order is false — it is in the arrow order as well as the Tab order,
+  and the range cited was the add button's own arrow handler, which says so
+  (`TabView.cpp:1578-1591`); a tab's is `TabViewItem.cpp:578-597`. The ends wrap, and re-entry
+  lands on the last focused tab — see the `TabView` observation below.
 
 The two entries are not equally weak, and that is the point: **the difference between them is
 invisible in the registry.** Both read as settled. Nothing in the format distinguishes a
@@ -468,6 +473,51 @@ WD-004's **Why accepted** rested on exactly the difficulty two of the fallen cla
 The entry was corrected in place on the day of the press, and **deleted on 2026-09-22** when the
 ring was built. Which outcome it was is the second one below, and it was already named there as
 a candidate: a roving tabindex is not something the web cannot do.
+
+## The `TabView` observation
+
+Pressed by hand on the reference guest on 2026-10-01, on the `TabView` page's first sample
+(`TabViewPage.xaml:18-25`, its three documents added at `TabViewPage.xaml.cs:38-41` and named at
+`:65`): `Document 0` selected, and the add-tab button. Each step was photographed. Our column was
+measured on `/dev/tab-view`'s first strip, the Gallery's own, by pressing the same keys. No key
+was pressed that closes or adds a tab, so **question 6 was not pressed**: answering it needs more
+tabs than fit, and the reference's sample does not have them until one is added.
+
+1. **One press reaches the strip, and it lands on a tab.** From the page's last header button,
+   Tab lands on `Document 0`, the next on the add-tab button, the next leaves the sample.
+   `Document 0` was both the first tab and the selected one, so that press does not say which
+   rule picked it. **Re-entry is the last focused tab, not the selected one**: with
+   `Document 1` selected by clicking it and focus then arrowed to `Document 2`, Tab to the add
+   button and Shift+Tab back lands on `Document 2`. **We** land on the selected tab both times —
+   on re-entry, on `Document 1`.
+2. **Right from a tab reaches that tab's close button**, and the next Right the next tab.
+   **We** do the same.
+3. **The add-tab button is in the arrow order as well as the Tab order.** Right from the last
+   tab's close button reaches it. **We** stop on that close button.
+4. **The arrows wrap at both ends.** Right from the add button reaches the first tab, and Left
+   from the first tab reaches the add button, then the last tab's close button. **We** stop at
+   both ends.
+5. **No arrow press changed the selection.** **We** do the same.
+6. Not pressed; see above.
+
+The pin says the same order in a comment: tab, its close button, the next tab and so on, then the
+add-tab button, then back to the first tab (`TabView.cpp:1439`), with the wrap at `:1487-1494`. A
+tab's Left and Right reach it through `TabViewItem.cpp:578-597`, the add button's through
+`OnAddButtonKeyDown` (`TabView.cpp:1578`). Selection not following focus is
+`SingleSelectionFollowsFocus="False"` (`TabView.xaml:56`). The re-entry is `TabNavigation="Once"`
+on the tab list (`TabView.xaml:54`), which `ListViewBase` implements as tabbing into the
+previously visited item, if any, and otherwise the first selectable item, or the last one going
+backward (`ListViewBase_Partial.cpp:1361-1364`). `Document 0` was the first selectable item too,
+so the first press fits that rule as well. That is a remembered item rather than a remembered
+element, so focus that left from a close button would, on that reading, come back to its tab;
+that case was not pressed. A selection change also moves the remembered item, by focusing the
+newly selected one (`Selector_Partial.cpp:990`); the only press bearing on it was the click on
+`Document 1`, which focused the tab as well, so that was not separated either.
+
+### What this decided
+
+The three differences are all the second outcome below: the original's model is reachable on
+the web, so each is a defect for the release's punch list rather than a divergence to record.
 
 ## What an observation decides
 
