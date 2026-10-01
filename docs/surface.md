@@ -806,6 +806,15 @@ and its key listeners never mark the key handled (`Hyperlink.cpp:343-384`, searc
 so read from source the dialog's default button would fire as well. Not pressed; no Gallery dialog
 holds a link.
 
+A third lives half in the template. `DefaultButtonStates` is a visual state group there
+(`ContentDialog_themeresources.xaml:194-211`) that gives one command button `AccentButtonStyle`,
+and when it applies is code-behind (`ContentDialog_Partial.cpp:398-440`): the default button is the
+accent one only while focus is outside the command area or on the default button itself, re-read on
+every `GotFocus` of the layout root (`:232-238`). This library drew the accent always. Pressed on
+the reference on 2026-10-01: Tab from the CheckBox to `Save` kept the accent, on to `Don't Save`
+and `Cancel` dropped it, and Shift+Tab back to `Save` and to the CheckBox drew it again. Built the
+same day; `content-dialog-focus.spec.ts` walks the same keys.
+
 ### TeachingTip — v6 unit 046a
 
 `TeachingTip_themeresources.xaml` carries fifty-one records and seven of them are dead.

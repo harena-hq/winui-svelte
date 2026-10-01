@@ -137,3 +137,58 @@ test('a dialog nothing inside can focus keeps focus on the card, unlit', async (
 	expect(state!.className).toContain('card');
 	expect(state!.focusVisible).toBe(false);
 });
+
+// `DefaultButtonStates` (`ContentDialog_Partial.cpp:398-440`): the default button is the accent
+// one while focus is outside the command area, and inside it only while it holds focus itself.
+// Pressed on the reference guest 2026-10-01 on the Gallery's first example: Tab from the CheckBox
+// to `Save` kept the accent, on to `Don't Save` and `Cancel` dropped it, and Shift+Tab back to
+// `Save` and then to the CheckBox drew it again.
+
+function variantOf(page: Page, label: string) {
+	return page
+		.getByRole('dialog')
+		.getByRole('button', { name: label, exact: true })
+		.getAttribute('data-variant');
+}
+
+test('the default button is the accent one unless another command button holds focus', async ({
+	page
+}) => {
+	await page.goto('/dev/content-dialog');
+	await settlesOn(page, 'tag', 'input');
+	const steps: [string, string, string][] = [
+		['Tab', 'Save', 'accent'],
+		['Tab', "Don't Save", 'default'],
+		['Tab', 'Cancel', 'default'],
+		['Shift+Tab', "Don't Save", 'default'],
+		['Shift+Tab', 'Save', 'accent'],
+		['Shift+Tab', '', 'accent']
+	];
+	expect(await variantOf(page, 'Save')).toBe('accent');
+	for (const [key, label, variant] of steps) {
+		await page.keyboard.press(key);
+		await settlesOn(page, 'label', label);
+		expect(await variantOf(page, 'Save'), `${key} to ${label || 'the CheckBox'}`).toBe(variant);
+		// Only ever the default button: a focused command button is not drawn as one.
+		expect(await variantOf(page, "Don't Save")).toBe('default');
+		expect(await variantOf(page, 'Cancel')).toBe('default');
+	}
+});
+
+test('a disabled default that focus passed over is not drawn as the default', async ({ page }) => {
+	// The dialog's initial focus fell through to `Keep` (`:2039`), a command button that is not the
+	// default, so upstream's state is `NoDefaultButton` — read from source, not pressed: no Gallery
+	// dialog has a disabled default button.
+	await open(page, 'Open text disabled default');
+	await settlesOn(page, 'label', 'Keep');
+	expect(await variantOf(page, 'Replace')).toBe('default');
+});
+
+test('a default button that the dialog focused itself stays the accent one', async ({ page }) => {
+	// The accent was always drawn before this unit, so this does not tell the rule from its absence;
+	// it pins only that a focused default keeps the accent when the focus was the dialog's own
+	// (`:2027`), not a key's, which the Tab walk in the accent test above reaches.
+	await open(page, 'Open text only');
+	await settlesOn(page, 'label', 'Keep');
+	expect(await variantOf(page, 'Keep')).toBe('accent');
+});
