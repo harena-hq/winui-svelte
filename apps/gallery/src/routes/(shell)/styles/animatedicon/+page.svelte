@@ -133,10 +133,9 @@
 			     `align-self` restores HorizontalAlignment's XAML default of Stretch, which the
 			     `.stack` rule below turns off for the button's sake in the example above.
 
-			     This is the first NavigationView in the reproduction that leaves IsBackButtonVisible
-			     at its default, so it is the first place the missing back button shows — WD-037. The
-			     original's pane opens with a back-button row above the toggle; this one opens at the
-			     toggle. -->
+			     IsBackButtonVisible is left at its default, so at the reference width the pane opens
+			     with a disabled back button above the toggle, as the original's does. Narrower, the
+			     control goes minimal, where ours draws none yet — WD-037. -->
 			<NavigationView items={MENU} settingsVisible={false} style="align-self: stretch" />
 		</div>
 	</ControlExample>

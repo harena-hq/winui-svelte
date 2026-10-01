@@ -133,12 +133,15 @@
 		{/snippet}
 	</TitleBar>
 
+	<!-- MainWindow.xaml:142-143 — the back button and the toggle are the title bar's, so the
+	     NavigationView draws neither. -->
 	<NavigationView
 		items={menu}
 		{selected}
 		onItemInvoked={go}
 		bind:paneOpen
 		paneToggleButtonVisible={false}
+		backButtonVisible="collapsed"
 		bind:expandedItems
 	>
 		<!-- The page scrolls, not the window. In the original each Gallery page carries its own
