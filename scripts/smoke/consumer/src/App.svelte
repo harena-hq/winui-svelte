@@ -1,27 +1,49 @@
 <script>
 	import {
 		Button,
+		ComboBox,
 		ContentDialog,
 		Expander,
+		HyperlinkButton,
+		InfoBar,
+		NavigationView,
+		NavigationViewItem,
 		ProgressBar,
 		ProgressRing,
-		TeachingTip
+		ScrollView,
+		ScrollViewer,
+		TabView,
+		TeachingTip,
+		TextBox,
+		TitleBar,
+		ToggleSwitch,
+		ToolTip
 	} from 'winui-svelte';
 	import { Flyout, InfoBadge, MenuFlyout, Popup } from 'winui-svelte/preview';
 
-	// Every control the Surfaces tranche added is instantiated here, alongside the four this
-	// script mounted before it. The step this script exists for is stated in `docs/plan.md` as
-	// closing the gap "before six more public prop surfaces are fixed by use", and a prop surface
-	// is fixed by use at a usage site: prop names, snippet names and which members are required
-	// are what a consumer discovers, and importing a component without mounting it discovers none
-	// of them.
+	// Every component the release exports is mounted here, and four the release holds back. The
+	// step this script exists for is stated in `docs/plan.md` as closing the gap "before six more
+	// public prop surfaces are fixed by use", and a prop surface is fixed by use at a usage site:
+	// prop names, snippet names and which members are required are what a consumer discovers,
+	// and importing a component without mounting it discovers none of them. So every one of the
+	// eighteen is placed with its required props and a few common ones. Placed is all it is: this
+	// file is untyped and its browser bundle is never run, so a misspelled prop still builds.
 	//
-	// The ten come from both entries, because the release does not hold four of them (ADR 0017):
-	// `winui-svelte` for the six it does, `winui-svelte/preview` for the rest. That makes the build
-	// resolve both entries against the tarball. It is not about whether the templates compile:
-	// each entry re-exports its components statically, so the bundler transforms every module an
-	// entry names to work out its exports and tree-shakes afterwards.
+	// The imports come from both entries (ADR 0017): `winui-svelte` for the eighteen it releases,
+	// `winui-svelte/preview` for four of those it does not. That makes the build resolve both entries
+	// against the tarball. It is not about whether the templates compile: each entry re-exports
+	// its components statically, so the bundler transforms every module an entry names to work
+	// out its exports and tree-shakes afterwards.
 	const menuItems = [{ id: 'one', text: 'One' }];
+	const comboItems = [
+		{ value: 'one', label: 'One' },
+		{ value: 'two', label: 'Two' }
+	];
+	const navItems = [
+		{ id: 'home', content: 'Home', glyph: 'E80F' },
+		{ header: 'Section' },
+		{ id: 'settings-page', content: 'Page', glyph: 'E713' }
+	];
 </script>
 
 <Button>Smoke button</Button>
@@ -64,3 +86,34 @@
 		<Button {...props}>Tip trigger</Button>
 	{/snippet}
 </TeachingTip>
+
+<TextBox value="Smoke text" placeholder="Type here" />
+<ToggleSwitch />
+<ComboBox items={comboItems} placeholder="Pick one" />
+<HyperlinkButton navigateUri="https://example.com">Smoke link</HyperlinkButton>
+<InfoBar severity="informational" title="Smoke" message="Smoke message" />
+
+<ToolTip content="Smoke tooltip">
+	{#snippet children(props)}
+		<Button {...props}>Tooltip trigger</Button>
+	{/snippet}
+</ToolTip>
+
+<ScrollView><p>Scroll view content</p></ScrollView>
+<ScrollViewer><p>Scroll viewer content</p></ScrollViewer>
+
+{#snippet tabContent()}<p>Tab content</p>{/snippet}
+<TabView items={[{ id: 'tab', header: 'Tab', content: tabContent }]} />
+
+<TitleBar title="Smoke" />
+
+<NavigationView items={navItems} selected="home">
+	{#snippet menuItemTemplate(entry)}
+		{#if 'header' in entry}
+			<li role="none">{entry.header}</li>
+		{:else}
+			<NavigationViewItem tag={entry.id} content={entry.content} glyph={entry.glyph} />
+		{/if}
+	{/snippet}
+	<p>Navigation content</p>
+</NavigationView>
