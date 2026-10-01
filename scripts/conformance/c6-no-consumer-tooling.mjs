@@ -27,8 +27,9 @@ import { fail, pass, read, ROOT, styleBlocks, walk } from './lib.mjs';
  * So the subject moved from `dist` to the source the package is built from, and the arms
  * are now what a static read can establish. **`pnpm smoke` is the layer that answers**
  * whether a consumer can install and build this package: it packs the tarball, installs it
- * outside the workspace, mounts ten exports in a bare Vite + Svelte app, builds for the
- * browser and for SSR, and refuses a build importing a name the package does not export.
+ * outside the workspace, places every released component in a bare Vite + Svelte app,
+ * type-checks it against the published types, builds for the browser and for SSR, and refuses
+ * a build importing a name the package does not export.
  * It also refuses a packed manifest carrying any runtime dependency, which is the other way
  * a styling tool could arrive. What is below is the cheap layer that runs without a build.
  *

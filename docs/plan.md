@@ -4137,9 +4137,9 @@ a consumer can mount what it exports, and that the smoke app the gate descriptio
 not exist. That was true at 17:45 on 2026-09-06, when `155b49c4` wrote it, and false at 18:36,
 when `1b792c5` installed the packed tarball into a project this workspace cannot help.
 `pnpm smoke` packs the library, installs it outside the workspace, places every released
-component and four from `preview` in a bare Vite + Svelte app, builds for the browser and for
-SSR, renders the SSR bundle, and refuses a build that imports a name the package does not
-export. A request written into this
+component and four from `preview` in a bare Vite + Svelte app, type-checks that app against the
+published types, builds for the browser and for SSR, renders the SSR bundle, and refuses a build
+that imports a name the package does not export. A request written into this
 file is not re-read once it is satisfied, and every later sentence citing it reads as
 corroboration — the same shape as the scrollbar claim `d2b00ff` corrected.
 

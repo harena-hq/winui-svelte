@@ -5,7 +5,8 @@
 	"type": "module",
 	"scripts": {
 		"build": "vite build",
-		"build:ssr": "vite build --ssr src/ssr.js --outDir dist-ssr"
+		"build:ssr": "vite build --ssr src/ssr.js --outDir dist-ssr",
+		"check": "svelte-check --tsconfig ./tsconfig.json --output machine"
 	},
 	"dependencies": {
 		"@internationalized/date": "3.12.3",
@@ -17,6 +18,8 @@
 	},
 	"devDependencies": {
 		"@sveltejs/vite-plugin-svelte": "7.3.0",
+		"svelte-check": "4.7.6",
+		"typescript": "6.0.3",
 		"vite": "8.2.2"
 	}
 }
