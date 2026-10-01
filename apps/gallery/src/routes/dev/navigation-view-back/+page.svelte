@@ -77,6 +77,14 @@
 	</NavigationView>
 </div>
 
+<h2 class="winui-SubtitleTextBlockStyle">minimal — enabled</h2>
+<div class="frame" id="minimal-enabled">
+	<NavigationView {items} selected="home" paneDisplayMode="leftMinimal" backEnabled>
+		{#snippet header()}Header{/snippet}
+		<p class="winui-BodyTextBlockStyle">Content sits under the toggle.</p>
+	</NavigationView>
+</div>
+
 <h2 class="winui-SubtitleTextBlockStyle">minimal — no toggle</h2>
 <div class="frame" id="minimal-no-toggle">
 	<NavigationView

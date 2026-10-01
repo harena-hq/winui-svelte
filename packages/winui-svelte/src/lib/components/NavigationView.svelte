@@ -456,6 +456,23 @@
 	const backButtonShown = $derived(backOrCloseShown && !(minimalLeft && paneOpen));
 	const closeButtonShown = $derived(backOrCloseShown && minimalLeft && paneOpen);
 
+	// The back button above the toggle, which is the one arrangement in which the arrow keys move
+	// between them. `NavigationView` handles no plain arrow key of its own — its `OnKeyDown`
+	// (`NavigationView.cpp:3093-3142`) takes Alt+Left and nothing else of the four — and turns on
+	// XAML's directional navigation for the root grid (`:681`), which is what moves focus, so it
+	// moves only where one button is above the other and the target can take focus. Pressed on
+	// the reference on 2026-10-01, with the NavigationView page's "Back button enabled" option
+	// set: Up on the toggle reaches the back button, and Down on the back button returns to the
+	// toggle. With the button disabled, Up on the toggle scrolls the page, as the 2026-09-22 press
+	// recorded. The web has no directional navigation, so both moves are named here. Side by side
+	// in a minimal pane, Left and Right would be the pair; no Gallery sample is minimal at the
+	// reference width, so that was not pressed and is not built. A top pane draws no toggle.
+	const backAboveToggle = $derived(
+		backButtonShown && !isTop && !minimalLeft && paneToggleButtonVisible
+	);
+	let backButton: HTMLButtonElement | undefined = $state();
+	let paneToggle: HTMLButtonElement | undefined = $state();
+
 	// `ContentLeftPadding`'s width (NavigationView.cpp:4704): the room the buttons take beside
 	// the header, which only a minimal left pane leaves there (`:4650-4652`). The toggle's part is
 	// `GetPaneToggleButtonWidth`, the `PaneToggleButtonWidth` resource (`:4663`); the back
@@ -734,6 +751,12 @@
 					aria-label="Back"
 					disabled={!backEnabled}
 					onclick={() => onBackRequested?.()}
+					onkeydown={(event) => {
+						if (event.key !== 'ArrowDown' || !backAboveToggle || !paneToggle) return;
+						paneToggle.focus();
+						event.preventDefault();
+					}}
+					bind:this={backButton}
 				></button>
 			{/if}
 			<!-- `NavigationViewCloseButton`, NavigationView.xaml:192 — the back button's style and
@@ -763,12 +786,19 @@
 					onclick={() => setPaneOpen(!paneOpen)}
 					onkeydown={(event) => {
 						// Only a key aimed at the button itself, and only when it moved — the same
-						// two tests the rows apply, for the same two reasons. Up is deliberately
-						// absent: the reference press recorded Up on the toggle scrolling the page
-						// the sample sits on, so there is nothing above it to reach.
+						// two tests the rows apply, for the same two reasons. Up reaches an enabled
+						// back button above it and is otherwise left alone, so the page scrolls, as
+						// the reference's does; see `backAboveToggle`.
 						if (event.target !== event.currentTarget) return;
+						if (event.key === 'ArrowUp') {
+							if (!backAboveToggle || !backButton || backButton.disabled) return;
+							backButton.focus();
+							event.preventDefault();
+							return;
+						}
 						if (enterRingFromHead(event.currentTarget, event.key)) event.preventDefault();
 					}}
+					bind:this={paneToggle}
 					{...RING_HEAD_ATTRIBUTE}
 				>
 					<span class="layout-root"></span>
