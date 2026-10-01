@@ -975,7 +975,11 @@
 					class="content-left-padding"
 					style:width={contentLeftPadding ? `calc(${contentLeftPadding})` : undefined}
 				></div>
-				<div class="header-content">{@render header()}</div>
+				<!-- `NavigationViewTitleHeaderContentControlTextStyle`
+				     (NavigationView_themeresources.xaml:1087-1093) is SemiBold, 28 and
+				     `XamlAutoFontFamily`, which are the three values the Title step of the ramp
+				     carries, so the ramp's class draws them. -->
+				<div class="header-content winui-TitleTextBlockStyle">{@render header()}</div>
 			</div>
 		{/if}
 		<div class="content-presenter">
@@ -2051,13 +2055,19 @@
 		flex: 0 0 auto;
 	}
 
+	/* `HeaderContent`, NavigationView.xaml:404: `MinHeight` is `PaneToggleButtonHeight`, and the
+	   margin is its style's (NavigationView_themeresources.xaml:1091). */
 	.header-content {
 		flex: 1 1 auto;
 		min-width: 0;
+		min-height: var(--winui-PaneToggleButtonHeight);
 		margin: var(--winui-NavigationViewHeaderMargin);
 	}
 
-	.root[data-display-mode='minimal'] .header-content {
+	/* Only the left pane's two minimal states set the margin (NavigationView.xaml:18, :34); a top
+	   pane's `mode` is minimal too, but `TopNavigationMinimal` (:25-31) leaves the header at the
+	   style's 56, as the reference's top sample draws it. */
+	.root[data-display-mode='minimal']:not([data-pane-display-mode='top']) .header-content {
 		margin: var(--winui-NavigationViewMinimalHeaderMargin);
 	}
 
