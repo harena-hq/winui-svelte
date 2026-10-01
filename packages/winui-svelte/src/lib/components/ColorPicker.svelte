@@ -750,16 +750,6 @@
 		align-self: start;
 		width: 132px;
 	}
-	/* These two rules exist only because of WD-042. TextBox.svelte's `.box` rule floors the box at
-	   318 pixels, which is **our** number and not the pin's — upstream binds `MinWidth` to
-	   `TextControlThemeMinWidth`, 64 (`generic.xaml:100`). Upstream's `Width="120"` and
-	   `Width="132"` sit comfortably above 64 and need no help there; against our 318 they are
-	   ignored, so the floor has to be lowered to the width the template asks for. Both rules
-	   go when WD-042 closes. `min-width` is not a C1-regulated property, which is why they
-	   carry no `c1-allow`. */
-	.text-entry :global(.hex-box > .box) {
-		min-width: 132px;
-	}
 	.text-entry.hex-left :global(.hex-box) {
 		grid-column: 1;
 		justify-self: start;
@@ -772,11 +762,6 @@
 		grid-column: 1;
 		margin-top: 12px;
 		width: 120px;
-	}
-	/* WD-042 again; the reason is stated once above. */
-	.channel-panel :global(.channel-box > .box),
-	.alpha-panel :global(.alpha-box > .box) {
-		min-width: 120px;
 	}
 	.channel-label {
 		grid-column: 3;
@@ -883,12 +868,6 @@
 		justify-self: start;
 		width: 120px;
 		margin-bottom: 12px;
-	}
-	/* WD-042 a third time, and the reason is the one stated above the first two: our 318px floor
-	   swallows the template's width. Here it is :192's Width="120", not the vertical hex box's
-	   132. Goes with the other two when that divergence closes. */
-	.root[data-orientation='horizontal'] .text-entry :global(.hex-box > .box) {
-		min-width: 120px;
 	}
 	/* :193-195. The label column stops being a star and becomes 122, so the TextBox column is
 	   the only flexible one left — and it is `Auto` (:371, :389, :408), which does not grow. The

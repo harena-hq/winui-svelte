@@ -2923,7 +2923,9 @@ generics="T">` component through `pnpm --filter winui-svelte build` reaches `dis
     read back as though it were the resource's value — so the `SpinButtonsVisible` setter
     raises the InputBox's floor to 120 rather than lowering it to it. Everything else here
     holds, including that our outer minimum keeps the setter from ever taking effect. See
-    WD-042 and v14 below; the unit that removes the 318 settles this row with it.
+    WD-042 and v14 below; the unit that removes the 318 settles this row with it. **Settled
+    2026-10-01**: the four floors are `TextControlThemeMinWidth`, so the outer minimum above held
+    until then, and WD-042, which carried the evidence, was deleted by the same unit.
 
     **A state setter that lowers a minimum is invisible behind an outer minimum transcribed from
     the same resource**, and nothing catches it: both numbers are cited, both citations are
@@ -3285,7 +3287,8 @@ System / Shell` moves to item 16; `item 15` occurs once in the whole of `docs/`,
     | owed                                                                                                      | what it needs                                                                                                            |
     | --------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
     | the System Backdrops prose runs 0.379px per line below the reference's, 353 against 348 over twelve lines | WD-018's own remedy — a local `line-height` on that one element — and that page's baseline                               |
-    | WD-042 — four text controls floor at 318 where WinUI floors at 64                                         | the four declarations, and the dev-route baselines that a 64-pixel floor would collapse                                  |
+    | ~~WD-042 — four text controls floor at 318 where WinUI floors at 64~~ — **closed 2026-10-01**             | the four declarations, and the dev-route baselines that a 64-pixel floor would collapse                                  |
+    | WD-100 — a text control sized by its content takes its input's default width                              | the desired width of a WinUI text box, traced; `field-sizing` reaches 237 of about 320                                   |
     | C9 does not follow a token whose value is a bare `var()`                                                  | one resolution step in the gate; three declarations were invalid for four versions and nothing noticed                   |
     | the ComboBox chevron column is fixed at 38 upstream, ours is 12 plus 14                                   | the same measurement pass as its trigger height, 34 against WinUI's 32                                                   |
     | `ControlExample`'s options pane is 233 wide at x 1330 against 232 at x 1331, `#fcfcfc` against `#fbfbfb`  | `.options` is content-box with `border-width: 0 0 0 1px`; three baselines move, and it does not show at every pane width |
@@ -3342,8 +3345,9 @@ System / Shell` moves to item 16; `item 15` occurs once in the whole of `docs/`,
     value. The consequence inverts the row's reading: `NumberBoxMinWidth` is 120, so the
     `SpinButtonsVisible` setter **raises** the InputBox's floor rather than lowering it, and its
     purpose is that a NumberBox showing two spin buttons needs a wider floor than a plain text
-    box — not, as the row says, that a NumberBox may be narrower than one. WD-042 carries the
-    evidence, and the unit that removes the 318 settles both rows at once.
+    box — not, as the row says, that a NumberBox may be narrower than one. WD-042 carried the
+    evidence, and the unit that removes the 318 settles both rows at once. **Both settled
+    2026-10-01**, by that unit.
 
 15. **Motion** (7) — Animation interop, Connected Animation, Easing Functions, Implicit
     Transitions, Page Transitions, Theme Transitions, and **ParallaxView**, which the Gallery

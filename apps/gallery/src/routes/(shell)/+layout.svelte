@@ -116,9 +116,8 @@
 			<!-- The ceiling goes on a wrapper this file owns rather than on the control's
 			     `class` prop: Svelte does not put this component's scope hash on a class
 			     string handed to another component, so `.search` on the control would be a
-			     rule that matches nothing — `pnpm check` says so, and the box would have
-			     looked right anyway, because its own `TextControlThemeMinWidth` is the width
-			     the original renders. -->
+			     rule that matches nothing — `pnpm check` says so. The width the box holds
+			     is set on the wrapper's child below. -->
 			<!-- No `onQuerySubmitted`: upstream opens a `SearchResultsPage` for text submitted
 			     without choosing a suggestion, and that page is a page of the Gallery this
 			     version does not build. It is recorded as owed in docs/plan.md. -->
@@ -153,15 +152,24 @@
 </div>
 
 <style>
-	/* `MainWindow.xaml` gives the search box `MaxWidth="580"` and stretches it across the
-	   title bar's `*` column. The minimum and the height are the control's own, from
-	   `TextControlThemeMinWidth` and `TextControlThemeMinHeight`; only the ceiling is the
-	   window's, so only the ceiling is written here. */
+	/* `MainWindow.xaml` gives the search box `MaxWidth="580"`, the ceiling written here. The
+	   height is the control's own, from `TextControlThemeMinHeight`; the width below is not. */
 	.search {
 		display: flex;
 		flex: 1 1 auto;
 		/* c1-allow: MainWindow.xaml, the Gallery's own AutoSuggestBox carries MaxWidth="580" */
 		max-width: 580px;
+	}
+
+	/* WD-100. The original's search box measured 320 wide at the reference's 1600-pixel window,
+	   with its placeholder showing and with a shorter query typed in, and 318 in the earlier
+	   captures at a narrower one; it has been seen to clip on the right as the window narrows rather
+	   than shrink. This library's text controls do not yet compute the desired width XAML does, and
+	   the width that would follow from the `<input>`'s intrinsic one is 199, so the shell holds 318,
+	   the captures' figure, two pixels under the 1600-pixel one. The 580 ceiling above never binds
+	   while it does. */
+	.search > :global(*) {
+		min-width: 318px;
 	}
 
 	.frame {

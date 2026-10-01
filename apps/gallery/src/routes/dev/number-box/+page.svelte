@@ -94,10 +94,10 @@
 <h2 class="winui-SubtitleTextBlockStyle">content-sized</h2>
 <div class="row start">
 	<!-- Every row above stretches to the container, which is what a photographed row must not
-	     do here: `NumberBox.xaml:33` lowers the control's minimum from a text box's 318 to
+	     do here: `NumberBox.xaml:33` raises the control's minimum from a text box's 64 to
 	     `NumberBoxMinWidth`'s 120 when the spin buttons are inline, and a stretched row renders
 	     that setter and its absence identically. This row is content-sized, so the first box
-	     below is 120 wide and the second is 318, and a baseline can tell them apart. -->
+	     below is 120 wide and the second is 64, and a baseline can tell them apart. -->
 	<NumberBox bind:value={contentSized} spinButtonPlacementMode="inline" />
 	<NumberBox bind:value={contentSizedNoSpin} />
 </div>

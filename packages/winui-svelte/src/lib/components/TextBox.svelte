@@ -154,10 +154,10 @@
 		position: relative;
 		display: flex;
 		align-items: stretch;
-		/* c1-allow: WD-042 — TextBox_themeresources.xaml:193 binds MinWidth to
-		   TextControlThemeMinWidth, which generic.xaml:100 defines as 64. 318 is not that floor
-		   and is kept only until the unit that removes it; see docs/divergences.md. */
-		min-width: 318px;
+		/* TextBox_themeresources.xaml:193 binds MinWidth to this token, 64 in all three themes.
+		   Above it, a content-sized box is as wide as its text element's default rather than its
+		   content (WD-100). */
+		min-width: var(--winui-TextControlThemeMinWidth);
 		/* TextBox_themeresources.xaml:192 binds MinHeight to this token. */
 		min-height: var(--winui-TextControlThemeMinHeight);
 		padding: var(--winui-TextControlThemePadding);
