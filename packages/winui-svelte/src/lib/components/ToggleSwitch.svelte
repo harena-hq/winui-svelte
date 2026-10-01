@@ -62,7 +62,112 @@
 		...rest
 	}: ToggleSwitchProps = $props();
 
+	// The knob travels `SwitchKnobBounds`' 40 less `SwitchKnob`'s 20
+	// (`ToggleSwitch_themeresources.xaml:508-509`), which is the `To="20"` the `On` state gives
+	// the knob's `X` (`:445`) and what `SizeChangedHandler` measures as the translation range
+	// (`ToggleSwitch_Partial.cpp:937-952`).
+	const KNOB_RANGE = 20;
+
+	// The drag, `SwitchThumb`'s (`ToggleSwitch_themeresources.xaml:524-530`), a `Thumb` spanning
+	// the switch, the gap and the content, which is this `<label>`. `DragStartedHandler`
+	// (`ToggleSwitch_Partial.cpp:803`) takes the knob's translation where it is (`GetTranslations`,
+	// `:421-428`, mid-slide included); `DragDeltaHandler` (`:823`) adds each horizontal change, the
+	// `Thumb`'s per-move delta (`Thumb_Partial.cpp:285-288`), and notes that the knob was dragged;
+	// `DragCompletedHandler` (`:844`) runs `MoveCompleted` (`:592`), which toggles if a dragged
+	// knob ended past half the range — compared against the sum of the deltas, not the clamped
+	// position `SetTranslations` (`:440`) draws. A lost capture completes the drag the same way
+	// (`Thumb::OnPointerCaptureLost`, `Thumb_Partial.cpp:490-496`), and a disabled switch ends it
+	// (`OnIsEnabledChanged`, `ToggleSwitch_Partial.cpp:1018-1021`).
+	//
+	// The tap is separate: `DragCompletedHandler` has cleared `m_isDragging` (`:860`) before
+	// `TapHandler` (`:869`) runs, so a press that moved less than the tap's tolerance toggles as a
+	// tap whatever the drag did. Pressed on the reference on 2026-10-01, from off: moved 1, 2 or
+	// 3px in either axis, or 3 in both, and released, it turned on; moved 4px in either, it stayed
+	// off. So did 6px; 14px turned it on, and from on 14px back turned it off; a drag that began
+	// on the word "Off" moved the knob too; and through each drag the switch kept the look it
+	// started with.
+	const TAP_TOLERANCE = 4;
+	let dragging = $state(false);
+	let knobTranslation = $state(0);
+	let knobRef = $state<HTMLElement | null>(null);
+	let pointerId: number | null = null;
+	let wasDragged = false;
+	let tapped = true;
+	let startX = 0;
+	let startY = 0;
+	let lastX = 0;
+	// The click a released press goes on to fire, when the press was not a tap. It is canceled
+	// as it passes the label, which cancels the label's activation, so the input is never clicked.
+	// A click aimed at the input itself — a key's, a script's — is not stopped by that: `toggle()`
+	// runs on it either way. The flag is consumed by the next click, or dropped by the next press
+	// if none comes; a touch drag past the browser's own slop, or a pan, fires no click at all.
+	let suppressClick = false;
+
+	function onLabelClick(event: MouseEvent) {
+		if (!suppressClick) return;
+		suppressClick = false;
+		event.preventDefault();
+	}
+
+	function onDragStart(event: PointerEvent) {
+		suppressClick = false;
+		if (disabled || dragging || !event.isPrimary || event.button !== 0) return;
+		(event.currentTarget as Element).setPointerCapture(event.pointerId);
+		const transform = knobRef ? getComputedStyle(knobRef).transform : 'none';
+		knobTranslation = transform === 'none' ? 0 : new DOMMatrix(transform).m41;
+		pointerId = event.pointerId;
+		dragging = true;
+		wasDragged = false;
+		tapped = true;
+		startX = lastX = event.clientX;
+		startY = event.clientY;
+	}
+
+	function onDragDelta(event: PointerEvent) {
+		if (!dragging || event.pointerId !== pointerId) return;
+		if (
+			Math.abs(event.clientX - startX) >= TAP_TOLERANCE ||
+			Math.abs(event.clientY - startY) >= TAP_TOLERANCE
+		)
+			tapped = false;
+		const delta = event.clientX - lastX;
+		if (delta === 0) return;
+		lastX = event.clientX;
+		wasDragged = true;
+		knobTranslation += delta;
+	}
+
+	function onDragCompleted(event: PointerEvent) {
+		if (!dragging || event.pointerId !== pointerId) return;
+		dragging = false;
+		pointerId = null;
+		// A press that left the tolerance is not a tap, whichever axis it left by.
+		suppressClick = !tapped;
+		if (!wasDragged) return;
+		// `DragStartedHandler` focuses the switch with `FocusState_Pointer`, which draws nothing.
+		// Here it is done at the release, because the label's own `mousedown` would take focus
+		// back off the input if it were done at the press.
+		ref?.focus({ preventScroll: true, focusVisible: false });
+		const half = KNOB_RANGE / 2;
+		if (checked ? knobTranslation <= half : knobTranslation >= half) {
+			checked = !checked;
+			onCheckedChange?.(checked);
+		}
+	}
+
+	$effect(() => {
+		if (disabled && dragging) {
+			dragging = false;
+			pointerId = null;
+			suppressClick = !tapped;
+		}
+	});
+
 	function toggle(event: MouseEvent) {
+		if (dragging) {
+			event.preventDefault();
+			return;
+		}
 		if (disabled) return;
 		// Same reason CheckBox does this and RadioButton does not: the browser flips
 		// `input.checked` before the handler runs, and preventing the default runs the
@@ -79,6 +184,7 @@
 	{style}
 	data-checked={checked || undefined}
 	data-disabled={disabled || undefined}
+	data-dragging={dragging || undefined}
 	{...rest}
 >
 	{#if header !== undefined}
@@ -86,7 +192,14 @@
 			{#if typeof header === 'string'}{header}{:else}{@render header()}{/if}
 		</span>
 	{/if}
-	<label class="body">
+	<label
+		class="body"
+		onpointerdown={onDragStart}
+		onpointermove={onDragDelta}
+		onpointerup={onDragCompleted}
+		onlostpointercapture={onDragCompleted}
+		onclickcapture={onLabelClick}
+	>
 		<input
 			bind:this={ref}
 			type="checkbox"
@@ -103,7 +216,13 @@
 		<span class="track">
 			<span class="off-track"></span>
 			<span class="on-track"></span>
-			<span class="knob">
+			<span
+				bind:this={knobRef}
+				class="knob"
+				style:transform={dragging
+					? `translateX(${Math.min(Math.max(knobTranslation, 0), KNOB_RANGE)}px)`
+					: undefined}
+			>
 				<span class="knob-off"></span>
 				<span class="knob-on"></span>
 			</span>
@@ -156,6 +275,10 @@
 		padding: var(--winui-ToggleSwitchPreContentMargin) 0 var(--winui-ToggleSwitchPostContentMargin)
 			0;
 		cursor: pointer;
+		/* `ManipulationMode="System,TranslateX"` (`ToggleSwitch_themeresources.xaml:197`): a
+		   horizontal touch drag is the switch's, a vertical one still pans what scrolls, and a pinch
+		   still zooms. */
+		touch-action: pan-y pinch-zoom;
 	}
 
 	/* The real control, kept focusable and kept out of the layout, exactly as CheckBox does. */
@@ -238,11 +361,10 @@
 	}
 
 	/* The knob's 20x20 container. `HorizontalAlignment="Left"` with a `TranslateTransform` the
-	   `On` state drives to X=20.
+	   `On` state drives to X=20, and which a drag moves too.
 
-	   WD-009: the knob cannot be dragged, only clicked; see docs/divergences.md. Upstream moves
-	   it with a `RepositionThemeAnimation`, a framework theme animation with no duration in any
-	   resource this repository reads, so the transform takes the same
+	   Upstream moves it with a `RepositionThemeAnimation`, a framework theme animation with no
+	   duration in any resource this repository reads, so the transform takes the same
 	   `ControlFasterAnimationDuration` the surrounding opacity keyframes are written with rather
 	   than a number invented for it. */
 	.knob {
@@ -330,6 +452,13 @@
 		transform: translateX(20px);
 	}
 
+	/* While dragged the knob follows the pointer with no easing, and on release the transition
+	   carries it from wherever it was to its end — `DraggingToOnTransition` and
+	   `DraggingToOffTransition` reposition it from the current offset (`:374`, `:404`). */
+	.root[data-dragging] .knob {
+		transition: none;
+	}
+
 	/* ----- PointerOver ----- */
 	.root:hover .area {
 		background: var(--winui-ToggleSwitchContainerBackgroundPointerOver);
@@ -356,21 +485,29 @@
 	}
 
 	/* ----- Pressed ----- */
-	.root:active .area {
+	/* Pressed is upstream's while it drags (`ToggleSwitch_Partial.cpp:65-67`), whatever is under
+	   the pointer, and `:active` alone is not: a touch that leaves the browser's tap slop drops
+	   it mid-drag. */
+	.root:active .area,
+	.root[data-dragging] .area {
 		background: var(--winui-ToggleSwitchContainerBackgroundPressed);
 	}
-	.root:active .off-track {
+	.root:active .off-track,
+	.root[data-dragging] .off-track {
 		background: var(--winui-ToggleSwitchFillOffPressed);
 		border-color: var(--winui-ToggleSwitchStrokeOffPressed);
 	}
-	.root:active .on-track {
+	.root:active .on-track,
+	.root[data-dragging] .on-track {
 		background: var(--winui-ToggleSwitchFillOnPressed);
 		border-color: var(--winui-ToggleSwitchStrokeOnPressed);
 	}
-	.root:active .knob-off {
+	.root:active .knob-off,
+	.root[data-dragging] .knob-off {
 		background: var(--winui-ToggleSwitchKnobFillOffPressed);
 	}
-	.root:active .knob-on {
+	.root:active .knob-on,
+	.root[data-dragging] .knob-on {
 		background:
 			linear-gradient(
 					var(--winui-ToggleSwitchKnobFillOnPressed),
@@ -390,7 +527,9 @@
 	}
 
 	.root:active .knob-off,
-	.root:active .knob-on {
+	.root:active .knob-on,
+	.root[data-dragging] .knob-off,
+	.root[data-dragging] .knob-on {
 		width: 17px;
 		height: 14px;
 	}
