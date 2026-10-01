@@ -50,6 +50,7 @@ export type { ToggleSwitchProps } from './components/ToggleSwitch.svelte';
 export { default as ToolTip } from './components/ToolTip.svelte';
 export type { ToolTipProps } from './components/ToolTip.svelte';
 export type {
+	NavigationViewBackButtonVisible,
 	NavigationViewDisplayMode,
 	NavigationViewEntry,
 	NavigationViewHeaderData,

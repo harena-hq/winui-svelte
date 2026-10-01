@@ -308,6 +308,13 @@
 		height: 100%;
 	}
 
+	/* The specimen `pane-separator.spec.ts` reads as a menu that fits. Its back button, which the
+	   control draws by default, takes a row of 40 above the toggle; the frame is taller by that
+	   row so the menu still fits under it. */
+	#menu-fits {
+		height: 400px;
+	}
+
 	.narrow {
 		max-width: 420px;
 		height: 100%;

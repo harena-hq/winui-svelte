@@ -155,8 +155,10 @@
 <pre class="log" id="log">{invoked.length ? invoked.join('\n') : 'nothing invoked yet'}</pre>
 
 <style>
+	/* 400 rather than 360 so the back button the control draws by default takes its row above
+	   the toggle and the last consumer row is still in the photograph. */
 	.frame {
-		height: 360px;
+		height: 400px;
 		margin-bottom: 24px;
 		overflow: hidden;
 		border-radius: var(--winui-OverlayCornerRadius);
