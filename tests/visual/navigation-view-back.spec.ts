@@ -43,6 +43,28 @@ async function boxes(page: Page, frame: string) {
 	});
 }
 
+/**
+ * Whether a key's `keydown` was cancelled, read after the control's own handlers: the listener
+ * is on `document` in the bubble phase. `null` means the key was not seen.
+ */
+async function watchHandled(page: Page) {
+	await page.evaluate(() => {
+		const win = window as unknown as { __handled: Record<string, boolean> };
+		win.__handled = {};
+		document.addEventListener(
+			'keydown',
+			(event) => void (win.__handled[event.key] = event.defaultPrevented)
+		);
+	});
+	return (key: string) =>
+		page.evaluate((wanted) => {
+			const win = window as unknown as { __handled: Record<string, boolean> };
+			const answer = wanted in win.__handled ? win.__handled[wanted] : null;
+			delete win.__handled[wanted];
+			return answer;
+		}, key);
+}
+
 test.beforeEach(async ({ page }) => {
 	await page.goto('/dev/navigation-view-back');
 });
@@ -109,6 +131,50 @@ test('a disabled button is no Tab stop and raises nothing, where an enabled one 
 	await expect(enabledToggle).toBeFocused();
 	await page.keyboard.press('Shift+Tab');
 	await expect(enabledBack).toBeFocused();
+});
+
+// Pressed on the reference on 2026-10-01 with the NavigationView page's "Back button enabled"
+// option set: Up on the toggle reached the back button above it and Down came back. Upstream
+// moves focus there by XAML's directional navigation (`NavigationView.cpp:681`); the web has
+// none, so the component names both moves.
+test('Up on the toggle reaches an enabled back button above it, and Down comes back', async ({
+	page
+}) => {
+	const handled = await watchHandled(page);
+	const back = page.locator('#compact-enabled .back-button');
+	const toggle = page.locator('#compact-enabled .pane-toggle');
+
+	await toggle.focus();
+	await page.keyboard.press('ArrowUp');
+	await expect(back).toBeFocused();
+	expect(await handled('ArrowUp')).toBe(true);
+
+	await page.keyboard.press('ArrowDown');
+	await expect(toggle).toBeFocused();
+	expect(await handled('ArrowDown')).toBe(true);
+});
+
+// The reference's 2026-09-22 press, with the button disabled: Up on the toggle scrolled the page.
+// So the key is left alone rather than swallowed. A minimal pane puts the button beside the
+// toggle. That arrangement was not pressed, so leaving both keys alone there is this library's
+// choice rather than an observation; the frame's button is enabled, so it is the arrangement and
+// not the button's state that the test reaches.
+test('the arrows are left to the page under a disabled button and beside one', async ({ page }) => {
+	const handled = await watchHandled(page);
+	await expect(page.locator('#left-default .back-button')).toBeDisabled();
+	for (const frame of ['left-default', 'minimal-enabled']) {
+		const toggle = page.locator(`#${frame} .pane-toggle`);
+		await toggle.focus();
+		await page.keyboard.press('ArrowUp');
+		await expect(toggle, frame).toBeFocused();
+		expect(await handled('ArrowUp'), frame).toBe(false);
+	}
+	const back = page.locator('#minimal-enabled .back-button');
+	await expect(back).toBeEnabled();
+	await back.focus();
+	await page.keyboard.press('ArrowDown');
+	await expect(back).toBeFocused();
+	expect(await handled('ArrowDown')).toBe(false);
 });
 
 // The header's left edge is `ContentLeftPadding` (`NavigationView.cpp:4704`) less the 24 that

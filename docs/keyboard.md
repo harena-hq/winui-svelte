@@ -256,6 +256,17 @@ then the ninth entry, which is a search rather than a press and says so.
    behaviour. Read off the shell alone, the press says the ring has no head, which is how a
    correct build came within one edit of being reverted.
 
+   **Above the head, the back button — pressed 2026-10-01.** With the NavigationView page's
+   "Back button enabled" option set, Up on the sample's toggle reaches the back button above it
+   and Down on the back button returns to the toggle; with the button disabled, as it is by
+   default, Up on the toggle scrolls the page, which is the press above. Neither button's key
+   is handled by `NavigationView` — its `OnKeyDown` takes Alt+Left and no other arrow
+   (`NavigationView.cpp:3093-3142`) — so this is the same directional navigation as the head.
+   **Built the same day**: the component names both moves, only while the back button sits
+   above the toggle and can take focus, and otherwise leaves Up alone. A minimal pane puts the
+   two side by side, where Left and Right would be the pair; no Gallery sample is minimal at
+   the reference width, so that was not pressed and is not built.
+
 3. **Home and End jump to the ends**, and pressing them again does nothing.
    **We** did nothing on either.
    **Built on 2026-09-22**, and with a scope of their own: they reach the ends of the row's own
