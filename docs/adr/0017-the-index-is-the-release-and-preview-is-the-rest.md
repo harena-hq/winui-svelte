@@ -64,13 +64,12 @@ release can narrow or widen without touching it.
 
 **C4 reads `preview.ts`**, so every component a consumer places keeps its three-theme baseline
 whether or not it is released, and it fails if the index exports a component `preview.ts` does
-not. `NavigationViewItem` has no baseline of its own today, so the implementing unit gives it
-one.
+not. `NavigationViewItem` had no baseline of its own, so the implementing unit gave it one.
 
-**`pnpm smoke` imports from both entries**: it mounts six of the release's components from the
-root and four held-back ones from `preview`, and a build that imports a held-back component from
-the root fails. Its consumer was written for one tranche, and mounting the rest of the release
-there is owed rather than done.
+**`pnpm smoke` imports from both entries**: it places every one of the release's components from
+the root and four held-back ones from `preview`, and a build that imports a held-back component
+from the root fails. Placed means compiled and bundled: the consumer is untyped and its browser
+bundle is never run, so a misspelled prop builds green.
 
 **A component moves into the index by a recorded decision** — a row in `plan.md`'s table naming
 it, with the reason. That is a review convention: no gate ties an index name to a row, and C4's
