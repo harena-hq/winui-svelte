@@ -113,16 +113,13 @@ export function setNavigationViewPane(state: () => NavigationViewPaneState) {
 /**
  * Read it, or throw. An absent context means the row is not inside a pane.
  *
- * `NavigationViewItem` is not re-exported from `index.ts` and the control is its only
- * caller here — but internal means unexported, not unreachable. The package's exports map
- * publishes every file under `dist` (the `./*.svelte` entry in its `package.json`'s `exports`), so
- * a consumer who writes `winui-svelte/components/NavigationViewItem.svelte` resolves it today. This
- * is a reachable failure, and it throws rather than returning `undefined` for the caller to
- * render around: `internal/command-bar.ts` returns `undefined` because a command outside a
- * bar is a real case with a real answer, while a row outside a pane would draw with no
- * selection, no expansion and no invoke — which reads as a styling defect rather than as
- * the mistake it is. What such a row *should* do is a question for the unit that makes the
- * component public, and it is not answered here.
+ * `NavigationViewItem` is in the release (ADR 0017), so a consumer can place one anywhere. It
+ * throws rather than returning `undefined` for the caller to render around:
+ * `internal/command-bar.ts` returns `undefined` because a command outside a bar is a real case
+ * with a real answer, while a row outside a pane would draw with no selection, no expansion and
+ * no invoke — which reads as a styling defect rather than as the mistake it is. The unit that
+ * made the component public kept the throw, because replacing the throw with a behaviour later
+ * is not a breaking change, while a behaviour chosen now could not be changed later without one.
  */
 export function getNavigationViewPane(): () => NavigationViewPaneState {
 	const state = getContext<(() => NavigationViewPaneState) | undefined>(PANE);

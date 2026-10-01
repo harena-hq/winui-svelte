@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Hyperlink, Span, TextBlock } from 'winui-svelte';
+	import { Hyperlink, Span, TextBlock } from 'winui-svelte/preview';
 </script>
 
 <svelte:head><title>Hyperlink — harness</title></svelte:head>

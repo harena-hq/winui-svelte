@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { RatingControl } from 'winui-svelte';
+	import { RatingControl } from 'winui-svelte/preview';
 </script>
 
 <svelte:head><title>RatingControl — harness</title></svelte:head>

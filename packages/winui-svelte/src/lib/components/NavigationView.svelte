@@ -101,8 +101,8 @@
 		 * `DataTemplate` is a value and cannot branch; a snippet is a function and writes the
 		 * `{#if}` the selector's `SelectTemplateCore` would have been. So a template that draws
 		 * only rows branches on the discriminant itself — `'header' in entry`, which is what
-		 * `isNavigationViewHeader` above tests; the helper is a value and `index.ts` exports
-		 * only the types from this module, which D46's naming unit is where to settle. The
+		 * `isNavigationViewHeader` above tests; the helper is a value, and neither `index.ts`
+		 * nor `preview.ts` exports it, so the discriminant is the documented test. The
 		 * control draws no header of its own once a template is set.
 		 *
 		 * **The settings row is never templated**, reproducing

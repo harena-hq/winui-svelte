@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Button, ToolTip } from 'winui-svelte';
+	import { Button, ToolTip } from 'winui-svelte/preview';
 
 	/** The fifth row's `IsEnabled`, flipped from outside so that a test can flip it mid-delay. */
 	let latentDisabled = $state(false);

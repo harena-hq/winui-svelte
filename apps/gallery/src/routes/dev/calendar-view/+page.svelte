@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { CalendarView } from 'winui-svelte';
+	import { CalendarView } from 'winui-svelte/preview';
 
 	const minimumDate = new Date(2026, 8, 1);
 	const maximumDate = new Date(2026, 8, 15);

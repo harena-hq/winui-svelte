@@ -1,6 +1,13 @@
 <script lang="ts">
-	import { ComboBox, ListView, Slider, SplitView, ToggleButton, ToggleSwitch } from 'winui-svelte';
-	import type { ComboBoxProps, SplitViewProps } from 'winui-svelte';
+	import {
+		ComboBox,
+		ListView,
+		Slider,
+		SplitView,
+		ToggleButton,
+		ToggleSwitch
+	} from 'winui-svelte/preview';
+	import type { ComboBoxProps, SplitViewProps } from 'winui-svelte/preview';
 	import { icons, type Icon } from '$lib/design';
 	import ControlExample from '$lib/frame/ControlExample.svelte';
 	import ItemPage from '$lib/frame/ItemPage.svelte';

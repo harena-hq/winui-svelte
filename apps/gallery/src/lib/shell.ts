@@ -1,5 +1,5 @@
 import record from '../../../../data/winui-gallery-shell.json' with { type: 'json' };
-import type { NavigationViewEntry } from 'winui-svelte';
+import type { NavigationViewEntry } from 'winui-svelte/preview';
 
 /**
  * The Gallery's window — `MainWindow.xaml` and the rows the Gallery's own

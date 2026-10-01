@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { AppBarButton, CommandBarFlyout } from 'winui-svelte';
+	import { AppBarButton, CommandBarFlyout } from 'winui-svelte/preview';
 </script>
 
 <svelte:head><title>CommandBarFlyout — harness</title></svelte:head>

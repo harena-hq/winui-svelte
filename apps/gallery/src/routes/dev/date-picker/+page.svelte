@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { DatePicker } from 'winui-svelte';
+	import { DatePicker } from 'winui-svelte/preview';
 
 	const currentDate = new Date();
 </script>

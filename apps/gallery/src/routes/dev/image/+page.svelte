@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Image } from 'winui-svelte';
+	import { Image } from 'winui-svelte/preview';
 </script>
 
 <svelte:head><title>Image — harness</title></svelte:head>

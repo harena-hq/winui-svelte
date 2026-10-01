@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Button, Flyout } from 'winui-svelte';
+	import { Button, Flyout } from 'winui-svelte/preview';
 
 	/*
 	 * The component's own harness, not part of the Gallery reproduction. Three flyouts are

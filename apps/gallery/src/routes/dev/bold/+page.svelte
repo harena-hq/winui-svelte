@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Bold, Italic, Span, TextBlock } from 'winui-svelte';
+	import { Bold, Italic, Span, TextBlock } from 'winui-svelte/preview';
 </script>
 
 <svelte:head><title>Bold — harness</title></svelte:head>

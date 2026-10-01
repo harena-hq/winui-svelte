@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { MediaPlayerElement } from 'winui-svelte';
+	import { MediaPlayerElement } from 'winui-svelte/preview';
 </script>
 
 <svelte:head><title>MediaPlayerElement — harness</title></svelte:head>

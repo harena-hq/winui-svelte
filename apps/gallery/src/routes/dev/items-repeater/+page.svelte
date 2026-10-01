@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { ItemsRepeater } from 'winui-svelte';
+	import { ItemsRepeater } from 'winui-svelte/preview';
 
 	const words = ['One', 'Two', 'Three', 'Four'];
 	const bars = [40, 120, 80, 200, 60];

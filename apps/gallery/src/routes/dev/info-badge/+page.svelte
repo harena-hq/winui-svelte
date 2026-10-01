@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { InfoBadge } from 'winui-svelte';
+	import { InfoBadge } from 'winui-svelte/preview';
 
 	/*
 	 * The component's own harness, not part of the Gallery reproduction: `/dev/` is where

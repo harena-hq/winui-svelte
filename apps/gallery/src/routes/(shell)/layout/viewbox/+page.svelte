@@ -6,7 +6,7 @@
 		Slider,
 		Viewbox,
 		type ViewboxProps
-	} from 'winui-svelte';
+	} from 'winui-svelte/preview';
 	import ControlExample from '$lib/frame/ControlExample.svelte';
 	import ItemPage from '$lib/frame/ItemPage.svelte';
 	import { sampleOf } from '$lib/samples';

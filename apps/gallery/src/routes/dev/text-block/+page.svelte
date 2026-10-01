@@ -8,7 +8,7 @@
 		TextBlock,
 		type TextBlockStyleName,
 		Underline
-	} from 'winui-svelte';
+	} from 'winui-svelte/preview';
 
 	const textStyles: TextBlockStyleName[] = [
 		'BaseTextBlockStyle',

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { CalendarDatePicker } from 'winui-svelte';
+	import { CalendarDatePicker } from 'winui-svelte/preview';
 
 	const date = new Date(2026, 8, 8);
 </script>

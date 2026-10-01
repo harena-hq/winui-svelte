@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { AutoSuggestBox } from 'winui-svelte';
-	import type { AutoSuggestBoxProps } from 'winui-svelte';
+	import { AutoSuggestBox } from 'winui-svelte/preview';
+	import type { AutoSuggestBoxProps } from 'winui-svelte/preview';
 
 	/*
 	 * The component's own harness, not part of the Gallery reproduction: `/dev/` is where

@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { PasswordBox } from 'winui-svelte';
-	import type { PasswordBoxProps } from 'winui-svelte';
+	import { PasswordBox } from 'winui-svelte/preview';
+	import type { PasswordBoxProps } from 'winui-svelte/preview';
 
 	/*
 	 * The component's own harness, not part of the Gallery reproduction: `/dev/` is where

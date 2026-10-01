@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { BreadcrumbBar } from 'winui-svelte';
+	import { BreadcrumbBar } from 'winui-svelte/preview';
 
 	const longItems = [
 		'Home',

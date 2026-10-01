@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { ItemContainer, ItemsView, type ItemsViewItemState } from 'winui-svelte';
+	import { ItemContainer, ItemsView, type ItemsViewItemState } from 'winui-svelte/preview';
 
 	const photos = ['One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight'];
 	let picked = $state<number[]>([]);

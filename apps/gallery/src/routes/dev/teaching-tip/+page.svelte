@@ -2,7 +2,7 @@
 	/* This page is the TeachingTip component's harness, not part of the Gallery reproduction.
 	   TeachingTips are portalled and out of flow, so each open sample reserves room for its own
 	   surface; upward tips get space above their row and downward tips get space below it. */
-	import { Button, TeachingTip } from 'winui-svelte';
+	import { Button, TeachingTip } from 'winui-svelte/preview';
 </script>
 
 <svelte:head><title>TeachingTip — harness</title></svelte:head>

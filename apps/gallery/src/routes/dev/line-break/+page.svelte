@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { LineBreak, TextBlock } from 'winui-svelte';
+	import { LineBreak, TextBlock } from 'winui-svelte/preview';
 
 	const longText =
 		'A long line demonstrates wrapping in the TextBlock that contains this LineBreak.';

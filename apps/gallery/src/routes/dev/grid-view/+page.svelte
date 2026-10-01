@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { GridView } from 'winui-svelte';
+	import { GridView } from 'winui-svelte/preview';
 
 	const tiles = ['One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight'];
 	let picked = $state<number[]>([]);

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { FlipViewItem } from 'winui-svelte';
+	import { FlipViewItem } from 'winui-svelte/preview';
 </script>
 
 <svelte:head><title>FlipViewItem — harness</title></svelte:head>

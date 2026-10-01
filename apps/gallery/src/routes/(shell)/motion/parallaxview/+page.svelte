@@ -1,6 +1,6 @@
 <!-- ParallaxViewPage.xaml — the two Gallery examples reproduced below. -->
 <script lang="ts">
-	import { ListView, ParallaxView, Rectangle, ScrollView } from 'winui-svelte';
+	import { ListView, ParallaxView, Rectangle, ScrollView } from 'winui-svelte/preview';
 	import ControlExample from '$lib/frame/ControlExample.svelte';
 	import ItemPage from '$lib/frame/ItemPage.svelte';
 	import { sampleOf } from '$lib/samples';

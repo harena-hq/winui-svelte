@@ -21,7 +21,7 @@
 </script>
 
 <script lang="ts">
-	import { InfoBar } from 'winui-svelte';
+	import { InfoBar } from 'winui-svelte/preview';
 
 	let {
 		element,

@@ -36,7 +36,7 @@
 </script>
 
 <script lang="ts">
-	import { Expander, SelectorBar, type SelectorBarItemData } from 'winui-svelte';
+	import { Expander, SelectorBar, type SelectorBarItemData } from 'winui-svelte/preview';
 	import SampleCodePresenter from './SampleCodePresenter.svelte';
 
 	let {

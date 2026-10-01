@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Button, Image, RadioButton, RadioButtons, type ImageProps } from 'winui-svelte';
+	import { Button, Image, RadioButton, RadioButtons, type ImageProps } from 'winui-svelte/preview';
 	import ControlExample from '$lib/frame/ControlExample.svelte';
 	import ItemPage from '$lib/frame/ItemPage.svelte';
 	import { sampleOf } from '$lib/samples';

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { ListView, ParallaxView, ScrollView } from 'winui-svelte';
+	import { ListView, ParallaxView, ScrollView } from 'winui-svelte/preview';
 
 	const listItems = ['First', 'Second', 'Third', 'Fourth', 'Fifth', 'Sixth', 'Seventh', 'Eighth'];
 	let scrollSource = $state<HTMLDivElement | null>(null);

@@ -4,7 +4,7 @@
 	a second open dialog would cover the first and its smoke layer would hide the page.
 -->
 <script lang="ts">
-	import { Button, CheckBox, ContentDialog } from 'winui-svelte';
+	import { Button, CheckBox, ContentDialog } from 'winui-svelte/preview';
 
 	let basicOpen = $state(true);
 	let noDefaultOpen = $state(false);

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { RadioButton, RadioButtons } from 'winui-svelte';
+	import { RadioButton, RadioButtons } from 'winui-svelte/preview';
 </script>
 
 <svelte:head><title>RadioButtons — harness</title></svelte:head>

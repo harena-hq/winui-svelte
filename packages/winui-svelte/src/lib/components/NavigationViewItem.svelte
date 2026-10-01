@@ -22,9 +22,8 @@
 	 * (`internal/navigation-view.ts` says why), so a prop for either would be a second writer
 	 * before there is a second writer to serve.
 	 *
-	 * The interface is exported and the component is not re-exported from `index.ts`. That is
-	 * D46's order rather than an omission — the naming unit fixes the exported set, and the
-	 * exports map already resolves a deep import of this file either way.
+	 * The component and this interface are in the release, exported from `index.ts` with
+	 * `NavigationView` (ADR 0015, ADR 0017).
 	 */
 	export interface NavigationViewItemProps {
 		/**

@@ -8,7 +8,7 @@
 		RadioButtons,
 		Rectangle,
 		RichTextBlock
-	} from 'winui-svelte';
+	} from 'winui-svelte/preview';
 	import {
 		EASING_MODES,
 		EASING_NAMES,
