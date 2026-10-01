@@ -8,9 +8,11 @@ import { test } from './fixtures';
  * an Xbox (`NavigationView.cpp:1892-1895`), so a control that says nothing about it draws the
  * button. A left pane that is not overlaying puts it above the toggle and gives the pane a row
  * of its height (`:4730-4746`, `:4935`); a top pane draws it over the row's first column
- * (`NavigationView.xaml:216`). Each box is read against the control's own top-left corner, and
- * every left-pane figure is compared with the same control at `'collapsed'`, so what is asserted
- * is the 40 the button adds rather than where the rest of the pane happens to sit.
+ * (`NavigationView.xaml:216`); a minimal pane draws it beside the toggle and, while the pane is
+ * open, a close button in its place (`NavigationView.cpp:1854-1890`). Each box is read against
+ * the control's own top-left corner, and every left-pane figure is compared with the same control
+ * at `'collapsed'`, so what is asserted is the 40 the button adds rather than where the rest of
+ * the pane happens to sit.
  */
 
 type Box = { left: number; top: number; width: number; height: number };
@@ -31,6 +33,8 @@ async function boxes(page: Page, frame: string) {
 		};
 		return {
 			back: box('.back-button'),
+			close: box('.close-button'),
+			header: box('.header-content'),
 			toggle: box('.pane-toggle'),
 			row: box('.pane [role=treeitem]'),
 			placeholder: box('.back-button-placeholder'),
@@ -107,9 +111,88 @@ test('a disabled button is no Tab stop and raises nothing, where an enabled one 
 	await expect(enabledBack).toBeFocused();
 });
 
-test('a minimal pane draws no back button yet, which is WD-037', async ({ page }) => {
-	await expect(page.locator('#minimal .pane-toggle')).toHaveCount(1);
-	await expect(page.locator('#minimal .back-button')).toHaveCount(0);
+// The header's left edge is `ContentLeftPadding` (`NavigationView.cpp:4704`) less the 24 that
+// `NavigationViewMinimalHeaderMargin` takes back: the toggle's 40 alone, or 40 more beside it.
+test('a minimal pane draws the button beside the toggle, and the header moves right by it', async ({
+	page
+}) => {
+	const shown = await boxes(page, 'minimal');
+	const hidden = await boxes(page, 'minimal-collapsed');
+
+	expect(shown.back).toEqual({ left: 4, top: 6, width: 40, height: 36 });
+	await expect(page.locator('#minimal .back-button')).toBeDisabled();
+	expect(hidden.back).toBeNull();
+	// `NavigationBackButtonSmallStyle`: the right margin goes. Nothing else can see it: the holder
+	// is out of flow, and the toggle beside the button sizes its cell.
+	await expect(page.locator('#minimal .back-button')).toHaveCSS('margin-right', '0px');
+	await expect(page.locator('#left-default .back-button')).toHaveCSS('margin-right', '4px');
+
+	// Beside, not above: the toggle moves right by c_backButtonWidth and not down.
+	expect(shown.toggle!.left - hidden.toggle!.left).toBe(40);
+	expect(shown.toggle!.top).toBe(hidden.toggle!.top);
+	// An overlaying pane keeps no row for the button (`:4736`).
+	expect(shown.row!.top).toBe(hidden.row!.top);
+
+	expect(shown.header!.left).toBe(56);
+	expect(hidden.header!.left).toBe(16);
+	expect(shown.header!.top).toBe(hidden.header!.top);
+});
+
+test('an open minimal pane swaps the back button for a close button that closes it', async ({
+	page
+}) => {
+	const frame = page.locator('#minimal');
+	const root = frame.locator('[data-pane-display-mode]');
+	const close = frame.locator('.close-button');
+	await expect(close).toHaveCount(0);
+
+	await frame.locator('.pane-toggle').click();
+	await expect(root).toHaveAttribute('data-pane-open', 'true');
+	await expect(frame.locator('.back-button')).toHaveCount(0);
+	await expect(close).toBeEnabled();
+	await expect(close).toHaveAccessibleName('Close');
+
+	// The close button stands where the back button was, so nothing beside it moves.
+	const open = await boxes(page, 'minimal');
+	expect(open.close).toEqual({ left: 4, top: 6, width: 40, height: 36 });
+	expect(open.toggle!.left).toBe(40);
+	expect(open.header!.left).toBe(56);
+
+	await close.click();
+	await expect(root).toHaveAttribute('data-pane-open', 'false');
+	await expect(close).toHaveCount(0);
+	await expect(frame.locator('.back-button')).toHaveCount(1);
+
+	// And from the keyboard, since it is a button like the toggle.
+	await frame.locator('.pane-toggle').click();
+	await close.focus();
+	await page.keyboard.press('Enter');
+	await expect(root).toHaveAttribute('data-pane-open', 'false');
+});
+
+test('a collapsed minimal pane draws neither button, open or closed', async ({ page }) => {
+	const frame = page.locator('#minimal-collapsed');
+	await expect(frame.locator('.back-button')).toHaveCount(0);
+	await expect(frame.locator('.close-button')).toHaveCount(0);
+	await frame.locator('.pane-toggle').click();
+	await expect(frame.locator('[data-pane-display-mode]')).toHaveAttribute('data-pane-open', 'true');
+	await expect(frame.locator('.back-button')).toHaveCount(0);
+	await expect(frame.locator('.close-button')).toHaveCount(0);
+	const open = await boxes(page, 'minimal-collapsed');
+	expect(open.toggle!.left).toBe(0);
+	expect(open.header!.left).toBe(16);
+});
+
+// The toggle's term leaves `ContentLeftPadding` with it (`NavigationView.cpp:4660-4667`), so the
+// back button's 40 is all that is beside the header, and the header sits where the toggle's alone
+// would put it.
+test('a minimal pane without its toggle keeps the back button and only its width', async ({
+	page
+}) => {
+	const alone = await boxes(page, 'minimal-no-toggle');
+	expect(alone.toggle).toBeNull();
+	expect(alone.back).toEqual({ left: 4, top: 6, width: 40, height: 36 });
+	expect(alone.header!.left).toBe(16);
 });
 
 test('a top pane draws the button over a 40-wide first column, which the items start after', async ({
