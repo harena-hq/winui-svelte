@@ -270,7 +270,7 @@
 	}
 
 	.icon-background::before {
-		content: var(--winui-InfoBarIconBackgroundGlyph);
+		content: var(--winui-InfoBarIconBackgroundGlyph) / '';
 	}
 
 	.standard-icon {
@@ -278,7 +278,7 @@
 	}
 
 	.standard-icon::before {
-		content: var(--winui-InfoBarInformationalIconGlyph);
+		content: var(--winui-InfoBarInformationalIconGlyph) / '';
 	}
 
 	.root[data-severity='success'] .icon-background {
@@ -290,7 +290,7 @@
 	}
 
 	.root[data-severity='success'] .standard-icon::before {
-		content: var(--winui-InfoBarSuccessIconGlyph);
+		content: var(--winui-InfoBarSuccessIconGlyph) / '';
 	}
 
 	.root[data-severity='warning'] .icon-background {
@@ -302,7 +302,7 @@
 	}
 
 	.root[data-severity='warning'] .standard-icon::before {
-		content: var(--winui-InfoBarWarningIconGlyph);
+		content: var(--winui-InfoBarWarningIconGlyph) / '';
 	}
 
 	.root[data-severity='error'] .icon-background {
@@ -314,7 +314,7 @@
 	}
 
 	.root[data-severity='error'] .standard-icon::before {
-		content: var(--winui-InfoBarErrorIconGlyph);
+		content: var(--winui-InfoBarErrorIconGlyph) / '';
 	}
 
 	.user-icon-box {

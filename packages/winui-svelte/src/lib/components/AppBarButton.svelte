@@ -435,7 +435,7 @@
 	   The glyph is drawn by a pseudo-element, as CheckBox's and Expander's are: `content` on a
 	   real element renders nothing. */
 	.chevron::before {
-		content: var(--winui-AppBarButtonFlyoutGlyph);
+		content: var(--winui-AppBarButtonFlyoutGlyph) / '';
 	}
 
 	/* AppBarButton_themeresources.xaml:155, :190, :200, :209, :223 and :237 — `Compact`,
@@ -514,7 +514,7 @@
 
 	/* AppBarButton_themeresources.xaml:377, `Glyph="{ThemeResource AppBarButtonOverflowFlyoutGlyph}"`. */
 	.overflow-chevron::before {
-		content: var(--winui-AppBarButtonOverflowFlyoutGlyph);
+		content: var(--winui-AppBarButtonOverflowFlyoutGlyph) / '';
 	}
 
 	/* Upstream puts this swap in `CommonStates` (:280, :293, :306, :319) rather than in

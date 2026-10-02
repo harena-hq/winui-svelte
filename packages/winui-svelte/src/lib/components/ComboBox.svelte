@@ -497,7 +497,7 @@
 		/* c1-allow: ComboBox_themeresources.xaml:585, `Glyph="&#xE70D;"` on the
 		   `FontIconSource` inside `AnimatedIcon.FallbackIconSource` — the glyph the
 		   original draws under WD-006 */
-		content: '\00e70d';
+		content: '\00e70d' / '';
 	}
 
 	/* The popup: the `PopupBorder` Border at :590 carries `Background`, `BorderBrush`,

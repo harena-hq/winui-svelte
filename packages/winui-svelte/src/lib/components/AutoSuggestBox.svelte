@@ -503,7 +503,7 @@
 	   `AutoSuggestBox_themeresources.xaml:91` — the Cancel glyph from Segoe Fluent Icons,
 	   at `AutoSuggestBoxIconFontSize` (12). */
 	.delete::after {
-		content: '\00e894';
+		content: '\00e894' / '';
 		position: relative;
 	}
 

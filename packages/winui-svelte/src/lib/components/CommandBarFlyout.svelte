@@ -838,6 +838,6 @@
 	}
 
 	.ellipsis::after {
-		content: '\E712';
+		content: '\E712' / '';
 	}
 </style>

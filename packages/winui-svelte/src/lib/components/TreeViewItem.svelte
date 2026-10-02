@@ -162,12 +162,12 @@
 
 	/* c1-allow: TreeView.idl:204, CollapsedGlyph defaults to \E76C */
 	.chevron[data-expandable]::after {
-		content: '\E76C';
+		content: '\E76C' / '';
 	}
 
 	/* c1-allow: TreeView.idl:202, ExpandedGlyph defaults to \E70D */
 	.root[data-expanded] .chevron[data-expandable]::after {
-		content: '\E70D';
+		content: '\E70D' / '';
 	}
 
 	/* ContentPresenter, MinHeight TreeViewItemContentHeight. */
