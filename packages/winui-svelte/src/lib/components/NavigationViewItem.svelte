@@ -776,7 +776,7 @@
 	   collapsed, up while expanded. Which way the real control points in each state is one
 	   of the things v2's side-by-side against Windows 11 is for. */
 	.expand-chevron::before {
-		content: var(--winui-NavigationViewItemExpandedGlyph);
+		content: var(--winui-NavigationViewItemExpandedGlyph) / '';
 		display: block;
 	}
 

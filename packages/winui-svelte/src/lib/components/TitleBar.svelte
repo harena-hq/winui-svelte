@@ -270,7 +270,7 @@
 	   See docs/divergences.md. */
 	.back-button::before {
 		/* c1-allow: TitleBar_themeresources.xaml:112, Content="&#xE72B;" */
-		content: '\00e72b';
+		content: '\00e72b' / '';
 		display: block;
 	}
 
@@ -299,7 +299,7 @@
 	/* WD-006 again, for the same reason and from the same pair of styles. */
 	.pane-toggle-button::before {
 		/* c1-allow: TitleBar_themeresources.xaml:182, Content="&#xE700;" */
-		content: '\00e700';
+		content: '\00e700' / '';
 		display: block;
 	}
 

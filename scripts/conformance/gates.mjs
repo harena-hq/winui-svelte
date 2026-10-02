@@ -15,8 +15,28 @@ import * as c14 from './c14-gradient-in-colour-property.mjs';
 import * as c15 from './c15-generated-line-citations.mjs';
 import * as c16 from './c16-own-line-citations.mjs';
 import * as c17 from './c17-gate-list.mjs';
+import * as c18 from './c18-generated-content-alt.mjs';
 
 // The suite `pnpm conform` runs, in order. `C17` holds this list to the `c<N>-*.mjs` files
 // beside it and to the apparatus row in `docs/keyboard.md`, so a gate lands as a file, an entry
 // here and that row together.
-export const GATES = [c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, c15, c16, c17];
+export const GATES = [
+	c1,
+	c2,
+	c3,
+	c4,
+	c5,
+	c6,
+	c7,
+	c8,
+	c9,
+	c10,
+	c11,
+	c12,
+	c13,
+	c14,
+	c15,
+	c16,
+	c17,
+	c18
+];

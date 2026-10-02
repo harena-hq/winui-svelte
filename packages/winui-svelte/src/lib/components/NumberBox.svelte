@@ -550,12 +550,12 @@
 
 	/* c1-allow: NumberBox.xaml:174, `UpSpinButton` `Content="&#xE70E;"` */
 	.spin-up::after {
-		content: '\e70e';
+		content: '\e70e' / '';
 	}
 
 	/* c1-allow: NumberBox.xaml:175, `DownSpinButton` `Content="&#xE70D;"` */
 	.spin-down::after {
-		content: '\e70d';
+		content: '\e70d' / '';
 	}
 
 	.spin-up:hover {

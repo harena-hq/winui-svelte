@@ -182,12 +182,12 @@
 	   at 12px, the original's ink is 8x4 and this is 9x5, both centred in the 32px button.
 	   See docs/divergences.md. */
 	.chevron::before {
-		content: var(--winui-ExpanderChevronDownGlyph);
+		content: var(--winui-ExpanderChevronDownGlyph) / '';
 	}
 
 	.root[data-direction='down'] .header[data-state='open'] .chevron::before,
 	.root[data-direction='up'] .header[data-state='closed'] .chevron::before {
-		content: var(--winui-ExpanderChevronUpGlyph);
+		content: var(--winui-ExpanderChevronUpGlyph) / '';
 	}
 
 	.header:hover .chevron {

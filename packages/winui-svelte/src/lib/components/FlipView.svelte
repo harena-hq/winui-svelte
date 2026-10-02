@@ -191,21 +191,21 @@
 
 	/* c1-allow: FlipView_themeresources.xaml:193, HorizontalPreviousTemplate's Glyph */
 	.root[data-orientation='horizontal'] .previous::after {
-		content: '\EDD9';
+		content: '\EDD9' / '';
 	}
 
 	/* c1-allow: FlipView_themeresources.xaml:145, HorizontalNextTemplate's Glyph */
 	.root[data-orientation='horizontal'] .next::after {
-		content: '\EDDA';
+		content: '\EDDA' / '';
 	}
 
 	/* c1-allow: FlipView_themeresources.xaml:289, VerticalPreviousTemplate's Glyph */
 	.root[data-orientation='vertical'] .previous::after {
-		content: '\EDDB';
+		content: '\EDDB' / '';
 	}
 
 	/* c1-allow: FlipView_themeresources.xaml:241, VerticalNextTemplate's Glyph */
 	.root[data-orientation='vertical'] .next::after {
-		content: '\EDDC';
+		content: '\EDDC' / '';
 	}
 </style>

@@ -384,7 +384,7 @@
 	/* `&#xF78D;` from `PasswordBox_themeresources.xaml:100` — the Reveal glyph from
 	   Segoe Fluent Icons. */
 	.reveal::after {
-		content: '\f78d';
+		content: '\f78d' / '';
 		position: relative;
 	}
 

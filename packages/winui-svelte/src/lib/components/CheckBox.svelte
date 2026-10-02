@@ -261,12 +261,12 @@
 
 	   `Margin="0,1,0,-1"` on the CheckGlyph, which the indeterminate states reset to 0. */
 	.root[data-state='checked'] .box::after {
-		content: var(--winui-CheckBoxCheckedGlyph);
+		content: var(--winui-CheckBoxCheckedGlyph) / '';
 		margin: 1px 0 -1px 0;
 	}
 
 	.root[data-state='indeterminate'] .box::after {
-		content: var(--winui-CheckBoxIndeterminateGlyph);
+		content: var(--winui-CheckBoxIndeterminateGlyph) / '';
 	}
 
 	/* `VerticalContentAlignment="Top"` on the ContentPresenter, with `Margin` bound to the

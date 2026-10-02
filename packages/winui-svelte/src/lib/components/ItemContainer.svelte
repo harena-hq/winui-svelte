@@ -259,7 +259,7 @@
 
 	/* WD-006: unchecked AnimatedIcon states draw no fallback glyph, so no pseudo-element exists. */
 	.checkbox[data-checked]::after {
-		content: var(--winui-CheckBoxCheckedGlyph);
+		content: var(--winui-CheckBoxCheckedGlyph) / '';
 		margin: 1px 0 -1px 0;
 	}
 </style>

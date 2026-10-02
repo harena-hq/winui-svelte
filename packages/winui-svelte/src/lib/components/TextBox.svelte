@@ -366,7 +366,7 @@
 	}
 
 	.delete::after {
-		content: '\00e894';
+		content: '\00e894' / '';
 		position: relative;
 	}
 

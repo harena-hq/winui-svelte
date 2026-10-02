@@ -1183,7 +1183,7 @@
 	/* `More`, the glyph the FontIcon at :388 draws. Written here rather than in the markup
 	   because it is a picture, not text: the button already carries an `aria-label`. */
 	.overflow-button::before {
-		content: '\e712';
+		content: '\e712' / '';
 	}
 	.overflow-button:hover {
 		background: var(--winui-TopNavigationViewItemBackgroundPointerOver);
@@ -1738,7 +1738,7 @@
 	.back-button::before,
 	.close-button::before {
 		/* c1-allow: NavigationBackButton.xaml:13, Content="&#xE72B;" */
-		content: '\e72b';
+		content: '\e72b' / '';
 		display: block;
 	}
 
@@ -1911,7 +1911,7 @@
 	   in the one is centring in the other — which is why this is on the painted box and not on a
 	   third element. */
 	.pane-toggle .layout-root::before {
-		content: '\e700';
+		content: '\e700' / '';
 	}
 
 	/* The focus visual; see Button.svelte in this package for the shape. `::after` because

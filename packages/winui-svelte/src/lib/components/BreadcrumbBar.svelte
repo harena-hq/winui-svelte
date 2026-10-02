@@ -301,7 +301,7 @@
 	}
 
 	.chevron::before {
-		content: var(--winui-BreadcrumbBarChevronLeftToRight);
+		content: var(--winui-BreadcrumbBarChevronLeftToRight) / '';
 	}
 
 	.ellipsis-glyph {
@@ -311,7 +311,7 @@
 
 	/* BreadcrumbBar.xaml:278 writes `Text="&#xE712;"`; it is a template literal, not a resource. */
 	.ellipsis-glyph::before {
-		content: '\e712';
+		content: '\e712' / '';
 	}
 
 	.drop-row {

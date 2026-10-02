@@ -721,11 +721,11 @@
 	}
 	/* c1-allow: ColorPicker.xaml:264, collapsed Glyph is \E70D. */
 	.more-glyph::after {
-		content: '\E70D';
+		content: '\E70D' / '';
 	}
 	/* c1-allow: ColorPicker.xaml:264, expanded Glyph is \E70E. */
 	.more-glyph[data-open]::after {
-		content: '\E70E';
+		content: '\E70E' / '';
 	}
 	.text-entry {
 		display: grid;

@@ -4402,13 +4402,14 @@ reproduce is a recorded decision, never a silent one.
 `C12` (every cited line names a file that has one), `C13` (every portalled surface sits in the
 popup layer), `C14` (no colour property reads a token that resolves to a gradient), `C15`
 (nothing cites a line in a generated source file), `C16` (nothing cites a line in a file this
-repository holds) and `C17` (the gate list is every gate file, in order) are in `pnpm conform`
-and have no entry here — C11 and C12 landed without one, and none of the five after them added
+repository holds), `C17` (the gate list is every gate file, in order) and `C18` (every
+content declaration that draws something states its alternative text) are in `pnpm conform`
+and have no entry here — C11 and C12 landed without one, and none of the six after them added
 itself alone, because an entry for the newest while the ones before it have none would make the
 gap read as a choice. **`scripts/conformance/gates.mjs` is the list**, and `C17` holds it to the
 files beside it; this section is a commentary on the gates that have one, and the backfill is
-owed. Each of the seven carries its own reasoning in its own file, which is where the detail
-is; C13's through C17's also record what they cannot reach, and each names the test that
+owed. Each of the eight carries its own reasoning in its own file, which is where the detail
+is; C13's through C18's also record what they cannot reach, and each names the test that
 answers that half where one does; C17's other gaps, and the two documents it reads, are left
 to hand.
 

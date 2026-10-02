@@ -302,13 +302,13 @@
 	/* `PipsPagerSelectedGlyph` and `PipsPagerNormalGlyph` are the same code point
 	   (PipsPager_themeresources.xaml:100-101); the selected pip differs by size and brush alone. */
 	.pip::before {
-		content: var(--winui-PipsPagerNormalGlyph);
+		content: var(--winui-PipsPagerNormalGlyph) / '';
 		font-family: var(--winui-SymbolThemeFontFamily);
 		line-height: normal;
 	}
 
 	.pip[data-selected]::before {
-		content: var(--winui-PipsPagerSelectedGlyph);
+		content: var(--winui-PipsPagerSelectedGlyph) / '';
 	}
 
 	/* `PipsPagerSelectedPipButtonStyle` (:280-286) is the selected pip's base, and the three
@@ -401,11 +401,11 @@
 	}
 
 	.nav-glyph.previous::before {
-		content: var(--winui-PipsPagerPreviousPageButtonGlyph);
+		content: var(--winui-PipsPagerPreviousPageButtonGlyph) / '';
 	}
 
 	.nav-glyph.next::before {
-		content: var(--winui-PipsPagerNextPageButtonGlyph);
+		content: var(--winui-PipsPagerNextPageButtonGlyph) / '';
 	}
 
 	.nav:hover:not(:disabled) {

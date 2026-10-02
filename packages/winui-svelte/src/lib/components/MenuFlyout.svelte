@@ -685,12 +685,12 @@
 
 	.chevron::before {
 		/* c1-allow: MenuFlyout_themeresources.xaml:720, `Glyph="&#xE974;"` on `SubItemChevron`. */
-		content: '\e974';
+		content: '\e974' / '';
 	}
 
 	.check::before {
 		/* c1-allow: MenuFlyout_themeresources.xaml:488, `Glyph="&#xE73E;"` on `CheckGlyph`. */
-		content: '\e73e';
+		content: '\e73e' / '';
 	}
 
 	.item.toggle[data-state='checked'] .check {
@@ -957,6 +957,6 @@
 	.item.radio .check::before {
 		/* c1-allow: RadioMenuFlyoutItem_themeresources.xaml:94, `Glyph="&#xE915;"` on `CheckGlyph`,
 		   where `DefaultToggleMenuFlyoutItemStyle` has `&#xE73E;` and everything else agrees. */
-		content: '\e915';
+		content: '\e915' / '';
 	}
 </style>
