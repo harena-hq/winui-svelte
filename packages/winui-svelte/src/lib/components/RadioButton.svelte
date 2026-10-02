@@ -87,6 +87,27 @@
 			onCheckedChange?.(true);
 		}
 	}
+
+	// The browser has already checked this input, and unchecked the one checked before it in
+	// its radio button group, by the time this runs. When the state `selected` derives from
+	// ends where it began — the radio was already selected, has no `value` to put in `group`,
+	// or a parent puts the state back from its callback — Svelte has nothing new to write, so
+	// the click is canceled and the browser puts both inputs back itself. A canceled click
+	// fires neither `input` nor `change`.
+	//
+	// Otherwise the click stands, and canceling would be wrong: Svelte applies the change in a
+	// microtask, a microtask checkpoint follows each listener of a click the user made, and the
+	// canceled-activation steps would then restore the old selection over it. Svelte writes
+	// only the inputs whose `selected` changed, though, and the clicked one's need not have: a
+	// parent that clears `group` leaves it unselected before and after. So the handler writes
+	// it here, inside the listener, where the activation keeps it.
+	function onclick(event: MouseEvent & { currentTarget: HTMLInputElement }) {
+		const state = () => (group === undefined ? checked : group);
+		const before = state();
+		choose();
+		if (state() === before) event.preventDefault();
+		else event.currentTarget.checked = selected;
+	}
 </script>
 
 <label
@@ -96,9 +117,6 @@
 	data-disabled={disabled || undefined}
 	{...rest}
 >
-	<!-- `onclick` lets the default run, as CheckBox's does, and writes nothing of its own: a
-	     radio's activation is idempotent — the browser sets checkedness to true and there is
-	     nothing to cycle — so the DOM and the props agree whenever `choose()` selects it. -->
 	<input
 		bind:this={ref}
 		type="radio"
@@ -109,7 +127,7 @@
 		{value}
 		{required}
 		{form}
-		onclick={choose}
+		{onclick}
 	/>
 	<span class="ring">
 		<span class="outer"></span>
