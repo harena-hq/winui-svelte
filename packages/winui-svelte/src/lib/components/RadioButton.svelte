@@ -96,9 +96,9 @@
 	data-disabled={disabled || undefined}
 	{...rest}
 >
-	<!-- `onclick` lets the default run, where CheckBox's cancels it: a radio's activation is
-	     idempotent — the browser sets checkedness to true and there is nothing to cycle — so
-	     the DOM and the props agree without a cancel-and-reassert. -->
+	<!-- `onclick` lets the default run, as CheckBox's does, and writes nothing of its own: a
+	     radio's activation is idempotent — the browser sets checkedness to true and there is
+	     nothing to cycle — so the DOM and the props agree whenever `choose()` selects it. -->
 	<input
 		bind:this={ref}
 		type="radio"

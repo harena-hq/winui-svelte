@@ -4518,6 +4518,13 @@ shape costs a measurement to dismiss, where a mis-stated rule costs a re-read. I
 one that would do real damage if taken on trust, because the "fix" is to delete the line the
 control's correctness rests on.
 
+_2026-10-02:_ the measurements above stand and the last sentence does not. The cancel was
+itself a defect: Svelte writes the props back in a microtask that runs before a user's
+click finishes dispatching, so the canceled-activation steps then undid the write, and
+after every real click `input.checked` held the old state while the box drew the new one.
+The line was removed, and the handler now writes `checked` to the element itself;
+`CheckBox.svelte`'s `toggle` gives the mechanism.
+
 So: it catches local textual contradiction, misses anything that requires simulating behaviour, and
 can assert a platform fact it has not checked. It is useful as a second pair of eyes on comments,
 citations and stated rules, not as coverage, and never a gate. Keeping the table honest matters more

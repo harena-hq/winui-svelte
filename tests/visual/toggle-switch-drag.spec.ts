@@ -14,9 +14,8 @@ import { test } from './fixtures';
  */
 
 const log = (page: Page) => page.locator('#log');
-// The component's own state, which its root carries. A tap leaves the `<input>`'s `checked`
-// property behind it — the click's canceled activation restores the property after the
-// component has written it — and that is a defect of its own, older than the drag.
+// The component's own state, which its root carries; the `afterEach` below holds the `<input>`
+// to it, after every press these tests make.
 const root = (page: Page, id: string) => page.locator(`#${id}`);
 
 async function knobX(page: Page, id: string) {
@@ -51,6 +50,13 @@ async function press(
 
 test.beforeEach(async ({ page }) => {
 	await page.goto('/dev/toggle-switch-drag');
+});
+
+test.afterEach(async ({ page }) => {
+	for (const id of ['starts-off', 'starts-on']) {
+		const on = await root(page, id).getAttribute('data-checked');
+		await expect(root(page, id).getByRole('switch')).toBeChecked({ checked: on === 'true' });
+	}
 });
 
 test('the knob follows the pointer, clamped to its track, with no easing', async ({ page }) => {
@@ -172,8 +178,11 @@ test.describe('by touch', () => {
 			undefined
 		);
 		await expect(page.locator('#starts-off input')).toBeFocused();
+		// The drag left its suppression armed, and this click is the key's, aimed at the input:
+		// it toggles, and is not canceled, which would put the input back where it was.
 		await page.keyboard.press('Space');
 		await expect(log(page)).toHaveText('off:true off:false');
+		await expect(page.locator('#starts-off input')).not.toBeChecked();
 	});
 
 	test('the next press after a drag that fired no click is a tap', async ({ page, context }) => {
