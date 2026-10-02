@@ -87,23 +87,37 @@
 		}
 	}
 
-	function toggle(event: MouseEvent) {
-		if (disabled) return;
-		// The browser has already flipped `input.checked` by the time this runs; preventing
-		// the default runs the canceled-activation steps, which put it back. The component
-		// owns the state, so it applies its own cycle to the props and lets the `checked`
-		// attribute below re-assert the result. Space and Enter reach here too — a checkbox's
-		// keyboard activation dispatches a click.
-		//
-		// Measured rather than recalled, because a review disputed it: inside this handler an
-		// unchecked box reads `checked === true` and a checked one reads `false`, and after
-		// `preventDefault()` both hold their original value. `indeterminate` behaves the same
-		// way — the pre-click steps clear it and cancellation restores it — which is what lets
-		// the indeterminate branch below run without the DOM having moved underneath it.
-		event.preventDefault();
+	function toggle(event: MouseEvent & { currentTarget: HTMLInputElement }) {
+		// Nothing changes, so the click is canceled and its flip put back.
+		if (disabled) {
+			event.preventDefault();
+			return;
+		}
+		// The click's legacy-pre-activation steps have already flipped `input.checked` and
+		// cleared `indeterminate` by the time this runs, so the cycle reads the props, not the
+		// element. Space reaches here too: a checkbox's keyboard activation dispatches a click.
 		if (indeterminate) set(false, false);
 		else if (checked) set(false, threeState);
 		else set(true, false);
+		// The click is left uncanceled. Svelte applies the props to the element in a microtask,
+		// and a microtask checkpoint follows each listener of a click the user made, so that
+		// runs before dispatch ends; canceling the click would then run the canceled-activation
+		// steps after it and restore the element to its state before the click, and the props
+		// and the accessibility tree would disagree from then on. A click dispatched from script
+		// — `element.click()`, `dispatchEvent` — defers the checkpoint past dispatch, which is
+		// why, while the click was canceled, only such a click left the two agreeing after a
+		// change. Left uncanceled, it fires the input's `input` and `change` on every click an
+		// enabled box takes, as a native checkbox does, even when a parent puts the state back.
+		//
+		// So the browser's flip stands, and `checked` is written here, inside the listener, where
+		// the activation keeps it — from the props as they stand after the callbacks, not from the
+		// step the cycle took. Svelte writes `checked` only when it differs from what it last
+		// wrote, and two cases leave it nothing to write while the flip is wrong: leaving an
+		// indeterminate box whose `checked` is false, which the flip checks, and a parent that puts
+		// the props back from `onCheckedChange` or `onIndeterminateChange`. `indeterminate` needs
+		// no write here: the `$effect` above re-runs on any change to the prop, a bound parent's
+		// that puts it back included.
+		event.currentTarget.checked = checked;
 	}
 </script>
 

@@ -98,15 +98,17 @@
 	let lastX = 0;
 	// The click a released press goes on to fire, when the press was not a tap. It is canceled
 	// as it passes the label, which cancels the label's activation, so the input is never clicked.
-	// A click aimed at the input itself — a key's, a script's — is not stopped by that: `toggle()`
-	// runs on it either way. The flag is consumed by the next click, or dropped by the next press
-	// if none comes; a touch drag past the browser's own slop, or a pan, fires no click at all.
+	// A click aimed at the input itself — a key's, a script's — is not the press's, since the input
+	// takes no pointer events, and it is let through: `toggle()` runs on it, and canceling it would
+	// restore the input's `checked` after the new state had been applied. The flag is consumed by
+	// the next click, or dropped by the next press if none comes; a touch drag past the browser's
+	// own slop, or a pan, fires no click at all.
 	let suppressClick = false;
 
 	function onLabelClick(event: MouseEvent) {
 		if (!suppressClick) return;
 		suppressClick = false;
-		event.preventDefault();
+		if (event.target !== ref) event.preventDefault();
 	}
 
 	function onDragStart(event: PointerEvent) {
@@ -163,19 +165,19 @@
 		}
 	});
 
-	function toggle(event: MouseEvent) {
-		if (dragging) {
+	function toggle(event: MouseEvent & { currentTarget: HTMLInputElement }) {
+		// Nothing changes, so the click is canceled and its flip put back.
+		if (dragging || disabled) {
 			event.preventDefault();
 			return;
 		}
-		if (disabled) return;
-		// Same reason CheckBox does this and RadioButton does not: the browser flips
-		// `input.checked` before the handler runs, and preventing the default runs the
-		// canceled-activation steps that put it back. The component owns the state, applies its
-		// own change, and lets the `checked` attribute below re-assert the result.
-		event.preventDefault();
 		checked = !checked;
 		onCheckedChange?.(checked);
+		// Left uncanceled and written from the props after the callback, for the reasons
+		// CheckBox's `toggle` gives: canceling would restore `input.checked` after the props had
+		// been applied to it, and a parent that puts `checked` back leaves Svelte nothing to write
+		// while the browser's flip stands. As there, the click now fires `input` and `change`.
+		event.currentTarget.checked = checked;
 	}
 </script>
 
