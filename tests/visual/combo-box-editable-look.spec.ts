@@ -66,6 +66,11 @@ async function focusTheControl(page: Page) {
 	await expect(font(page)).toHaveAttribute('aria-expanded', 'true');
 	await page.keyboard.press('Escape');
 	await expect(font(page)).toHaveAttribute('aria-expanded', 'false');
+	// The box's squared corners outlast `aria-expanded`: they follow the popup's side, which
+	// clears only once the popup has left the page. A picture taken in between has them.
+	await expect(page.getByTestId('font-size').locator('.root')).not.toHaveAttribute(
+		'data-popup-side'
+	);
 	await expect
 		.poll(() =>
 			page
