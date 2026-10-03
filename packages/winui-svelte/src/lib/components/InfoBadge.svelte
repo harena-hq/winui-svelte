@@ -57,7 +57,7 @@
 	{#if display === 'value'}
 		<span class="value">{value}</span>
 	{:else if display === 'icon'}
-		<span class="icon">{icon}</span>
+		<span class="icon" aria-hidden="true">{icon}</span>
 	{/if}
 </span>
 

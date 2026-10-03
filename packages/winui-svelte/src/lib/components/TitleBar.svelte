@@ -167,7 +167,7 @@
 	<div class="left-header-padding"></div>
 
 	{#if iconGlyph}
-		<span class="icon">{String.fromCodePoint(parseInt(iconGlyph, 16))}</span>
+		<span class="icon" aria-hidden="true">{String.fromCodePoint(parseInt(iconGlyph, 16))}</span>
 	{/if}
 
 	{#if title}

@@ -375,6 +375,11 @@
 			     visual is drawn at the focus target's bounds, so it covers that margin rather than
 			     the fill. -->
 			<div class="item-presenter">
+				<!-- Upstream's name: `NavigationViewItemAutomationPeer::GetNameCore` takes the
+				     string content, visible or not, and never the icon, and falls back to the
+				     localized control name `NavigationViewItem`. In that branch the label also keeps
+				     the expand chevron's out of the row's name. When `children` fills the content
+				     cell the row is named by its contents, and those include the chevron. -->
 				<div
 					{...props}
 					role="treeitem"
@@ -382,6 +387,7 @@
 					aria-selected={isSelected}
 					aria-expanded={hasChildren ? open : undefined}
 					aria-level={level}
+					aria-label={children ? undefined : content || 'NavigationViewItem'}
 					tabindex={tabStop ? 0 : -1}
 					data-selected={isSelected}
 					data-expanded={hasChildren ? open : undefined}
@@ -391,7 +397,9 @@
 					<span class="selection-indicator"></span>
 					<span class="icon-column" data-icon={glyph ? true : undefined}>
 						{#if glyph}
-							<span class="icon">{String.fromCodePoint(parseInt(glyph, 16))}</span>
+							<span class="icon" aria-hidden="true"
+								>{String.fromCodePoint(parseInt(glyph, 16))}</span
+							>
 						{/if}
 					</span>
 					<!-- `data-label` is the cell drawing a string, which is the only shape the three

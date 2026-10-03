@@ -388,9 +388,11 @@
 							{/snippet}
 						</Calendar.NextButton>
 					{:else}
+						<!-- `CalendarView_Partial.cpp` falls back to FlipView's previous and next strings. -->
 						<button
 							class="nav previous"
 							type="button"
+							aria-label="Previous"
 							{@attach focusVisual}
 							disabled={!scopeCanNavigate(-1)}
 							onclick={() => navigateScope(-1)}
@@ -400,6 +402,7 @@
 						<button
 							class="nav next"
 							type="button"
+							aria-label="Next"
 							{@attach focusVisual}
 							disabled={!scopeCanNavigate(1)}
 							onclick={() => navigateScope(1)}

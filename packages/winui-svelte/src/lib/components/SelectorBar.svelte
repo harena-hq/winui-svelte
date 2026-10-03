@@ -157,6 +157,11 @@
 	{...rest}
 >
 	{#each items as item, index (item.id)}
+		<!-- The icon is hidden, so an item without text would have no name.
+		     `SelectorBarItemAutomationPeer::GetNameCore` takes `AutomationProperties.Name`, which
+		     this item has no field for, then `Text`, then `ItemContainer.Child`'s string form,
+		     which this item does not have (the icon is `Icon`, not `Child`), and last the localized
+		     control name `SelectorBarItem`. -->
 		<button
 			type="button"
 			class={['item', 'winui-BodyTextBlockStyle']}
@@ -164,6 +169,7 @@
 			data-selected={isSelected(item) || undefined}
 			disabled={isItemDisabled(item)}
 			role="option"
+			aria-label={item.text ? undefined : 'SelectorBarItem'}
 			aria-selected={isSelected(item)}
 			aria-disabled={isItemDisabled(item) || undefined}
 			tabindex={tabIndexFor(item)}
@@ -172,7 +178,7 @@
 		>
 			{#if item.icon || item.glyph}
 				<span class="content">
-					<span class="icon">
+					<span class="icon" aria-hidden="true">
 						{#if item.icon}
 							{@render item.icon()}
 						{:else if item.glyph}
