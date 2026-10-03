@@ -94,6 +94,20 @@ and reading its shipped code before building on it is what turns a fidelity defe
 into a paragraph. `ScrollView` therefore uses no primitive; it is a scrolling box and this
 library's own `ScrollBar`.
 
+The editable `ComboBox` found the category at a smaller grain: one part of a primitive, not the
+whole of it. bits-ui's `Combobox` input opens the list on any key, picks its highlighted row on
+Enter, moves a highlight the text never shows, and closes on Alt+Up; WinUI's editable ComboBox
+keeps the list shut while typing, completes the text inline, commits whatever the text says on
+Enter, writes each arrowed-to item into the text, and treats Alt+Up as an arrow. So the input's
+two handlers are replaced rather than chained, and two of its ARIA attributes are overwritten
+(`aria-autocomplete` says the completion is inline, and `aria-activedescendant` follows the row
+WinUI draws as selected, not bits-ui's highlight). The portal and the positioning are kept as
+they are. Item clicks are kept with one addition: bits-ui sends no value change for a click on
+the row already selected, which WinUI still treats as a choice, so that click is applied first. Outside-press dismissal is kept with one correction: WinUI passes a press
+anywhere on the control through to it, where bits-ui exempts only the input, so the control
+tells bits-ui which presses are its own. The test is the same one applied per part: adopt what
+computes the same thing, replace or correct what does not, and say which is which at the site.
+
 ## Alternatives rejected
 
 - **Ark UI** — actively maintained, `asChild` on every component, and it covers the three
