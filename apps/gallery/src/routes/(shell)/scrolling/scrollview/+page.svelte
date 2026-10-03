@@ -3,13 +3,15 @@
 		Button,
 		ComboBox,
 		NumberBox,
+		ScrollAnimation,
 		ScrollView,
 		type ComboBoxProps,
-		type ScrollViewProps
+		type ScrollViewProps,
+		type ScrollingScrollAnimationStartingEventArgs
 	} from 'winui-svelte/preview';
 	import ControlExample from '$lib/frame/ControlExample.svelte';
 	import ItemPage from '$lib/frame/ItemPage.svelte';
-	import { sampleOf } from '$lib/samples';
+	import { sampleOf, textOf } from '$lib/samples';
 	import { itemOf } from '$lib/shell';
 
 	type ZoomModeName = 'Enabled' | 'Disabled';
@@ -64,6 +66,119 @@
 	let verticalVelocity = $state<number | null>(30);
 	let animation = $state('Default');
 	let animationDuration = $state<number | null>(1500);
+
+	let velocityView = $state<ReturnType<typeof ScrollView>>();
+	let velocityOffset = $state(0);
+	let velocityScrollable = $state(0);
+	// The NumberBox value the handler last saw, which is upstream's `e.OldValue`.
+	let previousVelocity = 30;
+	// Upstream writes the box from inside its own ValueChanged, which raises the event again with
+	// a velocity of 30 or -30. That nested run cancels and adds a velocity at the interaction
+	// tracker's minimum; on the reference, stepping down from 40 that way left the view still, and
+	// this library's addScrollVelocity moves nothing at 30 or under, so the nested run is skipped.
+	let applyingVelocity = false;
+
+	// ScrollViewPage.xaml.cs, NbVerticalVelocity_ValueChanged.
+	function onVerticalVelocityChange(next: number | null) {
+		if (applyingVelocity || next === null || !velocityView) return;
+		const old = previousVelocity;
+		// Cancel previous constant scroll velocity.
+		velocityView.scrollBy(0, 0, { animationMode: 'disabled', snapPointsMode: 'ignore' });
+		let velocity = next;
+		if (next <= 30 && next >= -30) {
+			// Only a value smaller than -30 or greater than 30 triggers a scroll.
+			if (next < old) velocity = velocityOffset === 0 ? 30 : -30;
+			else velocity = velocityOffset === velocityScrollable ? -30 : 30;
+		} else if (next < 30 && velocityOffset === 0) {
+			velocity = 30;
+		} else if (next > 30 && velocityOffset === velocityScrollable) {
+			velocity = -30;
+		}
+		previousVelocity = velocity;
+		applyingVelocity = true;
+		verticalVelocity = velocity;
+		applyingVelocity = false;
+		// An empty inertia decay rate, for a constant velocity.
+		velocityView.addScrollVelocity({ x: 0, y: velocity }, { x: 0, y: 0 });
+	}
+
+	let animationView = $state<ReturnType<typeof ScrollView>>();
+	let animationHorizontal = $state(0);
+	let animationVertical = $state(0);
+	let animationScrollable = $state(0);
+
+	// ScrollViewPage.xaml.cs, GetTargetVerticalOffset.
+	function targetVerticalOffset() {
+		return animationVertical > animationScrollable / 2
+			? animationScrollable / 5
+			: (4 * animationScrollable) / 5;
+	}
+
+	// ScrollViewPage.xaml.cs, BtnScrollWithAnimation_Click.
+	function scrollWithAnimation() {
+		animationView?.scrollTo(animationHorizontal, targetVerticalOffset(), {
+			animationMode: 'enabled',
+			snapPointsMode: 'ignore'
+		});
+	}
+
+	// ScrollViewPage.xaml.cs, ScrollView_ScrollAnimationStarting.
+	function onScrollAnimationStarting(args: ScrollingScrollAnimationStartingEventArgs) {
+		// Upstream's TimeSpan.FromMilliseconds would throw on an empty box; this keeps the stock
+		// duration instead.
+		if (animationDuration === null) return;
+		if (animation === 'Default') {
+			args.animation.duration = animationDuration;
+			return;
+		}
+		const target = targetVerticalOffset();
+		const custom = new ScrollAnimation();
+		if (animation === 'Accordion') {
+			let delta = 0.1 * (target - animationVertical);
+			for (let step = 0; step < 3; step++) {
+				custom.insertKeyFrame(1 - 0.4 / Math.pow(2, step), {
+					x: animationHorizontal,
+					y: target + delta
+				});
+				delta /= -2;
+			}
+			custom.insertKeyFrame(1, { x: animationHorizontal, y: target });
+		} else {
+			// Teleportation.
+			const delta = target - animationVertical;
+			custom.insertKeyFrame(
+				0.499999,
+				{ x: animationHorizontal, y: target - 0.9 * delta },
+				{ type: 'cubic-bezier', controlPoint1: { x: 1, y: 0 }, controlPoint2: { x: 1, y: 0 } }
+			);
+			custom.insertKeyFrame(
+				0.5,
+				{ x: animationHorizontal, y: target - 0.1 * delta },
+				{ type: 'step', stepCount: 1 }
+			);
+			custom.insertKeyFrame(
+				1,
+				{ x: animationHorizontal, y: target },
+				{ type: 'cubic-bezier', controlPoint1: { x: 0, y: 1 }, controlPoint2: { x: 0, y: 1 } }
+			);
+		}
+		custom.duration = animationDuration;
+		args.animation = custom;
+	}
+
+	// ScrollViewPage.xaml.cs, UpdateExample3Content: the C# tab shows the chosen animation's sample
+	// with the box's duration written into it. C#'s double.ToString gives "NaN" for an empty box.
+	const ANIMATION_SAMPLES: Record<string, string> = {
+		Default: 'SampleCode/ScrollView/ScrollViewSample3_DefaultAnimation_cs.txt',
+		Accordion: 'SampleCode/ScrollView/ScrollViewSample3_AccordionAnimation_cs.txt',
+		Teleportation: 'SampleCode/ScrollView/ScrollViewSample3_TeleportationAnimation_cs.txt'
+	};
+	const animationCsharp = $derived(
+		textOf(ANIMATION_SAMPLES[animation]).replaceAll(
+			'nbAnimationDuration.Value',
+			animationDuration === null ? 'NaN' : String(animationDuration)
+		)
+	);
 </script>
 
 <ItemPage {item}>
@@ -136,7 +251,12 @@
 				Set the vertical velocity to a value greater than 30 to scroll down, or a value smaller than
 				-30 to scroll up at a constant speed.
 			</p>
-			<ScrollView style="width: 400px; height: 300px">
+			<ScrollView
+				bind:this={velocityView}
+				bind:verticalOffset={velocityOffset}
+				bind:scrollableHeight={velocityScrollable}
+				style="width: 400px; height: 300px"
+			>
 				<div class="image-column">
 					{#each VELOCITY_IMAGES as image (image)}
 						<img src={`/${image}.jpg`} alt={image} />
@@ -147,13 +267,13 @@
 		{#snippet options()}
 			<div class="options-grid one-row">
 				<span class="option-label">Vertical velocity</span>
-				<!-- ScrollView.AddScrollVelocity is not implemented by this sealed component. -->
 				<NumberBox
 					min={-200}
 					max={200}
 					step={10}
 					spinButtonPlacementMode="inline"
 					bind:value={verticalVelocity}
+					onValueChange={onVerticalVelocityChange}
 				/>
 			</div>
 		{/snippet}
@@ -162,6 +282,7 @@
 	<ControlExample
 		headerText={animationSample.header ?? undefined}
 		xaml={animationSample.xaml ?? undefined}
+		csharp={animationCsharp}
 	>
 		<!-- ScrollViewPage.xaml:244-344. -->
 		<div class="sample-stack" data-vertical-alignment="top">
@@ -169,7 +290,14 @@
 				Pick an animation type and its duration and then click the button on the right to launch a
 				programmatic scroll.
 			</p>
-			<ScrollView style="width: 400px; height: 300px">
+			<ScrollView
+				bind:this={animationView}
+				bind:horizontalOffset={animationHorizontal}
+				bind:verticalOffset={animationVertical}
+				bind:scrollableHeight={animationScrollable}
+				{onScrollAnimationStarting}
+				style="width: 400px; height: 300px"
+			>
 				<div class="image-column">
 					{#each ANIMATION_IMAGES as image (image)}
 						<img src={`/${image}.jpg`} alt={image} />
@@ -195,8 +323,8 @@
 					spinButtonPlacementMode="inline"
 					bind:value={animationDuration}
 				/>
-				<!-- ScrollView.ScrollTo is not implemented by this sealed component. -->
-				<Button class="animation-button">Scroll with animation</Button>
+				<Button class="animation-button" onclick={scrollWithAnimation}>Scroll with animation</Button
+				>
 			</div>
 		{/snippet}
 	</ControlExample>

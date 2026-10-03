@@ -2896,13 +2896,13 @@ generics="T">` component through `pnpm --filter winui-svelte build` reaches `dis
 
     **What this version owes.**
 
-    | owed                                                                                      | what it needs                                                                                                      |
-    | ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
-    | ~~`NumberBox` is 240 wide where the original is about 120~~ — **read while planning v14** | one line, and the reading is below                                                                                 |
-    | the AnnotatedScrollBar page's tile grid is six columns, not five                          | the same question, from the other end: what the sample ScrollView's width should be when the pane is content-sized |
-    | `ScrollView`'s programmatic scroll — `ScrollTo`, `ScrollBy`, `AddScrollVelocity`          | two of the ScrollView page's three examples render fully and do nothing, which is what those members are for       |
-    | `ContentOrientation="None"` with content that cannot shrink                               | a rule this project has not needed: the Gallery's own use of that value is an image that fits                      |
-    | the six pages' narrow adaptive states                                                     | v10's owed row, unchanged                                                                                          |
+    | owed                                                                                                       | what it needs                                                                                                      |
+    | ---------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+    | ~~`NumberBox` is 240 wide where the original is about 120~~ — **read while planning v14**                  | one line, and the reading is below                                                                                 |
+    | the AnnotatedScrollBar page's tile grid is six columns, not five                                           | the same question, from the other end: what the sample ScrollView's width should be when the pane is content-sized |
+    | ~~`ScrollView`'s programmatic scroll — `ScrollTo`, `ScrollBy`, `AddScrollVelocity`~~ — **done 2026-10-03** | two of the ScrollView page's three examples render fully and do nothing, which is what those members are for       |
+    | `ContentOrientation="None"` with content that cannot shrink                                                | a rule this project has not needed: the Gallery's own use of that value is an image that fits                      |
+    | the six pages' narrow adaptive states                                                                      | v10's owed row, unchanged                                                                                          |
 
     **The `NumberBox` row, read while planning v14, and it is one line.**
     `NumberBox.xaml:114` gives the inner `InputBox` the `NumberBoxTextBoxStyle`, which is
