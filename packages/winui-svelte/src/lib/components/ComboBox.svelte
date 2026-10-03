@@ -16,9 +16,20 @@
 	export interface ComboBoxProps {
 		/** ItemsSource, narrowed to the text items this unit renders. */
 		items?: ComboBoxItemData[];
-		/** SelectedValue. */
+		/**
+		 * SelectedValue. In editable mode, a custom value equal to an item's value is that
+		 * item; use item values that free text will not collide with.
+		 */
 		value?: string;
 		onValueChange?: (value: string) => void;
+		/** IsEditable. */
+		editable?: boolean;
+		/** Text — the text in the editable box. Bindable. Tracks every keystroke. */
+		text?: string;
+		onTextChange?: (text: string) => void;
+		/** TextSubmitted. Raised when typed text matching no item is committed; set
+		 * `handled` to keep the text from becoming a custom value. */
+		onTextSubmitted?: (args: ComboBoxTextSubmittedEventArgs) => void;
 		/**
 		 * ItemTemplate. Renders one item's content, in the trigger and in every list row.
 		 * Absent, an item renders as its `label`.
@@ -41,27 +52,34 @@
 		class?: string;
 		style?: string;
 		/**
-		 * The trigger `<button>`, not the root — ADR 0009's `ref` points at the interactive
-		 * element. The root is the outer `<div>` the header and description sit on.
+		 * The editable `<input>`, or the non-editable trigger `<button>` — ADR 0009.
+		 * The root is the outer `<div>` the header and description sit on.
 		 */
-		ref?: HTMLButtonElement | null;
+		ref?: HTMLButtonElement | HTMLInputElement | null;
 		[key: string]: unknown;
 	}
 
-	// One WinUI member is deliberately absent, and a plain comment says so rather than
-	// a `/** */` one: a doc comment here would attach itself to `disabled` below and a
-	// consumer hovering that prop would be told about it.
-	//
-	// `IsEditable="True"` and the `EditableModeStates` group. The editable variant is a
-	// separate unit; this control renders the non-editable one only.
+	/** ComboBoxTextSubmittedEventArgs. */
+	export interface ComboBoxTextSubmittedEventArgs {
+		readonly text: string;
+		handled: boolean;
+	}
+
+	// SelectionChangedTrigger is not exposed; editable selection follows upstream's
+	// default, Committed. TextBoxStyle, gamepad and IME candidate-window offsets are absent.
 </script>
 
 <script lang="ts">
-	import { Select } from 'bits-ui';
+	import { Combobox, Select } from 'bits-ui';
+	import { onMount, tick, untrack } from 'svelte';
 
 	let {
 		items = [],
 		value = $bindable(''),
+		editable = false,
+		text = $bindable(''),
+		onTextChange,
+		onTextSubmitted,
 		onValueChange,
 		itemTemplate,
 		open = $bindable(false),
@@ -77,6 +95,335 @@
 		ref = $bindable(null),
 		...rest
 	}: ComboBoxProps = $props();
+
+	const uid = $props.id();
+
+	// The editable variant. Upstream's model lives in `ComboBox_Partial.cpp` and is kept here
+	// in its own terms: `searchIndex` is `m_searchResultIndex`, with `null` for "not set"
+	// (`ResetSearch`, :2601); `searchString` is `m_searchString`, the last text the control
+	// wrote itself; `shown` is `OverrideSelectedIndexForVisualStates`, the row that draws the
+	// Selected look while the list is open. Typing and arrowing never change the selection —
+	// upstream's default `SelectionChangedTrigger` is `Committed` — so the value moves only in
+	// `commit()` and through an item click.
+	let rootEl = $state<HTMLDivElement | null>(null);
+	let boxEl = $state<HTMLDivElement | null>(null);
+	let popupEl = $state<HTMLDivElement | null>(null);
+	let popupSide = $state<'top' | 'bottom' | null>(null);
+	let shown = $state(-1);
+	let hovered = $state(-1);
+	// eslint-disable-next-line svelte/prefer-writable-derived -- The row id is read after DOM rendering by an effect.
+	let activeId = $state<string | undefined>(undefined);
+	let searchIndex: number | null = null;
+	let searchString = '';
+	let lastValue = value;
+	let cancelling = false;
+	let lastOpen = open;
+	const selectedIndex = $derived(items.findIndex((item) => item.value === value));
+	const input = () => (ref instanceof HTMLInputElement ? ref : null);
+	const eqi = (a: string, b: string) => a.toLowerCase() === b.toLowerCase();
+	const displayString = () => items.find((item) => item.value === value)?.label ?? value;
+
+	// `UpdateEditableTextBox` (:1514-1551). Text equal but for case is left alone, selection
+	// included — which is why a committed "27" keeps its caret while a reverted "36" comes back
+	// as a selected "10" on the reference.
+	async function writeText(str: string, selectAll: boolean) {
+		const el = input();
+		if (eqi(str, text)) return;
+		searchString = str;
+		const start = el?.selectionStart ?? 0;
+		text = str;
+		if (el) el.value = str;
+		onTextChange?.(str);
+		await tick();
+		el?.setSelectionRange(selectAll ? 0 : start, str.length);
+	}
+	async function scrollShown() {
+		await tick();
+		if (open && shown >= 0)
+			popupEl?.querySelectorAll('.item')[shown]?.scrollIntoView({ block: 'nearest' });
+	}
+	// `ProcessSearch` (:3938-3997) over `SearchItemSourceIndex` (:4080-4129): the first item
+	// whose text starts with what was typed, ignoring case, width, kana type and diacritics,
+	// is written in with its remainder selected. Backspace matches whole text only, so that
+	// completion does not undo the deletion it follows (:4098-4107).
+	function search(kind: 'insert' | 'backspace' | 'reconcile') {
+		if (eqi(text, searchString)) return;
+		let found = -1;
+		if (text === '') searchString = '';
+		else {
+			// The search string becomes the text before the scan (:4031), so the same text is
+			// not searched twice — which is also why committing an item's own text again finds no
+			// search result and raises `TextSubmitted` for it, as upstream does.
+			searchString = text;
+			found = items.findIndex((item) => {
+				const s = item.label.trimStart();
+				return kind === 'backspace'
+					? eqi(s, text)
+					: s.slice(0, text.length).localeCompare(text, undefined, { sensitivity: 'base' }) === 0;
+			});
+			if (found >= 0 && kind !== 'backspace') void writeText(items[found].label, false);
+		}
+		searchIndex = found;
+		if (open) {
+			shown = found;
+			void scrollShown();
+		}
+	}
+	function setValue(v: string) {
+		const previous = value;
+		value = lastValue = v;
+		if (v !== previous) onValueChange?.(v);
+	}
+	// The tail every commit and revert shares (:2564-2596). `ResetSearch` (:2601-2605) clears
+	// the search result only; the search string keeps the text last written or searched.
+	function finish() {
+		void writeText(value === '' ? '' : displayString(), true);
+		searchIndex = null;
+	}
+	// `CommitRevertEditableSearch` (:2440-2596). A match selects the item; text matching
+	// nothing raises `TextSubmitted`, and unless the handler marks it handled the text —
+	// as the handler left it — becomes a custom value. Blank text, and text equal to the
+	// custom value already held, raise nothing.
+	function commit() {
+		if (searchIndex === null) search('reconcile');
+		const match = searchIndex === null ? undefined : items[searchIndex];
+		if (match) setValue(match.value);
+		else if (text.trim() !== '') {
+			const t = text;
+			const custom = value !== '' && selectedIndex === -1;
+			if (!custom || !eqi(value, t)) {
+				const args = { text: t, handled: false };
+				onTextSubmitted?.(args);
+				if (!args.handled) {
+					const found = items.findIndex((item) => eqi(item.label.trimStart(), text));
+					setValue(found >= 0 ? items[found].value : text);
+				}
+			}
+		}
+		finish();
+	}
+	function revert() {
+		finish();
+	}
+	// The `SelectedItem` change handler (:1328-1356), for a selection the commit did not make:
+	// an item click or the consumer's write. Writing the item's text here is what keeps the
+	// commit that follows a click from reconciling against whatever had been typed.
+	function selectionChanged() {
+		searchIndex = selectedIndex;
+		void writeText(value === '' ? '' : displayString(), true);
+		if (!open && selectedIndex > -1) commit();
+	}
+	function choose(v: string) {
+		setValue(v);
+		selectionChanged();
+	}
+	// `OnOpen` moves focus to the text box (ComboBox_Partial.cpp:1703-1712), and only a text
+	// box that did not have focus selects all as it takes it (`OnGotFocus`, :2351): opened
+	// from the keyboard mid-word, the auto-completed remainder stays the selection.
+	function opened() {
+		shown = searchIndex ?? selectedIndex;
+		const el = input();
+		if (el && document.activeElement !== el) {
+			el.focus();
+			el.select();
+		}
+		void scrollShown();
+	}
+	// Every close commits except a cancel — Escape, a press outside, focus leaving while open
+	// — which reverts (`OnClose`, :1755-1758).
+	function changeOpen(next: boolean, notify = true) {
+		if (next === lastOpen) {
+			cancelling = false;
+			return;
+		}
+		open = lastOpen = next;
+		if (next) opened();
+		else {
+			if (cancelling) revert();
+			else commit();
+			cancelling = false;
+			hovered = -1;
+		}
+		if (notify) onOpenChange?.(next);
+	}
+	function inputChanged(event: Event & { currentTarget: HTMLInputElement }) {
+		text = event.currentTarget.value;
+		onTextChange?.(text);
+		if (!(event instanceof InputEvent)) return;
+		const e = event;
+		// Upstream searches on `CharacterReceived` (:3807-3840) and its `TextChanged` handler is
+		// empty (:3123-3127), so only typed characters and Backspace search: a paste, Delete or
+		// a cut does not. Composed text arrives as characters once composition ends.
+		if (e.isComposing) return;
+		if (e.inputType === 'insertText') search('insert');
+		else if (e.inputType === 'deleteContentBackward') search('backspace');
+	}
+	let touchFocus = false;
+	// `OnGotFocus` (:2340-2351): a keyboard or mouse focus selects all and reconciles the text
+	// with the items; a touch focus puts the caret at the end instead.
+	function inputFocused() {
+		if (touchFocus) return;
+		input()?.select();
+		search('reconcile');
+	}
+	// `MainKeyDown` (:2996-3117) while closed and `PopupKeyDown` (:2770-2980) while open. The
+	// arrows open a closed list rather than step the selection; open, they write the next
+	// item's text, clamped at both ends. Tab while open stays in the text box, and Escape
+	// while open leaves focus on the control itself, both as the reference does.
+	function inputKey(event: KeyboardEvent) {
+		if (event.isComposing || event.keyCode === 229) return;
+		const key = event.key;
+		if (key === 'Tab' && !open) {
+			commit();
+			return;
+		}
+		if (key === 'ArrowDown' || key === 'ArrowUp') {
+			event.preventDefault();
+			if (!open) changeOpen(true);
+			else if (items.length) {
+				const base = searchIndex ?? selectedIndex;
+				const next = Math.max(0, Math.min(items.length - 1, base + (key === 'ArrowDown' ? 1 : -1)));
+				searchIndex = shown = next;
+				void writeText(items[next].label, true);
+				void scrollShown();
+			}
+		} else if (
+			key === 'F4' &&
+			!event.altKey &&
+			!event.ctrlKey &&
+			!event.metaKey &&
+			!event.shiftKey
+		) {
+			event.preventDefault();
+			changeOpen(!open);
+		} else if (key === 'Enter') {
+			event.preventDefault();
+			if (open) changeOpen(false);
+			else commit();
+		} else if (key === 'Escape') {
+			event.preventDefault();
+			if (open) {
+				cancelling = true;
+				changeOpen(false);
+				focusBox(true);
+			} else revert();
+		} else if (key === 'Tab') {
+			event.preventDefault();
+			changeOpen(false);
+		}
+	}
+	function focusBox(focusVisible: boolean) {
+		const options: { preventScroll?: boolean; focusVisible: boolean } = { focusVisible };
+		boxEl?.focus(options);
+	}
+	function boxKey(event: KeyboardEvent) {
+		if (event.target !== boxEl || disabled) return;
+		if (
+			event.key === 'ArrowUp' ||
+			event.key === 'ArrowDown' ||
+			(event.key === 'F4' && !event.altKey && !event.ctrlKey && !event.metaKey && !event.shiftKey)
+		) {
+			event.preventDefault();
+			changeOpen(true);
+		} else if (event.key === 'Enter' || event.key === 'Escape') {
+			event.preventDefault();
+			if (event.key === 'Enter') commit();
+			else revert();
+		}
+	}
+	function textPointer(event: PointerEvent) {
+		if (disabled || (event.target instanceof Element && event.target.closest('.overlay'))) return;
+		const el = input();
+		if (!el || document.activeElement === el) return;
+		event.preventDefault();
+		touchFocus = event.pointerType === 'touch';
+		el.focus();
+		touchFocus = false;
+		if (event.pointerType === 'touch') {
+			changeOpen(true);
+			el.setSelectionRange(text.length, text.length);
+		}
+	}
+	// Only the `DropDownOverlay` opens and closes the list (`PerformPointerUpAction`,
+	// :3541-3552). Closed from here, focus lands on the control without a ring, as a pointer
+	// focus does on the reference; Chrome would otherwise carry `:focus-visible` over from
+	// the text input, which always matches it.
+	function overlayClick(event: MouseEvent) {
+		if (disabled || event.button !== 0) return;
+		const closing = open;
+		changeOpen(!open);
+		if (closing) focusBox(false);
+	}
+	// Focus leaving the whole control commits (:2386-2392), or cancels while open
+	// (`FocusChanged`, :2192-2196). Moving between the text box and the box is not leaving.
+	function focusOut(event: FocusEvent) {
+		const target = event.relatedTarget;
+		if (target instanceof Node && (rootEl?.contains(target) || popupEl?.contains(target))) return;
+		if (open) {
+			cancelling = true;
+			changeOpen(false);
+		} else commit();
+	}
+	onMount(() => {
+		if (!editable) return;
+		if (text === '') text = displayString();
+		if (open && disabled) open = lastOpen = false;
+		else if (open)
+			void tick().then(() => {
+				if (open) opened();
+			});
+	});
+	$effect(() => {
+		const next = open;
+		// The consumer's own write: no `onOpenChange` back to it, and a disabled control stays shut.
+		if (editable && next !== lastOpen)
+			untrack(() => {
+				if (next && disabled) open = false;
+				else changeOpen(next, false);
+			});
+	});
+	$effect(() => {
+		const v = value;
+		if (editable && v !== lastValue)
+			untrack(() => {
+				lastValue = v;
+				selectionChanged();
+			});
+	});
+	$effect(() => {
+		const el = popupEl;
+		if (!el) {
+			popupSide = null;
+			return;
+		}
+		const sync = () => {
+			const side = el.getAttribute('data-side');
+			popupSide = side === 'top' || side === 'bottom' ? side : null;
+		};
+		sync();
+		const observer = new MutationObserver(sync);
+		observer.observe(el, { attributes: true, attributeFilter: ['data-side'] });
+		return () => observer.disconnect();
+	});
+	// Disabled while open: the list closes as a cancel.
+	$effect(() => {
+		if (editable && disabled && untrack(() => lastOpen))
+			untrack(() => {
+				cancelling = true;
+				changeOpen(false);
+			});
+	});
+	// Items replaced under a held search result leave it pointing past the end.
+	$effect(() => {
+		const count = items.length;
+		untrack(() => {
+			if (searchIndex !== null && searchIndex >= count) searchIndex = null;
+			if (shown >= count) shown = -1;
+		});
+	});
+	$effect(() => {
+		activeId = open && shown >= 0 ? popupEl?.querySelectorAll('.item')[shown]?.id : undefined;
+	});
 
 	// Upstream opens the list when a left press on the control is released on it, not when it
 	// goes down: `OnPointerPressed` (ComboBox_Partial.cpp:3310) only sets `m_bIsPressed` and
@@ -129,40 +476,192 @@
 	// selected".
 </script>
 
-<div
-	class={['root', 'winui-BodyTextBlockStyle', className]}
-	{style}
-	data-disabled={disabled || undefined}
-	{...rest}
->
-	{#if header !== undefined}
-		<span class="header">
-			{#if typeof header === 'string'}{header}{:else}{@render header()}{/if}
-		</span>
-	{/if}
-	<Select.Root
-		type="single"
-		bind:value={
-			() => value,
-			(next) => {
-				value = next;
-				onValueChange?.(next);
-			}
-		}
-		bind:open={
-			() => open,
-			(next) => {
-				open = next;
-				onOpenChange?.(next);
-			}
-		}
-		{items}
-		{disabled}
-		{required}
-		{name}
+{#if editable}
+	<div
+		class={['root', 'winui-BodyTextBlockStyle', className]}
+		{style}
+		data-disabled={disabled || undefined}
+		data-popup-side={popupSide ?? undefined}
+		bind:this={rootEl}
+		onfocusout={focusOut}
+		{...rest}
 	>
-		<Select.Trigger>
-			<!-- Every element the primitive would render is rendered here instead, through its
+		{#if header !== undefined}
+			<span class="header" id="{uid}-header"
+				>{#if typeof header === 'string'}{header}{:else}{@render header()}{/if}</span
+			>
+		{/if}
+		<Combobox.Root
+			type="single"
+			allowDeselect={false}
+			bind:value={() => value, choose}
+			bind:open={() => open, changeOpen}
+			inputValue={text}
+			{items}
+			{disabled}
+			{required}
+			{name}
+		>
+			<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+			<div
+				class="box trigger"
+				tabindex="-1"
+				role="group"
+				aria-labelledby={header !== undefined ? `${uid}-header` : undefined}
+				bind:this={boxEl}
+				onkeydown={boxKey}
+				onpointerdown={textPointer}
+			>
+				<span class="pill" aria-hidden="true"></span>
+				<Combobox.Input {placeholder}>
+					{#snippet child({ props })}
+						<!-- ADR 0004's third category: bits-ui's input handlers compute another
+					     model (typing opens, Enter chooses its highlight, Alt+Up closes).
+					     Unlike AutoSuggestBox, these two handlers replace rather than chain. -->
+						<input
+							{...props}
+							bind:this={ref}
+							class="input"
+							value={text}
+							{disabled}
+							aria-labelledby={header !== undefined ? `${uid}-header` : undefined}
+							aria-autocomplete="inline"
+							aria-activedescendant={activeId}
+							autocomplete="off"
+							onkeydown={inputKey}
+							oninput={inputChanged}
+							onfocus={inputFocused}
+							oncompositionend={() => search('insert')}
+						/>
+					{/snippet}
+				</Combobox.Input>
+				<!-- svelte-ignore a11y_no_static_element_interactions, a11y_click_events_have_key_events -->
+				<div
+					class="overlay"
+					onpointerdown={(event) => {
+						if (!disabled && event.button === 0) event.preventDefault();
+					}}
+					onclick={overlayClick}
+				></div>
+				<span class="chevron" aria-hidden="true"></span>
+			</div>
+			<Combobox.Portal>
+				<Combobox.Content
+					side="bottom"
+					align="start"
+					sideOffset={0}
+					onInteractOutside={(event) => {
+						// A press outside the control cancels (`OnElementOutsidePopupPointerPressed`,
+						// ComboBox_Partial.cpp:3738-3742); presses on the control pass through to it
+						// (`Popup.OverlayInputPassThroughElement = this`, :405-408). bits-ui exempts
+						// only the input. The overlay needs this too: bits-ui reports a press there
+						// as outside even when default-prevented, 10 ms after it goes down, so any
+						// click held longer than that would cancel and the release would reopen.
+						if (event.target instanceof Node && rootEl?.contains(event.target))
+							event.preventDefault();
+						else cancelling = true;
+					}}
+					onEscapeKeydown={(event) => event.preventDefault()}
+				>
+					{#snippet child({ props, wrapperProps })}
+						<div {...wrapperProps}>
+							<div
+								{...props}
+								class={['popup', 'editable-popup', 'winui-BodyTextBlockStyle']}
+								bind:this={popupEl}
+								onfocusout={focusOut}
+							>
+								<Combobox.Viewport>
+									{#snippet child({ props })}
+										<div {...props} class="list">
+											{#each items as item, index (item.value)}
+												<Combobox.Item
+													value={item.value}
+													label={item.label}
+													disabled={item.disabled ?? false}
+												>
+													{#snippet child({ props })}
+														<div
+															{...props}
+															class="item"
+															data-selected={open && index === shown ? '' : undefined}
+															data-highlighted={index === hovered ? '' : undefined}
+															onpointerup={(event) => {
+																// bits-ui skips its value setter when the clicked item is already
+																// selected. Apply the same selection-change rule before it closes.
+																if (
+																	!event.defaultPrevented &&
+																	!item.disabled &&
+																	item.value === value
+																)
+																	choose(item.value);
+																if (typeof props.onpointerup === 'function')
+																	props.onpointerup(event);
+															}}
+															onpointerenter={() => (hovered = index)}
+															onpointerleave={() => (hovered = -1)}
+														>
+															<span class="pill" aria-hidden="true"></span>
+															<span class="item-content"
+																>{#if itemTemplate}{@render itemTemplate(
+																		item,
+																		index
+																	)}{:else}{item.label}{/if}</span
+															>
+														</div>
+													{/snippet}
+												</Combobox.Item>
+											{/each}
+										</div>
+									{/snippet}
+								</Combobox.Viewport>
+							</div>
+						</div>
+					{/snippet}
+				</Combobox.Content>
+			</Combobox.Portal>
+		</Combobox.Root>
+		{#if description !== undefined}
+			<span class="description"
+				>{#if typeof description === 'string'}{description}{:else}{@render description()}{/if}</span
+			>
+		{/if}
+	</div>
+{:else}
+	<div
+		class={['root', 'winui-BodyTextBlockStyle', className]}
+		{style}
+		data-disabled={disabled || undefined}
+		{...rest}
+	>
+		{#if header !== undefined}
+			<span class="header">
+				{#if typeof header === 'string'}{header}{:else}{@render header()}{/if}
+			</span>
+		{/if}
+		<Select.Root
+			type="single"
+			bind:value={
+				() => value,
+				(next) => {
+					value = next;
+					onValueChange?.(next);
+				}
+			}
+			bind:open={
+				() => open,
+				(next) => {
+					open = next;
+					onOpenChange?.(next);
+				}
+			}
+			{items}
+			{disabled}
+			{required}
+			{name}
+		>
+			<Select.Trigger>
+				<!-- Every element the primitive would render is rendered here instead, through its
 			     `child` snippet — the escape ADR 0004 names first. bits-ui hands back the props
 			     it needs on the trigger (including the `aria-expanded`, `aria-controls` and the
 			     `data-state` it writes) and this component supplies the element and the class.
@@ -170,47 +669,47 @@
 			     the DOM without this component's scope hash, every rule for it has to be hoisted
 			     out of the selector, and `.trigger` then matches every element in the application
 			     that shares that very ordinary name. -->
-			{#snippet child({ props })}
-				<button
-					{...props}
-					data-pressed={pressed || undefined}
-					onpointerdown={(event) => triggerPointerDown(props, event)}
-					onpointerup={(event) => triggerPointerUp(props, event)}
-					onpointerleave={() => (pressed = false)}
-					onpointercancel={() => (pressed = false)}
-					bind:this={ref}
-					class="trigger"
-				>
-					<span class="pill" aria-hidden="true"></span>
-					<Select.Value>
-						{#snippet child({ props, selection })}
-							<span {...props} class="value">
-								{#if selection.type === 'single' && selection.selected}
-									{@const selectedValue = selection.selected.value}
-									{@const index = items.findIndex((item) => item.value === selectedValue)}
-									{#if itemTemplate && index !== -1}
-										{@render itemTemplate(items[index], index)}
+				{#snippet child({ props })}
+					<button
+						{...props}
+						data-pressed={pressed || undefined}
+						onpointerdown={(event) => triggerPointerDown(props, event)}
+						onpointerup={(event) => triggerPointerUp(props, event)}
+						onpointerleave={() => (pressed = false)}
+						onpointercancel={() => (pressed = false)}
+						bind:this={ref}
+						class="trigger"
+					>
+						<span class="pill" aria-hidden="true"></span>
+						<Select.Value>
+							{#snippet child({ props, selection })}
+								<span {...props} class="value">
+									{#if selection.type === 'single' && selection.selected}
+										{@const selectedValue = selection.selected.value}
+										{@const index = items.findIndex((item) => item.value === selectedValue)}
+										{#if itemTemplate && index !== -1}
+											{@render itemTemplate(items[index], index)}
+										{:else}
+											{selection.selected.label}
+										{/if}
 									{:else}
-										{selection.selected.label}
+										<span class="placeholder">{placeholder ?? ''}</span>
 									{/if}
-								{:else}
-									<span class="placeholder">{placeholder ?? ''}</span>
-								{/if}
-							</span>
-						{/snippet}
-					</Select.Value>
-					<!-- WD-006: the chevron is an `AnimatedIcon` whose `FallbackIconSource` at
+								</span>
+							{/snippet}
+						</Select.Value>
+						<!-- WD-006: the chevron is an `AnimatedIcon` whose `FallbackIconSource` at
 					     ComboBox_themeresources.xaml:585 is a `FontIconSource` in
 					     `SymbolThemeFontFamily` at `FontSize="12"` with `Glyph="&#xE70D;"`. Render
 					     the fallback, no transition; see docs/divergences.md. -->
-					<span class="chevron" aria-hidden="true"></span>
-				</button>
-			{/snippet}
-		</Select.Trigger>
-		<Select.Portal>
-			<Select.Content>
-				{#snippet child({ props, wrapperProps })}
-					<!-- `wrapperProps` is the outer wrapper Floating UI positions; pass it through
+						<span class="chevron" aria-hidden="true"></span>
+					</button>
+				{/snippet}
+			</Select.Trigger>
+			<Select.Portal>
+				<Select.Content>
+					{#snippet child({ props, wrapperProps })}
+						<!-- `wrapperProps` is the outer wrapper Floating UI positions; pass it through
 					     first, untouched. The popup's own border, background and corner live on
 					     `props` and reach the `<div>` this control writes.
 
@@ -220,48 +719,49 @@
 					     ComboBox's template, so `FontFamily` and `FontSize` reach it by
 					     property inheritance from `DefaultComboBoxStyle`. Without the class
 					     here the rows render in the document's own font. -->
-					<div {...wrapperProps}>
-						<div {...props} class={['popup', 'winui-BodyTextBlockStyle']}>
-							<Select.Viewport>
-								{#snippet child({ props })}
-									<div {...props} class="list">
-										{#each items as item, index (item.value)}
-											<Select.Item
-												value={item.value}
-												label={item.label}
-												disabled={item.disabled ?? false}
-											>
-												{#snippet child({ props })}
-													<!-- The `data-selected` and `data-highlighted` bits-ui writes
+						<div {...wrapperProps}>
+							<div {...props} class={['popup', 'winui-BodyTextBlockStyle']}>
+								<Select.Viewport>
+									{#snippet child({ props })}
+										<div {...props} class="list">
+											{#each items as item, index (item.value)}
+												<Select.Item
+													value={item.value}
+													label={item.label}
+													disabled={item.disabled ?? false}
+												>
+													{#snippet child({ props })}
+														<!-- The `data-selected` and `data-highlighted` bits-ui writes
 													     are the conditions the CSS keys off; the snippet only
 													     adds the element and the class. -->
-													<div {...props} class="item">
-														<span class="pill" aria-hidden="true"></span>
-														<span class="item-content">
-															{#if itemTemplate}{@render itemTemplate(
-																	item,
-																	index
-																)}{:else}{item.label}{/if}
-														</span>
-													</div>
-												{/snippet}
-											</Select.Item>
-										{/each}
-									</div>
-								{/snippet}
-							</Select.Viewport>
+														<div {...props} class="item">
+															<span class="pill" aria-hidden="true"></span>
+															<span class="item-content">
+																{#if itemTemplate}{@render itemTemplate(
+																		item,
+																		index
+																	)}{:else}{item.label}{/if}
+															</span>
+														</div>
+													{/snippet}
+												</Select.Item>
+											{/each}
+										</div>
+									{/snippet}
+								</Select.Viewport>
+							</div>
 						</div>
-					</div>
-				{/snippet}
-			</Select.Content>
-		</Select.Portal>
-	</Select.Root>
-	{#if description !== undefined}
-		<span class="description">
-			{#if typeof description === 'string'}{description}{:else}{@render description()}{/if}
-		</span>
-	{/if}
-</div>
+					{/snippet}
+				</Select.Content>
+			</Select.Portal>
+		</Select.Root>
+		{#if description !== undefined}
+			<span class="description">
+				{#if typeof description === 'string'}{description}{:else}{@render description()}{/if}
+			</span>
+		{/if}
+	</div>
+{/if}
 
 <style>
 	/* `isolation` is for the focus highlight below, and it is what makes upstream's
@@ -972,5 +1472,116 @@
 	.description {
 		color: var(--winui-SystemControlDescriptionTextForegroundBrush);
 		white-space: normal;
+	}
+	/* EditableText spans both columns; the input is also the floating anchor and spans
+	   the border box. ComboBox_themeresources.xaml:580, 770-813. The existing trigger
+	   class supplies the unfocused ring, hover, disabled and box-focus visuals. */
+	/* A `<div>`, not the `<button>` `.trigger` was written for, so the border-box sizing the
+	   user agent gives a button has to be stated: without it the box is the minimum height
+	   plus its border, and grows again when the focused bottom border thickens. */
+	.box {
+		box-sizing: border-box;
+		padding: 0;
+		cursor: text;
+	}
+	.input {
+		position: absolute;
+		inset: calc(-1 * var(--winui-ComboBoxBorderThemeThickness));
+		width: calc(100% + 2 * var(--winui-ComboBoxBorderThemeThickness));
+		height: calc(100% + 2 * var(--winui-ComboBoxBorderThemeThickness));
+		box-sizing: border-box;
+		padding: var(--winui-ComboBoxPadding);
+		/* c1-allow: ComboBox_themeresources.xaml:567, the reserved 38px glyph column. */
+		padding-right: 38px;
+		background: none;
+		border: none;
+		outline: none;
+		font: inherit;
+		color: var(--winui-ComboBoxForeground);
+	}
+	.input::placeholder {
+		color: var(--winui-ComboBoxPlaceHolderForeground);
+	}
+	.box:hover .input {
+		color: var(--winui-ComboBoxForegroundPointerOver);
+	}
+	/* Match TextBox's focused ring: a gradient brush cannot be border-color.
+	   Focus is scoped to the text box, rather than focus anywhere in the control. */
+	.box:has(.input:focus) {
+		border-width: var(--winui-TextControlBorderThemeThicknessFocused);
+		background: var(--winui-TextControlBackgroundFocused) padding-box;
+	}
+	.box:has(.input:focus)::after {
+		/* c1-allow: TextControlBorderThemeThicknessFocused is 1,1,1,2 in light and dark;
+		   a multi-value token cannot be negated with calc(). High contrast sets 2 on every side,
+		   which these insets do not follow — the same gap `TextBox.svelte`'s rule has. */
+		inset: -1px -1px -2px -1px;
+		padding: var(--winui-TextControlBorderThemeThicknessFocused);
+		background: var(--winui-TextControlBorderBrushFocused);
+	}
+	.box .input:focus {
+		padding: var(--winui-ComboBoxEditableTextPadding);
+		/* c1-allow: the focused border's bottom is 2px; the input still spans the box. */
+		height: calc(100% + 3px);
+		color: var(--winui-TextControlForegroundFocused);
+	}
+	.input:focus::placeholder {
+		color: var(--winui-TextControlPlaceholderForegroundFocused);
+	}
+	.box:has(.input:focus) .chevron {
+		color: var(--winui-ComboBoxEditableDropDownGlyphForeground);
+	}
+	.box .chevron {
+		z-index: 2;
+		pointer-events: none;
+	}
+	.overlay {
+		position: absolute;
+		/* c1-allow: ComboBox_themeresources.xaml:581, Margin=4 and Width=30. The margin is
+		   measured from the grid cell, which is the outer edge; this element is placed against
+		   the padding box, one border in, so the border is handed back as `.chevron` does. */
+		right: calc(4px - var(--winui-ComboBoxBorderThemeThickness));
+		top: calc(4px - var(--winui-ComboBoxBorderThemeThickness));
+		bottom: calc(4px - var(--winui-ComboBoxBorderThemeThickness));
+		width: 30px;
+		z-index: 1;
+		border-radius: var(--winui-ComboBoxDropDownButtonBackgroundCornerRadius);
+		background: transparent;
+		cursor: pointer;
+	}
+	.overlay:hover {
+		background: var(--winui-ComboBoxDropDownBackgroundPointerOver);
+	}
+	.overlay:active {
+		background: var(--winui-ComboBoxDropDownBackgroundPointerPressed);
+	}
+	.box:has(.input:focus) .overlay:active {
+		background: var(--winui-ComboBoxFocusedDropDownBackgroundPointerPressed);
+	}
+	.root[data-popup-side='bottom'] .box {
+		border-bottom-left-radius: 0;
+		border-bottom-right-radius: 0;
+	}
+	.root[data-popup-side='top'] .box {
+		border-top-left-radius: 0;
+		border-top-right-radius: 0;
+	}
+	.editable-popup[data-side='bottom'] {
+		border-top-left-radius: 0;
+		border-top-right-radius: 0;
+	}
+	.editable-popup[data-side='top'] {
+		border-bottom-left-radius: 0;
+		border-bottom-right-radius: 0;
+	}
+	.root[data-disabled] .input {
+		color: var(--winui-ComboBoxForegroundDisabled);
+	}
+	.root[data-disabled] .input::placeholder {
+		color: var(--winui-ComboBoxPlaceHolderForegroundDisabled);
+	}
+	.root[data-disabled] .overlay {
+		background: transparent;
+		cursor: default;
 	}
 </style>

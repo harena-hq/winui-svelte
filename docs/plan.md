@@ -718,13 +718,13 @@ group sizes, which no longer line up one-to-one with a version.
     none is a divergence: nothing here is being declined, it is simply not built yet, and
     every one of them is on the Gallery page the acceptance gate will compare against.
 
-    | control        | not yet built                                                               |
-    | -------------- | --------------------------------------------------------------------------- |
-    | Slider         | `Orientation="Vertical"`, the three `TickBar`s, and `IsThumbToolTipEnabled` |
-    | ComboBox       | `IsEditable="True"` and the `EditableModeStates` group                      |
-    | NumberBox      | `SpinButtonPlacementMode="Compact"`, `AcceptsExpression`, `ValidationMode`  |
-    | AutoSuggestBox | non-text suggestions, `LightDismissOverlayMode`                             |
-    | all four       | the touch and game-controller padding variants                              |
+    | control        | not yet built                                                                                                                            |
+    | -------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+    | Slider         | `Orientation="Vertical"`, the three `TickBar`s, and `IsThumbToolTipEnabled`                                                              |
+    | ComboBox       | ~~`IsEditable="True"` and the `EditableModeStates` group~~ — **built 2026-10-03**; its baselines against the reference are the next unit |
+    | NumberBox      | `SpinButtonPlacementMode="Compact"`, `AcceptsExpression`, `ValidationMode`                                                               |
+    | AutoSuggestBox | non-text suggestions, `LightDismissOverlayMode`                                                                                          |
+    | all four       | the touch and game-controller padding variants                                                                                           |
 
     Three of the deferrals carry a note. AutoSuggestBox renders its own suggestion rows from
     the `ComboBoxItem*` families because this library has no ListView; the Collections

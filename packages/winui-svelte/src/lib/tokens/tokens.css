@@ -168,6 +168,12 @@
 	--winui-ComboBoxDropDownForeground: var(--winui-TextFillColorPrimaryBrush);
 	--winui-ComboBoxDropDownBackground: var(--winui-AcrylicInAppFillColorDefaultBrush);
 	--winui-ComboBoxDropDownBorderBrush: var(--winui-SurfaceStrokeColorFlyoutBrush);
+	--winui-ComboBoxDropDownBackgroundPointerOver: var(--winui-SubtleFillColorSecondaryBrush);
+	--winui-ComboBoxDropDownBackgroundPointerPressed: var(--winui-SubtleFillColorTertiaryBrush);
+	--winui-ComboBoxFocusedDropDownBackgroundPointerPressed: var(
+		--winui-ControlAltFillColorQuarternaryBrush
+	);
+	--winui-ComboBoxEditableDropDownGlyphForeground: var(--winui-TextFillColorSecondaryBrush);
 	--winui-ComboBoxItemPillFillBrush: var(--winui-AccentFillColorDefaultBrush);
 	--winui-ComboBoxDropdownBorderPadding: 0px;
 	--winui-ComboBoxThemeMinWidth: 64px;
@@ -184,7 +190,9 @@
 	--winui-ComboBoxDropdownContentMargin: 4px 0px;
 	--winui-ComboBoxTopHeaderMargin: 0px 0px 8px 0px;
 	--winui-ComboBoxPadding: 5px 0px 7px 12px;
+	--winui-ComboBoxEditableTextPadding: 5px 38px 6px 11px;
 	--winui-ComboBoxHiglightBorderCornerRadius: 7px;
+	--winui-ComboBoxDropDownButtonBackgroundCornerRadius: 4px;
 	--winui-ComboBoxItemCornerRadius: 3px;
 	--winui-ComboBoxItemPillCornerRadius: 1.5px;
 	--winui-ComboBoxHeaderThemeFontWeight: 400;
@@ -2422,6 +2430,12 @@
 	--winui-ComboBoxDropDownForeground: var(--winui-TextFillColorPrimaryBrush);
 	--winui-ComboBoxDropDownBackground: var(--winui-AcrylicInAppFillColorDefaultBrush);
 	--winui-ComboBoxDropDownBorderBrush: var(--winui-SurfaceStrokeColorFlyoutBrush);
+	--winui-ComboBoxDropDownBackgroundPointerOver: var(--winui-SubtleFillColorSecondaryBrush);
+	--winui-ComboBoxDropDownBackgroundPointerPressed: var(--winui-SubtleFillColorTertiaryBrush);
+	--winui-ComboBoxFocusedDropDownBackgroundPointerPressed: var(
+		--winui-ControlAltFillColorQuarternaryBrush
+	);
+	--winui-ComboBoxEditableDropDownGlyphForeground: var(--winui-TextFillColorSecondaryBrush);
 	--winui-ComboBoxItemPillFillBrush: var(--winui-AccentFillColorDefaultBrush);
 	--winui-ComboBoxDropdownBorderPadding: 0px;
 	--winui-CommandBarFlyoutBackground: var(--winui-DesktopAcrylicTransparentBrush);
@@ -4348,6 +4362,12 @@
 		--winui-ComboBoxDropDownForeground: var(--winui-TextFillColorPrimaryBrush);
 		--winui-ComboBoxDropDownBackground: var(--winui-AcrylicInAppFillColorDefaultBrush);
 		--winui-ComboBoxDropDownBorderBrush: var(--winui-SurfaceStrokeColorFlyoutBrush);
+		--winui-ComboBoxDropDownBackgroundPointerOver: var(--winui-SubtleFillColorSecondaryBrush);
+		--winui-ComboBoxDropDownBackgroundPointerPressed: var(--winui-SubtleFillColorTertiaryBrush);
+		--winui-ComboBoxFocusedDropDownBackgroundPointerPressed: var(
+			--winui-ControlAltFillColorQuarternaryBrush
+		);
+		--winui-ComboBoxEditableDropDownGlyphForeground: var(--winui-TextFillColorSecondaryBrush);
 		--winui-ComboBoxItemPillFillBrush: var(--winui-AccentFillColorDefaultBrush);
 		--winui-ComboBoxDropdownBorderPadding: 0px;
 		--winui-CommandBarFlyoutBackground: var(--winui-DesktopAcrylicTransparentBrush);
@@ -6402,6 +6422,16 @@
 	--winui-ComboBoxDropDownForeground: var(--winui-SystemControlForegroundBaseHighBrush);
 	--winui-ComboBoxDropDownBackground: var(--winui-SystemControlBackgroundChromeMediumLowBrush);
 	--winui-ComboBoxDropDownBorderBrush: var(--winui-SystemControlForegroundChromeHighBrush);
+	--winui-ComboBoxDropDownBackgroundPointerOver: var(
+		--winui-SystemControlPageBackgroundAltMediumBrush
+	);
+	--winui-ComboBoxDropDownBackgroundPointerPressed: var(
+		--winui-SystemControlBackgroundListMediumBrush
+	);
+	--winui-ComboBoxFocusedDropDownBackgroundPointerPressed: var(
+		--winui-SystemControlBackgroundListMediumBrush
+	);
+	--winui-ComboBoxEditableDropDownGlyphForeground: var(--winui-SystemColorButtonTextColor);
 	--winui-ComboBoxItemPillFillBrush: var(--winui-SystemControlHighlightListAccentLowBrush);
 	--winui-ComboBoxDropdownBorderPadding: 0px;
 	--winui-CommandBarFlyoutBackground: var(--winui-SystemColorButtonFaceColor);
@@ -8283,6 +8313,7 @@
 	--winui-TimePickerHostPadding: 1px 0px 2px 0px;
 	--winui-DatePickerHostPadding: 1px 0px 2px 0px;
 	--winui-DatePickerHostMonthPadding: 0px 0px 1px 9px;
+	--winui-ComboBoxEditableTextPadding: 0px 30px 0px 10px;
 	--winui-ComboBoxMinHeight: 24px;
 	--winui-ComboBoxPadding: 1px 0px 3px 12px;
 	--winui-NavigationViewItemOnLeftMinHeight: 32px;

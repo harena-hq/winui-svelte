@@ -1846,11 +1846,9 @@ export const SLIDER_KEYS = {
  * What this list leaves out, so a gap reads as a decision rather than an oversight.
  * The ComboBox dictionary carries many more resources; these are the ones not here:
  *
- * - **`IsEditable="True"` and the `EditableModeStates` group.** The four `ComboBox*Editable*`
- *   brushes (`ComboBoxEditableDropDownGlyphForeground`, `ComboBoxDropDownBackgroundPointerOver`,
- *   `ComboBoxDropDownBackgroundPointerPressed`, `ComboBoxFocusedDropDownBackgroundPointerOver`,
- *   `ComboBoxFocusedDropDownBackgroundPointerPressed`), `ComboBoxEditableTextPadding`, and the
- *   `EditableText` `TextBox` at :580. Editable mode is a separate unit.
+ * - **Editable keys are seeded.** `ComboBoxFocusedDropDownBackgroundPointerOver` alone
+ *   is omitted: the focused-hover setter reads `ComboBoxDropDownBackgroundPointerOver`
+ *   instead (ComboBox_themeresources.xaml:537-538).
  * - **The touch and game-controller padding variants** — `ComboBoxItemThemeTouchPadding` and
  *   `ComboBoxItemThemeGameControllerPadding`. The two non-mouse input modes are not built.
  * - **`ComboBoxArrowThemeFontSize`** — the chevron's animated source font size; irrelevant
@@ -1875,6 +1873,16 @@ export const SLIDER_KEYS = {
  *   RadioButton's fifteen, ToggleSwitch's twenty-three and Slider's twenty-two.
  */
 export const COMBOBOX_KEYS = {
+	// The editable variant — the `EditableText` padding, the `EditableModeStates` brushes
+	// the overlay and the chevron take, and the overlay's corner.
+	ComboBoxEditableTextPadding: 'ComboBox editable text, its padding',
+	ComboBoxEditableDropDownGlyphForeground: 'ComboBox editable chevron, input focused',
+	ComboBoxDropDownBackgroundPointerOver: 'ComboBox overlay background, pointer over',
+	ComboBoxDropDownBackgroundPointerPressed: 'ComboBox overlay background, pressed',
+	ComboBoxFocusedDropDownBackgroundPointerPressed:
+		'ComboBox overlay background, input focused and pressed',
+	ComboBoxDropDownButtonBackgroundCornerRadius: 'ComboBox overlay, its corner radius',
+
 	// The box and its header — the three layout keys the trigger and header reach, the two
 	// font-weight resources, and the four metrics that size the box, the popup and the
 	// selection pill.

@@ -11,7 +11,11 @@ export type { ButtonProps } from './components/Button.svelte';
 export { default as ContentDialog } from './components/ContentDialog.svelte';
 export type { ContentDialogButton, ContentDialogProps } from './components/ContentDialog.svelte';
 export { default as ComboBox } from './components/ComboBox.svelte';
-export type { ComboBoxItemData, ComboBoxProps } from './components/ComboBox.svelte';
+export type {
+	ComboBoxItemData,
+	ComboBoxProps,
+	ComboBoxTextSubmittedEventArgs
+} from './components/ComboBox.svelte';
 export { default as Expander } from './components/Expander.svelte';
 export type { ExpanderProps } from './components/Expander.svelte';
 export { default as HyperlinkButton } from './components/HyperlinkButton.svelte';

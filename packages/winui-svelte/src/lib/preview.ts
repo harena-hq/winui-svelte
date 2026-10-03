@@ -41,7 +41,11 @@ export type { CommandBarFlyoutProps } from './components/CommandBarFlyout.svelte
 export { default as ContentDialog } from './components/ContentDialog.svelte';
 export type { ContentDialogButton, ContentDialogProps } from './components/ContentDialog.svelte';
 export { default as ComboBox } from './components/ComboBox.svelte';
-export type { ComboBoxItemData, ComboBoxProps } from './components/ComboBox.svelte';
+export type {
+	ComboBoxItemData,
+	ComboBoxProps,
+	ComboBoxTextSubmittedEventArgs
+} from './components/ComboBox.svelte';
 export { default as DatePicker } from './components/DatePicker.svelte';
 export type { DatePickerProps } from './components/DatePicker.svelte';
 export { default as Ellipse } from './components/Ellipse.svelte';
