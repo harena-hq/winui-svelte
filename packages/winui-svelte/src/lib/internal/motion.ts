@@ -1,4 +1,14 @@
 /**
+ * Whether the platform's animations are on, read as ADR 0016 reads them: off under
+ * `prefers-reduced-motion: reduce`, and off where there is no `matchMedia` to ask.
+ */
+export function animationsEnabled(): boolean {
+	return (
+		typeof matchMedia === 'function' && !matchMedia('(prefers-reduced-motion: reduce)').matches
+	);
+}
+
+/**
  * The scroll behaviour for a view change upstream animates only while the platform's
  * animations are on. `ScrollViewer::ChangeViewInternal` sets `disableAnimation` from
  * `IsAnimationEnabled()` (ScrollViewer_Partial.cpp:3616), and `BringIntoViewport` passes
@@ -8,6 +18,5 @@
  * caller asks here.
  */
 export function scrollBehavior(): ScrollBehavior {
-	if (typeof matchMedia !== 'function') return 'auto';
-	return matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
+	return animationsEnabled() ? 'smooth' : 'auto';
 }

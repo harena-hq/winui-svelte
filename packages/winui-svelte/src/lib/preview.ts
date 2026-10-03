@@ -146,7 +146,11 @@ export type { RefreshVisualizerProps } from './components/RefreshVisualizer.svel
 export { default as RepeatButton } from './components/RepeatButton.svelte';
 export type { RepeatButtonProps } from './components/RepeatButton.svelte';
 export { default as ScrollView } from './components/ScrollView.svelte';
-export type { ScrollViewProps } from './components/ScrollView.svelte';
+export type {
+	ScrollViewProps,
+	ScrollingScrollAnimationStartingEventArgs,
+	ScrollingScrollOptions
+} from './components/ScrollView.svelte';
 export { default as ScrollViewer } from './components/ScrollViewer.svelte';
 export type { ScrollViewerProps } from './components/ScrollViewer.svelte';
 export { default as SelectorBar } from './components/SelectorBar.svelte';
@@ -246,3 +250,8 @@ export type { UnderlineProps } from './components/Underline.svelte';
 // amendment. Generated — see `scripts/symbol/`.
 export { Symbol } from './symbol';
 export type { SymbolName } from './symbol';
+
+// Not a component: the animation `ScrollView`'s `onScrollAnimationStarting` hands out and takes
+// back, which a handler builds its own from.
+export { ScrollAnimation } from './scroll-animation';
+export type { ScrollAnimationEasing, ScrollVector } from './scroll-animation';
