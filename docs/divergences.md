@@ -2310,32 +2310,41 @@ changes`.
 - **Would reconsider if**: that page shows the title staying hidden, or upstream adds the check to
   `UpdateTitle` — either way this entry is deleted — or upstream is seen to show it on purpose.
 
-### WD-100 — a text control sized by its content takes its input's default width
+### WD-100 — a multi-line TextBox sized by its content takes its textarea's default size
 
-- **Control**: `TextBox`, `AutoSuggestBox`, `PasswordBox`, wherever the container lets the control
-  size to its content rather than stretching it. `NumberBox` is not one: its input is `width: 0`,
-  so content-sized it comes out at its floor, 64, or 120 with inline spin buttons.
-- **WinUI does**: measure the box from its template. In `TextBox`'s, the content `ScrollViewer`
-  and the placeholder `TextBlock` share a row, the placeholder spanning both columns
-  (`TextBox_themeresources.xaml:337`, `:338`), and `AutoSuggestBox`'s inner text box has a
-  template and a `MinWidth` setter of its own (`AutoSuggestBox_themeresources.xaml:29`, `:30`,
-  `:45`). What that measure comes to has not been traced, only observed on the Gallery's
-  title-bar search box: 320 wide at the reference's 1600-pixel window, with its placeholder
-  showing and with "Storage pickers" and "Easing Functions" typed in, and 318 in the earlier
-  captures at a narrower window — so it is not simply the placeholder's width.
-- **We do**: content-sized, take the text element's intrinsic width — an `<input>`'s or a
-  `<textarea>`'s default of about twenty characters, whatever the text — with
-  `TextControlThemeMinWidth`'s 64 under it. The same search
-  box comes out 199, so the Gallery's shell holds 318 explicitly.
-- **Why accepted**: until a unit traces the measure. `field-sizing: content` is the obvious CSS
-  and is not the answer on its own: injected on the same page it brings the search box to 237,
-  and nothing in the template accounts for the rest.
-- **What it is worth**: a text control in a content-sized container — a horizontal row, a grid
-  column sized to its content — comes out at twenty characters' width where the original's own
-  measure applies. A control that stretches renders at the stretched width; anything that reads
-  its desired width, such as a title bar deciding when to go compact, still reads ours.
-- **Would reconsider if**: the desired width of a WinUI text box is traced to the pixel, at which
-  point the controls size themselves and the shell's explicit width goes.
+- **Control**: `TextBox` with `acceptsReturn`, wherever the container lets the control size to
+  its content rather than stretching it. The single-line text controls — `TextBox`,
+  `PasswordBox`, `AutoSuggestBox` — are no longer in this entry: they size to their text, or to
+  their placeholder while they have none, as below. `NumberBox` never was: its input is
+  `width: 0`, so content-sized it comes out at its floor, 64, or 120 with inline spin buttons.
+- **WinUI does**: measure the text view at the text's natural size, against the width offered
+  when the text wraps and against an infinite one when it does not, plus a pixel for the caret,
+  when the box is empty, first laid out or growing to wrap (`TextBoxView.cpp:1674-1677`,
+  `:1723`, `:1740`); otherwise at the extent RichEdit requests (`:1683-1686`); either way capped
+  at the width offered (`:1692`). The placeholder `TextBlock` shares the text's grid cell,
+  spanning the delete button's column too, and is collapsed once there is text
+  (`TextBox_themeresources.xaml:337`, `:338`; `TextBox_Partial.cpp:965-982`). A multi-line box therefore comes out as wide as its longest
+  paragraph up to the width offered, and as tall as its lines. The width of the text itself is
+  RichEdit's, which the pin does not carry.
+- **We do**: give the single-line inputs `field-sizing: content`, which gives the same result
+  where it was measured — the same seven pixels between the last glyph and the border, and a
+  header that widens the box to the reference's 105 — and leave the `<textarea>` at its intrinsic width of about twenty characters and
+  `rows="3"`. The same declaration on a `<textarea>` grows its height with its lines as well,
+  which is upstream's behaviour and a change to every multi-line box this library draws, not
+  only to content-sized ones. `field-sizing` was read as supported in Chromium 151, Firefox
+  153 and WebKit 26.5 on the development host; an engine without it keeps the old twenty
+  characters for the single-line controls too. Two differences remain in the single-line
+  case and are not this entry's: the same text is 170 wide here against 176 on the reference,
+  all of it inside the run of glyphs (150 pixels of ink against 156), which is how the font is
+  rendered rather than how the box is measured; and focusing a box with text adds the delete
+  button's 30 here and 32 there, the other two being RichEdit's requested extent.
+- **Why accepted**: the height is the larger change and has not been measured against the
+  reference: whether an `AcceptsReturn` box grows by a whole line at a time, from what minimum,
+  and how the vertical scroll bar the template allows enters into it.
+- **What it is worth**: a multi-line `TextBox` in a content-sized container comes out at twenty
+  characters' width and three lines' height whatever it holds.
+- **Would reconsider if**: a unit measures a growing `AcceptsReturn` box on the reference, at
+  which point the `<textarea>` takes the declaration and its `rows` go.
 
 ### WD-101 — NavigationView's back, close and pane-toggle buttons show no tooltip
 

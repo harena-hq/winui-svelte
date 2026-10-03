@@ -326,6 +326,8 @@
 		display: inline-flex;
 		flex-direction: column;
 		position: relative;
+		/* As TextBox's root: see the same declaration there. */
+		min-width: var(--winui-TextControlThemeMinWidth);
 	}
 
 	/* The header presenter: `AutoSuggestBox_themeresources.xaml:238` carries
@@ -436,6 +438,9 @@
 		font: inherit;
 		color: inherit;
 		outline: none;
+		/* The control's own text box measures as TextBox does: see the same declaration in
+		   TextBox.svelte. */
+		field-sizing: content;
 	}
 
 	.input::placeholder {

@@ -164,15 +164,18 @@
 		max-width: 580px;
 	}
 
-	/* WD-100. The original's search box measured 320 wide at the reference's 1600-pixel window,
-	   with its placeholder showing and with a shorter query typed in, and 318 in the earlier
-	   captures at a narrower one; it has been seen to clip on the right as the window narrows rather
-	   than shrink. This library's text controls do not yet compute the desired width XAML does, and
-	   the width that would follow from the `<input>`'s intrinsic one is 199, so the shell holds 318,
-	   the captures' figure, two pixels under the 1600-pixel one. The 580 ceiling above never binds
-	   while it does. */
+	/* The search box's width is the Gallery's, not the control's. The reference guest runs a
+	   release whose `MainWindow.xaml` gives it `Width="320"`: measured 320 at the reference's
+	   1600-pixel window with its placeholder showing and with a query typed in, and 318 in
+	   earlier captures at a narrower one, clipping on the right rather than shrinking. The pin
+	   drops that width for `TitleBarContentHorizontalAlignment` set to `Stretch` under the 580
+	   ceiling above (WinUI-Gallery 9a14fa5), which this shell does not reproduce yet. Held as a
+	   `width` rather than a floor, because the control now sizes itself to its text: a floor
+	   let a long query widen the box, which neither Gallery does. Held at 318, the earlier
+	   captures' figure, rather than the 320 that `Width` says, because every shell baseline
+	   was taken at 318; the shell unit that reproduces the pin's stretch retakes them. */
 	.search > :global(*) {
-		min-width: 318px;
+		width: 318px;
 	}
 
 	.frame {
