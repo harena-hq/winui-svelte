@@ -513,6 +513,7 @@
 				onpointerdown={textPointer}
 			>
 				<span class="pill" aria-hidden="true"></span>
+				<span class="sizer" aria-hidden="true">{text === '' ? (placeholder ?? '') : text}</span>
 				<Combobox.Input {placeholder}>
 					{#snippet child({ props })}
 						<!-- ADR 0004's third category: bits-ui's input handlers compute another
@@ -1484,6 +1485,25 @@
 		padding: 0;
 		cursor: text;
 	}
+	/* The width. The input is placed over the box and gives it none, so a box with no width of
+	   its own would sit at `ComboBoxThemeMinWidth` and cut its text off. Upstream's unfocused
+	   faceplate is the `ContentPresenter` holding the text (`UpdateEditableContentPresenterTextBlock`
+	   in ComboBox_Partial.cpp), or the placeholder when there is none, measured like the
+	   non-editable trigger's label: the padding, the text, and the 38px glyph column, all from
+	   the grid cell's edge, which is the border's outer edge. This invisible copy takes that
+	   measure and hands the border back, so the padding is counted from the same edge and the
+	   box is `ComboBoxMinHeight` until padding and text outgrow it, as upstream's row is. Under
+	   a consumer's width it gives way. */
+	.sizer {
+		visibility: hidden;
+		min-width: 0;
+		overflow: hidden;
+		white-space: pre;
+		margin: calc(-1 * var(--winui-ComboBoxBorderThemeThickness));
+		padding: var(--winui-ComboBoxPadding);
+		/* c1-allow: ComboBox_themeresources.xaml:567, the reserved 38px glyph column. */
+		padding-right: 38px;
+	}
 	.input {
 		position: absolute;
 		inset: calc(-1 * var(--winui-ComboBoxBorderThemeThickness));
@@ -1506,24 +1526,67 @@
 		color: var(--winui-ComboBoxForegroundPointerOver);
 	}
 	/* Match TextBox's focused ring: a gradient brush cannot be border-color.
-	   Focus is scoped to the text box, rather than focus anywhere in the control. */
+	   Focus is scoped to the text box, rather than focus anywhere in the control.
+	   The focused border is the TextBox's own `BorderElement` (:798, :806), drawn inside the
+	   grid cell over the ComboBox's, so the ComboBox's border and everything placed against
+	   it — the overlay, the chevron — stay where they were, and the ComboBox's border still
+	   shows through the TextBox's translucent one — measured on the reference Gallery's
+	   "Font Size" example at 100% in light theme, its focused side edge reads 216 on a 243 card
+	   where one layer reads 228. So the ring is a second layer over
+	   `::after`, drawn from the outer edge inward at the token's widths — 1,1,1,2 in light and
+	   dark, 2 on every side in high contrast. `::before` is free here: the highlight that
+	   otherwise uses it needs the box itself focused, and here the input is. */
 	.box:has(.input:focus) {
-		border-width: var(--winui-TextControlBorderThemeThicknessFocused);
 		background: var(--winui-TextControlBackgroundFocused) padding-box;
 	}
-	.box:has(.input:focus)::after {
-		/* c1-allow: TextControlBorderThemeThicknessFocused is 1,1,1,2 in light and dark;
-		   a multi-value token cannot be negated with calc(). High contrast sets 2 on every side,
-		   which these insets do not follow — the same gap `TextBox.svelte`'s rule has. */
-		inset: -1px -1px -2px -1px;
+	.box:has(.input:focus)::before {
+		content: '';
+		position: absolute;
+		inset: calc(-1 * var(--winui-ComboBoxBorderThemeThickness));
+		z-index: 3;
+		border-radius: inherit;
 		padding: var(--winui-TextControlBorderThemeThicknessFocused);
+		-webkit-mask:
+			linear-gradient(#000 0 0) content-box,
+			linear-gradient(#000 0 0);
+		-webkit-mask-composite: xor;
+		mask:
+			linear-gradient(#000 0 0) content-box,
+			linear-gradient(#000 0 0);
+		mask-composite: exclude;
+		pointer-events: none;
 		background: var(--winui-TextControlBorderBrushFocused);
 	}
-	.box .input:focus {
+	/* `ContentElement`'s margin is the TextBox's own `BorderThickness` and its padding
+	   `ComboBoxEditableTextPadding` (:342, :580, :807). That property is
+	   `TextControlBorderThemeThickness`, 1 in every theme: the Focused state thickens
+	   `BorderElement` alone (:798), so the text does not move when the ring does. A
+	   transparent border carries it, because a multi-value padding token cannot be added to
+	   in calc(); the same border is what stops the background one border in, as
+	   `BackgroundSizing="InnerBorderEdge"` does on the TextBox. */
+	.box .input:focus,
+	.box:focus .input {
+		border: solid transparent;
+		border-width: var(--winui-TextControlBorderThemeThickness);
+		background-clip: padding-box;
 		padding: var(--winui-ComboBoxEditableTextPadding);
-		/* c1-allow: the focused border's bottom is 2px; the input still spans the box. */
-		height: calc(100% + 3px);
+	}
+	.box .input:focus {
 		color: var(--winui-TextControlForegroundFocused);
+	}
+	/* The TextBox keeps its size while focus is anywhere in the control and collapses only
+	   when focus leaves it (`EnsureTextBoxIsEnabled`, `OnLostFocus` in ComboBox_Partial.cpp).
+	   So with focus on the control itself — Escape while open — it is there in its `Normal`
+	   state, painting `TextControlBackground` over the Pill declared before it (:572, :580):
+	   the reference draws that pill at 30% in light theme, and high contrast's background is
+	   opaque, so there it hides the pill. The text keeps its colour: the reference draws it in
+	   the primary brush here, though the template binds the placeholder's (:580). */
+	.box:focus .input {
+		border-radius: inherit;
+		background: var(--winui-TextControlBackground);
+	}
+	.input::selection {
+		background: var(--winui-TextControlSelectionHighlightColor);
 	}
 	.input:focus::placeholder {
 		color: var(--winui-TextControlPlaceholderForegroundFocused);
