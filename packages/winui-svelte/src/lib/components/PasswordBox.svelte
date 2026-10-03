@@ -173,6 +173,8 @@
 	.root {
 		display: flex;
 		flex-direction: column;
+		/* As TextBox's root: see the same declaration there. */
+		min-width: var(--winui-TextControlThemeMinWidth);
 	}
 
 	.box {
@@ -293,6 +295,8 @@
 		   library. A WinUI TextBox draws its text at the font's own spacing whatever surrounds
 		   it, and this is what says so. ADR 0011. */
 		line-height: normal;
+		/* PasswordBox measures as TextBox does: see the same declaration in TextBox.svelte. */
+		field-sizing: content;
 	}
 
 	.root input::placeholder {

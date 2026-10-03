@@ -142,6 +142,14 @@
 	.root {
 		display: flex;
 		flex-direction: column;
+		/* Upstream caps a text box's desired width at the width it is offered
+		   (TextBoxView.cpp:1692), and the text scrolls inside it. A flex item's `min-width:
+		   auto` would instead floor this element at the input's content width, which
+		   `field-sizing` makes the text's, and the box would run out of its row. The floor is
+		   the control's `MinWidth` (TextBox_themeresources.xaml:193), which upstream sets on the
+		   whole control rather than on its border, so a header or the box never paints past
+		   the root. */
+		min-width: var(--winui-TextControlThemeMinWidth);
 	}
 
 	.box {
@@ -155,8 +163,8 @@
 		display: flex;
 		align-items: stretch;
 		/* TextBox_themeresources.xaml:193 binds MinWidth to this token, 64 in all three themes.
-		   Above it, a content-sized box is as wide as its text element's default rather than its
-		   content (WD-100). */
+		   Above it, a content-sized box is as wide as its text (the `<input>` rule below); a
+		   multi-line one is still as wide as its `<textarea>`'s default (WD-100). */
 		min-width: var(--winui-TextControlThemeMinWidth);
 		/* TextBox_themeresources.xaml:192 binds MinHeight to this token. */
 		min-height: var(--winui-TextControlThemeMinHeight);
@@ -273,6 +281,22 @@
 
 	.root textarea {
 		resize: vertical;
+	}
+
+	/* The `<input>` only: on a `<textarea>` the same declaration grows the height as well,
+	   which multi-line is not given here (WD-100). */
+	.root input {
+		/* A content-sized box is as wide as its text, or as its placeholder while it has none.
+		   Upstream's text view takes the text's width from RichEdit: its natural width,
+		   unwrapped and plus a pixel for the caret, when the box is empty or first laid out
+		   (TextBoxView.cpp:1674-1677, :1723, :1740), and the extent RichEdit requests once there
+		   is text (:1683-1686). The template's placeholder `TextBlock` shares that grid cell and
+		   is collapsed once there is text (TextBox_themeresources.xaml:338,
+		   TextBox_Partial.cpp:965-982). Without this an `<input>` is about twenty characters
+		   wide whatever it holds. Measured against the reference's Gallery TextBox page, typed
+		   into: seven clear pixels between the last glyph and the right border here and there,
+		   so no caret pixel is added. The glyphs themselves run narrower here (WD-100). */
+		field-sizing: content;
 	}
 
 	.root textarea::placeholder,
