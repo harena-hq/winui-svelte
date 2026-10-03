@@ -1,5 +1,6 @@
 <script lang="ts" module>
 	import type { Snippet } from 'svelte';
+	import { ScrollAnimation, type ScrollVector } from '../scroll-animation';
 
 	export interface ScrollViewProps {
 		/** ScrollView.Content. */
@@ -42,6 +43,9 @@
 		onOffsetChange?: ((offset: { horizontal: number; vertical: number }) => void) | undefined;
 		/** No WinUI member: ADR 0009 pairs bindable state with a change callback. */
 		onZoomFactorChange?: ((factor: number) => void) | undefined;
+		/** ScrollView.ScrollAnimationStarting. */
+		onScrollAnimationStarting?:
+			((args: ScrollingScrollAnimationStartingEventArgs) => void) | undefined;
 		/** UIElement.IsEnabled. */
 		disabled?: boolean;
 		class?: string;
@@ -51,13 +55,30 @@
 		[key: string]: unknown;
 	}
 
-	/** ScrollTo, ScrollBy, AddScrollVelocity and their options/events, plus anchoring properties,
-	 * belong to later units of this version. They are absent here for that sequencing reason, not
-	 * declined. */
+	/** ScrollingScrollOptions. */
+	export interface ScrollingScrollOptions {
+		/** ScrollingScrollOptions.AnimationMode; `auto` by default, as upstream's. */
+		animationMode?: 'enabled' | 'disabled' | 'auto';
+		/** ScrollingScrollOptions.SnapPointsMode. This component has no snap points, so the two
+		 * values behave alike. */
+		snapPointsMode?: 'default' | 'ignore';
+	}
+
+	/** ScrollingScrollAnimationStartingEventArgs. Assign `animation` to replace the animation. */
+	export interface ScrollingScrollAnimationStartingEventArgs {
+		animation: ScrollAnimation;
+		readonly startPosition: ScrollVector;
+		readonly endPosition: ScrollVector;
+		readonly correlationId: number;
+	}
+
+	/** AddScrollVelocity, ScrollCompleted, the zoom methods and the anchoring properties belong to
+	 * later units of this version. They are absent here for that sequencing reason, not declined. */
 </script>
 
 <script lang="ts">
 	import ScrollBar from '../internal/ScrollBar.svelte';
+	import { animationsEnabled } from '../internal/motion';
 
 	let {
 		children,
@@ -80,6 +101,7 @@
 		scrollableHeight = $bindable(0),
 		onOffsetChange,
 		onZoomFactorChange,
+		onScrollAnimationStarting,
 		disabled = false,
 		class: className,
 		style,
@@ -171,10 +193,152 @@
 	}
 
 	function onScroll() {
+		// A scroll the running animation did not make — a key, an offset bound from outside, the
+		// browser's own wheel scroll — interrupts it, as upstream's input and requests do. The
+		// animation's own write is known by the offsets the viewport held right after it.
+		if (
+			running &&
+			viewport &&
+			(Math.abs(viewport.scrollLeft - running.landed.x) > 0.5 ||
+				Math.abs(viewport.scrollTop - running.landed.y) > 0.5)
+		) {
+			stopAnimation();
+		}
 		measure();
 		if (horizontalOffset !== scrollLeft) horizontalOffset = scrollLeft;
 		if (verticalOffset !== scrollTop) verticalOffset = scrollTop;
 		onOffsetChange?.({ horizontal: scrollLeft, vertical: scrollTop });
+	}
+
+	// ScrollPresenter.h: s_offsetsChangeMsPerUnit, s_offsetsChangeMinMs, s_offsetsChangeMaxMs.
+	const OFFSETS_CHANGE_MS_PER_UNIT = 5;
+	const OFFSETS_CHANGE_MIN_MS = 50;
+	const OFFSETS_CHANGE_MAX_MS = 1000;
+
+	let lastCorrelationId = 0;
+	// The running animation's frame request, its latest position and what the viewport made of
+	// it. The position is kept here, unrounded, because the viewport snaps what it is given to
+	// device pixels and a request that starts from a running animation starts from where the
+	// animation is. What the viewport holds after the write is kept beside it, read back rather
+	// than predicted, so that a scroll event can tell the animation's own write from another.
+	let running: { frame: number; position: ScrollVector; landed: ScrollVector } | null = null;
+
+	function currentPosition(): ScrollVector {
+		if (running) return { x: running.position.x, y: running.position.y };
+		return { x: viewport?.scrollLeft ?? 0, y: viewport?.scrollTop ?? 0 };
+	}
+
+	function stopAnimation() {
+		if (!running) return;
+		cancelAnimationFrame(running.frame);
+		running = null;
+	}
+
+	function clampOffset(value: number, scrollable: number) {
+		return Math.min(scrollable, Math.max(0, value));
+	}
+
+	function changeOffsets(target: ScrollVector, options: ScrollingScrollOptions | undefined) {
+		const correlationId = ++lastCorrelationId;
+		const start = currentPosition();
+		stopAnimation();
+		if (!viewport) return correlationId;
+		const mode = options?.animationMode ?? 'auto';
+		// ScrollPresenter::GetComputedAnimationMode: Auto follows the platform's animation switch.
+		if (mode === 'disabled' || (mode === 'auto' && !animationsEnabled())) {
+			viewport.scrollLeft = clampOffset(target.x, scrollableWidth);
+			viewport.scrollTop = clampOffset(target.y, scrollableHeight);
+			return correlationId;
+		}
+		// ScrollPresenter::GetPositionAnimation: one key frame at the end, the distance truncated
+		// before it is turned into a duration.
+		const distance = Math.trunc(Math.hypot(target.x - start.x, target.y - start.y));
+		const stock = new ScrollAnimation();
+		stock.insertKeyFrame(1, target);
+		stock.duration = Math.min(
+			OFFSETS_CHANGE_MAX_MS,
+			Math.max(OFFSETS_CHANGE_MIN_MS, distance * OFFSETS_CHANGE_MS_PER_UNIT)
+		);
+		const args: ScrollingScrollAnimationStartingEventArgs = {
+			animation: stock,
+			startPosition: { x: start.x, y: start.y },
+			endPosition: { x: target.x, y: target.y },
+			correlationId
+		};
+		onScrollAnimationStarting?.(args);
+		// A handler that made a request of its own has interrupted this one, as any later request
+		// does.
+		if (correlationId !== lastCorrelationId) return correlationId;
+		run(args.animation, start);
+		return correlationId;
+	}
+
+	function run(animation: ScrollAnimation, start: ScrollVector) {
+		const startedAt = performance.now();
+		const duration = animation.duration;
+		// Each run checks that it is still the running one, so a run that was replaced stops at its
+		// next frame even where its frame request was not the one cancelled.
+		const self = {
+			frame: 0,
+			position: { x: start.x, y: start.y },
+			landed: { x: viewport?.scrollLeft ?? 0, y: viewport?.scrollTop ?? 0 }
+		};
+		const step = () => {
+			if (!viewport || running !== self) return;
+			const progress =
+				Number.isFinite(duration) && duration > 0
+					? Math.min(1, (performance.now() - startedAt) / duration)
+					: 1;
+			const position = animation.valueAt(progress, start);
+			self.position = {
+				x: clampOffset(position.x, scrollableWidth),
+				y: clampOffset(position.y, scrollableHeight)
+			};
+			viewport.scrollLeft = self.position.x;
+			viewport.scrollTop = self.position.y;
+			self.landed = { x: viewport.scrollLeft, y: viewport.scrollTop };
+			if (progress >= 1) running = null;
+			else self.frame = requestAnimationFrame(step);
+		};
+		self.frame = requestAnimationFrame(step);
+		running = self;
+	}
+
+	// ScrollPresenter::OnPointerPressed hands a touch or pen contact to the interaction tracker,
+	// whose interaction interrupts a running animation, and returns early for a mouse: a click on
+	// the content leaves the animation running.
+	function onPointerDown(event: PointerEvent) {
+		if (event.pointerType === 'touch' || event.pointerType === 'pen') stopAnimation();
+	}
+
+	/**
+	 * ScrollView.ScrollTo. Returns the request's correlation id. A disabled request lands before
+	 * this returns, where upstream's lands on a later tick; the bound offsets follow on the scroll
+	 * event it causes.
+	 */
+	export function scrollTo(
+		horizontalOffset: number,
+		verticalOffset: number,
+		options?: ScrollingScrollOptions
+	): number {
+		return changeOffsets({ x: horizontalOffset, y: verticalOffset }, options);
+	}
+
+	/**
+	 * ScrollView.ScrollBy. The deltas are added to where the view is now, a running animation's
+	 * current position included, as upstream's ResetAnticipatedView leaves them. Returns the
+	 * request's correlation id.
+	 */
+	export function scrollBy(
+		horizontalOffsetDelta: number,
+		verticalOffsetDelta: number,
+		options?: ScrollingScrollOptions
+	): number {
+		const start = currentPosition();
+		return changeOffsets(
+			{ x: start.x + horizontalOffsetDelta, y: start.y + verticalOffsetDelta },
+			options
+		);
 	}
 
 	// Upstream's ZoomTo takes a centre point and the Gallery passes null, which means the centre of
@@ -207,6 +371,7 @@
 	}
 
 	function onWheel(event: WheelEvent) {
+		stopAnimation();
 		if (disabled || zoomMode !== 'enabled' || !event.ctrlKey || event.deltaY === 0) return;
 		// This implementation uses a 1.1 step for each wheel notch; upstream only gates Ctrl+wheel.
 		setZoomFactor(zoomFactor * (event.deltaY < 0 ? 1.1 : 1 / 1.1));
@@ -232,12 +397,17 @@
 		return () => observer.disconnect();
 	});
 
+	// A running animation's frame request must not outlive the viewport it writes to.
+	$effect(() => stopAnimation);
+
 	// One, not the initial factor: a ScrollView mounted at a factor above one is upstream's
 	// `ZoomTo(factor, null)` from one, so it centres the same way a later change does.
 	let lastFactor = 1;
 	$effect(() => {
 		if (zoomFactor !== constrainedZoomFactor) zoomFactor = constrainedZoomFactor;
 		if (constrainedZoomFactor !== lastFactor) {
+			// A running scroll's positions are in the old factor's coordinates.
+			stopAnimation();
 			// A factor written from outside re-anchors on the same rule as one the wheel changed.
 			reanchor(lastFactor, constrainedZoomFactor);
 			lastFactor = constrainedZoomFactor;
@@ -262,7 +432,18 @@
 	data-zoom-mode={zoomMode}
 	{...rest}
 >
-	<div bind:this={viewport} class="viewport" onscroll={onScroll} onwheel={onWheel}>
+	<!-- The pointer handler only notices a touch or pen contact so that it can stop a running
+	     animation; it makes nothing interactive, so the viewport takes no role for it. -->
+	<!-- eslint-disable svelte/no-unused-svelte-ignore -->
+	<!-- svelte-ignore a11y_no_static_element_interactions -->
+	<div
+		bind:this={viewport}
+		class="viewport"
+		onscroll={onScroll}
+		onwheel={onWheel}
+		onpointerdown={onPointerDown}
+	>
+		<!-- eslint-enable svelte/no-unused-svelte-ignore -->
 		<!-- ScrollPresenter.cpp:636-644 constrains the opposite axes to their names: Both frees
 		     both dimensions while None constrains both, hence the four CSS rules below. -->
 		<div bind:this={zoomBox} class="zoom-box" style={zoomBoxStyle}>
@@ -287,7 +468,10 @@
 				viewportSize={viewportHeight}
 				indicatorMode="mouse"
 				{disabled}
-				onValueChange={scrollVertically}
+				onValueChange={(value) => {
+					stopAnimation();
+					scrollVertically(value);
+				}}
 			/>
 		</div>
 	{/if}
@@ -301,7 +485,10 @@
 				viewportSize={viewportWidth}
 				indicatorMode="mouse"
 				{disabled}
-				onValueChange={scrollHorizontally}
+				onValueChange={(value) => {
+					stopAnimation();
+					scrollHorizontally(value);
+				}}
 			/>
 		</div>
 	{/if}

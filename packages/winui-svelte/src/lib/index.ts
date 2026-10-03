@@ -26,7 +26,11 @@ export type { ProgressBarProps } from './components/ProgressBar.svelte';
 export { default as ProgressRing } from './components/ProgressRing.svelte';
 export type { ProgressRingProps } from './components/ProgressRing.svelte';
 export { default as ScrollView } from './components/ScrollView.svelte';
-export type { ScrollViewProps } from './components/ScrollView.svelte';
+export type {
+	ScrollViewProps,
+	ScrollingScrollAnimationStartingEventArgs,
+	ScrollingScrollOptions
+} from './components/ScrollView.svelte';
 export { default as ScrollViewer } from './components/ScrollViewer.svelte';
 export type { ScrollViewerProps } from './components/ScrollViewer.svelte';
 export { default as TeachingTip } from './components/TeachingTip.svelte';
@@ -64,3 +68,8 @@ export type { TitleBarProps } from './components/TitleBar.svelte';
 // amendment. Generated — see `scripts/symbol/`.
 export { Symbol } from './symbol';
 export type { SymbolName } from './symbol';
+
+// Not a component: the animation `ScrollView`'s `onScrollAnimationStarting` hands out and takes
+// back, which a handler builds its own from.
+export { ScrollAnimation } from './scroll-animation';
+export type { ScrollAnimationEasing, ScrollVector } from './scroll-animation';
