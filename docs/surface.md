@@ -276,6 +276,10 @@ checked and is **not** a member — it is about the pinned dictionary, and no XA
 `controls/dev` in this checkout sets a `LineHeight`, nor is there a `generic.xaml` in it. And a
 grep is not the read: the component corpus has not been gone through for the shape.
 
+The candidate was a member, and was settled in v18 by widening the checkout once more: the
+class is defined in `dxaml/xcp/core/native/text/Controls/`, which neither tree named above is.
+`docs/keyboard.md` now says so, and why the answer it was after is still out of reach.
+
 ### InfoBadge — v5 unit 3
 
 `InfoBadge.cpp` is 103 lines and **all four of its behaviours are outside the template**.

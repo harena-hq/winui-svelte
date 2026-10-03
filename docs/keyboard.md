@@ -155,8 +155,9 @@ question with one answer.
    (`TableView.cpp:271-273`). So a key handled inside the row never reaches the row's handler,
    and ours reaches it always. The half the pin does not answer is whether a focused `TextBox`
    marks Space handled at all — that is what would decide the case. An earlier version of this
-   line put that in a base class the pin's `NavigationView` directory does not carry, which was too
-   generous: it is not in the pin at all, and the observation below records the search.
+   line put that in a base class the pin's `NavigationView` directory does not carry, and a later
+   one said the class was not in the pin at all. It is, and it passes the decision on to RichEdit,
+   which is not; the observation below records the second search and why it was wrong.
 
 ### `TabView` — the strip
 
@@ -400,24 +401,22 @@ then the ninth entry, which is a search rather than a press and says so.
    carry one at all put it inside a `Grid` or a `StackPanel`, which is what says the search was
    looking rather than failing — 22 is every candidate in the pin, by an element-tree walk of
    all 188 `.xaml` files and by `grep -rl` independently.
-   The pin does not answer it either, and the load-bearing part of that search is structural
-   rather than a count: **`CTextBoxBase` is named by the pin and never defined in it.** Every
-   `class CTextBoxBase` is a forward declaration — `IBackingStore.h:9`, `RichEditGripper.h:9`,
-   `RichEditGripperChild.h:11`, `DependencyObjectTraits.g.h:2900` — no `textboxbase.cpp`
-   exists, and both uses of `CTextBoxBase::` are comments pointing at code that is absent
-   (`PointerInputProcessor.cpp:739`, `InputPaneProcessor.cpp:142`). Around it,
-   `TextBox_Partial.cpp:432-436` forwards `OnKeyDown` straight to `RaiseNative`, and
-   `core/text/TextBox/` holds three files — `PlainTextPosition.cpp`, `TextBoxHelpers.cpp`,
-   `TextSelection.cpp` — in which `VirtualKey`, `KeyEventArgs`, `OnKeyDown` and `VK_` do not
-   appear at all. The editing is RichEdit and TSF, which this repository does not carry, and
-   that is the pin's own account rather than a convention: `KeyboardInputProcessor.cpp:703-707`
-   says a handled `WM_CHAR` is "passed to TextServiceFramework (TSF)" by calling
-   "OnCharacterReceived event handler for TextBoxBase" — the class it then declares at `:709`
-   and the pin never defines.
+   The pin does not answer it either, though not for the reason this paragraph first gave. It
+   said **`CTextBoxBase` is named by the pin and never defined in it**, from a checkout that
+   stopped one directory short: every `class CTextBoxBase` in it was a forward declaration, and
+   the class is defined in `dxaml/xcp/core/native/text/Controls/`, which the checkout gained in
+   v18 (`TextBoxBase.h:43`). Read there, `OnKeyDown` (`TextBoxBase.cpp:2399`) decides a few
+   keys itself — the gamepad's accept, PageUp and PageDown — and lets a plain key such as Space
+   fall through to `SendKeyMessage` (`:2496`, `:4153`), which marks it handled when RichEdit's
+   `TxSendMessage` returns `S_OK` (`:120-123`); Backspace is the one key it overrides after
+   that (`:4158-4161`). So whether Space is handled is RichEdit's answer, and RichEdit is not in
+   the pin, by the pin's own account: the class "builds off of Window's ITextServices, the
+   windowless RichEdit control" (`TextBoxBase.h:37-38`).
    **One count here is not evidence, and is recorded so it is not mistaken for some.**
    `VK_SPACE` occurs in exactly two files pin-wide — `Hyperlink.cpp:418` and
    `KeyboardAccelerator_Partial.cpp:360` — which reads as decisive and is not:
-   `VirtualKey_Space` is the spelling most of the C++ uses, and that one is in 33 files.
+   `VirtualKey_Space` and `VirtualKey::Space` are the spellings most of the C++ uses, and
+   between them they are in 33 files.
    **What this does not say** is what WinUI's row would do. It says the reference cannot be asked,
    which is a fact about the instrument and not about the control — the distinction the answer
    would have turned on.

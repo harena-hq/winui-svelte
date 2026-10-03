@@ -147,7 +147,7 @@ measured its own packaging rather than assuming it.
    deleted on 2026-09-22, when the ring that press asked for was built. The narrow one — type into a
    field inside a row of the original and see whether the row invokes — **cannot be asked of
    the reference at all**: the Gallery builds no editable field inside a row, and the pin
-   does not carry the editor, so the search stands in for the press. That record is
+   does not carry RichEdit, the editor TextBox hands its keys to, so the search stands in for the press. That record is
    `docs/keyboard.md`'s entry 9, with what was searched written into it, and it is the first
    use of the fourth outcome that document now lists.
    So the row's handling of a key aimed at something inside it was a decision rather than a
