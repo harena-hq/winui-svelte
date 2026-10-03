@@ -51,8 +51,8 @@
 		onCheckedChange,
 		disabled = false,
 		header,
-		onContent = 'On',
-		offContent = 'Off',
+		onContent,
+		offContent,
 		name,
 		value,
 		form,
@@ -61,6 +61,33 @@
 		ref = $bindable(null),
 		...rest
 	}: ToggleSwitchProps = $props();
+
+	const uid = $props.id();
+
+	// The defaults are applied here rather than in the destructuring because upstream's peer
+	// names the switch by its content only when the property is set, so an unset content has to
+	// stay distinguishable from an explicit "On".
+	const shownOn = $derived(onContent ?? 'On');
+	const shownOff = $derived(offContent ?? 'Off');
+
+	// `ToggleSwitchAutomationPeer::GetNameCore`: the header's string, and the content of the
+	// current state only — `OnContent` when on, `OffContent` when off — and that content only
+	// when the property has been set. The default "On" adds nothing, since the toggle state
+	// already says it; an explicit "On" still counts. Both present are joined by one space,
+	// header first; one alone is the name; neither leaves the switch unnamed.
+	//
+	// A snippet is read for its text. That is a choice, not upstream's rule: `GetStringFromObject`
+	// reads text only from the types that override `GetPlainText`, a `ContentControl` or a
+	// `TextBlock` among them, and gives any other element no string. A snippet is taken as the
+	// text-bearing case.
+	const labelledBy = $derived(
+		[
+			header !== undefined && `${uid}-header`,
+			(checked ? onContent : offContent) !== undefined && `${uid}-${checked ? 'on' : 'off'}`
+		]
+			.filter(Boolean)
+			.join(' ') || undefined
+	);
 
 	// The knob travels `SwitchKnobBounds`' 40 less `SwitchKnob`'s 20
 	// (`ToggleSwitch_themeresources.xaml:508-509`), which is the `To="20"` the `On` state gives
@@ -190,7 +217,7 @@
 	{...rest}
 >
 	{#if header !== undefined}
-		<span class="header">
+		<span class="header" id="{uid}-header">
 			{#if typeof header === 'string'}{header}{:else}{@render header()}{/if}
 		</span>
 	{/if}
@@ -206,6 +233,7 @@
 			bind:this={ref}
 			type="checkbox"
 			role="switch"
+			aria-labelledby={labelledBy}
 			class="input"
 			{checked}
 			{disabled}
@@ -233,13 +261,15 @@
 		     and `OnContentPresenter` are both `Grid.Column="2"` with `Opacity="0"`, and
 		     `ContentStates` raises one of them. Swapping with an `{#if}` instead would size the
 		     column to whichever string is showing and reflow the row on every toggle, which the
-		     Gallery's own sample would show: "Do work" off, "Working" on. -->
-		<span class="content">
-			<span class="off-content">
-				{#if typeof offContent === 'string'}{offContent}{:else}{@render offContent()}{/if}
+		     Gallery's own sample would show: "Do work" off, "Working" on. Both are hidden
+		     from the tree: the name reaches them only through `labelledBy`, and the label's
+		     text would otherwise name the switch with both, "Off On". -->
+		<span class="content" aria-hidden="true">
+			<span class="off-content" id="{uid}-off">
+				{#if typeof shownOff === 'string'}{shownOff}{:else}{@render shownOff()}{/if}
 			</span>
-			<span class="on-content">
-				{#if typeof onContent === 'string'}{onContent}{:else}{@render onContent()}{/if}
+			<span class="on-content" id="{uid}-on">
+				{#if typeof shownOn === 'string'}{shownOn}{:else}{@render shownOn()}{/if}
 			</span>
 		</span>
 	</label>
