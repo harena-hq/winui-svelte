@@ -7,8 +7,8 @@
 		type ScrollingScrollOptions
 	} from 'winui-svelte/preview';
 
-	/** Drives ScrollView's scrollTo and scrollBy from tests through window.harness, and records
-	 * each animation-starting event. */
+	/** Drives ScrollView's scrollTo, scrollBy and addScrollVelocity from tests through
+	 * window.harness, and records each animation-starting event. */
 	interface Harness {
 		requestedAt: number;
 		lastFrame: number;
@@ -23,6 +23,10 @@
 		ScrollAnimation: typeof ScrollAnimation;
 		scrollTo(x: number, y: number, options?: ScrollingScrollOptions): number;
 		scrollBy(x: number, y: number, options?: ScrollingScrollOptions): number;
+		addScrollVelocity(
+			velocity: { x: number; y: number },
+			decay?: { x: number; y: number } | null
+		): number;
 	}
 
 	const BLOCKS = [1, 2, 3, 4, 5, 6, 7, 8];
@@ -54,6 +58,14 @@
 				requestAnimationFrame(tick);
 			}
 			return view!.scrollBy(x, y, options);
+		},
+		addScrollVelocity(velocity, decay) {
+			harness.requestedAt = performance.now();
+			if (!ticking) {
+				ticking = true;
+				requestAnimationFrame(tick);
+			}
+			return view!.addScrollVelocity(velocity, decay);
 		}
 	};
 

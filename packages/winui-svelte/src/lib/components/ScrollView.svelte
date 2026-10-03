@@ -72,7 +72,7 @@
 		readonly correlationId: number;
 	}
 
-	/** AddScrollVelocity, ScrollCompleted, the zoom methods and the anchoring properties belong to
+	/** ScrollCompleted, the zoom methods and the anchoring properties belong to
 	 * later units of this version. They are absent here for that sequencing reason, not declined. */
 </script>
 
@@ -215,13 +215,28 @@
 	const OFFSETS_CHANGE_MIN_MS = 50;
 	const OFFSETS_CHANGE_MAX_MS = 1000;
 
+	// Without a rate upstream restores the interaction tracker's default, which ScrollPresenter's
+	// ProcessOffsetsChange calls "the default 0.95 position inertia decay rate".
+	const DEFAULT_INERTIA_DECAY_RATE = 0.95;
+	// The interaction tracker's minimum inertia velocity, which the same ProcessOffsetsChange names.
+	// On the reference Gallery 30 pixels a second did not move, 31 moved at 31 and 40 at 40, so a
+	// velocity past it moves at its whole value rather than at what exceeds 30.
+	const MINIMUM_INERTIA_VELOCITY = 30;
+
 	let lastCorrelationId = 0;
 	// The running animation's frame request, its latest position and what the viewport made of
 	// it. The position is kept here, unrounded, because the viewport snaps what it is given to
 	// device pixels and a request that starts from a running animation starts from where the
 	// animation is. What the viewport holds after the write is kept beside it, read back rather
 	// than predicted, so that a scroll event can tell the animation's own write from another.
-	let running: { frame: number; position: ScrollVector; landed: ScrollVector } | null = null;
+	// The velocity is the motion's own at its last frame, which an added velocity adds to; a
+	// key-frame animation reports none.
+	let running: {
+		frame: number;
+		position: ScrollVector;
+		velocity: ScrollVector;
+		landed: ScrollVector;
+	} | null = null;
 
 	function currentPosition(): ScrollVector {
 		if (running) return { x: running.position.x, y: running.position.y };
@@ -269,39 +284,70 @@
 		// A handler that made a request of its own has interrupted this one, as any later request
 		// does.
 		if (correlationId !== lastCorrelationId) return correlationId;
-		run(args.animation, start);
+		const animation = args.animation;
+		const duration = animation.duration;
+		run((elapsed) => {
+			const progress =
+				Number.isFinite(duration) && duration > 0 ? Math.min(1, elapsed / duration) : 1;
+			return {
+				position: animation.valueAt(progress, start),
+				velocity: { x: 0, y: 0 },
+				done: progress >= 1
+			};
+		}, start);
 		return correlationId;
 	}
 
-	function run(animation: ScrollAnimation, start: ScrollVector) {
+	/** What a motion is `elapsed` milliseconds after it started: where, how fast in pixels a
+	 * second, and whether it has finished. */
+	type Sample = (elapsed: number) => {
+		position: ScrollVector;
+		velocity: ScrollVector;
+		done: boolean;
+	};
+
+	function run(sample: Sample, start: ScrollVector) {
 		const startedAt = performance.now();
-		const duration = animation.duration;
 		// Each run checks that it is still the running one, so a run that was replaced stops at its
 		// next frame even where its frame request was not the one cancelled.
 		const self = {
 			frame: 0,
 			position: { x: start.x, y: start.y },
+			velocity: { x: 0, y: 0 },
 			landed: { x: viewport?.scrollLeft ?? 0, y: viewport?.scrollTop ?? 0 }
 		};
 		const step = () => {
 			if (!viewport || running !== self) return;
-			const progress =
-				Number.isFinite(duration) && duration > 0
-					? Math.min(1, (performance.now() - startedAt) / duration)
-					: 1;
-			const position = animation.valueAt(progress, start);
+			const next = sample(performance.now() - startedAt);
 			self.position = {
-				x: clampOffset(position.x, scrollableWidth),
-				y: clampOffset(position.y, scrollableHeight)
+				x: clampOffset(next.position.x, scrollableWidth),
+				y: clampOffset(next.position.y, scrollableHeight)
 			};
+			self.velocity = next.velocity;
 			viewport.scrollLeft = self.position.x;
 			viewport.scrollTop = self.position.y;
 			self.landed = { x: viewport.scrollLeft, y: viewport.scrollTop };
-			if (progress >= 1) running = null;
+			if (next.done) running = null;
 			else self.frame = requestAnimationFrame(step);
 		};
 		self.frame = requestAnimationFrame(step);
 		running = self;
+	}
+
+	/**
+	 * One axis of an inertia that starts at `velocity` pixels a second and keeps `1 - decay` of it
+	 * each second: its travel and velocity `elapsed` milliseconds in, and whether it is at rest.
+	 * Only a decay of 0 was measured on the reference; the curve for any other is this library's
+	 * model. With a decay of 0 it never comes to rest, and at 1 it never moves.
+	 */
+	function inertia(velocity: number, decay: number, elapsed: number) {
+		const seconds = elapsed / 1000;
+		if (velocity === 0 || decay >= 1) return { travel: 0, velocity: 0, rest: true };
+		if (decay <= 0) return { travel: velocity * seconds, velocity, rest: false };
+		const log = Math.log(1 - decay);
+		const now = velocity * Math.exp(log * seconds);
+		// The travel still to come is now / -log; under half a pixel there is nothing left to draw.
+		return { travel: (now - velocity) / log, velocity: now, rest: Math.abs(now / log) < 0.5 };
 	}
 
 	// ScrollPresenter::OnPointerPressed hands a touch or pen contact to the interaction tracker,
@@ -339,6 +385,55 @@
 			{ x: start.x + horizontalOffsetDelta, y: start.y + verticalOffsetDelta },
 			options
 		);
+	}
+
+	/**
+	 * ScrollView.AddScrollVelocity. The velocity, in pixels a second, is added to the one a running
+	 * velocity scroll has; on an axis where the sum is 30 or less either way that axis does not
+	 * move. The reference showed the floor on one axis from rest; applying it per axis, and to the
+	 * sum, is this library's reading. A decay rate is clamped to [0, 1] per axis; without one, or
+	 * where it is not a number, 0.95. It runs until it comes to rest or reaches the edge it is
+	 * moving towards, and reduced motion does not stop it. Returns the request's correlation id.
+	 */
+	export function addScrollVelocity(
+		offsetsVelocity: ScrollVector,
+		inertiaDecayRate?: ScrollVector | null
+	): number {
+		const correlationId = ++lastCorrelationId;
+		const start = currentPosition();
+		const carried = running ? running.velocity : { x: 0, y: 0 };
+		stopAnimation();
+		if (!viewport) return correlationId;
+		const rate = (value: number | undefined) =>
+			value !== undefined && Number.isFinite(value)
+				? Math.min(1, Math.max(0, value))
+				: DEFAULT_INERTIA_DECAY_RATE;
+		const decay = { x: rate(inertiaDecayRate?.x), y: rate(inertiaDecayRate?.y) };
+		const minimum = (value: number) =>
+			Number.isFinite(value) && Math.abs(value) > MINIMUM_INERTIA_VELOCITY ? value : 0;
+		const velocity = {
+			x: minimum(carried.x + offsetsVelocity.x),
+			y: minimum(carried.y + offsetsVelocity.y)
+		};
+		if (velocity.x === 0 && velocity.y === 0) return correlationId;
+		// An axis is done when its inertia is at rest or it has reached the edge it moves towards.
+		const settled = (rest: boolean, at: number, scrollable: number, towards: number) =>
+			rest || (towards < 0 && at <= 0) || (towards > 0 && at >= scrollable);
+		run((elapsed) => {
+			const x = inertia(velocity.x, decay.x, elapsed);
+			const y = inertia(velocity.y, decay.y, elapsed);
+			const position = { x: start.x + x.travel, y: start.y + y.travel };
+			const xSettled = settled(x.rest, position.x, scrollableWidth, velocity.x);
+			const ySettled = settled(y.rest, position.y, scrollableHeight, velocity.y);
+			// An axis at its edge has no velocity left for a later request to add to, though the
+			// other axis is still moving.
+			return {
+				position,
+				velocity: { x: xSettled ? 0 : x.velocity, y: ySettled ? 0 : y.velocity },
+				done: xSettled && ySettled
+			};
+		}, start);
+		return correlationId;
 	}
 
 	// Upstream's ZoomTo takes a centre point and the Gallery passes null, which means the centre of

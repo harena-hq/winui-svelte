@@ -11,6 +11,8 @@
  * when a step jumps is this library's model, not a measurement.
  * The default easing was measured on the reference WinUI Gallery on 2026-10-03: the curve
  * (0.41, 0.52), (0.00, 0.94) fits two 5000 ms Default runs and Accordion's segments.
+ * An added velocity is measured in pixels a second, constant at a decay of 0, and nothing
+ * at 30 or less either way; a non-zero decay is this library's model.
  * Time is Playwright's clock, paused before the first request (see `freeze`).
  */
 import { expect, test } from './fixtures';
@@ -70,6 +72,10 @@ declare global {
 					animationMode?: 'enabled' | 'disabled' | 'auto';
 					snapPointsMode?: 'default' | 'ignore';
 				}
+			): number;
+			addScrollVelocity(
+				velocity: { x: number; y: number },
+				decay?: { x: number; y: number } | null
 			): number;
 		};
 	}
@@ -403,5 +409,152 @@ test.describe('a ScrollView scrolls on request', () => {
 		await page.evaluate(() => window.harness.scrollTo(0, 600, { animationMode: 'enabled' }));
 		await page.clock.runFor(20);
 		expect((await sample(page)).top).toBe(600);
+	});
+});
+
+test.describe('a ScrollView takes an added velocity', () => {
+	test('above 30 pixels a second it moves at that speed and raises no animation event', async ({
+		page
+	}) => {
+		await page.goto('/dev/scroll-view-scroll');
+		await freeze(page);
+		await page.evaluate(() => window.harness.addScrollVelocity({ x: 0, y: 40 }, { x: 0, y: 0 }));
+		await page.clock.runFor(1000);
+		{
+			const { top, elapsed } = await sample(page);
+			expect(Math.abs(top - (40 * elapsed) / 1000)).toBeLessThanOrEqual(1);
+		}
+		await page.clock.runFor(2000);
+		{
+			const { top, elapsed } = await sample(page);
+			expect(Math.abs(top - (40 * elapsed) / 1000)).toBeLessThanOrEqual(1);
+		}
+		expect(await page.evaluate(() => window.harness.starting)).toEqual([]);
+	});
+
+	test('at 30 or less it does not move', async ({ page }) => {
+		await page.goto('/dev/scroll-view-scroll');
+		await freeze(page);
+		await page.evaluate(() => window.harness.addScrollVelocity({ x: 0, y: 30 }, { x: 0, y: 0 }));
+		await page.clock.runFor(1000);
+		expect((await sample(page)).top).toBe(0);
+		await page.evaluate(() => window.harness.scrollTo(0, 500, { animationMode: 'disabled' }));
+		await page.evaluate(() => window.harness.addScrollVelocity({ x: 0, y: -30 }, { x: 0, y: 0 }));
+		await page.clock.runFor(1000);
+		expect((await sample(page)).top).toBe(500);
+		await page.evaluate(() => window.harness.addScrollVelocity({ x: 0, y: 31 }, { x: 0, y: 0 }));
+		await page.clock.runFor(1000);
+		const { top, elapsed } = await sample(page);
+		expect(Math.abs(top - (500 + (31 * elapsed) / 1000))).toBeLessThanOrEqual(1);
+	});
+
+	test('it reaches the edge it moves towards', async ({ page }) => {
+		await page.goto('/dev/scroll-view-scroll');
+		await freeze(page);
+		await page.evaluate(() => window.harness.scrollTo(0, 100, { animationMode: 'disabled' }));
+		await page.evaluate(() => window.harness.addScrollVelocity({ x: 0, y: -200 }, { x: 0, y: 0 }));
+		await page.clock.runFor(1000);
+		expect((await sample(page)).top).toBe(0);
+		await page.evaluate(() => window.harness.scrollTo(0, 1800, { animationMode: 'disabled' }));
+		await page.evaluate(() => window.harness.addScrollVelocity({ x: 0, y: 200 }, { x: 0, y: 0 }));
+		await page.clock.runFor(1000);
+		expect((await sample(page)).top).toBe(1844);
+	});
+
+	test('a decay slows it as each second keeps the rest of the velocity', async ({ page }) => {
+		await page.goto('/dev/scroll-view-scroll');
+		await freeze(page);
+		await page.evaluate(() => window.harness.addScrollVelocity({ x: 0, y: 200 }, { x: 0, y: 0.5 }));
+		await page.clock.runFor(1000);
+		{
+			const { top, elapsed } = await sample(page);
+			const t = elapsed / 1000;
+			expect(Math.abs(top - (200 * (Math.pow(0.5, t) - 1)) / Math.log(0.5))).toBeLessThanOrEqual(1);
+		}
+		// No rate, a null one and one that is not a number all take the 0.95 default.
+		for (const decay of [undefined, null, { x: 0, y: Number.NaN }]) {
+			await page.goto('/dev/scroll-view-scroll');
+			await freeze(page);
+			await page.evaluate(
+				(rate) => window.harness.addScrollVelocity({ x: 0, y: 200 }, rate),
+				decay
+			);
+			await page.clock.runFor(1000);
+			const { top, elapsed } = await sample(page);
+			const t = elapsed / 1000;
+			expect(Math.abs(top - (200 * (Math.pow(0.05, t) - 1)) / Math.log(0.05))).toBeLessThanOrEqual(
+				1
+			);
+			await page.clock.runFor(5000);
+			expect(Math.abs((await sample(page)).top - (200 * -1) / Math.log(0.05))).toBeLessThanOrEqual(
+				1
+			);
+		}
+	});
+
+	test('a disabled scrollBy of nothing stops it, which is how the reference Gallery cancels', async ({
+		page
+	}) => {
+		await page.goto('/dev/scroll-view-scroll');
+		await freeze(page);
+		await page.evaluate(() => window.harness.addScrollVelocity({ x: 0, y: 40 }, { x: 0, y: 0 }));
+		await page.clock.runFor(500);
+		const before = (await sample(page)).top;
+		await page.evaluate(() => window.harness.scrollBy(0, 0, { animationMode: 'disabled' }));
+		await page.clock.runFor(1000);
+		expect((await sample(page)).top).toBe(before);
+	});
+
+	test('an added velocity adds to a running one', async ({ page }) => {
+		await page.goto('/dev/scroll-view-scroll');
+		await freeze(page);
+		await page.evaluate(() => window.harness.addScrollVelocity({ x: 0, y: 40 }, { x: 0, y: 0 }));
+		await page.clock.runFor(500);
+		const first = await sample(page);
+		const start = (40 * first.elapsed) / 1000;
+		await page.evaluate(() => window.harness.addScrollVelocity({ x: 0, y: 40 }, { x: 0, y: 0 }));
+		await page.clock.runFor(1000);
+		const { top, elapsed } = await sample(page);
+		expect(Math.abs(top - (start + (80 * elapsed) / 1000))).toBeLessThanOrEqual(1);
+	});
+
+	test('reduced motion does not stop it', async ({ page }) => {
+		await page.goto('/dev/scroll-view-scroll');
+		await freeze(page);
+		await page.emulateMedia({ reducedMotion: 'reduce' });
+		await page.evaluate(() => window.harness.addScrollVelocity({ x: 0, y: 40 }, { x: 0, y: 0 }));
+		await page.clock.runFor(1000);
+		const { top, elapsed } = await sample(page);
+		expect(Math.abs(top - (40 * elapsed) / 1000)).toBeLessThanOrEqual(1);
+		// The preference is in force: an `auto` scrollTo lands at once.
+		await page.evaluate(() => window.harness.scrollTo(0, 500));
+		expect((await sample(page)).top).toBe(500);
+	});
+
+	test('its correlation id follows the others', async ({ page }) => {
+		await page.goto('/dev/scroll-view-scroll');
+		await freeze(page);
+		const a = await page.evaluate(() =>
+			window.harness.scrollTo(0, 10, { animationMode: 'disabled' })
+		);
+		const b = await page.evaluate(() =>
+			window.harness.addScrollVelocity({ x: 0, y: 40 }, { x: 0, y: 0 })
+		);
+		expect(b).toBe(a + 1);
+	});
+
+	test('reaching the edge ends it, so a later velocity carries none of it', async ({ page }) => {
+		await page.goto('/dev/scroll-view-scroll');
+		await freeze(page);
+		await page.evaluate(() => {
+			window.harness.scrollTo(0, 1800, { animationMode: 'disabled' });
+			window.harness.addScrollVelocity({ x: 0, y: 200 }, { x: 0, y: 0 });
+		});
+		await page.clock.runFor(1000);
+		expect((await sample(page)).top).toBe(1844);
+		await page.evaluate(() => window.harness.addScrollVelocity({ x: 0, y: -40 }, { x: 0, y: 0 }));
+		await page.clock.runFor(1000);
+		const { top, elapsed } = await sample(page);
+		expect(Math.abs(top - (1844 - (40 * elapsed) / 1000))).toBeLessThanOrEqual(1);
 	});
 });
