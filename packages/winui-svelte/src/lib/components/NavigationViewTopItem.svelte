@@ -61,7 +61,7 @@
 				role="treeitem"
 				class="item"
 				aria-selected={isSelected}
-				aria-label={!hasContent ? tooltip : undefined}
+				aria-label={!hasContent ? tooltip || 'NavigationViewItem' : undefined}
 				aria-level={1}
 				tabindex="0"
 				data-selected={isSelected}
@@ -71,7 +71,8 @@
 				onkeydown={withTriggerKeydown(props)}
 			>
 				<span class="selection-indicator"></span>
-				{#if item.glyph}<span class="icon">{String.fromCodePoint(parseInt(item.glyph, 16))}</span
+				{#if item.glyph}<span class="icon" aria-hidden="true"
+						>{String.fromCodePoint(parseInt(item.glyph, 16))}</span
 					>{/if}
 				{#if item.content}<span class="content">{item.content}</span>{/if}
 			</div>

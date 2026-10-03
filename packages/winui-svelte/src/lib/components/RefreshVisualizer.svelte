@@ -246,7 +246,7 @@
 					     (`dxaml/xcp/core/core/elements/icon.cpp:605`); the icon's own TextBlock is
 					     Segoe Fluent Icons at `g_ClientCoreFontSize`, centred and stretched
 					     (`icon.cpp:13`, `:318`, `:352-364`). -->
-					<span class="glyph">&#xE72C;</span>
+					<span class="glyph" aria-hidden="true">&#xE72C;</span>
 				{/if}
 			</div>
 		</div>
