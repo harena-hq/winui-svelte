@@ -13,10 +13,7 @@ test('CheckBox in three themes', async ({ page }) => {
  * key — because a script's `element.click()` runs its microtasks only after the whole dispatch,
  * and passed while every real click left the property one state behind.
  */
-// Found by its content rather than by role and name: a checked box's glyph is generated content,
-// and the accessibility tree reads it into the name.
-const box = (page: Page, name: string) =>
-	page.locator('label', { has: page.getByText(name, { exact: true }) }).locator('input');
+const box = (page: Page, name: string) => page.getByRole('checkbox', { name, exact: true });
 // The input takes no pointer events; a press lands on the content, inside the label.
 const press = (page: Page, name: string) => page.getByText(name, { exact: true }).click();
 
