@@ -58,6 +58,16 @@ export const CHECKOUT = join(ROOT, '.upstream', 'microsoft-ui-xaml');
 // widening rather than for fetching the one file: a path that is not checked out cannot be
 // grepped, so nobody finds what nobody knows to look for.
 //
+// Two text trees were added in v18. The first was already in the working copy and not in
+// this list, so the next run would have removed it: `dxaml/xcp/core/text`, the layout and
+// selection code behind TextBlock and RichTextBlock. The second,
+// `dxaml/xcp/core/native/text`, is where the text *controls* are: `CTextBoxBase`,
+// `CTextBoxView` and the RichEdit host, under 1 MB. Without it the pin read as declaring
+// `CTextBoxBase` and never defining it, and the code that measures a TextBox,
+// `CTextBoxView::MeasureOverride`, could not be read at all. Both were one directory
+// outside the checkout. What they hand on to RichEdit, which is not in the pin, is still
+// not readable: whether a key is handled, and the width of the text itself.
+//
 // The per-control test pages are excluded; they are app markup, not the control.
 //
 // `--no-cone` because cone mode can express neither a `**`-and-suffix pattern nor the
@@ -79,6 +89,10 @@ const SPARSE = [
 	'/dxaml/phone/lib/**/*.cpp',
 	'/dxaml/xcp/components/**/*.h',
 	'/dxaml/xcp/components/**/*.cpp',
+	'/dxaml/xcp/core/text/**/*.h',
+	'/dxaml/xcp/core/text/**/*.cpp',
+	'/dxaml/xcp/core/native/text/**/*.h',
+	'/dxaml/xcp/core/native/text/**/*.cpp',
 	// Not control source: the design note for the `Symbol` enum, which is the only second
 	// witness to the *rendered* code point that `icon.cpp`'s switch returns. The extractor
 	// under `scripts/symbol/` refuses to emit a table the note and the switch disagree on,

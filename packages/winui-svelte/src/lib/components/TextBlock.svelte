@@ -128,8 +128,9 @@
      reproduces that.
 
      `letter-spacing` divides by 1000 because `CharacterSpacing` is an `XINT32` in thousandths of
-     an em. A case-insensitive sweep of the whole pin returns eighteen non-generated hits: ten
-     propagate `m_nCharacterSpacing` from a parent or set the property from a style
+     an em. A case-insensitive sweep of the checkout, before it held the text engine, returned
+     eighteen non-generated hits: ten propagate `m_nCharacterSpacing` from a parent or set the
+     property from a style
      (`framework.cpp:555`, `uielement.cpp:1176`, `Control.cpp:170-172`,
      `ContentPresenter.cpp:1106-1108`, `icon.cpp:83`, `Pivot_themeresources.xaml:479`), two are the
      field's own declaration and a flag enum (`corep.h:493`, `TextBlock.h:41`), and six are one
@@ -137,8 +138,11 @@
      `<x:Int32 x:Key="PivotHeaderItemCharacterSpacing">-25</x:Int32>`
      (`Pivot_themeresources.xaml:10`, `:114`, `:144`). Those six are corroboration rather than a
      citation: -25 is tracking of -0.025em on a Pivot header, a plausible number that would be an
-     absurd one under any other unit. What the checkout does not carry is the conversion itself,
-     which happens in the text layout engine, so the unit here is the documented one. -->
+     absurd one under any other unit. The conversion itself is in the text engine, which that
+     sweep did not reach: "CharacterSpacing values are in 1000ths of the em size"
+     (`TextRunProperties.h:15-16`), and the line formatter turns it into glyph expansion as
+     that number times the font's design units per em over 1000
+     (`lineservicescallbacks.cpp:549`). -->
 <div
 	bind:this={ref}
 	class={['root', textStyle === undefined ? undefined : `winui-${textStyle}`, className]}
