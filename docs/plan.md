@@ -3914,6 +3914,66 @@ System / Shell` moves to item 16; `item 15` occurs once in the whole of `docs/`,
     and a `ListView` around a `TextBlock`. What that page files is a `WD` row for the gesture,
     and it needs no `SwipeControl` component at all.
 
+    **v19's plan — drafted and approved by the owner on 2026-10-04.** Goal: **every one of the Gallery's 120 item pages exists**, each reproduced against
+    the reference, so `Final` has all of them to walk. The release was not cut when v18 closed;
+    the owner holds it, and v19 does not wait on it.
+
+    _What it takes._ Sixty-five pages, recounted from `ControlInfoData.json` against the routes
+    on 2026-10-04, holding 203 `ControlExample`s between them. By kind:
+
+    | kind                                  | pages | examples | what the library supplies                           |
+    | ------------------------------------- | ----- | -------- | --------------------------------------------------- |
+    | a control the library has             | 48    | 150      | the component; the page is frame and samples        |
+    | a panel (Canvas, RelativePanel, VSWG) | 3     | 3        | nothing — CSS on the page, under D30                |
+    | a command object (Standard, Xaml)     | 2     | 2        | nothing — the page draws with buttons, under D47    |
+    | a declined control (Swipe, RichEdit)  | 2     | 10       | `Border`/`ListView`/`TextBlock`; `TextBox` (WD-069) |
+    | a page about the platform             | 10    | 38       | whatever each point needs, under D7 and O2          |
+
+    Scratch Pad is one of the ten, and its live-tree pane is the one box that goes to the
+    `NotApplicablePanel`. RichEditBox's page, which D47 left to "whichever unit reaches the group
+    first", is taken here with the rest of Text, drawn with `TextBox` under WD-069.
+
+    _Which reference._ The guest runs Gallery 2.9.3.0. Sixty-two of the sixty-five sample
+    directories are unchanged between that tag and the pin; three are not — AppBarButton
+    (`40a2297`, a code-sample fix), ListView (`8854551`, two added samples) and Canvas
+    (`29f6247`, a narrator fix) — and for those the pin is reproduced and the guest measures only
+    what both have.
+
+    _Units_, one group or half a group each, in this order: the order puts the smallest group
+    first, so the page pattern this version settles is settled on five pages rather than on
+    twenty-four.
+
+    1. Status & info — InfoBadge, InfoBar, ProgressBar, ProgressRing, ToolTip.
+    2. Basic input, the buttons — Button, DropDownButton, HyperlinkButton, RepeatButton,
+       ToggleButton, SplitButton, ToggleSplitButton.
+    3. Basic input, the rest — CheckBox, RadioButton, ComboBox, ColorPicker, RatingControl,
+       Slider, ToggleSwitch.
+    4. Dialogs & flyouts — ContentDialog, Flyout, Popup, TeachingTip.
+    5. Text — AutoSuggestBox, NumberBox, PasswordBox, RichEditBox, RichTextBlock, TextBlock,
+       TextBox.
+    6. Navigation — NavigationView and TabView (eighteen examples between them), then
+       BreadcrumbBar, Pivot and SelectorBar as a second unit.
+    7. Menus & toolbars — the four AppBar and CommandBar pages, MenuBar, MenuFlyout and
+       CommandBarFlyout; then SwipeControl, StandardUICommand and XamlUICommand, whose pages draw
+       a control the library does not have.
+    8. Collections — FlipView, GridView, ItemsRepeater, ItemsView, ListView, TreeView.
+    9. Layout — Expander, and the three panels in CSS.
+    10. Fundamentals, then Accessibility.
+
+    _Done when, per page:_ the route exists and the navigation tree reaches it rather than the
+    not-built fallback; every `ControlExample` of the pinned page is there with its sample code
+    from the pin's `.txt` and its options and output wired as the code-behind wires them; the
+    page is captured on the reference and beside it in the guest's Edge at the reference width,
+    and every difference measured is either fixed or recorded — a `WD` row when it is declined,
+    the driving session's queue when it is a fidelity defect; a spec asserts what the page's
+    code-behind does; and the battery is green. A page carries no baseline of its own by default:
+    the components it places carry theirs, and a page-level picture would re-photograph them.
+
+    _Decided by the owner with the plan:_ the order and split above; no page baselines, as
+    written; and authorship by unit — Navigation, Menus & toolbars and Collections, whose pages
+    carry the most code-behind behaviour, go through the A/B author lanes as v18's units did,
+    and the rest are authored directly, with the reason in each commit.
+
 **Twenty-four Gallery pages are scheduled by no tranche, and planning v7 is what found
 them.** The roadmap enumerates by name where a tranche schedules controls, and by count where
 it takes a whole group at once — Styles's ten, Motion's seven, and the eighteen O2 resolves.
