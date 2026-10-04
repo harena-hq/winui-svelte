@@ -720,7 +720,7 @@ group sizes, which no longer line up one-to-one with a version.
 
     | control        | not yet built                                                                                                                                  |
     | -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-    | Slider         | `Orientation="Vertical"`, the three `TickBar`s, and `IsThumbToolTipEnabled`                                                                    |
+    | Slider         | ~~`Orientation="Vertical"`, the three `TickBar`s, and `IsThumbToolTipEnabled`~~ — **built, the last in `36d41e2`**                             |
     | ComboBox       | ~~`IsEditable="True"` and the `EditableModeStates` group~~ — **built 2026-10-03**, then measured against the reference and given its baselines |
     | NumberBox      | `SpinButtonPlacementMode="Compact"`, `AcceptsExpression`, `ValidationMode`                                                                     |
     | AutoSuggestBox | non-text suggestions, `LightDismissOverlayMode`                                                                                                |
@@ -3296,7 +3296,7 @@ System / Shell` moves to item 16; `item 15` occurs once in the whole of `docs/`,
     | ~~WD-042 — four text controls floor at 318 where WinUI floors at 64~~ — **closed 2026-10-01**             | the four declarations, and the dev-route baselines that a 64-pixel floor would collapse                                  |
     | WD-100 — a multi-line TextBox sized by content takes its textarea's size                                  | a growing `AcceptsReturn` box measured; the single-line half closed 2026-10-03                                           |
     | C9 does not follow a token whose value is a bare `var()`                                                  | one resolution step in the gate; three declarations were invalid for four versions and nothing noticed                   |
-    | the ComboBox chevron column is fixed at 38 upstream, ours is 12 plus 14                                   | the same measurement pass as its trigger height, 34 against WinUI's 32                                                   |
+    | ~~the ComboBox chevron column is fixed at 38 upstream, ours is 12 plus 14~~ — **settled 2026-09-25**      | the same measurement pass as its trigger height, 34 against WinUI's 32                                                   |
     | `ControlExample`'s options pane is 233 wide at x 1330 against 232 at x 1331, `#fcfcfc` against `#fbfbfb`  | `.options` is content-box with `border-width: 0 0 0 1px`; three baselines move, and it does not show at every pane width |
     | unstyled text is the browser's 16px in both densities                                                     | XAML's own TextBlock default, which is in neither pin                                                                    |
 
@@ -4178,6 +4178,10 @@ divergence this registry owes an entry for.
 Every exported component named against the evidence that sealed it, and any whose only evidence
 is a dev route re-photographed against the original on the reference guest. v18's last unit runs
 it; a release is cut when it passes. D37.
+
+**Run on 2026-10-04, and passed**, after two defects it found were fixed: `docs/library-gate.md`
+names each of the eighteen against its evidence, says what each still owes, and argues why none
+of that blocks the release. The release itself has not been cut.
 
 **The first release exports a subset of what is built, and that is D46.** D54 amends it, in the
 two paragraphs below. The gate's sentence above was written when "exported" and "built" were
