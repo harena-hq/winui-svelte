@@ -430,20 +430,13 @@
 		background: var(--winui-ToggleSwitchKnobFillOff);
 	}
 
-	/* Only the on knob draws a stroke, and `ToggleSwitchKnobStrokeOn` is a gradient in the token
-	   layer. A gradient named as a `border-color` is invalid CSS and silently dropped, which is
-	   why Button, TextBox and RadioButton carry a transparent border under a two-layer
-	   background instead. The same form here: the fill clipped to the padding box, the gradient
-	   to the border box, and the fill written as a two-stop gradient of one colour because a
-	   background layer takes an image, not a colour. */
+	/* No stroke. `SwitchKnobOn` binds `BorderBrush` to `ToggleSwitchKnobStrokeOn` and sets no
+	   `BorderThickness` (ToggleSwitch_themeresources.xaml:510), and no state sets one, so a
+	   `Border`'s default of 0 draws nothing and the knob is twelve pixels of fill. A one-pixel
+	   stroke here left ten: measured against the reference's on switch, ten columns of solid
+	   white across the knob's middle row there and eight here. */
 	.knob-on {
-		border-style: solid;
-		border-width: var(--winui-ToggleSwitchOuterBorderStrokeThickness);
-		border-color: transparent;
-		background:
-			linear-gradient(var(--winui-ToggleSwitchKnobFillOn), var(--winui-ToggleSwitchKnobFillOn))
-				padding-box,
-			var(--winui-ToggleSwitchKnobStrokeOn) border-box;
+		background: var(--winui-ToggleSwitchKnobFillOn);
 		opacity: 0;
 	}
 
@@ -507,13 +500,7 @@
 		background: var(--winui-ToggleSwitchKnobFillOffPointerOver);
 	}
 	.root:hover .knob-on {
-		background:
-			linear-gradient(
-					var(--winui-ToggleSwitchKnobFillOnPointerOver),
-					var(--winui-ToggleSwitchKnobFillOnPointerOver)
-				)
-				padding-box,
-			var(--winui-ToggleSwitchKnobStrokeOn) border-box;
+		background: var(--winui-ToggleSwitchKnobFillOnPointerOver);
 	}
 
 	/* ----- Pressed ----- */
@@ -540,13 +527,7 @@
 	}
 	.root:active .knob-on,
 	.root[data-dragging] .knob-on {
-		background:
-			linear-gradient(
-					var(--winui-ToggleSwitchKnobFillOnPressed),
-					var(--winui-ToggleSwitchKnobFillOnPressed)
-				)
-				padding-box,
-			var(--winui-ToggleSwitchKnobStrokeOn) border-box;
+		background: var(--winui-ToggleSwitchKnobFillOnPressed);
 	}
 
 	/* 12x12 at rest, 14x14 under the pointer, 17 wide by 14 tall while pressed — the squish is
@@ -584,13 +565,7 @@
 		background: var(--winui-ToggleSwitchKnobFillOffDisabled);
 	}
 	.root[data-disabled] .knob-on {
-		background:
-			linear-gradient(
-					var(--winui-ToggleSwitchKnobFillOnDisabled),
-					var(--winui-ToggleSwitchKnobFillOnDisabled)
-				)
-				padding-box,
-			var(--winui-ToggleSwitchKnobStrokeOn) border-box;
+		background: var(--winui-ToggleSwitchKnobFillOnDisabled);
 	}
 	.root[data-disabled] .content {
 		color: var(--winui-ToggleSwitchContentForegroundDisabled);
