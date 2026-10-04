@@ -839,13 +839,20 @@ widest card it can produce is 320 — which is exactly what the Gallery's hero e
 and is why the reproduction's cap is `MaxWidth − 2 × TailShortSideLength` rather than
 `MaxWidth`.
 
-**`TeachingTipMinWidth` is not honoured by the shipped control** and the reproduction does not
-apply it either; WD-016 carries the decision. It is declared 320 and set as `MinWidth` on the
+**`TeachingTipMinWidth` is not honoured by the shipped control** (withdrawn 2026-10-03; see
+the correction below) and the reproduction does not apply it either; WD-016 carries the
+decision. It is declared 320 and set as `MinWidth` on the
 same two grids the maximum is set on, so the narrowest card the template can produce is 304.
 Two independent Gallery examples measure 224 and 248. No mechanism was found — the code never
 touches a width and the `perf2026` variant of the dictionary differs only in
 Storyboard-versus-Setter form — so this is recorded as a disagreement between the pin and the
 build rather than explained.
+
+**Corrected 2026-10-03: the mechanism is the Gallery's, not the control's.** The Gallery's
+`App.xaml:62` sets `TeachingTipMinWidth` to 48 for the whole app, so both examples were
+measured under a floor of 32 and the shipped control honours the resource it is given. The
+search above read the control and its dictionary and not the app that hosts them. The card now
+takes the floor, the harness lowers it as the Gallery does, and WD-016 is deleted.
 
 **The tail is not an ornament under the card; it is a hole in it.** `TailPolygon` (`:353`)
 fills with the card's `Background` and strokes with its `BorderBrush`, and it is painted after
@@ -886,6 +893,13 @@ control. Unit 046a's section carries the first, `TeachingTipMinWidth`. The other
 and both were found the same way: by decomposing a card that measured one number and finding
 the template's arithmetic gave another.
 
+**Corrected 2026-10-03: two of the three are explained, and by the pin.** The minimum width is
+the Gallery's `App.xaml:62` and the content margin is a state `OnApplyTemplate` never enters;
+both corrections follow their paragraphs. The third, the command row's columns below, is still
+a measurement with no mechanism, and the same search is owed to it: `Grid.cpp:1022-1023`
+treats star definitions as `Auto` only when the available width is infinite, and the
+template's `ScrollViewer` keeps the horizontal default of `Disabled`, so that is not it.
+
 **The command row's two columns behave as `Auto`, not as `*`.** The template declares two star
 columns (`TeachingTip.xaml:336`). Two star columns over the untargeted example's 222px content
 area are 111 each, which would make both buttons 107 wide. They measure 110 and 104 — their
@@ -900,6 +914,11 @@ between the subtitle and the description, which is exactly the `Margin="0,16,0,0
 sets on its own `TextBlock`; with the `Content` state (`:64`) live it would be 28 and the card
 would be twelve taller than the 310 it measures. The reproduction's content slot takes no
 margin, and the harness's description carries the 16 the Gallery's does.
+
+**Corrected 2026-10-03: the state is never entered for declared content, by the pin's own
+code.** `OnContentChanged` is the only caller of the `Content` state (`TeachingTip.cpp:249-258`)
+and `OnApplyTemplate` does not call it, so content set before the template exists never takes
+the margin. WD-017 now records the case that does differ: content that arrives later.
 
 The hero band fills the card's inner box exactly — 318 x 211 inside a 320 x 310 card whose
 border is 1 — and its top corners round against that inner corner rather than the outer one:
