@@ -120,11 +120,17 @@
 		container-type: inline-size;
 	}
 
+	/* ProgressBar.xaml:158: the track is `VerticalAlignment="Center"` in the bar's row, which
+	   puts a 1px track on the middle of three whole rows. Centred with auto margins rather than
+	   `top: 50%` and a half-height translate: paint snaps the 1.5px offset to 2 and the
+	   un-snapped transform then takes 0.5 off, and the line was painted across two rows at half
+	   strength.
+	   Measured against the reference's determinate bar: one row of 134 there, two of 188 here. */
 	.track {
 		position: absolute;
 		inset-inline: 0;
-		top: 50%;
-		transform: translateY(-50%);
+		inset-block: 0;
+		margin-block: auto;
 		height: var(--winui-ProgressBarTrackHeight);
 		background: var(--winui-ProgressBarBackground);
 		border-radius: var(--winui-ProgressBarTrackCornerRadius);
