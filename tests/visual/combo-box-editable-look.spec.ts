@@ -106,8 +106,15 @@ test('ComboBox editable with focus on the control, in three themes', async ({ pa
 		await setTheme(page, theme);
 		await focusTheControl(page);
 		await page.mouse.move(0, 0);
+		// A two-pixel budget, and only here. Under a full run's load the masked highlight ring's
+		// corners raster differently from run to run: twelve repeats on four workers failed three
+		// times, in two themes, each counted as one pixel; the raw differences were at the ring's
+		// corners only, at most 26 levels, with the state read as settled. A planted defect the
+		// size of the smallest this picture has to catch, the text box's corners squared under
+		// the pill, counted thirteen.
 		await expect(page).toHaveScreenshot(`ComboBoxEditable-control-focused-${theme}.png`, {
-			clip: await around(page)
+			clip: await around(page),
+			maxDiffPixels: 2
 		});
 	}
 });
