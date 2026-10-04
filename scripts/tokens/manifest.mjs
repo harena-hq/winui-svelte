@@ -1599,7 +1599,8 @@ export const TOGGLESWITCH_KEYS = {
 	ToggleSwitchContentForeground: 'ToggleSwitch on/off content text',
 	ToggleSwitchContentForegroundDisabled: 'ToggleSwitch on/off content text, disabled',
 
-	// The knob's stroke, which only the on knob draws.
+	// The on knob's `BorderBrush`, bound with no `BorderThickness`, so upstream paints nothing
+	// with it; carried because the dictionary declares it.
 	ToggleSwitchKnobStrokeOn: 'ToggleSwitch knob stroke, on',
 
 	ToggleSwitchContainerBackground: 'ToggleSwitch container background, at rest',
