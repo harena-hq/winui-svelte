@@ -1060,6 +1060,12 @@ group sizes, which no longer line up one-to-one with a version.
     wrong beside the control it copies. Every one was found by measuring the original, and
     none by a gate.
 
+    **Corrected 2026-10-03: neither was a disagreement, and the rule is withdrawn.** The
+    minimum width is lowered by the Gallery's own `App.xaml:62`, and the content margin is a
+    state the pin's `OnApplyTemplate` never enters. Both renders follow from pinned sources the
+    search did not read — the host app's resources and the control's code-behind. A render that
+    disagrees with the dictionary is a lead to those two, not a specification over them.
+
     **The seal gate learned one thing.** `--update-snapshots` over the whole suite wrote a
     light render into a dark baseline and nothing failed; the suite then agreed with the
     corrupted image on every later run. `tests/visual/themes.ts` now proves the theme was

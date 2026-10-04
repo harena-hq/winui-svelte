@@ -247,7 +247,9 @@
 										</div>
 									</div>
 									{#if content}
-										<!-- WD-017: the shipped control puts no margin above the content slot. -->
+										<!-- No margin above: upstream's 12px comes only from the `Content` state,
+										     which `OnContentChanged` enters and `OnApplyTemplate` never does, so
+										     content the tip is declared with never gets it (WD-017). -->
 										<div class="main">{@render content()}</div>
 									{/if}
 									{#if buttonCount > 0}
@@ -339,8 +341,12 @@
 		max-height: var(--winui-TeachingTipMaxHeight);
 		/* TeachingTip_themeresources.xaml:71 — keep the shipped minimum height. */
 		min-height: var(--winui-TeachingTipMinHeight);
-		/* WD-016: the shipped reference ignores TeachingTipMinWidth, so content sizes the card;
-		   consumers who need the documented floor can provide min-width through style or class. */
+		/* TeachingTip.xaml:282 and :297 set TeachingTipMinWidth (320,
+		   TeachingTip_themeresources.xaml:73) as `MinWidth` on the same two
+		   grids the maximum is on, so the narrowest card is 320 less the two 8px tail tracks.
+		   The Gallery lowers the resource to 48 for the whole app (its App.xaml:62), which is
+		   why its tips measure narrower; a consumer does the same with the token. */
+		min-width: calc(var(--winui-TeachingTipMinWidth) - 16px);
 		border-style: solid;
 		border-width: var(--winui-TeachingTipContentBorderThicknessUntargeted);
 		border-color: var(--winui-TeachingTipBorderBrush);

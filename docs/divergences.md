@@ -417,44 +417,33 @@ code-behind, not here, because nothing about it had been declined, and it was bu
 
 ---
 
-### WD-016 — TeachingTip does not honour its minimum width
-
-- **Control**: `TeachingTip`.
-- **WinUI does**: declare `TeachingTipMinWidth` as 320 in
-  `TeachingTip_themeresources.xaml:73`, then set it as `MinWidth` on the outer and tail-occlusion
-  grids at `TeachingTip.xaml:282` and `:297`. With the two 8px tail tracks, that would floor the
-  card at 304px.
-- **We do**: set no minimum width. The card is sized by its content and capped at 320px, which is
-  `TeachingTipMaxWidth` minus the two 8px tail tracks.
-- **Why accepted**: the shipped control on the reference machine does not honour the declared
-  floor. Two independent Gallery examples measured 224px and 248px, both below it, while
-  `TeachingTipMaxWidth` on the same two elements is honoured — the hero example measures exactly
-  336px minus two 8px tracks. Reproducing the dictionary would make every tip wider than the
-  control being copied.
-- **Would reconsider if**: the shipped control starts honouring the floor. This entry is a
-  disagreement between the pin and the build, not between WinUI and this library, so the test
-  is a measurement rather than a decision: a Gallery tip measuring 304 or more on the reference
-  machine closes it. Until then a consumer who wants the documented floor sets `min-width`
-  through `style` or `class`, and sees a tip narrower than 320px if they do not.
-
----
-
-### WD-017 — TeachingTip leaves its content slot directly under the subtitle
+### WD-017 — TeachingTip content set after its template applies lacks upstream's 12px margin
 
 - **Control**: `TeachingTip`.
 - **WinUI does**: the `Content` state in `ContentStates` (`TeachingTip.xaml:64`) sets
-  `MainContentPresenter.Margin` to `TeachingTipMainContentPresentMargin`, whose value is
-  `0,12,0,0` in `TeachingTip_themeresources.xaml:78`, putting 12px above content.
-- **We do**: put no margin above the content slot.
-- **Why accepted**: the shipped control on the reference machine does not apply that state. The
-  Gallery's hero example measures 16px between the subtitle and description, exactly the
-  Gallery TextBlock's own `Margin="0,16,0,0"`; with the upstream state live, the gap would be
-  28px and the card would be 322px tall instead of its measured 310px.
-- **Would reconsider if**: the shipped control starts applying the state — the same measurement
-  test as WD-016, and on the same control. A Gallery hero tip measuring 322 rather than 310
-  closes it. Until then content sits directly under the subtitle, and a consumer who wants the
-  documented gap puts it on their own content, which is where the reference Gallery's own 16px
-  comes from.
+  `MainContentPresenter.Margin` to `TeachingTipMainContentPresentMargin`, `0,12,0,0`
+  (`TeachingTip_themeresources.xaml:78`). Only `OnContentChanged` enters that state
+  (`TeachingTip.cpp:249-258`); `OnApplyTemplate` (`:45`) sets the title, subtitle, button,
+  light-dismiss, icon and hero-placement states (`:70-71`, `:124-127`) and not this one.
+  Content declared with the tip is set before the template exists, so that call
+  finds no state to go to and the margin never appears — which is what the reference measures:
+  16 between the hero example's subtitle and description, the Gallery `TextBlock`'s own
+  `Margin="0,16,0,0"`, in a card 310 tall where the margin would make it 322. Content set or
+  replaced once the template is applied does get the 12.
+- **We do**: put no margin above the content slot in either case. Content a tip is declared
+  with matches upstream; content that arrives later sits 12px higher than upstream's.
+- **Why accepted**: scope. Svelte can see the `content` snippet prop change identity after
+  mount, which is the case upstream re-enters the state for, but no Gallery example replaces a
+  tip's content, and tracking it is state kept for a case nobody has asked for.
+- **Would reconsider if**: a consumer replaces a tip's content in place and expects the gap,
+  or upstream enters `ContentStates` in `OnApplyTemplate`, at which point every tip takes the 12
+  and this entry becomes the opposite one.
+
+This entry once read as the shipped control ignoring its own template, and rested on a rule
+that the render is the specification where the dictionary disagrees. Both were wrong: the
+render is the pin's code doing what it says. WD-016, opened on the same rule for
+`TeachingTipMinWidth`, was deleted on 2026-10-03 — the Gallery lowers that resource to 48 for
+the whole app (`App.xaml:62`), and the control honours whatever it is given.
 
 ---
 
