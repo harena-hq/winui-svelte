@@ -721,7 +721,7 @@ group sizes, which no longer line up one-to-one with a version.
 
     | control        | not yet built                                                                                                                                  |
     | -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-    | Slider         | ~~`Orientation="Vertical"`, the three `TickBar`s, and `IsThumbToolTipEnabled`~~ — **built, the last in `36d41e2`**                             |
+    | Slider         | ~~`Orientation="Vertical"`, the three `TickBar`s, and `IsThumbToolTipEnabled`~~ — **built, the last in `f4a0a88`**                             |
     | ComboBox       | ~~`IsEditable="True"` and the `EditableModeStates` group~~ — **built 2026-10-03**, then measured against the reference and given its baselines |
     | NumberBox      | `SpinButtonPlacementMode="Compact"`, `AcceptsExpression`, `ValidationMode`                                                                     |
     | AutoSuggestBox | non-text suggestions, `LightDismissOverlayMode`                                                                                                |
@@ -747,7 +747,7 @@ group sizes, which no longer line up one-to-one with a version.
     the second half of each sealed control adds, the finding that seven of the twelve are
     `Windows.UI.Xaml` controls WinUI 3 only restyles — **recorded at the time as "no
     implementation in the pin at all", which was true of the sparse checkout then and stopped
-    being true when `8928bb8` widened it**; that file's "The checkout grew and these claims did
+    being true when `7fff31d` widened it**; that file's "The checkout grew and these claims did
     not" has the measurement — and,
     the part that matters going forward, the four steps that sweep a control **before** it
     is sealed rather than after. Two defects came out of it and are fixed; the rest are
@@ -774,8 +774,8 @@ group sizes, which no longer line up one-to-one with a version.
     popup re-breaks both, and ComboBox already carries the second. They are sealed before
     the next tranche starts. The other four are single lines in single components.
 
-    **All six are closed.** The four single-component fixes are `8619668`, `6201fb9`,
-    `fc50c93` and `23d24ba`; the two mechanisms are `b10a5b6` and `5371910`. Two of the
+    **All six are closed.** The four single-component fixes are `1aec498`, `7342d5b`,
+    `5ff8a7e` and `de93eba`; the two mechanisms are `1713e14` and `dad2795`. Two of the
     four were not the one-liners this paragraph predicted. The caret was not moved by the
     `type` change at all — Chromium resets a password field's selection at the end of the
     task that dispatched the pointer event, so a restore has to wait a frame and `tick()`
@@ -846,7 +846,7 @@ group sizes, which no longer line up one-to-one with a version.
     the five have a full implementation in the pin, and **this said ToolTip had only theme
     resources** — that it is a `Windows.UI.Xaml` control, so its dictionary and the Gallery's
     page were the whole of what could be read. **The dictionary is 77 lines, not 78, and the
-    claim around it expired on `8928bb8`**, which widened the sparse checkout to `dxaml`: the
+    claim around it expired on `7fff31d`**, which widened the sparse checkout to `dxaml`: the
     pin carries `ToolTip_Partial.cpp` and `ToolTipService_Partial.cpp`. `surface.md`'s ToolTip
     entry is the corrected account, and this line is the last copy of the old one — it sat in
     the file that entry points at. What the sweep changed about this version's shape:
@@ -1090,7 +1090,7 @@ group sizes, which no longer line up one-to-one with a version.
     was recorded as _the pin carries no implementation at all_ — **true of the checkout this
     version had, and false of the one the repository has now.** The search is quoted in the same
     sentence: `find controls/dev -name 'AppBar*'` matches three `*_themeresources.xaml` files and
-    nothing else, and at v7 `controls/dev` was the whole checkout. `8928bb8` added `dxaml` two
+    nothing else, and at v7 `controls/dev` was the whole checkout. `7fff31d` added `dxaml` two
     days later, and all four of `AppBarButton`, `AppBarToggleButton`, `AppBarSeparator` and
     `CommandBar` have an implementation there — 836, 430, 84 and 4257 lines. Steps 2 and 3 of the
     sweep were skipped on a verdict that has since expired, which is `docs/surface.md`'s "The
@@ -1418,7 +1418,7 @@ group sizes, which no longer line up one-to-one with a version.
     The top pane is on the surface the acceptance gate walks, and it is v8's.
 
     **The component states a reason for the absence, and it is not the reason.**
-    The TSDoc on `NavigationViewPaneDisplayMode` in `NavigationView.svelte` said, at `d50b02d`,
+    The TSDoc on `NavigationViewPaneDisplayMode` in `NavigationView.svelte` said, at `93bbf38`,
     that `Top` is missing from it "for
     the same reason it is absent from `NavigationViewDisplayMode`". The two enums are not in
     the same position. `NavigationViewDisplayMode` is the mode the control _computed_ and
@@ -1745,8 +1745,8 @@ generics="T">` component through `pnpm --filter winui-svelte build` reaches `dis
        headers — `ListViewHeaderItem` (`generic.xaml:9131`) is fully readable, a padded
        `ContentPresenter` over a half-pixel divider inset 12 on both sides. The scrollbar is the
        treatment NavigationView.svelte's `.items-container-grid::-webkit-scrollbar` rules
-       had already worked out against `ScrollBar_themeresources.xaml` at `1dac2d5` (folded
-       into the internal ScrollBar since, by `09341ad`); the ScrollBar control itself stays roadmap
+       had already worked out against `ScrollBar_themeresources.xaml` at `6e5fc3d` (folded
+       into the internal ScrollBar since, by `612e9ce`); the ScrollBar control itself stays roadmap
        item 13.
 
     7. **GridView and GridViewItem.** The same presenter with its own 45-key family and its own
@@ -2347,7 +2347,7 @@ generics="T">` component through `pnpm --filter winui-svelte build` reaches `dis
     since v10 had the description 4px high and the example header 12px high, and nothing said
     so until a page put the original's own content under the frame. Both roots are formatting
     context roots now, and a third case turned up the same day — a TextBlock's margin on an
-    inline span. The lesson is on the seal of `05f00af` and in the harness fix that followed.
+    inline span. The lesson is on the seal of `749876c` and in the harness fix that followed.
 
     **The one-column layout has a pre-count state, and it is the default's own.** `RadioButtons`
     counts its children in the DOM to know its row count; before the count exists, a
@@ -2920,7 +2920,7 @@ generics="T">` component through `pnpm --filter winui-svelte build` reaches `dis
     that minimum is the whole control's.
 
     Ours puts the 318 on the outer box (NumberBox.svelte's `.box`) and the 120 on the inner
-    input (`.input.inline`, as of `ee3f4c2`), where the outer minimum dominates and the state setter
+    input (`.input.inline`, as of `bb01378`), where the outer minimum dominates and the state setter
     can never take effect. The comment above it reads the setter backwards — it says the 120 is
     there so the box is wide _enough_, where upstream's purpose is to let a NumberBox be narrower
     than a text box.
@@ -3818,7 +3818,7 @@ System / Shell` moves to item 16; `item 15` occurs once in the whole of `docs/`,
 
     `Hyperlink` arrives with `TextBlock` rather than on its own. It is not a Gallery page; it is
     an inline, and three sites already carry a comment saying this library has no control for it
-    — as of `1d934e2`, the typography page's markup, the animated-icon page's `.lead a`, and the two
+    — as of `9b44e23`, the typography page's markup, the animated-icon page's `.lead a`, and the two
     anchors on `styles/acrylic/+page.svelte`. `TextBlock`'s `Inlines` is where it belongs.
 
     **`TextBlock` is a component, and that is D38.** The library already emits the type ramp as
@@ -4206,14 +4206,14 @@ evidence is a dev route.** That is a sweep of commit trailers plus a handful of 
 **The consumer this asked for was built fifty-one minutes later, and the paragraph asking for
 it stood for twelve days.** It said C6 proved the package needs no build tooling but not that
 a consumer can mount what it exports, and that the smoke app the gate description promised did
-not exist. That was true at 17:45 on 2026-09-06, when `155b49c4` wrote it, and false at 18:36,
-when `1b792c5` installed the packed tarball into a project this workspace cannot help.
+not exist. That was true at 17:45 on 2026-09-06, when `57999ae5` wrote it, and false at 18:36,
+when `854487e` installed the packed tarball into a project this workspace cannot help.
 `pnpm smoke` packs the library, installs it outside the workspace, places every released
 component and four from `preview` in a bare Vite + Svelte app, type-checks that app against the
 published types, builds for the browser and for SSR, renders the SSR bundle, and refuses a build
 that imports a name the package does not export. A request written into this
 file is not re-read once it is satisfied, and every later sentence citing it reads as
-corroboration — the same shape as the scrollbar claim `d2b00ff` corrected.
+corroboration — the same shape as the scrollbar claim `83b1a8d` corrected.
 
 C6 itself was what was actually owed, and it was worse than the paragraph said. The gate, the
 measurement that condemned it and what replaced it are under "Conformance gates" below.
@@ -4542,9 +4542,9 @@ answers that half where one does; C17's other gaps, and the two documents it rea
 to hand.
 
 **Two documents name the gates by number, and only one of them kept up.** The enumeration above
-did: `C13` was in it at `bbaff58`, the commit that wired C13. `keyboard.md`'s apparatus table
-did not. It read `C1–C11` from `0a17908` onward — through `a1a9ce1` wiring C12 and `bbaff58`
-wiring C13, so two gates behind at its worst — and was corrected only at `04a6924`, eight
+did: `C13` was in it at `1549641`, the commit that wired C13. `keyboard.md`'s apparatus table
+did not. It read `C1–C11` from `a23921a` onward — through `fcf44ca` wiring C12 and `1549641`
+wiring C13, so two gates behind at its worst — and was corrected only at `f347d15`, eight
 commits after C12 landed, by a `feat(navigation-view)` commit that had no business with it.
 Nothing read either file for a gate list, and C12 cannot reach this because neither sentence
 cites a line, so both were brought to C15 by hand. **`C17` now reads the table**: its row has

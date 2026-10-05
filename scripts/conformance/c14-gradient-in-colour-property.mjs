@@ -6,7 +6,7 @@ export const title = 'no colour property reads a token that resolves to a gradie
 // C9 asks whether a token name resolves to *anything*. This asks whether what it resolves to
 // is of the property's type, which is the half that renders.
 //
-// `ab843dd` is the defect that named this hole. `ComboBox.svelte`'s trigger wrote
+// `97e2335` is the defect that named this hole. `ComboBox.svelte`'s trigger wrote
 // `border-color: var(--winui-ComboBoxBorderBrush)`; that token aliases
 // `ControlElevationBorderBrush`, which this layer writes as a `linear-gradient(...)`.
 // **`var()` defers the type check to computed-value time**, so the declaration parses, becomes

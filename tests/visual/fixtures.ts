@@ -124,7 +124,7 @@ const HYDRATION_TIMEOUT = 20_000;
  * Resolves once the current document's own JavaScript has run.
  *
  * Every test that drives a control with input needs this, and two were caught without it: the
- * theme select in `theme-switch.spec.ts` (sealed in `fe1e0e9`) and the touch pull in
+ * theme select in `theme-switch.spec.ts` (sealed in `73c7083`) and the touch pull in
  * `refresh-gesture.spec.ts`. Server-rendered markup is present and interactive-looking before any
  * handler is attached, so input that lands first changes the DOM, runs no Svelte code, and leaves
  * the rest of the test measuring a page that never heard it. Nothing about it is random except

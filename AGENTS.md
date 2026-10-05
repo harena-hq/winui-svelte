@@ -73,6 +73,17 @@ parser sees a type named `ProgressRing`. **Those 294 subjects were rewritten on
 boundary it used to state is gone. The history as it was before the rewrite is
 not part of this repository.
 
+**It was rewritten once more on 2026-10-05, before publication.** One file was
+removed from every commit (a sample screenshot whose map data the upstream
+licence does not cover), one data file's every version was replaced by its
+extraction from an MIT-licensed source, and paragraphs naming private context
+were restated in every version of the docs that held them; thirty-three
+messages lost the same kind of detail or had their trailer block repaired. The
+final tree was byte-identical to the one before. Shas cited in messages were
+re-pointed by `git filter-repo`, and the 128 cited in tracked files at the tip
+by the commit that records this; a sha cited in an older version of a file
+still names the commit as it was.
+
 **A subject with two clauses is still one intent.** `engineering:principles` §7 says to
 split when you need "and", and 151 of these 412 subjects carry an `and` or a semicolon.
 The rule is about the unit, not the conjunction: "the pane is one tab stop and the rows
