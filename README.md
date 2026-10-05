@@ -36,8 +36,7 @@ against, and writing one would pin a substitute typeface.
 Read `AGENTS.md` before your first commit from a fresh clone — one line of git config has to
 be re-run there, and nothing else will tell you.
 
-Planning, review and commit discipline follow `docs/plan.md` and the `engineering:principles`
-skill it names.
+Planning, review and commit discipline follow `docs/plan.md` and `AGENTS.md`.
 
 ## Status
 

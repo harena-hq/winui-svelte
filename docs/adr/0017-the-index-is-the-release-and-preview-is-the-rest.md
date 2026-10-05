@@ -36,8 +36,8 @@ stylesheets:
 Thirteen are what a desktop application's own hand-built UI would replace with this library,
 chosen by reading such an application rather than guessed. Four more — `ToolTip`, `ScrollView`,
 `ScrollViewer` and `HyperlinkButton` — are what the same reading found one step away: a
-hover-revealed command that would want a label, a scrollbar the application leaves to the
-browser, a link a planned screen would carry. `NavigationViewItem` is ADR 0015's: it decided the
+hover-revealed command that would want a label, a scrollbar an application leaves to the
+browser, a link a screen would carry. `NavigationViewItem` is ADR 0015's: it decided the
 item becomes public with `NavigationView` at this unit, because `menuItemTemplate` is written in
 terms of it, and it is not in the index today. Each component ships with the types its own
 module exports.

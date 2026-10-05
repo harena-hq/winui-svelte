@@ -19,8 +19,6 @@ tracked file, commit message, PR, or issue unless it is first restated in a
 form that would be fine published. A rationale worth keeping is _promoted_ to a
 commit trailer or an ADR in publishable form, never copied across.
 
-`.private/README.md` states what belongs there for this project.
-
 **Run this once per clone**, before the first commit from it:
 
 ```sh
@@ -72,8 +70,8 @@ The drift was dateable — on 2026-09-06 one subject took the shape
 `ProgressRing: <sentence>` and 82 more followed, which _looks_ like the grammar while a
 parser sees a type named `ProgressRing`. **Those 294 subjects were rewritten on
 2026-09-22**, every tree left byte-identical, so `C10` now reads the whole log and the
-boundary it used to state is gone. The tag `pre-history-rewrite-20260922` holds the
-history as it was.
+boundary it used to state is gone. The history as it was before the rewrite is
+not part of this repository.
 
 **A subject with two clauses is still one intent.** `engineering:principles` §7 says to
 split when you need "and", and 151 of these 412 subjects carry an `and` or a semicolon.
@@ -117,8 +115,8 @@ out above.
 Load the `engineering:principles` skill before planning, reviewing, or sealing
 work here. When one agent authors and a different one reviews, load
 `engineering:pair-workflow` with it, and invoke them by name. These skills are
-not distributed with this repository and are not publicly available. If they
-are unavailable, the rules in this brief still stand on their own. This brief
+the author's own tooling and are not distributed with this repository; without
+them, the rules in this brief stand on their own. This brief
 may override either, with the exception and its rationale recorded here.
 
 One override is in force, and it is the one recorded under **Commit subjects** above:
