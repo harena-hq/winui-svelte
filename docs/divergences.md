@@ -2030,8 +2030,8 @@ changes`.
   an absent prop standing in for `Default`. The two upstream enums are **not** nested, which an
   earlier draft of this bullet claimed: `Default` is in neither the bar's set nor this union, and
   it means _defer to the bar_, which is what optionality expresses here. Narrowing the union now
-  is a breaking change to a prop already in the module graph — the package is at `0.0.0` and no
-  consumer holds it, so that is a shape rather than a bill, and the bullet below says when the
+  is a breaking change to a prop already in the module graph — the component is in `preview`,
+  which promises nothing (ADR 0017), and no consumer holds it, so that is a shape rather than a bill, and the bullet below says when the
   bill would start. The **reachable state set is unaffected**: the effective position feeds the
   same Right → Collapsed → Compact → FullSize chain the pin runs
   (`AppBarButtonHelpers.h:171-188`), every value this prop can take is one that chain already

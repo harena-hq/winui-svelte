@@ -5,7 +5,7 @@
  * index's are — the conformance gate that checks each component is snapshotted in all three
  * themes reads this file, and `export *` hides its names from every static reader.
  */
-export const VERSION = '0.0.0';
+export { VERSION } from './index';
 
 export { default as AnimatedVisualPlayer } from './components/AnimatedVisualPlayer.svelte';
 export type {
