@@ -93,6 +93,9 @@ const SPARSE = [
 	'/dxaml/xcp/core/text/**/*.cpp',
 	'/dxaml/xcp/core/native/text/**/*.h',
 	'/dxaml/xcp/core/native/text/**/*.cpp',
+	// The framework dictionary, which `scripts/framework/extract.mjs` reads: the copy here is
+	// under this repository's MIT licence, where the one the SDK package ships is not.
+	'/dxaml/xcp/dxaml/themes/generic.xaml',
 	// Not control source: the design note for the `Symbol` enum, which is the only second
 	// witness to the *rendered* code point that `icon.cpp`'s switch returns. The extractor
 	// under `scripts/symbol/` refuses to emit a table the note and the switch disagree on,

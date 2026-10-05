@@ -6,7 +6,7 @@
  * (`scripts/tokens/extract.mjs`) reads every `*_themeresources*.xaml` from the
  * sparse `microsoft-ui-xaml` clone and writes `data/winui-tokens.json`. The
  * other (`scripts/framework/extract.mjs`) reads the framework's
- * `generic.xaml` from the pinned Windows App SDK package and writes
+ * `generic.xaml` from the same clone, `dxaml/xcp/dxaml/themes/`, and writes
  * `data/winui-framework.json`. They produce the same shape of record file —
  * the file the generator's CSS custom-property layer is built from — and the
  * only reason that comparability survives is that the rule for "this is a

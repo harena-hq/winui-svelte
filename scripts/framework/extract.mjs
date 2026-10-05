@@ -1,15 +1,26 @@
+import { createHash } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join, relative } from 'node:path';
-import { DICTIONARY, head, ROOT, UPSTREAM } from './fetch.mjs';
+import { CHECKOUT, head, ROOT, UPSTREAM } from '../tokens/fetch.mjs';
 import { definitions, difference, tally } from '../tokens/dictionary.mjs';
 import { parse } from '../tokens/xaml.mjs';
 
 const OUTPUT = join(ROOT, 'data', 'winui-framework.json');
 
+// The framework dictionary as `microsoft-ui-xaml` carries it, at the same pin the control
+// dictionaries are read from, and under the MIT licence that repository states. The
+// `Microsoft.WindowsAppSDK.WinUI` package ships a larger build of the same file under
+// Microsoft's own software licence terms, which do not permit publishing it; what is
+// extracted and tracked here therefore comes from this copy alone (ADR 0010). The package's
+// copy is still fetched by `scripts/framework/fetch.mjs`, for reading and for the line
+// citations that name it, and nothing read from it is written into the repository.
+export const PATH = 'dxaml/xcp/dxaml/themes/generic.xaml';
+const DICTIONARY = join(CHECKOUT, PATH);
+
 function extract() {
-	// `'generic.xaml'` rather than the entry's full path inside the package: the path is
-	// written once in `source.entry`, and repeating it on 8 890 records would add a third
-	// of a megabyte and say nothing the header does not.
+	// `'generic.xaml'` rather than the file's full path in the checkout: the path is written
+	// once in `source.path`, and repeating it on every record would add about 130 kB and
+	// say nothing the header does not.
 	const { records } = definitions('generic.xaml', parse(readFileSync(DICTIONARY, 'utf8')));
 
 	const themeCounts = {};
@@ -28,12 +39,10 @@ function extract() {
 
 	return {
 		source: {
-			package: UPSTREAM.package,
-			version: UPSTREAM.version,
 			url: UPSTREAM.url,
-			entry: UPSTREAM.entry,
-			sha256: UPSTREAM.sha256,
-			entrySha256: UPSTREAM.entrySha256,
+			commit: UPSTREAM.commit,
+			path: PATH,
+			sha256: createHash('sha256').update(readFileSync(DICTIONARY)).digest('hex'),
 			extractedAt: new Date().toISOString().slice(0, 10)
 		},
 		census: {
@@ -54,8 +63,8 @@ const census = (doc) => {
 			.map(([name, n]) => `${name} ${n}`)
 			.join(', ');
 	return [
-		`source            ${doc.source.package} ${doc.source.version}`,
-		`entry             ${doc.source.entry} (${doc.source.entrySha256})`,
+		`source            ${doc.source.url} @ ${doc.source.commit}`,
+		`path              ${doc.source.path} (${doc.source.sha256})`,
 		`themes            ${line(themes)}`,
 		`records           ${rest.records} across ${rest.distinctKeys} distinct keys`,
 		`by kind           ${line(byKind)}`,
@@ -65,10 +74,15 @@ const census = (doc) => {
 
 function main(argv) {
 	const at = head();
-	if (at !== UPSTREAM.entrySha256) {
-		const state = at === null ? 'is missing' : `is at ${at}`;
+	if (at !== UPSTREAM.commit) {
+		const state = at === null ? 'is missing' : at === '' ? 'is not a repository' : `is at ${at}`;
 		throw new Error(
-			`.upstream/windows-app-sdk/generic.xaml ${state}, not ${UPSTREAM.entrySha256}. Run \`pnpm framework:fetch\`.`
+			`.upstream/microsoft-ui-xaml ${state}, not ${UPSTREAM.commit}. Run \`pnpm tokens:fetch\`.`
+		);
+	}
+	if (!existsSync(DICTIONARY)) {
+		throw new Error(
+			`.upstream/microsoft-ui-xaml has no ${PATH}. Run \`pnpm tokens:fetch\` to re-apply its sparse paths.`
 		);
 	}
 
