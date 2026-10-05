@@ -224,6 +224,14 @@ async function assertPublishedSurface(directory) {
 		);
 	}
 
+	// The notice for what the tokens and the `Symbol` table are generated from travels with
+	// them; npm packs a licence of its own accord and a notice only when `files` names it.
+	try {
+		await stat(path.join(installed, 'NOTICE.md'));
+	} catch {
+		throw new Error('expected the packed tarball to contain NOTICE.md, but it is missing');
+	}
+
 	// Nothing from the source tree ships. `files` lists `dist` alone, and the two negated
 	// patterns drop the tests.
 	const shipped = await readdir(installed);

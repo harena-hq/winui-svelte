@@ -692,14 +692,14 @@ the whole app (`App.xaml:62`), and the control honours whatever it is given.
 - **We do**: draw the table and not the image. The table is the original's own, row for row —
   v1 read the type ramp's nine rows out of that markup and they are what
   `data/winui-gallery-design.json` carries.
-- **Why accepted**: the images are Microsoft binaries inside `.upstream/`, which this repository
-  deliberately does not track, and every annotation on them is a coordinate measured against
-  their pixels. Nothing about the token layer or the frame is shown by them that the table below
-  does not show, which is why the pages were built this way in v1 — what was missing until now
-  is this entry.
-- **Would reconsider if**: the assets become redistributable and their annotation coordinates
-  are recorded as data. The renderer is the cheap half; a tracked image and a list of tip
-  positions is what does not exist.
+- **Why accepted**: the images are not tracked here — the Gallery's sample media are, under its MIT
+  licence (`NOTICE.md`), and these annotated design images are not — and every annotation on them is
+  a coordinate measured against their pixels. Nothing about the token layer or the frame is shown by
+  them that the table below does not show, which is why the pages were built this way in v1 — what
+  was missing until now is this entry.
+- **Would reconsider if**: the images are copied in as the sample media were and their annotation
+  coordinates are recorded as data. The renderer is the cheap half; a tracked image and a list of
+  tip positions is what does not exist.
 
 ### WD-030 — a Viewbox sized on one axis does not follow its scale on the other
 
@@ -1347,9 +1347,12 @@ changes`.
   `MapControlPage.xaml.cs:48-51` writes the token from the `PasswordBox` onto the control.
 - **We do**: render the not-applicable panel at the slot's 400px height, and the "Set token"
   button takes the value and does nothing with it.
+- **We do, too**: render the not-applicable panel in place of the page's `MapExample.png`, at
+  its 320px height.
 - **Why accepted**: the map is a paid hosted tile service reached with a key the reader supplies,
-  not a control's own drawing. The page's `MapExample.png` — its own screenshot of a map — is
-  reproduced exactly, and it is what the page actually shows a reader.
+  not a control's own drawing. The page's `MapExample.png` is a screenshot of such a map, and
+  the map data in it carries a third party's attribution, which the Gallery's MIT licence does
+  not extend to; it is the one sample image withheld for its licence.
 - **Would reconsider if**: this project acquires a tile source it may redistribute.
 
 ---

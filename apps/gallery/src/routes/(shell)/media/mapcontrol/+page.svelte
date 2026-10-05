@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Button, Hyperlink, Image, PasswordBox } from 'winui-svelte/preview';
+	import { Button, Hyperlink, PasswordBox } from 'winui-svelte/preview';
 	import ControlExample from '$lib/frame/ControlExample.svelte';
 	import ItemPage from '$lib/frame/ItemPage.svelte';
 	import NotApplicablePanel from '$lib/frame/NotApplicablePanel.svelte';
@@ -32,10 +32,15 @@
 		> to obtain your MapServiceToken.
 	</p>
 
-	<!-- MapControlPage.xaml:25-29 — Height 320, left-aligned, AccessibilityView="Raw", which is
-	     the empty `alt` the Image component already writes. 995x742 at height 320 is 429 wide,
-	     measured. -->
-	<Image source="/MapExample.png" style="height: 320px" />
+	<!-- WD-063. MapControlPage.xaml:25-29 — an Image of Height 320 showing `MapExample.png`, a
+	     screenshot of a map whose tiles carry third-party attribution. The Gallery's licence does
+	     not reach that map data, so the file is not copied and the slot keeps its height. -->
+	<NotApplicablePanel
+		element="Image"
+		reason="The original shows a screenshot of a map whose data is a third party's, and it is not redistributed here"
+		row="WD-063"
+		height={320}
+	/>
 
 	<ControlExample
 		headerText={sample.header ?? undefined}
