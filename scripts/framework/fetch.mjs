@@ -4,16 +4,23 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import { createHash } from 'node:crypto';
 import { inflateRawSync } from 'node:zlib';
 
+// The SDK package's build of the framework dictionary, fetched for reading only. Its
+// licence is Microsoft's own software licence terms, which permit using it to develop and
+// test and do not permit publishing it, so nothing read from it is tracked: the records in
+// `data/winui-framework.json` come from `microsoft-ui-xaml`'s MIT copy of the same
+// dictionary (`scripts/framework/extract.mjs`, ADR 0010). What this copy is still for is
+// the line citations that name it, `windows-app-sdk/generic.xaml:N`, which C15 checks
+// against it — a citation states where a fact is and copies nothing.
+//
 // The single place the pin is written. The version is not chosen freely: the pinned
 // Gallery's `standalone.props` declares `Microsoft.WindowsAppSDK` 2.4.0, and that
 // metapackage's dependency on this one is 2.3.6 — so this is the framework dictionary
 // the pinned Gallery would build against.
 //
-// It is deliberately *not* tied to the `microsoft-ui-xaml` pin. That one tracks `main`
-// and is therefore ahead of any released SDK, which is why the two are allowed to move
-// separately and why, where both dictionaries define the same key, the control pin wins
-// (ADR 0010). Two hashes are checked rather than one, the package's and the entry's, so a
-// silently re-published package fails loudly rather than substituting quietly.
+// It is not tied to the `microsoft-ui-xaml` pin, and since 2026-10-05 nothing generated
+// reads it: it anchors the citations alone. Two hashes are checked rather than one, the
+// package's and the entry's, so a silently re-published package fails loudly rather than
+// substituting quietly.
 export const UPSTREAM = {
 	package: 'Microsoft.WindowsAppSDK.WinUI',
 	version: '2.3.6',

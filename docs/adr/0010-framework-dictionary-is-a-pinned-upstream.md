@@ -133,6 +133,21 @@ Accepted. The design-time claim is the part with an expiry: **re-run the three c
 on any re-pin**, because a file shipped for a designer is a file whose relationship to the
 runtime is a fact about one version rather than a property of the format.
 
+**Amended 2026-10-05: what is extracted comes from `microsoft-ui-xaml`, not the package.**
+The decision above read the records in `data/winui-framework.json` out of the package's
+`generic.xaml`. The package is licensed under Microsoft's own software licence terms
+(`license.txt` in the `.nupkg`; the package requires their acceptance), which grant use to
+develop and test and withhold publishing, and the record file is most of that dictionary
+restated as data. `microsoft-ui-xaml` carries the same framework dictionary at
+`dxaml/xcp/dxaml/themes/generic.xaml`, under its MIT licence, at the pin the control
+dictionaries are already read from; `scripts/framework/extract.mjs` now reads that copy. It
+is the smaller of the two, 5 805 records against 8 890, and the generated `type-ramp.css` came
+out byte-identical and `tokens.css` byte-identical but for the header line naming its source, so
+every key the generator selects from the framework is in both with the same value. The
+package is still pinned and fetched for reading, and the line citations that name
+`windows-app-sdk/generic.xaml` still point into it — a citation says where a fact is and
+copies none of it — but nothing read from it is written into the repository.
+
 ## Alternatives rejected
 
 - **Transcribe the values as they are needed.** ADR 0001's and 0007's reason, and now with
