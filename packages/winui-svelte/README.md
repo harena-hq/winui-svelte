@@ -34,4 +34,6 @@ pnpm add @zag-js/svelte @zag-js/number-input
 
 The roadmap lives in the repository's `docs/plan.md`.
 
-MIT. An independent reimplementation, not affiliated with or endorsed by Microsoft.
+MIT. An independent reimplementation, not affiliated with or endorsed by Microsoft. Its tokens
+and `Symbol` table are generated from microsoft-ui-xaml, also MIT; `NOTICE.md` carries that
+notice.

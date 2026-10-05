@@ -53,6 +53,16 @@ the fonts out for the same kind of reason, and the licences differ but the habit
 keeping. Where a page's illustration is an image, v1 renders the page without it and the plan
 says so.
 
+**Amended 2026-10-05: the sample media are taken, and say so.** Later versions did copy
+assets: the photographs, videos and small images from the Gallery's `Assets/SampleMedia` that
+the reproduced pages show as sample content are in `apps/gallery/static/` — byte for byte, or
+re-encoded from WMV to H.264 for the two videos (D44). They come from the Gallery's
+repository, which is MIT licensed, and `NOTICE.md` lists them. The line this paragraph drew
+was a habit rather than a licence condition, and it held for the annotated design images
+only. One sample image is withheld for its licence rather than for being unused: the
+Gallery's map screenshot carries third-party map data under its own attribution, which the
+Gallery's licence does not extend to.
+
 **The line between extraction and transcription is the component shape.** A page's content
 is extracted where the source declares a repeated component with named attributes — `ColorTile`
 on the Color page, `TypographyControl` on the Typography page, the icon rows already

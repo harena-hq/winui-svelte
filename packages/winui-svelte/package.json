@@ -12,6 +12,7 @@
 	"files": [
 		"dist",
 		"LICENSE",
+		"NOTICE.md",
 		"!dist/**/*.test.*",
 		"!dist/**/*.spec.*"
 	],
