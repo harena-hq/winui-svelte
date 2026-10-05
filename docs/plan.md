@@ -91,6 +91,7 @@ pnpm workspace. The library is publishable and imposes no build tooling on its c
 | D52 | ContentDialog focuses content, then `DefaultButton`, then a command button, and lights none of them     | docs/surface.md, ContentDialog    |
 | D53 | Baselines compare at a 0.01 colour tolerance, and one unstable page gets a counted pixel budget         | this file, "Verification"         |
 | D54 | The first release is eighteen components in the index; `preview` exports the rest                       | docs/adr/0017                     |
+| D55 | The release is 0.1.0 with tested peer floors, cut after the owner's pass                                | this file, "The release — 0.1.0"  |
 
 ## Verification
 
@@ -4237,7 +4238,7 @@ divergence this registry owes an entry for.
 
 Every exported component named against the evidence that sealed it, and any whose only evidence
 is a dev route re-photographed against the original on the reference guest. v18's last unit runs
-it; a release is cut when it passes. D37.
+it; a release may be cut once it passes, as D55 orders it. D37.
 
 **Run on 2026-10-04, and passed**, after two defects it found were fixed: `docs/library-gate.md`
 names each of the eighteen against its evidence, says what each still owes, and argues why none
@@ -4275,6 +4276,62 @@ control that lives in its code-behind. A list written before that sweep is a lis
 invalidates. **v18 names the set**, as the unit before the gate runs, and the gate then
 measures against it. **It has: D54 names eighteen components, and ADR 0017 records why and how,
 including the change to this paragraph's polish criterion.**
+
+### The release — 0.1.0
+
+The gate passing is what permits a release; it is not the release. Four steps stand between the
+two, and the last of them is the owner's alone. D55.
+
+1. **Packaging.** One unit, authored directly — its values are decided here and the smoke cases
+   it adds are short — and read cold by a reviewer before it is sealed:
+   - `version` in `packages/winui-svelte/package.json` and `VERSION` in `src/lib/index.ts` both
+     read `0.1.0`, and `src/lib/preview.ts` re-exports the index's `VERSION` rather than keeping
+     a literal of its own. Below 1.0, because `index.ts` is a promise ADR 0017 makes and the owner's
+     pass below may yet change a prop it holds, and under 1.0 a minor bump is where npm's caret
+     range lets that happen: `^0.1.0` stops short of `0.2.0`.
+   - **The peer floors are the versions tested**: `svelte` `^5.57.0` and
+     `@internationalized/date` `^3.12.3`, the ones `scripts/smoke/consumer/package.json` pins.
+     The floors they replace, `^5.33.0` and `^3.8.1`, were never installed by anything. The
+     other three peers' floors already are the pinned versions.
+   - **`@zag-js/svelte` and `@zag-js/number-input` are optional peers**, through
+     `peerDependenciesMeta`: only NumberBox imports them, and it is in `preview`. The package
+     README's install line leaves them out and its `preview` section names them, which is what
+     the manifest then says too. They are `preview`'s, not only NumberBox's: measured, a build
+     importing nothing from `preview` but `Flyout` fails without them as one importing NumberBox
+     does. `@internationalized/date` is imported only by `preview`'s date components too, but
+     stays required: `bits-ui` 2.19.0 declares it a required peer of its own, so marking it
+     optional here would change what a consumer installs not at all.
+   - **Done-when**: `pnpm smoke` gains a second consumer that installs the required peers at
+     their floors exactly, and not the optional two. It asserts that pnpm's store holds no zag,
+     since pnpm installs a missing required peer of its own accord and a manifest that did not
+     mark zag optional would pass otherwise, and that the fixture pins each required peer at
+     its range's floor, read from what was installed; then it builds, type-checks and
+     server-renders the whole index, and the render prints `VERSION`, which has to equal the
+     packed manifest's `version`. The type-check holds a `@ts-expect-error` on a wrong use of
+     `VERSION`, so a consumer whose types did not resolve fails it; no published `.d.ts` names
+     zag, measured, so it is the bundle and not the types that the optional peers can break. Its control is
+     the same consumer importing `NumberBox` from `preview`, whose build has to fail naming zag.
+     Each of the three assertions fails on its own planted defect. The existing consumer is
+     unchanged, and `pnpm build`'s `publint` passes.
+2. **The changelog.** `packages/winui-svelte/CHANGELOG.md`, shipped in the tarball, with one
+   entry: the eighteen components of the index, what `preview` is and that it promises nothing
+   (ADR 0017), the peers, and a pointer to `docs/divergences.md` for where the clone departs
+   from the original on purpose. No history before 0.1.0, because nothing was published.
+   `files` gains it, because npm packs a README and a licence of its own accord and a changelog
+   not; the smoke's check of the packed surface asserts it is there.
+3. **The owner's pass.** The owner drives the Gallery and the dev routes by hand and reports
+   what they find. Each finding is a unit with the usual loop — a fix, a battery, a review, a
+   seal — or, where it is a known divergence or an owed row, a pointer to where it is
+   recorded. Findings outside the eighteen go to the queue, not to the release. The pass ends
+   when the owner says it has, and not before.
+4. **The cut.** On a HEAD whose full battery is green, after the owner's sign-off and on their
+   explicit word: the tag `v0.1.0`, then `pnpm publish` from `packages/winui-svelte` — pnpm,
+   because `pnpm pack` made the tarball the smoke installed — over the `dist` that battery
+   built. The name `winui-svelte` was unclaimed on the registry on 2026-10-05. The repository
+   has no remote, so `package.json` carries no `repository` field; adding one waits for a
+   remote to point at.
+
+v19 starts after the cut, as D37 orders it.
 
 ### Final — the acceptance gate
 
