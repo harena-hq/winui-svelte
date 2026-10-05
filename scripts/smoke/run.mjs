@@ -243,6 +243,123 @@ async function assertPublishedSurface(directory) {
 	}
 }
 
+// The peers `peerDependenciesMeta` marks optional: only `preview`'s NumberBox imports them, so a
+// consumer of the release does not install them.
+const OPTIONAL_PEERS = ['@zag-js/number-input', '@zag-js/svelte'];
+
+async function prepareWithoutOptionalPeers(directory, tarball) {
+	await prepareConsumer(directory, tarball);
+	const manifestPath = path.join(directory, 'package.json');
+	const manifest = JSON.parse(await readFile(manifestPath, 'utf8'));
+	for (const name of OPTIONAL_PEERS) delete manifest.dependencies[name];
+	await writeFile(manifestPath, `${JSON.stringify(manifest, null, '\t')}\n`);
+
+	const install = await installConsumer(directory);
+	assertExit(install, 0, `${path.basename(directory)} pnpm install`);
+	// pnpm installs a missing required peer of its own accord, so a manifest that had not
+	// marked these optional would put them back and every build below would pass anyway. It
+	// puts them in the virtual store only, under the name with its slash as a plus, not at the
+	// top of `node_modules`, which is why the store is what is read.
+	const store = await readdir(path.join(directory, 'node_modules/.pnpm'));
+	// The listing's positive control: a required peer is there under the same naming, so an
+	// empty or renamed store fails rather than passing the check below by finding nothing.
+	if (!store.some((entry) => entry.startsWith('bits-ui@'))) {
+		throw new Error(`expected bits-ui in the consumer's pnpm store, but found ${store.join(', ')}`);
+	}
+	for (const name of OPTIONAL_PEERS) {
+		const found = store.filter((entry) => entry.startsWith(`${name.replace('/', '+')}@`));
+		if (found.length > 0) {
+			throw new Error(
+				`expected ${name} to be left uninstalled as an optional peer, but found ${found.join(', ')}`
+			);
+		}
+	}
+}
+
+async function runReleaseOnly(workdir, tarball) {
+	// The release without the optional peers, at the required peers' floors. The whole index is
+	// imported, so a component of it that made a named import from an optional peer, directly or
+	// through a module it shares with `preview`, fails here rather than in a consumer's build.
+	// A namespace or default import would not: Vite resolves an absent optional peer to a stub
+	// whose default export is empty, and only a missing name fails the bundle.
+	const directory = path.join(workdir, 'release-only');
+	log('release only: installing the consumer without the optional peers');
+	await prepareWithoutOptionalPeers(directory, tarball);
+	await writeFile(
+		path.join(directory, 'src/App.svelte'),
+		`<script lang="ts">\n\timport * as winui from 'winui-svelte';\n\n\t// @ts-expect-error VERSION is typed as a string, which fails if the types do not resolve.\n\tconst wrong: number = winui.VERSION;\n\tconst names = Object.keys(winui);\n</script>\n\n<p>{wrong} {names.length}</p>\n`
+	);
+	await writeFile(
+		path.join(directory, 'src/ssr.js'),
+		`import { render } from 'svelte/server';\nimport * as winui from 'winui-svelte';\n\nconst { body } = render(winui.Button, { props: {} });\n\nprocess.stdout.write(\`\${winui.VERSION}\\n\${body}\`);\n`
+	);
+
+	log('release only: type-checking, building, and rendering the whole index');
+	assertExit(await runCommand('pnpm', ['run', 'check'], directory), 0, 'release-only check');
+	assertExit(await runCommand('pnpm', ['run', 'build'], directory), 0, 'release-only build');
+	const ssrBuild = await runCommand('pnpm', ['run', 'build:ssr'], directory);
+	assertExit(ssrBuild, 0, 'release-only build:ssr');
+	const render = await runCommand('node', ['dist-ssr/ssr.js'], directory);
+	assertExit(render, 0, 'release-only node dist-ssr/ssr.js');
+
+	const manifestOf = async (name) =>
+		JSON.parse(
+			await readFile(
+				path.join(await realpath(path.join(directory, 'node_modules', name)), 'package.json'),
+				'utf8'
+			)
+		);
+	const packed = await manifestOf('winui-svelte');
+
+	// A floor this run did not install is a floor nothing tested. What is read is the version
+	// installed, not the fixture's pin, so an override cannot stand between the two.
+	for (const [name, range] of Object.entries(packed.peerDependencies)) {
+		if (packed.peerDependenciesMeta?.[name]?.optional) continue;
+		const { version: installed } = await manifestOf(name);
+		if (`^${installed}` !== range) {
+			throw new Error(
+				`expected ${name} to be installed at its peer floor ${range}, but found ${installed}`
+			);
+		}
+	}
+
+	// `VERSION` is written by hand in `index.ts`, and nothing else ties it to the manifest.
+	const { version } = packed;
+	const [printed] = render.stdout.split('\n');
+	if (printed !== version) {
+		throw new Error(`expected VERSION to be the packed version ${version}, but found ${printed}`);
+	}
+	if (!render.stdout.includes('<button')) {
+		throw new Error(`expected SSR output to contain <button, but found: ${compactOutput(render)}`);
+	}
+}
+
+async function runOptionalPeerControl(workdir, tarball) {
+	// The control for the case above: the same consumer reaching for the component that needs
+	// the optional peers. Vite resolves an absent optional peer to a stub with no named exports,
+	// and names it and the package that declared it, so the failure is the one this package's manifest caused and not another.
+	const directory = path.join(workdir, 'optional-peer-control');
+	log('optional peer control: installing the consumer without the optional peers');
+	await prepareWithoutOptionalPeers(directory, tarball);
+	await writeFile(
+		path.join(directory, 'src/App.svelte'),
+		`<script>\n\timport { NumberBox } from 'winui-svelte/preview';\n</script>\n\n<NumberBox />\n`
+	);
+
+	log('optional peer control: building NumberBox without its peers');
+	const build = await runCommand('pnpm', ['run', 'build'], directory);
+	if (build.exitCode === 0) {
+		throw new Error(
+			`expected the build to fail without the optional peers, but it exited 0; output: ${compactOutput(build)}`
+		);
+	}
+	if (!/__vite-optional-peer-dep:@zag-js\/[a-z-]+:winui-svelte/.test(commandOutput(build))) {
+		throw new Error(
+			`expected the failed build to name an optional @zag-js peer, but found: ${compactOutput(build)}`
+		);
+	}
+}
+
 const UNKNOWN_EXPORT = 'NotAControl';
 // A component the library builds and the release holds back (ADR 0017): `preview` exports it and
 // the root must not.
@@ -250,7 +367,7 @@ const HELD_BACK_EXPORT = 'Flyout';
 
 async function runRootRejects(workdir, tarball, name, label) {
 	// The negative case. It has to be about this package rather than about the package
-	// manager: pnpm auto-installs a missing peer, so deleting one from the consumer changes
+	// manager: pnpm auto-installs a missing required peer, so deleting one from the consumer changes
 	// nothing, and a consumer that imports only components with no peer of their own builds
 	// green either way. Both were measured here before this shape was chosen. Importing a
 	// name the package does not export is the failure the package itself owns, and it is
@@ -365,6 +482,8 @@ async function main() {
 		const tarball = await packLibrary(workdir);
 
 		await runPositive(workdir, tarball);
+		await runReleaseOnly(workdir, tarball);
+		await runOptionalPeerControl(workdir, tarball);
 		await runRootRejects(workdir, tarball, UNKNOWN_EXPORT, 'unknown export');
 		await runRootRejects(workdir, tarball, HELD_BACK_EXPORT, 'held-back export');
 		for (const typeError of TYPE_ERRORS) await runTypeError(workdir, tarball, typeError);
