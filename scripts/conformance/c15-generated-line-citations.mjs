@@ -20,18 +20,18 @@ export const title = 'nothing cites a line in a generated source file';
 // sentence, so seventeen positions in all. **Six of the seventeen named a line nobody meant**, short by between 81 and 652 lines —
 // three of them a different declaration, and the other three inside a wrapped `var()`: two on
 // its closing paren and one on the name it wraps —
-// and all eleven that were right came out of one commit — `daf565d` re-pointed nine of them by
+// and all eleven that were right came out of one commit — `d66aae1` re-pointed nine of them by
 // hand, in the commit whose own seed had just moved them, and wrote the other two fresh.
 //
 // **All six were right against the tree they were written against**, which is the whole
 // argument. Four positions survived their own commit and rotted later — five things are named
 // below because the scrollbar spec wrote its pair as a range, and the tail of a range carries no
 // colon, so `citationsIn` never counts it: a scrollbar spec's two delays were
-// exact on 2026-09-13 and were moved the same day by `0c9e906`, a Hyperlink commit; a route's
-// two dark-theme selectors were exact on 2026-09-10 and were moved by `3d15523`; the plan's
-// animation duration was exact on 2026-09-11 and was moved by `f013ab9`, a ColorSpectrum commit.
+// exact on 2026-09-13 and were moved the same day by `6bb439e`, a Hyperlink commit; a route's
+// two dark-theme selectors were exact on 2026-09-10 and were moved by `3207dd3`; the plan's
+// animation duration was exact on 2026-09-11 and was moved by `b885cb0`, a ColorSpectrum commit.
 // None of those three touched the citing file, and no reviewer of them had a reason to open it.
-// The other two never survived their own: `2744db9` wrote Button's two brush citations against a
+// The other two never survived their own: `45dd910` wrote Button's two brush citations against a
 // tree where they were exact and added 149 lines to the token layer in the same diff, so they
 // were 38 short the moment they were sealed and drifted to 652 over the nineteen days after.
 // C12 was green throughout, and correctly — it asks whether a cited line exists, and every one
@@ -64,14 +64,14 @@ export const title = 'nothing cites a line in a generated source file';
 // sentences no longer name the file at all, so a number added back into any of them would pass.
 // This comment is the demonstration — "the token layer's 8258 lines" and "cites 173" are both
 // positions in generated output written in prose, and the gate they sit in
-// cannot see either. They are true of the tree at `daf565d` and are stated as history
+// cannot see either. They are true of the tree at `d66aae1` and are stated as history
 // rather than as addresses, which is the only thing keeping them honest.
 //
 // **And nothing here reads a commit message**, which is where this repository does much of its
 // arguing. Five sealed messages on `main` cite the token layer by position and **four of them
-// are wrong today**: `bf926fb` (2026-09-10), `a6bb994` (2026-09-11), `ab843dd` and `daf565d`
-// (both 2026-09-24); only `688bae1` still resolves. Each was exact against the tree it was
-// written against, and `daf565d`'s is the Button shape exactly — it cites 173 for
+// are wrong today**: `b4f87f8` (2026-09-10), `b87b680` (2026-09-11), `97e2335` and `d66aae1`
+// (both 2026-09-24); only `7a54522` still resolves. Each was exact against the tree it was
+// written against, and `d66aae1`'s is the Button shape exactly — it cites 173 for
 // `ComboBoxTopHeaderMargin`, which its own seed moved to 177 in the same commit. They are
 // sealed, unreachable by any gate that reads source files, and not correctable without
 // rewriting history, so the census is recorded here instead of fixed.

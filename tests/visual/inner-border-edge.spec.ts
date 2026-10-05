@@ -730,7 +730,7 @@ test("the ComboBox dropdown's fill stops at the inner border edge", async ({ pag
  * edges lie over two different surfaces because of where the control puts its popup, rather
  * than because of a shadow.
  *
- * The value is `4c0e000`'s shape rather than the section above it: neither AutoSuggestBox
+ * The value is `9ce988e`'s shape rather than the section above it: neither AutoSuggestBox
  * template writes `BackgroundSizing` on `SuggestionsContainer`
  * (`AutoSuggestBox_themeresources.xaml:283`), so the Border takes the property's default and
  * the chain that commit walks is what settles it. The string does occur once in each file —

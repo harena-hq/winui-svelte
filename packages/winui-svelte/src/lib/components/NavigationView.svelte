@@ -1444,7 +1444,7 @@
 	   transition nothing drives deliberately, written here rather than left for a reader to
 	   find.
 
-	   That number was 20 in this comment and in `8c53057`'s body until this commit, from reading
+	   That number was 20 in this comment and in `117a7b2`'s body until this commit, from reading
 	   `SplitViewPaneAnimationCloseDuration`'s 0.1s out of the resource table and attaching it to
 	   a transition that names a different resource. Citing `:382` was not enough; the duration a
 	   transition runs at is in the transition. */
@@ -1464,7 +1464,7 @@
 
 	/* Expanded is the inline shape, and its durations are resources rather than literals.
 
-	   It is not always open, which this comment used to say and `4eea44c` corrected one rule
+	   It is not always open, which this comment used to say and `154d028` corrected one rule
 	   below without correcting it here: the expanded shape moves between `OpenInlineLeft` and
 	   `ClosedCompactLeft` (`:355`, `:382`), and one resource covers both directions — the clip
 	   over `SplitViewPaneAnimationOpenDuration` either way.
@@ -1568,7 +1568,7 @@
 
 	   The shadow was on `.pane` until this element existed, and both of the divergences that
 	   followed came of one box doing two jobs. A clip at the border box takes an outer
-	   `box-shadow` with it, so `7d9f91c`'s clip erased the shadow and a negative inset had to buy
+	   `box-shadow` with it, so `d978d5e`'s clip erased the shadow and a negative inset had to buy
 	   it back — the inset stays, for the second reason recorded on it, but it is no longer this
 	   shadow's business. And `.pane` carries `OverlayCornerRadius` on its right corners, so its
 	   shadow turned those corners where upstream's, cast by a square Grid, does not: the corner

@@ -600,7 +600,7 @@
 	   occurs once in each — AutoSuggestBox_themeresources.xaml:101 and
 	   AutoSuggestBox_themeresources_perf2026.xaml:89 — on the query button's
 	   `ContentPresenter`, which is a different element. So the value is the property's
-	   default, `InnerBorderEdge`, down the chain `4c0e000` walks — the fill stops at the
+	   default, `InnerBorderEdge`, down the chain `9ce988e` walks — the fill stops at the
 	   stroke's inner edge, CSS stops it at the border box, and the declaration below says
 	   `padding-box`. Which of the two template files the pin follows does not change that,
 	   and was settled anyway: `AutoSuggestBox_themeresources_perf2026.xaml` is reached only

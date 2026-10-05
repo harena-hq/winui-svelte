@@ -32,15 +32,15 @@ Two defects, both missed by the unit that built the control — one a raster its
 the layout could not see, one a state it never compared:
 
 - **ProgressBar's track sat on a half pixel** — two rows of grey at half strength where the
-  reference draws one whole row on the middle of the indicator's three. `96c58d9` had measured
-  the track's box as centred, which it was; the paint was not. Fixed in `c5de3f0`.
+  reference draws one whole row on the middle of the indicator's three. `9140949` had measured
+  the track's box as centred, which it was; the paint was not. Fixed in `83b8bff`.
 - **ToggleSwitch's on knob drew a stroke** upstream binds and never gives a thickness: eight
   solid columns across the knob's middle row where the reference has ten. The unit that built
-  it compared the off state. Fixed in `cde77c4`.
+  it compared the off state. Fixed in `2523d0e`.
 
 The battery for the first of those failed one test that was neither: a snapshot of the
-editable ComboBox that `ddab793` had read as a state captured too early. It was the masked
-ring's corners rastering differently from run to run, one counted pixel each time, and `7b5dd9e`
+editable ComboBox that `f24dad9` had read as a state captured too early. It was the masked
+ring's corners rastering differently from run to run, one counted pixel each time, and `b32cc26`
 gives that picture a budget sized between the noise and a planted defect.
 
 Three smaller defects, measured and not fixed here; they are this record's to carry until the
@@ -61,23 +61,23 @@ app; the rest of a component's history was reviewed by gates, mutants and agents
 | component          | against the original                            | re-photographed 2026-10-04                    | owes                                                                   |
 | ------------------ | ----------------------------------------------- | --------------------------------------------- | ---------------------------------------------------------------------- |
 | Button             | none of its own (see below)                     | passes: fill, height, insets                  | —                                                                      |
-| ComboBox           | `0339b3b`, `765d594`                            | passes: height, insets, chevron               | WD-097, WD-098; v4 row: touch and game-controller padding              |
-| ContentDialog      | `b5ae995`, `8c9c750`, `4e771d9`                 | passes: 320 x 221                             | WD-014, WD-015                                                         |
-| Expander           | `ee8639c`                                       | passes, but for the chevron's phase           | WD-006, WD-010, WD-011; its Gallery page; the chevron                  |
+| ComboBox           | `65d0719`, `76ede81`                            | passes: height, insets, chevron               | WD-097, WD-098; v4 row: touch and game-controller padding              |
+| ContentDialog      | `9608de0`, `ddf52df`, `b17cd85`                 | passes: 320 x 221                             | WD-014, WD-015                                                         |
+| Expander           | `34f4ceb`                                       | passes, but for the chevron's phase           | WD-006, WD-010, WD-011; its Gallery page; the chevron                  |
 | HyperlinkButton    | none of its own (see below)                     | passes: ink, colour, hover                    | —                                                                      |
-| InfoBar            | `790555f`                                       | passes: height, icon and title offsets        | —                                                                      |
-| NavigationView     | `091953d`, `f7690c9`, `28c33f2`                 | the shell, photographed on every Gallery page | WD-006, -025, -089, -091, -092, -101; four rows                        |
+| InfoBar            | `2ae9dbe`                                       | passes: height, icon and title offsets        | —                                                                      |
+| NavigationView     | `53c6c80`, `a846afa`, `2b585b0`                 | the shell, photographed on every Gallery page | WD-006, -025, -089, -091, -092, -101; four rows                        |
 | NavigationViewItem | through NavigationView's                        | the shell                                     | WD-090, WD-092                                                         |
-| ProgressBar        | `96c58d9`                                       | failed; fixed in `c5de3f0`                    | —                                                                      |
-| ProgressRing       | `da3f383`                                       | passes: box and stroke at 60px                | —                                                                      |
-| ScrollView         | `0b08aa0`                                       | its Gallery page                              | WD-036; two layout rows                                                |
-| ScrollViewer       | `0b08aa0`, perhaps (see below)                  | its Gallery page                              | WD-036, through ScrollView                                             |
-| TabView            | `0b489d2`, `e7361d3`                            | passes, by eye on enlarged crops              | WD-023; v8 row: tear-out, `CanReorderTabs`, the rest of unit 5's table |
-| TeachingTip        | `b5f4d7c`, `b8eca4e`, `c20c85f`                 | passes: 224 x 64, but for border and shadow   | WD-017; v7 row: `icon`; border and shadow                              |
-| TextBox            | `474b44a`, `28c33f2`, `bdb9cd8`, `5be0258`      | passes: header gap, height, placeholder       | WD-100 (multi-line)                                                    |
-| TitleBar           | `dd04e14`                                       | its Gallery page and the shell                | WD-006, WD-007, WD-099                                                 |
-| ToggleSwitch       | `3e863ea` (the off state), `4f97adf` (the drag) | failed on the on knob; fixed in `cde77c4`     | WD-096; the pressed knob's shape                                       |
-| ToolTip            | `d793f08`                                       | passes: height, inset, baseline               | WD-094, WD-095                                                         |
+| ProgressBar        | `9140949`                                       | failed; fixed in `83b8bff`                    | —                                                                      |
+| ProgressRing       | `ee2f763`                                       | passes: box and stroke at 60px                | —                                                                      |
+| ScrollView         | `99c02d8`                                       | its Gallery page                              | WD-036; two layout rows                                                |
+| ScrollViewer       | `99c02d8`, perhaps (see below)                  | its Gallery page                              | WD-036, through ScrollView                                             |
+| TabView            | `45dd13c`, `7790165`                            | passes, by eye on enlarged crops              | WD-023; v8 row: tear-out, `CanReorderTabs`, the rest of unit 5's table |
+| TeachingTip        | `adec259`, `1bf4e92`, `ce28cb8`                 | passes: 224 x 64, but for border and shadow   | WD-017; v7 row: `icon`; border and shadow                              |
+| TextBox            | `9ecf440`, `2b585b0`, `80c7176`, `351987f`      | passes: header gap, height, placeholder       | WD-100 (multi-line)                                                    |
+| TitleBar           | `fb980a5`                                       | its Gallery page and the shell                | WD-006, WD-007, WD-099                                                 |
+| ToggleSwitch       | `62f011d` (the off state), `69efa8c` (the drag) | failed on the on knob; fixed in `2523d0e`     | WD-096; the pressed knob's shape                                       |
+| ToolTip            | `70b0c29`                                       | passes: height, inset, baseline               | WD-094, WD-095                                                         |
 
 NavigationView's four rows: `FooterMenuItems`, the pane's custom content, header, title and
 search slot, and `OverflowLabelMode`, in v8's table of what that version left owed; and v7's
@@ -87,12 +87,12 @@ fourth Tab press goes, the minimal pane's Left and Right, whether Left collapses
 press on a chevron, whether the flyout's ring wraps, and question 9 — and the ring's top end as
 not measured.
 
-`3ec307d` compared one thing with the original, an AppBarButton row in a CommandBar's
+`deaaf2d` compared one thing with the original, an AppBarButton row in a CommandBar's
 overflow, and swept every other control's focus visual against its own; it is credited to no
 member here. That leaves Button and HyperlinkButton with no comparison of their own before
 this gate, and this gate's is now theirs.
 
-`0b08aa0` built the ScrollView and ScrollViewer pages together and compared "the first
+`99c02d8` built the ScrollView and ScrollViewer pages together and compared "the first
 example's box" crop against crop with the original's; both pages open with a zoomable image,
 and the message does not say which page that was. ScrollViewer's own Gallery page is in the
 suite either way, which is what the gate's sentence asks.
@@ -123,14 +123,18 @@ and nothing here did it.
 ## What the evidence itself owed
 
 Read along the way rather than swept for, and recorded rather than rewritten, because a sealed
-message is history:
+message is history. The history was rewritten once since, on 2026-10-05 before publication, and
+the two items it could settle are marked:
 
-- **No `Reviewed:` trailer at all:** `702b4cb`, and seven NavigationView commits of 2026-09-19
-  and -20 — `6c3f184`, `1af479c`, `765bfad`, `4eea44c`, `8c53057`, `7d9f91c`, `73b4496`.
-- **A battery count never filled in** ("guest battery NNN passed"): `9d952a2`, `daa5554`,
-  `715c0f0`.
-- **A trailer cut off mid-sentence:** `b9ca71c`, `bbaff58`. And two, `8a8838b` and `034ca5c`,
-  whose `Reviewed:` line git does not parse as a trailer.
+- **No `Reviewed:` trailer at all:** `61767d8`, and seven NavigationView commits of 2026-09-19
+  and -20 — `2463380`, `a1e5cbc`, `37424f9`, `154d028`, `117a7b2`, `d978d5e`, `4ea6cf5`.
+- **A battery count never filled in** ("guest battery NNN passed"): `9230f3d`, `7b7eaec`,
+  `70e9cc4`, and a fourth. _Settled by the 2026-10-05 rewrite_: the count is not known, and each
+  now says it was not recorded.
+- **A trailer cut off mid-sentence:** `16cef0a`, `1549641`. And two, `7a74bfd` and `cdea038`,
+  whose `Reviewed:` line git did not parse as a trailer. _Settled by the 2026-10-05 rewrite_, with
+  three more of the same shape: a blank line now separates the prose from the trailer block, and
+  none is left inside it.
 - **Two owed rows that were done:** the Slider row of v4's not-yet-built table, all three of
   whose items are built, and the ComboBox chevron row of v14's owed table, settled on
   2026-09-25. Both are struck through in `docs/plan.md` by the commit that adds this record.

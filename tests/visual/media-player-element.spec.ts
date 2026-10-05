@@ -12,7 +12,7 @@ test('MediaTransportControls in three themes', async ({ page }) => {
 	// same way twice: at the right end of the indeterminate bar in the Buffering row, where the
 	// bar's 1.5-pixel corner curves. The capture leaves the bar at rest by cancelling its infinite
 	// animation. Measured 2026-09-25 through the comparator, as `path.spec.ts` measures its own, on
-	// eighteen runs with no budget: nine failed before 715c0f0 rounded the bar's widths to whole
+	// eighteen runs with no budget: nine failed before 70e9cc4 rounded the bar's widths to whole
 	// pixels and three after it, each failure reporting **one pixel** in
 	// `MediaTransportControls-high-contrast.png`. The two diffs opened, one from each side, both
 	// put it at (712, 1366) of the grown page, and each of the three failures' logs after the
