@@ -59,9 +59,14 @@
 		display: flow-root;
 		padding: 0 36px 36px;
 	}
+	/* `pre-wrap`, because the description is a TextBlock's `Text` (ItemPage.xaml:53-61): a line
+	   feed in the string is a line break there, and spaces are not collapsed. Three of the
+	   record's descriptions carry line feeds — ProgressBar's, ProgressRing's and AppBarButton's —
+	   and run together as one paragraph without it. */
 	.description {
 		max-width: 1064px;
 		margin: 4px 24px 0 0;
+		white-space: pre-wrap;
 	}
 	@media (width <= 640px) {
 		/* Breakpoint640Plus is 641 in WinUIGallery/App.xaml:57. */
