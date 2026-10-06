@@ -165,11 +165,11 @@
 	}
 
 	.example-container {
-		/* `Width="Auto" MaxWidth="320"` on both trailing columns — ControlExample.xaml:105-106.
+		/* `Width="Auto" MaxWidth="320"` on both trailing columns — ControlExample.xaml:108-109.
 		   `fit-content()` is CSS's name for exactly that: as wide as the content, capped. */
 		grid-template-columns: minmax(0, 1fr) fit-content(320px) fit-content(320px);
 		grid-template-rows: minmax(0, 1fr) auto;
-		/* ControlExample.xaml:65 sets `CornerRadius="8,8,0,0"`. */
+		/* ControlExample.xaml:99 sets `CornerRadius="8,8,0,0"`. */
 		border-radius: var(--winui-OverlayCornerRadius) var(--winui-OverlayCornerRadius) 0 0;
 	}
 
@@ -198,7 +198,7 @@
 		border-color: var(--winui-CardStrokeColorDefaultBrush);
 		border-style: solid;
 		border-width: 0;
-		/* ControlExample.xaml:87 sets `CornerRadius="8,8,0,0"`. */
+		/* ControlExample.xaml:123 sets `CornerRadius="8,8,0,0"`. */
 		border-radius: var(--winui-OverlayCornerRadius) var(--winui-OverlayCornerRadius) 0 0;
 	}
 
@@ -230,7 +230,7 @@
 
 	/* High contrast already maps SolidBackgroundFillColorBaseBrush to SystemColorWindowColor. */
 	:root[data-theme='high-contrast'] .example {
-		/* c1-allow: ControlExample.xaml:45-46 sets ControlExampleDisplayBorderThickness to 1 in HighContrast. */
+		/* c1-allow: ControlExample.xaml:54-55 sets ControlExampleDisplayBorderThickness to 1 in HighContrast. */
 		border-width: 1px;
 	}
 
@@ -248,32 +248,36 @@
 	.options {
 		align-self: stretch;
 		padding: 16px;
-		background: var(--winui-CardBackgroundFillColorDefaultBrush);
+		/* Stopped at the inner border edge, as a ContentPresenter's fill is by default (see
+		   tests/visual/inner-border-edge.spec.ts): the divider is laid over the tile grid's
+		   fill, 229 in light as on the original, not over this fill, which made it 237. */
+		background: var(--winui-CardBackgroundFillColorDefaultBrush) padding-box;
 		border-color: var(--winui-DividerStrokeColorDefaultBrush);
 		border-style: solid;
-		/* c1-allow: ControlExample.xaml:128 sets `BorderThickness="1,0,0,0"`. */
+		/* c1-allow: ControlExample.xaml:151 sets `BorderThickness="1,0,0,0"`. */
 		border-width: 0 0 0 1px;
 		border-radius: 0 var(--winui-OverlayCornerRadius) 0 0;
 	}
 
 	/* `Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}"` and `Padding="0"` on
-	   the Expander (ControlExample.xaml:157-160), expressed as the two tokens its header and
-	   content read. Aliasing one token to another is what C1 allows; the padding is a literal
-	   and cites the setter it comes from.
+	   the Expander (ControlExample.xaml:160-167), expressed as the two tokens its content reads.
+	   Content only: the template binds `Background` to the content's Border alone
+	   (Expander.xaml:114), and the header keeps `ExpanderHeaderBackground` (:111) — 253 in
+	   light on the original, where setting both gave 247. Aliasing one token to another is
+	   what C1 allows; the padding is a literal and cites the setter it comes from.
 	   `CornerRadius="0,0,8,8"` cannot be one value on the Expander — its own `--corner` drives
 	   the header's top corners and the content's bottom ones together — so the corner is
 	   squared there and rounded here, and `overflow: hidden` is what makes the clip. */
 	.source {
-		--winui-ExpanderHeaderBackground: var(--winui-CardBackgroundFillColorSecondaryBrush);
 		--winui-ExpanderContentBackground: var(--winui-CardBackgroundFillColorSecondaryBrush);
-		/* c1-allow: ControlExample.xaml:159, the Expander carries Padding="0" */
+		/* c1-allow: ControlExample.xaml:162, the Expander carries Padding="0" */
 		--winui-ExpanderContentPadding: 0;
 	}
 
 	/* The Expander declares `--corner` on its own root, so an inherited value never reaches it;
 	   this rule outranks that declaration, which is the only way in from outside. */
 	.source :global(.root) {
-		/* c1-allow: ControlExample.xaml:158, the Expander carries CornerRadius="0,0,8,8" and the
+		/* c1-allow: ControlExample.xaml:166, the Expander carries CornerRadius="0,0,8,8" and the
 		   bottom half of it is the wrapper's own radius below */
 		--corner: 0;
 		border-radius: 0 0 var(--winui-OverlayCornerRadius) var(--winui-OverlayCornerRadius);
@@ -298,7 +302,7 @@
 			grid-row: 2;
 			grid-column: 1 / span 2;
 			margin-top: 24px;
-			/* c1-allow: ControlExample.xaml:195 sets `BorderThickness="0,1,0,0"` in PhoneLayout. */
+			/* c1-allow: ControlExample.xaml:235 sets `BorderThickness="0,1,0,0"` in PhoneLayout. */
 			border-width: 1px 0 0;
 			border-radius: 0;
 		}

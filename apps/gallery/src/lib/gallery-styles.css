@@ -27,6 +27,11 @@ body {
 	   out as hard rectangles. Measured against the original, whose four corner tiles curve. */
 	overflow: hidden;
 	background: var(--winui-SolidBackgroundFillColorBaseBrush);
+	/* A Grid's fill stops at its inner border edge (`BackgroundSizing`'s default; see
+	   tests/visual/inner-border-edge.spec.ts), so the translucent stroke is laid over the page
+	   rather than over the tile's own fill. Over the fill it came out 228 against the
+	   original's 234 in light, on every example's top edge. */
+	background-clip: padding-box;
 	/* c1-allow: 1px is the Gallery's card stroke width, not a tokenized theme value */
 	border: 1px solid var(--winui-CardStrokeColorDefaultBrush);
 	border-radius: var(--winui-OverlayCornerRadius);
