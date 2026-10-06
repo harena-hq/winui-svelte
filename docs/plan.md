@@ -4279,7 +4279,7 @@ including the change to this paragraph's polish criterion.**
 
 ### The release — 0.1.0
 
-The gate passing is what permits a release; it is not the release. Four steps stand between the
+The gate passing is what permits a release; it is not the release. Five steps stand between the
 two, and the last of them is the owner's alone. D55.
 
 1. **Packaging.** One unit, authored directly — its values are decided here and the smoke cases
@@ -4319,12 +4319,54 @@ two, and the last of them is the owner's alone. D55.
    from the original on purpose. No history before 0.1.0, because nothing was published.
    `files` gains it, because npm packs a README and a licence of its own accord and a changelog
    not; the smoke's check of the packed surface asserts it is there.
-3. **The owner's pass.** The owner drives the Gallery and the dev routes by hand and reports
-   what they find. Each finding is a unit with the usual loop — a fix, a battery, a review, a
-   seal — or, where it is a known divergence or an owed row, a pointer to where it is
-   recorded. Findings outside the eighteen go to the queue, not to the release. The pass ends
-   when the owner says it has, and not before.
-4. **The cut.** On a HEAD whose full battery is green, after the owner's sign-off and on their
+3. **The fourteen Gallery pages.** Thirteen of the eighteen have no Gallery page of their own,
+   and their examples exist only on dev routes: Button, ComboBox, ContentDialog, Expander,
+   HyperlinkButton, InfoBar, ProgressBar, ProgressRing, TabView, TeachingTip, TextBox,
+   ToggleSwitch and ToolTip. NavigationView and NavigationViewItem are drawn by the shell on
+   every page, but in the one configuration the shell is, and NavigationView's own page and
+   its eight examples are not built either; NavigationViewItem has no page of its own in the
+   pin and is drawn on NavigationView's. A dev route is not the original's page — its
+   examples and its widths are its own, so a difference read off one is a difference in the
+   arrangement as often as in the control — and the shell is one arrangement. So each of the
+   fourteen gets its page, from the pin's `<Name>Page.xaml` and its samples, replacing what
+   `[...path]` serves for it today: fifty examples, ten of them TabView's and eight
+   NavigationView's. One page is one unit with the usual loop, fewest examples first — the six
+   of two (ContentDialog, Expander, HyperlinkButton, ProgressBar, ProgressRing, ToggleSwitch),
+   the four of three (ComboBox, InfoBar, TeachingTip, ToolTip), the two of four (Button,
+   TextBox), then NavigationView and TabView.
+   - **Done when**, per page: every example of the pin's page is drawn, or declined under a
+     named divergence; each is measured against the original on the reference guest at the
+     reference width, and the measurements are in the `Reviewed:` trailer; behaviour the
+     page's code-behind adds has a spec; the battery is green.
+   - **Every control comes from `preview`**, as on the pages already built, the eighteen
+     included. The page is the Gallery's, and `preview` promising nothing is a statement to
+     consumers, not to it.
+   - **An example the platform declines** follows the divergence already written for it.
+     TabView's windowing sample opens a second top-level window, which is WD-023's tear-out: the
+     page is drawn whole and the launch button is inert, as WD-065 does for the Windowing pages,
+     and the TabView unit widens WD-065's control line to say so. Whether tear-out is
+     a divergence, as WD-023 says, or surface not yet built, as v8's owed table lists it, is
+     settled by the TabView unit and written in both places.
+   - **An example that needs surface a member does not have yet** draws what the member has
+     and names the owed row, and the surface is not built for the release: D46, as ADR 0017
+     amends it, chose the eighteen by what a consumer's source would replace, and the gate held
+     that surface still to build does not block them. Which examples these are is found by the
+     unit that ports the page; TeachingTip's `IconSource` against the `icon` row the gate
+     records is the first to check.
+   - **A defect a page finds** in one of the eighteen is its own unit, fixed before the cut;
+     one outside them goes to the queue.
+
+   The owner's pass may start on what is already drawn — the shell, ScrollView, ScrollViewer
+   and TitleBar — while these are built. A finding there on a control whose page is in
+   progress waits for that page's unit to seal, and is then its own unit.
+
+4. **The owner's pass.** The owner drives the Gallery by hand, page by page against the
+   original, and the dev routes for the states no page shows, and reports what they find. Each
+   finding is a unit with the usual loop — a fix, a battery, a review, a seal — or, where it is
+   a known divergence or an owed row, a pointer to where it is recorded. Findings outside the
+   eighteen go to the queue, not to the release. The pass ends when the owner says it has, and
+   not before.
+5. **The cut.** On a HEAD whose full battery is green, after the owner's sign-off and on their
    explicit word: the tag `v0.1.0`, then `pnpm publish` from `packages/winui-svelte` — pnpm,
    because `pnpm pack` made the tarball the smoke installed — over the `dist` that battery
    built. The name `winui-svelte` was unclaimed on the registry on 2026-10-05. The repository
