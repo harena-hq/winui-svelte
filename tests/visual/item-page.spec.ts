@@ -52,3 +52,26 @@ test('the source flyout spaces its label and its links as the pin does', async (
 	expect(gaps.separatorToNextSection).toBe(8);
 	expect(gaps.separatorBleed).toBe(12);
 });
+
+// ItemPage.xaml:53-61 binds the description to a TextBlock's `Text`, where a line feed is a line
+// break. AppBarButton's record has three; without them its four sentences run on as one.
+test('a line feed in the description starts a new line', async ({ page }) => {
+	await page.goto('/menusandtoolbars/appbarbutton');
+	const rows = await page.locator('[data-item-page] .description').evaluate((element) => {
+		const text = element.firstChild as Text;
+		const top = (offset: number) => {
+			const range = document.createRange();
+			range.setStart(text, offset);
+			range.setEnd(text, offset + 1);
+			return range.getBoundingClientRect().top;
+		};
+		const value = text.data;
+		const rows: [number, number][] = [];
+		for (let i = value.indexOf('\n'); i !== -1; i = value.indexOf('\n', i + 1)) {
+			rows.push([top(i - 1), top(i + 1)]);
+		}
+		return rows;
+	});
+	expect(rows).toHaveLength(3);
+	for (const [before, after] of rows) expect(after).toBeGreaterThan(before);
+});
