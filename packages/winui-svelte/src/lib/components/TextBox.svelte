@@ -1,7 +1,9 @@
 <script lang="ts" module>
 	import type { Snippet } from 'svelte';
+	import type { AccessibleNameProps } from '../internal/accessible-name';
 
-	export interface TextBoxProps {
+	/** `aria-label`, `aria-labelledby` and `aria-describedby` reach the input, not the root. */
+	export interface TextBoxProps extends AccessibleNameProps {
 		/** Text, under HTML's name for it — ADR 0009. */
 		value?: string;
 		/** No WinUI member: ADR 0009 pairs every `$bindable` prop with its own change callback.
@@ -39,6 +41,8 @@
 </script>
 
 <script lang="ts">
+	import { controlName } from '../internal/accessible-name';
+
 	let {
 		value = $bindable(''),
 		onValueChange,
@@ -52,8 +56,26 @@
 		class: className,
 		style,
 		ref = $bindable(null),
+		'aria-label': ariaLabel,
+		'aria-labelledby': ariaLabelledby,
+		'aria-describedby': ariaDescribedby,
 		...rest
 	}: TextBoxProps = $props();
+
+	const uid = $props.id();
+	// Upstream names a TextBox by its header when nothing else names it, and by its placeholder
+	// when it has no header either (TextBox_Partial.cpp:1050-1070); the input's own placeholder
+	// is the second half of that here.
+	const naming = $derived(
+		controlName(
+			{
+				'aria-label': ariaLabel,
+				'aria-labelledby': ariaLabelledby,
+				'aria-describedby': ariaDescribedby
+			},
+			header !== undefined ? `${uid}-header` : undefined
+		)
+	);
 
 	let focused = $state(false);
 
@@ -73,7 +95,7 @@
 
 <div class={['root', className]} {style} data-disabled={disabled || undefined} {...rest}>
 	{#if header !== undefined}
-		<span class="header">
+		<span class="header" id="{uid}-header">
 			{#if typeof header === 'string'}{header}{:else}{@render header()}{/if}
 		</span>
 	{/if}
@@ -86,6 +108,7 @@
 		{#if acceptsReturn}
 			<textarea
 				bind:this={ref}
+				{...naming}
 				bind:value
 				{placeholder}
 				{readonly}
@@ -98,6 +121,7 @@
 			     is a drop-down no WinUI text control has. -->
 			<input
 				bind:this={ref}
+				{...naming}
 				type="text"
 				autocomplete="off"
 				bind:value
@@ -130,7 +154,8 @@
 	</div>
 	<!-- Upstream marks the `DescriptionPresenter` `AutomationProperties.AccessibilityView="Raw"`
 	     (`TextBox_themeresources.xaml:339`), which keeps the description out of the control's
-	     accessibility view; no `aria-describedby` on the input here, for the same reason. -->
+	     accessibility view; the input's `aria-describedby` is the consumer's alone, for the same
+	     reason. -->
 	{#if description !== undefined}
 		<span class="description">
 			{#if typeof description === 'string'}{description}{:else}{@render description()}{/if}

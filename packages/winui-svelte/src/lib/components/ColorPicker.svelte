@@ -471,8 +471,8 @@
 			</ToggleButton>
 		{/if}
 		{#if textEntryGridShown}
-			<!-- WD-086: visible labels have no programmatic association because TextBox and ComboBox
-			     put rest attributes on wrapper divs; see docs/divergences.md. -->
+			<!-- WD-086: visible labels have no programmatic association, and no `aria-label` is
+			     passed to the TextBoxes and the ComboBox yet; see docs/divergences.md. -->
 			<div class:hex-left={!colorChannelTextInputVisible} class="text-entry">
 				{#if colorChannelTextInputVisible}
 					<ComboBox
