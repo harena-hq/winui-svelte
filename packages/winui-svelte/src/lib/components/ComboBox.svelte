@@ -1,5 +1,6 @@
 <script lang="ts" module>
 	import type { Snippet } from 'svelte';
+	import type { AccessibleNameProps } from '../internal/accessible-name';
 
 	export interface ComboBoxItemData {
 		/** SelectedValue. Also the key the list is rendered by. */
@@ -13,7 +14,9 @@
 		disabled?: boolean;
 	}
 
-	export interface ComboBoxProps {
+	/** `aria-label`, `aria-labelledby` and `aria-describedby` reach the editable `<input>` or the
+	 *  trigger `<button>`, not the root. */
+	export interface ComboBoxProps extends AccessibleNameProps {
 		/** ItemsSource, narrowed to the text items this unit renders. */
 		items?: ComboBoxItemData[];
 		/**
@@ -72,6 +75,7 @@
 <script lang="ts">
 	import { Combobox, Select } from 'bits-ui';
 	import { onMount, tick, untrack } from 'svelte';
+	import { controlName, nameSource } from '../internal/accessible-name';
 
 	let {
 		items = [],
@@ -93,10 +97,53 @@
 		class: className,
 		style,
 		ref = $bindable(null),
+		'aria-label': ariaLabel,
+		'aria-labelledby': ariaLabelledby,
+		'aria-describedby': ariaDescribedby,
 		...rest
 	}: ComboBoxProps = $props();
 
 	const uid = $props.id();
+
+	// The header names the control when nothing else does, after `AutomationProperties.Name`
+	// and `LabeledBy` (ComboBoxAutomationPeer_Partial.cpp:184-205), in both modes.
+	const nameProps = $derived({
+		'aria-label': ariaLabel,
+		'aria-labelledby': ariaLabelledby,
+		'aria-describedby': ariaDescribedby
+	});
+	const naming = $derived(
+		controlName(nameProps, header !== undefined ? `${uid}-header` : undefined)
+	);
+
+	// The editable mode's box is a `role="group"` around the input with no upstream
+	// counterpart; it carries the same name as the input, so a consumer's name is not announced
+	// as the header's around it. Not the description, which belongs to the input alone.
+	const groupNaming = $derived({
+		'aria-label': naming['aria-label'],
+		'aria-labelledby': naming['aria-labelledby']
+	});
+
+	// The non-editable trigger is a `<button>`, and a button has no value to report beside its
+	// name: upstream's peer reports the selection through its own patterns, apart from the name.
+	// Named by its content alone, the trigger says the selection and nothing else; named by the
+	// header alone, it would lose the selection. So whatever names it is followed by the
+	// selection's own text, and a consumer's `aria-label` is restated in a hidden span so the two
+	// can be referenced together. With nothing selected the content is the placeholder, which is
+	// no part of upstream's name, and the name stands alone.
+	const triggerLabel = $derived(nameSource(nameProps).label);
+	const triggerNaming = $derived.by(() => {
+		const { label, labelledby } = nameSource(nameProps);
+		const name =
+			label !== undefined
+				? `${uid}-name`
+				: (labelledby ?? (header !== undefined ? `${uid}-header` : undefined));
+		const selected = items.some((item) => item.value === value);
+		return {
+			'aria-labelledby': name === undefined ? undefined : selected ? `${name} ${uid}-value` : name,
+			'aria-describedby': ariaDescribedby
+		};
+	});
 
 	// The editable variant. Upstream's model lives in `ComboBox_Partial.cpp` and is kept here
 	// in its own terms: `searchIndex` is `m_searchResultIndex`, with `null` for "not set"
@@ -502,12 +549,13 @@
 			{required}
 			{name}
 		>
-			<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+			<!-- No `svelte-ignore` for the handlers on this group: with a spread among its
+			     attributes the compiler cannot tell what role it ends with, and does not warn. -->
 			<div
 				class="box trigger"
 				tabindex="-1"
 				role="group"
-				aria-labelledby={header !== undefined ? `${uid}-header` : undefined}
+				{...groupNaming}
 				bind:this={boxEl}
 				onkeydown={boxKey}
 				onpointerdown={textPointer}
@@ -525,7 +573,7 @@
 							class="input"
 							value={text}
 							{disabled}
-							aria-labelledby={header !== undefined ? `${uid}-header` : undefined}
+							{...naming}
 							aria-autocomplete="inline"
 							aria-activedescendant={activeId}
 							autocomplete="off"
@@ -636,9 +684,12 @@
 		{...rest}
 	>
 		{#if header !== undefined}
-			<span class="header">
+			<span class="header" id="{uid}-header">
 				{#if typeof header === 'string'}{header}{:else}{@render header()}{/if}
 			</span>
+		{/if}
+		{#if triggerLabel !== undefined}
+			<span id="{uid}-name" hidden>{triggerLabel}</span>
 		{/if}
 		<Select.Root
 			type="single"
@@ -673,6 +724,7 @@
 				{#snippet child({ props })}
 					<button
 						{...props}
+						{...triggerNaming}
 						data-pressed={pressed || undefined}
 						onpointerdown={(event) => triggerPointerDown(props, event)}
 						onpointerup={(event) => triggerPointerUp(props, event)}
@@ -682,7 +734,7 @@
 						class="trigger"
 					>
 						<span class="pill" aria-hidden="true"></span>
-						<Select.Value>
+						<Select.Value id="{uid}-value">
 							{#snippet child({ props, selection })}
 								<span {...props} class="value">
 									{#if selection.type === 'single' && selection.selected}

@@ -1,7 +1,9 @@
 <script lang="ts" module>
 	import type { Snippet } from 'svelte';
+	import type { AccessibleNameProps } from '../internal/accessible-name';
 
-	export interface ToggleSwitchProps {
+	/** `aria-label`, `aria-labelledby` and `aria-describedby` reach the switch, not the root. */
+	export interface ToggleSwitchProps extends AccessibleNameProps {
 		/**
 		 * IsOn, under HTML's name for it — ADR 0009. The control renders a real
 		 * `<input type="checkbox" role="switch">`, where `checked` is already live, and two
@@ -46,6 +48,8 @@
 </script>
 
 <script lang="ts">
+	import { controlName } from '../internal/accessible-name';
+
 	let {
 		checked = $bindable(false),
 		onCheckedChange,
@@ -59,6 +63,9 @@
 		class: className,
 		style,
 		ref = $bindable(null),
+		'aria-label': ariaLabel,
+		'aria-labelledby': ariaLabelledby,
+		'aria-describedby': ariaDescribedby,
 		...rest
 	}: ToggleSwitchProps = $props();
 
@@ -87,6 +94,19 @@
 		]
 			.filter(Boolean)
 			.join(' ') || undefined
+	);
+
+	// The peer above is what names the switch when nothing else does; `AutomationProperties.Name`
+	// and `LabeledBy` come first (ToggleSwitchAutomationPeer_Partial.cpp:107-112).
+	const naming = $derived(
+		controlName(
+			{
+				'aria-label': ariaLabel,
+				'aria-labelledby': ariaLabelledby,
+				'aria-describedby': ariaDescribedby
+			},
+			labelledBy
+		)
 	);
 
 	// The knob travels `SwitchKnobBounds`' 40 less `SwitchKnob`'s 20
@@ -233,7 +253,7 @@
 			bind:this={ref}
 			type="checkbox"
 			role="switch"
-			aria-labelledby={labelledBy}
+			{...naming}
 			class="input"
 			{checked}
 			{disabled}

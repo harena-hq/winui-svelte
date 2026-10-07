@@ -1807,14 +1807,17 @@ changes`.
   `ComboBox` (`ColorPicker.cpp:126`, `:135`, `:144`, `:153`, `:162`, `:171`, `:180`, `:189`,
   `:198`), and swap the hex box's between "RGB hex" and "HSV hex" with the representation
   (`:775-791`).
-- **We do**: render the visible label beside each box with no programmatic association.
-  `TextBox` spreads `...rest` onto its root `<div>` (`TextBox.svelte`'s markup) and `ComboBox`
-  onto its root `<div>` (`ComboBox.svelte`'s), so an `aria-label` passed from `ColorPicker`
-  reaches a wrapper with no role rather than the `<input>` or the trigger.
-- **Why accepted**: naming them means giving `TextBox` and `ComboBox` a way to forward
-  attributes to their inner interactive element, which changes two shipped components' public
-  surface and belongs to a unit of its own.
-- **Would reconsider if**: either component gains attribute forwarding to its input.
+- **We do**: render the visible label beside each box with no programmatic association, and
+  pass no name. Until 2026-10-07 there was nowhere to pass one: `TextBox` and `ComboBox` spread
+  every `aria-*` onto their root `<div>`, a wrapper with no role. Since then both route
+  `aria-label` to their input or trigger, and only `ColorPicker` passing it is missing.
+- **Why accepted**: naming them meant giving `TextBox` and `ComboBox` a way to forward
+  attributes to their inner interactive element, which changed two shipped components' public
+  surface and belonged to a unit of its own.
+- **Would reconsider if**: either component gains attribute forwarding to its input. **Both
+  have, as of 2026-10-07** (ADR 0009's amendment of that date): an `aria-label` given to either
+  now names its input or trigger. What is left is `ColorPicker` passing the nine names, which is
+  that control's own unit.
 
 ---
 

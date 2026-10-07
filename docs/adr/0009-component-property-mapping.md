@@ -156,6 +156,40 @@ re-emitting it fixes the erasure and costs a runtime narrowing of an `unknown`, 
 a prop that does not appear in the component's own type — which is the invisibility this rule
 exists to prevent. Destructuring is the same fix written where a reader finds it.
 
+**Amended 2026-10-07: the naming attributes go to the control.** The rule above put every
+`aria-*` on the root, and for a component whose root is a wrapper that put a consumer's
+`aria-label` where it names nothing — a `<div>` with no role. Building the release's Gallery
+pages found it, on a switch upstream names through `AutomationProperties.Name`. So
+`aria-label`, `aria-labelledby` and `aria-describedby` are declared on such a component and
+routed to the element `ref` points at — the same element this ADR already calls the control.
+That is a third kind of declared attribute, beside the reserved set's and `dir`: these three are
+not in the closed set and are not declared to be overridden, but to be **moved**, because the
+root is the wrong element for them. Every other `aria-*` stays on the root with the rest props,
+`aria-description` included, by choice: it describes nothing on a wrapper either, and nothing in
+the release has needed it.
+
+The name is resolved in upstream's order, which is not ARIA's: `AutomationProperties.Name`, then
+`LabeledBy`, then the control's own — its header, and for a `TextBox` with none its placeholder
+(`FrameworkElementAutomationPeer::GetNameCore`; `TextBox::GetPlainText`). An empty source is no
+source, as upstream checks each for zero length before falling through. ARIA lets
+`aria-labelledby` win over `aria-label`, so a consumer's `aria-label` clears the component's own
+`aria-labelledby` rather than sitting beside it. `internal/accessible-name.ts` holds the one
+resolution all of them use.
+
+A non-editable `ComboBox` is the exception to "the name is the name". Its trigger is a
+`<button>`, which reports nothing beside its name, where upstream's peer reports the selection
+apart from it. So whatever names the trigger is followed by the selection's text — "Header Red",
+and "Header" alone with nothing selected — and a consumer's `aria-label` is restated in a hidden
+element so it can be referenced with it.
+
+It is done for the three of the release whose root is a wrapper — `TextBox`, `ComboBox` in both
+modes, `ToggleSwitch`. `preview`'s wrapper-rooted controls follow when a unit next touches them;
+ADR 0017 promises nothing for them in the meantime. Besides a consumer's `aria-label` now
+reaching the control, two names change with no attribute given, both toward upstream's header:
+a `TextBox` with a header was named by its placeholder or by nothing and is now named by its
+header, and a non-editable `ComboBox` with a header was named by its selection or its placeholder
+and is now named by the header, followed by the selection when there is one.
+
 ## Alternatives rejected
 
 - **Keep the WinUI name verbatim, as ADR 0006 does for tokens.** The symmetry is false. A token
