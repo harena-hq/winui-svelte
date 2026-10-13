@@ -2333,13 +2333,20 @@ changes`.
   all of it inside the run of glyphs (150 pixels of ink against 156), which is how the font is
   rendered rather than how the box is measured; and focusing a box with text adds the delete
   button's 30 here and 32 there, the other two being RichEdit's requested extent.
-- **Why accepted**: the height is the larger change and has not been measured against the
-  reference: whether an `AcceptsReturn` box grows by a whole line at a time, from what minimum,
-  and how the vertical scroll bar the template allows enters into it.
+- **Why accepted**: measured on 2026-10-13 against the Gallery's TextBox page, whose multi-line
+  box has `MinWidth="400"` and wraps: empty it is one line, 32 high, and it grows a line at a
+  time, 18 or 19 a line (50, 69, and 106 at five lines), its width held at 400 while the text
+  wraps there. `field-sizing: content` on the `<textarea>` does not give that. Tried with one
+  row on that box in the reference browser, it grew the height a line at a time, the same as the
+  original's 32 empty and then two over it at two and three lines (52 and 71 against 50 and 69),
+  and made the box 1277 wide while empty. A
+  height that grows with a width that holds needs more than that one declaration, and it
+  changes every multi-line box this library draws. How the vertical scroll bar the template
+  allows enters into it is not measured.
 - **What it is worth**: a multi-line `TextBox` in a content-sized container comes out at twenty
   characters' width and three lines' height whatever it holds.
-- **Would reconsider if**: a unit measures a growing `AcceptsReturn` box on the reference, at
-  which point the `<textarea>` takes the declaration and its `rows` go.
+- **Would reconsider if**: a unit builds a height that grows by the line while the width holds,
+  as measured above; `field-sizing` alone does not.
 
 ### WD-101 — NavigationView's back, close and pane-toggle buttons show no tooltip
 
