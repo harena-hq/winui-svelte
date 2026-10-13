@@ -59,3 +59,42 @@ test('content a tip is declared with sits directly under the subtitle', async ({
 	await main.evaluate((el) => ((el.firstElementChild as HTMLElement).style.margin = '0'));
 	await expect.poll(gap).toBe(0);
 });
+
+// UntargetedTipFarPlacementOffset (TeachingTip.h:274) puts the bottom of TailOcclusionGrid
+// PlacementMargin plus s_untargetedTipWindowEdgeMargin, 24 (TeachingTip.h:310), above the
+// window's bottom, and the card stops that grid's last row, its 8px tail track, above that
+// (TeachingTip.xaml:310 and :312). Measured on the reference guest with the Gallery's
+// PlacementMargin="20": the card's bottom edge 52 above the window's.
+test("an untargeted tip's card sits PlacementMargin, 24 and the tail track above the window's bottom", async ({
+	page
+}) => {
+	await page.goto(ROUTE);
+	const card = page
+		.locator('.card')
+		.filter({ hasText: 'And this is the subtitle' })
+		.filter({ has: page.getByRole('button', { name: 'Close button' }) });
+	await expect(card).toHaveCount(1);
+	// Until Floating UI places it, bits-ui parks the wrapper at `translate(0, -200%)`
+	// (use-floating-layer.svelte.js:135), which has a real box; the read waits for two
+	// consecutive boxes that agree, as tool-tip.spec.ts's `placed()` does.
+	let last: { x: number; y: number; width: number; height: number } | null = null;
+	await expect
+		.poll(async () => {
+			const now = await card.boundingBox();
+			const settled = !!now && now.y >= 0 && !!last && now.x === last.x && now.y === last.y;
+			last = now;
+			return settled;
+		})
+		.toBe(true);
+	const box: { x: number; y: number; width: number; height: number } = last!;
+	// Floating UI rounds the wrapper's position to the device pixel (`roundByDPR`), so a card of
+	// fractional size lands up to half a pixel off either way. The anchor is fixed to the bottom
+	// of the layout viewport, which `clientHeight` measures.
+	const { width, height } = await page.evaluate(() => ({
+		width: document.documentElement.clientWidth,
+		height: document.documentElement.clientHeight
+	}));
+	expect(Math.abs(height - (box.y + box.height) - (20 + 24 + 8))).toBeLessThanOrEqual(0.5);
+	// Centred: UntargetedTipCenterPlacementOffset with equal near and far margins.
+	expect(Math.abs(box.x + box.width / 2 - width / 2)).toBeLessThanOrEqual(0.5);
+});

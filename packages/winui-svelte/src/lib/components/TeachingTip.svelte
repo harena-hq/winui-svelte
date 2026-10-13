@@ -42,9 +42,11 @@
 		/** ActionButtonClick. */
 		onActionButtonClick?: () => void;
 		/**
-		 * PlacementMargin. The inset between an untargeted tip and the viewport's edge. Upstream
-		 * reads all four sides of a Thickness; only the one the tip is placed against is visible,
-		 * so this is a single number.
+		 * PlacementMargin. Added to the fixed 24px, and the 8px tail track, between an untargeted
+		 * tip's card and the viewport's bottom edge. Upstream reads all four sides of a Thickness:
+		 * the bottom one lifts an untargeted tip, and the left and right ones shift it sideways by
+		 * their difference (TeachingTip.h:275), so equal sides cancel and this is a single number.
+		 * Upstream also offsets a targeted tip by it (TeachingTip.cpp:480); this does not.
 		 */
 		placementMargin?: number;
 		/**
@@ -121,6 +123,9 @@
 	}: TeachingTipProps = $props();
 
 	const CLOSE_GLYPH = String.fromCodePoint(parseInt('E711', 16));
+	// s_untargetedTipWindowEdgeMargin (TeachingTip.h:310), between an untargeted tip and the
+	// window's edge before PlacementMargin is added.
+	const UNTARGETED_EDGE_MARGIN = 24;
 
 	const placements = {
 		top: { side: 'top', align: 'center' },
@@ -201,12 +206,16 @@
 		     so the 8 is asked for in whichever of the two terms is not already there: the tail is
 		     8 tall, and a collapsed tail is no element at all. Upstream keeps the track either way
 		     — it is a Grid row, not the tail. An untargeted tip is centred against a viewport-wide
-		     anchor at the bottom of the window and offset by PlacementMargin; collision avoidance
-		     is off because that anchor already is the viewport. -->
+		     anchor at the bottom of the window; collision avoidance is off because that anchor
+		     already is the viewport. Its offset is UntargetedTipFarPlacementOffset's
+		     (TeachingTip.h:274): PlacementMargin plus s_untargetedTipWindowEdgeMargin, 24
+		     (TeachingTip.h:310), from the bottom of TailOcclusionGrid (TeachingTip.cpp:579), whose
+		     last row, an 8px TeachingTipTailShortSideLength, lies under the card
+		     (TeachingTip.xaml:310, ContentRootGrid at :312 spanning rows 1 to 3). -->
 		<Popover.Content
 			side={targeted ? position.side : 'top'}
 			align={targeted ? position.align : 'center'}
-			sideOffset={targeted ? (showTail ? 0 : 8) : placementMargin}
+			sideOffset={targeted ? (showTail ? 0 : 8) : placementMargin + UNTARGETED_EDGE_MARGIN + 8}
 			customAnchor={targeted ? null : anchor}
 			avoidCollisions={targeted}
 			trapFocus={false}
