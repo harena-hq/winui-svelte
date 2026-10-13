@@ -66,7 +66,7 @@ app; the rest of a component's history was reviewed by gates, mutants and agents
 | Expander           | `34f4ceb`                                       | passes, but for the chevron's phase           | WD-006, WD-010, WD-011; its Gallery page; the chevron                  |
 | HyperlinkButton    | none of its own (see below)                     | passes: ink, colour, hover                    | —                                                                      |
 | InfoBar            | `2ae9dbe`                                       | passes: height, icon and title offsets        | —                                                                      |
-| NavigationView     | `53c6c80`, `a846afa`, `2b585b0`                 | the shell, photographed on every Gallery page | WD-006, -025, -089, -091, -092, -101; four rows                        |
+| NavigationView     | `53c6c80`, `a846afa`, `2b585b0`                 | the shell, photographed on every Gallery page | WD-006, -025, -089, -091, -092, -101; four rows; six more              |
 | NavigationViewItem | through NavigationView's                        | the shell                                     | WD-090, WD-092                                                         |
 | ProgressBar        | `9140949`                                       | failed; fixed in `83b8bff`                    | —                                                                      |
 | ProgressRing       | `ee2f763`                                       | passes: box and stroke at 60px                | —                                                                      |
@@ -86,6 +86,20 @@ records at least six of its pane questions, or halves of them, as not pressed �
 fourth Tab press goes, the minimal pane's Left and Right, whether Left collapses, Space after a
 press on a chevron, whether the flyout's ring wraps, and question 9 — and the ring's top end as
 not measured.
+
+Added 2026-10-13, after the run: NavigationView's Gallery page uses six things no row names, and
+the library has none of them. Four are the control's members: `SelectionFollowsFocus` (its
+fourth and eighth examples), `AlwaysShowHeader`, and the threshold widths
+`ExpandedModeThresholdWidth` and `CompactModeThresholdWidth`, which the control holds at 1008
+and 641. One is the item's: `SelectsOnInvoked`, one of the nine members
+`NavigationViewItem.svelte`'s module comment lists as not carried, which the page reproduces by
+leaving the selection alone when an item that sets it False is invoked, the selection being the
+consumer's. And one is the attached `ToolTipService.ToolTip` on a row, where the control gives a
+row on the closed rail its content as a tooltip and nothing else. The page draws each example
+without them and names this paragraph where it does. It also puts two NavigationViewItems in a
+`PaneFooter`, which the library's item cannot stand in: there it would claim a top-level tree
+row's role and place outside the control's tree, and it takes no name of its own, so the page
+draws the two as their icons.
 
 Added 2026-10-13, after the run: ToolTip's Gallery page found the two members ToolTip's cell
 names, and the pin explains what the guest shows of both. A tooltip's popup is windowed where
