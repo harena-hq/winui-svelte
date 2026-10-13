@@ -175,6 +175,69 @@
 		onCloseButtonClick?.();
 		open = false;
 	}
+
+	// Upstream's light-dismiss layer takes the press that dismisses the tip, so what was under
+	// the pointer gets no Click; measured on the reference guest, a press on the Gallery's own
+	// Show button dismissed its light-dismiss tip without reopening it. bits-ui closes from the
+	// pointerdown, debounced 10ms (use-dismissable-layer.svelte.js:150), and lets that gesture's
+	// click through, so a press held past the debounce reopened the tip. Its `onInteractOutside`
+	// is raised only for a press that may dismiss the tip, and while that press is still down
+	// its click is stopped before it reaches its target. Only the click: whatever acts on the
+	// press itself (a pointerdown or a pointerup) still does. A press released before the
+	// debounce has clicked already, and still lands as before. Touch is left to the primitive,
+	// which dismisses a touch from its click.
+	//
+	// Whether the press is down is tracked here rather than read off the event the primitive
+	// hands over: a default-prevented pointerdown reaches the callback rewrapped
+	// (use-dismissable-layer.svelte.js:132-134), with a timestamp of its own.
+	let pressed = false;
+	let disarm: (() => void) | null = null;
+
+	$effect(() => {
+		if (!open || !lightDismiss) return;
+		const down = () => (pressed = true);
+		const up = () => (pressed = false);
+		document.addEventListener('pointerdown', down, true);
+		document.addEventListener('pointerup', up, true);
+		document.addEventListener('pointercancel', up, true);
+		return () => {
+			document.removeEventListener('pointerdown', down, true);
+			document.removeEventListener('pointerup', up, true);
+			document.removeEventListener('pointercancel', up, true);
+		};
+	});
+
+	$effect(() => () => disarm?.());
+
+	function swallowDismissingClick(event: PointerEvent) {
+		disarm?.();
+		if (event.type !== 'pointerdown' || !pressed) return;
+		const swallow = (click: MouseEvent) => {
+			click.preventDefault();
+			click.stopPropagation();
+		};
+		// A mouse click follows its pointerup in the same task, so the timer outlives it. A
+		// cancelled press has no click, and the next press starts a gesture of its own.
+		const ended = () => setTimeout(() => disarm?.(), 0);
+		const stop = () => {
+			document.removeEventListener('click', swallow, true);
+			document.removeEventListener('pointerup', ended, true);
+			document.removeEventListener('pointercancel', stop, true);
+			document.removeEventListener('pointerdown', stop, true);
+			disarm = null;
+		};
+		document.addEventListener('click', swallow, true);
+		document.addEventListener('pointerup', ended, true);
+		document.addEventListener('pointercancel', stop, true);
+		document.addEventListener('pointerdown', stop, true);
+		disarm = stop;
+		// The primitive closes synchronously after this callback unless it declines to
+		// (popover.svelte.js:289-306, chiefly a press on the tip's own trigger at :293-295); a
+		// press that leaves the tip open is not a dismissing one.
+		queueMicrotask(() => {
+			if (open && disarm === stop) stop();
+		});
+	}
 </script>
 
 {#if !targeted}
@@ -222,6 +285,7 @@
 			onOpenAutoFocus={(event) => event.preventDefault()}
 			interactOutsideBehavior={lightDismiss ? 'close' : 'ignore'}
 			escapeKeydownBehavior={lightDismiss ? 'close' : 'ignore'}
+			onInteractOutside={swallowDismissingClick}
 		>
 			{#snippet child({ props, wrapperProps })}
 				<div {...wrapperProps}>
