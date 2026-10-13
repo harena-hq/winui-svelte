@@ -7,7 +7,7 @@
 
 <svelte:head><title>TeachingTip — harness</title></svelte:head>
 
-<h1 class="winui-TitleTextBlockStyle" data-gallery-floor>TeachingTip</h1>
+<h1 class="winui-TitleTextBlockStyle">TeachingTip</h1>
 <p class="description winui-BodyTextBlockStyle">
 	The Gallery example, text-only tips, side placements, and a tip without its tail.
 </p>
@@ -137,15 +137,9 @@
 </div>
 
 <style>
-	:global(body:has([data-gallery-floor])) {
-		/* c1-allow: an app's override of a WinUI resource, the one the Gallery makes, not a
-		   value of this library's. The tips below are the Gallery's examples, and the Gallery
-		   lowers `TeachingTipMinWidth` from 320 to 48 for the whole app (App.xaml:62). The tips
-		   are portalled to the body, so the override goes there, and only while this page is
-		   on it. The control's own floor is asserted in teaching-tip.spec.ts with this taken
-		   back off. */
-		--winui-TeachingTipMinWidth: 48px;
-	}
+	/* The tips below are the Gallery's examples, at the 48px `TeachingTipMinWidth` the Gallery
+	   sets for the whole app (App.xaml:62), which gallery-styles.css sets on the body. The
+	   control's own floor is asserted in teaching-tip.spec.ts with that taken back off. */
 	/* Rows are ordinary Gallery harness layout; their backgrounds follow the application page token. */
 	.row {
 		display: flex;

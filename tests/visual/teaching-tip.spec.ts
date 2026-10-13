@@ -15,8 +15,8 @@ const titleOnly = (page: Page) =>
 
 // TeachingTip.xaml:282 and :297 put `MinWidth="{ThemeResource TeachingTipMinWidth}"` on the
 // two grids whose outer columns are the 8px tail tracks, so the narrowest card is 320 less 16.
-// The harness lowers the resource the way the Gallery's App.xaml does; taken back off, a tip
-// with a short title stops at that floor rather than at its text.
+// The Gallery's stylesheet lowers the resource on the body, as its App.xaml:62 does; taken back
+// off, a tip with a short title stops at that floor rather than at its text.
 test("a tip is no narrower than TeachingTipMinWidth less the tail's two tracks", async ({
 	page
 }) => {
