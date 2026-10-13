@@ -18,6 +18,10 @@
 body {
 	margin: 0;
 	overflow: hidden;
+	/* c1-allow: an app's override of a WinUI resource, not a value of the library's. The
+	   Gallery lowers `TeachingTipMinWidth` from 320 to 48 for the whole app (App.xaml:62).
+	   Tips are portalled to the body, so the override is set here. */
+	--winui-TeachingTipMinWidth: 48px;
 }
 
 .gallery-tile-grid {
