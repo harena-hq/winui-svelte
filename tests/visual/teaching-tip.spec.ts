@@ -98,3 +98,94 @@ test("an untargeted tip's card sits PlacementMargin, 24 and the tail track above
 	// Centred: UntargetedTipCenterPlacementOffset with equal near and far margins.
 	expect(Math.abs(box.x + box.width / 2 - width / 2)).toBeLessThanOrEqual(0.5);
 });
+
+/** The harness's light-dismiss tip, alone: the primitive dismisses only from the layer it holds
+ *  responsible, the last registered, and the tips declared after this one register later; all
+ *  the others are closed, as they also overlap. Also a button outside every tip that counts the
+ *  clicks it gets, and calls `preventDefault` on its pointerdown when `prevented` is set. */
+async function lightDismissAlone(page: Page, prevented = false) {
+	await page.goto(ROUTE);
+	// The harness's tips overlap one another, so they are closed by their buttons' own click:
+	// every header close button, and the footer one of the tip that has no header one.
+	await page.evaluate(() => {
+		for (const button of document.querySelectorAll<HTMLElement>(
+			'[data-popover-content] button[aria-label="Close"]'
+		))
+			button.click();
+		for (const card of document.querySelectorAll('[data-popover-content]'))
+			if (card.textContent?.includes('One close command'))
+				[...card.querySelectorAll<HTMLElement>('button')]
+					.find((button) => button.textContent?.trim() === 'Close button')
+					?.click();
+	});
+	const tip = page.locator('[data-popover-content]');
+	await expect(tip).toHaveCount(1);
+	await expect(tip).toHaveAttribute('data-light-dismiss', '');
+	await page.evaluate((prevented) => {
+		const button = document.createElement('button');
+		button.id = 'counter';
+		button.textContent = 'counter';
+		button.style.cssText = 'position: fixed; left: 8px; top: 8px';
+		button.dataset.clicks = '0';
+		button.onclick = () => (button.dataset.clicks = String(Number(button.dataset.clicks) + 1));
+		if (prevented) button.onpointerdown = (event) => event.preventDefault();
+		document.body.append(button);
+	}, prevented);
+	return { tip, counter: page.locator('#counter') };
+}
+
+// Upstream's light-dismiss layer takes the press that dismisses the tip, and what was under the
+// pointer gets no Click; on the reference guest a press on the Gallery's own Show button
+// dismissed its tip without reopening it. A press held as a hand holds one outlasts the
+// primitive's 10ms debounce.
+test('the click of a press that light-dismisses a tip never reaches its target', async ({
+	page
+}) => {
+	const { tip, counter } = await lightDismissAlone(page);
+	await counter.hover();
+	await page.mouse.down();
+	await page.waitForTimeout(100);
+	await page.mouse.up();
+	await expect(tip).toHaveCount(0);
+	await page.waitForTimeout(100);
+	await expect(counter).toHaveAttribute('data-clicks', '0');
+	// Only that press: a keyboard click after it, and the next press, both land.
+	await counter.focus();
+	await page.keyboard.press('Enter');
+	await expect(counter).toHaveAttribute('data-clicks', '1');
+	await counter.click();
+	await expect(counter).toHaveAttribute('data-clicks', '2');
+});
+
+// A pointerdown its target default-prevents reaches the primitive's callback rewrapped, with a
+// timestamp of its own (use-dismissable-layer.svelte.js:132-134), so whether the press is still
+// down is not read off it. Released quickly or not, nothing is left to take the keyboard click
+// that follows: a quick press has clicked before the tip is dismissed, a held one has ended.
+test('a default-prevented press leaves the next keyboard click alone', async ({ page }) => {
+	const { tip, counter } = await lightDismissAlone(page, true);
+	await counter.click();
+	await expect(tip).toHaveCount(0);
+	await page.waitForTimeout(100);
+	const before = Number(await counter.getAttribute('data-clicks'));
+	await counter.focus();
+	await page.keyboard.press('Enter');
+	await expect(counter).toHaveAttribute('data-clicks', String(before + 1));
+});
+
+// A press the browser cancels has no click, and nothing is left armed by it.
+test('a cancelled dismissing press leaves the next keyboard click alone', async ({ page }) => {
+	const { tip, counter } = await lightDismissAlone(page);
+	await counter.hover();
+	await page.mouse.down();
+	await page.waitForTimeout(100);
+	await expect(tip).toHaveCount(0);
+	await page.evaluate(() =>
+		document
+			.getElementById('counter')!
+			.dispatchEvent(new PointerEvent('pointercancel', { bubbles: true, pointerType: 'mouse' }))
+	);
+	await counter.focus();
+	await page.keyboard.press('Enter');
+	await expect(counter).toHaveAttribute('data-clicks', '1');
+	await page.mouse.up();
+});
