@@ -77,7 +77,7 @@ app; the rest of a component's history was reviewed by gates, mutants and agents
 | TextBox            | `9ecf440`, `2b585b0`, `80c7176`, `351987f`      | passes: header gap, height, placeholder       | WD-100 (multi-line)                                                    |
 | TitleBar           | `fb980a5`                                       | its Gallery page and the shell                | WD-006, WD-007, WD-099                                                 |
 | ToggleSwitch       | `62f011d` (the off state), `69efa8c` (the drag) | failed on the on knob; fixed in `2523d0e`     | WD-096; the pressed knob's shape                                       |
-| ToolTip            | `70b0c29`                                       | passes: height, inset, baseline               | WD-094, WD-095                                                         |
+| ToolTip            | `70b0c29`                                       | passes: height, inset, baseline               | WD-094, WD-095; `PlacementRect`, `VerticalOffset`                      |
 
 NavigationView's four rows: `FooterMenuItems`, the pane's custom content, header, title and
 search slot, and `OverflowLabelMode`, in v8's table of what that version left owed; and v7's
@@ -86,6 +86,22 @@ records at least six of its pane questions, or halves of them, as not pressed â€
 fourth Tab press goes, the minimal pane's Left and Right, whether Left collapses, Space after a
 press on a chevron, whether the flyout's ring wraps, and question 9 â€” and the ring's top end as
 not measured.
+
+Added 2026-10-13, after the run: ToolTip's Gallery page found the two members ToolTip's cell
+names, and the pin explains what the guest shows of both. A tooltip's popup is windowed where
+the platform supports it (`ToolTip_Partial.cpp:147-153`, `:739-748`), despite the stale note at
+`:1146`; the guest's measurements are what the windowed path produces and the other does not.
+Any placement but `Mouse` takes the windowed directional path (`:1433-1458`), which for a mouse
+docks to the pointer before anything else (`:1667-1683`). A pointer inside a non-empty
+`PlacementRect` is first moved to the rectangle's edge on the placement's side (`:1791-1820`),
+so the page's third tooltip, `Placement="Right"`, keeps the pointer's height. The dock point is
+then inflated by the two offsets (`:1768`), each 20 for a mouse when it is not set
+(`:1712-1751`, `ToolTip_Partial.h:11`): the 20 the third tooltip stands clear of the rectangle.
+The second sets `VerticalOffset` to -80, which inflates the point by -80 and turns it inside
+out, so a tooltip above it ends 80 below the pointer; with the one-line tooltip's 32 that
+`ToolTip.svelte` measured, its top is 48 below, which the guest shows at two pointer heights
+(503 and 510 for 455 and 462). Neither is built here. `PlacementRect` is absent, and this
+library's one `offset` at -80 put the popup's top at the pointer, measured.
 
 `deaaf2d` compared one thing with the original, an AppBarButton row in a CommandBar's
 overflow, and swept every other control's focus visual against its own; it is credited to no
