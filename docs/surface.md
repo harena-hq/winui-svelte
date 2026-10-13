@@ -252,8 +252,8 @@ nothing chose them; the first is here only as a pointer, because a choice _was_ 
 
 Dismissal is where the deferral below still stands on its original footing: the Gallery's page
 and Microsoft's published reference are the whole of what this library has read for it. What
-that left open — `PlacementRect`, and a `VerticalOffset` whose effect on the guest did not
-reduce to a simple delta — is deferred in `plan.md` rather than guessed at.
+that left open — `PlacementRect`, and `VerticalOffset`'s effect on a tooltip anchored to the
+pointer — is read and not built; `library-gate.md`'s ToolTip paragraph has the reading.
 
 **The stale twin of this entry was in the component**, which still said there was no
 implementation to read; `16cef0a` corrected it. It is the **fourth** member of this
