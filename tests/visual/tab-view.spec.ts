@@ -51,3 +51,45 @@ test('the arrows ring through the add button, and re-entry is the tab last focus
 	await expect(tab(2), 'Shift+Tab back into the strip').toBeFocused();
 	expect((await selected()).trim()).toBe('Document 1');
 });
+
+/**
+ * The strip's header and footer span its whole height. `TabViewHeaderPadding`'s 8 on top is the
+ * TabView's Padding (`TabView.xaml:6`), passed to the list (`:39`) and by the list's template to
+ * its `ItemsPresenter` (`:115`), and the header and footer presenters span the row (`:38`, `:43`).
+ * What they hold places itself: the harness's two texts are the Gallery's TabStripHeader sample
+ * (`TabViewPage.xaml:187-201`), each `VerticalAlignment="Center"`. Measured on the reference in
+ * that sample: the header and footer text's ink from 441, the tab labels' from 446, in a strip
+ * from 425 to 465.
+ */
+test("the strip's header and footer span its whole height, the tabs below its padding", async ({
+	page
+}) => {
+	await page.goto('/dev/tab-view');
+	const boxes = await page
+		.locator('.strip-header-text')
+		.first()
+		.evaluate((text) => {
+			const strip = text.closest('.strip')!.getBoundingClientRect();
+			const r = (e: Element) => e.getBoundingClientRect();
+			const footer = text.closest('.strip')!.querySelector('.strip-footer-text')!;
+			const tab = text.closest('.strip')!.querySelector('[role=tab]')!;
+			return {
+				strip: [strip.top, strip.bottom],
+				headerBox: [r(text.parentElement!).top, r(text.parentElement!).bottom],
+				footerBox: [r(footer.parentElement!).top, r(footer.parentElement!).bottom],
+				header: (r(text).top + r(text).bottom) / 2,
+				footer: (r(footer).top + r(footer).bottom) / 2,
+				tabTop: r(tab).top
+			};
+		});
+	expect(boxes.strip[1] - boxes.strip[0]).toBeCloseTo(40, 0);
+	for (const box of [boxes.headerBox, boxes.footerBox]) {
+		expect(box[0]).toBeCloseTo(boxes.strip[0], 1);
+		expect(box[1]).toBeCloseTo(boxes.strip[1], 1);
+	}
+	const middle = (boxes.strip[0] + boxes.strip[1]) / 2;
+	expect(boxes.header).toBeCloseTo(middle, 0);
+	expect(boxes.footer).toBeCloseTo(middle, 0);
+	// The tab starts the 8 the list's padding adds below the strip's top.
+	expect(boxes.tabTop - boxes.strip[0]).toBeCloseTo(8, 0);
+});

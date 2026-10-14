@@ -535,9 +535,6 @@
 	.strip {
 		position: relative;
 		display: flex;
-		/* `TabViewHeaderPadding`, which the template puts on the list's Padding
-		   (`TabView.xaml:39`) rather than on the strip. Same pixels, one fewer box. */
-		padding: var(--winui-TabViewHeaderPadding);
 		background: var(--winui-TabViewBackground);
 	}
 
@@ -578,6 +575,12 @@
 
 	.viewport {
 		min-width: 0;
+		/* `TabViewHeaderPadding`, the TabView's Padding (`TabView.xaml:6`), which the template
+		   passes to the list (`:39`) and the list's template to its `ItemsPresenter` (`:115`),
+		   inside this ScrollViewer. Only the tabs feel it: the header and footer presenters span
+		   the strip's whole height (`:38`, `:43`), and the add and scroll buttons sit on the
+		   bottom (`:40`, `:157`, `:163`). */
+		padding: var(--winui-TabViewHeaderPadding);
 		/* The ScrollViewer the two RepeatButtons flank (`TabView.xaml:162`). `auto` and not
 		   `hidden`, so the wheel and a trackpad still move the strip the way they do upstream;
 		   the bar itself is upstream's thin overlay one and is not drawn here. */
@@ -589,10 +592,19 @@
 		display: none;
 	}
 
+	/* The presenters set no content alignment (`TabView.xaml:38`, `:43`), and a ContentPresenter's
+	   defaults to Stretch (`DependencyProperty.cpp:613-618`, arranged at `ContentPresenter.cpp
+	   :891-894`), so what they hold is given the strip's height and places itself in it, as a
+	   TextBlock with `VerticalAlignment="Center"` does in the Gallery's sample. A child brings
+	   its own alignment: this package's Button does not yet carry its style's
+	   `VerticalAlignment="Center"` (`Button_themeresources.xaml:162`), so in a header it
+	   stretches unless the caller centres it; and a child of fixed height sits at the top here,
+	   where XAML centres a Stretch child smaller than its slot. Centring here would fix those two
+	   but shrink every child of auto height, which XAML's default `VerticalAlignment` of Stretch
+	   (`DependencyProperty.cpp:613`) has fill the row; a child that wants centring says so. */
 	.strip-header,
 	.strip-footer {
 		display: flex;
-		align-items: center;
 	}
 	.strip-footer {
 		/* `RightContentColumn` is the Grid's only `*` column (`TabView.xaml:34`) and its presenter
