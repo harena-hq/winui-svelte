@@ -851,7 +851,10 @@
 	   `FontWeight="{ThemeResource ComboBoxHeaderThemeFontWeight}"`. `LineHeight="20"` and
 	   `TextWrapping="Wrap"` map to `line-height: 20px` and `white-space: normal`; the
 	   wrapper itself is line-height-normal and inherits, so the rule sets the constant
-	   explicitly. */
+	   explicitly. `Wrap` also breaks inside a word too wide for the line, as TextBlock's
+	   does, which at a definite width is `overflow-wrap: break-word` (measured on the
+	   reference at the Gallery's `Width="150"`). Whether the original also lets an
+	   auto-width box shrink below such a word, which `anywhere` would, is not measured. */
 	.header {
 		margin: var(--winui-ComboBoxTopHeaderMargin);
 		color: var(--winui-ComboBoxHeaderForeground);
@@ -860,6 +863,7 @@
 		   `HeaderContentPresenter` */
 		line-height: 20px;
 		white-space: normal;
+		overflow-wrap: break-word;
 	}
 
 	/* Row 1 of `DefaultComboBoxStyle` at ComboBox_themeresources.xaml:571: the
