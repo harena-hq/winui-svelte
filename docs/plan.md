@@ -1545,7 +1545,8 @@ group sizes, which no longer line up one-to-one with a version.
 
     **What this version is likely to decline, decided in the units and not here.** TabView's
     tear-out sample opens a second OS window (`TabViewWindowingSamplePage`), which a page
-    cannot do; Pivot's carousel arrows and its `PivotHeaderItemLockedTranslation` of 40 are
+    cannot do (a forecast WD-065's measurement of `window.open` superseded; tear-out was settled
+    under WD-023 on 2026-10-14); Pivot's carousel arrows and its `PivotHeaderItemLockedTranslation` of 40 are
     Windows-Phone-era behaviour the Gallery never demonstrates; and `CanReorderTabs` is a drag
     the web can express and may still not be worth its weight. Each is a `WD-` with a
     measurement behind it or it is built — the one thing none of them may be is unmentioned.
@@ -1610,7 +1611,7 @@ group sizes, which no longer line up one-to-one with a version.
     | NavigationView | `FooterMenuItems` — a second item list, in either pane                            |
     | NavigationView | `PaneCustomContent`, `PaneHeader`, `PaneTitle`, and the pane's `AutoSuggestBox`   |
     | NavigationView | `OverflowLabelMode`, whose two styles differ by a glyph size and drop both labels |
-    | TabView        | tear-out, `CanReorderTabs`, and the rest of unit 5's table                        |
+    | TabView        | `CanReorderTabs` and the rest of unit 5's table (tear-out is `WD-023`'s)          |
 
     `WD-025` is the one thing declined rather than postponed: an item's children are not
     expanded on the top pane, because that subtree is a second portalled surface per item and
@@ -4346,7 +4347,8 @@ two, and the last of them is the owner's alone. D55.
      page is drawn whole and the launch button is inert, as WD-065 does for the Windowing pages,
      and the TabView unit widens WD-065's control line to say so. Whether tear-out is
      a divergence, as WD-023 says, or surface not yet built, as v8's owed table lists it, is
-     settled by the TabView unit and written in both places.
+     settled by the TabView unit and written in both places. Settled 2026-10-14: a divergence,
+     the window it ends in being WD-065's, not one a page cannot open.
    - **An example that needs surface a member does not have yet** draws what the member has
      and names the owed row, and the surface is not built for the release: D46, as ADR 0017
      amends it, chose the eighteen by what a consumer's source would replace, and the gate held
