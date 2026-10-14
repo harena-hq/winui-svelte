@@ -46,10 +46,11 @@
 {#snippet longerContent()}<p class="winui-BodyTextBlockStyle">Longer tab content.</p>{/snippet}
 {#snippet thirdContent()}<p class="winui-BodyTextBlockStyle">Third tab content.</p>{/snippet}
 {#snippet narrowContent()}<p class="winui-BodyTextBlockStyle">Narrow strip content.</p>{/snippet}
-<!-- `TabViewPage.xaml:188-200`: both are TextBlocks in `BaseTextBlockStyle`, the header
-     `Margin="8,6"` and the footer `Margin="6"` with `HorizontalAlignment="Right"`. The right
-     alignment is the sample's own — the control gives the footer the Grid's `*` column and
-     leaves what sits in it to the app — so it is set here, not in TabView. -->
+<!-- `TabViewPage.xaml:188-200`: both are TextBlocks in `BaseTextBlockStyle` with
+     `VerticalAlignment="Center"`, the header `Margin="8,6"` and the footer `Margin="6"` with
+     `HorizontalAlignment="Right"`. Both alignments are the sample's own — the control gives the
+     header and footer the strip's height and the footer the Grid's `*` column, and leaves what
+     sits in them to the app — so they are set here, not in TabView. -->
 {#snippet stripHeader()}<span class="strip-header-text winui-BaseTextBlockStyle"
 		>TabStripHeader Content</span
 	>{/snippet}
@@ -131,10 +132,14 @@
 	.strip-header-text {
 		/* `Margin="8,6"` — a XAML Thickness of two is horizontal then vertical. */
 		margin: 6px 8px;
+		/* `VerticalAlignment="Center"`. */
+		align-self: center;
 	}
 	.strip-footer-text {
 		margin: 6px;
 		/* `HorizontalAlignment="Right"` inside the footer's own box. */
 		margin-left: auto;
+		/* `VerticalAlignment="Center"`. */
+		align-self: center;
 	}
 </style>
