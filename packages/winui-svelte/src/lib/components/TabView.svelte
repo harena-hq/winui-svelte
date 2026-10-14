@@ -37,10 +37,18 @@
 
 	export interface TabViewProps {
 		items: TabViewItemData[];
-		/** SelectedItem, narrowed to the `id` of one record. `null` means the first tab. */
+		/**
+		 * SelectedItem, narrowed to the `id` of one record. `null` means the first tab. Removing
+		 * the selected record, by a close request or otherwise, moves it to the closest enabled tab.
+		 */
 		selected?: string | null;
 		onSelectionChanged?: (id: string | null) => void;
-		/** TabCloseRequested. This requests closure; the consumer edits its own collection. */
+		/**
+		 * TabCloseRequested. This requests closure; the consumer edits its own collection, and if
+		 * the tab was selected, the selection moves to the closest enabled tab once its record is
+		 * gone. With none enabled, it names the removed record, a `null` selection included, so no
+		 * tab shows as selected, and no change is reported.
+		 */
 		onTabCloseRequested?: (id: string) => void;
 		/** IsEnabled on the control, inverted to the attribute — ADR 0009. */
 		disabled?: boolean;
@@ -278,6 +286,37 @@
 		if (Math.abs(delta) > 0.5) viewport.scrollBy({ left: delta, behavior: scrollBehavior() });
 	}
 
+	// A removal that takes the selected tab selects the closest one (`TabView::OnItemsChanged`,
+	// `TabView.cpp:780-815`): the tab now at its index, or the last if it was the last, and from
+	// there the first enabled tab forward, wrapping, and `SelectedItem` raises the change. The
+	// consumer removes the record, so the selection moves here, once the tab is gone. A `null`
+	// selection shows the first tab and moves when that tab goes. A selection naming no tab is
+	// upstream's `SelectedIndex` of -1, which any removal answers from the removed index (`:786`);
+	// that is also where a removal that found no enabled tab leaves it, naming the removed record,
+	// a `null` selection included, since `null` would show the first tab. Upstream is told of one
+	// removal at a time; the start here is the one it reaches were the selected tab removed last:
+	// the tabs kept before it. Any change that drops ids counts as a removal, a replaced list
+	// included, where upstream sees a reset. The early return in the effect leaves `before`
+	// holding a removed id, so `shown` is always one.
+	function selectAfterRemoval(before: string[], kept: Set<string>) {
+		const shown = selected ?? before[0];
+		if (kept.has(shown)) return;
+		const was = before.indexOf(shown);
+		const from = was === -1 ? before.findIndex((id) => !kept.has(id)) : was;
+		const start = Math.min(
+			before.slice(0, from).filter((id) => kept.has(id)).length,
+			items.length - 1
+		);
+		for (let step = 0; step < items.length; step++) {
+			const item = items[(start + step) % items.length];
+			if (isItemDisabled(item)) continue;
+			selected = item.id;
+			onSelectionChanged?.(item.id);
+			return;
+		}
+		selected = shown;
+	}
+
 	// Becoming selected brings a tab into view (`TabViewItem.cpp:151-154`), and so does a change
 	// in the items presenter's size (`OnItemsPresenterSizeChanged`, `TabView.cpp:736-746`) — the
 	// presenter's and not the strip's: it sits inside the ScrollViewer, so while the tabs overflow
@@ -292,12 +331,17 @@
 	// content (`UpdateTabWidths` leaves it NaN for both, `TabView.cpp:1140`, applied at
 	// `:1324-1336`). A mode that did change on leaving would have to bring the selection in then.
 	let removalPending = false;
-	let previousIds = new Set<string>();
+	let previousIds: string[] = [];
 	let itemsWidth = 0;
 	$effect.pre(() => {
-		const ids = new Set(items.map((item) => item.id));
-		if ([...previousIds].some((id) => !ids.has(id))) removalPending = true;
+		const ids = items.map((item) => item.id);
+		const kept = new Set(ids);
+		const before = previousIds;
 		previousIds = ids;
+		if (!before.some((id) => !kept.has(id))) return;
+		removalPending = true;
+		// Untracked, so neither the selection nor what the consumer's callback reads re-runs this.
+		untrack(() => selectAfterRemoval(before, kept));
 	});
 	// The selected tab's flare reaches 4 past it, so a new selection can move the content's edge
 	// without any tab changing size; it is recorded here so that a later measure does not read
@@ -476,7 +520,7 @@
 		class="panel"
 		role="tabpanel"
 		id={panelId}
-		aria-labelledby={current === null ? undefined : tabId(current)}
+		aria-labelledby={currentItem ? tabId(currentItem.id) : undefined}
 	>
 		{#if currentItem?.content}{@render currentItem.content()}{/if}
 	</div>
