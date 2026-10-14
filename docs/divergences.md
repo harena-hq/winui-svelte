@@ -580,9 +580,13 @@ the whole app (`App.xaml:62`), and the control honours whatever it is given.
 - **We do**: none of it. A tab is selected and closed and nothing else; the reorder and drag
   state groups have no counterpart, and `Control+Tab` is left to the browser, which owns that
   chord.
-- **Why accepted**: two different reasons that both hold on their own. Tear-out needs a second
-  top-level window, which a page cannot open — the same wall `WD-020` and the TitleBar deferrals
-  meet. Reordering does not need one, and is declined for its weight rather than its possibility:
+- **Why accepted**: two different reasons that both hold on their own. Tear-out ends in a second
+  top-level window, and a page's second window, `window.open`'s, works but carries the browser's
+  chrome and none of what the Gallery's sample configures on its own (`WD-065`, measured); the drag
+  that starts it is declined with reordering. Settled 2026-10-14 by the TabView page: tear-out is
+  this divergence, not surface owed, and v8's table no longer lists it; reordering, which that table
+  still lists as `CanReorderTabs`, was not settled with it. Reordering does not need a second
+  window, and is declined for its weight rather than its possibility:
   the drop indicator, the eleven drag states and the three-way border-line suppression are a
   second unit's worth of work for an interaction the acceptance surface never shows in a still
   frame, and the Gallery demonstrates it in prose rather than in a state the gate can compare.
@@ -1376,13 +1380,15 @@ changes`.
 
 ---
 
-### WD-065 — Windowing's pages open no second window
+### WD-065 — Windowing's pages, and TabView's windowing sample, open no second window
 
-- **Control**: the Gallery's AppWindow, AppWindowTitleBar, TitleBar and Multiple windows pages.
-- **WinUI does**: open a real top-level window from each of thirteen buttons — AppWindow's seven
+- **Control**: the Gallery's AppWindow, AppWindowTitleBar, TitleBar and Multiple windows pages, and the
+  TabView page's windowing sample.
+- **WinUI does**: open a real top-level window from each of fourteen buttons — AppWindow's seven
   (`AppWindowPage.xaml.cs:17-39`, `:59-75`), AppWindowTitleBar's three
   (`AppWindowTitleBarPage.xaml.cs:31-49`, `:159-167`, `:201-207`), TitleBar's two
-  (`TitleBarPage.xaml.cs:19-29`) and Multiple windows' one (`CreateMultipleWindowsPage.xaml.cs:19-44`) —
+  (`TitleBarPage.xaml.cs:19-29`), Multiple windows' one (`CreateMultipleWindowsPage.xaml.cs:19-44`) and
+  TabView's one, a window extended into its title bar with a TabView in it (`TabViewPage.xaml.cs:262-273`) —
   and configures it through `Microsoft.UI.Windowing`: three presenters, `OverlappedPresenter`'s six
   switches, preferred minimum and maximum size, a position, modality, and the title bar's twelve colours.
 - **We do**: render every one of those pages whole, and leave every button inert.
@@ -1393,7 +1399,7 @@ changes`.
   carries the browser's chrome, takes no presenter, has no modality against its opener, and exposes no title
   bar to colour. The one page whose whole demonstration is just _opening_ a window, Multiple windows, opens
   one that `ExtendsContentIntoTitleBar` over a `MicaBackdrop` at a 500 × 500 client size, and none of those
-  three is reachable either. So what every one of the thirteen declines is the demonstration, not the act.
+  three is reachable either. So what every one of the fourteen declines is the demonstration, not the act.
 - **Would reconsider if**: a page in this group gains something a popup can actually show. The row is then
   narrowed to the buttons that still decline, rather than deleted.
 
@@ -2367,3 +2373,25 @@ changes`.
   keyboard and pointer tests that `ToolTip`'s other triggers have.
 - **Would reconsider if**: the next NavigationView unit, or a consumer whose users meet an
   unlabelled glyph button.
+
+### WD-102 — the browser keeps Control+T and Control+W from the TabView page's accelerators
+
+- **Control**: the Gallery's TabView page, its keyboard sample.
+- **WinUI does**: declare eleven `KeyboardAccelerator`s on the sample's TabView
+  (`TabViewPage.xaml:111-156`): Control+T adds a tab, Control+W closes the selected one, and
+  Control+1 to Control+8 select that tab and Control+9 the last (`TabViewPage.xaml.cs:149-221`),
+  each marked handled.
+- **We do**: handle all eleven on the window, as the original's are invoked whatever has the
+  focus, and mark each handled. In Chromium-based browsers, the reference's included, Control+T
+  and Control+W are the browser's own new-tab and close-tab chords, which a page in an ordinary
+  browser window is not given — one of the reasons the Keyboard Lock API exists — so there they
+  open and close browser tabs, the second taking the Gallery with it. Control+1 to Control+9,
+  such a browser's tab switching, reach the page, which takes them from the browser across the
+  whole page, even for a number naming no tab, as the original marks them handled. None of this
+  was pressed in this rig's browser; the page's spec presses synthetic keys, which reach the
+  page whatever the browser keeps.
+- **Why accepted**: the chords are the browser's to give, not the page's to take, and the page
+  draws the sample's text as the original's so its source still reads as the Gallery's.
+- **Would reconsider if**: the Gallery runs as an installed app or in a window whose browser
+  passes these chords on, where they would then work as written; or a measurement in this rig
+  shows they arrive.

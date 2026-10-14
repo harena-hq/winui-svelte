@@ -24,7 +24,9 @@ Both repositories below are MIT licensed, under the notice that follows the list
   `apps/gallery/static/` are copied from its `Assets/SampleMedia`, byte for byte except
   `ladybug.mp4` and `fishes.mp4`, which are re-encoded from its `.wmv` originals. Its
   `MapExample.png` is not copied: the map data it shows carries a third party's
-  attribution, which this licence does not extend to.
+  attribution, which this licence does not extend to. Its `linux.png` draws Tux, the Linux
+  mascot, whose original Larry Ewing drew with The GIMP and asks only to be acknowledged for;
+  it is acknowledged here.
 
 ```
 Copyright (c) Microsoft Corporation.

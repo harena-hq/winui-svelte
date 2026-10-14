@@ -58,26 +58,26 @@ session that drives the Gallery takes them, and the owes column names them:
 "Against the original" names the commits whose review cites a comparison with the original
 app; the rest of a component's history was reviewed by gates, mutants and agents.
 
-| component          | against the original                            | re-photographed 2026-10-04                    | owes                                                                   |
-| ------------------ | ----------------------------------------------- | --------------------------------------------- | ---------------------------------------------------------------------- |
-| Button             | none of its own (see below)                     | passes: fill, height, insets                  | —                                                                      |
-| ComboBox           | `65d0719`, `76ede81`                            | passes: height, insets, chevron               | WD-097, WD-098; v4 row: touch and game-controller padding              |
-| ContentDialog      | `9608de0`, `ddf52df`, `b17cd85`                 | passes: 320 x 221                             | WD-014, WD-015                                                         |
-| Expander           | `34f4ceb`                                       | passes, but for the chevron's phase           | WD-006, WD-010, WD-011; its Gallery page; the chevron                  |
-| HyperlinkButton    | none of its own (see below)                     | passes: ink, colour, hover                    | —                                                                      |
-| InfoBar            | `2ae9dbe`                                       | passes: height, icon and title offsets        | —                                                                      |
-| NavigationView     | `53c6c80`, `a846afa`, `2b585b0`                 | the shell, photographed on every Gallery page | WD-006, -025, -089, -091, -092, -101; four rows; six more              |
-| NavigationViewItem | through NavigationView's                        | the shell                                     | WD-090, WD-092                                                         |
-| ProgressBar        | `9140949`                                       | failed; fixed in `83b8bff`                    | —                                                                      |
-| ProgressRing       | `ee2f763`                                       | passes: box and stroke at 60px                | —                                                                      |
-| ScrollView         | `99c02d8`                                       | its Gallery page                              | WD-036; two layout rows                                                |
-| ScrollViewer       | `99c02d8`, perhaps (see below)                  | its Gallery page                              | WD-036, through ScrollView                                             |
-| TabView            | `45dd13c`, `7790165`                            | passes, by eye on enlarged crops              | WD-023; v8 row: tear-out, `CanReorderTabs`, the rest of unit 5's table |
-| TeachingTip        | `adec259`, `1bf4e92`, `ce28cb8`                 | passes: 224 x 64, but for border and shadow   | WD-017; v7 row: `icon`; border and shadow                              |
-| TextBox            | `9ecf440`, `2b585b0`, `80c7176`, `351987f`      | passes: header gap, height, placeholder       | WD-100 (multi-line)                                                    |
-| TitleBar           | `fb980a5`                                       | its Gallery page and the shell                | WD-006, WD-007, WD-099                                                 |
-| ToggleSwitch       | `62f011d` (the off state), `69efa8c` (the drag) | failed on the on knob; fixed in `2523d0e`     | WD-096; the pressed knob's shape                                       |
-| ToolTip            | `70b0c29`                                       | passes: height, inset, baseline               | WD-094, WD-095; `PlacementRect`, `VerticalOffset`                      |
+| component          | against the original                            | re-photographed 2026-10-04                    | owes                                                                                      |
+| ------------------ | ----------------------------------------------- | --------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| Button             | none of its own (see below)                     | passes: fill, height, insets                  | —                                                                                         |
+| ComboBox           | `65d0719`, `76ede81`                            | passes: height, insets, chevron               | WD-097, WD-098; v4 row: touch and game-controller padding                                 |
+| ContentDialog      | `9608de0`, `ddf52df`, `b17cd85`                 | passes: 320 x 221                             | WD-014, WD-015                                                                            |
+| Expander           | `34f4ceb`                                       | passes, but for the chevron's phase           | WD-006, WD-010, WD-011; its Gallery page; the chevron                                     |
+| HyperlinkButton    | none of its own (see below)                     | passes: ink, colour, hover                    | —                                                                                         |
+| InfoBar            | `2ae9dbe`                                       | passes: height, icon and title offsets        | —                                                                                         |
+| NavigationView     | `53c6c80`, `a846afa`, `2b585b0`                 | the shell, photographed on every Gallery page | WD-006, -025, -089, -091, -092, -101; four rows; six more                                 |
+| NavigationViewItem | through NavigationView's                        | the shell                                     | WD-090, WD-092                                                                            |
+| ProgressBar        | `9140949`                                       | failed; fixed in `83b8bff`                    | —                                                                                         |
+| ProgressRing       | `ee2f763`                                       | passes: box and stroke at 60px                | —                                                                                         |
+| ScrollView         | `99c02d8`                                       | its Gallery page                              | WD-036; two layout rows                                                                   |
+| ScrollViewer       | `99c02d8`, perhaps (see below)                  | its Gallery page                              | WD-036, through ScrollView                                                                |
+| TabView            | `45dd13c`, `7790165`                            | passes, by eye on enlarged crops              | WD-023, tear-out included; v8 row: `CanReorderTabs`, the rest of unit 5's table; two more |
+| TeachingTip        | `adec259`, `1bf4e92`, `ce28cb8`                 | passes: 224 x 64, but for border and shadow   | WD-017; v7 row: `icon`; border and shadow                                                 |
+| TextBox            | `9ecf440`, `2b585b0`, `80c7176`, `351987f`      | passes: header gap, height, placeholder       | WD-100 (multi-line)                                                                       |
+| TitleBar           | `fb980a5`                                       | its Gallery page and the shell                | WD-006, WD-007, WD-099                                                                    |
+| ToggleSwitch       | `62f011d` (the off state), `69efa8c` (the drag) | failed on the on knob; fixed in `2523d0e`     | WD-096; the pressed knob's shape                                                          |
+| ToolTip            | `70b0c29`                                       | passes: height, inset, baseline               | WD-094, WD-095; `PlacementRect`, `VerticalOffset`                                         |
 
 NavigationView's four rows: `FooterMenuItems`, the pane's custom content, header, title and
 search slot, and `OverflowLabelMode`, in v8's table of what that version left owed; and v7's
@@ -100,6 +100,19 @@ without them and names this paragraph where it does. It also puts two Navigation
 `PaneFooter`, which the library's item cannot stand in: there it would claim a top-level tree
 row's role and place outside the control's tree, and it takes no name of its own, so the page
 draws the two as their icons.
+
+Added 2026-10-14, after the run: TabView's Gallery page uses two things no row names, and the
+library has neither. One is a tab's `ContextFlyout`: every tab on the page but the third
+example's, whose template sets none, opens the page's `MenuFlyout`, which the Gallery fills with
+"Move tab left", "Move tab right" or both as the tab's place allows, and hides when it holds
+neither (`TabViewHelper.cs:61-101`, `TabViewPage.xaml.cs:275-284`), moving the tab in its
+collection; the library's `TabViewItemData` takes no flyout. The other is `KeyboardAccelerators`
+on the TabView, a member every UIElement has and no component here carries; the page reproduces
+its eleven accelerators on the window, where an accelerator on a visible element is invoked
+whatever has the focus, as pressing Control+T on the reference with another example's tab
+focused showed, and a browser keeps two of them, Control+T and Control+W (`WD-102`). The page
+draws the tabs without their flyout and names this paragraph where it does. Tear-out, which this
+row listed as v8's, is `WD-023`'s, settled by the same page.
 
 Added 2026-10-13, after the run: ToolTip's Gallery page found the two members ToolTip's cell
 names, and the pin explains what the guest shows of both. A tooltip's popup is windowed where
