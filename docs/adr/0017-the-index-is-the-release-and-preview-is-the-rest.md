@@ -84,6 +84,15 @@ what a member still owes blocks the release is the library gate's question. And 
 C4 follows the exported set on its own is replaced by the C4 paragraph above. The implementing
 unit is the split this record decides.
 
+**Amended 2026-10-14**, recording what the index already held: the release also carries
+`ScrollAnimation` and its `ScrollAnimationEasing` and `ScrollVector` types. They entered both
+entries on 2026-10-03 with `ScrollView`'s `onScrollAnimationStarting`, which hands a
+`ScrollAnimation` out and takes one back, so the animation a released prop's argument carries,
+and the one a handler assigns in its place, are ones a consumer of the root can name. Like
+`Symbol`, it is not a component, and the rule above for a component's move into the index does
+not reach it; this paragraph is its record. The package README and changelog list it with the
+rest.
+
 ## Alternatives rejected
 
 - **Shrink the index and let C4 shrink with it**, as D46's paragraph expected. It costs the

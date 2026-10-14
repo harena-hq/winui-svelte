@@ -232,8 +232,15 @@ async function assertPublishedSurface(directory) {
 		throw new Error('expected the packed tarball to contain NOTICE.md, but it is missing');
 	}
 
-	// Nothing from the source tree ships. `files` lists `dist` alone, and the two negated
-	// patterns drop the tests.
+	// The changelog ships too, and is packed only when `files` names it.
+	try {
+		await stat(path.join(installed, 'CHANGELOG.md'));
+	} catch {
+		throw new Error('expected the packed tarball to contain CHANGELOG.md, but it is missing');
+	}
+
+	// Nothing from the source tree ships. `files` lists `dist` and three documents beside it,
+	// and the two negated patterns drop the tests.
 	const shipped = await readdir(installed);
 	const unexpected = shipped.filter((name) => name === 'src' || name === 'node_modules');
 	if (unexpected.length > 0) {
