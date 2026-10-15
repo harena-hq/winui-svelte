@@ -115,7 +115,9 @@ test('the built-in styles stand 16 apart', async ({ page }) => {
 	expect(b.x - (a.x + a.width)).toBeCloseTo(16, 0);
 });
 
-test('stretched buttons span the widest text, and wrapped ones stop at 240', async ({ page }) => {
+test('stretched buttons span the widest text, and wrapped ones their widest line', async ({
+	page
+}) => {
 	const example = examples(page).nth(3);
 	// The widest line of text, measured on its text run rather than on its paragraph, which spans
 	// the column whatever its text measures.
@@ -141,10 +143,29 @@ test('stretched buttons span the widest text, and wrapped ones stop at 240', asy
 	const second = example.getByRole('button', {
 		name: 'This is another text that would result in being cut off without wrapping'
 	});
+	// MaxWidth="240", and inside it the TextBlock's widest wrapped line rounded up
+	// (TextBlock.cpp:1730-1737) with the button's padding and border: 225 and 211 on the
+	// reference guest, where the original's are the same.
+	for (const [button, width] of [
+		[first, 225],
+		[second, 211]
+	] as const) {
+		// The width is written once the fonts are in, after hydration, so it is polled, and the
+		// lines are read after it, in the same font. The literal is the measurement; the widest
+		// line beside it only checks the fit read the lines this does, which it does by
+		// construction.
+		await expect.poll(async () => (await button.boundingBox())!.width).toBe(width);
+		const lines = await button.locator('.wraps').evaluate((span) => {
+			const range = document.createRange();
+			range.selectNodeContents(span);
+			const scale = window.devicePixelRatio;
+			return Array.from(range.getClientRects(), (rect) => Math.ceil(rect.width * scale) / scale);
+		});
+		expect(lines).toHaveLength(3);
+		expect(width).toBe(Math.max(...lines) + 24);
+	}
 	const f = (await first.boundingBox())!;
 	const s = (await second.boundingBox())!;
-	expect(f.width).toBe(240);
-	expect(s.width).toBe(240);
 	// Wrapped, not clipped: more than one line tall.
 	expect(f.height).toBeGreaterThan(40);
 	// Margin="0,0,8,0", and the pair centred in the stack.
