@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { Button, CheckBox, Image } from 'winui-svelte/preview';
+	import { fitLines } from '$lib/fit-lines';
 	import ControlExample from '$lib/frame/ControlExample.svelte';
 	import ItemPage from '$lib/frame/ItemPage.svelte';
 	import { sampleOf } from '$lib/samples';
@@ -82,7 +83,8 @@
 		<!-- ButtonPage.xaml:91-112. The StackPanel is as wide as its widest child, and the two
 		     Stretch buttons span it. Here that holds while no paragraph wraps: once one does,
 		     the column takes the width it was offered, where the original's takes its widest
-		     wrapped line, the same CSS limit as the wrapped buttons below. -->
+		     wrapped line. CSS has no length for that; fitLines supplies it for the wrapped
+		     buttons below, and the column is not fitted. -->
 		<div class="wrapping">
 			<p class="winui-BodyTextBlockStyle">
 				The following buttons' content may get clipped if we don't pay careful attention to their
@@ -98,16 +100,16 @@
 				Another option is to explicitly wrap the Button's content
 			</p>
 			<!-- MaxWidth="240" with a wrapping TextBlock inside. The original's buttons are as
-			     wide as their widest wrapped line, under 240; here they are 240: CSS has no
-			     length for the width a wrapped box used. -->
+			     wide as their widest wrapped line, 225 and 211 on the reference guest, and
+			     fitLines sizes each text to its widest line as the TextBlock does. -->
 			<div class="wrapped-row">
 				<Button class="wrapped first">
-					<span class="wraps"
+					<span class="wraps" {@attach fitLines}
 						>This is some text that is too long and will get cut off without wrapping</span
 					>
 				</Button>
 				<Button class="wrapped">
-					<span class="wraps"
+					<span class="wraps" {@attach fitLines}
 						>This is another text that would result in being cut off without wrapping</span
 					>
 				</Button>
