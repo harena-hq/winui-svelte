@@ -67,6 +67,10 @@
 		return items;
 	});
 	let selectedLanguage = $state<string | null>(null);
+	// c1-allow: ControlExample.xaml:202 and :213, each presenter's Padding="16,0,16,16". The
+	// presenter gives it to the code alone, so the copy button's 8 from the right edge is
+	// measured from the presenter's edge, not the padding's.
+	const CODE_PADDING = '0 16px 16px';
 	const showSourceCode = $derived(sourceCodeVisible && sourceItems.length > 0);
 
 	$effect(() => {
@@ -122,9 +126,14 @@
 						</div>
 						<div class="presenter-row">
 							{#if selectedLanguage === 'xaml' && xaml}
-								<SampleCodePresenter code={xaml} {substitutions} />
+								<SampleCodePresenter code={xaml} {substitutions} padding={CODE_PADDING} />
 							{:else if selectedLanguage === 'csharp' && csharp}
-								<SampleCodePresenter code={csharp} sampleType="csharp" {substitutions} />
+								<SampleCodePresenter
+									code={csharp}
+									sampleType="csharp"
+									{substitutions}
+									padding={CODE_PADDING}
+								/>
 							{/if}
 						</div>
 					</div>
@@ -275,8 +284,10 @@
 	}
 
 	/* The Expander declares `--corner` on its own root, so an inherited value never reaches it;
-	   this rule outranks that declaration, which is the only way in from outside. */
-	.source :global(.root) {
+	   this rule outranks that declaration, which is the only way in from outside. The child
+	   combinator keeps it to the Expander's root: every component in the pane names its root
+	   `root`, and a descendant match squared the copy button's corners and clipped its border. */
+	.source > :global(.root) {
 		/* c1-allow: ControlExample.xaml:166, the Expander carries CornerRadius="0,0,8,8" and the
 		   bottom half of it is the wrapper's own radius below */
 		--corner: 0;
@@ -291,10 +302,6 @@
 
 	.selector-row {
 		margin-left: 4px;
-	}
-
-	.presenter-row {
-		padding: 0 16px 16px;
 	}
 
 	@media (width < 740px) {
