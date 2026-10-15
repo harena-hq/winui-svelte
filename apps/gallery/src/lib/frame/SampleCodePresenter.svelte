@@ -10,6 +10,12 @@
 		substitutions?: Record<string, string>;
 		/** IsCopyButtonVisible. */
 		copyButtonVisible?: boolean;
+		/**
+		 * Padding, as a CSS `padding` value. The template binds it to the ContentPresenter inside
+		 * the ScrollViewer (SampleCodePresenter.xaml:28), so the code scrolls with it and the
+		 * copy button, outside the ScrollViewer, does not take it.
+		 */
+		padding?: string;
 		class?: string;
 		style?: string;
 		ref?: HTMLDivElement | null;
@@ -31,6 +37,7 @@
 		sampleType = 'xaml',
 		substitutions,
 		copyButtonVisible = true,
+		padding,
 		class: className,
 		style,
 		ref = $bindable(null),
@@ -110,6 +117,7 @@
 		bind:this={codeElement}
 		class:scrollable={sampleType !== 'inline'}
 		class="code-area"
+		style:padding
 		onscroll={scrolled}
 	>
 		{#if sampleType === 'inline'}
