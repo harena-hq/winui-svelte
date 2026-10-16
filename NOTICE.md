@@ -86,8 +86,41 @@ OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 DEALINGS IN THE SOFTWARE.
 ```
 
-## Fonts and icons are not redistributed
+## Fluent UI System Icons
+
+`tokens.css` embeds a font of the eighteen glyphs the package's own components draw,
+for where the Segoe icon fonts are not installed. Each is an outline, or part of one,
+from [Fluent UI System Icons](https://github.com/microsoft/fluentui-system-icons),
+scaled and placed at a Segoe Fluent Icons code point. `data/winui-icon-fallback.json`
+holds the outlines as they were extracted. They are MIT licensed:
+
+```
+MIT License
+
+Copyright (c) 2020 Microsoft Corporation
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
+
+## Segoe fonts are not redistributed
 
 Segoe UI Variable, Segoe UI, Segoe Fluent Icons and Segoe MDL2 Assets ship with
 Windows and are referenced by name from the local system, never embedded. See
-`docs/adr/0003-fonts-and-icons.md`.
+`docs/adr/0003-fonts-and-icons.md`, and for the embedded glyphs above,
+`docs/adr/0018-the-release-glyphs-fall-back-to-fluent-system-icons.md`.

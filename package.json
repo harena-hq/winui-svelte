@@ -20,6 +20,7 @@
 		"symbol:extract": "node scripts/symbol/extract.mjs",
 		"parts:extract": "node scripts/parts/extract.mjs",
 		"symbol:build": "node scripts/symbol/generate.mjs",
+		"icons:extract": "node scripts/icons/extract.mjs",
 		"gallery:fetch": "node scripts/gallery/fetch.mjs",
 		"gallery:extract": "node scripts/gallery/extract.mjs",
 		"colorcode:fetch": "node scripts/colorcode/fetch.mjs",
@@ -32,6 +33,7 @@
 	},
 	"devDependencies": {
 		"@eslint/js": "^10.0.1",
+		"@fluentui/svg-icons": "^1.1.344",
 		"@playwright/test": "^1.62.1",
 		"@types/node": "^26.4.0",
 		"eslint": "^10.9.1",
@@ -42,6 +44,8 @@
 		"prettier-plugin-svelte": "^4.1.1",
 		"sirv-cli": "^3.0.1",
 		"svelte": "^5.57.0",
+		"svg2ttf": "^6.1.0",
+		"svgpath": "^2.6.0",
 		"typescript": "^6.0.3",
 		"typescript-eslint": "^8.69.0"
 	}

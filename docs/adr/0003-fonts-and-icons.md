@@ -81,6 +81,10 @@ also ships with Windows and is referenced by name the same way, never embedded. 
 redistributable set the Decision puts behind them was never built: off Windows, no Segoe glyph
 resolves, and an icon draws as whatever the browser substitutes, if anything.
 
+**Amended by ADR 0018**, the same day, which builds that set for the eighteen glyphs the
+release's own components draw, from Fluent UI System Icons. A consumer's own glyph is still
+not in it.
+
 ## Alternatives rejected
 
 - **Embedding the fonts as webfonts** — prohibited by their EULA.

@@ -3202,7 +3202,10 @@ export const SYSTEM_COLORS = {
  *
  * The values are ADR 0003's decision, not a new one: reference the family by name and embed
  * nothing. `tests/visual/fonts.spec.ts` fails if they stop resolving where the baselines
- * are taken, which is the only place the reference can be checked.
+ * are taken, which is the only place the reference can be checked. The generator emits the
+ * icon stack with one family after the two written here, the face of the release's own glyphs
+ * that ADR 0018 embeds in `tokens.css` for where Segoe is absent; `checkIconStack` compares
+ * the two written here alone.
  *
  * `PivotHeaderItemFontFamily` and `PivotTitleFontFamily` are records in the control pin, in all
  * three Pivot dictionaries, and like `ContentControlThemeFontFamily` each says
