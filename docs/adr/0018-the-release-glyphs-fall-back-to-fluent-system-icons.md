@@ -112,6 +112,26 @@ to 603. The inline decision below stands on the same argument at that size: the 
 Windows consumer is a tenth more of a stylesheet already over half a megabyte, against a
 bundler asset in every consumer's build.
 
+**Amended again 2026-10-16: the drawn rows are every component's, and C19 holds them.** The
+owner's pass on macOS found the Gallery's copy button taller than it is wide. Its success
+glyph, hidden until a copy, is U+E73E, which had no row, so it was laid out in a substitute
+face whose line is taller than an em. U+E73E is also CheckBox's check, and CheckBox is preview,
+outside what the release draws. Reading every component's source found 22 points with no row:
+CheckBox's check and indeterminate dash, MenuFlyout's check, radio bullet and sub-item chevron,
+the chevrons of DropDownButton, SplitButton and TreeViewItem, PipsPager's dots, PasswordBox's
+reveal glyph, SemanticZoom's zoom-out bar, and thirteen MediaTransportControls commands. A
+preview component ships in the same package, and drawing nothing off Windows is the same
+defect there. So `DRAWN` becomes every point a component in the package writes for itself,
+`Symbol` names or not: the 22, chosen and fitted as the amendment above describes, and the
+seven `Symbol` points that preview components draw, moved over from the `Symbol` rows, join the
+eighteen for 47 rows, 229 in all.
+Three of the 22, U+E0B8, U+E627 and U+E628, are in neither of Microsoft's published lists for
+Segoe Fluent Icons and Segoe MDL2 Assets, and their rows are named for what draws them.
+Conformance C19 reads the components' sources, with comments removed, and the generated tokens,
+and fails on a private-use point that is not a `DRAWN` row and on a `DRAWN` row no component
+draws. The font
+grows to about 53 kilobytes, 71 of base64, and `tokens.css` to 608.
+
 ## Alternatives rejected
 
 - **The Fluent font as it ships, after Segoe in the stack.** Its code points are not Segoe's,
@@ -130,8 +150,8 @@ bundler asset in every consumer's build.
 - **NOTICE.md**, the package's and the repository's, carries the Fluent UI System Icons
   licence, as `tokens.css` now distributes outlines from it.
 - **The package README and changelog** say what draws off Windows and what does not.
-- **`tests/visual/icon-fallback.spec.ts`** draws each of the table's rows, 207 since the
-  amendment, from the token's stack, from Segoe alone, from the face alone and from an absent
+- **`tests/visual/icon-fallback.spec.ts`** draws each of the table's rows, 229 since the
+  amendments, from the token's stack, from Segoe alone, from the face alone and from an absent
   family, and compares the pixels: on the reference guest the stack must draw Segoe and the face
   something else, except for a row marked `absent`, whose point Segoe must lack and the stack
   draw from the face, and every other row's point must be one Segoe has, an em wide; elsewhere
@@ -141,5 +161,6 @@ bundler asset in every consumer's build.
   guest, so it compares the stack with Segoe; the comparison of the stack with the face runs on
   the local lane, where Segoe is absent.
 - **A component that starts drawing a new glyph of its own** owes the table a row, or it draws
-  nothing off Windows. No gate ties the two; this is a review convention. A `Symbol` member
-  is tied: `font.mjs` fails the build when one's point has no row.
+  nothing off Windows. Since the second amendment, C19 fails until it has one, and fails on a
+  row no component draws any more. A `Symbol` member is tied the same way: `font.mjs` fails
+  the build when one's point has no row.

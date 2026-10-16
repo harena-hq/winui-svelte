@@ -92,7 +92,7 @@ pnpm workspace. The library is publishable and imposes no build tooling on its c
 | D53 | Baselines compare at a 0.01 colour tolerance, and one unstable page gets a counted pixel budget         | this file, "Verification"         |
 | D54 | The first release is eighteen components in the index; `preview` exports the rest                       | docs/adr/0017                     |
 | D55 | The release is 0.1.0 with tested peer floors, cut after the owner's pass                                | this file, "The release — 0.1.0"  |
-| D56 | Off Windows, the glyphs the release draws itself or names in `Symbol` come from Fluent UI System Icons  | docs/adr/0018                     |
+| D56 | Off Windows, the glyphs the components draw or `Symbol` names come from Fluent UI System Icons          | docs/adr/0018                     |
 
 ## Verification
 
@@ -4234,8 +4234,8 @@ there.
 Elsewhere, and more decisively, **Segoe UI Variable and Segoe Fluent Icons exist only on
 Windows** — ADR 0003's type ramp and every icon in the library assume them. A consumer is
 faithful on Windows and degrades off it, and that degradation is out of scope here rather than a
-divergence this registry owes an entry for. ADR 0018 narrows it for icons: the eighteen glyphs
-the release's own components draw, and the glyphs `Symbol` names, fall back to Fluent UI System
+divergence this registry owes an entry for. ADR 0018 narrows it for icons: the glyphs the
+components draw for themselves, and the glyphs `Symbol` names, fall back to Fluent UI System
 Icons.
 
 ### The library gate — the release bar
@@ -4576,14 +4576,15 @@ reproduce is a recorded decision, never a silent one.
 `C12` (every cited line names a file that has one), `C13` (every portalled surface sits in the
 popup layer), `C14` (no colour property reads a token that resolves to a gradient), `C15`
 (nothing cites a line in a generated source file), `C16` (nothing cites a line in a file this
-repository holds), `C17` (the gate list is every gate file, in order) and `C18` (every
-content declaration that draws something states its alternative text) are in `pnpm conform`
-and have no entry here — C11 and C12 landed without one, and none of the six after them added
+repository holds), `C17` (the gate list is every gate file, in order), `C18` (every
+content declaration that draws something states its alternative text) and `C19` (every glyph a
+component draws for itself has a row in the fallback face's table) are in `pnpm conform` and
+have no entry here — C11 and C12 landed without one, and none of the seven after them added
 itself alone, because an entry for the newest while the ones before it have none would make the
 gap read as a choice. **`scripts/conformance/gates.mjs` is the list**, and `C17` holds it to the
 files beside it; this section is a commentary on the gates that have one, and the backfill is
-owed. Each of the eight carries its own reasoning in its own file, which is where the detail
-is; C13's through C18's also record what they cannot reach, and each names the test that
+owed. Each of the nine carries its own reasoning in its own file, which is where the detail
+is; C13's through C19's also record what they cannot reach, and each names the test that
 answers that half where one does; C17's other gaps, and the two documents it reads, are left
 to hand.
 

@@ -1266,7 +1266,7 @@ function stylesheet(doc, framework, selection, extraEmitted, icons) {
 		' */',
 		'',
 		'/*',
-		' * The glyphs the release draws for itself and names in `Symbol`, from Fluent UI System',
+		' * The glyphs the components draw for themselves and `Symbol` names, from Fluent UI System',
 		' * Icons, for where Segoe Fluent Icons and Segoe MDL2 Assets are not installed: the icon',
 		' * token names this face after both, so it draws only what neither has. Built by',
 		` * scripts/icons/font.mjs from ${FALLBACK_RECORD} —`,
