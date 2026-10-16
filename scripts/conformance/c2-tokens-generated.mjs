@@ -7,10 +7,10 @@ export const title = 'committed generated sources match their generators';
 
 // The generator's inputs. Everything it emits is a function of the token record, the
 // framework record, `scripts/tokens/manifest.mjs`, and the icon record with the table in
-// `scripts/icons/fallback.mjs`, which is what makes the comparison below meaningful: a
-// difference is committed generated source drifting, never the environment. The font's
-// libraries, `svg2ttf` and `svgpath` and their dependencies, are the lockfile's versions, and
-// its timestamp is fixed.
+// `scripts/icons/fallback.mjs`, checked against the symbol record, which is what makes the
+// comparison below meaningful: a difference is committed generated source drifting, never the
+// environment. The font's libraries, `svg2ttf` and `svgpath` and their dependencies, are the
+// lockfile's versions, and its timestamp is fixed.
 // The symbol generator similarly reads its committed record rather than the upstream checkout.
 const TOKEN_RECORD = 'data/winui-tokens.json';
 const SYMBOL_RECORD = 'data/winui-symbol.json';

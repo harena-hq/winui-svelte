@@ -57,7 +57,7 @@ metrics, as Chromium on Linux does, so the generator zeroes it in the built font
 A consumer's `glyph` is in the face only if it is one of the eighteen; any other code point
 still draws whatever the browser substitutes, if anything. Covering all of Segoe's points would
 need a mapping for each of some fifteen hundred icons, and most have no Fluent counterpart that
-a table could name without choosing one.
+a table could name without choosing one. (The amendment below adds the points `Symbol` names.)
 
 **The face is built, not drawn.** `pnpm icons:extract` copies the outlines the table names
 from the installed `@fluentui/svg-icons` into `data/winui-icon-fallback.json`, which is
@@ -81,6 +81,37 @@ Accepted, 2026-10-16. **Amends ADR 0003**, whose redistributable set this is for
 the release draws itself. ADR 0003's reference by name stands, and nothing of Segoe is
 embedded.
 
+**Amended 2026-10-16: the face also holds every glyph `Symbol` names.** The owner's pass found
+the Gallery's navigation icons blank off Windows, and asked whether an icon component that
+writes each font's own code for a name, as Font Awesome does, would serve better. It would not
+remove the table: a name has to be paired with a Segoe point and a Fluent icon either way, and a
+component choosing between fonts at run time has to ask whether Segoe is installed, which CSS
+cannot and a script answers only after the first paint. The package already exports names, in
+`Symbol`, the release's copy of WinUI's `Symbol` enum, whose 197 members draw 196 Segoe points
+(`Favorite` and `OutlineStar` share one). So the table's bound moves from what the release
+draws to what the release names: `scripts/icons/fallback.mjs` gains a row for each of the
+`Symbol` points the eighteen did not have, 189 of them, 207 rows in all, and `font.mjs` fails
+the build if a member's point has no row. A `glyph` that `Symbol` does not name still draws
+whatever the browser substitutes.
+
+These rows' Fluent icons were chosen by eye, each against the Segoe glyph drawn on the reference
+guest, and are the same idea in Fluent's drawing rather than always the same picture:
+`Directions` is Fluent's road sign where Segoe draws an arrow, `Scan` an aperture where Segoe
+draws a flatbed. Each is fitted to the Segoe glyph's measured box as before. One point is not in
+the reference guest's Segoe Fluent Icons at all: `Target` is F5F0 in WinUI's table, and the
+browser draws a missing-glyph box for it there, so the stack draws the face's target on Windows
+too; that row borrows `Clock`'s box and is marked `absent`, and the spec checks both that Segoe
+lacks it and that the stack draws the face. Fluent SVGs drawn as several paths are joined into
+one outline, each made absolute first. The SVG paints several paths as a union and the font
+fills one outline by nonzero winding, which differ where one path overlaps another wound the
+other way; the three joined today draw the same pixels both ways, bar antialiasing at their
+edges, and a new one is checked by eye in the overlay a row is chosen against.
+
+The font grows from 4.5 to about 49 kilobytes, about 66 of base64, and `tokens.css` from 541
+to 603. The inline decision below stands on the same argument at that size: the cost to a
+Windows consumer is a tenth more of a stylesheet already over half a megabyte, against a
+bundler asset in every consumer's build.
+
 ## Alternatives rejected
 
 - **The Fluent font as it ships, after Segoe in the stack.** Its code points are not Segoe's,
@@ -99,13 +130,16 @@ embedded.
 - **NOTICE.md**, the package's and the repository's, carries the Fluent UI System Icons
   licence, as `tokens.css` now distributes outlines from it.
 - **The package README and changelog** say what draws off Windows and what does not.
-- **`tests/visual/icon-fallback.spec.ts`** draws each of the eighteen from the token's stack,
-  from Segoe alone, from the face alone and from an absent family, and compares the pixels: on
-  the reference guest the stack must draw Segoe and the face something else; elsewhere the
-  stack must draw the face. It checks each fitted glyph's ink against its Segoe box, each
+- **`tests/visual/icon-fallback.spec.ts`** draws each of the table's rows, 207 since the
+  amendment, from the token's stack, from Segoe alone, from the face alone and from an absent
+  family, and compares the pixels: on the reference guest the stack must draw Segoe and the face
+  something else, except for a row marked `absent`, whose point Segoe must lack and the stack
+  draw from the face, and every other row's point must be one Segoe has, an em wide; elsewhere
+  the stack must draw the face. It checks each fitted glyph's ink against its Segoe box, each
   InfoBar symbol's against its circle and the Segoe symbol's centre, and that a 16px icon's line
   box is 16px, as Segoe Fluent Icons' is on the reference guest. The gate runs on the reference
   guest, so it compares the stack with Segoe; the comparison of the stack with the face runs on
   the local lane, where Segoe is absent.
 - **A component that starts drawing a new glyph of its own** owes the table a row, or it draws
-  nothing off Windows. No gate ties the two; this is a review convention.
+  nothing off Windows. No gate ties the two; this is a review convention. A `Symbol` member
+  is tied: `font.mjs` fails the build when one's point has no row.

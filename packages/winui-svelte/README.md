@@ -6,10 +6,10 @@ Styling is a CSS custom-property token cascade plus Svelte scoped styles — no 
 CSS-in-JS, and no build tooling required of consumers. The Segoe fonts are referenced from
 the local system rather than embedded, so text and icons render exactly as WinUI does on
 Windows 11. Elsewhere text takes the system's sans-serif, and the glyphs the components draw
-themselves, such as chevrons and close buttons, come from a small embedded font of Fluent UI
-System Icons outlines; a glyph code point a consumer passes draws from it only if it is one of
-those eighteen. The font is a `data:` URL, which a Content Security Policy's `font-src`, or its
-`default-src` where it has none, has to allow.
+themselves, such as chevrons and close buttons, come from an embedded font of Fluent UI System
+Icons outlines, as do the glyphs `Symbol` names; a glyph code point a consumer passes draws from
+it only if it is one of those. The font is a `data:` URL, which a Content Security Policy's
+`font-src`, or its `default-src` where it has none, has to allow.
 
 ```sh
 pnpm add winui-svelte bits-ui @internationalized/date
