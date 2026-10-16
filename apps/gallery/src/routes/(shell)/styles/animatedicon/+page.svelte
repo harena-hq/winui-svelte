@@ -189,8 +189,9 @@
 	   the thing ADR 0012 decided not to build. The third site is where this is worth revisiting,
 	   and by then it is a decision rather than a habit. */
 	.symbol-icon {
-		/* Segoe Fluent Icons, at icon.cpp:328 and :374-378. This one is a theme value and has a
-		   token, so it comes from the token. */
+		/* Segoe Fluent Icons then Segoe MDL2 Assets: icon.cpp:14 hard-codes the list that :328
+		   and :374-378 use, the same list the framework dictionary gives SymbolThemeFontFamily.
+		   The two are equal rather than linked, and this one comes from the token. */
 		font-family: var(--winui-SymbolThemeFontFamily);
 		/* c1-allow: IconElement's own size, g_ClientCoreFontSize = 20.f at
 		   dxaml/xcp/core/core/elements/icon.cpp:13, applied to SymbolIcon at :318. Not a ramp

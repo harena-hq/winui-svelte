@@ -27,7 +27,7 @@
 	--winui-SystemAccentColorLight1: #0091f8;
 	--winui-SystemAccentColorLight2: #4cc2ff;
 	--winui-SystemAccentColorLight3: #99ebff;
-	--winui-SymbolThemeFontFamily: 'Segoe Fluent Icons';
+	--winui-SymbolThemeFontFamily: 'Segoe Fluent Icons', 'Segoe MDL2 Assets';
 	--winui-ContentControlThemeFontFamily: 'Segoe UI Variable Text', 'Segoe UI', sans-serif;
 	--winui-PivotHeaderItemFontFamily: 'Segoe UI Variable Text', 'Segoe UI', sans-serif;
 	--winui-PivotTitleFontFamily: 'Segoe UI Variable Text', 'Segoe UI', sans-serif;

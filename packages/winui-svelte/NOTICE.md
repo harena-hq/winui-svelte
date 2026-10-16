@@ -36,5 +36,5 @@ SOFTWARE.
 
 ## Fonts and icons are not redistributed
 
-Segoe UI Variable and Segoe Fluent Icons ship with Windows and are referenced by
-name from the local system, never embedded.
+Segoe UI Variable, Segoe UI, Segoe Fluent Icons and Segoe MDL2 Assets ship with
+Windows and are referenced by name from the local system, never embedded.
