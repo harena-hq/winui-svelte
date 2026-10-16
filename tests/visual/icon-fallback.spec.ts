@@ -1,10 +1,11 @@
 import { CDP_ENDPOINT, expect, test } from './fixtures';
 
 /**
- * ADR 0018: the icon token names a face of the release's own glyphs, and the ones `Symbol`
- * names, after the two Segoe families, so a glyph draws from it only where neither is
- * installed. Each glyph is drawn to a canvas from four stacks and the pixels compared, because
- * a measured width cannot tell two faces apart when one was fitted to the other's box.
+ * ADR 0018: the icon token names a face of the glyphs the components draw for themselves and
+ * the ones `Symbol` names, after the two Segoe families, so a glyph draws from it only where
+ * neither is installed. Each glyph is drawn to a canvas from four stacks and the pixels
+ * compared, because a measured width cannot tell two faces apart when one was fitted to the
+ * other's box.
  */
 const { FALLBACK_FAMILY, FALLBACK_GLYPHS } =
 	await (import('../../scripts/icons/fallback.mjs') as Promise<
@@ -13,7 +14,7 @@ const { FALLBACK_FAMILY, FALLBACK_GLYPHS } =
 
 const ABSENT = "'NoSuchFamilyIsInstalledAnywhere'";
 
-test('the release glyphs draw from Segoe where it is installed, and from the fallback face elsewhere', async ({
+test("the face's glyphs draw from Segoe where it is installed, and from the fallback face elsewhere", async ({
 	page
 }) => {
 	await page.goto('/');

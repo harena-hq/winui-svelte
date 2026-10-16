@@ -16,6 +16,7 @@ import * as c15 from './c15-generated-line-citations.mjs';
 import * as c16 from './c16-own-line-citations.mjs';
 import * as c17 from './c17-gate-list.mjs';
 import * as c18 from './c18-generated-content-alt.mjs';
+import * as c19 from './c19-drawn-glyphs-have-a-fallback.mjs';
 
 // The suite `pnpm conform` runs, in order. `C17` holds this list to the `c<N>-*.mjs` files
 // beside it and to the apparatus row in `docs/keyboard.md`, so a gate lands as a file, an entry
@@ -38,5 +39,6 @@ export const GATES = [
 	c15,
 	c16,
 	c17,
-	c18
+	c18,
+	c19
 ];

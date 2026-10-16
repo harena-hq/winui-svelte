@@ -1,17 +1,21 @@
 /**
- * The glyphs the fallback face draws, and what each draws off Windows. ADR 0018 and its
- * 2026-10-16 amendment.
+ * The glyphs the fallback face draws, and what each draws off Windows. ADR 0018 and its two
+ * 2026-10-16 amendments.
  *
- * Two sets of rows, one table. `DRAWN` is every Segoe Fluent Icons code point that one of the
- * eighteen components the package root exports, or the ScrollBar part ScrollView and
- * ScrollViewer render, writes for itself: a chevron, a close button, a caret. `SYMBOLS` is
- * every other code point the release's `Symbol` names, the glyph WinUI draws for each member
- * of its `Symbol` enum, so a consumer who writes `glyph={Symbol.Save}` gets a save icon off
- * Windows too; `font.mjs` fails if a member's point is in neither. A code point a consumer
- * passes as `glyph` that `Symbol` does not name draws whatever the browser substitutes, if
+ * Two sets of rows, one table. `DRAWN` is every Segoe Fluent Icons code point that a component
+ * in the package, exported from the root or from `preview`, writes for itself: a chevron, a
+ * close button, a check, a media command, `Symbol` names it or not. Conformance C19 reads the
+ * components for those points and fails on one that is not a `DRAWN` row, and on a `DRAWN` row
+ * none of them draws. `SYMBOLS` is every other code point the release's `Symbol` names, the
+ * glyph WinUI draws for each member of its `Symbol` enum, so a consumer who writes
+ * `glyph={Symbol.Save}` gets a save icon off Windows too; `font.mjs` fails if a member's point
+ * is in neither. A code point a consumer passes as `glyph` that `Symbol` does not name draws
+ * whatever the browser substitutes, if
  * anything.
  *
- * `segoe` is the Segoe glyph's name, and in `SYMBOLS` the `Symbol` members that draw it.
+ * `segoe` is the Segoe glyph's name, and in `SYMBOLS` the `Symbol` members that draw it. Three
+ * `DRAWN` points, E0B8, E627 and E628, are in neither of Microsoft's published lists for Segoe
+ * Fluent Icons and Segoe MDL2 Assets, and are named for what draws them.
  * `fluent` names the Fluent UI System Icons SVG whose shape stands in for it, chosen by eye
  * against the Segoe glyph, so a stand-in is the same idea in Fluent's drawing and not always
  * the same picture. `box` is the Segoe Fluent Icons glyph's ink,
@@ -31,6 +35,14 @@
  * `tests/visual/icon-fallback.spec.ts` holds the symbol drawn here near its centre.
  */
 const DRAWN = [
+	{ point: 'E0B8', segoe: 'ZoomOut', fluent: 'subtract_16_filled', box: [0, 1000, 328, 672] },
+	{ point: 'E627', segoe: 'Rewind', fluent: 'rewind_16_filled', box: [16, 1000, 125, 875] },
+	{
+		point: 'E628',
+		segoe: 'FastForward',
+		fluent: 'fast_forward_16_filled',
+		box: [0, 984, 125, 875]
+	},
 	{
 		point: 'E700',
 		segoe: 'GlobalNavButton',
@@ -48,8 +60,84 @@ const DRAWN = [
 	{ point: 'E711', segoe: 'Cancel', fluent: 'dismiss_16_regular', box: [125, 813, 188, 875] },
 	{ point: 'E712', segoe: 'More', fluent: 'more_horizontal_16_regular', box: [109, 891, 422, 578] },
 	{ point: 'E713', segoe: 'Settings', fluent: 'settings_16_regular', box: [16, 984, 0, 1000] },
+	{ point: 'E716', segoe: 'People', fluent: 'people_16_regular', box: [0, 1000, 63, 1000] },
 	{ point: 'E72B', segoe: 'Back', fluent: 'arrow_left_16_regular', box: [0, 1000, 63, 1000] },
+	{
+		point: 'E72C',
+		segoe: 'Refresh',
+		fluent: 'arrow_clockwise_16_regular',
+		box: [0, 1000, 0, 1000]
+	},
+	{
+		point: 'E734',
+		segoe: 'FavoriteStar',
+		fluent: 'star_16_regular',
+		box: [0, 1000, 16, 984]
+	},
+	{ point: 'E735', segoe: 'FavoriteStarFill', fluent: 'star_16_filled', box: [0, 1000, 16, 984] },
+	{ point: 'E73E', segoe: 'CheckMark', fluent: 'checkmark_16_regular', box: [125, 875, 219, 750] },
+	{
+		point: 'E76C',
+		segoe: 'ChevronRight',
+		fluent: 'chevron_right_16_regular',
+		box: [313, 719, 125, 875]
+	},
+	{ point: 'E77B', segoe: 'Contact', fluent: 'person_16_regular', box: [63, 938, 0, 1000] },
+	{ point: 'E787', segoe: 'Calendar', fluent: 'calendar_ltr_16_regular', box: [63, 938, 63, 938] },
+	{ point: 'E799', segoe: 'AspectRatio', fluent: 'resize_16_regular', box: [0, 1000, 125, 875] },
 	{ point: 'E894', segoe: 'Clear', fluent: 'dismiss_16_regular', box: [125, 813, 188, 875] },
+	{ point: 'E8FB', segoe: 'Accept', fluent: 'checkmark_16_regular', box: [0, 1000, 188, 875] },
+	{ point: 'E915', segoe: 'RadioBullet', fluent: 'circle_16_filled', box: [313, 688, 313, 688] },
+	{
+		point: 'E96E',
+		segoe: 'ChevronDownSmall',
+		fluent: 'chevron_down_16_regular',
+		box: [125, 875, 313, 750]
+	},
+	{
+		point: 'E974',
+		segoe: 'ChevronRightMed',
+		fluent: 'chevron_right_16_regular',
+		box: [328, 719, 156, 844]
+	},
+	{ point: 'E9AE', segoe: 'DashKey', fluent: 'subtract_16_regular', box: [250, 688, 438, 500] },
+	{ point: 'EA3B', segoe: 'CircleFill', fluent: 'circle_16_filled', box: [31, 969, 31, 969] },
+	{
+		point: 'EC15',
+		segoe: 'MiracastLogoSmall',
+		fluent: 'cast_20_regular',
+		box: [0, 1000, 125, 938]
+	},
+	{
+		point: 'EC57',
+		segoe: 'PlaybackRate1x',
+		fluent: 'play_circle_16_regular',
+		box: [0, 1000, 0, 1000]
+	},
+	{
+		point: 'ED1E',
+		segoe: 'Subtitles',
+		fluent: 'closed_caption_16_regular',
+		box: [0, 1000, 125, 875]
+	},
+	{
+		point: 'ED1F',
+		segoe: 'SubtitlesAudio',
+		fluent: 'speaker_2_16_regular',
+		box: [0, 1000, 0, 875]
+	},
+	{
+		point: 'ED3C',
+		segoe: 'SkipBack10',
+		fluent: 'skip_back_10_20_regular',
+		box: [63, 953, 63, 938]
+	},
+	{
+		point: 'ED3D',
+		segoe: 'SkipForward30',
+		fluent: 'skip_forward_30_20_regular',
+		box: [47, 938, 63, 938]
+	},
 	{
 		point: 'EDD9',
 		segoe: 'CaretLeftSolid8',
@@ -101,7 +189,17 @@ const DRAWN = [
 		part: 'holes',
 		with: 'F136',
 		box: [422, 516, 281, 688]
-	}
+	},
+	{ point: 'F5B0', segoe: 'PlaySolid', fluent: 'play_16_filled', box: [125, 938, 47, 953] },
+	{
+		point: 'F78D',
+		segoe: 'RevealPasswordMedium',
+		fluent: 'eye_16_regular',
+		box: [0, 1000, 156, 844]
+	},
+	{ point: 'F8AC', segoe: 'BackSolidBold', fluent: 'previous_16_filled', box: [63, 938, 63, 938] },
+	{ point: 'F8AD', segoe: 'ForwardSolidBold', fluent: 'next_16_filled', box: [63, 938, 63, 938] },
+	{ point: 'F8AE', segoe: 'PauseBold', fluent: 'pause_16_filled', box: [63, 938, 63, 938] }
 ];
 
 // Sorted by code point. A point `DRAWN` has is not repeated here.
@@ -117,7 +215,6 @@ const SYMBOLS = [
 	{ point: 'E70F', segoe: 'Edit', fluent: 'edit_16_regular', box: [0, 1000, 0, 1000] },
 	{ point: 'E714', segoe: 'Video', fluent: 'video_16_regular', box: [0, 1000, 125, 875] },
 	{ point: 'E715', segoe: 'Mail', fluent: 'mail_16_regular', box: [0, 1000, 63, 875] },
-	{ point: 'E716', segoe: 'People', fluent: 'people_16_regular', box: [0, 1000, 63, 1000] },
 	{ point: 'E717', segoe: 'Phone', fluent: 'call_16_regular', box: [125, 875, 0, 1000] },
 	{ point: 'E718', segoe: 'Pin', fluent: 'pin_16_regular', box: [0, 984, 0, 984] },
 	{ point: 'E719', segoe: 'Shop', fluent: 'shopping_bag_16_regular', box: [125, 875, 0, 1000] },
@@ -134,12 +231,6 @@ const SYMBOLS = [
 	{ point: 'E724', segoe: 'Send', fluent: 'send_16_regular', box: [0, 1000, 63, 1000] },
 	{ point: 'E729', segoe: 'Page', fluent: 'document_16_filled', box: [125, 875, 0, 1000] },
 	{ point: 'E72A', segoe: 'Forward', fluent: 'arrow_right_16_regular', box: [0, 1000, 63, 1000] },
-	{
-		point: 'E72C',
-		segoe: 'Refresh',
-		fluent: 'arrow_clockwise_16_regular',
-		box: [0, 1000, 0, 1000]
-	},
 	{ point: 'E72D', segoe: 'Share', fluent: 'share_16_regular', box: [63, 984, 63, 938] },
 	{
 		point: 'E730',
@@ -147,13 +238,6 @@ const SYMBOLS = [
 		fluent: 'shield_error_16_regular',
 		box: [63, 938, 0, 1000]
 	},
-	{
-		point: 'E734',
-		segoe: 'Favorite, OutlineStar',
-		fluent: 'star_16_regular',
-		box: [0, 1000, 16, 984]
-	},
-	{ point: 'E735', segoe: 'SolidStar', fluent: 'star_16_filled', box: [0, 1000, 16, 984] },
 	{ point: 'E738', segoe: 'Remove', fluent: 'subtract_16_regular', box: [63, 875, 500, 563] },
 	{
 		point: 'E73F',
@@ -186,7 +270,6 @@ const SYMBOLS = [
 		box: [0, 1000, 188, 875]
 	},
 	{ point: 'E77A', segoe: 'UnPin', fluent: 'pin_off_16_regular', box: [0, 1000, 0, 1000] },
-	{ point: 'E77B', segoe: 'Contact', fluent: 'person_16_regular', box: [63, 938, 0, 1000] },
 	{ point: 'E77C', segoe: 'Memo', fluent: 'voicemail_16_regular', box: [0, 1000, 125, 875] },
 	{ point: 'E77F', segoe: 'Paste', fluent: 'clipboard_paste_16_regular', box: [63, 938, 0, 1000] },
 	{
@@ -196,7 +279,6 @@ const SYMBOLS = [
 		box: [125, 875, 0, 1000]
 	},
 	{ point: 'E786', segoe: 'SlideShow', fluent: 'slide_play_20_regular', box: [0, 1000, 63, 938] },
-	{ point: 'E787', segoe: 'Calendar', fluent: 'calendar_ltr_16_regular', box: [63, 938, 63, 938] },
 	{ point: 'E78A', segoe: 'Trim', fluent: 'video_clip_16_regular', box: [0, 1000, 63, 938] },
 	{ point: 'E78B', segoe: 'NewWindow', fluent: 'window_new_16_regular', box: [0, 938, 63, 875] },
 	{
@@ -541,7 +623,6 @@ const SYMBOLS = [
 		box: [0, 1000, 188, 813]
 	},
 	{ point: 'E8FA', segoe: 'AddFriend', fluent: 'person_add_16_regular', box: [0, 1000, 0, 1000] },
-	{ point: 'E8FB', segoe: 'Accept', fluent: 'checkmark_16_regular', box: [0, 1000, 188, 875] },
 	{ point: 'E8FC', segoe: 'GoToStart', fluent: 'grid_dots_16_regular', box: [0, 1000, 125, 875] },
 	{
 		point: 'E8FD',
@@ -613,6 +694,9 @@ const SYMBOLS = [
  * }[]}
  */
 export const FALLBACK_GLYPHS = [...DRAWN, ...SYMBOLS];
+
+/** The `DRAWN` rows alone, which `C19` holds to the points the components draw. */
+export const DRAWN_GLYPHS = DRAWN;
 
 /** The family the token layer names after the two Segoe families. */
 export const FALLBACK_FAMILY = 'winui-svelte icons';
