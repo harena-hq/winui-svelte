@@ -43,12 +43,14 @@ release was tested with.
 ### Fonts and icons
 
 Text and icons are drawn from the Segoe families Windows installs, referenced by name and never
-embedded, which is where the release matches WinUI. Off Windows, text takes the system's
-sans-serif, and the 47 glyphs the package's components draw themselves, preview ones
-included, and the 196 that `Symbol` names, 229 in all as fourteen are both, come from a font
-in `tokens.css` built from Fluent UI System Icons outlines, MIT licensed; a code point a
-consumer passes as `glyph` draws from it only if it is one of those. The icon stack falls
-back to Segoe MDL2 Assets, as WinUI's does, before that font.
+embedded, which is where the release matches WinUI. Off Windows, text draws from a font the
+system has, Arial where there is one, with Segoe UI Variable's line metrics laid over it where
+the browser supports the descriptors that set them, and the 47 glyphs the package's components
+draw themselves, preview ones included, and the 196 that `Symbol` names, 229 in all as
+fourteen are both, come from a font in `tokens.css` built from Fluent UI System Icons
+outlines, MIT licensed; a code point a consumer passes as `glyph` draws from it only if it is
+one of those. The icon stack falls back to Segoe MDL2 Assets, as WinUI's does, before that
+font.
 
 ### Where it departs from WinUI
 

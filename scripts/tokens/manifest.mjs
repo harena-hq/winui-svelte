@@ -3205,7 +3205,8 @@ export const SYSTEM_COLORS = {
  * are taken, which is the only place the reference can be checked. The generator emits the
  * icon stack with one family after the two written here, the face of the release's own glyphs
  * that ADR 0018 embeds in `tokens.css` for where Segoe is absent; `checkIconStack` compares
- * the two written here alone.
+ * the two written here alone. Each text stack ends in `TEXT_FACE`'s family and then
+ * `sans-serif`, which the generator checks (ADR 0019).
  *
  * `PivotHeaderItemFontFamily` and `PivotTitleFontFamily` are records in the control pin, in all
  * three Pivot dictionaries, and like `ContentControlThemeFontFamily` each says
@@ -3224,9 +3225,105 @@ export const SYSTEM_COLORS = {
  */
 export const PLATFORM_FONTS = {
 	SymbolThemeFontFamily: "'Segoe Fluent Icons', 'Segoe MDL2 Assets'",
-	ContentControlThemeFontFamily: "'Segoe UI Variable Text', 'Segoe UI', sans-serif",
-	PivotHeaderItemFontFamily: "'Segoe UI Variable Text', 'Segoe UI', sans-serif",
-	PivotTitleFontFamily: "'Segoe UI Variable Text', 'Segoe UI', sans-serif"
+	ContentControlThemeFontFamily:
+		"'Segoe UI Variable Text', 'Segoe UI', 'winui-svelte text', sans-serif",
+	PivotHeaderItemFontFamily:
+		"'Segoe UI Variable Text', 'Segoe UI', 'winui-svelte text', sans-serif",
+	PivotTitleFontFamily: "'Segoe UI Variable Text', 'Segoe UI', 'winui-svelte text', sans-serif"
+};
+
+/**
+ * The face every text stack names after the two Segoe families, for where neither is installed.
+ * ADR 0019.
+ *
+ * Off Windows a stack used to fall through to `sans-serif`, whose line metrics are its own: at
+ * 14px DejaVu Sans draws a 16px line where Segoe UI Variable draws 19, and every control
+ * that places its text from the top of its box, as a CheckBox's label is, drew it out of line
+ * with what sits beside it. This face is a system font the platform already has, named by
+ * `local()` and embedded nowhere, with Segoe UI Variable's vertical metrics laid over it by the
+ * `ascent-override`, `descent-override` and `line-gap-override` descriptors, so the line box and
+ * the baseline in it are Segoe's and only the shapes are not.
+ *
+ * `metrics` is `SegUIVar.ttf`'s, as ADR 0011 records it: `hhea` ascender 2210 and descender 514
+ * over 2048 units, no line gap, and `segoeui.ttf` carries the same. `faces` are two weights,
+ * upright and italic, each weight a range so that nothing the ramp and the components ask for
+ * is synthesized: 350 and 400 draw from the regular face, 600 and 700 from the bold one, and
+ * italic text from an italic face rather than a slanted upright one. Each lists the same
+ * families in the same order, by full name and then by PostScript name, as `local()` matches
+ * either: Arial, which Windows and macOS both install, Helvetica Neue, which macOS does, and
+ * Liberation Sans, Arimo and DejaVu Sans, one of which most Linux distributions do. A face
+ * none of whose fonts is installed fails to load, and text asking for it falls through to
+ * `sans-serif` and that font's own line.
+ */
+export const TEXT_FACE = {
+	family: 'winui-svelte text',
+	metrics: { unitsPerEm: 2048, ascent: 2210, descent: 514, lineGap: 0 },
+	faces: [
+		{
+			weight: '1 500',
+			style: 'normal',
+			local: [
+				'Arial',
+				'ArialMT',
+				'Helvetica Neue',
+				'HelveticaNeue',
+				'Liberation Sans',
+				'LiberationSans',
+				'Arimo',
+				'Arimo-Regular',
+				'DejaVu Sans',
+				'DejaVuSans'
+			]
+		},
+		{
+			weight: '501 1000',
+			style: 'normal',
+			local: [
+				'Arial Bold',
+				'Arial-BoldMT',
+				'Helvetica Neue Bold',
+				'HelveticaNeue-Bold',
+				'Liberation Sans Bold',
+				'LiberationSans-Bold',
+				'Arimo Bold',
+				'Arimo-Bold',
+				'DejaVu Sans Bold',
+				'DejaVuSans-Bold'
+			]
+		},
+		{
+			weight: '1 500',
+			style: 'italic',
+			local: [
+				'Arial Italic',
+				'Arial-ItalicMT',
+				'Helvetica Neue Italic',
+				'HelveticaNeue-Italic',
+				'Liberation Sans Italic',
+				'LiberationSans-Italic',
+				'Arimo Italic',
+				'Arimo-Italic',
+				'DejaVu Sans Oblique',
+				'DejaVuSans-Oblique'
+			]
+		},
+		{
+			weight: '501 1000',
+			style: 'italic',
+			local: [
+				'Arial Bold Italic',
+				'Arial-BoldItalicMT',
+				'Helvetica Neue Bold Italic',
+				'HelveticaNeue-BoldItalic',
+				'Liberation Sans Bold Italic',
+				'LiberationSans-BoldItalic',
+				'Arimo Bold Italic',
+				'Arimo-BoldItalic',
+				'DejaVu Sans Bold Oblique',
+				'DejaVuSans-BoldOblique'
+			]
+		}
+	]
 };
 
 /**
