@@ -189,3 +189,8 @@ Off Windows, where ADR 0003's open question O1 already applies, `normal` is now 
 whichever face the machine substitutes. That is a change of kind rather than a regression: the ramp
 used to impose Segoe's metrics on a face that was not Segoe. Neither is right, and the new one is
 at least self-consistent.
+
+**Amended by ADR 0019, 2026-10-16.** Off Windows, the stacks now reach a face with Segoe UI
+Variable's ascent, descent and line gap before `sans-serif`, so `normal` there is computed from
+Segoe's metrics wherever the browser supports the descriptors that set them and one of the fonts
+the face names is installed. On Windows nothing here changes.

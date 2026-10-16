@@ -26,6 +26,7 @@ import {
 	SHELL_KEYS,
 	PLATFORM_BRUSHES,
 	SYSTEM_COLORS,
+	TEXT_FACE,
 	TEXTBOX_KEYS,
 	TOGGLESWITCH_KEYS,
 	PASSWORDBOX_KEYS,
@@ -661,7 +662,7 @@ function style(record, byKey) {
 		);
 
 	return {
-		fontFamily: `'Segoe UI Variable ${face}', 'Segoe UI', sans-serif`,
+		fontFamily: `'Segoe UI Variable ${face}', 'Segoe UI', '${TEXT_FACE.family}', sans-serif`,
 		fontSize: ref(fontSizeKey, record.theme, where),
 		fontWeight,
 		lineHeight: 'normal'
@@ -1079,18 +1080,29 @@ function select(resources, framework) {
  * A generator that emits a line Prettier would rewrite puts `pnpm format` and C2 in a
  * fight C2 loses every time: the format pass edits the committed file, and the gate then
  * reports the generator as stale. Prettier breaks a function value at its top-level
- * commas once the line passes `printWidth`.
+ * commas once the line passes `printWidth`, and moves a value with top-level commas of its
+ * own to a line of its own after the name.
  */
 function declaration(name, value, depth) {
 	const indent = '\t'.repeat(depth);
 	const text = `--winui-${name}: ${value};`;
 	if (depth * TAB_WIDTH + text.length <= PRINT_WIDTH) return [`${indent}${text}`];
 
-	// Only `var()` and `color-mix()` values are long enough to wrap, and both are a
-	// single call. A long value of another shape means this has stopped describing
-	// Prettier, and guessing at the rest of its algorithm is how that goes unnoticed.
+	// A text stack is a list with top-level commas that fits on the next line, and `var()`
+	// and `color-mix()` values are a single call. The list is told apart first, as a list
+	// that opens and closes with a call would otherwise read as one call. A long value of
+	// another shape means this has stopped describing Prettier, and guessing at the rest of
+	// its algorithm is how that goes unnoticed.
+	if (topLevelParts(value).length > 1) {
+		// Measured at the boundary: Prettier keeps the value on its own line while the value
+		// alone fits, and does not count the `;` after it.
+		if ((depth + 1) * TAB_WIDTH + value.length > PRINT_WIDTH)
+			fail(`--winui-${name}: value is a list too long for a line of its own`);
+		return [`${indent}--winui-${name}:`, `${indent}\t${value};`];
+	}
 	const call = /^([\w-]+)\((.*)\)$/s.exec(value);
-	if (!call) fail(`--winui-${name}: value is too long for one line and is not a function call`);
+	if (!call)
+		fail(`--winui-${name}: value is too long for one line and is neither a call nor a list`);
 
 	const parts = topLevelParts(call[2]);
 	return [
@@ -1123,6 +1135,43 @@ function filled(items, depth) {
 		} else line = next;
 	});
 	lines.push(`${indent}${line}`);
+	return lines;
+}
+
+/**
+ * The `@font-face` rules of the face every text stack names after the two Segoe families, a
+ * system face with Segoe UI Variable's line metrics. ADR 0019.
+ */
+function textFaces() {
+	const { family, metrics, faces } = TEXT_FACE;
+	// Each descriptor is a percentage of the font size, so Segoe's units over its em, exactly:
+	// 2048 is a power of two, and every quotient of it is a finite decimal.
+	const percent = (units) => `${(units * 100) / metrics.unitsPerEm}%`;
+	const lines = [
+		'/*',
+		' * Text where neither Segoe family is installed: a face the system already has, named by',
+		" * `local()` and embedded nowhere, with Segoe UI Variable's line metrics laid over its own,",
+		' * so a line box and the baseline in it are where Segoe puts them, in two weights, upright',
+		' * and italic. ADR 0019.',
+		' */'
+	];
+	for (const face of faces)
+		lines.push(
+			'@font-face {',
+			`\tfont-family: '${family}';`,
+			'\tsrc:',
+			...filled(
+				face.local.map((name) => `local('${name}')`),
+				2
+			),
+			`\tfont-weight: ${face.weight};`,
+			`\tfont-style: ${face.style};`,
+			`\tascent-override: ${percent(metrics.ascent)};`,
+			`\tdescent-override: ${percent(metrics.descent)};`,
+			`\tline-gap-override: ${percent(metrics.lineGap)};`,
+			'}',
+			''
+		);
 	return lines;
 }
 
@@ -1193,7 +1242,7 @@ function stylesheet(doc, framework, selection, extraEmitted, icons) {
 		// for the same reason: a family that changed with the theme would be a different
 		// decision than the one ADR 0003 made. The icon stack ends in the face the
 		// `@font-face` the stylesheet opens with defines, for where neither Segoe family is
-		// installed (ADR 0018).
+		// installed (ADR 0018). The text stacks name ADR 0019's face in `PLATFORM_FONTS` itself.
 		...Object.entries(PLATFORM_FONTS).flatMap(([key, value]) =>
 			declaration(
 				key,
@@ -1282,6 +1331,7 @@ function stylesheet(doc, framework, selection, extraEmitted, icons) {
 		...filled(icons.range, 2),
 		'}',
 		'',
+		...textFaces(),
 		':root {',
 		...light,
 		'}',
@@ -1349,6 +1399,20 @@ function stylesheet(doc, framework, selection, extraEmitted, icons) {
 }
 
 /**
+ * Every text stack `PLATFORM_FONTS` writes ends in the face `TEXT_FACE` defines and then the
+ * generic family, so that off Windows each draws a Segoe line box (ADR 0019). The type ramp's
+ * stacks are built here from the same name.
+ */
+function checkTextStacks() {
+	const tail = `, '${TEXT_FACE.family}', sans-serif`;
+	for (const [key, stack] of Object.entries(PLATFORM_FONTS)) {
+		if (key === 'SymbolThemeFontFamily') continue;
+		if (!stack.endsWith(tail))
+			fail(`PLATFORM_FONTS.${key} is \`${stack}\`, not ending \`${tail}\``);
+	}
+}
+
+/**
  * `PLATFORM_FONTS` writes the icon stack by hand, and the framework record says what it is in
  * every theme. A hand-written stack that differs from the record's is not the one WinUI draws
  * from, so the two are compared rather than trusted.
@@ -1375,6 +1439,7 @@ async function build() {
 	const doc = JSON.parse(await readFile(join(ROOT, RECORD), 'utf8'));
 	const framework = JSON.parse(await readFile(join(ROOT, FRAMEWORK_RECORD), 'utf8'));
 	checkIconStack(framework.resources);
+	checkTextStacks();
 
 	// One selection, computed here and handed to both writers. Selecting twice would
 	// read the same records twice to answer the same question, and would leave two

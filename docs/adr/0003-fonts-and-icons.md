@@ -86,6 +86,11 @@ release's own components draw, from Fluent UI System Icons, and by its amendment
 glyphs `Symbol` names and those the preview components draw. A consumer's other glyphs are
 still not in it.
 
+**Amended by ADR 0019**, the same day: every text stack names a face before `sans-serif`, a
+font the system already has, named by `local()`, with Segoe UI Variable's line metrics laid
+over it, so that off Windows a line box is Segoe's where the browser supports the override
+descriptors and one of the fonts it names is installed. Nothing is embedded.
+
 ## Alternatives rejected
 
 - **Embedding the fonts as webfonts** — prohibited by their EULA.
