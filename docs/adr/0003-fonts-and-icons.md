@@ -72,6 +72,15 @@ That changes what this ADR's argument buys off Windows: the ramp used to impose 
 on a substituted face, and now a substituted face keeps its own. Neither is the reference, and
 open question O1 is where that is tracked.
 
+**Amended 2026-10-16.** The icon stack is WinUI's own, `Segoe Fluent Icons` then `Segoe MDL2
+Assets`, as `data/winui-framework.json` defines `SymbolThemeFontFamily` in all three themes,
+and the token generator fails if the two drift apart. The token had named the first family
+alone. WinUI draws from MDL2 where Fluent is absent, as it is on a default Windows 10 install;
+that was not measured here, as the reference guest is Windows 11, where both resolve. MDL2
+also ships with Windows and is referenced by name the same way, never embedded. The
+redistributable set the Decision puts behind them was never built: off Windows, no Segoe glyph
+resolves, and an icon draws as whatever the browser substitutes, if anything.
+
 ## Alternatives rejected
 
 - **Embedding the fonts as webfonts** — prohibited by their EULA.

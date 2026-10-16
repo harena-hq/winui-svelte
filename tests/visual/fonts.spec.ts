@@ -10,6 +10,7 @@ const REQUIRED = [
 	'Segoe UI Variable Text',
 	'Segoe UI Variable Display',
 	'Segoe Fluent Icons',
+	'Segoe MDL2 Assets',
 	'Segoe UI'
 ];
 

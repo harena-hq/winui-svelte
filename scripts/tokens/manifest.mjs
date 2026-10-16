@@ -3177,22 +3177,24 @@ export const SYSTEM_COLORS = {
 };
 
 /**
- * Font families the platform supplies rather than the dictionaries this project reads.
+ * Font families written by hand, as the generator converts no `FontFamily` record; three of
+ * the four records say `XamlAutoFontFamily`, which no CSS font resolves.
  *
  * `SymbolThemeFontFamily` is referenced from theme resources all over the source — every
  * `FontIcon` in every control template resolves its family through it — and defined in none
- * of them. Its definition lives in the framework dictionary that ships with WinUI rather
- * than in the per-control `*_themeresources.xaml` files the extractor walks, so there is
- * nothing to extract and the value is written here.
+ * of the per-control dictionaries. Its definition is in the framework record, in all three
+ * themes, as the XAML list `Segoe Fluent Icons,Segoe MDL2 Assets`, so the CSS stack is written
+ * here, and `build()` in `scripts/tokens/generate.mjs` fails when it is not the record's. The
+ * second family is Windows 10's icon font, which Windows 11 still carries; where the first is
+ * absent, WinUI draws from MDL2, and so does this stack.
  *
  * `ContentControlThemeFontFamily` is the second one. `DefaultToolTipStyle` at
  * ToolTip_themeresources.xaml:48 binds `FontFamily` to it directly — and the tooltips are
  * the only place in the acceptance surface that does, because every other control reads
  * the family through one of the `*TextBlockStyle` records in the type ramp rather than
- * through a `Setter` on the control's own template. Nothing in either pin defines it: the
- * XAML framework dictionary that ships with WinUI is the source, the same pin that
- * supplies `SymbolThemeFontFamily`, and the value has to be written here for the same
- * reason.
+ * through a `Setter` on the control's own template. The control pin does not define it, and
+ * the framework record defines it as `XamlAutoFontFamily` in all three themes, a name that
+ * resolves only inside WinUI, so the family it stands for is written here.
  *
  * The two stack values are kept in step: the `Text` row here is the same stack
  * `style()` in `scripts/tokens/generate.mjs` builds for the type ramp's Text face, and ADR 0003
@@ -3202,9 +3204,9 @@ export const SYSTEM_COLORS = {
  * nothing. `tests/visual/fonts.spec.ts` fails if they stop resolving where the baselines
  * are taken, which is the only place the reference can be checked.
  *
- * `PivotHeaderItemFontFamily` and `PivotTitleFontFamily` are different: their records exist in
- * all three Pivot dictionaries, but each says `XamlAutoFontFamily`, a name neither pin defines.
- * They therefore need the same platform choice as the two record-less entries above.
+ * `PivotHeaderItemFontFamily` and `PivotTitleFontFamily` are records in the control pin, in all
+ * three Pivot dictionaries, and like `ContentControlThemeFontFamily` each says
+ * `XamlAutoFontFamily`, so they take the same written stack.
  *
  * ADR 0003 gives the type ramp an explicit family per step because Windows registers Segoe UI
  * Variable as three families rather than one with an `opsz` axis, and the ramp switches to the
@@ -3218,7 +3220,7 @@ export const SYSTEM_COLORS = {
  * emitting a name nothing reads makes the layer harder to audit and easier to trust wrongly.
  */
 export const PLATFORM_FONTS = {
-	SymbolThemeFontFamily: "'Segoe Fluent Icons'",
+	SymbolThemeFontFamily: "'Segoe Fluent Icons', 'Segoe MDL2 Assets'",
 	ContentControlThemeFontFamily: "'Segoe UI Variable Text', 'Segoe UI', sans-serif",
 	PivotHeaderItemFontFamily: "'Segoe UI Variable Text', 'Segoe UI', sans-serif",
 	PivotTitleFontFamily: "'Segoe UI Variable Text', 'Segoe UI', sans-serif"
@@ -3229,9 +3231,8 @@ export const PLATFORM_FONTS = {
  *
  * `FocusVisualPrimaryThickness` and `FocusVisualSecondaryThickness` are property defaults
  * on `Control` rather than theme resources, so there is no record to read them from — not
- * in the control pin and not in the framework dictionary, which is the same reason
- * `SymbolThemeFontFamily` is written out above. Every `Setter` in the pinned source that
- * overrides the pair sets 2 and 1, and a Button on the reference guest measures a 2px
+ * in the control pin and not in the framework record. Every `Setter` in the pinned source
+ * that overrides the pair sets 2 and 1, and a Button on the reference guest measures a 2px
  * outer stroke over a 1px inner one. Theme-independent, so `:root` only.
  */
 export const PLATFORM_METRICS = {

@@ -1304,9 +1304,33 @@ function stylesheet(doc, framework, selection, extraEmitted) {
 	};
 }
 
+/**
+ * `PLATFORM_FONTS` writes the icon stack by hand, and the framework record says what it is in
+ * every theme. A hand-written stack that differs from the record's is not the one WinUI draws
+ * from, so the two are compared rather than trusted.
+ */
+function checkIconStack(resources) {
+	const key = 'SymbolThemeFontFamily';
+	const records = resources.filter((record) => record.key === key);
+	if (records.length === 0) fail(`${key}: the framework record no longer defines it`);
+	for (const record of records) {
+		if (typeof record.value !== 'string') fail(`${at(record)}: no literal value`);
+		const stack = record.value
+			.split(',')
+			.map((family) => `'${family.trim()}'`)
+			.join(', ');
+		if (stack !== PLATFORM_FONTS[key]) {
+			fail(
+				`${at(record)}: the record says \`${record.value}\`, PLATFORM_FONTS writes \`${PLATFORM_FONTS[key]}\``
+			);
+		}
+	}
+}
+
 async function build() {
 	const doc = JSON.parse(await readFile(join(ROOT, RECORD), 'utf8'));
 	const framework = JSON.parse(await readFile(join(ROOT, FRAMEWORK_RECORD), 'utf8'));
+	checkIconStack(framework.resources);
 
 	// One selection, computed here and handed to both writers. Selecting twice would
 	// read the same records twice to answer the same question, and would leave two

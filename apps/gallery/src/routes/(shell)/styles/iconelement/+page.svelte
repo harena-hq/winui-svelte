@@ -248,10 +248,12 @@
 	}
 
 	.font-icon {
-		/* c1-allow: IconElementPage.xaml:47 names Segoe MDL2 Assets, and there is no token for
-		   that face because it is not a theme value — it is this example's own subject, the
-		   older icon font the paragraph is about. It is installed on the reference guest and
-		   will not resolve on a Linux dev preview, which is expected rather than a defect. */
+		/* c1-allow: IconElementPage.xaml:47 names Segoe MDL2 Assets. The theme's icon token
+		   names it only behind Segoe Fluent Icons, so on the reference guest it would draw
+		   Fluent; this example's subject is the older icon font itself, the one the paragraph
+		   is about. It is installed on the reference guest, as tests/visual/fonts.spec.ts
+		   checks, and will not resolve on a Linux dev preview, which is expected rather than a
+		   defect. */
 		font-family: 'Segoe MDL2 Assets';
 		/* c1-allow: IconElement's own size, g_ClientCoreFontSize = 20.f at
 		   dxaml/xcp/core/core/elements/icon.cpp:13, applied to FontIcon at :738. Not a ramp
@@ -284,8 +286,9 @@
 	/* CSymbolIcon::ApplyTemplate, icon.cpp:323-395. The TextBlock beneath needs nothing of its
 	   own: it takes the page's body size from the Button's own ramp class. */
 	.symbol-icon {
-		/* Segoe Fluent Icons, at icon.cpp:328 and :374-378. This one is a theme value and has a
-		   token, so it comes from the token. */
+		/* Segoe Fluent Icons then Segoe MDL2 Assets: icon.cpp:14 hard-codes the list that :328
+		   and :374-378 use, the same list the framework dictionary gives SymbolThemeFontFamily.
+		   The two are equal rather than linked, and this one comes from the token. */
 		font-family: var(--winui-SymbolThemeFontFamily);
 		/* c1-allow: the same g_ClientCoreFontSize = 20.f as the FontIcon above, applied to
 		   SymbolIcon at dxaml/xcp/core/core/elements/icon.cpp:318. */
