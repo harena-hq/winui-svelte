@@ -1,6 +1,8 @@
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { FALLBACK_FAMILY } from '../icons/fallback.mjs';
+import { FALLBACK_RECORD, fontFace } from '../icons/font.mjs';
 import {
 	ACCENT_COLORS,
 	ADDITIONAL_KEYS,
@@ -1107,6 +1109,23 @@ function declaration(name, value, depth) {
  */
 const declared = (lines) => lines.filter((line) => /^\t+--winui-\w+:/.test(line)).length;
 
+/** A comma-separated list as Prettier fills it, one indented line per `printWidth`. */
+function filled(items, depth) {
+	const indent = '\t'.repeat(depth);
+	const lines = [];
+	let line = '';
+	items.forEach((item, i) => {
+		const piece = `${item}${i === items.length - 1 ? ';' : ','}`;
+		const next = line ? `${line} ${piece}` : piece;
+		if (line && depth * TAB_WIDTH + next.length > PRINT_WIDTH) {
+			lines.push(`${indent}${line}`);
+			line = piece;
+		} else line = next;
+	});
+	lines.push(`${indent}${line}`);
+	return lines;
+}
+
 /** `args` split at its top-level commas. */
 function topLevelParts(args) {
 	const parts = [];
@@ -1126,7 +1145,7 @@ function topLevelParts(args) {
 	return parts;
 }
 
-function stylesheet(doc, framework, selection, extraEmitted) {
+function stylesheet(doc, framework, selection, extraEmitted, icons) {
 	const { records, byKey, compactByKey, external } = selection;
 
 	// The HighContrast dictionary, keyed by resource name, for the palette resolution
@@ -1172,8 +1191,16 @@ function stylesheet(doc, framework, selection, extraEmitted) {
 		),
 		// Theme-independent, so `:root` only — the same treatment the accent ramp gets, and
 		// for the same reason: a family that changed with the theme would be a different
-		// decision than the one ADR 0003 made.
-		...Object.entries(PLATFORM_FONTS).flatMap(([key, value]) => declaration(key, value, 1)),
+		// decision than the one ADR 0003 made. The icon stack ends in the face the
+		// `@font-face` the stylesheet opens with defines, for where neither Segoe family is
+		// installed (ADR 0018).
+		...Object.entries(PLATFORM_FONTS).flatMap(([key, value]) =>
+			declaration(
+				key,
+				key === 'SymbolThemeFontFamily' ? `${value}, '${FALLBACK_FAMILY}'` : value,
+				1
+			)
+		),
 		// Same shape as `PLATFORM_FONTS` and for the same reason: `FocusVisualPrimaryThickness`
 		// and `FocusVisualSecondaryThickness` are `Control` property defaults rather than
 		// theme resources, so the value has nowhere to be read from — see manifest.mjs.
@@ -1237,6 +1264,22 @@ function stylesheet(doc, framework, selection, extraEmitted) {
 		' *',
 		' * Generated file — do not edit. Run `pnpm tokens:build`.',
 		' */',
+		'',
+		'/*',
+		' * The glyphs the release draws for itself, from Fluent UI System Icons, for where Segoe',
+		' * Fluent Icons and Segoe MDL2 Assets are not installed: the icon token names this face',
+		' * after both, so it draws only what neither has. Built by scripts/icons/font.mjs from',
+		` * ${FALLBACK_RECORD} — ${icons.source.package} ${icons.source.version}, ${icons.source.license}. ADR 0018.`,
+		' */',
+		'@font-face {',
+		`\tfont-family: '${FALLBACK_FAMILY}';`,
+		// Prettier breaks a declaration this long before its last value, and fills a list
+		// across as many lines as `printWidth` needs, so the generator does both.
+		`\tsrc: url('data:font/ttf;base64,${icons.base64}')`,
+		"\t\tformat('truetype');",
+		'\tunicode-range:',
+		...filled(icons.range, 2),
+		'}',
 		'',
 		':root {',
 		...light,
@@ -1343,7 +1386,8 @@ async function build() {
 		selection.byKey,
 		doc.source.commit
 	);
-	const { css, stats } = stylesheet(doc, framework, selection, rampEmitted);
+	const icons = await fontFace(ROOT);
+	const { css, stats } = stylesheet(doc, framework, selection, rampEmitted, icons);
 	const rampLines = rampCss.split('\n').length - 1;
 	return {
 		files: { [OUTPUT]: css, [RAMP_OUTPUT]: rampCss },

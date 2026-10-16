@@ -40,6 +40,15 @@ release was tested with.
   `NumberBox` imports them, and a bundler resolves them for any import from `preview`; a
   consumer of the root alone goes without them.
 
+### Fonts and icons
+
+Text and icons are drawn from the Segoe families Windows installs, referenced by name and never
+embedded, which is where the release matches WinUI. Off Windows, text takes the system's
+sans-serif, and the eighteen glyphs the components draw themselves come from a font in
+`tokens.css` built from Fluent UI System Icons outlines, MIT licensed; a code point a consumer
+passes as `glyph` draws from it only if it is one of those eighteen. The icon stack falls back
+to Segoe MDL2 Assets, as WinUI's does, before that font.
+
 ### Where it departs from WinUI
 
 Visual fidelity is the bar. Where reproducing a WinUI behaviour would mean fighting a

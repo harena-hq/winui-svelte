@@ -92,6 +92,7 @@ pnpm workspace. The library is publishable and imposes no build tooling on its c
 | D53 | Baselines compare at a 0.01 colour tolerance, and one unstable page gets a counted pixel budget         | this file, "Verification"         |
 | D54 | The first release is eighteen components in the index; `preview` exports the rest                       | docs/adr/0017                     |
 | D55 | The release is 0.1.0 with tested peer floors, cut after the owner's pass                                | this file, "The release — 0.1.0"  |
+| D56 | Off Windows, the glyphs the release draws itself come from Fluent UI System Icons                       | docs/adr/0018                     |
 
 ## Verification
 
@@ -4233,7 +4234,8 @@ there.
 Elsewhere, and more decisively, **Segoe UI Variable and Segoe Fluent Icons exist only on
 Windows** — ADR 0003's type ramp and every icon in the library assume them. A consumer is
 faithful on Windows and degrades off it, and that degradation is out of scope here rather than a
-divergence this registry owes an entry for.
+divergence this registry owes an entry for. ADR 0018 narrows it for icons: the eighteen glyphs
+the release's own components draw fall back to Fluent UI System Icons.
 
 ### The library gate — the release bar
 
