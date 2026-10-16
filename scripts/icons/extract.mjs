@@ -8,6 +8,7 @@ import { readFile, writeFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import svgpath from 'svgpath';
 import { FALLBACK_GLYPHS } from './fallback.mjs';
 import { FALLBACK_RECORD as RECORD } from './font.mjs';
 
@@ -18,16 +19,27 @@ const require = createRequire(import.meta.url);
 const packageDir = dirname(require.resolve(`${PACKAGE}/package.json`));
 const { version, license } = JSON.parse(await readFile(join(packageDir, 'package.json'), 'utf8'));
 
-// A Fluent SVG is one `<path d>` in a square `viewBox`; anything else is a shape this record
-// has no place for, and failing on it is cheaper than drawing half of an icon.
-const SVG = /^<svg [^>]*viewBox="0 0 (\d+) \1"[^>]*><path d="([^"]+)"\/><\/svg>$/;
+// A Fluent SVG is one or more bare `<path d>`s in a square `viewBox`, which the record joins
+// into one path, a glyph's outline being one list of subpaths; anything else is a shape this
+// record has no place for, and failing on it is cheaper than drawing half of an icon.
+const SVG = /^<svg [^>]*viewBox="0 0 (\d+) \1"[^>]*>((?:<path d="[^"]+"\/>)+)<\/svg>$/;
+const PATH = /<path d="([^"]+)"\/>/g;
 
 const icons = {};
 for (const name of [...new Set(FALLBACK_GLYPHS.map((glyph) => glyph.fluent))].sort()) {
 	const svg = (await readFile(join(packageDir, 'icons', `${name}.svg`), 'utf8')).trim();
 	const match = SVG.exec(svg);
-	if (!match) throw new Error(`${name}.svg is not one path in a square viewBox`);
-	icons[name] = { size: Number(match[1]), d: match[2] };
+	if (!match) throw new Error(`${name}.svg is not bare paths in a square viewBox`);
+	// One path is kept as written. Several are each made absolute before they are joined: a path
+	// that opens with a relative `m` starts at the origin on its own, and after another path it
+	// would start from wherever that one left off. ADR 0018's amendment says what the join
+	// assumes of their winding.
+	const paths = [...match[2].matchAll(PATH)].map((path) => path[1]);
+	const d =
+		paths.length === 1
+			? paths[0]
+			: paths.map((path) => svgpath(path).abs().round(3).toString()).join(' ');
+	icons[name] = { size: Number(match[1]), d };
 }
 
 const record = {

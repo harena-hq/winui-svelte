@@ -82,8 +82,8 @@ redistributable set the Decision puts behind them was never built: off Windows, 
 resolves, and an icon draws as whatever the browser substitutes, if anything.
 
 **Amended by ADR 0018**, the same day, which builds that set for the eighteen glyphs the
-release's own components draw, from Fluent UI System Icons. A consumer's own glyph is still
-not in it.
+release's own components draw, from Fluent UI System Icons, and by its amendment for the
+glyphs `Symbol` names. A consumer's other glyphs are still not in it.
 
 ## Alternatives rejected
 

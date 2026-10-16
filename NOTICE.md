@@ -88,11 +88,13 @@ DEALINGS IN THE SOFTWARE.
 
 ## Fluent UI System Icons
 
-`tokens.css` embeds a font of the eighteen glyphs the package's own components draw,
-for where the Segoe icon fonts are not installed. Each is an outline, or part of one,
-from [Fluent UI System Icons](https://github.com/microsoft/fluentui-system-icons),
-scaled and placed at a Segoe Fluent Icons code point. `data/winui-icon-fallback.json`
-holds the outlines as they were extracted. They are MIT licensed:
+`tokens.css` embeds a font of the glyphs the package's own components draw and the
+glyphs its `Symbol` export names, for where the Segoe icon fonts are not installed. Each
+is an outline, or part of one, from
+[Fluent UI System Icons](https://github.com/microsoft/fluentui-system-icons), scaled and
+placed at a Segoe Fluent Icons code point. `data/winui-icon-fallback.json` holds the
+outlines as they were extracted, except the three drawn as more than one path, which are
+made absolute and joined into one. They are MIT licensed:
 
 ```
 MIT License

@@ -8,6 +8,9 @@ import { FALLBACK_FAMILY, FALLBACK_GLYPHS } from './fallback.mjs';
 
 export const FALLBACK_RECORD = 'data/winui-icon-fallback.json';
 
+// The `Symbol` export's record, whose every glyph the table has to have a row for.
+const SYMBOL_RECORD = 'data/winui-symbol.json';
+
 // Segoe Fluent Icons' em, ascent and descent as the reference guest measures them, so a glyph
 // drawn from this face sits in the line where the Segoe one would.
 const EM = 1000;
@@ -29,11 +32,13 @@ const TIMESTAMP = 1792108800;
 function subpaths(d) {
 	const out = [];
 	let closed = false;
+	let start = [0, 0];
 	for (const segment of svgpath(d).abs().unshort().unarc().segments) {
-		// A drawing command straight after a close starts a subpath of its own, which the split
-		// below would merge into the last; no outline in the record does it, so it is refused.
-		if (closed && segment[0] !== 'M') throw new Error(`a subpath starts without a move in ${d}`);
+		// A drawing command straight after a close starts a subpath of its own at the closed
+		// one's first point, as SVG draws it, so it is given the move it leaves out.
+		if (closed && segment[0] !== 'M') out.push([['M', ...start]]);
 		closed = segment[0] === 'Z';
+		if (segment[0] === 'M') start = segment.slice(1, 3);
 		if (segment[0] === 'M' || out.length === 0) out.push([]);
 		out.at(-1).push(segment);
 	}
@@ -157,6 +162,22 @@ export async function fontFace(root) {
 		return subpaths(icon.d);
 	};
 
+	// A `Symbol` member whose glyph has no row would draw nothing off Windows while every other
+	// member draws, and nothing else would say so.
+	const { symbols } = JSON.parse(await readFile(join(root, SYMBOL_RECORD), 'utf8'));
+	const points = new Set(FALLBACK_GLYPHS.map((row) => row.point));
+	// A point in two rows would be two glyphs for one character, which svg2ttf does not refuse.
+	if (points.size !== FALLBACK_GLYPHS.length) {
+		const seen = new Set();
+		const twice = FALLBACK_GLYPHS.filter((row) => seen.size === seen.add(row.point).size);
+		throw new Error(`scripts/icons/fallback.mjs has ${twice[0].point} in two rows`);
+	}
+	const missing = symbols.filter((symbol) => !points.has(symbol.glyph));
+	if (missing.length > 0) {
+		const named = missing.map((symbol) => `Symbol.${symbol.name} (${symbol.glyph})`);
+		throw new Error(`scripts/icons/fallback.mjs has no row for ${named.join(', ')}`);
+	}
+
 	const matrices = {};
 	const glyphs = [];
 	for (const row of FALLBACK_GLYPHS.filter((glyph) => glyph.part !== 'holes')) {
@@ -188,7 +209,8 @@ export async function fontFace(root) {
 		version: '1.0',
 		copyright:
 			'Outlines from Fluent UI System Icons, Copyright (c) 2020 Microsoft Corporation, MIT',
-		description: 'The glyphs winui-svelte draws for itself, for where Segoe Fluent Icons is absent',
+		description:
+			'The glyphs winui-svelte draws for itself and names in Symbol, for where Segoe Fluent Icons is absent',
 		url: record.source.url
 	});
 	const base64 = withoutLineGap(Buffer.from(font.buffer)).toString('base64');

@@ -1,10 +1,10 @@
 import { CDP_ENDPOINT, expect, test } from './fixtures';
 
 /**
- * ADR 0018: the icon token names a face of the release's own glyphs after the two Segoe
- * families, so a glyph draws from it only where neither is installed. Each glyph is drawn to a
- * canvas from four stacks and the pixels compared, because a measured width cannot tell two
- * faces apart when one was fitted to the other's box.
+ * ADR 0018: the icon token names a face of the release's own glyphs, and the ones `Symbol`
+ * names, after the two Segoe families, so a glyph draws from it only where neither is
+ * installed. Each glyph is drawn to a canvas from four stacks and the pixels compared, because
+ * a measured width cannot tell two faces apart when one was fitted to the other's box.
  */
 const { FALLBACK_FAMILY, FALLBACK_GLYPHS } =
 	await (import('../../scripts/icons/fallback.mjs') as Promise<
@@ -55,7 +55,11 @@ test('the release glyphs draw from Segoe where it is installed, and from the fal
 					-m.actualBoundingBoxDescent,
 					m.actualBoundingBoxAscent
 				].map(Math.round);
-				rows.push({ point, pixels, box });
+				// Every Segoe Fluent Icons glyph is an em wide; what it does not have is drawn by
+				// whatever the browser substitutes, which is not.
+				context.font = `1000px ${stacks.segoe}`;
+				const segoeWidth = Math.round(context.measureText(char).width);
+				rows.push({ point, pixels, box, segoeWidth });
 			}
 
 			// The line box an icon sits in, at 16px and the line height a template leaves alone. A
@@ -84,11 +88,22 @@ test('the release glyphs draw from Segoe where it is installed, and from the fal
 	// the same metrics so that it sizes it alike.
 	expect(drawn.line, 'the line a 16px icon sits in').toBe(16);
 	if (CDP_ENDPOINT) expect(drawn.segoeLine, "Segoe Fluent Icons' own line").toBe(16);
-	for (const { point, pixels, box } of drawn.rows) {
+	for (const { point, pixels, box, segoeWidth } of drawn.rows) {
+		const row = FALLBACK_GLYPHS.find((glyph) => glyph.point === point);
 		// The fallback face draws something of its own for every one of them: not the
 		// browser's missing-glyph box, and not nothing.
 		expect(pixels.fallback, `${point} from the fallback face`).not.toBe(pixels.absent);
 		if (CDP_ENDPOINT) {
+			expect(segoeWidth !== 1000, `${point} is absent from Segoe: ${segoeWidth} wide`).toBe(
+				Boolean(row?.absent)
+			);
+		}
+		if (CDP_ENDPOINT && row?.absent) {
+			// A point the guest's Segoe Fluent Icons lacks, where Segoe alone draws whatever the
+			// browser substitutes: the stack draws the face instead.
+			expect(pixels.stack, `${point} from the token's stack`).toBe(pixels.fallback);
+			expect(pixels.segoe, `${point} from Segoe, which lacks it`).not.toBe(pixels.fallback);
+		} else if (CDP_ENDPOINT) {
 			// Where Segoe is installed the stack draws it, pixel for pixel, and the fallback is
 			// something else, so the comparison could have told them apart.
 			expect(pixels.stack, `${point} from the token's stack`).toBe(pixels.segoe);
@@ -100,7 +115,6 @@ test('the release glyphs draw from Segoe where it is installed, and from the fal
 		// axis, the one the fit was bound by. The 20 thousandths are a margin over the pipeline's
 		// rounding, the outlines' tenth of a unit and the TrueType conversion's whole units, and
 		// over Segoe's own 64th-of-an-em grid that the measured boxes fall on.
-		const row = FALLBACK_GLYPHS.find((glyph) => glyph.point === point);
 		if (row?.part === 'holes' && row.box) {
 			// A symbol cut from Fluent's circle is placed with the circle's transform, not fitted:
 			// it is inside the circle drawn here, and its centre is near the Segoe symbol's. The four
