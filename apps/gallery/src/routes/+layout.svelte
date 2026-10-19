@@ -45,8 +45,15 @@
 	.window {
 		/* Exactly the viewport, not at least it. The original is a window: its pane and its
 		   content each scroll inside a frame that does not move, and a page that grows past
-		   the viewport gives the whole thing one outer scrollbar instead. */
+		   the viewport gives the whole thing one outer scrollbar instead.
+
+		   `dvh` rather than `vh` because a browser whose toolbars collapse sizes `vh` to the
+		   viewport with them collapsed: on an iPad, while a toolbar was showing, the window ran
+		   on past the bottom of what was visible, and the pane's last rows, Settings among them,
+		   could not be scrolled to. Where nothing collapses the two are the same length, and the
+		   `vh` line is for a browser that has no `dvh`, which would otherwise drop the height. */
 		height: 100vh;
+		height: 100dvh;
 		overflow: hidden;
 		background: var(--winui-SolidBackgroundFillColorBaseBrush);
 		color: var(--winui-TextFillColorPrimaryBrush);

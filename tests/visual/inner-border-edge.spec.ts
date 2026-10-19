@@ -613,7 +613,7 @@ test("the ComboBox dropdown's fill stops at the inner border edge", async ({ pag
 		).toBe(2);
 		// **`growViewportToContent` rather than a scroll, and the difference is the surface this
 		// reads over.** The layout paints the app's background on `.window`, which is
-		// `height: 100vh; overflow: hidden`, and a portalled popup is placed into `<body>`
+		// `height: 100dvh; overflow: hidden`, and a portalled popup is placed into `<body>`
 		// outside that box — so scrolling the popup into view drags it past `.window`'s bottom
 		// edge and onto Chromium's default canvas. The ring then reads 240 light and 14 dark
 		// against the 228 and 25 the tracked baselines hold, because a clipped ring's value is
@@ -801,7 +801,7 @@ test("the AutoSuggestBox suggestion list's fill stops at the inner border edge",
 		).toBe(1);
 		// The same hazard and the same one answer as the section above, and on this route the
 		// call does more than keep the list in frame — it is what puts the list on its anchor.
-		// `.window` is `height: 100vh; overflow: hidden`, so at the default 720 the content is
+		// `.window` is `height: 100dvh; overflow: hidden`, so at the default 720 the content is
 		// clipped and Floating UI shifts the list up to keep it visible: measured at y 567..701
 		// against a box whose bottom edge falls at 731.66, so the list is a hundred and
 		// sixty-four pixels above its anchor and wholly over the page. Grown to the content it

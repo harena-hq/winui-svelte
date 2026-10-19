@@ -4447,7 +4447,7 @@ Automated, and a unit that fails one cannot be sealed.
   **A third gap was what the baselines could see at all, and it was much larger than the
   page that exposed it.** `snapshotAllThemes` photographs `body`; `/dev/`'s layout scrolls
   inside a `.dev` element with `overflow-y: auto`, and the window above it is exactly
-  `100vh` by D16 — so `body` was always the viewport and every tracked baseline was a
+  `100vh` by F2 — so `body` was always the viewport and every tracked baseline was a
   1280×720 crop of the top of a page. TextBox's header and description were the first
   content the suite rendered and never photographed, but measuring the rest found six of
   the seven component pages already cropped: NavigationView by 1786 pixels, which is 71% of
@@ -4456,7 +4456,7 @@ Automated, and a unit that fails one cannot be sealed.
   top of each page.
 
   Closed by growing the viewport to the content before the capture rather than by changing
-  the layout: the window semantics the shell is judged on stay exactly as D16 wrote them.
+  the layout: the window semantics the shell is judged on stay exactly as F2 wrote them.
   The visible region did not move — five of the six pages were pixel-identical over their
   old 720 rows, and RadioButton differed in 24 pixels along row 714 to 719, which is the
   antialiasing of a ring the old crop cut in half.

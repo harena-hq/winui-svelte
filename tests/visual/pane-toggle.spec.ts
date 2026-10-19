@@ -77,7 +77,7 @@ async function settle(root: Locator) {
 async function clickContent(page: Page, root: Locator) {
 	// `page.mouse` takes viewport coordinates and does none of the work `locator.click()` does
 	// first, scrolling included. This harness is about 6,200px tall inside a window that is
-	// `100vh` and clips (D16), so a frame below the fold has a box the mouse cannot reach — and
+	// `100dvh` and clips (F2), so a frame below the fold has a box the mouse cannot reach — and
 	// a click at coordinates nothing occupies is silent, not an error.
 	await root.scrollIntoViewIfNeeded();
 	const box = await root.locator('.content-grid').boundingBox();
