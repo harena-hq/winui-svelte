@@ -128,6 +128,8 @@
 		const viewport = axis === 'vertical' ? scroller.clientHeight : scroller.clientWidth;
 		const content = axis === 'vertical' ? scroller.scrollHeight : scroller.scrollWidth;
 		const input = sourceInput(scroller);
+		// The marker also tells ScrollView it draws the older ScrollViewer, whose press shows no
+		// bars; see `drawsScrollViewer` there.
 		const pan =
 			input.dataset.scrollInput === 'scroll-viewer' &&
 			(input.dataset.zoomMode ?? 'disabled') === 'disabled'

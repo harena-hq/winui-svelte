@@ -109,10 +109,13 @@
      would make a 190-pixel item overflow a 190-pixel cell. The uniform Gallery items make this
      wrapping panel, with the item's own margin and no added gap, reproduce that geometry. -->
 <div bind:this={ref} class={['root', className]} {style} {...rest}>
-	<!-- The ScrollViewer at generic.xaml:9002-9021 disables horizontal scrolling and leaves vertical
-	     scrolling on Auto. This region is now a ScrollView, which supplies that scrolling. -->
+	<!-- GridView's style setters (generic.xaml:9035-9041) disable horizontal scrolling and set
+	     vertical scrolling Enabled with its bar on Auto; the template's ScrollViewer
+	     (:9068-9089) binds to them. This region is now a ScrollView, which supplies that
+	     scrolling. -->
 	<!-- generic.xaml:9032 — Padding 0,0,0,10, which is ten pixels under the last row. -->
 	<ScrollView
+		data-scroll-input="scroll-viewer"
 		style="flex: 1 1 auto; min-height: 0; padding-bottom: 10px"
 		role="listbox"
 		tabindex="-1"
