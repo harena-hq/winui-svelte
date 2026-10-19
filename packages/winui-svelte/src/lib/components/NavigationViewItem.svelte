@@ -93,8 +93,10 @@
 	const level = $derived(readPlacement().level);
 	/** `IsTopLevelItem`: this row is in one of the control's own lists, not in a flyout. */
 	const topLevel = $derived(readPlacement().topLevel);
+	/** The top-level row whose children flyout this row is drawn in, or `null`. */
+	const flyoutOwner = $derived(readPlacement().flyoutOwner);
 	/** This row is itself drawn inside the rail's children flyout. */
-	const withinFlyout = $derived(readPlacement().inFlyout);
+	const withinFlyout = $derived(flyoutOwner !== null);
 
 	const open = $derived(pane().expandedItems.includes(tag));
 	const hasChildren = $derived((items?.length ?? 0) > 0);
@@ -141,8 +143,8 @@
 	setNavigationViewPlacement(() => ({
 		level: childrenInFlyout ? 1 : level + 1,
 		topLevel: false,
-		// Once inside the flyout, everything below is too.
-		inFlyout: childrenInFlyout || withinFlyout
+		// Once inside the flyout, everything below is too, and the flyout is this row's.
+		flyoutOwner: childrenInFlyout ? tag : flyoutOwner
 	}));
 	/**
 	 * The consumer's row template, or nothing. A row's children go through the same template
@@ -164,6 +166,14 @@
 			pane().setExpanded(tag, !open);
 		}
 		pane().onItemInvoked?.(tag);
+		// `CloseFlyoutIfRequired` (`NavigationView.cpp:360-390`, called last, at `:1065-1068`):
+		// a leaf invoked in the flyout collapses the top-level row the flyout belongs to, and
+		// the flyout follows the row's expansion. Upstream does it only when the invoke
+		// selects, `SelectsOnInvoked`, which this component does not carry, so every leaf's
+		// invoke closes it. Its top-pane arm (`:370`) waits on WD-025.
+		if (!hasChildren && flyoutOwner !== null) {
+			pane().setExpanded(flyoutOwner, false);
+		}
 	}
 
 	function onkeydown(event: KeyboardEvent) {

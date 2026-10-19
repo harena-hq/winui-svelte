@@ -613,7 +613,7 @@
 	// The rows the pane renders itself are the top level, and the only rows that are —
 	// `IsTopLevelItem` is "my parent repeater is one of the control's own"
 	// (`NavigationView.cpp:5748-5751`). Each row publishes its own placement for its children.
-	setNavigationViewPlacement(() => ({ level: 1, topLevel: true, inFlyout: false }));
+	setNavigationViewPlacement(() => ({ level: 1, topLevel: true, flyoutOwner: null }));
 
 	// The row is measured against two boxes, and **not** against the box the items sit in.
 	// `.top-items` is content-sized, so hiding an item narrows it — measuring there would feed

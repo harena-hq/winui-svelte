@@ -78,7 +78,7 @@ test('a parent inside the flyout draws its children in the flyout, not in a seco
 	await expect(flyout.locator('ul[role="group"]')).toHaveCount(1);
 	await expect(flyout.locator(row('Swatches'))).toHaveAttribute('aria-level', '2');
 
-	// WD-092 reaches all the way down, not just the flyout's first list. `inFlyout` is carried
+	// WD-092 reaches all the way down, not just the flyout's first list. `flyoutOwner` is carried
 	// through the placement record, so `Swatches` two levels in is as tooltip-free as `Color`
 	// one level in — the row the primitive marks is the one that would take the Escape.
 	await expect(flyout.locator('[data-tooltip-trigger]')).toHaveCount(0);
@@ -102,24 +102,66 @@ test('a second click on the row closes the flyout rather than leaving it open', 
 	await expect(design).toHaveAttribute('aria-expanded', 'false');
 });
 
-test('a leaf inside the flyout invokes through the pane it was portalled out of', async ({
+test('a leaf inside the flyout invokes through the pane, and closes the flyout', async ({
 	page
 }) => {
 	await page.goto(PAGE);
-	await page.locator('#rail').locator(row('Design')).click();
+	const design = page.locator('#rail').locator(row('Design'));
+	await design.click();
 
 	await page.locator('.flyout-children').locator(row('Geometry')).click();
 
 	// The flyout's rows are portalled to the end of the document, so nothing about them is a
-	// descendant of the control any more; they reach it through the pane context. What the
-	// flyout does *next* is not asserted: answer 8 records a parent with content of its own
-	// swapping the content on selection, and says nothing about a leaf, so there is no
-	// reference behaviour here to pin.
+	// descendant of the control any more; they reach it through the pane context.
 	// `design` is in the log first because opening the flyout invoked it: `activate()` reports
 	// the invoke whether or not the row has somewhere to go, which is
 	// `OnNavigationViewItemInvoked` calling `ToggleIsExpandedNavigationViewItem` and raising
 	// `ItemInvoked` on the same press (NavigationView.cpp:1062).
 	await expect(page.locator('#log')).toHaveText('design\ngeometry');
+	// `CloseFlyoutIfRequired` (NavigationView.cpp:360-390): a leaf collapses the top-level row
+	// the flyout belongs to. A parent inside the flyout keeps it open, as the test above shows.
+	// Focus goes back to the row the flyout opened from, which stays mounted.
+	await expect(page.locator('.flyout-children')).toHaveCount(0);
+	await expect(design).toHaveAttribute('aria-expanded', 'false');
+	await expect(design).toBeFocused();
+});
+
+test('a leaf chosen with the keyboard closes the flyout the same way', async ({ page }) => {
+	await page.goto(PAGE);
+	const design = page.locator('#rail').locator(row('Design'));
+	await design.click();
+	const flyout = page.locator('.flyout-children');
+	await expect(flyout.locator(row('Color'))).toBeFocused();
+
+	await page.keyboard.press('ArrowDown');
+	await expect(flyout.locator(row('Geometry'))).toBeFocused();
+	await page.keyboard.press('Enter');
+
+	await expect(page.locator('#log')).toHaveText('design\ngeometry');
+	await expect(flyout).toHaveCount(0);
+	await expect(design).toHaveAttribute('aria-expanded', 'false');
+	await expect(design).toBeFocused();
+});
+
+test('a leaf two levels into the flyout closes it too', async ({ page }) => {
+	await page.goto(PAGE);
+	const design = page.locator('#rail').locator(row('Design'));
+	await design.click();
+	const flyout = page.locator('.flyout-children');
+	await flyout.locator(row('Color')).click();
+
+	await flyout.locator(row('Swatches')).click();
+
+	// Upstream collapses the container at the selection's top-level index
+	// (`GetContainerForIndex(selectedIndex.GetAt(1), …)`, NavigationView.cpp:378), whatever the
+	// leaf's depth, so the row whose flyout this is folds, not `color`.
+	await expect(flyout).toHaveCount(0);
+	await expect(design).toHaveAttribute('aria-expanded', 'false');
+	await expect(design).toBeFocused();
+	// `color` keeps its own expansion, so the flyout opens again on it.
+	await design.click();
+	await expect(flyout.locator(row('Color'))).toHaveAttribute('aria-expanded', 'true');
+	await expect(flyout.locator(row('Swatches'))).toBeVisible();
 });
 
 test('a click outside closes the flyout', async ({ page }) => {
