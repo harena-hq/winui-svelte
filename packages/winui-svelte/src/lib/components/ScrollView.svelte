@@ -72,11 +72,26 @@
 		readonly correlationId: number;
 	}
 
+	// GettingFocusEventArgs.InputDevice (ScrollView.cpp:526-533) names what gave a focus. A page is
+	// told nothing of the kind, so the last input anywhere on the page stands in for it, read once
+	// for every ScrollView: a press gives its pointer type and a key the keyboard. A focus a script
+	// gives is read as whatever came last, where upstream reads Programmatic.
+	let lastInputKind: string | null = null;
+	let lastInputListening = false;
+	function listenForLastInput() {
+		if (lastInputListening || typeof window === 'undefined') return;
+		lastInputListening = true;
+		const capture = { capture: true, passive: true };
+		window.addEventListener('pointerdown', (event) => (lastInputKind = event.pointerType), capture);
+		window.addEventListener('keydown', () => (lastInputKind = 'keyboard'), capture);
+	}
+
 	/** ScrollCompleted, the zoom methods and the anchoring properties belong to
 	 * later units of this version. They are absent here for that sequencing reason, not declined. */
 </script>
 
 <script lang="ts">
+	import { untrack } from 'svelte';
 	import ScrollBar from '../internal/ScrollBar.svelte';
 	import { animationsEnabled } from '../internal/motion';
 
@@ -205,6 +220,10 @@
 			stopAnimation();
 		}
 		measure();
+		// OnScrollPresenterViewChanged shows the indicators for a view change of any origin: a
+		// wheel, a key, a drag, a pan or a request. Which kind is the preference's, above.
+		if (touchContacts.length > 0) preferMouseIndicators = false;
+		if (loaded) showIndicators();
 		if (horizontalOffset !== scrollLeft) horizontalOffset = scrollLeft;
 		if (verticalOffset !== scrollTop) verticalOffset = scrollTop;
 		onOffsetChange?.({ horizontal: scrollLeft, vertical: scrollTop });
@@ -513,6 +532,200 @@
 		scrollHorizontally(horizontalOffset);
 		scrollVertically(verticalOffset);
 	});
+
+	// ScrollingIndicatorStates (ScrollView.xaml:28-104): the bars draw nothing until the pointer
+	// or the view gives them a reason to, and go back to nothing once it stops. Upstream's
+	// `AreScrollControllersAutoHiding` reads the system's "always show scrollbars" setting, which
+	// a page cannot see, so this is its default, auto-hiding, everywhere: WD-103.
+	//
+	// The delays are the reference guest's, measured on its Gallery against both a ScrollView and
+	// the pane's ScrollViewer: with the pointer left still inside, the bar starts to fade 3.2 to
+	// 3.3 seconds after it appeared; after the pointer leaves, it is gone a little over two
+	// seconds later, which is `s_noIndicatorCountdown` (ScrollView.h:377) and the fade. The pin
+	// does not account for the first figure — the `MouseIndicator`-to-`NoIndicator` transition's
+	// two seconds (ScrollView_themeresources.xaml:17) leave about 1.25 of it unexplained — so the
+	// measurement is what is reproduced. The touch indicator's half second is the template's
+	// `ScrollViewScrollBarsNoTouchDuration` (:23); the guest has no touch input to measure it by.
+	const MOUSE_INDICATOR_MS = 3250;
+	const NO_INDICATOR_COUNTDOWN_MS = 2000;
+	const TOUCH_INDICATOR_MS = 500;
+	// ScrollBar's `NoIndicator` state fades every part over `ScrollBarOpacityChangeDuration` and
+	// collapses the mouse roots at its end (ScrollBar_themeresources.xaml:465-526, :174); the
+	// panning roots collapse later, at `ScrollBarContractDuration` (:176), with nothing left to
+	// draw by then.
+	const OPACITY_CHANGE_MS = 83;
+
+	let indicator = $state<'none' | 'mouse' | 'touch'>('none');
+	let fading = $state(false);
+	// m_preferMouseIndicators, false until a mouse or pen moves over the control (ScrollView.h:352).
+	// A key clears it (OnKeyDown, ScrollView.cpp:1947), a focus sets it from the device that gave
+	// the focus (OnGotFocus, :511-513), and a touch pan clears it (OnScrollPresenterStateChanged,
+	// :940-943). The browser reports no interaction state; what it does is cancel a touch contact
+	// that it takes for a pan, before the pan's first scroll, so that cancellation is the pan, and
+	// a scroll while a contact is still down is one too. Nothing resets it when the bars hide.
+	let preferMouseIndicators = false;
+	// The ids of the touch contacts that went down inside the control and have not ended. Not
+	// reactive state, which is why it is not a SvelteSet: nothing draws from it.
+	let touchContacts: number[] = [];
+	// m_isPointerOverVerticalScrollController and its horizontal twin, which hold the bars up. A
+	// thumb drag that leaves the bar holds them as well, as m_keepIndicatorsShowing does while a
+	// bar scrolls with the mouse (ScrollView.cpp:836-902): the thumb captures the pointer, so the
+	// bar sees no leave until the release. A press on an arrow or the track captures nothing and
+	// scrolls once, so nothing is held for it.
+	const pointerOver = { vertical: false, horizontal: false };
+	const pointerOverBar = () => pointerOver.vertical || pointerOver.horizontal;
+	// IsLoaded: a view change before the control has drawn shows nothing (ScrollView.cpp:1006).
+	let loaded = false;
+	let hideTimer: ReturnType<typeof setTimeout> | undefined;
+	let fadeTimer: ReturnType<typeof setTimeout> | undefined;
+
+	function clearIndicatorTimers() {
+		clearTimeout(hideTimer);
+		clearTimeout(fadeTimer);
+		hideTimer = fadeTimer = undefined;
+	}
+
+	/** UpdateScrollControllersVisualState with showIndicators (ScrollView.cpp:1835-1855). */
+	function showIndicators() {
+		if (!verticalBarVisible && !horizontalBarVisible) return;
+		clearIndicatorTimers();
+		fading = false;
+		// Mouse indicators dominate once they are showing.
+		indicator = preferMouseIndicators || indicator === 'mouse' ? 'mouse' : 'touch';
+		hideIndicatorsAfter(indicator === 'mouse' ? MOUSE_INDICATOR_MS : TOUCH_INDICATOR_MS);
+	}
+
+	function hideIndicatorsAfter(ms: number) {
+		clearTimeout(hideTimer);
+		hideTimer = setTimeout(hideIndicators, ms);
+	}
+
+	/**
+	 * HideIndicators: the bar fades and then draws nothing. With the platform's animations off,
+	 * upstream hides on a timer path instead: the hide branch of UpdateScrollControllersVisualState
+	 * calls HideIndicatorsAfterDelay (ScrollView.cpp:1863-1867, :1752-1796), which a pointer
+	 * entering a bar also starts (:2187-2191). The guest's animation setting is reference state
+	 * and was not switched to measure it, so the measured path serves both.
+	 */
+	function hideIndicators() {
+		// Called from an effect as well as from its own timer, so neither timer is assumed spent.
+		clearIndicatorTimers();
+		if (indicator === 'none' || pointerOverBar()) return;
+		fading = true;
+		// The fade's own length is `--winui-ScrollBarOpacityChangeDuration`, which the CSS
+		// transition below reads; this is the same 83ms, as the end of that transition.
+		fadeTimer = setTimeout(() => {
+			fadeTimer = undefined;
+			fading = false;
+			indicator = 'none';
+		}, OPACITY_CHANGE_MS);
+	}
+
+	// OnScrollViewPointerEntered / Moved / Exited / Pressed (ScrollView.cpp:563-672), OnKeyDown
+	// and OnGotFocus. The first three ignore touch; a press of any kind shows, and so does a
+	// focus. Upstream skips a press something inside has handled (:651-654); `defaultPrevented`
+	// is the nearest reading, and it sees only a handler added natively, because Svelte's own
+	// `onpointerdown` attributes are delegated to the app's root and run after this one. A
+	// disabled control takes no input upstream, so none of these reach it. They are listened for
+	// here rather than written on the root, where a caller's own `onpointer…` in `rest` would
+	// replace them.
+	$effect(() => {
+		const root = ref;
+		if (!root) return;
+		const onMove = (event: PointerEvent) => {
+			if (disabled || event.pointerType === 'touch') return;
+			preferMouseIndicators = true;
+			showIndicators();
+		};
+		// Exited shows the bars and then hides them after the countdown, so a bar that had faded
+		// under a still pointer comes back as the pointer leaves.
+		const onLeave = (event: PointerEvent) => {
+			if (disabled || event.pointerType === 'touch') return;
+			pointerOver.vertical = pointerOver.horizontal = false;
+			preferMouseIndicators = true;
+			showIndicators();
+			hideIndicatorsAfter(NO_INDICATOR_COUNTDOWN_MS);
+		};
+		const onDown = (event: PointerEvent) => {
+			if (event.pointerType === 'touch') touchContacts.push(event.pointerId);
+			if (!disabled && !event.defaultPrevented) showIndicators();
+		};
+		const end = (event: PointerEvent) => {
+			const inside = touchContacts.includes(event.pointerId);
+			touchContacts = touchContacts.filter((id) => id !== event.pointerId);
+			return inside;
+		};
+		const onUp = (event: PointerEvent) => void end(event);
+		const onCancel = (event: PointerEvent) => {
+			if (end(event)) preferMouseIndicators = false;
+		};
+		const onKey = () => {
+			if (!disabled) preferMouseIndicators = false;
+		};
+		const onFocus = () => {
+			if (disabled) return;
+			preferMouseIndicators = lastInputKind === 'mouse' || lastInputKind === 'pen';
+			showIndicators();
+		};
+		listenForLastInput();
+		root.addEventListener('pointerenter', onMove);
+		root.addEventListener('pointermove', onMove);
+		root.addEventListener('pointerleave', onLeave);
+		root.addEventListener('pointerdown', onDown);
+		// On the window, because a contact that lifts outside the control still ends.
+		// Captured, so that a handler inside that stops the event cannot leave a contact recorded.
+		window.addEventListener('pointerup', onUp, true);
+		window.addEventListener('pointercancel', onCancel, true);
+		root.addEventListener('keydown', onKey);
+		root.addEventListener('focusin', onFocus);
+		return () => {
+			root.removeEventListener('pointerenter', onMove);
+			root.removeEventListener('pointermove', onMove);
+			root.removeEventListener('pointerleave', onLeave);
+			root.removeEventListener('pointerdown', onDown);
+			window.removeEventListener('pointerup', onUp, true);
+			window.removeEventListener('pointercancel', onCancel, true);
+			root.removeEventListener('keydown', onKey);
+			root.removeEventListener('focusin', onFocus);
+			// A contact whose end this listener no longer hears is not left recorded.
+			touchContacts = [];
+		};
+	});
+
+	$effect(() => {
+		// Two frames: the scroll an initial offset causes is dispatched in the first.
+		let frame = requestAnimationFrame(() => {
+			frame = requestAnimationFrame(() => (loaded = true));
+		});
+		return () => cancelAnimationFrame(frame);
+	});
+
+	// The indicator timers must not outlive the component.
+	$effect(() => clearIndicatorTimers);
+
+	// OnScrollViewIsEnabledChanged (ScrollView.cpp:535-547) hides the bars; and a bar removed
+	// from under the pointer sends it no leave, so it no longer holds them.
+	$effect(() => {
+		const held = pointerOverBar();
+		if (disabled || !verticalBarVisible) pointerOver.vertical = false;
+		if (disabled || !horizontalBarVisible) pointerOver.horizontal = false;
+		if (disabled || (!verticalBarVisible && !horizontalBarVisible)) untrack(hideIndicators);
+		// The bar that remains counts down, as it would had the pointer left the one that went.
+		else if (held && !pointerOverBar())
+			untrack(() => hideIndicatorsAfter(NO_INDICATOR_COUNTDOWN_MS));
+	});
+
+	// HandleScrollControllerPointerEntered / Exited (ScrollView.cpp:2175-2211).
+	function onBarPointerEnter(bar: keyof typeof pointerOver, event: PointerEvent) {
+		if (event.pointerType === 'touch') return;
+		pointerOver[bar] = true;
+		clearTimeout(hideTimer);
+	}
+	function onBarPointerLeave(bar: keyof typeof pointerOver, event: PointerEvent) {
+		if (event.pointerType === 'touch') return;
+		pointerOver[bar] = false;
+		hideIndicatorsAfter(NO_INDICATOR_COUNTDOWN_MS);
+	}
 </script>
 
 <!-- ScrollInputHelper::UpdateOutOfBoundsPanSize (ScrollInputHelper.cpp:307) branches on the
@@ -553,15 +766,23 @@
 		</div>
 	</div>
 	{#if verticalBarVisible}
-		<div class:with-horizontal={horizontalBarVisible} class="bar-wrapper vertical">
-			<!-- UpdateScrollControllersVisualState (ScrollView.cpp:1821-1869) chooses touch versus
-			     mouse upstream; touch is unreachable on the reference host, so this unit uses mouse. -->
+		<!-- The wrapper only notices the pointer over its bar, which holds the indicator up; the bar
+		     inside is what takes input, so the wrapper takes no role. -->
+		<!-- svelte-ignore a11y_no_static_element_interactions -->
+		<div
+			class:with-horizontal={horizontalBarVisible}
+			class="bar-wrapper vertical"
+			data-indicator={indicator}
+			data-fading={fading || undefined}
+			onpointerenter={(event) => onBarPointerEnter('vertical', event)}
+			onpointerleave={(event) => onBarPointerLeave('vertical', event)}
+		>
 			<ScrollBar
 				value={scrollTop}
 				minimum={0}
 				maximum={scrollableHeight}
 				viewportSize={viewportHeight}
-				indicatorMode="mouse"
+				indicatorMode={indicator}
 				{disabled}
 				onValueChange={(value) => {
 					stopAnimation();
@@ -571,14 +792,23 @@
 		</div>
 	{/if}
 	{#if horizontalBarVisible}
-		<div class:with-vertical={verticalBarVisible} class="bar-wrapper horizontal">
+		<!-- As the vertical wrapper above. -->
+		<!-- svelte-ignore a11y_no_static_element_interactions -->
+		<div
+			class:with-vertical={verticalBarVisible}
+			class="bar-wrapper horizontal"
+			data-indicator={indicator}
+			data-fading={fading || undefined}
+			onpointerenter={(event) => onBarPointerEnter('horizontal', event)}
+			onpointerleave={(event) => onBarPointerLeave('horizontal', event)}
+		>
 			<ScrollBar
 				orientation="horizontal"
 				value={scrollLeft}
 				minimum={0}
 				maximum={scrollableWidth}
 				viewportSize={viewportWidth}
-				indicatorMode="mouse"
+				indicatorMode={indicator}
 				{disabled}
 				onValueChange={(value) => {
 					stopAnimation();
@@ -678,6 +908,20 @@
 		position: absolute;
 		box-sizing: border-box;
 		padding: var(--winui-ScrollViewScrollBarsMargin);
+	}
+	/* The bar's mouse roots are `IsHitTestVisible="False"` (ScrollBar_themeresources.xaml:672,
+	   694) until the `MouseIndicator` state sets them True (:459-460), so only the mouse indicator
+	   takes the pointer. The panning indicator's 2px thumb is a filled Border upstream (:714) and
+	   would take a press on it; that strip is not reproduced. At rest, under the touch indicator
+	   and while fading, a press reaches the
+	   content beneath, and a touch pan that starts over the bar pans the content. */
+	.bar-wrapper:not([data-indicator='mouse']),
+	.bar-wrapper[data-fading] {
+		pointer-events: none;
+	}
+	.bar-wrapper[data-fading] {
+		opacity: 0;
+		transition: opacity var(--winui-ScrollBarOpacityChangeDuration) linear;
 	}
 	.bar-wrapper.vertical {
 		top: 0;

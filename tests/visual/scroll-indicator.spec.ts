@@ -1,0 +1,411 @@
+import type { Page } from '@playwright/test';
+import { expect, test } from './fixtures';
+
+/**
+ * A ScrollView's bars auto-hide (ScrollingIndicatorStates, ScrollView.xaml:28-104): nothing is
+ * drawn until the pointer or the view gives a reason, and the bars fade back to nothing once it
+ * stops. The delays are the reference guest's, measured on its Gallery; ScrollView.svelte says
+ * where each one comes from. The clock is Playwright's, paused, so every delay is stepped over
+ * exactly rather than slept through.
+ */
+
+const EXAMPLE = '.scroll-example';
+
+/** The first example's vertical bar: what it is drawing, and whether it is fading. */
+function state(page: Page) {
+	return page.evaluate((selector) => {
+		const wrapper = document.querySelector<HTMLElement>(`${selector} .bar-wrapper.vertical`)!;
+		return {
+			indicator: wrapper.dataset.indicator,
+			fading: wrapper.dataset.fading !== undefined,
+			rail: wrapper.querySelector("[class~='rail']") !== null,
+			panning: wrapper.querySelector("[class~='panning-rail']") !== null
+		};
+	}, EXAMPLE);
+}
+
+const NONE = { indicator: 'none', fading: false, rail: false, panning: false };
+const MOUSE = { indicator: 'mouse', fading: false, rail: true, panning: false };
+const FADING = { indicator: 'mouse', fading: true, rail: true, panning: false };
+const TOUCH = { indicator: 'touch', fading: false, rail: false, panning: true };
+
+/** See scroll-view-scroll.spec.ts: the instant is the page's, and the pause lands after it. */
+async function freeze(page: Page) {
+	const now = await page.evaluate(() => Date.now());
+	await page.clock.install({ time: now });
+	await page.clock.pauseAt(now + 10_000);
+}
+
+/** A touch contact at a point, which the browser cannot synthesise through Playwright's mouse. */
+function touch(page: Page, x: number, y: number, types: string[]) {
+	return page.evaluate(
+		([px, py, kinds]) => {
+			const target = document.elementFromPoint(px as number, py as number)!;
+			const init = { bubbles: true, pointerType: 'touch', clientX: px, clientY: py };
+			for (const type of kinds as string[]) {
+				// An enter does not bubble, so it is dispatched on the control's root.
+				const at = type.endsWith('enter') ? target.closest('.scroll-view')! : target;
+				at.dispatchEvent(new PointerEvent(type, { ...init, bubbles: !type.endsWith('enter') }));
+			}
+		},
+		[x, y, types] as [number, number, string[]]
+	);
+}
+
+async function open(page: Page) {
+	await page.goto('/dev/scroll-view');
+	await page.mouse.move(0, 0);
+	// The component counts itself drawn two frames after it mounts; frozen sooner, its frames
+	// would wait on the paused clock and no view change would ever show the bar.
+	await page.evaluate(
+		() => new Promise((done) => requestAnimationFrame(() => requestAnimationFrame(done)))
+	);
+	await freeze(page);
+	const box = (await page.locator(EXAMPLE).first().boundingBox())!;
+	return { x: box.x + box.width / 2, y: box.y + box.height / 2, box };
+}
+
+test('at rest a bar draws nothing and lets the pointer through', async ({ page }) => {
+	const { box } = await open(page);
+	expect(await state(page)).toEqual(NONE);
+	const wrapper = page.locator(`${EXAMPLE} .bar-wrapper.vertical`).first();
+	expect(await wrapper.evaluate((element) => getComputedStyle(element).pointerEvents)).toBe('none');
+	// The bar's own box, where the pointer lands on the content instead.
+	const hit = await page.evaluate(
+		([x, y]) => document.elementFromPoint(x, y)?.closest('.bar-wrapper') === null,
+		[box.x + box.width - 4, box.y + box.height / 2]
+	);
+	expect(hit).toBe(true);
+});
+
+test('a pointer left still inside fades the bar 3.25s after it moved', async ({ page }) => {
+	const { x, y } = await open(page);
+	await page.mouse.move(x, y);
+	expect(await state(page)).toEqual(MOUSE);
+	await page.clock.runFor(3249);
+	expect(await state(page)).toEqual(MOUSE);
+	await page.clock.runFor(1);
+	expect(await state(page)).toEqual(FADING);
+	await page.clock.runFor(83);
+	expect(await state(page)).toEqual(NONE);
+});
+
+test('every move restarts the delay', async ({ page }) => {
+	const { x, y } = await open(page);
+	await page.mouse.move(x, y);
+	await page.clock.runFor(3000);
+	await page.mouse.move(x + 1, y);
+	await page.clock.runFor(3000);
+	expect(await state(page)).toEqual(MOUSE);
+	await page.clock.runFor(250);
+	expect(await state(page)).toEqual(FADING);
+});
+
+test('a pointer that leaves fades the bar two seconds later', async ({ page }) => {
+	const { x, y } = await open(page);
+	await page.mouse.move(x, y);
+	await page.clock.runFor(500);
+	await page.mouse.move(0, 0);
+	await page.clock.runFor(1999);
+	expect(await state(page)).toEqual(MOUSE);
+	await page.clock.runFor(1);
+	expect(await state(page)).toEqual(FADING);
+	await page.clock.runFor(83);
+	expect(await state(page)).toEqual(NONE);
+});
+
+test('a pointer over the bar holds it until the pointer leaves the control', async ({ page }) => {
+	const { box } = await open(page);
+	const barX = box.x + box.width - 6;
+	await page.mouse.move(box.x + box.width / 2, box.y + 40);
+	await page.mouse.move(barX, box.y + 40);
+	await page.clock.runFor(10_000);
+	expect(await state(page)).toEqual(MOUSE);
+	await page.mouse.move(0, 0);
+	await page.clock.runFor(1999);
+	expect(await state(page)).toEqual(MOUSE);
+	await page.clock.runFor(84);
+	expect(await state(page)).toEqual(NONE);
+});
+
+/** Sets the first example's offset and waits for the scroll event, the browser's to dispatch. */
+function scrollTo(page: Page, top: number) {
+	return page.evaluate(
+		([selector, offset]) =>
+			new Promise((done) => {
+				const viewport = document.querySelector<HTMLElement>(`${selector} .viewport`)!;
+				viewport.addEventListener('scroll', done, { once: true });
+				viewport.scrollTop = offset as number;
+			}),
+		[EXAMPLE, top] as [string, number]
+	);
+}
+
+test('a scroll before any mouse input shows the panning indicator', async ({ page }) => {
+	await open(page);
+	await scrollTo(page, 40);
+	expect(await state(page)).toEqual(TOUCH);
+	await page.clock.runFor(500 + 83);
+	expect(await state(page)).toEqual(NONE);
+});
+
+test('a scroll after the mouse has moved over the control shows the mouse indicator', async ({
+	page
+}) => {
+	const { x, y } = await open(page);
+	await page.mouse.move(x, y);
+	await page.mouse.move(0, 0);
+	await page.clock.runFor(2000 + 83);
+	expect(await state(page)).toEqual(NONE);
+	await scrollTo(page, 40);
+	expect(await state(page)).toEqual(MOUSE);
+});
+
+test('a key clears the mouse preference, unless the mouse indicator is already up', async ({
+	page
+}) => {
+	const { x, y } = await open(page);
+	await page.mouse.move(x, y);
+	const viewport = page.locator(`${EXAMPLE} .viewport`).first();
+	await viewport.dispatchEvent('keydown', { key: 'ArrowDown' });
+	await scrollTo(page, 20);
+	// Mouse indicators dominate once they are showing.
+	expect(await state(page)).toEqual(MOUSE);
+	await page.mouse.move(0, 0);
+	await page.clock.runFor(2000 + 83);
+	expect(await state(page)).toEqual(NONE);
+	await viewport.dispatchEvent('keydown', { key: 'ArrowDown' });
+	await scrollTo(page, 60);
+	expect(await state(page)).toEqual(TOUCH);
+});
+
+test('a move during the fade brings the bar back', async ({ page }) => {
+	const { x, y } = await open(page);
+	await page.mouse.move(x, y);
+	await page.clock.runFor(3250 + 40);
+	expect(await state(page)).toEqual(FADING);
+	await page.mouse.move(x + 1, y);
+	expect(await state(page)).toEqual(MOUSE);
+	await page.clock.runFor(3249);
+	expect(await state(page)).toEqual(MOUSE);
+});
+
+test('a drag released over the content leaves the bar to count down two seconds', async ({
+	page
+}) => {
+	const { box } = await open(page);
+	await page.mouse.move(box.x + box.width / 2, box.y + 40);
+	const thumb = (await page
+		.locator(`${EXAMPLE} .bar-wrapper.vertical [class~='thumb']`)
+		.first()
+		.boundingBox())!;
+	await page.mouse.move(thumb.x + thumb.width / 2, thumb.y + 4);
+	await page.mouse.down();
+	await page.mouse.move(box.x + box.width / 2, thumb.y + 4);
+	await page.mouse.up();
+	// No move follows the release, so the bar's own leave is the only countdown running.
+	await page.clock.runFor(1999);
+	expect(await state(page)).toEqual(MOUSE);
+	await page.clock.runFor(1);
+	expect(await state(page)).toEqual(FADING);
+});
+
+test('a touch shows the panning indicator, gone half a second later', async ({ page }) => {
+	const { x, y } = await open(page);
+	await touch(page, x, y, ['pointerdown', 'pointerup']);
+	expect(await state(page)).toEqual(TOUCH);
+	await page.clock.runFor(499);
+	expect(await state(page)).toEqual(TOUCH);
+	await page.clock.runFor(1 + 83);
+	expect(await state(page)).toEqual(NONE);
+});
+
+test('a touch moving over the control does not show the mouse indicator', async ({ page }) => {
+	const { x, y } = await open(page);
+	await touch(page, x, y, ['pointerenter', 'pointermove']);
+	expect(await state(page)).toEqual(NONE);
+});
+
+test('only the mouse indicator takes the pointer', async ({ page }) => {
+	const { x, y } = await open(page);
+	const events = () =>
+		page
+			.locator(`${EXAMPLE} .bar-wrapper.vertical`)
+			.first()
+			.evaluate((element) => getComputedStyle(element).pointerEvents);
+	await page.mouse.move(x, y);
+	expect(await events()).toBe('auto');
+	await page.clock.runFor(3250);
+	expect(await state(page)).toEqual(FADING);
+	expect(await events()).toBe('none');
+});
+
+test('the panning indicator lets the pointer through', async ({ page }) => {
+	const { x, y } = await open(page);
+	await touch(page, x, y, ['pointerdown']);
+	expect(await state(page)).toEqual(TOUCH);
+	expect(
+		await page
+			.locator(`${EXAMPLE} .bar-wrapper.vertical`)
+			.first()
+			.evaluate((element) => getComputedStyle(element).pointerEvents)
+	).toBe('none');
+});
+
+test('a touch pan prefers the panning indicator after mouse input', async ({ page }) => {
+	const { x, y } = await open(page);
+	await page.mouse.move(x, y);
+	await page.mouse.move(0, 0);
+	await page.clock.runFor(2000 + 83);
+	await touch(page, x, y, ['pointerdown']);
+	// A press keeps the preference: upstream changes it only once the touch pans.
+	expect(await state(page)).toEqual(MOUSE);
+	await page.clock.runFor(3250 + 83);
+	expect(await state(page)).toEqual(NONE);
+	await scrollTo(page, 40);
+	expect(await state(page)).toEqual(TOUCH);
+	await touch(page, x, y, ['pointerup']);
+});
+
+test('a disabled ScrollViewer shows nothing under the pointer', async ({ page }) => {
+	// ScrollViewer's harness: its disabled example keeps a bar, where ScrollView's collapses both.
+	await page.goto('/dev/scroll-viewer');
+	await page.mouse.move(0, 0);
+	const disabled = page.locator('.scroll-view.disabled');
+	const box = (await disabled.boundingBox())!;
+	await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+	await page.mouse.move(box.x + box.width / 2 + 4, box.y + box.height / 2);
+	const indicators = await disabled.evaluate((element) =>
+		[...element.querySelectorAll<HTMLElement>('.bar-wrapper')].map(
+			(wrapper) => wrapper.dataset.indicator
+		)
+	);
+	expect(indicators.length).toBeGreaterThan(0);
+	expect(indicators.every((indicator) => indicator === 'none')).toBe(true);
+});
+
+test('a drag on the thumb holds the bar off the control, and the release counts down', async ({
+	page
+}) => {
+	const { box } = await open(page);
+	await page.mouse.move(box.x + box.width / 2, box.y + 40);
+	const thumb = (await page
+		.locator(`${EXAMPLE} .bar-wrapper.vertical [class~='thumb']`)
+		.first()
+		.boundingBox())!;
+	await page.mouse.move(thumb.x + thumb.width / 2, thumb.y + 4);
+	await page.mouse.down();
+	await page.mouse.move(box.x + box.width + 200, thumb.y + 20);
+	await page.clock.runFor(10_000);
+	expect(await state(page)).toEqual(MOUSE);
+	await page.mouse.up();
+	await page.clock.runFor(1999);
+	expect(await state(page)).toEqual(MOUSE);
+	await page.clock.runFor(84);
+	expect(await state(page)).toEqual(NONE);
+});
+
+test('a focus shows the bar, as the kind of what gave it', async ({ page }) => {
+	const { x, y } = await open(page);
+	const focus = () =>
+		page
+			.locator(`${EXAMPLE} .viewport`)
+			.first()
+			.evaluate((element) => element.dispatchEvent(new FocusEvent('focusin', { bubbles: true })));
+	// A key before it, as a Tab gives: the panning indicator.
+	await page.keyboard.press('Shift');
+	await focus();
+	expect(await state(page)).toEqual(TOUCH);
+	await page.clock.runFor(500 + 83);
+	expect(await state(page)).toEqual(NONE);
+	// A focus a mouse press gave: the mouse indicator.
+	await page.mouse.move(x, y);
+	await page.mouse.down();
+	await page.mouse.up();
+	await page.mouse.move(0, 0);
+	await page.clock.runFor(2000 + 83);
+	expect(await state(page)).toEqual(NONE);
+	await focus();
+	expect(await state(page)).toEqual(MOUSE);
+	await page.clock.runFor(3250 + 83);
+	// A focus a touch press gave, after the mouse had set the preference: the panning indicator.
+	await touch(page, x, y, ['pointerdown', 'pointerup']);
+	await page.clock.runFor(3250 + 83);
+	expect(await state(page)).toEqual(NONE);
+	await focus();
+	expect(await state(page)).toEqual(TOUCH);
+	await page.clock.runFor(500 + 83);
+	// A key after a mouse press: the key is what came last, so the panning indicator.
+	await page.mouse.move(x, y);
+	await page.mouse.down();
+	await page.mouse.up();
+	await page.mouse.move(0, 0);
+	await page.clock.runFor(2000 + 83);
+	await page.keyboard.press('Shift');
+	await focus();
+	expect(await state(page)).toEqual(TOUCH);
+});
+
+test('a pointer leaving shows a bar that had faded under it, then counts down', async ({
+	page
+}) => {
+	const { x, y } = await open(page);
+	await page.mouse.move(x, y);
+	await page.clock.runFor(3250 + 83);
+	expect(await state(page)).toEqual(NONE);
+	await page.mouse.move(0, 0);
+	expect(await state(page)).toEqual(MOUSE);
+	await page.clock.runFor(1999);
+	expect(await state(page)).toEqual(MOUSE);
+	await page.clock.runFor(1);
+	expect(await state(page)).toEqual(FADING);
+});
+
+test('a touch the browser cancels for a pan prefers the panning indicator', async ({ page }) => {
+	const { x, y } = await open(page);
+	await page.mouse.move(x, y);
+	await page.mouse.move(0, 0);
+	await page.clock.runFor(2000 + 83);
+	// The browser cancels a contact it takes for a pan before the pan's first scroll.
+	await touch(page, x, y, ['pointerdown', 'pointercancel']);
+	await page.clock.runFor(3250 + 83);
+	expect(await state(page)).toEqual(NONE);
+	await scrollTo(page, 40);
+	expect(await state(page)).toEqual(TOUCH);
+});
+
+/** Takes the first example's content away, so its auto bar goes, and then puts it back. */
+async function removeAndRestoreBar(page: Page) {
+	// The resize observer that sees it runs on the browser's frames, not the paused clock, so the
+	// bar's count is polled.
+	const tall = page.locator(`${EXAMPLE} .tall`).first();
+	const bar = page.locator(EXAMPLE).first().locator('.bar-wrapper.vertical');
+	await tall.evaluate((element) => (element.style.display = 'none'));
+	await expect(bar).toHaveCount(0);
+	await tall.evaluate((element) => (element.style.display = ''));
+	await expect(bar).toHaveCount(1);
+}
+
+test('a bar removed while it fades leaves no fade behind to end a later show', async ({ page }) => {
+	const { x, y } = await open(page);
+	await page.mouse.move(x, y);
+	await page.clock.runFor(3250);
+	expect(await state(page)).toEqual(FADING);
+	// The removal hides the bars again while the first fade is still pending.
+	await removeAndRestoreBar(page);
+	await page.mouse.move(x + 1, y);
+	expect(await state(page)).toEqual(MOUSE);
+	// A fade timer the second hide had lost track of would end this show here.
+	await page.clock.runFor(83);
+	expect(await state(page)).toEqual(MOUSE);
+});
+
+test('a bar removed from under the pointer stops holding', async ({ page }) => {
+	const { box } = await open(page);
+	await page.mouse.move(box.x + box.width / 2, box.y + 40);
+	await page.mouse.move(box.x + box.width - 6, box.y + 40);
+	await removeAndRestoreBar(page);
+	await page.mouse.move(box.x + box.width / 2, box.y + 40);
+	await page.clock.runFor(3250);
+	expect(await state(page)).toEqual(FADING);
+});

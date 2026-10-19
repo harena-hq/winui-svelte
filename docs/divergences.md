@@ -2395,3 +2395,20 @@ changes`.
 - **Would reconsider if**: the Gallery runs as an installed app or in a window whose browser
   passes these chords on, where they would then work as written; or a measurement in this rig
   shows they arrive.
+
+### WD-103 — a ScrollView's bars auto-hide whatever the system's scroll bar setting says
+
+- **Control**: `ScrollView`, and `ScrollViewer` and every control drawn on it.
+- **WinUI does**: auto-hide the bars only while `AreScrollControllersAutoHiding` is true, which
+  reads `UISettings.AutoHideScrollBars` (`ScrollViewLightup.cpp:96-103`), Windows' "Always show
+  scrollbars" switch inverted, and follows it when it changes (`AutoHideScrollBarsChanged`,
+  `:37-39`). With the switch on, the bars stay in the mouse indicator and never fade.
+- **We do**: auto-hide them always, with the delays measured on the reference guest, where the
+  switch is off, as it is by default. With the platform's animations off, upstream hides on a
+  timer path of its own; the guest's animation setting is reference state and was not switched
+  to measure it, so the measured delays serve there too.
+- **Why accepted**: no browser exposes the setting to a page, and auto-hiding is Windows'
+  default.
+- **Would reconsider if**: a consumer needs bars that stay drawn, which would be a property of
+  this component's own rather than a reading of the system's; or the platform exposes the
+  setting; or the animations-off path is measured.
