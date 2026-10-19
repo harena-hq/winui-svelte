@@ -633,7 +633,8 @@
 
 	// OnScrollViewPointerEntered / Moved / Exited / Pressed (ScrollView.cpp:563-672), OnKeyDown and
 	// OnGotFocus. The first three ignore touch; a press of any kind shows unless this draws the
-	// older ScrollViewer (`drawsScrollViewer` above); a focus inside shows either way. Upstream
+	// older ScrollViewer (`drawsScrollViewer` above); a focus inside shows either way, except one
+	// after a touch on the older ScrollViewer (WD-104, at the handler below). Upstream
 	// skips a press something inside has handled (:651-654); `defaultPrevented` is the nearest
 	// reading, and it sees only a handler added natively, because Svelte's own `onpointerdown`
 	// attributes are delegated to the app's root and run after this one. A disabled control takes
@@ -685,6 +686,10 @@
 			if (drawsScrollViewer && event.target === root && root.getAttribute('tabindex') === '-1')
 				return;
 			preferMouseIndicators = lastInputKind === 'mouse' || lastInputKind === 'pen';
+			// WD-104: on the older ScrollViewer a focus after a touch shows nothing; upstream's
+			// OnGotFocus (ScrollViewer_Partial.cpp:2323-2343) shows the panning indicator. The
+			// preference is still taken, as upstream takes it.
+			if (drawsScrollViewer && lastInputKind === 'touch') return;
 			showIndicators();
 		};
 		listenForLastInput();

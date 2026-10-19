@@ -2412,3 +2412,27 @@ changes`.
 - **Would reconsider if**: a consumer needs bars that stay drawn, which would be a property of
   this component's own rather than a reading of the system's; or the platform exposes the
   setting; or the animations-off path is measured.
+
+### WD-104 — a focus inside a ScrollViewer after a touch shows no bars
+
+- **Control**: `ScrollViewer`, and every control drawn on it: `NavigationView`'s pane,
+  `ListView`, `GridView`, `TreeView` and `PipsPager`, which draws no bars.
+- **WinUI does**: show the bars on any focus that lands inside, whatever input gave it.
+  `ScrollViewer::OnGotFocus` takes the indicator preference from the last input device and
+  calls `ShowIndicators` (`ScrollViewer_Partial.cpp:2323-2343`). After a touch that is the
+  panning indicator, and a tap on a `NavigationView` menu item gives that focus, as
+  `NavigationView::OnNavigationViewItemClicked` focuses the item (`NavigationView.cpp:2706`).
+  So on a touch screen, while the pane has more items than it shows, every tap on a menu item
+  draws the pane's panning indicator for a moment.
+- **We do**: take the preference as upstream does and show nothing, when the last input was a
+  touch. A script's focus is read as whatever input came last, so a focus restored or given by
+  code after a touch shows nothing too, where upstream's, reading the same last input device,
+  shows the panning indicator. A focus after a mouse or pen press, or a key, shows the bars as
+  upstream's does; a hover does not count as the last input here, where upstream's last device
+  follows every pointer message (`PointerInputProcessor.cpp:234-245`). `ScrollView`'s focus
+  shows them after any input, a touch included, as its press shows them anyway.
+- **Why accepted**: the owner, tapping the pane on an iPad, found the flash on every menu-item
+  tap distracting, and asked for it gone. The guest takes no touch input, so upstream's flash
+  was read from the sources and not seen.
+- **Would reconsider if**: upstream's flash is measured on a touch screen and found to differ
+  from the sources' reading, or a consumer asks for upstream's behaviour.

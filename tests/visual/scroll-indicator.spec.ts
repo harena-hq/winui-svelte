@@ -220,17 +220,34 @@ test('a touch shows the panning indicator, gone half a second later', async ({ p
 	expect(await state(page)).toEqual(NONE);
 });
 
-test('a touch press on a ScrollViewer shows nothing, and a focus inside it still does', async ({
+test('a touch press on a ScrollViewer shows nothing, and neither does a focus after it', async ({
 	page
 }) => {
 	// ScrollViewer's harness, whose first example is the older control, drawn on this one.
 	const { x, y } = await open(page, '/dev/scroll-viewer');
+	const focusInside = () =>
+		page
+			.locator(`${EXAMPLE} .viewport`)
+			.first()
+			.evaluate((element) => element.dispatchEvent(new FocusEvent('focusin', { bubbles: true })));
+	// The mouse sets the preference first, so the scroll below tells whether the focus took it.
+	await page.mouse.move(x, y);
+	await page.mouse.move(0, 0);
+	await page.clock.runFor(2000 + 83);
+	expect(await state(page)).toEqual(NONE);
 	await touch(page, x, y, ['pointerdown', 'pointerup']);
 	expect(await state(page)).toEqual(NONE);
-	await page
-		.locator(`${EXAMPLE} .viewport`)
-		.first()
-		.evaluate((element) => element.dispatchEvent(new FocusEvent('focusin', { bubbles: true })));
+	// WD-104: upstream's OnGotFocus shows the panning indicator here.
+	await focusInside();
+	expect(await state(page)).toEqual(NONE);
+	// The focus still took the touch's preference, as upstream's does.
+	await scrollTo(page, 40);
+	expect(await state(page)).toEqual(TOUCH);
+	await page.clock.runFor(500 + 83);
+	expect(await state(page)).toEqual(NONE);
+	// A focus after a key still shows.
+	await page.keyboard.press('Shift');
+	await focusInside();
 	expect(await state(page)).toEqual(TOUCH);
 });
 
