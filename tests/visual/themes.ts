@@ -6,7 +6,7 @@ export const THEMES = ['light', 'dark', 'high-contrast'] as const;
 /**
  * Grow the viewport to the dev page's own content height.
  *
- * The window is exactly `100vh` and clips (D16), and the dev layout is what scrolls inside it,
+ * The window is exactly `100dvh` and clips (F2), and the dev layout is what scrolls inside it,
  * so `body` is the viewport and a screenshot of it is a crop of the top of the page. That was
  * invisible while every dev page fitted above the fold, and it stopped being invisible the
  * moment one did not: TextBox's header and description rendered, and were photographed by

@@ -111,9 +111,10 @@ test('the checkerboard leaves its first cell transparent', async ({ page }) => {
 	// `(x / CheckerSize + y / CheckerSize) % 2 == 0`, with `CheckerSize` 4 (`ColorHelpers.cpp:9`).
 	// The CSS conic gradient has to land on that phase and not its complement, which no reading
 	// of the declaration can settle — so this photographs one 8px tile and reads four pixels.
-	// The element's own screenshot, not a page clip: the dev layout is exactly `100vh` and scrolls
-	// inside it (D16), so the alpha strip is below the fold and a page-level clip is refused as
-	// "outside the resulting image". Playwright scrolls a locator into view for its own shot.
+	// The element's own screenshot, not a page clip: the window is exactly `100dvh` and the dev
+	// layout scrolls inside it (F2), so the alpha strip is below the fold and a page-level clip is
+	// refused as "outside the resulting image". Playwright scrolls a locator into view for its
+	// own shot.
 	const tile = await page.getByTestId('alpha').locator('.alpha .checkerboard').screenshot();
 	const corners = await page.evaluate(
 		async (url) => {
