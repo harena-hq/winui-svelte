@@ -311,14 +311,15 @@
 	// the template's `NVIRootGrid` (named at `:15`, taken at `:86`), which holds the presenter
 	// in its first row and the children repeater in its second.
 	//
-	// **What that number was really cancelling is `offset`, and it is set to zero below
-	// instead.** `Flyout`'s own default is 4 (its `offset` prop), measured on a
-	// `Bottom`-placed flyout and not on this one; upstream places a `Right` mode flush against
-	// the anchor, `*pControlPos = anchorPos + anchorSize` with nothing added
-	// (`FlyoutBase_partial.cpp:386`, reached for `MajorPlacementMode::Right` at `:457-464`).
-	// The vertical is the same story with the answer already right: `RightEdgeAlignedTop` is
-	// `PreferredJustification::Top` (`:99-101`), which is `*pControlPos = anchorPos` (`:331-333`),
-	// and the presenter's `Margin="0,-4,0,0"` lifts it the 4 from there.
+	// **What that number was really cancelling is `offset`, and an earlier version of this set
+	// it to zero, reading the placement as flush** — `*pControlPos = anchorPos + anchorSize`
+	// (`FlyoutBase_partial.cpp:386`, reached for `MajorPlacementMode::Right` at `:457-464`). That
+	// is the first step only: `CalculatePlacementPrivate` then adds `FlyoutMargin`, 4 (`:65`),
+	// in the direction the flyout opens, `pControlRect->X += FlyoutMargin` for `Right`
+	// (`:2622-2640`). So the gap is `Flyout`'s own 4, which this leaves as it is. The vertical
+	// has no such step: `RightEdgeAlignedTop` is `PreferredJustification::Top` (`:99-101`),
+	// which is `*pControlPos = anchorPos` (`:331-333`), and the presenter's `Margin="0,-4,0,0"`
+	// lifts it the 4 from there.
 	const CHILDREN_FLYOUT_STYLE =
 		'--winui-FlyoutContentPadding: var(--winui-NavigationViewItemChildrenMenuFlyoutPadding);' +
 		/* c1-allow: NavigationView.xaml:474 */
@@ -503,7 +504,6 @@
 			if (!next && open) pane().setExpanded(tag, false);
 		}}
 		placement="rightEdgeAlignedTop"
-		offset={0}
 		style={CHILDREN_FLYOUT_STYLE}
 		content={flyoutRows}
 	>
