@@ -145,18 +145,20 @@ export interface NavigationViewPlacement {
 	/** `IsTopLevelItem`: this row is in one of the control's own lists. */
 	topLevel: boolean;
 	/**
-	 * This row is drawn inside the rail's children flyout, at any depth within it.
+	 * The tag of the top-level row whose children flyout this row is drawn in, at any depth
+	 * within it; `null` outside the rail's children flyout.
 	 *
-	 * It has no upstream counterpart and it is here for one reason: the flyout shows labels,
-	 * so the rail's tooltip is redundant inside it, and the primitive's tooltip takes the
-	 * Escape that should have closed the flyout. WD-092.
+	 * It is here for two reasons. The flyout shows labels, so the rail's tooltip is redundant
+	 * inside it, and the primitive's tooltip takes the Escape that should have closed the
+	 * flyout (WD-092). And a leaf invoked inside it collapses that row, which closes the
+	 * flyout, as `NavigationView::CloseFlyoutIfRequired` does (`NavigationView.cpp:360-390`).
 	 */
-	inFlyout: boolean;
+	flyoutOwner: string | null;
 }
 
 /**
  * Publish where the rows rendered from here sit. The pane publishes `{ level: 1, topLevel:
- * true }`.
+ * true, flyoutOwner: null }`.
  *
  * A getter rather than a value, for the same reason the pane's state is one: what a row
  * publishes is not fixed at initialisation. The pane opening and closing moves a row's
