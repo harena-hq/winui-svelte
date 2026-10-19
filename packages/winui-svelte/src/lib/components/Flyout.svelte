@@ -22,7 +22,9 @@
 		/**
 		 * No WinUI member: the gap between the flyout and its trigger, in pixels. 4 is what the
 		 * Gallery's flyout measures on the reference guest — the flyout's bottom border is row
-		 * 275 and the button's top border is row 280 — and no pinned dictionary states it.
+		 * 275 and the button's top border is row 280. No dictionary states it because it is a
+		 * constant, `FlyoutBase::FlyoutMargin` (`FlyoutBase_partial.cpp:65`), added in whichever
+		 * direction the flyout opens (`:2622-2640`).
 		 */
 		offset?: number;
 		/** IsOpen. `FlyoutBase` exposes this read-only with `ShowAt`/`Hide`; ADR 0009 maps a

@@ -49,13 +49,15 @@ test('a rail row opens its children in a flyout, at the top level and outside th
 	// two questions of it moves both answers by that margin — 4 on x and 2 on y — and a check
 	// written against the fill cannot tell the two boxes apart.
 	//
-	// **Zero on the x axis, not `Flyout`'s default 4.** Upstream's `Right` mode is flush:
+	// **4 on the x axis.** Upstream's `Right` mode first places the flyout flush,
 	// `*pControlPos = anchorPos + anchorSize` (`FlyoutBase_partial.cpp:386`, reached at
-	// `:457-464`). The -4 on the y axis is the presenter style's `Margin="0,-4,0,0"` on top of
-	// `PreferredJustification::Top`, which is `*pControlPos = anchorPos` (`:99-101`, `:331-333`).
+	// `:457-464`), and then adds `FlyoutMargin`, 4 (`:65`), towards where it opens (`:2622-2640`).
+	// The -4 on the y axis is the presenter style's `Margin="0,-4,0,0"` on top of
+	// `PreferredJustification::Top`, which is `*pControlPos = anchorPos` (`:99-101`, `:331-333`),
+	// and gets no margin, as the flyout does not open upwards.
 	const anchor = (await design.locator('xpath=ancestor::li[1]').boundingBox())!;
 	const presenter = (await page.locator('.presenter:has(.flyout-children)').boundingBox())!;
-	expect(presenter.x - (anchor.x + anchor.width)).toBeCloseTo(0, 0);
+	expect(presenter.x - (anchor.x + anchor.width)).toBeCloseTo(4, 0);
 	expect(presenter.y - anchor.y).toBeCloseTo(-4, 0);
 });
 
