@@ -79,6 +79,8 @@ test('dragging the list scrollbar scrolls it and pulls nothing', async ({ page }
 	// scrollbar and the defect this covers is about *this library's* — an overlay bar that is the
 	// scrolled region's sibling, so a press on it is outside the region.
 	await page.goto('/collections/pulltorefresh');
+	// The bar draws nothing until the pointer is over the list (scroll-indicator.spec.ts).
+	await page.locator('.container').first().hover();
 	await page.waitForSelector(
 		'.container [data-scroll-bar][data-orientation="vertical"] [class*="thumb"]'
 	);
