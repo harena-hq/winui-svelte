@@ -216,6 +216,7 @@
 	<!-- `PipsPagerScrollViewer` (PipsPager.xaml:83): both bars hidden, both modes disabled, and a
 	     maximum size on the scrolling axis is the whole of what makes the strip a window. -->
 	<ScrollView
+		data-scroll-input="scroll-viewer"
 		contentOrientation={orientation}
 		horizontalScrollBarVisibility="hidden"
 		verticalScrollBarVisibility="hidden"

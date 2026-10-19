@@ -52,8 +52,8 @@ function touch(page: Page, x: number, y: number, types: string[]) {
 	);
 }
 
-async function open(page: Page) {
-	await page.goto('/dev/scroll-view');
+async function open(page: Page, path = '/dev/scroll-view') {
+	await page.goto(path);
 	await page.mouse.move(0, 0);
 	// The component counts itself drawn two frames after it mounts; frozen sooner, its frames
 	// would wait on the paused clock and no view change would ever show the bar.
@@ -218,6 +218,82 @@ test('a touch shows the panning indicator, gone half a second later', async ({ p
 	expect(await state(page)).toEqual(TOUCH);
 	await page.clock.runFor(1 + 83);
 	expect(await state(page)).toEqual(NONE);
+});
+
+test('a touch press on a ScrollViewer shows nothing, and a focus inside it still does', async ({
+	page
+}) => {
+	// ScrollViewer's harness, whose first example is the older control, drawn on this one.
+	const { x, y } = await open(page, '/dev/scroll-viewer');
+	await touch(page, x, y, ['pointerdown', 'pointerup']);
+	expect(await state(page)).toEqual(NONE);
+	await page
+		.locator(`${EXAMPLE} .viewport`)
+		.first()
+		.evaluate((element) => element.dispatchEvent(new FocusEvent('focusin', { bubbles: true })));
+	expect(await state(page)).toEqual(TOUCH);
+});
+
+test('a mouse press on a ScrollViewer whose bar faded under it shows nothing', async ({ page }) => {
+	const { x, y } = await open(page, '/dev/scroll-viewer');
+	await page.mouse.move(x, y);
+	await page.clock.runFor(3250 + 83);
+	expect(await state(page)).toEqual(NONE);
+	await page.mouse.down();
+	await page.mouse.up();
+	expect(await state(page)).toEqual(NONE);
+});
+
+test("a press on a ListView's blank space shows nothing, and a focus on an item does", async ({
+	page
+}) => {
+	await page.goto('/motion/parallaxview');
+	await page.mouse.move(0, 0);
+	// Two frames, for the component to count itself drawn, as `open` waits.
+	await page.evaluate(
+		() => new Promise((done) => requestAnimationFrame(() => requestAnimationFrame(done)))
+	);
+	await freeze(page);
+	// The page's ListView overflows, so it draws a vertical bar, and nothing shown is not merely no
+	// bar. Its header is inside the scrolling region and takes no focus, so it is blank space.
+	const root = page.locator('.sample-list [data-scroll-input="scroll-viewer"]');
+	const bar = root.locator('.bar-wrapper.vertical');
+	const header = (await root.locator('.list-header').boundingBox())!;
+	await page.mouse.move(header.x + header.width / 2, header.y + header.height / 2);
+	await page.clock.runFor(3250 + 83);
+	expect(await bar.getAttribute('data-indicator')).toBe('none');
+	// The browser focuses the root on this press; neither the press nor that focus shows the bar.
+	await page.mouse.down();
+	await page.mouse.up();
+	await expect(root).toBeFocused();
+	// Read once, not polled: a polling assertion would pass on the state before any update.
+	expect(await bar.getAttribute('data-indicator')).toBe('none');
+	await root.locator('[role="option"]').first().focus();
+	await expect(bar).toHaveAttribute('data-indicator', 'mouse');
+});
+
+test("GridView and TreeView carry the older ScrollViewer's marker, since each is one upstream", async ({
+	page
+}) => {
+	for (const [path, role] of [
+		['/dev/grid-view', 'listbox'],
+		['/dev/tree-view', 'tree']
+	]) {
+		await page.goto(path);
+		await expect(
+			page.locator(`[role="${role}"][data-scroll-input="scroll-viewer"]`).first()
+		).toBeAttached();
+	}
+});
+
+test("NavigationView's pane carries the older ScrollViewer's marker, since it is one upstream", async ({
+	page
+}) => {
+	await page.goto('/dev/navigation-view');
+	await expect(page.locator('.items-container-grid').first()).toHaveAttribute(
+		'data-scroll-input',
+		'scroll-viewer'
+	);
 });
 
 test('a touch moving over the control does not show the mouse indicator', async ({ page }) => {

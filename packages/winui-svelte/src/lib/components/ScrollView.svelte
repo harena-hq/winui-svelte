@@ -567,6 +567,16 @@
 	// The ids of the touch contacts that went down inside the control and have not ended. Not
 	// reactive state, which is why it is not a SvelteSet: nothing draws from it.
 	let touchContacts: number[] = [];
+	// Whether this instance draws the older ScrollViewer, as ScrollViewer, ListView, GridView,
+	// TreeView, PipsPager and NavigationView's pane do, each marking the root with the attribute
+	// ParallaxView also reads. That control's press shows nothing: ScrollViewer::OnPointerPressed
+	// (ScrollViewer_Partial.cpp:2465-2499) only records the button, where ScrollView's shows the
+	// bars (ScrollView.cpp:645-672). Of the input paths that show the bars, ScrollViewer's focus,
+	// pointer, thumb-drag and offset paths do as this one's do (ScrollViewer_Partial.cpp:2323-2343,
+	// :2617-2712, :5487, :4897-4910), so the press is the one that differs. The release that
+	// follows asks for focus (:2502-2585), which a default ScrollViewer refuses, as its style makes
+	// it no tab stop (ScrollViewer_themeresources.xaml:27).
+	const drawsScrollViewer = $derived(rest['data-scroll-input'] === 'scroll-viewer');
 	// m_isPointerOverVerticalScrollController and its horizontal twin, which hold the bars up. A
 	// thumb drag that leaves the bar holds them as well, as m_keepIndicatorsShowing does while a
 	// bar scrolls with the mouse (ScrollView.cpp:836-902): the thumb captures the pointer, so the
@@ -621,14 +631,14 @@
 		}, OPACITY_CHANGE_MS);
 	}
 
-	// OnScrollViewPointerEntered / Moved / Exited / Pressed (ScrollView.cpp:563-672), OnKeyDown
-	// and OnGotFocus. The first three ignore touch; a press of any kind shows, and so does a
-	// focus. Upstream skips a press something inside has handled (:651-654); `defaultPrevented`
-	// is the nearest reading, and it sees only a handler added natively, because Svelte's own
-	// `onpointerdown` attributes are delegated to the app's root and run after this one. A
-	// disabled control takes no input upstream, so none of these reach it. They are listened for
-	// here rather than written on the root, where a caller's own `onpointer…` in `rest` would
-	// replace them.
+	// OnScrollViewPointerEntered / Moved / Exited / Pressed (ScrollView.cpp:563-672), OnKeyDown and
+	// OnGotFocus. The first three ignore touch; a press of any kind shows unless this draws the
+	// older ScrollViewer (`drawsScrollViewer` above); a focus inside shows either way. Upstream
+	// skips a press something inside has handled (:651-654); `defaultPrevented` is the nearest
+	// reading, and it sees only a handler added natively, because Svelte's own `onpointerdown`
+	// attributes are delegated to the app's root and run after this one. A disabled control takes
+	// no input upstream, so none of these reach it. They are listened for here rather than written
+	// on the root, where a caller's own `onpointer…` in `rest` would replace them.
 	$effect(() => {
 		const root = ref;
 		if (!root) return;
@@ -648,7 +658,7 @@
 		};
 		const onDown = (event: PointerEvent) => {
 			if (event.pointerType === 'touch') touchContacts.push(event.pointerId);
-			if (!disabled && !event.defaultPrevented) showIndicators();
+			if (!disabled && !drawsScrollViewer && !event.defaultPrevented) showIndicators();
 		};
 		const end = (event: PointerEvent) => {
 			const inside = touchContacts.includes(event.pointerId);
@@ -662,8 +672,18 @@
 		const onKey = () => {
 			if (!disabled) preferMouseIndicators = false;
 		};
-		const onFocus = () => {
+		// ListView, GridView and TreeView put their `tabindex="-1"` on this root, so a press on
+		// their blank space gives the root focus. Upstream that press focuses nothing: the list
+		// marks its ScrollViewer `m_templatedParentHandlesMouseButton`
+		// (ListViewBase_Partial.cpp:636), and ScrollViewer::OnPointerPressed returns before the
+		// release can ask for focus (ScrollViewer_Partial.cpp:2483). So that focus is skipped. A
+		// focus given to the list itself upstream goes on to an item (ListViewBase::OnFocusChanged,
+		// ListViewBase_Partial_Interaction.cpp:2919-2963) and shows the bars from there; here a
+		// script's focus on the root shows nothing, as it lands where that press's does.
+		const onFocus = (event: FocusEvent) => {
 			if (disabled) return;
+			if (drawsScrollViewer && event.target === root && root.getAttribute('tabindex') === '-1')
+				return;
 			preferMouseIndicators = lastInputKind === 'mouse' || lastInputKind === 'pen';
 			showIndicators();
 		};

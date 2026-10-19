@@ -107,8 +107,15 @@
 
 <div bind:this={ref} class={['root', className]} {style} {...rest}>
 	<!-- TreeView.xaml:8-28 is one TreeViewList, a ListView subclass. This region is now a
-	     ScrollView with vertical content orientation. -->
-	<ScrollView style="flex: 1 1 auto; min-height: 0" role="tree" tabindex="-1">
+	     ScrollView with vertical content orientation. TreeViewList sets no style key of its own
+	     (TreeViewList.cpp:13), so ListView's template draws it, and that template's region is a
+	     ScrollViewer (generic.xaml:9002), which the attribute records. -->
+	<ScrollView
+		data-scroll-input="scroll-viewer"
+		style="flex: 1 1 auto; min-height: 0"
+		role="tree"
+		tabindex="-1"
+	>
 		{#each rows as row (row.id)}
 			<TreeViewItem
 				depth={row.depth}

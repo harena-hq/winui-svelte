@@ -840,8 +840,11 @@
 					<div class="toggle-button-row" aria-hidden="true"></div>
 				{/if}
 
-				<!-- This pane region is now a ScrollView; horizontal scrolling remains disabled. -->
+				<!-- This pane region is now a ScrollView; horizontal scrolling remains disabled.
+				     Upstream's is the older ScrollViewer, `MenuItemsScrollViewer`
+				     (NavigationView.xaml:363), which is what the attribute records. -->
 				<ScrollView
+					data-scroll-input="scroll-viewer"
 					class="items-container-grid"
 					style="flex: 1 1 auto; min-height: 0"
 					horizontalScrollMode="disabled"
