@@ -210,10 +210,18 @@ test('a lost capture completes the drag, as a release would', async ({ page }) =
 			(window as unknown as { pointer: number }).pointer = event.pointerId;
 		})
 	);
-	await press(page, 'starts-off', [4, 4, 4, 2]);
+	const { x, y } = await press(page, 'starts-off', [4, 4, 4, 2]);
 	await page.locator('#starts-off .body').evaluate((label) => {
 		label.releasePointerCapture((window as unknown as { pointer: number }).pointer);
 	});
+	// Releasing the capture only marks it pending; `lostpointercapture` fires when the browser
+	// next processes it, which the Pointer Events spec places before the next pointer event, and
+	// Chromium left it undelivered past three seconds in 6 of 30 probes with nothing following.
+	// A move straight down, which moves no knob, is that next event: the drag adds only
+	// horizontal change, and the press has already left the tap's tolerance. The drag still ends
+	// by the lost capture: `pointermove` does not end it, and the button is released only after
+	// the checks below.
+	await page.mouse.move(x, y + 1);
 	await expect(root(page, 'starts-off')).not.toHaveAttribute('data-dragging');
 	await expect(root(page, 'starts-off')).toHaveAttribute('data-checked', 'true');
 	await page.mouse.up();
