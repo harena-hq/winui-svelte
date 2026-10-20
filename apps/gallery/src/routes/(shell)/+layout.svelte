@@ -55,7 +55,12 @@
 			return;
 		}
 		openedContainer = null;
-		void goto(resolve(id === 'settings' ? '/settings' : (id as `/${string}`)));
+		const path = (id === 'settings' ? '/settings' : id) as `/${string}`;
+		const record = { path: resolve(path) };
+		invoked = record;
+		void goto(resolve(path)).finally(() => {
+			if (invoked === record) invoked = null;
+		});
 	}
 
 	// The pane's open set, kept in place across navigations. Seeding with the ancestors
@@ -77,10 +82,31 @@
 	//
 	// The `includes` guard stays, but it is now only a needless write avoided rather
 	// than the thing that stops a loop.
+	//
+	// A navigation the pane asked for is not seeded either. `go` is reached only from
+	// a row's invoke, and the row invoked was on screen, so its ancestors are open
+	// already, except in a rail's flyout: there the control collapses the flyout's row
+	// after reporting the invoke (`CloseFlyoutIfRequired`,
+	// NavigationView.cpp:1065-1068), and seeding once the navigation landed opened the
+	// row, and the flyout with it, again. The original seeds too
+	// (`EnsureNavigationSelection`, ItemPage.xaml.cs:79), but inside the invoke: the
+	// selection change navigates (MainWindow.xaml.cs:400), `Frame.Navigate` calls
+	// `OnNavigatedTo` before it returns (Frame_Partial.cpp:660), and the page's `await`
+	// finds the data loaded at start (App.xaml.cs:108,
+	// ControlInfoDataSource.cs:87-90), so it runs before the collapse.
+	//
+	// The record names the resolved path, which is what `page.url` holds. It is kept for
+	// the page already shown too, because `goto` to it still lands and wakes this effect
+	// with a new `URL`. Each invoke has its own record, so an earlier invoke's navigation,
+	// superseded or failed, clears only the record it made.
 	let expandedItems = $state<string[]>([]);
+	let invoked: { path: string } | null = null;
 	$effect(() => {
 		const path = page.url.pathname;
 		untrack(() => {
+			const asked = invoked;
+			invoked = null;
+			if (path === asked?.path) return;
 			const add = ancestorsOf(path).filter((id) => !expandedItems.includes(id));
 			if (add.length > 0) expandedItems = [...expandedItems, ...add];
 		});
