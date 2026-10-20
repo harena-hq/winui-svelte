@@ -91,6 +91,7 @@
 </div>
 
 <h2 class="winui-SubtitleTextBlockStyle">open</h2>
+<div class="clearance"></div>
 <div class="row">
 	<ComboBox items={colours} placeholder="Pick a colour" bind:value={openSelection} bind:open />
 </div>
@@ -103,6 +104,7 @@
 </div>
 
 <h2 class="winui-SubtitleTextBlockStyle">an item template, open</h2>
+<div class="clearance"></div>
 <div class="row">
 	<ComboBox
 		items={swatches}
@@ -128,15 +130,19 @@
 </div>
 
 <style>
-	/* Two rows hold an open popup in the snapshot, and each needs 220 of clearance under it for a
-	   different reason. Under the templated one, without room below it Floating UI flips the popup
-	   upward over the row above and hides that row from the baseline; the same spacer keeps that
-	   popup off the disabled row placed after it. Under the `open` row, the popup does not flip —
-	   it opens downward across the two rows that follow, and measured before this spacer it covered
-	   the `an item template` heading and the whole of its trigger, which is the one row that shows
-	   a template reaching the trigger. */
+	/* Two rows hold an open popup in the snapshot. A non-editable list opens over its box, with
+	   the middle item on it when nothing is selected, so it reaches above the box as well as
+	   below it: two items above for the `open` row's four, one for the templated row's three,
+	   and one item below for both. The clearance between each heading and its row is what
+	   keeps the list off the row above, which it would otherwise cover; measured before it, the
+	   `open` row's list covered its own heading and the disabled row's trigger, and its top edge
+	   lay on that trigger's fill. The tail under each keeps the list's last item off the row
+	   that follows. */
+	.clearance {
+		height: 96px;
+	}
 	.tail {
-		height: 220px;
+		height: 64px;
 	}
 
 	.row {

@@ -690,9 +690,9 @@ test("the ComboBox dropdown's fill stops at the inner border edge", async ({ pag
 		// The mechanism. 999 is chosen against the single popup layer C13 gates — one value,
 		// 1000, declared in `Popup.svelte`'s `.root` rule with nothing above it — so this lands
 		// between the page and the popup, which is where the thing a translucent stroke shows
-		// through has to be. `.popup` is `position: static`, so its own `z-index` paints
-		// nothing and bits-ui mirrors the value onto the wrapper it positions; the comment
-		// above that declaration in `ComboBox.svelte` carries the whole of it.
+		// through has to be. This list is a non-editable one, which `ComboBox.svelte` fixes in
+		// the viewport, so its own `z-index` is the one in force; the comment above that
+		// declaration carries the editable list's case as well.
 		const backdrop = await page.addStyleTag({
 			content: `body::before { content: ''; position: fixed; inset: 0; background: #ff0000; z-index: 999; }`
 		});

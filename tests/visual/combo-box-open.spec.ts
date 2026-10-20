@@ -137,16 +137,23 @@ test('a press on a trigger the keyboard focused keeps the list shut and the Pill
 	await expect(trigger).toHaveAttribute('aria-expanded', 'true');
 });
 
-test('a press on the trigger while the list is open still closes it', async ({ page }) => {
+test('a press where the trigger is, while the list is open, chooses the item laid over it', async ({
+	page
+}) => {
+	// The list opens over the box with its middle item on it when nothing is selected
+	// (`GetNonPannablePopupLayout`, ComboBox_Partial.cpp:4767-4911), so the open list, and not
+	// the trigger, is what a second press lands on. This row's four colours put Blue there.
 	const { trigger, x, y } = await firstTrigger(page);
 	await page.mouse.move(x, y);
 	await page.mouse.down();
 	await page.mouse.up();
 	await expect(trigger).toHaveAttribute('aria-expanded', 'true');
 	await page.mouse.down();
-	await expect(trigger).toHaveAttribute('aria-expanded', 'false');
+	expect(await pressed(trigger), 'the press reached the trigger under the list').toBe(false);
+	await expect(trigger).toHaveAttribute('aria-expanded', 'true');
 	await page.mouse.up();
 	await expect(trigger).toHaveAttribute('aria-expanded', 'false');
+	await expect(trigger).toContainText('Blue');
 });
 
 test('Pressed is the pointer flag, and it ends when the press leaves the control', async ({

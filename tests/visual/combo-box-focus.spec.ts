@@ -367,13 +367,20 @@ test('a pointer lights nothing and a key lights it', async ({ page }) => {
 	expect(await highlightOf(trigger), 'a click on the trigger drew a focus visual').toBe(null);
 	expect(await pillShown(trigger), 'a click on the trigger raised the pill').toBe(false);
 
-	// A second click closes it and leaves focus where it was, which is the only way to reach
+	// A click on an item closes it and leaves focus where it was, which is the only way to reach
 	// pointer-focused-and-closed on this control short of holding the button down: every click
-	// opens the drop-down, and while that is open `FocusedDropDown` hides both visuals whatever
-	// acquired focus. Without this step nothing here separates `:focus` from `:focus-visible` —
-	// the open list hides the difference, and a rule keyed on the wrong one passes.
-	await trigger.click();
+	// on the trigger opens the drop-down — which then lies over the trigger, so there is no
+	// second click on it to close it — and while that is open `FocusedDropDown` hides both
+	// visuals whatever acquired focus. Without this step nothing here separates `:focus` from
+	// `:focus-visible` — the open list hides the difference, and a rule keyed on the wrong one
+	// passes.
+	// The route holds two other lists open, the `open` row's with the same colours. The one
+	// this click opened holds the row the trigger names as its active descendant.
+	const active = await trigger.getAttribute('aria-activedescendant');
+	const list = page.locator('.select-popup').filter({ has: page.locator(`[id="${active}"]`) });
+	await list.getByRole('option', { name: 'Green' }).click();
 	await expect(trigger).toHaveAttribute('aria-expanded', 'false');
+	await expect(trigger).toBeFocused();
 	expect(await trigger.evaluate((el) => el.matches(':focus-visible'))).toBe(false);
 	expect(await highlightOf(trigger), 'a pointer-focused closed trigger drew a visual').toBe(null);
 	expect(await pillShown(trigger), 'a pointer-focused closed trigger raised the pill').toBe(false);

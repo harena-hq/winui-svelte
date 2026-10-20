@@ -2436,3 +2436,22 @@ changes`.
   was read from the sources and not seen.
 - **Would reconsider if**: upstream's flash is measured on a touch screen and found to differ
   from the sources' reading, or a consumer asks for upstream's behaviour.
+
+### WD-105 — a touch opens a long ComboBox list as a pointer does, not as a carousel
+
+- **Control**: `ComboBox`, non-editable, when the list pans: more than nine items, or more
+  than the window or `MaxDropDownHeight` holds.
+- **WinUI does**: open such a list as a carousel when a touch opened it. `ArrangePopup` zeroes
+  the content margin and asks `GetPannablePopupLayout` for the list's place when the list pans
+  and the input that opened it was a touch (`ComboBox_Partial.cpp:5363-5377`); that layout
+  (`:4976`) places a list whose items sit on a `CarouselPanel`. A pointer or a key takes
+  `GetNonPannablePopupLayout` (`:4767-4911`) whatever the list's length.
+- **We do**: take `GetNonPannablePopupLayout` for every input. A touch opens a long list
+  exactly as a mouse does: the selected item on the box, at most nine items shown, the list
+  scrolled to the first of them, and scrolling that stops at either end.
+- **Why accepted**: the carousel is a panel of its own, with its own realization and layout,
+  and a short list takes the pointer's layout upstream under a touch too; the two
+  non-editable lists on the Gallery's ComboBox page hold four items and five. The guest takes
+  no touch input, so the carousel was read from the sources and not seen.
+- **Would reconsider if**: a consumer's long list is used mostly by touch, or the carousel is
+  measured on a touch screen.
