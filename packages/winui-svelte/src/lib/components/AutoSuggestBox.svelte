@@ -271,10 +271,10 @@
 					<!-- `wrapperProps` is the outer wrapper Floating UI positions; pass it
 					     through first, untouched. The popup's own border, background and
 					     corner live on `props` and reach the `<div>` this control writes.
-					     The same shape ComboBox uses; see its `<Select.Content>` — including the
-					     type ramp class on the popup, which a portalled element has to carry
-					     itself because CSS inheritance follows the DOM and the portal moves
-					     it out of the root. -->
+					     The same shape ComboBox's editable list uses; see its
+					     `<Combobox.Content>` — including the type ramp class on the popup,
+					     which a portalled element has to carry itself because CSS inheritance
+					     follows the DOM and the portal moves it out of the root. -->
 					<div {...wrapperProps}>
 						<div
 							{...props}

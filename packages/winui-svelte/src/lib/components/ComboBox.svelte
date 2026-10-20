@@ -76,6 +76,7 @@
 	import { Combobox, Select } from 'bits-ui';
 	import { onMount, tick, untrack } from 'svelte';
 	import { controlName, nameSource } from '../internal/accessible-name';
+	import { placeDropDown } from '../internal/combo-box-placement';
 
 	let {
 		items = [],
@@ -479,9 +480,14 @@
 	// :3236), so a press dragged off and back does not open. bits-ui 2.19's trigger opens on
 	// a mouse or pen `pointerdown` instead, so the press is held back here and replayed into
 	// bits-ui's own handler on the release, which opens from the same code path. Touch is
-	// bits-ui's `pointerup` already, and a press while the list is open still reaches bits-ui,
-	// which closes it. The `ctrlKey` gate is bits-ui's (`select.svelte.js:747-749`), kept so a
-	// Ctrl-click does here what it did before; upstream has no such condition.
+	// bits-ui's `pointerup` already. A press while the non-editable list is open does not
+	// normally reach the trigger: the list lies over the box, so the press lands on the list,
+	// and on the item laid on the box wherever that item covers it, which it chooses as
+	// upstream's does. A box taller than that item can leave a strip of itself uncovered; a
+	// mouse or pen press there is refused by `presses`, and bits-ui's handler closes the list
+	// for a left press without Ctrl. That `ctrlKey` gate is bits-ui's
+	// (`select.svelte.js:747-749`), kept so a Ctrl-click does here what it did before; upstream
+	// has no such condition.
 	//
 	// The same flag is what draws `Pressed`, as `m_bIsPressed` is upstream: once `Disabled`
 	// and the inline `Highlighted` are ruled out, `CommonStates` picks `Pressed` on it alone
@@ -515,6 +521,44 @@
 		props.onpointerup?.(event);
 		if (pressed && event.pointerType !== 'touch' && presses(event)) props.onpointerdown?.(event);
 		pressed = false;
+	}
+
+	// The non-editable list, placed over the box by `placeDropDown`, upstream's `ArrangePopup`,
+	// and scrolled to the first item shown, as upstream sets that offset while it centres the
+	// selection (ComboBox_Partial.cpp:5533-5545). A resize places it again. A scroll of anything
+	// under it moves it with the box and lays nothing out again, so the items on the box stay
+	// the ones that were; upstream arranges the popup on its own layout passes, not on an
+	// ancestor's scroll, and following the box at all is this port's, as the floating layer it
+	// replaced followed it. Items that change while it is open are laid out again on the next
+	// resize, with the item at the index the selection had at open laid on the box, or the
+	// middle item when there was none or that index has gone.
+	function dropDown(popup: HTMLElement) {
+		const list = popup.querySelector<HTMLElement>('.list');
+		const box = untrack(() => ref);
+		if (!list || !box) return;
+		const selected = untrack(() => selectedIndex);
+		let anchor = box.getBoundingClientRect();
+		const place = () => {
+			const offset = placeDropDown(popup, box, list, selected);
+			const items = list.children;
+			if (list.scrollHeight > list.clientHeight && items[offset] instanceof HTMLElement)
+				list.scrollTop = items[offset].offsetTop - (items[0] as HTMLElement).offsetTop;
+			anchor = box.getBoundingClientRect();
+		};
+		place();
+		const follow = (event: Event) => {
+			if (event.target instanceof Node && popup.contains(event.target)) return;
+			const rect = box.getBoundingClientRect();
+			popup.style.top = `${parseFloat(popup.style.top) + rect.top - anchor.top}px`;
+			popup.style.left = `${parseFloat(popup.style.left) + rect.left - anchor.left}px`;
+			anchor = rect;
+		};
+		window.addEventListener('scroll', follow, true);
+		window.addEventListener('resize', place);
+		return () => {
+			window.removeEventListener('scroll', follow, true);
+			window.removeEventListener('resize', place);
+		};
 	}
 
 	// `bits-ui`'s Select uses a `value` typed as `string | undefined` upstream and the
@@ -760,52 +804,53 @@
 				{/snippet}
 			</Select.Trigger>
 			<Select.Portal>
-				<Select.Content>
-					{#snippet child({ props, wrapperProps })}
-						<!-- `wrapperProps` is the outer wrapper Floating UI positions; pass it through
-					     first, untouched. The popup's own border, background and corner live on
-					     `props` and reach the `<div>` this control writes.
+				<!-- The static content: no floating layer, as `dropDown` places the list itself, over
+				     the box rather than beside it.
 
-					     The popup carries the type ramp class again because it is not inside
-					     the root: the portal moves it to `<body>`, and CSS inheritance follows
-					     the DOM. Upstream has no such break — the popup is part of the
-					     ComboBox's template, so `FontFamily` and `FontSize` reach it by
-					     property inheritance from `DefaultComboBoxStyle`. Without the class
-					     here the rows render in the document's own font. -->
-						<div {...wrapperProps}>
-							<div {...props} class={['popup', 'winui-BodyTextBlockStyle']}>
-								<Select.Viewport>
-									{#snippet child({ props })}
-										<div {...props} class="list">
-											{#each items as item, index (item.value)}
-												<Select.Item
-													value={item.value}
-													label={item.label}
-													disabled={item.disabled ?? false}
-												>
-													{#snippet child({ props })}
-														<!-- The `data-selected` and `data-highlighted` bits-ui writes
+				     The popup carries the type ramp class again because it is not inside the root:
+				     the portal moves it to `<body>`, and CSS inheritance follows the DOM. Upstream
+				     has no such break — the popup is part of the ComboBox's template, so
+				     `FontFamily` and `FontSize` reach it by property inheritance from
+				     `DefaultComboBoxStyle`. Without the class here the rows render in the
+				     document's own font. -->
+				<Select.ContentStatic>
+					{#snippet child({ props })}
+						<div
+							{...props}
+							class={['popup', 'select-popup', 'winui-BodyTextBlockStyle']}
+							{@attach dropDown}
+						>
+							<Select.Viewport>
+								{#snippet child({ props })}
+									<div {...props} class="list">
+										{#each items as item, index (item.value)}
+											<Select.Item
+												value={item.value}
+												label={item.label}
+												disabled={item.disabled ?? false}
+											>
+												{#snippet child({ props })}
+													<!-- The `data-selected` and `data-highlighted` bits-ui writes
 													     are the conditions the CSS keys off; the snippet only
 													     adds the element and the class. -->
-														<div {...props} class="item">
-															<span class="pill" aria-hidden="true"></span>
-															<span class="item-content">
-																{#if itemTemplate}{@render itemTemplate(
-																		item,
-																		index
-																	)}{:else}{item.label}{/if}
-															</span>
-														</div>
-													{/snippet}
-												</Select.Item>
-											{/each}
-										</div>
-									{/snippet}
-								</Select.Viewport>
-							</div>
+													<div {...props} class="item">
+														<span class="pill" aria-hidden="true"></span>
+														<span class="item-content">
+															{#if itemTemplate}{@render itemTemplate(
+																	item,
+																	index
+																)}{:else}{item.label}{/if}
+														</span>
+													</div>
+												{/snippet}
+											</Select.Item>
+										{/each}
+									</div>
+								{/snippet}
+							</Select.Viewport>
 						</div>
 					{/snippet}
-				</Select.Content>
+				</Select.ContentStatic>
 			</Select.Portal>
 		</Select.Root>
 		{#if description !== undefined}
@@ -1060,10 +1105,13 @@
 	/* The popup: the `PopupBorder` Border at :590 carries `Background`, `BorderBrush`,
 	   `BorderThickness`, `Padding` and `CornerRadius` from the popup's own resources.
 	   The `Margin="0,-0.5,0,-1"` upstream is a half-pixel nudge for XAML's popup
-	   placement and is not reproduced here: bits-ui positions the content with Floating UI
-	   and a negative fractional margin against a different positioner is noise, not
-	   fidelity. `OverlayCornerRadius` is the popup's own corner — distinct from the
-	   trigger's `ControlCornerRadius`.
+	   placement and is not reproduced here. `placeDropDown` puts the non-editable list's
+	   border at the rounded offset, which is where the reference draws it: on the Gallery
+	   page's two non-editable samples its border lies 80 pixels above the box, the rounded
+	   offset for its 37-pixel items. The editable list is positioned by Floating UI, and a
+	   negative fractional margin against a different positioner is noise, not fidelity.
+	   `OverlayCornerRadius` is the popup's own corner — distinct from the trigger's
+	   `ControlCornerRadius`.
 
 	   It also carries `BackgroundSizing="InnerBorderEdge"` in the attribute list, so the
 	   fill's clip is read off the template rather than argued from the property's default
@@ -1090,17 +1138,22 @@
 	   `min-width` is the one thing the popup takes from outside its own resources. The
 	   `ScrollViewer` at :591 binds `MinWidth` to `TemplateSettings.DropDownContentMinWidth`,
 	   which WinUI computes as the ComboBox's own width — so upstream's dropdown is never
-	   narrower than the control it drops from. bits-ui publishes the trigger's measured
-	   width on the content as `--bits-floating-anchor-width`, and `max()` against
+	   narrower than the control it drops from. `placeDropDown` publishes the box's measured
+	   width on the non-editable list as `--combo-box-width`, and bits-ui the editable
+	   one's on its content as `--bits-floating-anchor-width`; `max()` against
 	   `ComboBoxPopupThemeMinWidth` keeps the 80 the source states as the floor for a
 	   control narrower than that. Without this the popup shrinks to its longest item and
 	   the control looks nothing like the original. */
 	.popup {
 		/* The popup layer. `Popup.svelte`'s `.root` rule carries the whole reason; the short
-		   version is that this element is static, so the declaration paints nothing here and
-		   is read by the primitive, which mirrors it onto the wrapper it positions. */
+		   version is that the editable list is static, so the declaration paints nothing there
+		   and is read by the primitive, which mirrors it onto the wrapper it positions. The
+		   non-editable list is fixed, below, and the declaration applies to it directly. */
 		z-index: 1000;
-		min-width: max(var(--bits-floating-anchor-width), var(--winui-ComboBoxPopupThemeMinWidth));
+		min-width: max(
+			var(--combo-box-width, var(--bits-floating-anchor-width)),
+			var(--winui-ComboBoxPopupThemeMinWidth)
+		);
 		background: var(--winui-ComboBoxDropDownBackground) padding-box;
 		border-style: solid;
 		border-width: var(--winui-ComboBoxDropdownBorderThickness);
@@ -1108,6 +1161,17 @@
 		padding: var(--winui-ComboBoxDropdownBorderPadding);
 		border-radius: var(--winui-OverlayCornerRadius);
 		color: var(--winui-ComboBoxDropDownForeground);
+	}
+
+	/* `placeDropDown` writes the top, the left and the limits in the viewport's coordinates, as
+	   upstream's popup is laid out in the window's rather than in its ComboBox's. */
+	.select-popup {
+		position: fixed;
+		/* Shown once placed: `placeDropDown` makes it visible, and a list it could not place
+		   would otherwise draw at the end of the body. A box with no size leaves the list open
+		   and unseen until a window resize places it; with no trigger nothing places it. Either
+		   way a key or a press outside closes it. */
+		visibility: hidden;
 	}
 
 	/* The list: the `ScrollViewer` at :591 carries `Foreground` for the items, and the
