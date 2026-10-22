@@ -688,9 +688,9 @@ test('a pressed selected row shrinks its pill over the storyboard and releases a
 	// so the scale is back at 1 in the frame the press ends. The states a press can be left
 	// for are `Selected` and, with the pointer still on the row, `SelectedPointerOver` — a release
 	// on this row also selects it and closes the list, so the two are read before the press — and
-	// the pill declares no transition in either. The primitive highlights the selected row when the list opens and keeps the
-	// highlight until another row takes it, so reaching plain `Selected` means moving the pointer
-	// over a different row first.
+	// the pill declares no transition in either. The selected row opens laid on the box, under the
+	// pointer that opened it, so reaching plain `Selected` means moving the pointer over a
+	// different row first.
 	const other = page.locator(
 		'[data-select-content]:not([data-already-open]) .item:not([data-selected]):not([data-disabled])'
 	);
