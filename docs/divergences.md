@@ -2455,3 +2455,29 @@ changes`.
   no touch input, so the carousel was read from the sources and not seen.
 - **Would reconsider if**: a consumer's long list is used mostly by touch, or the carousel is
   measured on a touch screen.
+
+### WD-106 — an open ComboBox list draws the first enabled row in view as the one focused
+
+- **Control**: `ComboBox`, non-editable, while its list is open, when nothing is selected and
+  the list opens scrolled past its first row or the first row is disabled, or when the
+  selected item is disabled.
+- **WinUI does**: give focus, and with it the Selected look, to the selected row, or to the
+  first row when there is none, wherever it is: `OnOpen` focuses the selected index, or with
+  nothing selected asks `OverrideSelectedIndexForVisualStates(0)` and focuses row 0 without
+  bringing it into view (`ComboBox_Partial.cpp:1716-1741`). A row out of view draws its look
+  out of view, and a disabled row draws `Disabled` whether it appears selected or not
+  (`ComboBoxItem_Partial.cpp:447-453`), so in these cases no visible row is drawn as selected
+  until an arrow moves focus, from that row.
+- **We do**: give it to the row bits-ui first highlights, which is the selected row when
+  that is enabled, and otherwise the first enabled row wholly in view (`select.svelte.js`
+  in bits-ui 2.19, `:218-233`, `:128-131` with `:101-106`, and `:107-127`), so in these cases
+  the first enabled row in view draws the look, and the arrows move from it. Moving the
+  highlight to upstream's row afterwards would scroll the list to it, as the primitive brings
+  every highlight change into view once its content is placed.
+- **Why accepted**: the highlight is the row the primitive's keys move from and Enter
+  chooses, and the drawn row agrees with it. A list scrolls only when it holds more rows than
+  it shows, and then opens scrolled in some windows and not others: the twelve-row list on
+  `/dev/combo-box-placement`, with nothing selected, opens at its top in a 1600 by 900 window
+  and 111 pixels down in a 1280 by 720 one. The two non-editable lists on the Gallery's
+  ComboBox page hold four rows and five, and no disabled one.
+- **Would reconsider if**: the primitive can take a highlight without scrolling to it.

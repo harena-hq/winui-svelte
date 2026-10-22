@@ -55,8 +55,8 @@ test('an item’s pill and label sit one pixel further in than its padding puts 
 
 test('the selected row under the pointer does not darken under its border', async ({ page }) => {
 	const item = await open(page);
-	// The row opens highlighted as well as selected: the primitive highlights the selection on
-	// open, and the row is laid on the box, under the pointer that opened it. That is
+	// The row opens under the pointer as well as selected: it is laid on the box, under the
+	// pointer that opened it, and Chromium enters it there without a move. That is
 	// `SelectedPointerOver`, whose fill and border are both `SubtleFillColorTertiary`.
 	await expect(item).toHaveAttribute('data-highlighted', '');
 	// A row without a border at top or bottom would pass the comparison below as well.

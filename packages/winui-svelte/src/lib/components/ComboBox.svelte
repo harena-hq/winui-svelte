@@ -152,7 +152,8 @@
 	// wrote itself; `shown` is `OverrideSelectedIndexForVisualStates`, the row that draws the
 	// Selected look while the list is open. Typing and arrowing never change the selection —
 	// upstream's default `SelectionChangedTrigger` is `Committed` — so the value moves only in
-	// `commit()` and through an item click.
+	// `commit()` and through an item click. `hovered` serves the non-editable list as well,
+	// which is the other branch; see the comment over its `$effect.pre`.
 	let rootEl = $state<HTMLDivElement | null>(null);
 	let boxEl = $state<HTMLDivElement | null>(null);
 	let popupEl = $state<HTMLDivElement | null>(null);
@@ -523,6 +524,44 @@
 		pressed = false;
 	}
 
+	// `OverrideSelectedIndexForVisualStates` (ComboBox_Partial.cpp:6326) for the non-editable
+	// list: while it is open, the row that draws the Selected look is the row keyboard focus is
+	// on, and the selected row, when that is another, draws as unselected. Opening puts it on the
+	// selection, or on the first row when there is none (`OnOpen`, :1716-1741); the arrows and
+	// type-ahead move it (:2979, :3979), and closing clears it (`OnClose`, :1768). The pointer
+	// does not move it. It draws `PointerOver` on the row under it, the row laid on the box under
+	// a pointer that has not moved since the click included, as the reference does and as
+	// Chromium's `pointerenter` does for a row laid out under a still pointer.
+	//
+	// bits-ui's highlight is the row its keys move from and the row Enter chooses, which is
+	// upstream's focused row, except that it also follows the pointer. Each row's snippet
+	// withholds the `pointermove` handler that makes it follow, and with that the highlight is the
+	// focused row, so `shownValue` follows it through `onHighlight`. It holds the row's value
+	// rather than its index, as the highlight holds the row's node and upstream's override its
+	// container, so rows added or removed while the list is open leave the look on its row.
+	// Neither state attribute bits-ui writes is drawn: its `data-highlighted` is the highlight,
+	// not the row under the pointer, and its `data-selected` is the selection. Its first pick on
+	// opening is the selected row when that is enabled (`select.svelte.js:218-233`, `:128-131`
+	// with `:101-106`), and otherwise the first enabled row wholly in view (`:107-127`), so a list
+	// opened scrolled with nothing selected, a disabled first row and a disabled selection each
+	// give the look to the first enabled row in view, where upstream's stays on its row: WD-106.
+	// The seed below takes the same rows, short of the view, so that no disabled row is drawn as
+	// selected when the primitive finds no row to highlight.
+	let shownValue = $state<string | undefined>(undefined);
+	$effect.pre(() => {
+		const next = open;
+		if (!editable)
+			untrack(() => {
+				const chosen = items[selectedIndex];
+				shownValue = next
+					? chosen && !chosen.disabled
+						? chosen.value
+						: items.find((item) => !item.disabled)?.value
+					: undefined;
+				hovered = -1;
+			});
+	});
+
 	// The non-editable list, placed over the box by `placeDropDown`, upstream's `ArrangePopup`,
 	// and scrolled to the first item shown, as upstream sets that offset while it centres the
 	// selection (ComboBox_Partial.cpp:5533-5545). A resize places it again. A scroll of anything
@@ -828,12 +867,23 @@
 												value={item.value}
 												label={item.label}
 												disabled={item.disabled ?? false}
+												onHighlight={() => (shownValue = item.value)}
 											>
 												{#snippet child({ props })}
-													<!-- The `data-selected` and `data-highlighted` bits-ui writes
-													     are the conditions the CSS keys off; the snippet only
-													     adds the element and the class. -->
-													<div {...props} class="item">
+													<!-- `data-selected` and `data-highlighted` are written over
+													     the primitive's, and its `pointermove` is withheld, as the
+													     comment over the `$effect.pre` on `open` says. -->
+													<div
+														{...props}
+														class="item"
+														data-selected={open && item.value === shownValue ? '' : undefined}
+														data-highlighted={index === hovered ? '' : undefined}
+														onpointerenter={(event) => {
+															if (event.pointerType !== 'touch' && !item.disabled) hovered = index;
+														}}
+														onpointerleave={() => (hovered = -1)}
+														onpointermove={undefined}
+													>
 														<span class="pill" aria-hidden="true"></span>
 														<span class="item-content">
 															{#if itemTemplate}{@render itemTemplate(
@@ -1516,7 +1566,7 @@
 		color: var(--winui-ComboBoxDropDownGlyphForegroundFocusedPressed);
 	}
 
-	/* ----- Items: PointerOver (`data-highlighted` is bits-ui's hover/active key) ----- */
+	/* ----- Items: PointerOver (`data-highlighted` is the row under the pointer) ----- */
 	.item[data-highlighted] {
 		background-color: var(--winui-ComboBoxItemBackgroundPointerOver);
 		border-color: var(--winui-ComboBoxItemBorderBrushPointerOver);
