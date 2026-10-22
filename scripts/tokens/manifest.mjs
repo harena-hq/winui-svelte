@@ -1968,8 +1968,8 @@ export const COMBOBOX_KEYS = {
 	ComboBoxPopupThemeMinWidth: 'ComboBox popup, the floor its width never goes below',
 	ComboBoxDropDownForeground: 'ComboBox popup, the list text colour',
 
-	// The item: its corner radius, its padding, and its eight brushes across the four
-	// `CommonStates` (Normal, PointerOver, Pressed, Disabled) the modern item template
+	// The item: its corner radius, its padding, its border width, and its twelve brushes across
+	// the four `CommonStates` (Normal, PointerOver, Pressed, Disabled) the modern item template
 	// reaches.
 	ComboBoxItemCornerRadius: 'ComboBox item, its corner radius',
 	ComboBoxItemThemePadding: 'ComboBox item, the padding around its text',
@@ -1981,9 +1981,19 @@ export const COMBOBOX_KEYS = {
 	ComboBoxItemForegroundPointerOver: 'ComboBox item text, pointer over',
 	ComboBoxItemForegroundPressed: 'ComboBox item text, pressed',
 	ComboBoxItemForegroundDisabled: 'ComboBox item text, disabled',
+	// The item's border at rest, and its width, are the built-in style's, not this item style's:
+	// `DefaultComboBoxItemStyle` sets neither, so both fall through to the framework's built-in
+	// style, `ComboBoxItemRevealStyle` in its generic.xaml (ComboBox.svelte's comment on the item
+	// has the chain, and the link in it that is not confirmed). The states' borders are this
+	// style's keys, which its visual states set.
+	ComboBoxItemRevealBorderThemeThickness: 'ComboBox item, the border width',
+	ComboBoxItemRevealBorderBrush: 'ComboBox item border, at rest',
+	ComboBoxItemBorderBrushPointerOver: 'ComboBox item border, pointer over',
+	ComboBoxItemBorderBrushPressed: 'ComboBox item border, pressed',
+	ComboBoxItemBorderBrushDisabled: 'ComboBox item border, disabled',
 
 	// The item's `Selected*` variants — the four `Selected*` states override the fill, the
-	// foreground, and the pill's opacity. The four missing siblings
+	// border, the foreground, and the pill's opacity. The three missing siblings
 	// (`ComboBoxItem*SelectedUnfocused`) sit between `Selected` and `SelectedPointerOver`
 	// in the upstream `CommonStates` and are reachable only via a tab navigation that takes
 	// focus off the popup without a pointer over it — out of scope for this unit.
@@ -1996,6 +2006,10 @@ export const COMBOBOX_KEYS = {
 		'ComboBox item, the selected foreground with the pointer over it',
 	ComboBoxItemForegroundSelectedPressed: 'ComboBox item, the selected foreground while pressed',
 	ComboBoxItemForegroundSelectedDisabled: 'ComboBox item text, selected disabled',
+	ComboBoxItemBorderBrushSelected: 'ComboBox item border, selected',
+	ComboBoxItemBorderBrushSelectedPointerOver: 'ComboBox item border, selected pointer over',
+	ComboBoxItemBorderBrushSelectedPressed: 'ComboBox item border, selected pressed',
+	ComboBoxItemBorderBrushSelectedDisabled: 'ComboBox item border, selected disabled',
 
 	// The selection pill: its brush, its two sizes, its corner radius, and the scale the
 	// `SelectedPressed` state animates to and the duration it animates over.

@@ -1186,8 +1186,9 @@
 
 	/* The item: the `LayoutRoot` Grid at :614 carries `Margin="5,2,5,2"`,
 	   `CornerRadius="{TemplateBinding CornerRadius}"` (which the
-	   `DefaultComboBoxItemStyle` sets to `ComboBoxItemCornerRadius`), and `Padding` and
-	   `Background`/`BorderBrush` template-bound to the eight `ComboBoxItem*` brushes.
+	   `DefaultComboBoxItemStyle` sets to `ComboBoxItemCornerRadius`), and `Background`,
+	   `BorderBrush` and `BorderThickness` template-bound; `Padding` reaches the
+	   `ContentPresenter` as its `Margin` (:764), inside the Grid's border.
 	   The `Control.IsTemplateFocusTarget="True"` puts the focus visual on the item. The
 	   `Margin="5,2,5,2"` is on the `LayoutRoot` upstream; here it is on the item div,
 	   which is the visual equivalent for a flex-column list. */
@@ -1201,19 +1202,50 @@
 		   gives the selected row's rounded highlight its floating look. */
 		margin: 2px 5px;
 		padding: var(--winui-ComboBoxItemThemePadding);
+		border: var(--winui-ComboBoxItemRevealBorderThemeThickness) solid
+			var(--winui-ComboBoxItemRevealBorderBrush);
 		border-radius: var(--winui-ComboBoxItemCornerRadius);
-		background: var(--winui-ComboBoxItemBackground);
+		background-color: var(--winui-ComboBoxItemBackground);
+		/* `LayoutRoot` is a Grid and sets no `BackgroundSizing`, so it takes the default,
+		   `InnerBorderEdge`: the fill stops at the border rather than running under it. The
+		   state rules below set `background-color`, because the `background` shorthand would
+		   reset this clip to the border box and double the border's alpha over the fill's. */
+		background-clip: padding-box;
 		color: var(--winui-ComboBoxItemForeground);
 		cursor: pointer;
 	}
 
-	/* No border on an item, and no `ComboBoxItemBorderBrush` anywhere in this component.
-	   `DefaultComboBoxItemStyle` at ComboBox_themeresources.xaml:600 sets `Foreground`,
-	   `Background`, `Padding` and `CornerRadius` and no `BorderThickness`, so the item's
-	   border is the framework default of zero — and the nine `ComboBoxItemBorderBrush*`
-	   keys the dictionary defines are read by nothing, the same shape as the pre-Fluent
-	   `*ThemeBrush` families. A zero-width border with a colour on it is a declaration that
-	   looks like a decision and is not one. */
+	/* The item has a one-pixel border, and it is not this item style's. `LayoutRoot` binds
+	   `BorderThickness` (ComboBox_themeresources.xaml:614), and `DefaultComboBoxItemStyle` (:602)
+	   sets no `BorderThickness` or `BorderBrush`, so both fall to the layer under it: the
+	   framework's built-in style, which `CControl::ApplyBuiltInStyle` applies as its own value
+	   source (`BaseValueSourceBuiltInStyle`, core/elements/Control.cpp:1086) and which a property
+	   reads only when the style gives it nothing (PropertySystem.cpp:1280-1296). The framework's
+	   generic.xaml bases the implicit ComboBoxItem style on `ComboBoxItemRevealStyle`
+	   (dxaml/themes/generic.xaml:20202), whose setters give `BorderThickness` and `BorderBrush`
+	   from `ComboBoxItemRevealBorderThemeThickness`, 1, and `ComboBoxItemRevealBorderBrush`,
+	   `SystemControlTransparentBrush` in every theme (the same file's :17936-17937, :1401, and
+	   :1515, :3477 and :5440 for the three themes). Its padding loses to the item style's. The
+	   tokens are emitted from RevealBrush_themeresources.xaml instead, which gives the same width
+	   (RevealBrush_themeresources.xaml:83) and, outside high contrast,
+	   `SubtleFillColorTransparentBrush` (:182, and :367 for Light): a different key with the same
+	   zero alpha. Not confirmed: that the shipped framework carries that generic.xaml rather than
+	   the WinAppSDK pin's, whose implicit style is based on `DefaultComboBoxItemStyle`
+	   (windows-app-sdk/generic.xaml:15346).
+
+	   The measurement agrees with the chain. On the reference guest's Expander page, the
+	   ExpandDirection list's selected row, under the pointer, fills 33 rows of pixels at a
+	   37-pixel pitch, where the padding and a 19-pixel line make 31 and 35; its pill starts seven
+	   pixels inside the popup's outer edge, one more than the popup's border and the item's
+	   margin; and its label's cap top is eleven pixels below the row's top, which is one for the
+	   border, five for the padding, and the rest the line's own room above its capitals.
+
+	   Every state but `Normal` sets the border's brush to a `ComboBoxItemBorderBrush*` key
+	   (ComboBox_themeresources.xaml:624 and the seven after it). In Light and Dark each is the
+	   state's own fill in every state this component reaches, so a row reads as one block. In
+	   high contrast every one is `SystemControlTransparentBrush` (:128-136), so there the fill
+	   stops a pixel inside the row; no high-contrast reference has been measured to confirm it.
+	   The editable list's items share this rule, as upstream's share the item style. */
 
 	/* The selection indicator, and the focus indicator: **there are two `Pill` Rectangles**
 	   and they share the `ComboBoxItemPill` style. The item's is at :759 and the trigger's
@@ -1242,12 +1274,14 @@
 		background: var(--winui-ComboBoxItemPillFillBrush);
 	}
 
-	/* The item's sits on the left edge of its own box: `:759` carries no `Margin`, and the
-	   item writes no border, so the padding box an absolutely positioned child is offset
-	   from is the border box as well. `Opacity="0"` is transcribed as written here because
-	   the deviation below was taken only where it was measured to cost something, and this
-	   is not that place: seven of these sit in the resting document of this route's own
-	   baseline and none of them moved a pixel. */
+	/* The item's sits on the left edge of the Grid's cell: `:759` carries no `Margin`, and a
+	   Grid lays its children out inside its `BorderThickness`, which is where the padding box
+	   an absolutely positioned child is offset from begins. So `left: 0` puts it one pixel
+	   in from the item's outer edge, as measured, and `top: 50%` centres it in the padding
+	   box, which shares the border box's centre. `Opacity="0"` is transcribed as written
+	   here because the deviation below was taken only where it was measured to cost
+	   something, and this is not that place: seven of these sit in the resting document of
+	   this route's own baseline and none of them moved a pixel. */
 	.item > .pill {
 		left: 0;
 		opacity: 0;
@@ -1484,19 +1518,22 @@
 
 	/* ----- Items: PointerOver (`data-highlighted` is bits-ui's hover/active key) ----- */
 	.item[data-highlighted] {
-		background: var(--winui-ComboBoxItemBackgroundPointerOver);
+		background-color: var(--winui-ComboBoxItemBackgroundPointerOver);
+		border-color: var(--winui-ComboBoxItemBorderBrushPointerOver);
 		color: var(--winui-ComboBoxItemForegroundPointerOver);
 	}
 
 	/* ----- Items: Pressed ----- */
 	.item:active {
-		background: var(--winui-ComboBoxItemBackgroundPressed);
+		background-color: var(--winui-ComboBoxItemBackgroundPressed);
+		border-color: var(--winui-ComboBoxItemBorderBrushPressed);
 		color: var(--winui-ComboBoxItemForegroundPressed);
 	}
 
 	/* ----- Items: Selected ----- */
 	.item[data-selected] {
-		background: var(--winui-ComboBoxItemBackgroundSelected);
+		background-color: var(--winui-ComboBoxItemBackgroundSelected);
+		border-color: var(--winui-ComboBoxItemBorderBrushSelected);
 		color: var(--winui-ComboBoxItemForegroundSelected);
 	}
 
@@ -1506,13 +1543,15 @@
 
 	/* ----- Items: Selected + PointerOver ----- */
 	.item[data-selected][data-highlighted] {
-		background: var(--winui-ComboBoxItemBackgroundSelectedPointerOver);
+		background-color: var(--winui-ComboBoxItemBackgroundSelectedPointerOver);
+		border-color: var(--winui-ComboBoxItemBorderBrushSelectedPointerOver);
 		color: var(--winui-ComboBoxItemForegroundSelectedPointerOver);
 	}
 
 	/* ----- Items: Selected + Pressed ----- */
 	.item[data-selected]:active {
-		background: var(--winui-ComboBoxItemBackgroundSelectedPressed);
+		background-color: var(--winui-ComboBoxItemBackgroundSelectedPressed);
+		border-color: var(--winui-ComboBoxItemBorderBrushSelectedPressed);
 		color: var(--winui-ComboBoxItemForegroundSelectedPressed);
 	}
 
@@ -1543,14 +1582,16 @@
 
 	/* ----- Items: Disabled ----- */
 	.item[data-disabled] {
-		background: var(--winui-ComboBoxItemBackgroundDisabled);
+		background-color: var(--winui-ComboBoxItemBackgroundDisabled);
+		border-color: var(--winui-ComboBoxItemBorderBrushDisabled);
 		color: var(--winui-ComboBoxItemForegroundDisabled);
 		cursor: default;
 	}
 
 	/* ----- Items: Selected + Disabled ----- */
 	.item[data-selected][data-disabled] {
-		background: var(--winui-ComboBoxItemBackgroundSelectedDisabled);
+		background-color: var(--winui-ComboBoxItemBackgroundSelectedDisabled);
+		border-color: var(--winui-ComboBoxItemBorderBrushSelectedDisabled);
 		color: var(--winui-ComboBoxItemForegroundSelectedDisabled);
 	}
 

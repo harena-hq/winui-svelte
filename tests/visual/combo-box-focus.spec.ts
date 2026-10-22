@@ -583,7 +583,7 @@ test('the open drop-down ends the focus state, so neither visual is drawn', asyn
 	expect(await pillShown(trigger), 'the pill did not come back').toBe(true);
 });
 
-test('the item’s pill sits on its own left edge and only the selected row shows one', async ({
+test('the item’s pill sits just inside its border and only the selected row shows one', async ({
 	page
 }) => {
 	await page.goto(ROUTE);
@@ -628,16 +628,17 @@ test('the item’s pill sits on its own left edge and only the selected row show
 		const pill = (await item.locator('> .pill').boundingBox())!;
 		expect(`${pill.width}px`, `item ${index} pill width`).toBe(tokens.width);
 		expect(`${pill.height}px`, `item ${index} pill height`).toBe(tokens.height);
-		// `:759` carries no `Margin`, and the item writes no border, so nought is the whole of
-		// the offset. This is the assertion the child combinator in the rule needs: if the
-		// primitive ever interposes a wrapper, `left` falls back to `auto` and the pill takes a
-		// static position at the content edge, which every other test here would let through.
-		expect(pill.x - box.x, `item ${index} pill inset`).toBe(0);
+		// `:759` carries no `Margin`, so the item's one-pixel border is the whole of the offset
+		// (ComboBox.svelte's comment on the item has the measurement). This is the assertion
+		// the child combinator in the rule needs: if the primitive ever interposes a wrapper,
+		// `left` falls back to `auto` and the pill takes a static position at the content edge,
+		// which every other test here would let through.
+		expect(pill.x - box.x, `item ${index} pill inset`).toBe(1);
 		// And the label does not move for it. Upstream's Pill and ContentPresenter share one
-		// cell, so the text sits at the item's own padding whether the row is selected or not;
-		// this repro inset it by four more until 2026-09-24.
+		// cell, so the text sits at the item's own padding, inside its border, whether the row
+		// is selected or not; this repro inset it by four more until 2026-09-24.
 		const label = (await item.locator('> .item-content').boundingBox())!;
-		expect(label.x - box.x, `item ${index} label inset`).toBe(padding);
+		expect(label.x - box.x, `item ${index} label inset`).toBe(padding + 1);
 		if (
 			await item
 				.locator('> .pill')
