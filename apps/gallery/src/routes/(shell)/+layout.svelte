@@ -3,7 +3,13 @@
 	import { afterNavigate, goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import { resolve } from '$app/paths';
-	import { AutoSuggestBox, NavigationView, ScrollView, TitleBar } from 'winui-svelte/preview';
+	import {
+		AutoSuggestBox,
+		NavigationView,
+		ScrollView,
+		TitleBar,
+		type NavigationViewDisplayMode
+	} from 'winui-svelte/preview';
 	import {
 		QUERY_GLYPH,
 		ancestorsOf,
@@ -26,7 +32,11 @@
 	function chooseSuggestion(suggestion: string) {
 		const path = pathOfSuggestion(suggestion);
 		if (path === null) return;
-		void goto(resolve(path as `/${string}`));
+		const record = { path: resolve(path as `/${string}`) };
+		searched = record;
+		void goto(resolve(path as `/${string}`)).finally(() => {
+			if (searched === record) searched = null;
+		});
 	}
 
 	// `selected` is the row the pane highlights; derived from the URL, so the back and
@@ -99,15 +109,57 @@
 	// the page already shown too, because `goto` to it still lands and wakes this effect
 	// with a new `URL`. Each invoke has its own record, so an earlier invoke's navigation,
 	// superseded or failed, clears only the record it made.
+	//
+	// In the rail the top-level ancestor is not seeded, except after a search. Measured on the
+	// reference guest with the pane shut into its rail: a page opened from a Home card leaves
+	// its section's row shut, with no flyout drawn; one click on the row opens the flyout, and
+	// opening the pane shows the section collapsed. A page chosen from the search box's
+	// suggestions instead opens the section's flyout and leaves it open, its page selected.
+	// The Home card's page sets `IsExpanded` on the row and then selects
+	// (`EnsureNavigationSelection`, MainWindow.xaml.cs:192). The search runs that too, once its
+	// selection has navigated, but first expands the row, lays the pane out and selects on its
+	// own (`EnsureItemIsVisibleInNavigation`, MainWindow.xaml.cs:521-525). In a rail an
+	// expanded row shows its flyout (`ShowHideChildren`, NavigationViewItem.cpp:805-824) and a
+	// closing flyout collapses its row (`OnFlyoutClosing`, NavigationViewItem.cpp:944-947).
+	// What closes the Home card's flyout was not found, and no flyout was seen. Searched: the
+	// literal `IsExpanded(false)` writes. Those at NavigationView.cpp:385 and :920 and at
+	// NavigationViewItem.cpp:855 are not reached on this path; the one at
+	// NavigationViewItem.cpp:946 runs when a flyout closes, which is the question. The page
+	// focusing itself once loaded (Pages/ItemPage.xaml.cs:44) could dismiss a flyout just
+	// opened, and is not examined; the search's page focuses itself too and its flyout stays,
+	// which weighs against it.
+	//
+	// Seeded in the rail, a deep link left the row expanded with no flyout drawn, so the first
+	// click shut a flyout nobody saw. Rows below the top level are seeded as before: the
+	// original expands them too (MainWindow.xaml.cs:206), and they show when the flyout opens.
+	// No row below the top level of this menu has children of its own, so nothing reaches that
+	// branch today (data/winui-gallery-shell.json nests one level). A shut minimal pane is not
+	// a rail, so its section is seeded and shows when the pane opens. `searched` is kept as
+	// `invoked` is: one record per search, cleared by this effect or by its own `goto`.
+	//
+	// On a deep link this reads the rail only because two things run before it: the size
+	// binding reads the control's width synchronously in the mount flush, so its first mode is
+	// measured rather than guessed, and the control's effects, which report that mode and shut
+	// the pane, run before this one in Svelte's child-first order. Were either otherwise, the
+	// control's expansion memory would collapse the seeded row and put it back when the pane
+	// opens; the deep-link test opens the pane to catch that. `displayMode` is read only here,
+	// under `untrack`, so it is a plain variable.
 	let expandedItems = $state<string[]>([]);
 	let invoked: { path: string } | null = null;
+	let searched: { path: string } | null = null;
+	let displayMode: NavigationViewDisplayMode = 'expanded';
 	$effect(() => {
 		const path = page.url.pathname;
 		untrack(() => {
 			const asked = invoked;
+			const found = searched;
 			invoked = null;
+			searched = null;
 			if (path === asked?.path) return;
-			const add = ancestorsOf(path).filter((id) => !expandedItems.includes(id));
+			const leaveTopShut = !paneOpen && displayMode !== 'minimal' && path !== found?.path;
+			const add = ancestorsOf(path)
+				.slice(leaveTopShut ? 1 : 0)
+				.filter((id) => !expandedItems.includes(id));
 			if (add.length > 0) expandedItems = [...expandedItems, ...add];
 		});
 	});
@@ -166,6 +218,7 @@
 		{selected}
 		onItemInvoked={go}
 		bind:paneOpen
+		onDisplayModeChanged={(mode) => (displayMode = mode)}
 		paneToggleButtonVisible={false}
 		backButtonVisible="collapsed"
 		bind:expandedItems

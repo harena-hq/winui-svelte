@@ -507,7 +507,18 @@
 	     the item expanded, so the expansion is the state and the popup follows it. The
 	     callback is the other direction only — a dismiss the popup performs itself, Escape or
 	     a click outside, has to collapse the row or the two would disagree and the flyout
-	     could not be opened again. -->
+	     could not be opened again.
+
+	     **One case does not follow, and it is open.** A top-level id added to `expandedItems`
+	     in the flush that mounts a rail, after the control's own effects have run — from a
+	     parent's `$effect`, as the Gallery's shell used to — reads `aria-expanded` true and
+	     draws no flyout, so its first click collapses a flyout nobody saw. An id passed in
+	     before mount does not reach it: the expansion memory files it away for the rail.
+	     Upstream's `ShowHideChildren` shows the flyout for a row expanded in the rail, on a
+	     deferred callback that skips the show if the item is no longer expanded or no longer
+	     in flyout mode, or has no grid or no attached flyout (NavigationViewItem.cpp:805-824,
+	     the guard at :821-822); whether that skip is taken at load is what is open. The
+	     Gallery's shell no longer seeds this state. -->
 	<Flyout
 		{open}
 		onOpenChange={(next) => {

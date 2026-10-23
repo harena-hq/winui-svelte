@@ -150,10 +150,23 @@
 		onBackRequested?: () => void;
 		/**
 		 * PaneDisplayMode — the settable mode the consumer chooses, and all five of its members
-		 * are here. The read-only `DisplayMode` member and its `DisplayModeChanged` event are
-		 * still not implemented, because nothing consumes them.
+		 * are here. The read-only `DisplayMode` member is still not implemented, because
+		 * nothing consumes it; its event is below.
 		 */
 		paneDisplayMode?: NavigationViewPaneDisplayMode;
+		/**
+		 * DisplayModeChanged — fires with the mode the control computed, on mount and whenever
+		 * that mode changes, from `SetDisplayMode` upstream (`NavigationView.cpp:2581-2599`). On
+		 * mount that can be the `'expanded'` guessed before the pane is measured, when the root
+		 * reads zero wide in the mount flush, as under a hidden ancestor. Upstream also
+		 * forces it on every `paneDisplayMode` change (`:4410`, `:4426`), so `'auto'` to `'left'`
+		 * at a wide width raises it there and not here. Here it always fires before `paneOpen`
+		 * follows the new mode. Upstream does that on a change (`:1486-1506`) but closes the
+		 * pane first on its first unforced update, when that lands in a narrow mode
+		 * (`:1478-1484`), and on entering top (`:4425`). A top pane computes `'minimal'`, as
+		 * upstream's does (`:4426`).
+		 */
+		onDisplayModeChanged?: (mode: NavigationViewDisplayMode) => void;
 		/**
 		 * The ids of the items whose children are shown. `$bindable`. No WinUI member:
 		 * upstream holds expansion on each `NavigationViewItem` as `IsExpanded`, and this
@@ -207,6 +220,7 @@
 		backEnabled = false,
 		onBackRequested,
 		paneDisplayMode = 'auto',
+		onDisplayModeChanged,
 		expandedItems = $bindable([]),
 		onExpandedItemsChange,
 		settingsVisible = true,
@@ -303,6 +317,7 @@
 	$effect(() => {
 		if (mode === acted) return;
 		acted = mode;
+		onDisplayModeChanged?.(mode);
 		setPaneOpen(mode === 'expanded');
 	});
 
