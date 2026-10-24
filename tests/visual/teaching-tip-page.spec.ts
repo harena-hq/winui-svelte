@@ -97,6 +97,23 @@ test('the first tip shows the Refresh symbol and is not light-dismissed', async 
 	await expect(tip).toBeVisible();
 });
 
+// WD-107. A tip that is not light-dismissed ignores Escape, and a tooltip leaves the key to it,
+// so the press closes nothing: not the tip, and not the tooltip either, as upstream's takes no
+// Escape. The tooltip is the title bar's, hovered after the tip opened.
+test('with a tip open that ignores Escape, the key closes no tooltip either', async ({ page }) => {
+	await show(page, 0).click();
+	const tip = refreshTip(page);
+	await expect(tip).toBeVisible();
+	await page.locator('.pane-toggle-button').hover();
+	const tooltip = page.locator('.popup:text-is("Toggle Navigation")');
+	await expect(tooltip).toBeVisible();
+
+	await page.keyboard.press('Escape');
+	await settle(page);
+	await expect(tooltip).toBeVisible();
+	await expect(tip).toBeVisible();
+});
+
 test('the Gallery lowers TeachingTipMinWidth, so the first tip is as wide as its text', async ({
 	page
 }) => {

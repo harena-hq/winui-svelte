@@ -577,6 +577,18 @@
 			{/snippet}
 		</Tooltip.Trigger>
 		<Tooltip.Portal>
+			<!-- WD-107. `escapeKeydownBehavior`: an Escape pressed while another popup is open
+			     is that popup's, not a tooltip's that opened after it. Upstream's tooltip takes
+			     no Escape at all, so the key reaches whatever has focus. bits-ui keeps one flat
+			     registry of escape layers and gives the key to the most recently opened one
+			     that closes or ignores Escape, or the oldest when every layer defers
+			     (`isResponsibleEscapeLayer`, `bits-ui/dist/bits/utilities/escape-layer/`), so
+			     with the default a tooltip opened after a flyout took the press and the flyout
+			     needed a second.
+			     `'defer-otherwise-close'` stands aside for any layer that closes or ignores
+			     Escape. A popup that ignores it then swallows the key and the tooltip stays
+			     open, as upstream's does; with no other layer the tooltip closes, which is the
+			     primitive's and the WAI-ARIA tooltip pattern's half, not upstream's. -->
 			<Tooltip.Content
 				bind:ref
 				{side}
@@ -584,6 +596,7 @@
 				align="center"
 				{customAnchor}
 				updatePositionStrategy="always"
+				escapeKeydownBehavior="defer-otherwise-close"
 			>
 				<!-- `Tooltip.Content`'s `child` snippet hands back `props` (the popup's own
 				     border, background, padding) and `wrapperProps` (the outer wrapper

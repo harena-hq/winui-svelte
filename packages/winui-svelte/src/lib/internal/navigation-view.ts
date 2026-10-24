@@ -148,10 +148,9 @@ export interface NavigationViewPlacement {
 	 * The tag of the top-level row whose children flyout this row is drawn in, at any depth
 	 * within it; `null` outside the rail's children flyout.
 	 *
-	 * It is here for two reasons. The flyout shows labels, so the rail's tooltip is redundant
-	 * inside it, and the primitive's tooltip takes the Escape that should have closed the
-	 * flyout (WD-092). And a leaf invoked inside it collapses that row, which closes the
-	 * flyout, as `NavigationView::CloseFlyoutIfRequired` does (`NavigationView.cpp:360-390`).
+	 * A leaf invoked inside it collapses that row, which closes the flyout, as
+	 * `NavigationView::CloseFlyoutIfRequired` does (`NavigationView.cpp:360-390`), and a row
+	 * inside it is a tab stop whatever `tabStops` says.
 	 */
 	flyoutOwner: string | null;
 }

@@ -446,6 +446,20 @@ test('a disabled tooltip declines a keyboard focus as well as a hover', async ({
 	await expect(page.locator('.popup:text-is("Disabled tooltip")')).toHaveCount(0);
 });
 
+// WD-107: Escape with no other popup open closes the tooltip. Upstream's takes no Escape at all;
+// this half is the primitive's and the WAI-ARIA pattern's. With a popup open the key is the
+// popup's: `navigation-view-rail.spec.ts` has one that closes, `teaching-tip-page.spec.ts` one
+// that ignores it.
+test('a tooltip with no popup open closes on Escape', async ({ page }) => {
+	await page.goto(MODE_PAGE);
+	const popup = page.locator('.popup:text-is("Default offset")');
+	await page.locator('#default-trigger').hover();
+	await expect(popup).toBeVisible();
+
+	await page.keyboard.press('Escape');
+	await expect(popup).toBeHidden();
+});
+
 // The two ways a pending keyboard open outlived what asked for it. Both were a review's, and
 // both open a tooltip a keyboard focus asked for **in the mouse's mode** — `sideOffset` 20
 // where the whole unit is about 12 — because the mode is cleared by the close and the timer

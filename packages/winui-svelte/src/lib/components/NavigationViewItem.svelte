@@ -456,13 +456,12 @@
 	     empty content, and it is not this component — `NavigationViewTopItem.svelte` draws it
 	     and carries its own tooltip, `UpdateSettingsItemToolTip` at NavigationView.cpp:1921.
 
-	     **And not inside the flyout**, which is WD-092 and this library's own departure. The
-	     predicate above is pane state, so it stays true for a row drawn in the flyout, and
-	     upstream does attach a tooltip there. It is redundant there — the flyout shows the
-	     label the rail was hiding — and it is not harmless: the primitive's tooltip takes the
-	     Escape that `docs/keyboard.md`'s answer 8 measured closing the flyout, so a rail's
-	     flyout needed two presses to dismiss. -->
-		{#if collapsed && content && !withinFlyout}
+	     **Inside the flyout too**, as upstream: the predicate above is pane state, so it stays
+	     true for a row drawn in the flyout, and the reference shows a flyout row's tooltip when
+	     the keyboard focuses it. It is redundant there, since the flyout shows the label the
+	     rail was hiding, and before WD-107 it would have cost a press: the focused row's
+	     tooltip took the Escape that `docs/keyboard.md`'s answer 8 measured closing the flyout. -->
+		{#if collapsed && content}
 			<ToolTip {content}>
 				{#snippet children(props)}
 					{@render row(props)}

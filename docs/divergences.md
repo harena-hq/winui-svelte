@@ -1991,37 +1991,6 @@ changes`.
 
 ---
 
-### WD-092 — a row inside the rail's children flyout carries no tooltip
-
-- **Control**: `NavigationViewItem` in `NavigationView`'s `ChildrenFlyout`.
-- **WinUI does**: attach one. `ShouldEnableToolTip` is `IsOnLeftNav() && m_isClosedCompact`
-  (`NavigationViewItem.cpp:743`), and `m_isClosedCompact` is pane state — the pane shut, with
-  the SplitView in either compact mode (`:253-255`) — so it stays true for a row the control has
-  reparented into the flyout. The tooltip is redundant there, because the flyout shows the label
-  the rail was hiding, but upstream does not switch it off.
-- **We do**: draw no tooltip for any row inside the flyout, at any depth. The rail's own rows keep
-  theirs.
-- **Why accepted**: the tooltip primitive dismisses on Escape, which the WAI-ARIA tooltip pattern
-  asks for and WinUI's `ToolTip` does not do. That second half is a negative and the search
-  behind it is this: `VK_ESCAPE` and `VirtualKey_Escape` occur in **none** of the pin's
-  tooltip-named sources — `ToolTip_Partial.cpp`, `ToolTipService_Partial.cpp`,
-  `ToolTipAutomationPeer_Partial.cpp` and their headers, plus the four generated
-  `winrtgeneratedclasses/ToolTip*.g.cpp` — run as a file walk over every `*tooltip*` `.cpp` and
-  `.h` in the checkout. The positive control for the same query is
-  `ComboBox_Partial.cpp`, which matches five times, so the query finds the thing when it is
-  there. Focus lands inside the flyout when it opens, so the
-  focused row's tooltip is open, and its Escape handler runs first: measured before this entry,
-  dismissing a rail flyout took **two** presses — the first closed the tooltip, the second the
-  flyout. `docs/keyboard.md`'s answer 8 was pressed on the reference and records one. Keeping the
-  tooltip would trade a behaviour that was measured against the original for one that was
-  inferred from a predicate, and the redundant tooltip is what the trade would buy.
-- **Would reconsider if**: the tooltip stops consuming Escape — which is a decision about every
-  tooltip in the library and not about this control, and would be taken against the WAI-ARIA
-  pattern rather than against WinUI. `ToolTip.svelte` is where it would land, and this entry is
-  the first site that would notice.
-
----
-
 ### WD-093 — a command's own `labelPosition` can ask for Right, where upstream's cannot
 
 - **Control**: `AppBarButton` and `AppBarToggleButton`.
@@ -2481,3 +2450,42 @@ changes`.
   and 111 pixels down in a 1280 by 720 one. The two non-editable lists on the Gallery's
   ComboBox page hold four rows and five, and no disabled one.
 - **Would reconsider if**: the primitive can take a highlight without scrolling to it.
+
+---
+
+### WD-107 — a tooltip closes on Escape when no other popup is open
+
+- **Control**: `ToolTip`, and every control that draws one.
+- **WinUI does**: take no Escape at all. `VK_ESCAPE` and `VirtualKey_Escape` occur in **none** of
+  the pin's fifteen tooltip-named sources, found by a file walk over every `*tooltip*` `.cpp` and
+  `.h` in the checkout — among them `ToolTip_Partial.cpp`, `ToolTipService_Partial.cpp`,
+  `ToolTipAutomationPeer_Partial.cpp` and their headers, and the generated
+  `winrtgeneratedclasses/ToolTip*.g.cpp` and `.g.h`. The positive control for the same query is
+  `ComboBox_Partial.cpp`, which matches five times. `CloseToolTipInternal`
+  (`ToolTipService_Partial.cpp:948-982`) would close on any key `IsSpecialKey` does not list,
+  Escape among them, but its one caller passes no key (`ToolTip_Partial.cpp:2431`, on the
+  release of a Ctrl pressed alone). Popups close on Escape in two places. `CPopup::OnKeyDown`
+  closes a popup that itself has focus (`dxaml/xcp/core/core/elements/Popup.cpp:3605-3615`,
+  `:3731-3749`), and a tooltip never does: it is no tab stop and not hit-testable
+  (`ToolTip_Partial.cpp:128-129`). `CPopupRoot::OnKeyDown` closes the newest open popup that is
+  light-dismiss or a flyout (the same `Popup.cpp`, `:5341-5345`, the filter at `:5362`), and a
+  tooltip's popup is neither: `IsLightDismiss|AssociatedFlyout` matches none of the same
+  fifteen files, where the positive control `FlyoutBase_partial.cpp` matches, among others, at
+  its two setters `:1381` and `:1428`. So the key closes the newest such popup, and never the
+  tooltip itself.
+- **We do**: close the tooltip on Escape when no open layer closes or ignores Escape, which is the
+  primitive's behaviour and the WAI-ARIA tooltip pattern's. The one other layer that defers is
+  bits-ui's submenu content, by its own default, which `MenuFlyout` uses; it is open only above
+  its root menu's layer, which closes. With another popup open the tooltip stands aside
+  (`escapeKeydownBehavior="defer-otherwise-close"`): a popup that closes on Escape takes the key,
+  and one that ignores it — `Popup` and `TeachingTip` without light dismiss — takes it and does
+  nothing, so the tooltip stays open, as upstream's does.
+- **Why accepted**: the WAI-ARIA pattern asks for it, and WCAG 1.4.13 asks that content shown on
+  hover or focus can be dismissed without moving either
+  (<https://www.w3.org/WAI/WCAG22/Understanding/content-on-hover-or-focus.html>). bits-ui gives
+  Escape to one layer only, the newest that closes or ignores it, or the oldest when every open
+  layer defers, so the alternative to deferring was a tooltip opened after a flyout taking the
+  press meant for the flyout, which then needed a second. Before this entry a rail's children
+  flyout showed no tooltips on its rows for that reason (WD-092, deleted with it).
+- **Would reconsider if**: Escape with a tooltip alone open is pressed on the reference and
+  something is seen to depend on the tooltip staying.
