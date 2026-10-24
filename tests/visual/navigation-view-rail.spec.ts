@@ -78,10 +78,9 @@ test('a parent inside the flyout draws its children in the flyout, not in a seco
 	await expect(flyout.locator('ul[role="group"]')).toHaveCount(1);
 	await expect(flyout.locator(row('Swatches'))).toHaveAttribute('aria-level', '2');
 
-	// WD-092 reaches all the way down, not just the flyout's first list. `flyoutOwner` is carried
-	// through the placement record, so `Swatches` two levels in is as tooltip-free as `Color`
-	// one level in — the row the primitive marks is the one that would take the Escape.
-	await expect(flyout.locator('[data-tooltip-trigger]')).toHaveCount(0);
+	// A row in the flyout keeps the rail's tooltip at any depth, as upstream's does: its
+	// predicate is pane state (`NavigationViewItem.cpp:743`), true for every row the pane draws.
+	await expect(flyout.locator(row('Swatches'))).toHaveAttribute('data-tooltip-trigger', '');
 });
 
 test('a second click on the row closes the flyout rather than leaving it open', async ({
@@ -194,17 +193,40 @@ test('the flyout takes the padding the rail flyout is given, not a flyout defaul
 test('focus lands on the flyout first row, and Escape takes one press', async ({ page }) => {
 	await page.goto(PAGE);
 	const design = page.locator('#rail').locator(row('Design'));
-	await design.click();
+	await design.focus();
+	await page.keyboard.press('Enter');
 
 	// `docs/keyboard.md`'s answer 8, pressed on the reference: "Focus lands on the flyout's
 	// first item ... Escape closes it."
 	const first = page.locator('.flyout-children').locator(row('Color'));
 	await expect(first).toBeFocused();
+	// The reference shows the focused flyout row's tooltip as well.
+	await expect(page.locator('.popup:text-is("Color")')).toBeVisible();
 
-	// One press, not two. WD-092: the focused row's own tooltip used to take the first, because
-	// the tooltip primitive dismisses on Escape and WinUI's does not.
+	// One press, not two, with that tooltip up: WD-107. Before it the tooltip took the first,
+	// and the flyout's rows were drawn without one to avoid that.
 	await page.keyboard.press('Escape');
 	await expect(page.locator('.flyout-children')).toHaveCount(0);
+	// And focus goes back to the row, as it did on the reference (`docs/keyboard.md`, answer 8).
+	await expect(design).toBeFocused();
+});
+
+test('a tooltip hovered open after the flyout leaves Escape to the flyout', async ({ page }) => {
+	await page.goto(PAGE);
+	const rail = page.locator('#rail');
+	await rail.locator(row('Design')).click();
+	const flyout = page.locator('.flyout-children');
+	await expect(flyout).toBeVisible();
+
+	// Opened after the flyout, so it is the newer of the two layers the primitive registers for
+	// Escape. On the Gallery a probe found the same order with the title bar's back button,
+	// which appears on the first navigation under a pointer left resting on the pane toggle.
+	await rail.locator(row('All')).hover();
+	const tip = page.locator('.popup:text-is("All")');
+	await expect(tip).toBeVisible();
+
+	await page.keyboard.press('Escape');
+	await expect(flyout).toHaveCount(0);
 });
 
 test('dismissing the flyout collapses the row it belongs to', async ({ page }) => {

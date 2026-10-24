@@ -381,13 +381,23 @@ then the ninth entry, which is a search rather than a press and says so.
    Tab leaves. Measured, not reasoned: focusing the pane toggle is undone and Tab cycles over
    the flyout's rows. An earlier draft of this paragraph reasoned from document order to "the
    Tab lands on the settings row", which the press refutes in both of its halves. **What is
-   owed is the reference's behaviour after the entry press**, which this record never covered. Escape needed a decision of its own to arrive at one press
-   — the focused row's tooltip was taking the first — and that is WD-092. One behaviour beyond
-   this record was measured while building it and is asserted: a click outside closes the
-   flyout.
-   What stays unreached from this answer is what it never covered: where focus returns after
-   Escape, whether Tab or Home and End do anything inside the flyout, and what a parent that has
-   content of its own does on selection.
+   owed is the reference's behaviour after the entry press**, which this record never covered;
+   the press below answers a neighbouring question, where focus returns after Escape. Escape
+   needed a decision of its own to arrive at one press — the focused row's tooltip was taking
+   the first. WD-092, since deleted, answered that by drawing the flyout's rows without one,
+   and WD-107 replaced it: the tooltip leaves Escape to the open flyout, and the rows have
+   theirs back. One behaviour beyond this record was measured while building it and is
+   asserted: a click outside closes the flyout.
+   **Where focus returns after Escape was pressed on 2026-10-24**, in the Gallery with the pane
+   shut by its toggle at 1600 pixels: the flyout opened from its row with Enter, its first row
+   took focus and showed that row's tooltip, and Escape put focus back on the parent row with
+   its focus visual. Here it lands there too, and is asserted.
+   In the same press, choosing a child with Enter instead left focus on the page it opens, on
+   the page header's first button: the Gallery's `ItemPage` focuses itself once loaded
+   (`ItemPage.xaml.cs:44`), which this Gallery does not yet do.
+   What stays unreached from this answer is what it never covered: whether Tab or Home and End
+   do anything inside the flyout, and what a parent that has content of its own does on
+   selection.
 
 9. **Not pressed, and not pressable here.** The shape the question needs is an editable field
    _inside_ a `NavigationViewItem`, and the Gallery never builds one. `NavigationViewPage.xaml`

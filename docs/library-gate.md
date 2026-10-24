@@ -66,8 +66,8 @@ app; the rest of a component's history was reviewed by gates, mutants and agents
 | Expander           | `34f4ceb`                                       | passes, but for the chevron's phase           | WD-006, WD-010, WD-011; its Gallery page; the chevron                                     |
 | HyperlinkButton    | none of its own (see below)                     | passes: ink, colour, hover                    | —                                                                                         |
 | InfoBar            | `2ae9dbe`                                       | passes: height, icon and title offsets        | —                                                                                         |
-| NavigationView     | `53c6c80`, `a846afa`, `2b585b0`                 | the shell, photographed on every Gallery page | WD-006, -025, -089, -091, -092, -101; four rows; six more                                 |
-| NavigationViewItem | through NavigationView's                        | the shell                                     | WD-090, WD-092                                                                            |
+| NavigationView     | `53c6c80`, `a846afa`, `2b585b0`                 | the shell, photographed on every Gallery page | WD-006, -025, -089, -091, -101; four rows; six more                                       |
+| NavigationViewItem | through NavigationView's                        | the shell                                     | WD-090                                                                                    |
 | ProgressBar        | `9140949`                                       | failed; fixed in `83b8bff`                    | —                                                                                         |
 | ProgressRing       | `ee2f763`                                       | passes: box and stroke at 60px                | —                                                                                         |
 | ScrollView         | `99c02d8`                                       | its Gallery page                              | WD-036; two layout rows                                                                   |
@@ -77,7 +77,7 @@ app; the rest of a component's history was reviewed by gates, mutants and agents
 | TextBox            | `9ecf440`, `2b585b0`, `80c7176`, `351987f`      | passes: header gap, height, placeholder       | WD-100 (multi-line)                                                                       |
 | TitleBar           | `fb980a5`                                       | its Gallery page and the shell                | WD-006, WD-007, WD-099                                                                    |
 | ToggleSwitch       | `62f011d` (the off state), `69efa8c` (the drag) | failed on the on knob; fixed in `2523d0e`     | WD-096; the pressed knob's shape                                                          |
-| ToolTip            | `70b0c29`                                       | passes: height, inset, baseline               | WD-094, WD-095; `PlacementRect`, `VerticalOffset`                                         |
+| ToolTip            | `70b0c29`                                       | passes: height, inset, baseline               | WD-094, WD-095, WD-107; `PlacementRect`, `VerticalOffset`                                 |
 
 NavigationView's four rows: `FooterMenuItems`, the pane's custom content, header, title and
 search slot, and `OverflowLabelMode`, in v8's table of what that version left owed; and v7's
