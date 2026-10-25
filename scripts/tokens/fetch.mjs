@@ -68,6 +68,12 @@ export const CHECKOUT = join(ROOT, '.upstream', 'microsoft-ui-xaml');
 // outside the checkout. What they hand on to RichEdit, which is not in the pin, is still
 // not readable: whether a key is handled, and the width of the text itself.
 //
+// `dxaml/xcp/core/dll` was added after them, twelve `.cpp` files and under 1 MB. It holds the
+// focus manager, `CFocusManager` in `focusmgr.cpp`, which decides what a programmatic focus
+// is drawn as (`CoerceFocusState`) and where a focus set on a container lands
+// (`SetFocusedElement`). Both functions were first read by URL at the pin, and conformance
+// gate C12 refuses a line citation into a file the checkout does not hold.
+//
 // The per-control test pages are excluded; they are app markup, not the control.
 //
 // `--no-cone` because cone mode can express neither a `**`-and-suffix pattern nor the
@@ -93,6 +99,7 @@ const SPARSE = [
 	'/dxaml/xcp/core/text/**/*.cpp',
 	'/dxaml/xcp/core/native/text/**/*.h',
 	'/dxaml/xcp/core/native/text/**/*.cpp',
+	'/dxaml/xcp/core/dll/**/*.cpp',
 	// The framework dictionary, which `scripts/framework/extract.mjs` reads: the copy here is
 	// under this repository's MIT licence, where the one the SDK package ships is not.
 	'/dxaml/xcp/dxaml/themes/generic.xaml',
