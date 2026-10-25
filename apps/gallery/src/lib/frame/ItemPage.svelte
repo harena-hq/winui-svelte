@@ -18,7 +18,10 @@
 </script>
 
 <script lang="ts">
+	import { afterNavigate } from '$app/navigation';
 	import PageHeader from './PageHeader.svelte';
+	import { lastInputWasKeyboard } from './last-input';
+	import { takeReselect } from './reselect';
 
 	let {
 		item,
@@ -28,6 +31,40 @@
 		ref = $bindable(null),
 		...rest
 	}: ItemPageProps = $props();
+
+	const TAB_STOP = 'a[href], button, input, select, textarea, [tabindex]';
+
+	// The page focuses itself once loaded, as the original's does
+	// (`this.Focus(FocusState.Programmatic)`, ItemPage.xaml.cs:44). A page that is not a tab stop
+	// hands that focus to its first descendant that is (`CFocusManager::SetFocusedElement`,
+	// dxaml/xcp/core/dll/focusmgr.cpp:122-124), which here is the header's first button. That is
+	// taken in document order, where upstream's is tab order; no element in this page carries a
+	// positive `tabindex`, so the two agree.
+	// Measured on the reference on 2026-10-24: a page chosen with Enter in the rail's flyout left
+	// focus on that button with its focus visual, and one chosen with the pointer from the search
+	// box's suggestions drew none. The visual is asked for or declined by the last input
+	// (`last-input.ts`), because Chromium's own choice for a scripted `focus()` differs from
+	// upstream's after that typing and before any input.
+	//
+	// On the first load as well: upstream's launch into a page, by protocol or a jump-list
+	// argument, loads an `ItemPage` too (App.xaml.cs:119-162), and with no input yet the focus is
+	// drawn as a pointer's. Each navigation after it runs after SvelteKit's own focus handling,
+	// which blurs whatever had focus before the update and then focuses the body unless something
+	// else took focus (`reset_focus`); `afterNavigate` callbacks run after both.
+	//
+	// Not when the selected row is invoked again, which upstream loads no page for; the shell
+	// still goes to the page shown, and says so (`reselect.ts`).
+	afterNavigate((navigation) => {
+		if (takeReselect(navigation.to?.url.pathname) || !ref) return;
+		const first = [...ref.querySelectorAll<HTMLElement>(TAB_STOP)].find(
+			(element) =>
+				element.tabIndex >= 0 &&
+				!element.matches(':disabled') &&
+				!element.closest('[inert]') &&
+				element.checkVisibility({ visibilityProperty: true })
+		);
+		first?.focus({ preventScroll: true, focusVisible: lastInputWasKeyboard() });
+	});
 </script>
 
 <!-- `data-item-page` is what the shell's page area looks for: this component carries

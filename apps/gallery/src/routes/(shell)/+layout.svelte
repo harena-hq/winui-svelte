@@ -19,6 +19,8 @@
 		searchSuggestions,
 		titleBar
 	} from '$lib/shell';
+	import { noteKeyDown, notePointer } from '$lib/frame/last-input';
+	import { clearReselect, markReselect } from '$lib/frame/reselect';
 
 	let { children } = $props();
 	let searchValue = $state('');
@@ -64,12 +66,23 @@
 			openedContainer = id;
 			return;
 		}
-		openedContainer = null;
 		const path = (id === 'settings' ? '/settings' : id) as `/${string}`;
 		const record = { path: resolve(path) };
+		// The selected row invoked again keeps the focus: upstream navigates on a selection
+		// change (MainWindow.xaml.cs:304-404), and that invoke changes none, so no page loads to
+		// take it. `keepFocus` is passed, since without it SvelteKit blurs the row and focuses
+		// the body, and the page is told not to take the focus itself (`reselect.ts`). The row is
+		// not the selected one after a container's row was opened, though its page is the one
+		// shown. Where the invoke removes the row, as the rail's flyout and a pane outside the
+		// expanded mode do when they close, the focus leaves it all the same, and where
+		// upstream's goes then was not measured.
+		const reselected = openedContainer === null && record.path === page.url.pathname;
+		openedContainer = null;
 		invoked = record;
-		void goto(resolve(path)).finally(() => {
+		const mark = markReselect(reselected ? record.path : null);
+		void goto(resolve(path), { keepFocus: reselected }).finally(() => {
 			if (invoked === record) invoked = null;
+			clearReselect(mark);
 		});
 	}
 
@@ -179,6 +192,13 @@
 		else if (navigation.type !== 'enter') depth += 1;
 	});
 </script>
+
+<svelte:document
+	onkeydowncapture={noteKeyDown}
+	onpointerdowncapture={notePointer}
+	onpointermovecapture={notePointer}
+	onwheelcapture={notePointer}
+/>
 
 <div class="frame">
 	<!-- WD-007: TitleBar is mounted without `iconGlyph` — the Gallery's icon is a bitmap
