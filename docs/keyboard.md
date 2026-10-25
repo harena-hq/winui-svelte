@@ -394,7 +394,13 @@ then the ninth entry, which is a search rather than a press and says so.
    its focus visual. Here it lands there too, and is asserted.
    In the same press, choosing a child with Enter instead left focus on the page it opens, on
    the page header's first button: the Gallery's `ItemPage` focuses itself once loaded
-   (`ItemPage.xaml.cs:44`), which this Gallery does not yet do.
+   (`ItemPage.xaml.cs:44`). This Gallery's does too, on the first load and on every navigation
+   but the one made by invoking the selected row again, for which upstream, navigating only on
+   a selection change, makes none. It draws the visual after a key and not after a pointer,
+   moved, pressed or wheeled, or before any input, as upstream decides a programmatic focus
+   (`CFocusManager::CoerceFocusState`, `dxaml/xcp/core/dll/focusmgr.cpp:3195`), and a page
+   chosen from the search box's suggestions with the pointer drew none on the reference. The
+   press above, that search, and each of those inputs are asserted.
    What stays unreached from this answer is what it never covered: whether Tab or Home and End
    do anything inside the flyout, and what a parent that has content of its own does on
    selection.
