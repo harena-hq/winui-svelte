@@ -87,12 +87,29 @@ export interface NavigationViewPaneState {
 	 * search leaves the repeater, restoring them afterwards. Together they are what the
 	 * reference press recorded: one stop per list, and that stop is the selected row.
 	 *
-	 * **Upstream's mechanism is dynamic and this one is static**, and the difference is in the
-	 * mechanism rather than in the observable. There every row is a tab stop until a Tab asks
-	 * otherwise; here the rows that are not the entry carry `tabindex="-1"` from the start. The
-	 * two agree on every press this control can receive — entering the list, leaving it in
-	 * either direction, and a row focused by pointer, which is a stop upstream and is reachable
-	 * by click here — because what both produce is a list Tab crosses in one press.
+	 * **Both halves run only after a Tab the control itself saw.** The guard at `:2947` reads
+	 * `m_TabKeyPrecedesFocusChange`, which the control's own key handlers set for Tab and clear
+	 * for any other key (`:3087-3126`), and which is cleared otherwise only when focus arrives in
+	 * a root list (`:3044`). `KeyDown` bubbles, so the control sees a key only when focus was
+	 * inside it. A Tab pressed outside it, in a title bar above the control as the Gallery's is
+	 * (`MainWindow.xaml:23-61`, beside the control at `:137`), is redirected only if a Tab the
+	 * control saw is still pending; with none, focus lands on the list's first row. Both were
+	 * pressed on the reference, from its search box: `Home` on 2026-10-24, and on 2026-10-26
+	 * `Home` after a pointer had put focus there and the selected row after a Shift+Tab had.
+	 *
+	 * **Upstream's mechanism acts on the Tab, and this one is set before it.** There every row is
+	 * a tab stop until a Tab asks otherwise; here the rows that are not the stop carry
+	 * `tabindex="-1"`, and the stop follows the focus (`noteFocus` below, and the flag beside it
+	 * in `NavigationView.svelte`). It is the focused row while focus is on a row of the list,
+	 * which is the walk out of the repeater: a Tab from that row reaches no other row of it. It
+	 * is the selected row, as above, while focus is anywhere else inside the control, or outside
+	 * it with a Tab pending. And it is the list's first row while focus is outside the control
+	 * with none, the Tab that nothing redirects. The two agree on entering the list from either
+	 * side of it, on leaving it in either direction from any of its rows, and on a row focused by
+	 * pointer. They part in two places. A Shift+Tab into the menu from past the control with no
+	 * Tab pending and no settings row drawn lands upstream on the menu's last row and here on its
+	 * first. And a press on something inside the control that takes no focus leaves focus where
+	 * it was upstream, while the browser moves it to the body, outside the control.
 	 *
 	 * Both of upstream's branches are guarded by `m_selectionModel.SelectedIndex()`, so with no
 	 * selection at all neither fires and the rows are tab stops as they come. That is what
@@ -103,6 +120,19 @@ export interface NavigationViewPaneState {
 	 * two, so membership is a scan, and a `string[]` is what `expandedItems` beside it already is.
 	 */
 	tabStops: string[] | null;
+	/**
+	 * Where focus is, as `tabStops` needs it. A row reports its own focus here with its tag, and
+	 * the control works out which list that row is in and tells inside from outside itself. The
+	 * report also clears the pending Tab, as focus arriving in a root list does upstream. A row in
+	 * the rail's flyout reports too, and its tag names a row the rail does not draw, so no rail
+	 * row is a stop while focus is on a row of the flyout. Its report clears the pending Tab as
+	 * well, where the flyout's list is no root list upstream; nothing can tell, because the flyout is
+	 * drawn outside the control, so no key pressed in it reaches the control's listeners, and a
+	 * key or a press that opens it from its row has cleared the flag already. A flyout opened
+	 * from script, through `expandedItems`, clears nothing first; telling the two apart then
+	 * takes a press in the flyout, a dismissal outside the control and a Tab back in.
+	 */
+	noteFocus: (tag: string) => void;
 }
 
 /** Publish the pane's state. The argument is a getter so the value stays reactive. */

@@ -55,7 +55,10 @@ test('Tab crosses the pane in one press, and the stop is the selected row', asyn
 
 	// The rule, read off the elements: one stop in the menu and one in the settings list.
 	// `Design` is neither the first row nor a row without children, which is the pair of
-	// mistakes a single-specimen test cannot separate.
+	// mistakes a single-specimen test cannot separate. Read with focus inside the control,
+	// where a Tab reaches the control's own handler and is redirected; the next test has the
+	// stop with focus outside it.
+	await frame.locator('.pane-toggle').focus();
 	await expect(frame.locator(row('Design'))).toHaveAttribute('tabindex', '0');
 	for (const label of ['Home', 'Color', 'Geometry', 'All', 'Recent', 'Archive']) {
 		await expect(frame.locator(row(label))).toHaveAttribute('tabindex', '-1');
@@ -70,7 +73,6 @@ test('Tab crosses the pane in one press, and the stop is the selected row', asyn
 
 	// And the same rule as presses, which is the half the attributes cannot show: that nothing
 	// else sits between the toggle and the row, and that the chevron is skipped on the way out.
-	await frame.locator('.pane-toggle').focus();
 	await expect(focused(page)).toHaveText('selected-mid / pane toggle');
 	await page.keyboard.press('Tab');
 	await expect(focused(page)).toHaveText('selected-mid / Design');
@@ -78,6 +80,151 @@ test('Tab crosses the pane in one press, and the stop is the selected row', asyn
 	await expect(focused(page)).toHaveText('selected-mid / Settings');
 	await page.keyboard.press('Tab');
 	await expect(focused(page)).not.toHaveText(/^selected-mid/);
+});
+
+test('with focus outside the control the stop is the first row, unless a Tab is pending', async ({
+	page
+}) => {
+	await page.goto(PAGE);
+	const frame = page.locator('#selected-mid');
+	const stop = async (label: string) => {
+		for (const name of ['Home', 'Design']) {
+			await expect(frame.locator(row(name))).toHaveAttribute(
+				'tabindex',
+				name === label ? '0' : '-1'
+			);
+		}
+	};
+
+	// The redirect onto the selected row runs only after a Tab the control's own key handler saw
+	// (`m_TabKeyPrecedesFocusChange`, NavigationView.cpp:2947), and nothing has been pressed after
+	// the load, so with focus outside the control the menu's stop is its first row.
+	await expect(frame.locator(row('Home'))).toHaveAttribute('tabindex', '0');
+	for (const label of ['Design', 'Color', 'Geometry', 'All', 'Recent', 'Archive']) {
+		await expect(frame.locator(row(label))).toHaveAttribute('tabindex', '-1');
+	}
+	await expect(frame.locator(row('Settings'))).toHaveAttribute('tabindex', '0');
+
+	// Inside the control, the selected row; moved to another control by script, with no key
+	// pressed inside this one, the first row again.
+	await frame.locator('.pane-toggle').focus();
+	await stop('Design');
+	const outside = page.locator('#selected-hidden .pane-toggle');
+	await outside.focus();
+	await stop('Home');
+
+	// A Tab from the settings row leaves the control for the next frame's, with the Tab still
+	// pending, so the stop stays on the selected row: `:3044` clears the flag only when focus
+	// arrives in a root list.
+	await frame.locator(row('Settings')).focus();
+	await page.keyboard.press('Tab');
+	await expect(focused(page)).toHaveText('selected-hidden / pane toggle');
+	await stop('Design');
+
+	// Any other key pressed inside the control clears it as well (`OnPreviewKeyDown` and
+	// `OnKeyDown`, `:3087-3126`), with focus on no row so that nothing else does.
+	await frame.locator('.pane-toggle').focus();
+	await stop('Design');
+	await page.keyboard.press('a');
+	await outside.focus();
+	await stop('Home');
+
+	// Set again, it is cleared by focus arriving on a row, and focus leaving by going nowhere is
+	// outside too, the row it left included.
+	await frame.locator(row('Settings')).focus();
+	await page.keyboard.press('Tab');
+	await stop('Design');
+	await frame.locator(row('Design')).focus();
+	await page.evaluate(() => (document.activeElement as HTMLElement).blur());
+	await stop('Home');
+});
+
+test('a Tab handled beneath the control sets nothing, a key stopped there clears', async ({
+	page
+}) => {
+	await page.goto(PAGE);
+	const frame = page.locator('#selected-mid');
+	const outside = page.locator('#selected-hidden .pane-toggle');
+	// Upstream clears the flag in `OnPreviewKeyDown`, on the way down, and sets it in `OnKeyDown`,
+	// which a key handled beneath the control never reaches (NavigationView.cpp:3087-3126). The
+	// toggle stands in for that descendant: it cancels a Tab and stops an `a`, and each is
+	// pressed once below.
+	await frame.locator('.pane-toggle').evaluate((toggle: HTMLElement) => {
+		toggle.addEventListener('keydown', (event) => {
+			if (event.key === 'Tab') event.preventDefault();
+			if (event.key === 'a') event.stopPropagation();
+		});
+	});
+
+	await frame.locator('.pane-toggle').focus();
+	await page.keyboard.press('Tab');
+	// The Tab was cancelled, so focus reached no row that could have cleared the flag instead.
+	await expect(focused(page)).toHaveText('selected-mid / pane toggle');
+	await outside.focus();
+	await expect(frame.locator(row('Home'))).toHaveAttribute('tabindex', '0');
+
+	// Set the flag with a Tab nothing cancels, from the settings row into the next frame.
+	await frame.locator(row('Settings')).focus();
+	await page.keyboard.press('Tab');
+	await expect(frame.locator(row('Design'))).toHaveAttribute('tabindex', '0');
+	await frame.locator('.pane-toggle').focus();
+	await page.keyboard.press('a');
+	await outside.focus();
+	await expect(frame.locator(row('Home'))).toHaveAttribute('tabindex', '0');
+});
+
+test('a Tab from a row that is not the stop leaves the list, in either direction', async ({
+	page
+}) => {
+	await page.goto(PAGE);
+	const frame = page.locator('#selected-mid');
+
+	// The walk out of the repeater (NavigationView.cpp:3018): a Tab from any row of it finds the
+	// next stop outside it, so `Design`, selected and after `Home`, is not where it goes.
+	await frame.locator('.pane-toggle').focus();
+	await page.keyboard.press('Tab');
+	await expect(focused(page)).toHaveText('selected-mid / Design');
+	await page.keyboard.press('ArrowUp');
+	await expect(focused(page)).toHaveText('selected-mid / Home');
+	await page.keyboard.press('Tab');
+	await expect(focused(page)).toHaveText('selected-mid / Settings');
+
+	// Shift+Tab from the settings row comes from another root list, so it is redirected onto
+	// the selected row (`:2986`), and from a row before it leaves backwards to the toggle.
+	await page.keyboard.press('Shift+Tab');
+	await expect(focused(page)).toHaveText('selected-mid / Design');
+	await page.keyboard.press('ArrowUp');
+	await page.keyboard.press('Shift+Tab');
+	await expect(focused(page)).toHaveText('selected-mid / pane toggle');
+
+	// Focus on the toggle is on no row, so the stop is the selected row again rather than the
+	// row the focus left.
+	await page.keyboard.press('Tab');
+	await expect(focused(page)).toHaveText('selected-mid / Design');
+});
+
+test('a Tab from the Gallery title bar enters at the first row or the selected one', async ({
+	page
+}) => {
+	// The presses measured on the reference: the Gallery's title bar is outside its
+	// NavigationView (MainWindow.xaml:23-61, the control at :137), so a Tab from the search box
+	// reached `Home` rather than the selected page's row; a Shift+Tab from `Home` back to the
+	// search box left the Tab pending, and the next Tab reached the selected row. Every frame
+	// on the harness page starts with a pane toggle of its own, inside the control, which is
+	// why this is pressed here.
+	await page.goto('/basicinput/button');
+	// The page focuses its own header once loaded, inside the control; wait for it, so that it
+	// cannot take the focus back from the search box.
+	await expect(page.getByRole('button', { name: 'API details' })).toBeFocused();
+	await page.getByRole('combobox').first().focus();
+	await page.keyboard.press('Tab');
+	await expect(page.locator(row('Home'))).toBeFocused();
+	await page.keyboard.press('Shift+Tab');
+	await expect(page.getByRole('combobox').first()).toBeFocused();
+	await page.keyboard.press('Tab');
+	await expect(page.locator(row('Button'))).toBeFocused();
+	await page.keyboard.press('Tab');
+	await expect(page.locator(row('Settings'))).toBeFocused();
 });
 
 test('Down walks the visible rows, steps over a header, and reaches the settings row', async ({
@@ -178,12 +325,12 @@ test('a selection inside a collapsed subtree stops at the deepest row on screen'
 	// `GetContainerForIndexPath(selectedIndex, lastVisible = true)` — NavigationView.cpp:2988 —
 	// walks the path while each row above is expanded and stops at the last one reached.
 	await expect(frame.locator(row('Swatches'))).toHaveCount(0);
+	await frame.locator('.pane-toggle').focus();
 	await expect(frame.locator(row('Color'))).toHaveAttribute('tabindex', '0');
 	for (const label of ['Home', 'Design', 'Geometry', 'All']) {
 		await expect(frame.locator(row(label))).toHaveAttribute('tabindex', '-1');
 	}
 
-	await frame.locator('.pane-toggle').focus();
 	await page.keyboard.press('Tab');
 	await expect(focused(page)).toHaveText('selected-hidden / Color');
 });
@@ -217,7 +364,9 @@ test('a rail stops at its selected row and Settings, and rings over its top leve
 	const frame = page.locator('#rail');
 
 	// A rail force-collapses its top level, so `Design`'s children are not under it — which is
-	// why `Home` and `Settings` are the pane's two stops and `Design` and `All` are not.
+	// why `Home` and `Settings` are the pane's two stops and `Design` and `All` are not. Read
+	// from inside the control, because `Home` is also the first row, the stop from outside.
+	await frame.locator('.pane-toggle').focus();
 	await expect(frame.locator(row('Home'))).toHaveAttribute('tabindex', '0');
 	await expect(frame.locator(row('Design'))).toHaveAttribute('tabindex', '-1');
 	await expect(frame.locator(row('All'))).toHaveAttribute('tabindex', '-1');
@@ -226,7 +375,6 @@ test('a rail stops at its selected row and Settings, and rings over its top leve
 	// And as presses. The pane toggle is not a pane row and is a stop in every frame on this
 	// page — the first test treats it as outside the ring — so it is where the walk starts
 	// rather than something this counts.
-	await frame.locator('.pane-toggle').focus();
 	await page.keyboard.press('Tab');
 	await expect(focused(page)).toHaveText('rail / Home');
 	await page.keyboard.press('Tab');
@@ -315,10 +463,11 @@ test('a rail row is the stop while its flyout is shut, and is not while it is op
 	await design.click();
 	await page.locator('.flyout-children').locator(row('Color')).click();
 
-	// `Color` is now selected and is two levels down. While the flyout is open the walk keeps
-	// going — upstream descends through the row's own repeater, and a rail row's repeater is
-	// the one reparented into the flyout — so the container it lands on is inside the flyout
-	// and **no rail row is a stop**.
+	// `Color` is now selected and is two levels down, and **no rail row is a stop** while the
+	// flyout is open. Focus is on `Color` in the flyout here, so what this half reads is the
+	// focused row's answer; the walk, which would land in the flyout too (upstream descends
+	// through the row's own repeater, and a rail row's is the one reparented into the flyout),
+	// cannot be read past an open flyout, which holds focus.
 	await expect(design).toHaveAttribute('tabindex', '-1');
 	await expect(frame.locator(row('Home'))).toHaveAttribute('tabindex', '-1');
 
@@ -327,6 +476,9 @@ test('a rail row is the stop while its flyout is shut, and is not while it is op
 	// this pair a test of the walk rather than of the rail.
 	await page.keyboard.press('Escape');
 	await expect(page.locator('.flyout-children')).toHaveCount(0);
+	// Escape hands focus back to `Design`, and a focused row is its list's stop whatever the
+	// walk says, so focus moves to the toggle first: still inside the control, on no row.
+	await frame.locator('.pane-toggle').focus();
 	await expect(design).toHaveAttribute('tabindex', '0');
 });
 
