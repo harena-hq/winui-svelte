@@ -217,6 +217,22 @@ then the ninth entry, which is a search rather than a press and says so.
    its own because it is a root list of its own. `navigation-view-ring.spec.ts` presses the
    sequence on each of those branches. **Where the fourth press goes is still not pressed**,
    and this implementation sends it to whatever follows the pane in the document.
+   **The press above started inside the control, and that turned out to be a condition.**
+   Upstream redirects only after a Tab its own key handlers saw (`m_TabKeyPrecedesFocusChange`,
+   read at `NavigationView.cpp:2947`). A Tab pressed outside the control never reaches them,
+   and the flag is cleared only by another key inside the control or by focus arriving in one
+   of its lists (`:3044`), so a Tab that left the control is still pending when the next one
+   comes back in. Both sides were pressed on the reference from the Gallery's search box, in a
+   title bar outside its NavigationView. On 2026-10-24 Tab landed on `Home`. On 2026-10-26 it
+   did again with a pointer having put focus there, then Shift+Tab went back to the search box
+   and the next Tab landed on the selected page's row. Ours landed on the selected row every
+   time. A second gap was read from the pin rather than pressed: a Tab from a row the arrows
+   reached leaves the list (`:3018`), where ours went on to the selected row when it came later
+   in the list. **Both were fixed on 2026-10-26**, with the stop following the focus: the
+   focused row while focus is on a row of the menu; the selected row while it is elsewhere
+   inside the control, or outside it with a Tab pending; and the first row while it is outside
+   with none (`tabStops` in `internal/navigation-view.ts`). `navigation-view-ring.spec.ts`
+   presses each, the title bar's on the Gallery itself.
 2. **Down does not expand; it steps past.** On a collapsed parent Down moves to the next item
    rather than opening it, and past the last item it reaches the Settings row, from which Up
    returns to the list. **At the foot, Down scrolls the page the sample sits on** — that is the

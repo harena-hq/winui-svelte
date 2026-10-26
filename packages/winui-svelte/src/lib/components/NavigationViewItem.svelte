@@ -384,8 +384,10 @@
 			     `4,2` it carries below is a margin on the *presenter's* `LayoutRoot`
 			     (`NavigationView_themeresources.xaml:451`), which lies inside this box. The focus
 			     visual is drawn at the focus target's bounds, so it covers that margin rather than
-			     the fill. -->
-			<div class="item-presenter">
+			     the fill. Its `focusin` is the row reporting focus for `tabStops`, on this box
+			     because nothing is spread onto it to collide with, and so the chevron's focus
+			     counts as its row's. -->
+			<div class="item-presenter" onfocusin={() => pane().noteFocus(tag)}>
 				<!-- Upstream's name: `NavigationViewItemAutomationPeer::GetNameCore` takes the
 				     string content, visible or not, and never the icon, and falls back to the
 				     localized control name `NavigationViewItem`. In that branch the label also keeps

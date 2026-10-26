@@ -530,6 +530,70 @@
 		return null;
 	}
 
+	// What `tabStops` reads besides the selection: whether focus is inside the control at all,
+	// the row it is on when that row reports itself (`noteFocus` in `internal/navigation-view.ts`),
+	// and upstream's `m_TabKeyPrecedesFocusChange` (`NavigationView.h:519`, false to start).
+	//
+	// The flag is the last key pressed inside the control, asked whether it was Tab: the control's
+	// `OnPreviewKeyDown` clears it for every key (`NavigationView.cpp:3089`) and its `OnKeyDown` sets
+	// it for Tab (`:3126`). The first runs on the way down, which nothing below can stop, and the
+	// second on the way up, which a descendant that handled the key skips; the capture and bubble
+	// phases are the same split, with `defaultPrevented` standing in for handled. Read at the
+	// document, that counts a key handled by an ancestor of the control too, or by an earlier
+	// listener on the document, where upstream counts only descendants; and a listener on the window
+	// that stops a key skips the clear. It is cleared again only by focus arriving in one of the root
+	// lists, at the end of `OnRepeaterGettingFocus` (`:3044`), whatever moved it there. So a Tab that
+	// leaves the control leaves the flag set, and the next Tab back in from outside is redirected as
+	// one from inside would be. Measured on the reference on 2026-10-26: from the search box a Tab
+	// reached `Home`, Shift+Tab went back to the search box, and the next Tab reached the selected
+	// page's row.
+	//
+	// Focus and keys are listened for on the document rather than on the root: focus so that its
+	// leaving for anywhere is seen, and the Tab so that it is read after Svelte's delegated handlers,
+	// which run at the root of the mount, have had their say. A move fires `focusout` before
+	// `focusin`, so the reset below has run by the time a row reports. That rests on the browser
+	// firing `focusout` for a focused row that is removed, as Chromium does; one that fires none
+	// would leave the report naming a row no longer drawn, and the menu with no stop until focus
+	// moved again.
+	let focusInside = $state(false);
+	let focusedRow = $state<string | null>(null);
+	let tabSeen = $state(false);
+	$effect(() => {
+		const root = ref;
+		if (!root) return;
+		const enter = (event: FocusEvent) => {
+			focusInside = root.contains(event.target as Node);
+		};
+		// Focus going nowhere — to the body, or out of the window — fires no `focusin`, so every
+		// `focusout` resets, and a `focusin` that follows it sets the real value.
+		const leave = () => {
+			focusInside = false;
+			focusedRow = null;
+		};
+		const clearOnKey = (event: KeyboardEvent) => {
+			if (root.contains(event.target as Node)) tabSeen = false;
+		};
+		const setOnTab = (event: KeyboardEvent) => {
+			if (event.key !== 'Tab' || event.defaultPrevented) return;
+			if (root.contains(event.target as Node)) tabSeen = true;
+		};
+		focusInside = root.contains(document.activeElement);
+		document.addEventListener('focusin', enter);
+		document.addEventListener('focusout', leave);
+		document.addEventListener('keydown', clearOnKey, true);
+		document.addEventListener('keydown', setOnTab);
+		return () => {
+			document.removeEventListener('focusin', enter);
+			document.removeEventListener('focusout', leave);
+			document.removeEventListener('keydown', clearOnKey, true);
+			document.removeEventListener('keydown', setOnTab);
+		};
+	});
+	function noteFocus(tag: string) {
+		focusedRow = tag;
+		tabSeen = false;
+	}
+
 	// `GetContainerForIndexPath(m_selectionModel.SelectedIndex(), true /* lastVisible */)` —
 	// NavigationView.cpp:2988 — is the path to the selection walked while every row above it is
 	// expanded, stopping at the last row reached. The walk is `:5421` and `:5450`, and what
@@ -543,7 +607,9 @@
 	// through `GetRepeater()` (`:5465`), and a rail row's repeater is the one reparented into
 	// the flyout (`NavigationViewItem.cpp:875-889`), so the container it returns is the flyout's
 	// row. Here the same thing falls out of `expandedItems`, which holds the rail row for
-	// exactly as long as its flyout is open.
+	// exactly as long as its flyout is open. While it is open, focus is usually on one of its
+	// rows, and then the focused row's answer below stands in for this one; with the selection
+	// under the flyout's row, the two name rows of the flyout alike.
 	//
 	// **What `:2989` then does is reproduced by something else entirely, and only the half this
 	// computes is computed here.** Upstream both takes the entry away from the rail's rows *and*
@@ -577,6 +643,8 @@
 		// control's is hidden, which is the only way the two can collide.
 		const settings = settingsVisible ? [SETTINGS_ITEM.id] : [];
 		const path = pathTo(items, selected, []);
+		const first = items.find((entry) => !isNavigationViewHeader(entry)) as T | undefined;
+		const menuEntry = first ? [first.id, ...settings] : settings;
 		if (!path) {
 			// `selected` names no row in this list, and the two ways that happens are not the
 			// same upstream.
@@ -589,19 +657,24 @@
 			// row. The menu is still crossed in one press because the *other* branch runs: the
 			// walk that sets `IsTabStop(false)` on the way out (`:3018`) compares each row
 			// against the repeater being left, not against the selection, and the handler's own
-			// guard at `:2947` only asks that a selection exist somewhere, which this is.
-			if (settingsVisible && selected === SETTINGS_ITEM.id) {
-				const first = items.find((entry) => !isNavigationViewHeader(entry));
-				return first ? [(first as T).id, ...settings] : settings;
-			}
+			// guard at `:2947` only asks that a selection exist somewhere, which this is. That
+			// walk is the focused row below, which this answer goes through too.
+			//
 			// **An id that names nothing is the other, and it is not a selection.** The model
 			// has no index, and `:2947` guards the whole handler on one, so neither branch runs
 			// and the rows are tab stops as they come. A consumer routing by URL is where this
 			// arrives: a page under no row, or one that has not resolved yet. Same answer as a
 			// `null` selection above, reached from a different premise — which is why it is
 			// written out rather than folded into that test.
-			return null;
+			if (!(settingsVisible && selected === SETTINGS_ITEM.id)) return null;
 		}
+		// A row of the menu with focus on it is the walk out of the list, and focus outside the
+		// control with no Tab pending is the Tab that nothing redirects; `tabStops` in
+		// `internal/navigation-view.ts` has both. The settings row is no row of `items`, so focus
+		// on it is focus elsewhere inside the control, as it is upstream, where it sits in the
+		// footer's repeater.
+		if (focusedRow !== null && pathTo(items, focusedRow, [])) return [focusedRow, ...settings];
+		if (!path || (!focusInside && !tabSeen)) return menuEntry;
 		let stop = path[0].id;
 		for (let i = 1; i < path.length; i++) {
 			if (!expandedItems.includes(path[i - 1].id)) break;
@@ -614,6 +687,7 @@
 		selected,
 		expandedItems,
 		tabStops,
+		noteFocus,
 		setExpanded,
 		onItemInvoked,
 		collapsed,
