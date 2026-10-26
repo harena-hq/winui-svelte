@@ -1630,19 +1630,27 @@
 			cubic-bezier(0, 0, 0, 1);
 	}
 
-	/* ----- Items: Disabled ----- */
-	.item[data-disabled] {
+	/* ----- Items: Disabled, whatever else the row is. For content that is not a control,
+	   `ChangeVisualState` chooses `Disabled` before it considers selection, pointer or press
+	   (ComboBoxItem_Partial.cpp:447-453). The template's `SelectedDisabled`
+	   (ComboBox_themeresources.xaml:689) is a state ComboBoxItem's code never enters: it derives
+	   from SelectorItem (ComboBoxItem.g.h:23), not ListBoxItem, whose code does
+	   (ListBoxItem_Partial.cpp:442). So its brushes go unused. The editable list draws the
+	   selected look on `shown`, which the selection, the arrows and type-ahead can each put on
+	   a disabled row; the non-editable list's look reaches one only when its row is disabled
+	   while the list is open, as its navigation skips disabled rows. Written after the
+	   selected rules, the first selector wins over Selected by order; the second weighs as
+	   much as Selected + PointerOver and Selected + Pressed, and wins over them the same way. */
+	.item[data-disabled],
+	.item[data-disabled][data-selected] {
 		background-color: var(--winui-ComboBoxItemBackgroundDisabled);
 		border-color: var(--winui-ComboBoxItemBorderBrushDisabled);
 		color: var(--winui-ComboBoxItemForegroundDisabled);
 		cursor: default;
 	}
 
-	/* ----- Items: Selected + Disabled ----- */
-	.item[data-selected][data-disabled] {
-		background-color: var(--winui-ComboBoxItemBackgroundSelectedDisabled);
-		border-color: var(--winui-ComboBoxItemBorderBrushSelectedDisabled);
-		color: var(--winui-ComboBoxItemForegroundSelectedDisabled);
+	.item[data-disabled] > .pill {
+		opacity: 0;
 	}
 
 	/* ----- Trigger: Disabled — written last so the five disabled brushes win over `:hover`
