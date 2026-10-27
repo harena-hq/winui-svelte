@@ -23,23 +23,38 @@
  */
 import type { Attachment } from 'svelte/attachments';
 
-type Modality = 'keyboard' | 'pointer';
+type Modality = 'keyboard' | 'pointer' | 'none';
 
-// The shared state every element the attachment is used on reads. Keyboard first, so an
-// element focused before any interaction has happened draws the visual; that is what a
-// browser does with `:focus-visible` and what a user with no pointer needs.
-let modality: Modality = 'keyboard';
+// The shared state every element the attachment is used on reads. WinUI draws a
+// programmatic focus as a keyboard focus only when the last input device was the keyboard,
+// and as a pointer focus otherwise, including before any input
+// (`CFocusManager::CoerceFocusState`, focusmgr.cpp:3195). The device starts as `None`
+// (InputDeviceCache.cpp:28), and a window takes Keyboard instead only when the system shows
+// keyboard cues (XamlIslandRoot.cpp:1183-1197), which a page cannot read. So an element
+// focused by script before any input draws no visual, where Chromium's `:focus-visible`
+// grants one. `'none'` behaves as `'pointer'` does and is there to say which state it is.
+//
+// Only a press counts as a pointer here. Upstream records the device for every pointer
+// message it does not replay, a move and the wheel included
+// (PointerInputProcessor.cpp:218-251), so a key, then a pointer move, then a scripted focus
+// draws the visual here and none there.
+let modality: Modality = 'none';
 
-// The document listeners are installed once, on the first attachment to run, and are
-// never removed. Both phases are capture-phase so they run before any handler that could
-// move focus, and both are passive so they do not block the user agent's scrolling or
-// pinch-zoom bookkeeping. The cleanup returned by the attachment removes only the three
-// node listeners; removing the document listeners here would unmount them for the next
+// The document listeners are installed once, when this module is first evaluated in the
+// browser, and are never removed. Not on the first attachment to run: the key that opens a
+// flyout comes before the flyout's content mounts, and on a page where nothing else carries
+// the attachment it would go unrecorded, so a CalendarDatePicker opened from the keyboard
+// drew no visual. The module is evaluated with the code of the component that imports it,
+// so a key that loads that code, by navigating to a page that uses it, is not seen either.
+// Both phases are capture-phase so they run before any handler that could move focus, and
+// both are passive so they do not block the user agent's scrolling or pinch-zoom
+// bookkeeping. The cleanup returned by the attachment removes only the three
+// node listeners; removing the document listeners there would unmount them for the next
 // component that adopts the attachment and silently break it.
-let documentListenersInstalled = false;
-function installDocumentListeners() {
-	if (documentListenersInstalled) return;
-	documentListenersInstalled = true;
+//
+// The module is imported on the server too, by the components that use it, and SvelteKit's
+// SSR has no `document`.
+if (typeof document !== 'undefined') {
 	document.addEventListener(
 		'keydown',
 		() => {
@@ -59,13 +74,6 @@ function installDocumentListeners() {
 const ATTRIBUTE = 'data-focus-visual';
 
 export const focusVisual: Attachment<HTMLElement> = (node) => {
-	// An attachment does not run on the server, but the module is imported there by
-	// the components that use it, and SvelteKit's SSR has no `document`. Skip the
-	// installation rather than guard every listener call.
-	if (typeof document === 'undefined') return;
-
-	installDocumentListeners();
-
 	const onFocus = () => {
 		if (modality === 'keyboard') node.setAttribute(ATTRIBUTE, '');
 		else node.removeAttribute(ATTRIBUTE);
