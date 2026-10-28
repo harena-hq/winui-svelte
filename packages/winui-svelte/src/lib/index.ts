@@ -46,6 +46,7 @@ export type {
 } from './components/TeachingTip.svelte';
 export { default as TabView } from './components/TabView.svelte';
 export type {
+	TabViewAddTabButtonClickEventArgs,
 	TabViewCloseButtonOverlayMode,
 	TabViewItemData,
 	TabViewProps,
