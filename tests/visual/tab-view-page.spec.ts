@@ -1,7 +1,8 @@
 /**
  * The TabView page runs the original's code-behind (TabViewPage.xaml.cs): the Loaded handler's
  * three Document tabs, the add and close handlers, the bound sample's MyData collection, the
- * keyboard accelerators, and the two option boxes that set the width and close-button modes.
+ * keyboard accelerators, the two option boxes that set the width and close-button modes, and the
+ * context menu's Opening and its moves.
  */
 import { expect, test } from './fixtures';
 import type { Locator, Page } from '@playwright/test';
@@ -282,4 +283,60 @@ test('the windowing button opens no window', async ({ page }) => {
 	await page.waitForTimeout(300);
 	expect(popups).toHaveLength(0);
 	expect(page.context().pages()).toHaveLength(1);
+});
+
+/** The page's one menu's rows, once it is open. */
+const menuRows = async (page: Page) => {
+	await expect(page.getByRole('menu')).toBeVisible();
+	return (await page.getByRole('menuitem').allTextContents()).map((text) => text.trim());
+};
+
+test("every view's tabs but the bound view's open the page's move menu", async ({ page }) => {
+	// TabViewPage.xaml:12 and the ContextFlyout of every markup tab and every tab CreateNewTab
+	// makes; the bound view's template sets none.
+	for (const [index, first, middle] of [
+		[0, 'Document 0', 'Document 1'],
+		[1, 'Document 0', 'Document 1'],
+		[3, 'Document 0', 'Document 1'],
+		[4, 'Document 0', 'Document 1'],
+		[5, 'Home', 'Tab 2 Has Longer Text'],
+		[6, 'Home', 'Tab 2 Has Longer Text'],
+		[7, 'CMD Prompt', 'PowerShell'],
+		[8, 'Document 0', 'Document 1']
+	] as const) {
+		const tv = view(page, index);
+		await tab(tv, first).scrollIntoViewIfNeeded();
+		await tab(tv, first).click({ button: 'right' });
+		expect(await menuRows(page), `view ${index}, ${first}`).toEqual(['Move tab right']);
+		await page.keyboard.press('Escape');
+		await expect(page.getByRole('menu')).toHaveCount(0);
+		await tab(tv, middle).click({ button: 'right' });
+		expect(await menuRows(page), `view ${index}, ${middle}`).toEqual([
+			'Move tab left',
+			'Move tab right'
+		]);
+		await page.keyboard.press('Escape');
+		await expect(page.getByRole('menu')).toHaveCount(0);
+	}
+	const bound = view(page, 2);
+	await tab(bound, 'MyData Doc 1').click({ button: 'right' });
+	// Long enough for a menu to open, were one to.
+	await page.waitForTimeout(300);
+	await expect(page.getByRole('menu')).toHaveCount(0);
+});
+
+test('a move from the menu moves the tab in its own view, and an added tab has the menu', async ({
+	page
+}) => {
+	const width = view(page, 5);
+	await tab(width, 'Third Tab').click({ button: 'right' });
+	expect(await menuRows(page)).toEqual(['Move tab left']);
+	await page.getByRole('menuitem', { name: 'Move tab left' }).click();
+	await expect.poll(() => labels(width)).toEqual(['Home*', 'Third Tab', 'Tab 2 Has Longer Text']);
+	// The close-button view, built from the same three tabs, is not moved with it.
+	expect(await labels(view(page, 6))).toEqual(['Home*', 'Tab 2 Has Longer Text', 'Third Tab']);
+	const first = view(page, 0);
+	await first.getByRole('button', { name: 'Add new tab' }).click(hold);
+	await tab(first, 'Document 3').click({ button: 'right' });
+	expect(await menuRows(page)).toEqual(['Move tab left']);
 });
