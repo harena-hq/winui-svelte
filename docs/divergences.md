@@ -2385,7 +2385,10 @@ changes`.
 ### WD-104 — a focus inside a ScrollViewer after a touch shows no bars
 
 - **Control**: `ScrollViewer`, and every control drawn on it: `NavigationView`'s pane,
-  `ListView`, `GridView`, `TreeView` and `PipsPager`, which draws no bars.
+  `ListView`, `GridView`, `TreeView` and `PipsPager`, which draws no bars; and, in the
+  Gallery, the SemanticZoom page's zoomed-in view (a `GridView` upstream) and the page
+  scroller on every page but Settings (a `ScrollViewer` or a `GridView` upstream). Each of
+  the controls and sites above carries `data-scroll-input="scroll-viewer"`.
 - **WinUI does**: show the bars on any focus that lands inside, whatever input gave it.
   `ScrollViewer::OnGotFocus` takes the indicator preference from the last input device and
   calls `ShowIndicators` (`ScrollViewer_Partial.cpp:2323-2343`). After a touch that is the
@@ -2398,8 +2401,9 @@ changes`.
   code after a touch shows nothing too, where upstream's, reading the same last input device,
   shows the panning indicator. A focus after a mouse or pen press, or a key, shows the bars as
   upstream's does; a hover does not count as the last input here, where upstream's last device
-  follows every pointer message (`PointerInputProcessor.cpp:234-245`). `ScrollView`'s focus
-  shows them after any input, a touch included, as its press shows them anyway.
+  follows every pointer message (`PointerInputProcessor.cpp:234-245`). A `ScrollView` without
+  `data-scroll-input="scroll-viewer"` shows them on a focus after any input, a touch included,
+  as its press shows them anyway.
 - **Why accepted**: the owner, tapping the pane on an iPad, found the flash on every menu-item
   tap distracting, and asked for it gone. The guest takes no touch input, so upstream's flash
   was read from the sources and not seen.

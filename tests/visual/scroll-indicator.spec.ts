@@ -502,3 +502,40 @@ test('a bar removed from under the pointer stops holding', async ({ page }) => {
 	await page.clock.runFor(3250);
 	expect(await state(page)).toEqual(FADING);
 });
+
+test("the Gallery's page scroller carries the marker on every page but Settings", async ({
+	page
+}) => {
+	// Upstream's Settings page alone scrolls in a ScrollView; see the shell's layout.
+	const scroller = page.locator('.scroll-view.page');
+	await page.goto('/settings');
+	await expect(scroller).toBeAttached();
+	await expect(scroller).not.toHaveAttribute('data-scroll-input');
+	// Each way between Settings and Home without a reload, so the marker follows the route rather
+	// than the load; the flag on the window would not survive one.
+	const row = (label: string) =>
+		page.locator(`[role="treeitem"]:has(> .content-presenter:text-is("${label}"))`);
+	await page.evaluate(() => ((window as { stayed?: boolean }).stayed = true));
+	await row('Home').click();
+	await expect(page).toHaveURL(/\/$/);
+	await expect(scroller).toHaveAttribute('data-scroll-input', 'scroll-viewer');
+	await row('Settings').click();
+	await expect(page).toHaveURL(/\/settings$/);
+	await expect(scroller).toBeAttached();
+	await expect(scroller).not.toHaveAttribute('data-scroll-input');
+	expect(await page.evaluate(() => (window as { stayed?: boolean }).stayed)).toBe(true);
+	for (const path of ['/scrolling/semanticzoom', '/menusandtoolbars/appbarbutton']) {
+		await page.goto(path);
+		await expect(scroller).toHaveAttribute('data-scroll-input', 'scroll-viewer');
+	}
+});
+
+test("SemanticZoom's zoomed-in view carries the marker, since it is a GridView upstream", async ({
+	page
+}) => {
+	await page.goto('/scrolling/semanticzoom');
+	await expect(page.locator('.scroll-view.zoomed-in-scroll')).toHaveAttribute(
+		'data-scroll-input',
+		'scroll-viewer'
+	);
+});

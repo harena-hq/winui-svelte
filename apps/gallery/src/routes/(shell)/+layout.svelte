@@ -247,7 +247,18 @@
 		     ScrollViewer, so this region is now a ScrollView rather than a NavigationView rule.
 		     The gutter is on the content inside it rather than on the scroller, which is where
 		     upstream puts it and what lets the rule below take it away from a framed page. -->
-		<ScrollView class="page" style="height: 100%">
+		<!-- The page's own scroller is the older control on every page but Settings: ItemPage's
+		     (ItemPage.xaml:43), Home's (HomePage.xaml:52), and the GridView that each of the All
+		     controls, section and search pages is (AllControlsPage.xaml:39, SectionPage.xaml:30,
+		     SearchResultsPage.xaml:22), pages this Gallery builds as placeholders or not at all.
+		     Settings alone scrolls in a ScrollView (SettingsPage.xaml:35). The marker tells this
+		     one which it draws: the older control's press shows no bars, as upstream's does, and a
+		     focus after a touch shows none either (WD-104). -->
+		<ScrollView
+			class="page"
+			style="height: 100%"
+			data-scroll-input={page.url.pathname === '/settings' ? undefined : 'scroll-viewer'}
+		>
 			<div class="page-gutter">{@render children()}</div>
 		</ScrollView>
 	</NavigationView>

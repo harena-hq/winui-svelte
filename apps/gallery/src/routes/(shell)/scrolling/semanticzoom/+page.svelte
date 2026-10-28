@@ -28,9 +28,14 @@
      and **the grouping is this page's rather than the control's**: this library's `GridView` has
      no grouping and this unit adds none, so the headings and the items under them are drawn here
      directly — the way v11's Grid and StackPanel pages draw layouts that are not components. The
-     `ScrollView` is the scrolling the GridView would have brought with it. -->
+     `ScrollView` is the scrolling the GridView would have brought with it, and carries the
+     marker of the older ScrollViewer that scrolling is, as this library's GridView does. -->
 {#snippet zoomedInView()}
-	<ScrollView class="zoomed-in-scroll" contentOrientation="vertical">
+	<ScrollView
+		class="zoomed-in-scroll"
+		contentOrientation="vertical"
+		data-scroll-input="scroll-viewer"
+	>
 		<div class="groups">
 			{#each GROUPS as group (group.uniqueId)}
 				<section>
