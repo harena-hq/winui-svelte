@@ -15,6 +15,16 @@
 	 */
 	export type TabViewCloseButtonOverlayMode = 'auto' | 'onPointerOver' | 'always';
 
+	/**
+	 * AddTabButtonClick's `args`: the member of `RoutedEventArgs` a handler here can use. Named
+	 * for the event, as upstream's `args` is typed `Object` (TabView.idl:128) and carries the
+	 * button's own `RoutedEventArgs`.
+	 */
+	export interface TabViewAddTabButtonClickEventArgs {
+		/** RoutedEventArgs.OriginalSource — the add button. */
+		readonly originalSource: HTMLButtonElement;
+	}
+
 	/** One tab. `TabView.TabItems` narrowed to plain records — D26 and NavigationView's narrowing. */
 	export interface TabViewItemData {
 		/** Stable identity. What `selected` holds and what the callbacks report. */
@@ -58,8 +68,13 @@
 		closeButtonOverlayMode?: TabViewCloseButtonOverlayMode;
 		/** IsAddTabButtonVisible. Defaults to true, as upstream does (`TabView.idl:119`). */
 		addTabButtonVisible?: boolean;
-		/** AddTabButtonClick. */
-		onAddTabButtonClick?: () => void;
+		/**
+		 * AddTabButtonClick. Upstream raises it with the add button's own `RoutedEventArgs` as its
+		 * `args` (`TabView::OnAddButtonClick`, TabView.cpp:514-516), whose `OriginalSource` the
+		 * button set to itself (`ButtonBase::OnClick`, ButtonBase_Partial.cpp:889), so a handler
+		 * can show a flyout at it; this passes the button the same way.
+		 */
+		onAddTabButtonClick?: (args: TabViewAddTabButtonClickEventArgs) => void;
 		/** TabStripHeader, ADR 0012's general form — the content left of the tabs. */
 		tabStripHeader?: Snippet;
 		/** TabStripFooter, ADR 0012's general form — the content right of the add button. */
@@ -510,7 +525,8 @@
 					onkeydown={(event) => {
 						if (walk(event, addId)) event.stopPropagation();
 					}}
-					onclick={() => onAddTabButtonClick?.()}>{addGlyph}</button
+					onclick={(event) => onAddTabButtonClick?.({ originalSource: event.currentTarget })}
+					>{addGlyph}</button
 				>
 			</div>
 		{/if}

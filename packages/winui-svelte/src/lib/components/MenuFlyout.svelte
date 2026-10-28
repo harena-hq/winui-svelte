@@ -131,6 +131,17 @@
 		 * Spread them **first**, before the element's own attributes: they carry the
 		 * primitive's event handlers, and a trigger that sets one of the same names after the
 		 * spread replaces it rather than adding to it.
+		 *
+		 * Optional: without it the menu has no trigger of its own and opens through `open`,
+		 * placed against `anchor`, which is `FlyoutBase.ShowAt(placementTarget)` from a handler,
+		 * as an application opens a menu from TabView's add button. While it is open a press
+		 * anywhere outside it, `anchor` included, closes it and reaches nothing beneath, as on
+		 * the triggered menu, unless what is beneath sets `pointer-events: auto`. The focus
+		 * returns to `anchor` when the menu closes, however it closes, unless it has already left
+		 * the menu for something other than the body, as a press on such an element moves it;
+		 * there it stays. The triggered menu returns it to the trigger except after any press
+		 * outside. Tab inside such a menu or one of its submenus closes it, and the focus returns
+		 * to `anchor`, where the triggered menu closes and moves on from its trigger.
 		 */
 		children?: Snippet<[Record<string, unknown>]>;
 		/** No WinUI member: render inside a `MenuBar`'s menu group rather than owning a trigger of
@@ -229,6 +240,46 @@
 	} as const;
 
 	const position = $derived(placements[placement]);
+
+	// With no trigger, `anchor` is where the focus returns on closing, which bits-ui gives the
+	// trigger's node in `onCloseAutoFocus` and has none of here. Without it the focus returns to
+	// what had it before the menu opened, which WebKit does not give a button it clicks, and is
+	// otherwise left to fall to the body. That includes a close by a press outside, which bits-ui
+	// leaves the focus after so as not to take it from what was pressed: while the menu is open
+	// the scroll lock of the primitive's content, its `preventScroll`, on by default and not set
+	// here, sets `pointer-events: none` on the body, so such a press lands on the root and
+	// focuses nothing. An element that sets `pointer-events: auto` is pressed all the same, as
+	// NavigationView's back button is, and a press that focused one keeps it. So what decides is
+	// where the focus is, not what was pressed, as upstream returns it only if the popup "still
+	// contains focus, or if nothing now has focus" (`CPopup::Close`, Popup.cpp:866-872): in a
+	// menu, the submenus' included, or on the body, it goes to `anchor`, and anywhere else it is
+	// left, bits-ui's own return included. Upstream returns it to what had it before the menu
+	// opened, which for a menu shown from a button the button's press gave it to.
+	function onCloseAutoFocus(event: Event) {
+		if (!anchor || !anchor.isConnected) return;
+		event.preventDefault();
+		const focused = document.activeElement;
+		if (focused && focused !== document.body && !focused.closest('[role="menu"]')) return;
+		anchor.focus();
+	}
+
+	function setOpen(next: boolean) {
+		open = next;
+		onOpenChange?.(next);
+	}
+
+	// bits-ui moves a Tab on from the trigger and, with none, leaves it to the browser, which
+	// takes the focus out of the menu and leaves it open: `DropdownMenu.Content` defaults
+	// `trapFocus` to false, where `Menu.Content` forces it, and a trap here would also pull back
+	// the focus a press through the body's `pointer-events` gives. Here Tab closes the menu
+	// instead, as Escape does, so the focus returns to `anchor` and the next Tab moves on from
+	// there. A submenu's content is portaled apart from the menu's, so each takes it.
+	function onkeydown(event: KeyboardEvent) {
+		if (event.key !== 'Tab') return;
+		event.preventDefault();
+		setOpen(false);
+	}
+
 	const hasCheckColumn = $derived(items.some((entry) => 'toggle' in entry || 'groupName' in entry));
 	const hasIconColumn = $derived(
 		items.some(
@@ -338,7 +389,13 @@
 						</div>
 					</div>
 					<DropdownMenu.Portal>
-						<DropdownMenu.SubContent side="right" align="start" sideOffset={0} alignOffset={-2}>
+						<DropdownMenu.SubContent
+							side="right"
+							align="start"
+							sideOffset={0}
+							alignOffset={-2}
+							onkeydown={children || menubar ? undefined : onkeydown}
+						>
 							{#snippet child({ props, wrapperProps })}
 								<div {...wrapperProps}>
 									<div
@@ -381,7 +438,13 @@
 						{/snippet}
 					</DropdownMenu.SubTrigger>
 					<DropdownMenu.Portal>
-						<DropdownMenu.SubContent side="right" align="start" sideOffset={0} alignOffset={-2}>
+						<DropdownMenu.SubContent
+							side="right"
+							align="start"
+							sideOffset={0}
+							alignOffset={-2}
+							onkeydown={children || menubar ? undefined : onkeydown}
+						>
 							{#snippet child({ props, wrapperProps })}
 								<div {...wrapperProps}>
 									<div
@@ -491,15 +554,7 @@
 		</Menubar.Content>
 	</Menubar.Portal>
 {:else}
-	<DropdownMenu.Root
-		bind:open={
-			() => open,
-			(next) => {
-				open = next;
-				onOpenChange?.(next);
-			}
-		}
-	>
+	<DropdownMenu.Root bind:open={() => open, setOpen}>
 		<DropdownMenu.Trigger>
 			{#snippet child({ props })}
 				{@render children?.(props)}
@@ -511,6 +566,8 @@
 				align={position.align}
 				sideOffset={offset}
 				customAnchor={anchor}
+				onCloseAutoFocus={children ? undefined : onCloseAutoFocus}
+				onkeydown={children ? undefined : onkeydown}
 			>
 				{#snippet child({ props, wrapperProps })}{@render presenter(props, wrapperProps)}{/snippet}
 			</DropdownMenu.Content>
