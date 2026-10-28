@@ -506,8 +506,9 @@ test('a bar removed from under the pointer stops holding', async ({ page }) => {
 test("the Gallery's page scroller carries the marker on every page but Settings", async ({
 	page
 }) => {
-	// Upstream's Settings page alone scrolls in a ScrollView; see the shell's layout.
-	const scroller = page.locator('.scroll-view.page');
+	// Upstream's Settings page alone scrolls in a ScrollView; see InterimPage.svelte. Each page
+	// brings its own scroller, so the locator finds a new one after each navigation.
+	const scroller = page.locator('.page-scroller');
 	await page.goto('/settings');
 	await expect(scroller).toBeAttached();
 	await expect(scroller).not.toHaveAttribute('data-scroll-input');

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import InterimPage from '$lib/frame/InterimPage.svelte';
 	import { colorItems, colorSections, nav } from '$lib/design';
 	import { resolve } from '$lib/resolve';
 
@@ -10,45 +11,47 @@
 	}));
 </script>
 
-<h1 class="winui-TitleTextBlockStyle">{page.title}</h1>
-<p class="winui-BodyTextBlockStyle">{page.subtitle}</p>
+<InterimPage>
+	<h1 class="winui-TitleTextBlockStyle">{page.title}</h1>
+	<p class="winui-BodyTextBlockStyle">{page.subtitle}</p>
 
-{#each bySection as group (group.section)}
-	<section>
-		<h2 class="winui-SubtitleTextBlockStyle">{group.section}</h2>
+	{#each bySection as group (group.section)}
+		<section>
+			<h2 class="winui-SubtitleTextBlockStyle">{group.section}</h2>
 
-		{#each group.items as item, i (i)}
-			{#if item.kind === 'example'}
-				{@const ex = item}
-				<div
-					class="example"
-					style:background={resolve(ex.background)}
-					style:color={resolve(ex.foreground)}
-				>
-					<div class="winui-SubtitleTextBlockStyle">{ex.title}</div>
-					<div class="caption winui-CaptionTextBlockStyle">{ex.description}</div>
-					<div class="content"></div>
-				</div>
-			{:else}
-				<div class="gallery-tile-grid" style:grid-template-columns="repeat({item.columns}, 1fr)">
-					{#each item.tiles as tile, j (j)}
-						{@const t = tile}
-						<!-- WD-003: the two Mica tiles carry no fill; see docs/divergences.md -->
-						<div
-							class="tile"
-							style:background={resolve(t.background)}
-							style:color={resolve(t.foreground)}
-						>
-							<div class="winui-BodyStrongTextBlockStyle">{t.colorName}</div>
-							<div class="caption winui-CaptionTextBlockStyle">{t.colorExplanation}</div>
-							<div class="brush">{t.colorBrushName}</div>
-						</div>
-					{/each}
-				</div>
-			{/if}
-		{/each}
-	</section>
-{/each}
+			{#each group.items as item, i (i)}
+				{#if item.kind === 'example'}
+					{@const ex = item}
+					<div
+						class="example"
+						style:background={resolve(ex.background)}
+						style:color={resolve(ex.foreground)}
+					>
+						<div class="winui-SubtitleTextBlockStyle">{ex.title}</div>
+						<div class="caption winui-CaptionTextBlockStyle">{ex.description}</div>
+						<div class="content"></div>
+					</div>
+				{:else}
+					<div class="gallery-tile-grid" style:grid-template-columns="repeat({item.columns}, 1fr)">
+						{#each item.tiles as tile, j (j)}
+							{@const t = tile}
+							<!-- WD-003: the two Mica tiles carry no fill; see docs/divergences.md -->
+							<div
+								class="tile"
+								style:background={resolve(t.background)}
+								style:color={resolve(t.foreground)}
+							>
+								<div class="winui-BodyStrongTextBlockStyle">{t.colorName}</div>
+								<div class="caption winui-CaptionTextBlockStyle">{t.colorExplanation}</div>
+								<div class="brush">{t.colorBrushName}</div>
+							</div>
+						{/each}
+					</div>
+				{/if}
+			{/each}
+		</section>
+	{/each}
+</InterimPage>
 
 <style>
 	section {

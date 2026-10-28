@@ -227,3 +227,29 @@ test('a wheel turned after the last key draws no visual', async ({ page }) => {
 	await expect(api(page)).toBeFocused();
 	expect(await focusVisible(page)).toBe(false);
 });
+
+test('the header stays as the samples scroll, and the bars start below it', async ({ page }) => {
+	// `pageHeader` is rootPanel's first row and `svPanel` its second (ItemPage.xaml:32-47).
+	await page.setViewportSize({ width: 1600, height: 900 });
+	await page.goto('/basicinput/button');
+	const header = page.locator('[data-item-page] .header-slot');
+	const scroller = page.locator('[data-item-page] .page-scroller');
+	const viewport = scroller.locator('.viewport').first();
+	const before = (await header.boundingBox())!;
+	const region = (await scroller.boundingBox())!;
+	expect(region.y).toBeGreaterThanOrEqual(before.y + before.height);
+	// The page overflows, so the scroll below moves something.
+	expect(await viewport.evaluate((el) => el.scrollHeight > el.clientHeight)).toBe(true);
+	await viewport.evaluate((el) => el.scrollTo({ top: 100, behavior: 'instant' }));
+	await expect.poll(() => viewport.evaluate((el) => el.scrollTop)).toBe(100);
+	expect(await header.boundingBox()).toEqual(before);
+	// No box around the header scrolled in the region's place.
+	const scrolled = await header.evaluate((el) => {
+		const found: string[] = [];
+		for (let box = el.parentElement; box; box = box.parentElement) {
+			if (box.scrollTop !== 0) found.push(box.className);
+		}
+		return found;
+	});
+	expect(scrolled).toEqual([]);
+});

@@ -1097,9 +1097,9 @@
 	     `ContentRoot`, after the `Border` carrying `Content` (`:718-723`). That order is the
 	     whole mechanism and it is not decoration: a positioned element with `z-index: auto`
 	     paints in tree order, so a layer written before the content loses to anything in the
-	     content that is positioned. Measured on the Gallery's own shell, where
-	     `ScrollView`'s `.scroll-view.page` is `position: relative` and took every tap: the layer
-	     was there, covered the point, and `elementFromPoint` returned the page.
+	     content that is positioned. Measured on the Gallery's own shell when its page area was a
+	     `ScrollView` (`.scroll-view.page`, `position: relative`), which took every tap: the
+	     layer was there, covered the point, and `elementFromPoint` returned the page.
 
 	     The pane is above this (its `z-index: 1`, which beats `auto` whatever the order) and so
 	     is the toggle button (`:100`), so neither dismisses by being clicked.

@@ -18,11 +18,11 @@ async function freeze(page: Page) {
 }
 
 /** The scroll position of the page's `index`th example ScrollView (0, 1, 2 for Examples 1–3).
- * The shell contributes two more `.scroll-view` viewports ahead of the examples, so the
- * locator is scoped to the item page. */
+ * The shell's pane and the item page's own scroller contribute `.scroll-view` viewports ahead
+ * of the examples, so the locator is scoped to the item page's content. */
 async function offset(page: Page, index: number) {
 	return page
-		.locator('[data-item-page] .scroll-view .viewport')
+		.locator('[data-item-page] .content-root .scroll-view .viewport')
 		.nth(index)
 		.evaluate((element) => element.scrollTop);
 }
@@ -30,7 +30,7 @@ async function offset(page: Page, index: number) {
 /** The third example ScrollView's scrollable height. */
 async function scrollable(page: Page) {
 	return page
-		.locator('[data-item-page] .scroll-view .viewport')
+		.locator('[data-item-page] .content-root .scroll-view .viewport')
 		.nth(2)
 		.evaluate((element) => element.scrollHeight - element.clientHeight);
 }
