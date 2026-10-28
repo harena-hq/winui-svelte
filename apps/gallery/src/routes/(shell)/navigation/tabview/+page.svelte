@@ -1,5 +1,13 @@
 <script lang="ts">
-	import { Button, ComboBox, TabView, type TabViewItemData } from 'winui-svelte/preview';
+	import {
+		Button,
+		ComboBox,
+		MenuFlyout,
+		TabView,
+		type MenuFlyoutEntry,
+		type TabViewItemData,
+		type TabViewTabContextRequestedEventArgs
+	} from 'winui-svelte/preview';
 	import ControlExample from '$lib/frame/ControlExample.svelte';
 	import ItemPage from '$lib/frame/ItemPage.svelte';
 	import { SamplePage1, SamplePage2, SamplePage3 } from '$lib/sample-pages';
@@ -32,9 +40,8 @@
 	const id = () => `tab-${nextId++}`;
 
 	// CreateNewTab (TabViewPage.xaml.cs:61-89): "Document " and the index, the Document symbol.
-	// It also sets the page's ContextFlyout, as the markup tabs do, which the library's tab
-	// takes none of (docs/library-gate.md, the TabView paragraph of 2026-10-14); no tab here
-	// has one.
+	// It also sets the page's ContextFlyout (:67), as the markup tabs do; `contextMenu` below
+	// is what the TabViews it reaches take.
 	const newTab = (index: number): TabViewItemData => ({
 		id: id(),
 		header: `Document ${index}`,
@@ -121,7 +128,7 @@
 		},
 		{ id: 'third', header: 'Third Tab', glyph: SYMBOL.Placeholder, closable, content: page3 }
 	];
-	const items6 = fixedTabs(false);
+	let items6 = $state(fixedTabs(false));
 	// TabWidthBehaviorComboBox_SelectionChanged (TabViewPage.xaml.cs:224-241).
 	const WIDTH_MODES = [
 		{ value: 'sizeToContent', label: 'SizeToContent' },
@@ -132,7 +139,7 @@
 	const WIDTH_MODE_NAMES = { sizeToContent: 'SizeToContent', equal: 'Equal', compact: 'Compact' };
 
 	// The seventh sets no TabCloseRequested, so a close button closes nothing.
-	const items7 = fixedTabs(true);
+	let items7 = $state(fixedTabs(true));
 	// TabCloseButtonOverlayModeComboBox_SelectionChanged (TabViewPage.xaml.cs:243-260): the
 	// item "OnHover" sets OnPointerOver. SelectedIndex="1" (TabViewPage.xaml:289) starts it on Always,
 	// as the original's source pane shows at load.
@@ -145,11 +152,11 @@
 	const OVERLAY_MODE_NAMES = { auto: 'Auto', always: 'Always', onPointerOver: 'OnPointerOver' };
 
 	// Example 8 (:301-336): full-colour bitmaps, no content.
-	const items8: TabViewItemData[] = [
+	let items8 = $state<TabViewItemData[]>([
 		{ id: 'cmd', header: 'CMD Prompt', closable: false, icon: cmdIcon },
 		{ id: 'powershell', header: 'PowerShell', closable: false, icon: powershellIcon },
 		{ id: 'linux', header: 'Windows Subsystem for Linux', closable: false, icon: linuxIcon }
-	];
+	]);
 
 	// Example 9 (:338-361).
 	let items9 = $state(loaded());
@@ -157,6 +164,45 @@
 	// TabView_AddButtonClick (TabViewPage.xaml.cs:51-54) appends at the count, without
 	// selecting, and TabView_TabCloseRequested (:56-59) removes the tab asked for.
 	const add = (items: TabViewItemData[]) => [...items, newTab(items.length)];
+
+	// The page's one MenuFlyout, `TabViewContextMenu` (TabViewPage.xaml:12), is the ContextFlyout
+	// of every tab but the third example's, whose items take none: the markup tabs' (:38-50,
+	// :218-230, :264-276, :316-326) and every tab CreateNewTab makes. Its Opening fills it with
+	// "Move tab left", "Move tab right" or both as the tab's place allows, and hides it when it
+	// holds neither (TabViewPage.xaml.cs:275-284, TabViewHelper.cs:61-101). It opens at the
+	// pointer, or against the tab from the keyboard, as the library's tab reports.
+	let menuOpen = $state(false);
+	let menuAnchor = $state<HTMLElement | null>(null);
+	let menuPosition = $state<{ x: number; y: number } | null>(null);
+	let menuRows = $state<MenuFlyoutEntry[]>([]);
+	let moveTab: (row: string) => void = () => {};
+
+	function contextMenu(get: () => TabViewItemData[], set: (items: TabViewItemData[]) => void) {
+		return (tab: string, args: TabViewTabContextRequestedEventArgs) => {
+			const count = get().length;
+			const index = get().findIndex((t) => t.id === tab);
+			if (index < 0) return;
+			const rows: MenuFlyoutEntry[] = [];
+			if (index > 0) rows.push({ id: 'left', text: 'Move tab left' });
+			if (index < count - 1) rows.push({ id: 'right', text: 'Move tab right' });
+			menuRows = rows;
+			menuAnchor = args.originalSource;
+			menuPosition = args.position;
+			// The tab is moved in its collection: removed, then inserted one place over. It is
+			// found again by its id when the row is invoked, where upstream keeps the index the menu
+			// opened at; the two differ only if the view changed while the menu was open.
+			moveTab = (row) => {
+				const next = [...get()];
+				const from = next.findIndex((t) => t.id === tab);
+				const to = row === 'left' ? from - 1 : from + 1;
+				if (from < 0 || to < 0 || to >= next.length) return;
+				const [moved] = next.splice(from, 1);
+				next.splice(to, 0, moved);
+				set(next);
+			};
+			menuOpen = rows.length > 0;
+		};
+	}
 </script>
 
 {#snippet page1()}<SamplePage1 />{/snippet}
@@ -169,6 +215,14 @@
 
 <svelte:window onkeydown={accelerate} />
 
+<MenuFlyout
+	items={menuRows}
+	anchor={menuAnchor}
+	position={menuPosition}
+	bind:open={menuOpen}
+	onItemInvoked={(row) => moveTab(row)}
+/>
+
 <ItemPage {item}>
 	<ControlExample
 		headerText={addingSample.header ?? undefined}
@@ -179,6 +233,10 @@
 			items={items1}
 			onAddTabButtonClick={() => (items1 = add(items1))}
 			onTabCloseRequested={(tab) => (items1 = without(items1, tab))}
+			onTabContextRequested={contextMenu(
+				() => items1,
+				(next) => (items1 = next)
+			)}
 			class="tv-page-view"
 		/>
 	</ControlExample>
@@ -192,6 +250,10 @@
 			items={items2}
 			onAddTabButtonClick={() => (items2 = add(items2))}
 			onTabCloseRequested={(tab) => (items2 = without(items2, tab))}
+			onTabContextRequested={contextMenu(
+				() => items2,
+				(next) => (items2 = next)
+			)}
 			class="tv-page-view"
 		/>
 	</ControlExample>
@@ -227,6 +289,10 @@
 				bind:selected={selected4}
 				onAddTabButtonClick={() => (items4 = add(items4))}
 				onTabCloseRequested={(tab) => (items4 = without(items4, tab))}
+				onTabContextRequested={contextMenu(
+					() => items4,
+					(next) => (items4 = next)
+				)}
 				class="tv-page-view"
 			/>
 		</div>
@@ -254,6 +320,10 @@
 				tabWidthMode="sizeToContent"
 				onAddTabButtonClick={() => (items5 = add(items5))}
 				onTabCloseRequested={(tab) => (items5 = without(items5, tab))}
+				onTabContextRequested={contextMenu(
+					() => items5,
+					(next) => (items5 = next)
+				)}
 				class="tv-page-view"
 			>
 				{#snippet tabStripHeader()}
@@ -276,6 +346,10 @@
 	>
 		<TabView
 			items={items6}
+			onTabContextRequested={contextMenu(
+				() => items6,
+				(next) => (items6 = next)
+			)}
 			tabWidthMode={widthMode6}
 			addTabButtonVisible={false}
 			class="tv-page-view"
@@ -299,6 +373,10 @@
 	>
 		<TabView
 			items={items7}
+			onTabContextRequested={contextMenu(
+				() => items7,
+				(next) => (items7 = next)
+			)}
 			closeButtonOverlayMode={overlayMode7}
 			addTabButtonVisible={false}
 			class="tv-page-view"
@@ -328,6 +406,10 @@
 			     others take. -->
 			<TabView
 				items={items8}
+				onTabContextRequested={contextMenu(
+					() => items8,
+					(next) => (items8 = next)
+				)}
 				tabWidthMode="sizeToContent"
 				addTabButtonVisible={false}
 				class="tv-page-icons"
@@ -344,6 +426,10 @@
 			items={items9}
 			onAddTabButtonClick={() => (items9 = add(items9))}
 			onTabCloseRequested={(tab) => (items9 = without(items9, tab))}
+			onTabContextRequested={contextMenu(
+				() => items9,
+				(next) => (items9 = next)
+			)}
 			class="tv-page-view tv-page-accent"
 		/>
 	</ControlExample>

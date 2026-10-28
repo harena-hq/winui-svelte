@@ -102,17 +102,20 @@ row's role and place outside the control's tree, and it takes no name of its own
 draws the two as their icons.
 
 Added 2026-10-14, after the run: TabView's Gallery page uses two things no row names, and the
-library has neither. One is a tab's `ContextFlyout`: every tab on the page but the third
-example's, whose template sets none, opens the page's `MenuFlyout`, which the Gallery fills with
-"Move tab left", "Move tab right" or both as the tab's place allows, and hides when it holds
-neither (`TabViewHelper.cs:61-101`, `TabViewPage.xaml.cs:275-284`), moving the tab in its
-collection; the library's `TabViewItemData` takes no flyout. The other is `KeyboardAccelerators`
-on the TabView, a member every UIElement has and no component here carries; the page reproduces
-its eleven accelerators on the window, where an accelerator on a visible element is invoked
-whatever has the focus, as pressing Control+T on the reference with another example's tab
-focused showed, and a browser keeps two of them, Control+T and Control+W (`WD-102`). The page
-draws the tabs without their flyout and names this paragraph where it does. Tear-out, which this
-row listed as v8's, is `WD-023`'s, settled by the same page.
+library has neither. One is a tab's `ContextFlyout`: every tab on the page but the third example's,
+whose template sets none, opens the page's `MenuFlyout`, which the Gallery fills with "Move tab
+left", "Move tab right" or both as the tab's place allows, and hides when it holds neither
+(`TabViewHelper.cs:61-101`, `TabViewPage.xaml.cs:275-284`), moving the tab in its collection; the
+library's `TabViewItemData` takes no flyout. Since 2026-10-28 TabView reports a tab's context
+request through `onTabContextRequested`, with the pointer's point in the tab or none from the
+keyboard, and MenuFlyout opens at a `position` in its `anchor`, so the page draws the menu with one
+MenuFlyout, as upstream does; until then it drew the tabs without one. The other is
+`KeyboardAccelerators` on the TabView, a member every UIElement has and no component here carries;
+the page reproduces its eleven accelerators on the window, where an accelerator on a visible element
+is invoked whatever has the focus, as pressing Control+T on the reference with another example's tab
+focused showed, and a browser keeps two of them, Control+T and Control+W (`WD-102`). The page names
+this paragraph where it draws the accelerators. Tear-out, which this row listed as v8's, is
+`WD-023`'s, settled by the same page.
 
 Added 2026-10-13, after the run: ToolTip's Gallery page found the two members ToolTip's cell
 names, and the pin explains what the guest shows of both. A tooltip's popup is windowed where
