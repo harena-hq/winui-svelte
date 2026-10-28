@@ -25,6 +25,21 @@
 		readonly originalSource: HTMLButtonElement;
 	}
 
+	/**
+	 * A tab's ContextRequested `args`: the members of `ContextRequestedEventArgs` a handler here
+	 * can use, as upstream shows a tab's `ContextFlyout` from them
+	 * (`CUIElement::OnContextRequestedCore`, uielement.cpp:12775-12861).
+	 */
+	export interface TabViewTabContextRequestedEventArgs {
+		/** RoutedEventArgs.OriginalSource, narrowed to the tab. */
+		readonly originalSource: HTMLElement;
+		/**
+		 * `TryGetPosition(tab)`: the pointer's point in the tab, from its top-left corner, or
+		 * `null` when the keyboard asked, which upstream shows the flyout against the tab for.
+		 */
+		readonly position: { x: number; y: number } | null;
+	}
+
 	/** One tab. `TabView.TabItems` narrowed to plain records — D26 and NavigationView's narrowing. */
 	export interface TabViewItemData {
 		/** Stable identity. What `selected` holds and what the callbacks report. */
@@ -60,6 +75,12 @@
 		 * tab shows as selected, and no change is reported.
 		 */
 		onTabCloseRequested?: (id: string) => void;
+		/**
+		 * No member of TabView: each TabViewItem's ContextRequested, reported by id, which is
+		 * where a tab's `ContextFlyout` opens from. With a handler, the browser's own menu is not
+		 * shown on an enabled tab; a disabled tab raises none and keeps the browser's menu.
+		 */
+		onTabContextRequested?: (id: string, args: TabViewTabContextRequestedEventArgs) => void;
 		/** IsEnabled on the control, inverted to the attribute — ADR 0009. */
 		disabled?: boolean;
 		/** TabWidthMode. Defaults to `Equal`, as upstream does (`TabView.idl:105`). */
@@ -103,6 +124,7 @@
 		selected = $bindable(null),
 		onSelectionChanged,
 		onTabCloseRequested,
+		onTabContextRequested,
 		disabled = false,
 		tabWidthMode = 'equal',
 		closeButtonOverlayMode = 'auto',
@@ -225,6 +247,18 @@
 		}
 
 		walk(event, tabId(item.id));
+	}
+
+	// A `contextmenu` the keyboard raised, Shift+F10 or the menu key, carries no pointer
+	// button: Chromium gives it `button` -1, on Windows as on Linux, after either key.
+	function requestContext(event: MouseEvent, item: TabViewItemData) {
+		if (!onTabContextRequested || isItemDisabled(item)) return;
+		event.preventDefault();
+		const tab = event.currentTarget as HTMLElement;
+		const box = tab.getBoundingClientRect();
+		const position =
+			event.button === -1 ? null : { x: event.clientX - box.left, y: event.clientY - box.top };
+		onTabContextRequested(item.id, { originalSource: tab, position });
 	}
 
 	function handleCloseKeydown(event: KeyboardEvent, item: TabViewItemData) {
@@ -456,6 +490,7 @@
 							onclick={() => select(item)}
 							onfocusin={() => (remembered = item.id)}
 							onkeydown={(event) => handleKeydown(event, item)}
+							oncontextmenu={(event) => requestContext(event, item)}
 						>
 							<div class="body">
 								{#if item.icon || item.glyph}

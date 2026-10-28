@@ -132,22 +132,25 @@
 		 * primitive's event handlers, and a trigger that sets one of the same names after the
 		 * spread replaces it rather than adding to it.
 		 *
-		 * Optional: without it the menu has no trigger of its own and opens through `open`,
-		 * placed against `anchor`, which is `FlyoutBase.ShowAt(placementTarget)` from a handler,
-		 * as an application opens a menu from TabView's add button. While it is open a press
-		 * anywhere outside it, `anchor` included, closes it and reaches nothing beneath, as on
-		 * the triggered menu, unless what is beneath sets `pointer-events: auto`. The focus
-		 * returns to `anchor` when the menu closes, however it closes, unless it has already left
-		 * the menu for something other than the body, as a press on such an element moves it;
-		 * there it stays. The triggered menu returns it to the trigger except after any press
-		 * outside. Tab inside such a menu or one of its submenus closes it, and the focus returns
-		 * to `anchor`, where the triggered menu closes and moves on from its trigger.
+		 * Optional: without it the menu has no trigger of its own and opens through `open`, placed
+		 * against `anchor`, which is `FlyoutBase.ShowAt(placementTarget)` from a handler, as an
+		 * application opens a menu from TabView's add button. While it is open a press anywhere outside
+		 * it, `anchor` included, closes it and reaches nothing beneath, as on the triggered menu,
+		 * unless what is beneath sets `pointer-events: auto`. A right press outside it closes it too
+		 * and, where the body swallowed it, is handed to what is beneath as a `contextmenu`, so a
+		 * right-click on another tab opens that tab's menu, as on the reference, and no browser menu is
+		 * drawn; nor is one for a right press in the menu. The focus returns to `anchor` when the menu
+		 * closes, however it closes, unless it has already left the menu for something other than the
+		 * body, as a press on such an element moves it; there it stays. The triggered menu returns it
+		 * to the trigger except after any press outside. Tab inside such a menu or one of its submenus
+		 * closes it, and the focus returns to `anchor`, where the triggered menu closes and moves on
+		 * from its trigger.
 		 */
 		children?: Snippet<[Record<string, unknown>]>;
 		/** No WinUI member: render inside a `MenuBar`'s menu group rather than owning a trigger of
 		 * this component's own. `MenuBarItemFlyout` (`MenuBarItemFlyout.cpp`) is upstream's
-		 * `MenuFlyout` subclass for the same job. When set, `children`, `open` and `onOpenChange`
-		 * are unused — the surrounding `MenuBar` owns which menu is open. */
+		 * `MenuFlyout` subclass for the same job. When set, `children`, `open`, `onOpenChange` and
+		 * `position` are unused — the surrounding `MenuBar` owns which menu is open. */
 		menubar?: boolean;
 		/** FlyoutBase.Placement. */
 		placement?: FlyoutPlacement;
@@ -165,6 +168,16 @@
 		 * right of where WinUI puts it. Left unset, the trigger is the anchor.
 		 */
 		anchor?: HTMLElement | null;
+		/**
+		 * `FlyoutShowOptions.Position`: the point in `anchor` the menu opens at, in pixels from
+		 * its top-left corner, and ignored without `anchor`. A MenuFlyout shown at a point
+		 * ignores `placement` and puts its own top-left corner there
+		 * (`FlyoutBase::UpdateTargetPosition`, FlyoutBase_partial.cpp:3251-3260), as a tab's
+		 * context menu opens at the pointer. Where it does not fit below the point it opens above
+		 * it, as upstream does; where it does not fit to the right, it slides left until it does,
+		 * where upstream puts its right edge at the point. `null` places it by `placement`.
+		 */
+		position?: { x: number; y: number } | null;
 		/** IsOpen. `FlyoutBase` exposes this read-only with `ShowAt`/`Hide`; ADR 0009 maps a
 		 * control's own state to a bindable prop. */
 		open?: boolean;
@@ -200,11 +213,13 @@
 </script>
 
 <script lang="ts">
+	import { tick } from 'svelte';
 	import { DropdownMenu, Menubar } from 'bits-ui';
 
 	let {
 		items = [],
 		anchor = null,
+		position = null,
 		placement = 'top',
 		offset = 4,
 		open = $bindable(false),
@@ -239,7 +254,22 @@
 		auto: { side: 'top', align: 'center' }
 	} as const;
 
-	const position = $derived(placements[placement]);
+	// A point in `anchor`, read whenever the primitive measures, so the menu moves with the
+	// anchor's box as it does when placed against it.
+	const point = $derived.by(() => {
+		if (menubar || !anchor || !position) return null;
+		const target = anchor;
+		const { x, y } = position;
+		return {
+			// floating-ui watches the scrolling ancestors of a virtual element's `contextElement`.
+			contextElement: target,
+			getBoundingClientRect: () => {
+				const box = target.getBoundingClientRect();
+				return new DOMRect(box.left + x, box.top + y, 0, 0);
+			}
+		};
+	});
+	const placed = $derived(point ? placements.bottomEdgeAlignedLeft : placements[placement]);
 
 	// With no trigger, `anchor` is where the focus returns on closing, which bits-ui gives the
 	// trigger's node in `onCloseAutoFocus` and has none of here. Without it the focus returns to
@@ -267,6 +297,57 @@
 		open = next;
 		onOpenChange?.(next);
 	}
+
+	// bits-ui dismisses on a primary press only, outside a ContextMenu trigger, and while the
+	// menu is open the body takes no pointer events, so a right press outside it reached the
+	// root: the menu stayed open and the browser drew its own menu over it. Upstream's light
+	// dismiss takes any press, whatever its button (`CPopupRoot::OnPointerPressed`,
+	// Popup.cpp:5318-5332), and on the reference a right-click on another tab while one tab's
+	// menu was open closed that menu and opened the other's. So the press closes the menu and,
+	// where it landed on the root, is handed, as a fresh `contextmenu` once the close is
+	// flushed, to what lies beneath with the lock set aside; that event cannot open the
+	// browser's menu, so none is drawn. One that reached an element
+	// setting `pointer-events: auto`, or one the keyboard raised outside the menu, closes it
+	// and goes on as it is. In a menu, the request draws no browser menu, as upstream has none.
+	// Only the triggerless menu does this, the one a context request opens: the triggered and
+	// the menubar menus keep bits-ui's behaviour, which DropDownButton, SplitButton and MenuBar
+	// share, and changing theirs is a change of its own.
+	$effect(() => {
+		if (children || menubar || !open) return;
+		const onContextMenu = (event: MouseEvent) => {
+			const target = event.target;
+			if (target instanceof Element && target.closest('[role="menu"]')) {
+				event.preventDefault();
+				return;
+			}
+			if (target !== document.documentElement) {
+				setOpen(false);
+				return;
+			}
+			event.preventDefault();
+			const { clientX, clientY, button } = event;
+			const body = document.body.style;
+			const locked = body.pointerEvents;
+			body.pointerEvents = '';
+			const beneath = document.elementFromPoint(clientX, clientY);
+			body.pointerEvents = locked;
+			setOpen(false);
+			void tick().then(() =>
+				beneath?.dispatchEvent(
+					new MouseEvent('contextmenu', {
+						bubbles: true,
+						cancelable: true,
+						composed: true,
+						clientX,
+						clientY,
+						button
+					})
+				)
+			);
+		};
+		document.addEventListener('contextmenu', onContextMenu, true);
+		return () => document.removeEventListener('contextmenu', onContextMenu, true);
+	});
 
 	// bits-ui moves a Tab on from the trigger and, with none, leaves it to the browser, which
 	// takes the focus out of the menu and leaves it open: `DropdownMenu.Content` defaults
@@ -545,8 +626,8 @@
 {#if menubar}
 	<Menubar.Portal>
 		<Menubar.Content
-			side={position.side}
-			align={position.align}
+			side={placed.side}
+			align={placed.align}
 			sideOffset={offset}
 			customAnchor={anchor}
 		>
@@ -562,10 +643,10 @@
 		</DropdownMenu.Trigger>
 		<DropdownMenu.Portal>
 			<DropdownMenu.Content
-				side={position.side}
-				align={position.align}
-				sideOffset={offset}
-				customAnchor={anchor}
+				side={placed.side}
+				align={placed.align}
+				sideOffset={point ? 0 : offset}
+				customAnchor={point ?? anchor}
 				onCloseAutoFocus={children ? undefined : onCloseAutoFocus}
 				onkeydown={children ? undefined : onkeydown}
 			>

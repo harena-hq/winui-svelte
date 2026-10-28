@@ -50,6 +50,7 @@ export type {
 	TabViewCloseButtonOverlayMode,
 	TabViewItemData,
 	TabViewProps,
+	TabViewTabContextRequestedEventArgs,
 	TabViewWidthMode
 } from './components/TabView.svelte';
 export { default as TextBox } from './components/TextBox.svelte';
