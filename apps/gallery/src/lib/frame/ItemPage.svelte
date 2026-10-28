@@ -19,6 +19,7 @@
 
 <script lang="ts">
 	import { afterNavigate } from '$app/navigation';
+	import { ScrollViewer } from 'winui-svelte/preview';
 	import PageHeader from './PageHeader.svelte';
 	import { lastInputWasKeyboard } from './last-input';
 	import { takeReselect } from './reselect';
@@ -67,26 +68,45 @@
 	});
 </script>
 
-<!-- `data-item-page` is what the shell's page area looks for: this component carries
-     ItemPage's own gutter, so the interim gutter v2 put on `.page` stands down for it. An
-     attribute rather than a class, because a scoped class name is not addressable from
-     another component's stylesheet. -->
+<!-- `data-item-page` is how the tests find an item page's content. An attribute rather than a
+     class, because a scoped class name is not addressable from another component's
+     stylesheet. -->
+<!-- The header is the page's first row and the content region its second, which is the one
+     that scrolls (ItemPage.xaml:32-47): the header stays where it is as the samples scroll,
+     and the region's bars start below it. -->
 <div bind:this={ref} data-item-page class={['root', className]} {style} {...rest}>
 	<div class="header-slot"><PageHeader {item} /></div>
-	<div class="content-root">
-		{#if item.description}
-			<p class="description winui-BodyTextBlockStyle">{item.description}</p>
-		{/if}
-		{@render children?.()}
-	</div>
+	<!-- `svPanel`, `VerticalScrollBarVisibility="Auto"` (ItemPage.xaml:43-47). -->
+	<ScrollViewer class="page-scroller" verticalScrollBarVisibility="auto">
+		<div class="content-root">
+			{#if item.description}
+				<p class="description winui-BodyTextBlockStyle">{item.description}</p>
+			{/if}
+			{@render children?.()}
+		</div>
+	</ScrollViewer>
 </div>
 
 <style>
+	/* `rootPanel`'s two rows, `Auto` and `*` (ItemPage.xaml:32-36), in the height the shell's
+	   page area gives as a flex item of it. Not `height: 100%`: a harness that lays several
+	   pages out in one scrolling block would give each a viewport's height. There its `flex` has
+	   no effect and the region is as tall as what it holds; the header's margin does not
+	   collapse with what is above it either way, as XAML margins never do. */
 	.root {
+		display: flex;
+		flex: 1 1 auto;
+		flex-direction: column;
 		min-width: 0;
+		min-height: 0;
 	}
 	.header-slot {
+		flex: none;
 		margin: 24px 36px 0;
+	}
+	.root > :global(.page-scroller) {
+		flex: 1 1 auto;
+		min-height: 0;
 	}
 	/* A formatting-context root, so the description's `Margin="0,4,24,0"` adds to the 12 the
 	   page header's button row carries below itself (PageHeader.xaml, the row 1 Grid's

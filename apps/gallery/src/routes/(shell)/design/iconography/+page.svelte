@@ -1,23 +1,26 @@
 <script lang="ts">
+	import InterimPage from '$lib/frame/InterimPage.svelte';
 	import { icons, nav } from '$lib/design';
 
 	const page = nav.find((n) => n.uniqueId === 'Iconography')!;
 </script>
 
-<h1 class="winui-TitleTextBlockStyle">{page.title}</h1>
-<p class="winui-BodyTextBlockStyle">{page.subtitle}</p>
-{#if page.description}
-	<p class="winui-CaptionTextBlockStyle">{page.description}</p>
-{/if}
+<InterimPage>
+	<h1 class="winui-TitleTextBlockStyle">{page.title}</h1>
+	<p class="winui-BodyTextBlockStyle">{page.subtitle}</p>
+	{#if page.description}
+		<p class="winui-CaptionTextBlockStyle">{page.description}</p>
+	{/if}
 
-<div class="grid">
-	{#each icons as icon, i (i)}
-		<div class="tile">
-			<div class="glyph">{String.fromCodePoint(parseInt(icon.Code, 16))}</div>
-			<div class="name winui-CaptionTextBlockStyle">{icon.Name}</div>
-		</div>
-	{/each}
-</div>
+	<div class="grid">
+		{#each icons as icon, i (i)}
+			<div class="tile">
+				<div class="glyph">{String.fromCodePoint(parseInt(icon.Code, 16))}</div>
+				<div class="name winui-CaptionTextBlockStyle">{icon.Name}</div>
+			</div>
+		{/each}
+	</div>
+</InterimPage>
 
 <style>
 	.grid {

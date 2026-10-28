@@ -6,7 +6,6 @@
 	import {
 		AutoSuggestBox,
 		NavigationView,
-		ScrollView,
 		TitleBar,
 		type NavigationViewDisplayMode
 	} from 'winui-svelte/preview';
@@ -243,24 +242,11 @@
 		backButtonVisible="collapsed"
 		bind:expandedItems
 	>
-		<!-- The page scrolls, not the window. In the original each Gallery page carries its own
-		     ScrollViewer, so this region is now a ScrollView rather than a NavigationView rule.
-		     The gutter is on the content inside it rather than on the scroller, which is where
-		     upstream puts it and what lets the rule below take it away from a framed page. -->
-		<!-- The page's own scroller is the older control on every page but Settings: ItemPage's
-		     (ItemPage.xaml:43), Home's (HomePage.xaml:52), and the GridView that each of the All
-		     controls, section and search pages is (AllControlsPage.xaml:39, SectionPage.xaml:30,
-		     SearchResultsPage.xaml:22), pages this Gallery builds as placeholders or not at all.
-		     Settings alone scrolls in a ScrollView (SettingsPage.xaml:35). The marker tells this
-		     one which it draws: the older control's press shows no bars, as upstream's does, and a
-		     focus after a touch shows none either (WD-104). -->
-		<ScrollView
-			class="page"
-			style="height: 100%"
-			data-scroll-input={page.url.pathname === '/settings' ? undefined : 'scroll-viewer'}
-		>
-			<div class="page-gutter">{@render children()}</div>
-		</ScrollView>
+		<!-- The page scrolls, not the window, and not this region either: each upstream page carries
+		     its own scroller, and ItemPage's starts below its header (ItemPage.xaml:32-47), so each
+		     page here brings its own too — ItemPage.svelte, or InterimPage.svelte for a page not
+		     yet reproduced. This region only gives them the content area's height. -->
+		<div class="page">{@render children()}</div>
 	</NavigationView>
 </div>
 
@@ -295,20 +281,10 @@
 		flex-direction: column;
 	}
 
-	.page-gutter {
-		/* The Gallery's own gutter, not NavigationView's — `NavigationViewContentPresenterMargin`
-		   is 0. `ItemPage.xaml:39` gives the page header `Margin="36,24,36,0"` and `:48` gives
-		   the content root `Padding="36,0,36,36"`, which together are 36 a side, 24 above and
-		   36 below. Its narrow adaptive state drops both to 16 — `:87` and `:88` — which this
-		   does not reproduce yet. */
-		/* c1-allow: ItemPage.xaml:39 and :48, the Gallery's page gutter */
-		padding: 24px 36px 36px;
-	}
-
-	/* Except where the page is an `ItemPage`, which carries those same margins itself — the
-	   gutter above is v2's interim stand-in for a frame that now exists, and two of them
-	   would be 72 a side. The pages still without a frame keep it until their own unit. */
-	.page-gutter:has(> :global([data-item-page])) {
-		padding: 0;
+	/* A column, so the page's root fills it as a flex item and gives its scroller a height. */
+	.page {
+		display: flex;
+		flex-direction: column;
+		height: 100%;
 	}
 </style>
