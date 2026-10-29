@@ -4250,7 +4250,8 @@ it; a release may be cut once it passes, as D55 orders it. D37.
 **Run on 2026-10-04, and passed**, after two defects it found were fixed: `docs/library-gate.md`
 names each of the eighteen against its evidence, says what each still owes, and argues why none
 of that blocks the release. The release itself has not been cut. Since 2026-10-29 it names one
-defect, which the Flyout page found, to be fixed before the cut under release step 3.
+defect, which the Flyout page found, to be fixed before the cut under release step 3; it was
+fixed the same day.
 
 **The first release exports a subset of what is built, and that is D46.** D54 amends it, in the
 two paragraphs below. The gate's sentence above was written when "exported" and "built" were

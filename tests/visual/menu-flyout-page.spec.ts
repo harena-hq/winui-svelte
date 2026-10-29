@@ -92,6 +92,99 @@ test('the toggles start checked, and the source pane follows them', async ({ pag
 	await expect(code).toContainText('<ToggleMenuFlyoutItem Text="Shuffle" IsChecked="True"/>');
 });
 
+test('the focus returns in the state the trigger had when the menu opened', async ({ page }) => {
+	const trigger = example(page, 1).getByRole('button', { name: 'Options', exact: true });
+	const visual = () => trigger.evaluate((node) => node.matches(':focus-visible'));
+	const close = async (how: () => Promise<void>, drawn: boolean) => {
+		await placed(menu(page));
+		await how();
+		await expect(menu(page)).toHaveCount(0);
+		await expect(trigger).toBeFocused();
+		expect(await visual()).toBe(drawn);
+	};
+
+	// A press opened the menu: a row invoked from the keyboard closes it, and the focus comes
+	// back with no visual, as it did on the guest; so does a menu opened by Enter on the trigger
+	// that return focused.
+	await trigger.click();
+	await close(async () => {
+		await page.keyboard.press('ArrowDown');
+		await page.keyboard.press('Enter');
+	}, false);
+	await page.keyboard.press('Enter');
+	await close(() => page.keyboard.press('Enter'), false);
+	// Escape returns it with the visual, as on the guest.
+	await trigger.click();
+	await close(() => page.keyboard.press('Escape'), true);
+	// The keyboard focused the trigger: a press on a row keeps the visual.
+	await page.keyboard.press('Enter');
+	await close(() => menu(page).getByRole('menuitem', { name: 'Reset' }).click(), true);
+	// A press outside returns it as a press does, with none.
+	await page.keyboard.press('Enter');
+	await close(() => page.mouse.click(1000, 500), false);
+	// A press on the trigger the keyboard focused gives it the state a press does, as on the
+	// guest, though the primitive keeps that press from focusing it.
+	await page.keyboard.press('Shift+Tab');
+	await page.keyboard.press('Tab');
+	expect(await visual()).toBe(true);
+	await trigger.click();
+	await close(async () => {
+		await page.keyboard.press('ArrowDown');
+		await page.keyboard.press('Enter');
+	}, false);
+});
+
+test('a press outside that focuses something keeps the focus there', async ({ page }) => {
+	// The body takes no pointer events while a menu is open; an element that sets
+	// `pointer-events: auto`, as NavigationView's back button does, is pressed all the same.
+	await page.evaluate(() => {
+		const button = document.createElement('button');
+		button.textContent = 'Elsewhere';
+		button.style.cssText = 'position: fixed; left: 8px; bottom: 8px; pointer-events: auto';
+		document.body.append(button);
+	});
+	await open(page, 1, 'Options');
+	const elsewhere = page.getByRole('button', { name: 'Elsewhere' });
+	await elsewhere.click();
+	await expect(menu(page)).toHaveCount(0);
+	await expect(elsewhere).toBeFocused();
+});
+
+test("a press in a submenu is not a press outside: the trigger's visual comes back", async ({
+	page
+}) => {
+	const trigger = example(page, 2).getByRole('button', { name: 'File Options', exact: true });
+	await trigger.focus();
+	await page.keyboard.press('Enter');
+	await placed(menu(page));
+	await page.getByRole('menuitem', { name: 'Send to' }).hover();
+	// Held as a hand holds it: bits-ui hears a press outside its layer 10ms after it starts, and
+	// a click from the driver is over, and the menu closed, before then.
+	const row = (await page.getByRole('menuitem', { name: 'Bluetooth' }).boundingBox())!;
+	await page.mouse.move(row.x + row.width / 2, row.y + row.height / 2);
+	await page.mouse.down();
+	await page.waitForTimeout(100);
+	await page.mouse.up();
+	await expect(page.getByRole('menu')).toHaveCount(0);
+	await expect(trigger).toBeFocused();
+	expect(await trigger.evaluate((node) => node.matches(':focus-visible'))).toBe(true);
+});
+
+test('a Tab closes the menu and moves on from the trigger, which it does not focus', async ({
+	page
+}) => {
+	const trigger = example(page, 1).getByRole('button', { name: 'Options', exact: true });
+	await trigger.click();
+	await placed(menu(page));
+	await trigger.evaluate((node) => {
+		node.addEventListener('focus', () => node.setAttribute('data-was-focused', ''));
+	});
+	await page.keyboard.press('Tab');
+	await expect(menu(page)).toHaveCount(0);
+	await expect(page.getByRole('button', { name: 'Source code' }).nth(2)).toBeFocused();
+	await expect(trigger).not.toHaveAttribute('data-was-focused');
+});
+
 test('the cascading menu opens Send to, and Compressed file within it', async ({ page }) => {
 	await open(page, 2, 'File Options');
 	await page.getByRole('menuitem', { name: 'Send to' }).hover();

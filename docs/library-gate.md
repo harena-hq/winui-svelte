@@ -173,9 +173,9 @@ did: the example's card and its source pane on the same rows and columns, and th
 in the same box. Driving it found a defect. Closed by the code-behind's `Hide`, from a key on
 "Yes, empty my cart", the original returned the focus to its trigger with no visual when a
 press had opened the flyout, and with one when a key had; Escape left the visual either way.
-Ours draws the visual in all three: its return is a scripted focus after a key, which
-`:focus-visible` matches, so only the first differs. A defect a page finds is its own unit,
-fixed before the cut, by release step 3, and this is one.
+Ours drew the visual in all three: its return was a scripted focus after a key, which
+`:focus-visible` matches, so only the first differed. A defect a page finds is its own unit,
+fixed before the cut, by release step 3, and this was one.
 
 The MenuFlyout page, drawn since, measures the same way: its seven examples' cards on the same
 rows at the page's top and at its end, six of its seven menus' rows of ink where the original's
@@ -186,14 +186,26 @@ without accelerators are 32 on both. And the original draws that example's Copy 
 labels in other ink than the example before it, as their `FontFamily="Consolas"` and
 `"Segoe UI"` ask, where its Rename's matches; a row here takes no font of its own.
 
+The Flyout page's defect is fixed. Upstream's popup saves the focused element's state when it
+opens and returns the focus in it, but for Escape, which returns it as a key does
+(`CPopupRoot::OnKeyDown`), and a press outside, which returns it as a press does
+(`CPopupRoot::OnPointerPressed`); and it returns the focus only if the popup still holds it or
+nothing does (`CPopup::Close`). Flyout and MenuFlyout now return it so, by
+`internal/focus-return.ts`; the menus a `MenuBar` opens keep the primitive's return. Driven on
+the MenuFlyout page, the original's menus follow the same rule: a row a key invoked returned the
+focus with no visual to a trigger a press had focused, even where Enter on that trigger had
+opened the menu or the keyboard had focused it before the press; Escape returned it with one; a
+row pressed returned it with one to a trigger the keyboard had focused; and a press outside
+returned it with none.
+
 | component  | against the original                                                                   | re-photographed 2026-10-28               | owes                                                                                                                                                          |
 | ---------- | -------------------------------------------------------------------------------------- | ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Flyout     | `67a546b`, `ce28cb8`                                                                   | passes: 366 x 97, gap, insets            | the button's width; the right press; the visual after `Hide`, press-opened                                                                                    |
+| Flyout     | `67a546b`, `ce28cb8`                                                                   | passes: 366 x 97, gap, insets            | the button's width; the right press                                                                                                                           |
 | MenuFlyout | `f463031`, `117aecd`, `edf2deb` (driven on the guest), `df99a73`, `c1080a5`, `aa0f33d` | passes: 103 x 105, 116 x 70, the submenu | WD-002, WD-013; a row's font; the accelerator example's row height; the submenu's width; the right press, from a trigger; the LOWs of `12b04b9` and `aa0f33d` |
 
 ## Whether what they owe blocks the release
 
-It does not, but for one defect to be fixed before the cut, and the reasons differ by kind.
+It does not, now the one defect a page found is fixed, and the reasons differ by kind.
 
 - **The divergences** are accepted ones, each with what it is worth written down and what
   would reopen it. None of them is a defect waiting on a fix.
@@ -217,13 +229,14 @@ It does not, but for one defect to be fixed before the cut, and the reasons diff
   nothing, so the press reaches what lies under it. That is behaviour owed rather than accepted, and
   it has no divergence entry; the table names it. It does not block the release for the reason the
   owed rows do not: nothing a consumer writes against it breaks when it is fixed.
-- **The defect the Flyout page found**, the focus visual Flyout's return draws after `Hide`
-  when a press opened the flyout, is a defect in one of the release's components, and release
-  step 3 makes it a unit to be fixed before the cut rather than a row the release may carry.
+- **The defect the Flyout page found**, the focus visual Flyout's return drew after `Hide`
+  when a press opened the flyout, was a defect in one of the release's components, and release
+  step 3 made it a unit to be fixed before the cut rather than a row the release may carry. It
+  was fixed so, for Flyout and MenuFlyout both.
 - **The unpressed keyboard questions** are recorded as unpressed, and the answers the library
   gives are the ones its own tests hold it to.
 
-**The gate passes**, with that one defect to fix before the cut. Cutting the release — a
+**The gate passes**, with the one defect a page found fixed. Cutting the release — a
 version, a tag, a publish — is the owner's to do, and nothing here did it.
 
 ## What the evidence itself owed

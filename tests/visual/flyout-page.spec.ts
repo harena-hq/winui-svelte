@@ -73,6 +73,41 @@ test('"Yes, empty my cart" hides the flyout, and the focus returns to "Empty car
 	}
 });
 
+test('the focus returns in the state the trigger had when the flyout opened', async ({ page }) => {
+	const visual = () => trigger(page).evaluate((node) => node.matches(':focus-visible'));
+	const close = async (how: () => Promise<void>, drawn: boolean) => {
+		await placed(flyout(page));
+		await how();
+		await expect(flyout(page)).toHaveCount(0);
+		await expect(trigger(page)).toBeFocused();
+		expect(await visual()).toBe(drawn);
+	};
+
+	// A press focused the trigger: a key on the inner button hides the flyout, and the focus
+	// comes back with no visual, as it did on the guest. A key on the trigger focused so opens
+	// the flyout with the trigger's state unchanged.
+	await trigger(page).click();
+	await close(() => page.keyboard.press('Enter'), false);
+	await page.keyboard.press('Space');
+	await close(() => page.keyboard.press('Space'), false);
+	// Escape returns it as a key does, with the visual, whatever the trigger had.
+	await page.keyboard.press('Space');
+	await close(() => page.keyboard.press('Escape'), true);
+	// The keyboard focused the trigger: a press on the inner button keeps the visual.
+	await page.keyboard.press('Space');
+	await close(() => confirm(page).click(), true);
+	// A press outside returns it as a press does, with none.
+	await page.keyboard.press('Space');
+	await close(() => page.mouse.click(1000, 500), false);
+	// A press on the trigger the keyboard focused gives it the state a press does, as on the
+	// guest's menus.
+	await page.keyboard.press('Shift+Tab');
+	await page.keyboard.press('Tab');
+	expect(await visual()).toBe(true);
+	await trigger(page).click();
+	await close(() => page.keyboard.press('Enter'), false);
+});
+
 test('the flyout is light-dismissed by a press outside and by Escape', async ({ page }) => {
 	await trigger(page).click();
 	await placed(flyout(page));
