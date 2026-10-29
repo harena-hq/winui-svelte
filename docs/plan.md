@@ -94,6 +94,7 @@ pnpm workspace. The library is publishable and imposes no build tooling on its c
 | D55 | The release is 0.1.0 with tested peer floors, cut after the owner's pass                                | this file, "The release — 0.1.0"  |
 | D56 | Off Windows, the glyphs the components draw or `Symbol` names come from Fluent UI System Icons          | docs/adr/0018                     |
 | D57 | Off Windows, text draws from a system font carrying Segoe UI Variable's line metrics                    | docs/adr/0019                     |
+| D58 | Flyout and MenuFlyout join the release, so the menu TabView's events open is released with it           | docs/adr/0017                     |
 
 ## Verification
 
@@ -4282,7 +4283,8 @@ this version owes` table from v4 onward, plus `docs/surface.md`'s sweep of the h
 control that lives in its code-behind. A list written before that sweep is a list the sweep
 invalidates. **v18 names the set**, as the unit before the gate runs, and the gate then
 measures against it. **It has: D54 names eighteen components, and ADR 0017 records why and how,
-including the change to this paragraph's polish criterion.**
+including the change to this paragraph's polish criterion.** D58 adds `Flyout` and
+`MenuFlyout` on 2026-10-28, and ADR 0017's amendment of that day records why.
 
 ### The release — 0.1.0
 
@@ -4321,9 +4323,10 @@ two, and the last of them is the owner's alone. D55.
      Each of the three assertions fails on its own planted defect. The existing consumer is
      unchanged, and `pnpm build`'s `publint` passes.
 2. **The changelog.** `packages/winui-svelte/CHANGELOG.md`, shipped in the tarball, with one
-   entry: the eighteen components of the index, what `preview` is and that it promises nothing
-   (ADR 0017), the peers, and a pointer to `docs/divergences.md` for where the clone departs
-   from the original on purpose. No history before 0.1.0, because nothing was published.
+   entry: the components of the index, eighteen then and twenty since D58, what `preview` is
+   and that it promises nothing (ADR 0017), the peers, and a pointer to `docs/divergences.md`
+   for where the clone departs from the original on purpose. No history before 0.1.0, because
+   nothing was published.
    `files` gains it, because npm packs a README and a licence of its own accord and a changelog
    not; the smoke's check of the packed surface asserts it is there.
 3. **The fourteen Gallery pages.** Thirteen of the eighteen have no Gallery page of their own,
@@ -4341,12 +4344,16 @@ two, and the last of them is the owner's alone. D55.
    of two (ContentDialog, Expander, HyperlinkButton, ProgressBar, ProgressRing, ToggleSwitch),
    the four of three (ComboBox, InfoBar, TeachingTip, ToolTip), the two of four (Button,
    TextBox), then NavigationView and TabView.
+   **And two more, since 2026-10-28.** `Flyout` and `MenuFlyout` joined the release by D58 with dev
+   routes alone, so their pages, one example and seven, are owed before the cut on the same
+   terms, sixteen in all, after TabView's and Flyout's first; the library gate's section of
+   that day records what the guest measured meanwhile.
    - **Done when**, per page: every example of the pin's page is drawn, or declined under a
      named divergence; each is measured against the original on the reference guest at the
      reference width, and the measurements are in the `Reviewed:` trailer; behaviour the
      page's code-behind adds has a spec; the battery is green.
-   - **Every control comes from `preview`**, as on the pages already built, the eighteen
-     included. The page is the Gallery's, and `preview` promising nothing is a statement to
+   - **Every control comes from `preview`**, as on the pages already built, the release's
+     twenty included. The page is the Gallery's, and `preview` promising nothing is a statement to
      consumers, not to it.
    - **An example the platform declines** follows the divergence already written for it.
      TabView's windowing sample opens a second top-level window, which is WD-023's tear-out: the
@@ -4361,8 +4368,8 @@ two, and the last of them is the owner's alone. D55.
      that surface still to build does not block them. Which examples these are is found by the
      unit that ports the page; TeachingTip's `IconSource` against the `icon` row the gate
      records is the first to check.
-   - **A defect a page finds** in one of the eighteen is its own unit, fixed before the cut;
-     one outside them goes to the queue.
+   - **A defect a page finds** in one of the release's components, the eighteen and the two D58
+     adds, is its own unit, fixed before the cut; one outside them goes to the queue.
 
    The owner's pass may start on what is already drawn — the shell, ScrollView, ScrollViewer
    and TitleBar — while these are built. A finding there on a control whose page is in
@@ -4372,8 +4379,8 @@ two, and the last of them is the owner's alone. D55.
    original, and the dev routes for the states no page shows, and reports what they find. Each
    finding is a unit with the usual loop — a fix, a battery, a review, a seal — or, where it is
    a known divergence or an owed row, a pointer to where it is recorded. Findings outside the
-   eighteen go to the queue, not to the release. The pass ends when the owner says it has, and
-   not before.
+   release's twenty go to the queue, not to the release. The pass ends when the owner says it
+   has, and not before.
 5. **The cut.** On a HEAD whose full battery is green, after the owner's sign-off and on their
    explicit word: the tag `v0.1.0`, then `pnpm publish` from `packages/winui-svelte` — pnpm,
    because `pnpm pack` made the tarball the smoke installed — over the `dist` that battery

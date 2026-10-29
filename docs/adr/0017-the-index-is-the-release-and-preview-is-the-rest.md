@@ -93,6 +93,18 @@ and the one a handler assigns in its place, are ones a consumer of the root can 
 not reach it; this paragraph is its record. The package README and changelog list it with the
 rest.
 
+**Amended 2026-10-28**: the release set is twenty components. `Flyout` and `MenuFlyout` join it,
+by `plan.md`'s D58, for the reason the selection rule above names: what a consumer's source would
+replace. An application with a tab strip opens a menu from TabView's add button and from a tab,
+and TabView now hands its handlers the element to open one against, and for a tab the pointer's
+point when a pointer asked, so a release that carried TabView without the menu left the consumer
+to build the popup TabView's own events are for. `Flyout` comes with it as the surface
+`MenuFlyout`'s placement is typed by and the one a consumer opens from its own trigger for
+anything that is not a list of commands. Each ships with the types its module exports. Where this
+record says eighteen, or seventy-eight for the rest, the set it names is the one decided on
+2026-10-01, and what the two owe the library gate collects the same way; `pnpm smoke` still
+places four held-back components from `preview`, two of them new.
+
 ## Alternatives rejected
 
 - **Shrink the index and let C4 shrink with it**, as D46's paragraph expected. It costs the

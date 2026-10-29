@@ -4,8 +4,10 @@
 		ComboBox,
 		ContentDialog,
 		Expander,
+		Flyout,
 		HyperlinkButton,
 		InfoBar,
+		MenuFlyout,
 		NavigationView,
 		NavigationViewItem,
 		ProgressBar,
@@ -19,21 +21,21 @@
 		ToggleSwitch,
 		ToolTip
 	} from 'winui-svelte';
-	import { Flyout, InfoBadge, MenuFlyout, Popup } from 'winui-svelte/preview';
+	import { CheckBox, InfoBadge, Popup, ToggleButton } from 'winui-svelte/preview';
 
 	// Every component the release exports is mounted here, and four the release holds back. The
 	// step this script exists for is stated in `docs/plan.md` as closing the gap "before six more
 	// public prop surfaces are fixed by use", and a prop surface is fixed by use at a usage site:
 	// prop names, snippet names and which members are required are what a consumer discovers,
 	// and importing a component without mounting it discovers none of them. So every one of the
-	// eighteen is placed with its required props and a few common ones, and the file is
+	// twenty is placed with its required props and a few common ones, and the file is
 	// type-checked against the package's published types. That refuses a value of the wrong type
 	// and a missing required prop. It does not refuse a misspelled prop, because most props
 	// interfaces end in an index signature, and the browser bundle is never run. Nor does it check
 	// the package's `.d.ts` themselves (`skipLibCheck`, as in every tsconfig here), so a
 	// declaration that failed to resolve would read as `any`.
 	//
-	// The imports come from both entries (ADR 0017): `winui-svelte` for the eighteen it releases,
+	// The imports come from both entries (ADR 0017): `winui-svelte` for the twenty it releases,
 	// `winui-svelte/preview` for four of those it does not. That makes the build resolve both entries
 	// against the tarball. It is not about whether the templates compile: each entry re-exports
 	// its components statically, so the bundler transforms every module an entry names to work
@@ -52,6 +54,8 @@
 
 <Button>Smoke button</Button>
 <InfoBadge value={3} />
+<CheckBox>Smoke check</CheckBox>
+<ToggleButton>Smoke toggle</ToggleButton>
 <ProgressBar value={40} />
 <ProgressRing />
 
