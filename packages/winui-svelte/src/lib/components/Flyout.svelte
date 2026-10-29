@@ -61,6 +61,7 @@
 <script lang="ts">
 	import { Popover } from 'bits-ui';
 	import { FLYOUT_PLACEMENTS } from '../internal/flyout-placement';
+	import { createFocusReturn } from '../internal/focus-return';
 
 	let {
 		content,
@@ -78,6 +79,20 @@
 	const position = $derived(FLYOUT_PLACEMENTS[placement]);
 
 	// `FLYOUT_PLACEMENTS` carries the collision-avoidance reasoning and the measurement behind it.
+
+	// The primitive returns the focus on closing to what had it when the flyout opened, and so
+	// does this, in the state `createFocusReturn` saved rather than the one a plain `focus()`
+	// gives. Upstream returns it only if the popup still holds it or nothing does; here the
+	// primitive's focus trap takes back the focus a press outside gives a button, before the
+	// close, so the popup always does.
+	const focusReturn = createFocusReturn();
+
+	function onCloseAutoFocus(event: Event) {
+		const target = focusReturn.saved;
+		if (!(target instanceof HTMLElement) || !target.isConnected) return;
+		event.preventDefault();
+		focusReturn.restore(target, () => true);
+	}
 </script>
 
 <Popover.Root
@@ -91,11 +106,19 @@
 >
 	<Popover.Trigger>
 		{#snippet child({ props })}
-			{@render children(props)}
+			{@render children({ ...props, ...focusReturn.trigger })}
 		{/snippet}
 	</Popover.Trigger>
 	<Popover.Portal>
-		<Popover.Content side={position.side} align={position.align} sideOffset={offset}>
+		<Popover.Content
+			side={position.side}
+			align={position.align}
+			sideOffset={offset}
+			onOpenAutoFocus={focusReturn.opened}
+			onEscapeKeydown={focusReturn.escaped}
+			onInteractOutside={focusReturn.pressedOutside}
+			{onCloseAutoFocus}
+		>
 			{#snippet child({ props, wrapperProps })}
 				<div {...wrapperProps}>
 					<div

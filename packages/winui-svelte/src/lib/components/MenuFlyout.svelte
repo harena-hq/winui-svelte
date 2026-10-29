@@ -215,6 +215,7 @@
 <script lang="ts">
 	import { tick } from 'svelte';
 	import { DropdownMenu, Menubar } from 'bits-ui';
+	import { createFocusReturn } from '../internal/focus-return';
 
 	let {
 		items = [],
@@ -288,10 +289,58 @@
 	function onCloseAutoFocus(event: Event) {
 		if (!anchor || !anchor.isConnected) return;
 		event.preventDefault();
-		const focused = document.activeElement;
-		if (focused && focused !== document.body && !focused.closest('[role="menu"]')) return;
-		anchor.focus();
+		focusReturn.restore(anchor, inMenu);
 	}
+
+	// The triggered and the triggerless menu return the focus in the state `createFocusReturn`
+	// saved, rather than the one a plain `focus()` gives. The menubar's menus keep bits-ui's
+	// return: MenuBar is its own control, and changing its return is a change of its own.
+	const focusReturn = createFocusReturn();
+
+	const inMenu = (element: Element) => !!element.closest('[role="menu"]');
+
+	// A press in a submenu held past bits-ui's 10ms debounce reaches the menu's own handler as a
+	// press outside it, since the submenu's content is portaled apart; it dismisses nothing, so
+	// it is not counted as one.
+	function onInteractOutside(event: PointerEvent) {
+		if (event.target instanceof Element && inMenu(event.target)) return;
+		focusReturn.pressedOutside();
+	}
+
+	// With a trigger, bits-ui returns the focus to it, and its node is what the props' own
+	// attachment hands the primitive, out of reach here; `focusReturn.trigger` hands it here too.
+	// bits-ui leaves the focus where a press outside put it, and upstream does as
+	// `onCloseAutoFocus` above says, so the return is done here, to the same node, on the same
+	// condition. Except where a Tab closed the menu: bits-ui then moves the focus on from the
+	// trigger, or to the body where nothing follows it, and a return here would focus the
+	// trigger first. The Tab is read at the document, as a submenu's content is portaled apart
+	// from the menu's, and a press in between forgets it, as a Tab that moved the focus to the
+	// body leaves the menu open.
+	let tabbed = false;
+
+	function onTriggerCloseAutoFocus(event: Event) {
+		const trigger = focusReturn.triggerNode;
+		if (tabbed || !trigger || !trigger.isConnected) return;
+		event.preventDefault();
+		focusReturn.restore(trigger, inMenu);
+	}
+
+	$effect(() => {
+		if (!children || !open) return;
+		tabbed = false;
+		const onKeydown = (event: KeyboardEvent) => {
+			tabbed = event.key === 'Tab';
+		};
+		const onPointerDown = () => {
+			tabbed = false;
+		};
+		document.addEventListener('keydown', onKeydown, true);
+		document.addEventListener('pointerdown', onPointerDown, true);
+		return () => {
+			document.removeEventListener('keydown', onKeydown, true);
+			document.removeEventListener('pointerdown', onPointerDown, true);
+		};
+	});
 
 	function setOpen(next: boolean) {
 		open = next;
@@ -320,6 +369,7 @@
 				event.preventDefault();
 				return;
 			}
+			focusReturn.pressedOutside();
 			if (target !== document.documentElement) {
 				setOpen(false);
 				return;
@@ -638,7 +688,7 @@
 	<DropdownMenu.Root bind:open={() => open, setOpen}>
 		<DropdownMenu.Trigger>
 			{#snippet child({ props })}
-				{@render children?.(props)}
+				{@render children?.({ ...props, ...focusReturn.trigger })}
 			{/snippet}
 		</DropdownMenu.Trigger>
 		<DropdownMenu.Portal>
@@ -647,7 +697,10 @@
 				align={placed.align}
 				sideOffset={point ? 0 : offset}
 				customAnchor={point ?? anchor}
-				onCloseAutoFocus={children ? undefined : onCloseAutoFocus}
+				onOpenAutoFocus={focusReturn.opened}
+				onEscapeKeydown={focusReturn.escaped}
+				{onInteractOutside}
+				onCloseAutoFocus={children ? onTriggerCloseAutoFocus : onCloseAutoFocus}
 				onkeydown={children ? undefined : onkeydown}
 			>
 				{#snippet child({ props, wrapperProps })}{@render presenter(props, wrapperProps)}{/snippet}
