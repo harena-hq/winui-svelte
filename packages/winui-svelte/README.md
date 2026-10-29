@@ -21,10 +21,10 @@ context, and two copies in one tree do not share it. `@internationalized/date` i
 `bits-ui` requires it as a peer of its own; `preview`'s date components take its types too.
 
 `winui-svelte` is the release, and semantic versioning applies to it and its two stylesheets
-alone. It exports eighteen components — `Button`, `ComboBox`, `ContentDialog`, `Expander`,
-`HyperlinkButton`, `InfoBar`, `NavigationView`, `NavigationViewItem`, `ProgressBar`,
-`ProgressRing`, `ScrollView`, `ScrollViewer`, `TabView`, `TeachingTip`, `TextBox`, `TitleBar`,
-`ToggleSwitch`, `ToolTip` —
+alone. It exports twenty components — `Button`, `ComboBox`, `ContentDialog`, `Expander`,
+`Flyout`, `HyperlinkButton`, `InfoBar`, `MenuFlyout`, `NavigationView`, `NavigationViewItem`,
+`ProgressBar`, `ProgressRing`, `ScrollView`, `ScrollViewer`, `TabView`, `TeachingTip`, `TextBox`,
+`TitleBar`, `ToggleSwitch`, `ToolTip` —
 with their types, the `Symbol` table and its `SymbolName` type, `ScrollAnimation` and its two
 types, `VERSION`, and the two stylesheets `winui-svelte/tokens.css` and
 `winui-svelte/type-ramp.css`.

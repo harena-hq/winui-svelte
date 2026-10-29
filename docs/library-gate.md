@@ -2,8 +2,9 @@
 
 `docs/plan.md`'s release bar, run once over the release: every component `index.ts` exports
 named against the evidence that sealed it, and every one whose only evidence was a dev route
-re-photographed against the original on the reference guest. ADR 0017 fixes the set at eighteen
-and leaves to this gate the question of whether what a member still owes blocks the release.
+re-photographed against the original on the reference guest. ADR 0017 fixed the set at
+eighteen, and its amendment of 2026-10-28 at twenty; both leave to this gate the question of
+whether what a member still owes blocks the release.
 
 ## How it was run
 
@@ -143,6 +144,35 @@ example's box" crop against crop with the original's; both pages open with a zoo
 and the message does not say which page that was. ScrollViewer's own Gallery page is in the
 suite either way, which is what the gate's sentence asks.
 
+## The two added on 2026-10-28
+
+D58 adds `Flyout` and `MenuFlyout`, after the run. Neither has a Gallery page in this
+repository, only a dev route, so each was re-photographed as the run's thirteen were: the
+reference's own Gallery page and the dev route in the guest's Edge, both 1600 wide, in light,
+compared by box edges, insets and ink. Both pages, their samples' directories whole, are
+unchanged between Gallery 2.9.3.0's tag and the pin.
+
+- **Flyout**, its page's one example: the card is 366 by 97 on both, 4 above its trigger and
+  centred on it; the message's ink starts 21 below the card's top edge, and the button inside
+  sits 17 in from the left edge and 47 down, 32 tall, on both. That button is 139 wide against
+  140, its label's advance a pixel short.
+- **MenuFlyout**, two of its page's seven examples: the toggle example's card is 103 by 105 on
+  both, its separator 36 below the top edge, and its three rows' ink in the same boxes to a
+  column; the cascading example's card is 116 by 70 on both, and its submenu opens 111 right of
+  and 35 below the card's corner, 102 tall, on both, and 167 wide against 168, its chevron a
+  column left.
+
+Neither width is fixed here; like the three above, they are this record's to carry. Both
+members also keep bits-ui's light dismiss, which only a primary press performs: a right press
+outside an open `Flyout`, measured in Chromium, leaves it open, where upstream's light dismiss
+takes any button (`CPopupRoot::OnPointerPressed`). `MenuFlyout` opened without a trigger closes
+on one since `aa0f33d`; opened from its trigger, it does not.
+
+| component  | against the original                                                                   | re-photographed 2026-10-28               | owes                                                                                                                        |
+| ---------- | -------------------------------------------------------------------------------------- | ---------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| Flyout     | `67a546b`, `ce28cb8`                                                                   | passes: 366 x 97, gap, insets            | its Gallery page; the button's width; the right press                                                                       |
+| MenuFlyout | `f463031`, `117aecd`, `edf2deb` (driven on the guest), `df99a73`, `c1080a5`, `aa0f33d` | passes: 103 x 105, 116 x 70, the submenu | WD-002, WD-013; its Gallery page; the submenu's width; the right press, from a trigger; the LOWs of `12b04b9` and `aa0f33d` |
+
 ## Whether what they owe blocks the release
 
 It does not, and the reasons differ by kind.
@@ -160,6 +190,15 @@ It does not, and the reasons differ by kind.
   by what a consumer's source would replace rather than by completeness, and the gate holds
   that a member may ship with surface still to build, because building it later breaks nothing
   a consumer already wrote.
+- **What the two added on 2026-10-28 carry** is of the same kinds: two widths a pixel short,
+  one of them from a label's advance; and a light dismiss that a primary press outside
+  performs and a right press does not, except on the menu opened without a trigger. Such a
+  press leaves the popup open. Over a menu it lands on the root, since the page's body takes no
+  pointer events while a menu is open, and the browser draws its own menu there; a Flyout locks
+  nothing, so the press reaches what lies under it. That is behaviour owed rather than
+  accepted, and it has no divergence entry; the table names it. It does not block the release
+  for the reason the owed rows do not: nothing a consumer writes against it breaks when it is
+  fixed.
 - **The unpressed keyboard questions** are recorded as unpressed, and the answers the library
   gives are the ones its own tests hold it to.
 

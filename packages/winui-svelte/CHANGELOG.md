@@ -10,11 +10,12 @@ The first release. Nothing was published before it, so it has no earlier history
 
 ### The release
 
-The package root exports eighteen components, each with the types its own module exports:
+The package root exports twenty components, each with the types its own module exports:
 
-`Button`, `ComboBox`, `ContentDialog`, `Expander`, `HyperlinkButton`, `InfoBar`,
-`NavigationView`, `NavigationViewItem`, `ProgressBar`, `ProgressRing`, `ScrollView`,
-`ScrollViewer`, `TabView`, `TeachingTip`, `TextBox`, `TitleBar`, `ToggleSwitch`, `ToolTip`.
+`Button`, `ComboBox`, `ContentDialog`, `Expander`, `Flyout`, `HyperlinkButton`, `InfoBar`,
+`MenuFlyout`, `NavigationView`, `NavigationViewItem`, `ProgressBar`, `ProgressRing`,
+`ScrollView`, `ScrollViewer`, `TabView`, `TeachingTip`, `TextBox`, `TitleBar`, `ToggleSwitch`,
+`ToolTip`.
 
 With them it exports the `Symbol` table, WinUI's `Symbol` enum as the code points a `glyph`
 takes, and its `SymbolName` type; `ScrollAnimation`, with its `ScrollAnimationEasing` and
@@ -23,7 +24,7 @@ and `VERSION`. The stylesheets are `winui-svelte/tokens.css` and `winui-svelte/t
 
 ### `preview`
 
-`winui-svelte/preview` exports everything the root does and seventy-eight more components, and
+`winui-svelte/preview` exports everything the root does and seventy-six more components, and
 promises nothing: a name there may change shape or leave in any version. So may anything
 reached by a path into the package other than the root and the two stylesheets. Why the
 release is drawn there is the repository's ADR 0017,

@@ -378,7 +378,7 @@ async function runOptionalPeerControl(workdir, tarball) {
 const UNKNOWN_EXPORT = 'NotAControl';
 // A component the library builds and the release holds back (ADR 0017): `preview` exports it and
 // the root must not.
-const HELD_BACK_EXPORT = 'Flyout';
+const HELD_BACK_EXPORT = 'Popup';
 
 async function runRootRejects(workdir, tarball, name, label) {
 	// The negative case. It has to be about this package rather than about the package
@@ -409,8 +409,8 @@ async function runRootRejects(workdir, tarball, name, label) {
 		);
 	}
 	// The bundler's own words for a missing export, with the name quoted, rather than the name
-	// alone: `Flyout` is also in `MenuFlyout`, and in the path of a module the root does reach,
-	// so a build that failed for another reason could still mention it.
+	// alone: `Popup` is also in the source of modules the root does reach, ComboBox's and
+	// ToolTip's among them, so a build that failed for another reason could still mention it.
 	if (!commandOutput(build).includes(`"${name}" is not exported by`)) {
 		throw new Error(
 			`expected the failed build to say "${name}" is not exported, but found: ${compactOutput(build)}`

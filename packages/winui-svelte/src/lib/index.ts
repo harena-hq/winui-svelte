@@ -18,10 +18,23 @@ export type {
 } from './components/ComboBox.svelte';
 export { default as Expander } from './components/Expander.svelte';
 export type { ExpanderProps } from './components/Expander.svelte';
+export { default as Flyout } from './components/Flyout.svelte';
+export type { FlyoutPlacement, FlyoutProps } from './components/Flyout.svelte';
 export { default as HyperlinkButton } from './components/HyperlinkButton.svelte';
 export type { HyperlinkButtonProps } from './components/HyperlinkButton.svelte';
 export { default as InfoBar } from './components/InfoBar.svelte';
 export type { InfoBarProps } from './components/InfoBar.svelte';
+export { default as MenuFlyout } from './components/MenuFlyout.svelte';
+export type {
+	MenuFlyoutEntry,
+	MenuFlyoutItemData,
+	MenuFlyoutProps,
+	MenuFlyoutSeparatorData,
+	MenuFlyoutSubItemData,
+	RadioMenuFlyoutItemData,
+	SplitMenuFlyoutItemData,
+	ToggleMenuFlyoutItemData
+} from './components/MenuFlyout.svelte';
 export { default as NavigationView } from './components/NavigationView.svelte';
 export { default as NavigationViewItem } from './components/NavigationViewItem.svelte';
 export type { NavigationViewItemProps } from './components/NavigationViewItem.svelte';
