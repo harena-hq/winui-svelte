@@ -177,10 +177,19 @@ Ours draws the visual in all three: its return is a scripted focus after a key, 
 `:focus-visible` matches, so only the first differs. A defect a page finds is its own unit,
 fixed before the cut, by release step 3, and this is one.
 
-| component  | against the original                                                                   | re-photographed 2026-10-28               | owes                                                                                                                        |
-| ---------- | -------------------------------------------------------------------------------------- | ---------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| Flyout     | `67a546b`, `ce28cb8`                                                                   | passes: 366 x 97, gap, insets            | the button's width; the right press; the visual after `Hide`, press-opened                                                  |
-| MenuFlyout | `f463031`, `117aecd`, `edf2deb` (driven on the guest), `df99a73`, `c1080a5`, `aa0f33d` | passes: 103 x 105, 116 x 70, the submenu | WD-002, WD-013; its Gallery page; the submenu's width; the right press, from a trigger; the LOWs of `12b04b9` and `aa0f33d` |
+The MenuFlyout page, drawn since, measures the same way: its seven examples' cards on the same
+rows at the page's top and at its end, six of its seven menus' rows of ink where the original's
+are against their triggers, and the two output lines on the same columns. Two things differ. In
+the example with keyboard accelerators the two rows below the separator are 32 tall against 33,
+so the card is 172 tall against 174, and 159 wide against 160; the same rows in the example
+without accelerators are 32 on both. And the original draws that example's Copy and Delete
+labels in other ink than the example before it, as their `FontFamily="Consolas"` and
+`"Segoe UI"` ask, where its Rename's matches; a row here takes no font of its own.
+
+| component  | against the original                                                                   | re-photographed 2026-10-28               | owes                                                                                                                                                          |
+| ---------- | -------------------------------------------------------------------------------------- | ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Flyout     | `67a546b`, `ce28cb8`                                                                   | passes: 366 x 97, gap, insets            | the button's width; the right press; the visual after `Hide`, press-opened                                                                                    |
+| MenuFlyout | `f463031`, `117aecd`, `edf2deb` (driven on the guest), `df99a73`, `c1080a5`, `aa0f33d` | passes: 103 x 105, 116 x 70, the submenu | WD-002, WD-013; a row's font; the accelerator example's row height; the submenu's width; the right press, from a trigger; the LOWs of `12b04b9` and `aa0f33d` |
 
 ## Whether what they owe blocks the release
 
@@ -200,7 +209,8 @@ It does not, but for one defect to be fixed before the cut, and the reasons diff
   that a member may ship with surface still to build, because building it later breaks nothing
   a consumer already wrote.
 - **What the two added on 2026-10-28 carry**, but for the defect below, is of the same kinds: two
-  widths a pixel short, one of them from a label's advance; and a light dismiss that a primary press
+  widths a pixel short, one of them from a label's advance, and one menu's two rows and width a
+  pixel short; a row's font, surface not yet built; and a light dismiss that a primary press
   outside performs and a right press does not, except on the menu opened without a trigger. Such a
   press leaves the popup open. Over a menu it lands on the root, since the page's body takes no
   pointer events while a menu is open, and the browser draws its own menu there; a Flyout locks
