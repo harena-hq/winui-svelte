@@ -146,8 +146,8 @@ suite either way, which is what the gate's sentence asks.
 
 ## The two added on 2026-10-28
 
-D58 adds `Flyout` and `MenuFlyout`, after the run. Neither has a Gallery page in this
-repository, only a dev route, so each was re-photographed as the run's thirteen were: the
+D58 adds `Flyout` and `MenuFlyout`, after the run. Neither had a Gallery page in this
+repository then, only a dev route, so each was re-photographed as the run's thirteen were: the
 reference's own Gallery page and the dev route in the guest's Edge, both 1600 wide, in light,
 compared by box edges, insets and ink. Both pages, their samples' directories whole, are
 unchanged between Gallery 2.9.3.0's tag and the pin.
@@ -168,14 +168,23 @@ outside an open `Flyout`, measured in Chromium, leaves it open, where upstream's
 takes any button (`CPopupRoot::OnPointerPressed`). `MenuFlyout` opened without a trigger closes
 on one since `aa0f33d`; opened from its trigger, it does not.
 
+The Flyout page, drawn since, measures against the original's on the guest as the dev route
+did: the example's card and its source pane on the same rows and columns, and the open flyout
+in the same box. Driving it found a defect. Closed by the code-behind's `Hide`, from a key on
+"Yes, empty my cart", the original returned the focus to its trigger with no visual when a
+press had opened the flyout, and with one when a key had; Escape left the visual either way.
+Ours draws the visual in all three: its return is a scripted focus after a key, which
+`:focus-visible` matches, so only the first differs. A defect a page finds is its own unit,
+fixed before the cut, by release step 3, and this is one.
+
 | component  | against the original                                                                   | re-photographed 2026-10-28               | owes                                                                                                                        |
 | ---------- | -------------------------------------------------------------------------------------- | ---------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| Flyout     | `67a546b`, `ce28cb8`                                                                   | passes: 366 x 97, gap, insets            | its Gallery page; the button's width; the right press                                                                       |
+| Flyout     | `67a546b`, `ce28cb8`                                                                   | passes: 366 x 97, gap, insets            | the button's width; the right press; the visual after `Hide`, press-opened                                                  |
 | MenuFlyout | `f463031`, `117aecd`, `edf2deb` (driven on the guest), `df99a73`, `c1080a5`, `aa0f33d` | passes: 103 x 105, 116 x 70, the submenu | WD-002, WD-013; its Gallery page; the submenu's width; the right press, from a trigger; the LOWs of `12b04b9` and `aa0f33d` |
 
 ## Whether what they owe blocks the release
 
-It does not, and the reasons differ by kind.
+It does not, but for one defect to be fixed before the cut, and the reasons differ by kind.
 
 - **The divergences** are accepted ones, each with what it is worth written down and what
   would reopen it. None of them is a defect waiting on a fix.
@@ -190,20 +199,22 @@ It does not, and the reasons differ by kind.
   by what a consumer's source would replace rather than by completeness, and the gate holds
   that a member may ship with surface still to build, because building it later breaks nothing
   a consumer already wrote.
-- **What the two added on 2026-10-28 carry** is of the same kinds: two widths a pixel short,
-  one of them from a label's advance; and a light dismiss that a primary press outside
-  performs and a right press does not, except on the menu opened without a trigger. Such a
+- **What the two added on 2026-10-28 carry**, but for the defect below, is of the same kinds: two
+  widths a pixel short, one of them from a label's advance; and a light dismiss that a primary press
+  outside performs and a right press does not, except on the menu opened without a trigger. Such a
   press leaves the popup open. Over a menu it lands on the root, since the page's body takes no
   pointer events while a menu is open, and the browser draws its own menu there; a Flyout locks
-  nothing, so the press reaches what lies under it. That is behaviour owed rather than
-  accepted, and it has no divergence entry; the table names it. It does not block the release
-  for the reason the owed rows do not: nothing a consumer writes against it breaks when it is
-  fixed.
+  nothing, so the press reaches what lies under it. That is behaviour owed rather than accepted, and
+  it has no divergence entry; the table names it. It does not block the release for the reason the
+  owed rows do not: nothing a consumer writes against it breaks when it is fixed.
+- **The defect the Flyout page found**, the focus visual Flyout's return draws after `Hide`
+  when a press opened the flyout, is a defect in one of the release's components, and release
+  step 3 makes it a unit to be fixed before the cut rather than a row the release may carry.
 - **The unpressed keyboard questions** are recorded as unpressed, and the answers the library
   gives are the ones its own tests hold it to.
 
-**The gate passes.** Cutting the release — a version, a tag, a publish — is the owner's to do,
-and nothing here did it.
+**The gate passes**, with that one defect to fix before the cut. Cutting the release — a
+version, a tag, a publish — is the owner's to do, and nothing here did it.
 
 ## What the evidence itself owed
 
