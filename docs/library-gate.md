@@ -18,7 +18,7 @@ whether what a member still owes blocks the release.
   the eighteen have, sixteen are unchanged between that release's tag and the pin; TitleBar's
   differs by WinUI-Gallery `9a14fa5`, whose effect on the shell's search box is recorded in
   `apps/gallery/src/routes/(shell)/+layout.svelte`.
-- **Re-photographed.** Thirteen components have no Gallery page in this repository, only a
+- **Re-photographed.** Thirteen components had no Gallery page in this repository then, only a
   dev route: Button, ComboBox, ContentDialog, Expander, HyperlinkButton, InfoBar, ProgressBar,
   ProgressRing, TabView, TeachingTip, TextBox, ToggleSwitch and ToolTip. Each was captured on
   the reference's own Gallery page and on its dev route in the guest's Edge at the same width,
@@ -64,7 +64,7 @@ app; the rest of a component's history was reviewed by gates, mutants and agents
 | Button             | none of its own (see below)                     | passes: fill, height, insets                  | —                                                                                         |
 | ComboBox           | `65d0719`, `76ede81`                            | passes: height, insets, chevron               | WD-097, WD-098; v4 row: touch and game-controller padding                                 |
 | ContentDialog      | `9608de0`, `ddf52df`, `b17cd85`                 | passes: 320 x 221                             | WD-014, WD-015                                                                            |
-| Expander           | `34f4ceb`                                       | passes, but for the chevron's phase           | WD-006, WD-010, WD-011; its Gallery page; the chevron                                     |
+| Expander           | `34f4ceb`                                       | passes, but for the chevron's phase           | WD-006, WD-010, WD-011; the chevron                                                       |
 | HyperlinkButton    | none of its own (see below)                     | passes: ink, colour, hover                    | —                                                                                         |
 | InfoBar            | `2ae9dbe`                                       | passes: height, icon and title offsets        | —                                                                                         |
 | NavigationView     | `53c6c80`, `a846afa`, `2b585b0`                 | the shell, photographed on every Gallery page | WD-006, -025, -089, -091, -101; four rows; six more                                       |
@@ -133,6 +133,11 @@ out, so a tooltip above it ends 80 below the pointer; with the one-line tooltip'
 `ToolTip.svelte` measured, its top is 48 below, which the guest shows at two pointer heights
 (503 and 510 for 455 and 462). Neither is built here. `PlacementRect` is absent, and this
 library's one `offset` at -80 put the popup's top at the pointer, measured.
+
+Added 2026-10-30, after the run: Expander's Gallery page, which its row owed, was built in
+`c8d6b06` and measured against the original on the reference guest, and the row no longer owes
+it. All thirteen components the run re-photographed from their dev routes now have Gallery
+pages, the last TabView's in `7ed4616` on 2026-10-14.
 
 `deaaf2d` compared one thing with the original, an AppBarButton row in a CommandBar's
 overflow, and swept every other control's focus visual against its own; it is credited to no
