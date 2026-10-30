@@ -502,14 +502,14 @@
 	// lands, reaches the trigger and opens the list — unless the browser took the slide as a pan
 	// and cancelled the pointer. That is WD-098; see docs/divergences.md.
 	let pressed = $state(false);
-	type TriggerProps = Record<string, unknown> & {
+	type PointerProps = Record<string, unknown> & {
 		onpointerdown?: (event: PointerEvent) => void;
 		onpointerup?: (event: PointerEvent) => void;
 	};
 	function presses(event: PointerEvent) {
 		return !disabled && !open && event.button === 0 && !event.ctrlKey;
 	}
-	function triggerPointerDown(props: TriggerProps, event: PointerEvent) {
+	function triggerPointerDown(props: PointerProps, event: PointerEvent) {
 		pressed = presses(event);
 		if (!pressed || event.pointerType === 'touch') return props.onpointerdown?.(event);
 		// What bits-ui's handler does before it opens (`select.svelte.js:743-746`): a pointer
@@ -518,11 +518,62 @@
 		const target = event.target as Element | null;
 		if (target?.hasPointerCapture(event.pointerId)) target.releasePointerCapture(event.pointerId);
 	}
-	function triggerPointerUp(props: TriggerProps, event: PointerEvent) {
+	function triggerPointerUp(props: PointerProps, event: PointerEvent) {
 		props.onpointerup?.(event);
 		if (pressed && event.pointerType !== 'touch' && presses(event)) props.onpointerdown?.(event);
 		pressed = false;
 	}
+
+	// What closes the list decides the box's focus visual, whatever focused the box before:
+	// measured on the reference guest, a pressed row leaves the box without it, a list opened by a
+	// key or by a press alike, and a key that closes the list leaves it drawn, a box a pressed row
+	// had just left without it included. Upstream's Escape and Tab focus the box `Programmatic`,
+	// which resolves to `Keyboard` (ComboBox_Partial.cpp:2776-2779, :2793-2795); Enter's close
+	// does not focus it, and its visual is the guest's alone. A press anywhere but the list lands
+	// on the light-dismiss canvas under the popup (:509-517), the box included where the list
+	// leaves it uncovered, and closes the list without focusing anything (:3721-3746): the box
+	// keeps its state, as a press outside kept it on the guest. So the last input while the list
+	// is open decides: a press in the list, a key, or neither.
+	// The focus never leaves the trigger here, as bits-ui's rows keep the press from taking it
+	// (`select.svelte.js:942-945`), so a `focus()` would change nothing: it is taken off and put
+	// back, and the box hears a `focusout` and a `focusin` it would not otherwise. A press's close
+	// does it even on a box that shows no visual, as Chromium would otherwise draw it for the next
+	// key on a box a press focused, where Escape on that box on the guest drew nothing; a key's
+	// close only where the visual is not already drawn. Tab's close is left alone, as the focus
+	// moves on from the box at once. A press outside the list that takes the focus to the body
+	// leaves nothing to put back. The record starts over on each opening, since a close the
+	// consumer makes through `open` never reaches the setter that reads it.
+	let closingInput: 'press' | 'key' | 'tab' | null = null;
+	let selectPopup: HTMLElement | null = null;
+	function holdSelectPopup(popup: HTMLElement) {
+		selectPopup = popup;
+		return () => {
+			if (selectPopup === popup) selectPopup = null;
+		};
+	}
+	function afterClose() {
+		const input = closingInput;
+		closingInput = null;
+		if (!ref || document.activeElement !== ref || input === null || input === 'tab') return;
+		const visible = input === 'key';
+		if (visible && ref.matches(':focus-visible')) return;
+		ref.blur();
+		ref.focus({ preventScroll: true, focusVisible: visible });
+	}
+	$effect(() => {
+		if (editable || !open) return;
+		closingInput = null;
+		const onPress = (event: PointerEvent) =>
+			(closingInput =
+				event.target instanceof Node && selectPopup?.contains(event.target) ? 'press' : null);
+		const onKey = (event: KeyboardEvent) => (closingInput = event.key === 'Tab' ? 'tab' : 'key');
+		document.addEventListener('pointerdown', onPress, true);
+		document.addEventListener('keydown', onKey, true);
+		return () => {
+			document.removeEventListener('pointerdown', onPress, true);
+			document.removeEventListener('keydown', onKey, true);
+		};
+	});
 
 	// `OverrideSelectedIndexForVisualStates` (ComboBox_Partial.cpp:6326) for the non-editable
 	// list: while it is open, the row that draws the Selected look is the row keyboard focus is
@@ -788,6 +839,7 @@
 				(next) => {
 					open = next;
 					onOpenChange?.(next);
+					if (!next) afterClose();
 				}
 			}
 			{items}
@@ -858,6 +910,7 @@
 							{...props}
 							class={['popup', 'select-popup', 'winui-BodyTextBlockStyle']}
 							{@attach dropDown}
+							{@attach holdSelectPopup}
 						>
 							<Select.Viewport>
 								{#snippet child({ props })}

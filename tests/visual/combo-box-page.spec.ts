@@ -80,6 +80,51 @@ test('the editable size starts at 10 and takes a listed or in-range size', async
 	await expect(page.getByRole('dialog')).toHaveCount(0);
 });
 
+test('the box keeps the focus visual a key closes the list with, and not a pressed row', async ({
+	page
+}) => {
+	const trigger = examples(page).nth(0).locator('button.trigger');
+	const close = async (open: () => Promise<void>, how: () => Promise<void>, drawn: boolean) => {
+		await open();
+		await expect(page.getByRole('listbox')).toBeVisible();
+		await how();
+		await expect(page.getByRole('listbox')).toHaveCount(0);
+		await expect(trigger).toBeFocused();
+		expect(await trigger.evaluate((node) => node.matches(':focus-visible'))).toBe(drawn);
+	};
+	const commit = async () => {
+		await page.keyboard.press('ArrowDown');
+		await page.keyboard.press('Enter');
+	};
+	// As on the reference guest: a press opens the list and a key closes it, and the box has the
+	// visual, by Enter or by Escape; a key opens it and a pressed row closes it, and the box has
+	// none; a press on the box the keyboard had focused, and a key to close, draws it again.
+	await close(() => trigger.click(), commit, true);
+	await close(
+		() => trigger.click(),
+		() => page.keyboard.press('Escape'),
+		true
+	);
+	await close(
+		() => page.keyboard.press('Enter'),
+		() => page.getByRole('option', { name: 'Yellow', exact: true }).click(),
+		false
+	);
+	await page.keyboard.press('Shift+Tab');
+	await page.keyboard.press('Tab');
+	await expect(trigger).toBeFocused();
+	expect(await trigger.evaluate((node) => node.matches(':focus-visible'))).toBe(true);
+	await close(() => trigger.click(), commit, true);
+	// The box has the visual and a press opens the list: a pressed row closes it with none, and a
+	// key that closes it after that draws it again, both as on the guest.
+	await close(
+		() => trigger.click(),
+		() => page.getByRole('option', { name: 'Red', exact: true }).click(),
+		false
+	);
+	await close(() => trigger.click(), commit, true);
+});
+
 test('an out-of-range size is rejected with a dialog and the text reverts', async ({ page }) => {
 	await submit(page, '50');
 	await expect.poll(() => css(sizeOutput(page), 'font-size')).toBe('50px');

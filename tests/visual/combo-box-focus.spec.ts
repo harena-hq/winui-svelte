@@ -353,7 +353,7 @@ test('the highlight takes upstream’s corner and not a concentric one', async (
 	expect(highlight, 'the highlight rounds by something other than its own resource').toBe(token);
 });
 
-test('a pointer lights nothing and a key lights it', async ({ page }) => {
+test('a pointer lights nothing and keyboard navigation lights it', async ({ page }) => {
 	// `PointerFocused` (ComboBox_themeresources.xaml:504) is an empty visual state where
 	// `Focused` (:473) is not, so a pointer-acquired focus shows nothing at all. That is what
 	// `:focus-visible` models, and it is why no band in this library keys on `:focus`.
@@ -367,8 +367,8 @@ test('a pointer lights nothing and a key lights it', async ({ page }) => {
 	expect(await highlightOf(trigger), 'a click on the trigger drew a focus visual').toBe(null);
 	expect(await pillShown(trigger), 'a click on the trigger raised the pill').toBe(false);
 
-	// A click on an item closes it and leaves focus where it was, which is the only way to reach
-	// pointer-focused-and-closed on this control short of holding the button down: every click
+	// A click on an item closes it and focuses the box again without the visual, the only way to
+	// reach pointer-focused-and-closed on this control short of holding the button down: every click
 	// on the trigger opens the drop-down — which then lies over the trigger, so there is no
 	// second click on it to close it — and while that is open `FocusedDropDown` hides both
 	// visuals whatever acquired focus. Without this step nothing here separates `:focus` from
@@ -385,9 +385,16 @@ test('a pointer lights nothing and a key lights it', async ({ page }) => {
 	expect(await highlightOf(trigger), 'a pointer-focused closed trigger drew a visual').toBe(null);
 	expect(await pillShown(trigger), 'a pointer-focused closed trigger raised the pill').toBe(false);
 
-	// Escape is the key press that lights it, so one action carries the control and its
-	// opposite.
+	// A key on the box does not light it: Escape on the reference guest's closed box, which a
+	// pressed row had left focused, drew nothing. Focus that the keyboard moves does, so the
+	// control's opposite is a Tab out and back.
 	await page.keyboard.press('Escape');
+	expect(await trigger.evaluate((el) => el.matches(':focus-visible'))).toBe(false);
+	expect(await highlightOf(trigger), 'Escape on the closed box drew a visual').toBe(null);
+	expect(await pillShown(trigger), 'Escape on the closed box raised the pill').toBe(false);
+	await page.keyboard.press('Shift+Tab');
+	await page.keyboard.press('Tab');
+	await expect(trigger).toBeFocused();
 	await expect(trigger).toHaveAttribute('aria-expanded', 'false');
 	expect(await trigger.evaluate((el) => el.matches(':focus-visible'))).toBe(true);
 	expect(await highlightOf(trigger)).toBe(await grownBoxOf(trigger));
@@ -832,4 +839,80 @@ test('a keyboard-focused trigger held down paints FocusedPressed’s three brush
 		await page.mouse.up();
 		await expect(trigger).toHaveAttribute('aria-expanded', 'false');
 	}
+});
+
+/** The box, left focused without the visual by a row pressed in its list. */
+async function unlitByRow(page: Page, trigger: Locator, row: string) {
+	await trigger.click();
+	const active = await trigger.getAttribute('aria-activedescendant');
+	const list = page.locator('.select-popup').filter({ has: page.locator(`[id="${active}"]`) });
+	await list.getByRole('option', { name: row, exact: true }).click();
+	await expect(trigger).toHaveAttribute('aria-expanded', 'false');
+	await expect(trigger).toBeFocused();
+	expect(await trigger.evaluate((el) => el.matches(':focus-visible'))).toBe(false);
+}
+
+test('a released row that closes nothing leaves a key to close the list with the visual', async ({
+	page
+}) => {
+	// A disabled row's release chooses nothing and the list stays open, so the Enter after it is
+	// what closes the list, and the box takes the visual a key gives it, from a box a pressed row
+	// had left without it: the press before the key does not decide the close.
+	await page.goto(ROUTE);
+	await growViewportToContent(page);
+	const trigger = page
+		.locator('h2', { hasText: 'a disabled item' })
+		.locator('xpath=following-sibling::div[1]')
+		.locator('.trigger');
+	await unlitByRow(page, trigger, 'Segoe UI');
+	await trigger.click();
+	const listbox = page.getByRole('listbox').filter({ hasText: 'Cascadia Mono' });
+	await expect(listbox).toBeVisible();
+	await listbox.getByRole('option', { name: 'Cascadia Mono' }).click({ force: true });
+	await expect(listbox).toBeVisible();
+	await page.keyboard.press('Enter');
+	await expect(listbox).toHaveCount(0);
+	await expect(trigger).toBeFocused();
+	expect(await trigger.evaluate((node) => node.matches(':focus-visible'))).toBe(true);
+});
+
+test('a press on the box while the list is open closes it and leaves its visual', async ({
+	page
+}) => {
+	// The press a strip of a tall box left uncovered by the list would take. Upstream it lands on
+	// the light-dismiss canvas under the popup (ComboBox_Partial.cpp:509-517), which closes the
+	// list and focuses nothing (:3721-3746), so the box keeps its state. It is dispatched to the
+	// trigger here, whatever lies over it. The box was lit: a key opened the list.
+	await page.goto(ROUTE);
+	await growViewportToContent(page);
+	const trigger = page.locator('.trigger').first();
+	await trigger.click();
+	await page.keyboard.press('Escape');
+	await page.keyboard.press('Shift+Tab');
+	await page.keyboard.press('Tab');
+	await expect(trigger).toBeFocused();
+	expect(await trigger.evaluate((el) => el.matches(':focus-visible'))).toBe(true);
+	await page.keyboard.press('Enter');
+	await expect(trigger).toHaveAttribute('aria-expanded', 'true');
+	await trigger.dispatchEvent('pointerdown', { button: 0, pointerType: 'mouse', isPrimary: true });
+	await expect(trigger).toHaveAttribute('aria-expanded', 'false');
+	await expect(trigger).toBeFocused();
+	expect(await trigger.evaluate((el) => el.matches(':focus-visible'))).toBe(true);
+});
+
+test('Tab closes the list and moves on without focusing the box again', async ({ page }) => {
+	// From a box a pressed row left without the visual, which a key's close would focus again.
+	await page.goto(ROUTE);
+	await growViewportToContent(page);
+	const trigger = page.locator('.trigger').first();
+	await unlitByRow(page, trigger, 'Green');
+	await trigger.click();
+	await expect(trigger).toHaveAttribute('aria-expanded', 'true');
+	await trigger.evaluate((node) => {
+		node.addEventListener('focus', () => node.setAttribute('data-was-focused', ''));
+	});
+	await page.keyboard.press('Tab');
+	await expect(trigger).toHaveAttribute('aria-expanded', 'false');
+	await expect(trigger).not.toBeFocused();
+	await expect(trigger).not.toHaveAttribute('data-was-focused');
 });
