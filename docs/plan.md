@@ -4391,6 +4391,13 @@ two, and the last of them is the owner's alone. D55.
    has no remote, so `package.json` carries no `repository` field; adding one waits for a
    remote to point at.
 
+   **A pre-release first, 2026-10-30.** At the owner's word, `version` and `VERSION` read
+   `0.1.0-rc.1`, and the tarball the smoke installed, from a HEAD whose battery is green, goes to
+   a consumer to install before anything is published, so that what they find can still change
+   the release without a second `0.1.0` under the same name. If the consumer's findings become
+   units, the next `rc` (`0.1.0-rc.2`) carries them. The cut sets both back to `0.1.0`. The
+   changelog keeps its `0.1.0` heading, the release the candidate is for.
+
 v19 starts after the cut, as D37 orders it.
 
 ### Final — the acceptance gate
