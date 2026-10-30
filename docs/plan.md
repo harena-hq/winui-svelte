@@ -2370,7 +2370,7 @@ generics="T">` component through `pnpm --filter winui-svelte build` reaches `dis
     | `RadioButtons` dropping columns when the width runs out                   | `ColumnMajorUniformToLargestGridLayout.cpp:132-162`, and a measurement of a group that hits it                                          |
     | Border's first star column going under `MinWidth`                         | a reading of how the shipped Gallery resolves star columns against a child's minimum; 8px on one page                                   |
     | the SplitView content's slide in the inline transition                    | `SplitViewPaneAnimationOpenPreDuration` and a translation of the content; the column interpolates instead                               |
-    | Expander's page, and the Layout group's three unscheduled pages           | O-pages for the first; Canvas, RelativePanel and VariableSizedWrapGrid stay in the unscheduled table                                    |
+    | ~~Expander's page~~ — **built, `c8d6b06`**; Layout's unscheduled pages    | O-pages for the first; Canvas, RelativePanel and VariableSizedWrapGrid stay in the unscheduled table                                    |
 
     **What this version declined.** WD-030: a Viewbox sized on one axis keeps the child's own
     size on the other where XAML follows the scale. Every sample in the Gallery sizes both.
@@ -4349,7 +4349,8 @@ two, and the last of them is the owner's alone. D55.
    **And two more, since 2026-10-28.** `Flyout` and `MenuFlyout` joined the release by D58 with dev
    routes alone, so their pages, one example and seven, are owed before the cut on the same
    terms, sixteen in all, after TabView's and Flyout's first; the library gate's section of
-   that day records what the guest measured meanwhile.
+   that day records what the guest measured meanwhile. **Done 2026-10-29**: all sixteen are
+   drawn, the last the MenuFlyout page in `51ea029`.
    - **Done when**, per page: every example of the pin's page is drawn, or declined under a
      named divergence; each is measured against the original on the reference guest at the
      reference width, and the measurements are in the `Reviewed:` trailer; behaviour the
