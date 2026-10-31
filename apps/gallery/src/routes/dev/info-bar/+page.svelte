@@ -46,7 +46,7 @@
 <div class="row">
 	<InfoBar title="Title" message={SHORT_MESSAGE} closable={false} />
 	<InfoBar title="Title" message={SHORT_MESSAGE} iconVisible={false} />
-	<InfoBar title="Title" message={SHORT_MESSAGE} iconSource="E946" />
+	<InfoBar title="Title" message={SHORT_MESSAGE} glyph="E946" />
 	<InfoBar title="Title" message={SHORT_MESSAGE} open={false} />
 	<InfoBar>
 		<span>Content only</span>

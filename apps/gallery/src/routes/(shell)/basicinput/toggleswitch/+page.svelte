@@ -44,7 +44,7 @@
 			/>
 			<!-- ToggleSwitchPage.xaml:34: Width="32"; the height is the style's 32
 			     (ProgressRing.xaml:13). -->
-			<ProgressRing isActive={working} style="width: 32px" />
+			<ProgressRing active={working} style="width: 32px" />
 		</div>
 	</ControlExample>
 </ItemPage>

@@ -18,6 +18,8 @@
 		 *  increment-raise-decrement (`RefreshContainer.cpp:347-349`) does with a deferral nobody
 		 *  took. */
 		refreshing?: boolean;
+		/** No WinUI member: ADR 0009 pairs every `$bindable` prop with its own change callback. */
+		onRefreshingChange?: (refreshing: boolean) => void;
 		class?: string;
 		style?: string;
 		/** The RefreshContainer root element. */
@@ -82,6 +84,7 @@
 		pullDirection = 'topToBottom', // RefreshContainer.idl:23
 		onRefreshRequested,
 		refreshing = $bindable(false),
+		onRefreshingChange,
 		class: className,
 		style,
 		ref = $bindable(null),
@@ -315,10 +318,12 @@
 	async function onVisualizerRefreshRequested() {
 		refreshing = true;
 		try {
+			onRefreshingChange?.(true);
 			await onRefreshRequested?.();
 		} finally {
 			refreshing = false;
 			visualizerState = 'idle';
+			onRefreshingChange?.(false);
 		}
 	}
 </script>

@@ -19,7 +19,7 @@
 		 * corroborated in `generic.xaml:11016` and :11017; Caution `E171` (Important) comes
 		 * from the Windows Symbol enumeration and neither pin confirms it.
 		 */
-		iconSource?: string;
+		glyph?: string;
 		class?: string;
 		style?: string;
 		ref?: HTMLSpanElement | null;
@@ -31,7 +31,7 @@
 	let {
 		variant = 'default',
 		value = -1,
-		iconSource = undefined,
+		glyph = undefined,
 		class: className,
 		style,
 		ref = $bindable(null),
@@ -40,10 +40,8 @@
 
 	// `InfoBadge.cpp:48` rejects Value below -1. This component treats every value below 0
 	// as Dot: throwing during render would take down the page for a visually identical state.
-	const display = $derived<'dot' | 'value' | 'icon'>(
-		value >= 0 ? 'value' : iconSource ? 'icon' : 'dot'
-	);
-	const icon = $derived(iconSource ? String.fromCodePoint(parseInt(iconSource, 16)) : '');
+	const display = $derived<'dot' | 'value' | 'icon'>(value >= 0 ? 'value' : glyph ? 'icon' : 'dot');
+	const icon = $derived(glyph ? String.fromCodePoint(parseInt(glyph, 16)) : '');
 </script>
 
 <span

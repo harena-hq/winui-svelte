@@ -39,9 +39,9 @@
 
 <h2 class="winui-SubtitleTextBlockStyle">indeterminate</h2>
 <div class="row">
-	<ProgressBar isIndeterminate style="width: 130px" />
-	<ProgressBar isIndeterminate showPaused style="width: 130px" />
-	<ProgressBar isIndeterminate showError style="width: 130px" />
+	<ProgressBar indeterminate style="width: 130px" />
+	<ProgressBar indeterminate showPaused style="width: 130px" />
+	<ProgressBar indeterminate showError style="width: 130px" />
 </div>
 
 <h2 class="winui-SubtitleTextBlockStyle">range</h2>

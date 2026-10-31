@@ -17,7 +17,7 @@
 		/** FlipView.SelectedIndex. Bindable, because the flip buttons move it. */
 		selectedIndex?: number;
 		/** SelectionChanged, narrowed to the new index. */
-		onSelectionChanged?: (index: number) => void;
+		onSelectedIndexChange?: (index: number) => void;
 		/**
 		 * FlipView's ItemsPanel orientation — `VirtualizingStackPanel Orientation="Horizontal"`
 		 * by default, and the Gallery's own third example sets it vertical.
@@ -38,7 +38,7 @@
 		itemTemplate,
 		key,
 		selectedIndex = $bindable(0),
-		onSelectionChanged,
+		onSelectedIndexChange,
 		orientation = 'horizontal',
 		class: className,
 		style,
@@ -58,7 +58,7 @@
 		const next = selectedIndex + delta;
 		if (next < 0 || next >= items.length) return;
 		selectedIndex = next;
-		onSelectionChanged?.(next);
+		onSelectedIndexChange?.(next);
 	}
 </script>
 

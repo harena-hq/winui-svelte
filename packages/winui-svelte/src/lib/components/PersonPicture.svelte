@@ -13,7 +13,7 @@
 		/** Initials. */
 		initials?: string;
 		/** IsGroup. */
-		isGroup?: boolean;
+		group?: boolean;
 		/** ProfilePicture, as the URI an `ImageSource` would carry. */
 		profilePicture?: string;
 		/** Width and Height, which upstream keeps equal — `PersonPicture.cpp:563-591`. */
@@ -69,7 +69,7 @@
 		badgeText,
 		displayName,
 		initials,
-		isGroup = false,
+		group = false,
 		profilePicture,
 		size = 96,
 		class: className,
@@ -82,7 +82,7 @@
 	const shownInitials = $derived(initials || initialsFromDisplayName(displayName ?? ''));
 	// PersonPicture.cpp:162-180 gives IsGroup precedence even when a profile picture is supplied.
 	const face = $derived(
-		isGroup ? 'group' : profilePicture ? 'photo' : shownInitials ? 'initials' : 'placeholder'
+		group ? 'group' : profilePicture ? 'photo' : shownInitials ? 'initials' : 'placeholder'
 	);
 	// PersonPicture.cpp:185-245 gives image, non-zero number, then glyph precedence; a non-positive
 	// selected number form hides the badge instead of falling through to a glyph.
@@ -97,7 +97,7 @@
 	// PersonPicture.cpp:293-407 uses the Initials property rather than derived initials. Its seven
 	// en-US plural resources are identical, so only the singular/plural distinction remains.
 	const automationName = $derived.by(() => {
-		const name = isGroup ? 'Group' : displayName || initials || 'Person';
+		const name = group ? 'Group' : displayName || initials || 'Person';
 		if (badgeNumber > 0)
 			return `${name}, ${badgeNumber} ${badgeText || (badgeNumber === 1 ? 'item' : 'items')}`;
 		// Upstream's automation branch treats a negative number as non-numeric here, even though the

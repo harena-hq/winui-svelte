@@ -67,7 +67,7 @@
 		 * the selected record, by a close request or otherwise, moves it to the closest enabled tab.
 		 */
 		selected?: string | null;
-		onSelectionChanged?: (id: string | null) => void;
+		onSelectedChange?: (id: string | null) => void;
 		/**
 		 * TabCloseRequested. This requests closure; the consumer edits its own collection, and if
 		 * the tab was selected, the selection moves to the closest enabled tab once its record is
@@ -122,7 +122,7 @@
 	let {
 		items,
 		selected = $bindable(null),
-		onSelectionChanged,
+		onSelectedChange,
 		onTabCloseRequested,
 		onTabContextRequested,
 		disabled = false,
@@ -156,7 +156,7 @@
 	function select(item: TabViewItemData) {
 		if (isItemDisabled(item) || item.id === current) return;
 		selected = item.id;
-		onSelectionChanged?.(item.id);
+		onSelectedChange?.(item.id);
 	}
 
 	const closeId = (id: string) => `${uid}-close-${id}`;
@@ -360,7 +360,7 @@
 			const item = items[(start + step) % items.length];
 			if (isItemDisabled(item)) continue;
 			selected = item.id;
-			onSelectionChanged?.(item.id);
+			onSelectedChange?.(item.id);
 			return;
 		}
 		selected = shown;

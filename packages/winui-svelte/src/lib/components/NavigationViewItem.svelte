@@ -1,5 +1,6 @@
 <script lang="ts" module>
 	import type { Snippet } from 'svelte';
+	import type { AccessibleNameProps } from '../internal/accessible-name';
 	import type { NavigationViewItemData } from './NavigationView.svelte';
 
 	/**
@@ -25,7 +26,7 @@
 	 * The component and this interface are in the release, exported from `index.ts` with
 	 * `NavigationView` (ADR 0015, ADR 0017).
 	 */
-	export interface NavigationViewItemProps {
+	export interface NavigationViewItemProps extends AccessibleNameProps {
 		/**
 		 * Which row this is: what `selected` holds, what `ItemInvoked` reports, and what the
 		 * pane's expansion list names.
@@ -38,6 +39,18 @@
 		 * field and is untouched — the control reads it and passes it here.
 		 */
 		tag: string;
+		/**
+		 * No WinUI member: on the `<li>`, the row's root, with `style` and the rest props. In the
+		 * expanded pane the `<li>` holds the row's children, so a handler here hears a child row's
+		 * events too. On the rail, a top-level row with children has its `id` and popup attributes
+		 * replaced by the flyout trigger's. A `role` or `tabindex` here is outside the pane's one tab
+		 * stop, so neither is for a row that wants to stay in it.
+		 */
+		class?: string;
+		style?: string;
+		/** The row's focusable `treeitem`, not the `<li>` — ADR 0009's `ref`. */
+		ref?: HTMLElement | null;
+		[key: string]: unknown;
 		/**
 		 * `Content`, narrowed to the label — the string arm of a member XAML types as
 		 * `IInspectable`. `children` is the other arm and wins the content cell; this one is
@@ -72,11 +85,31 @@
 		RING_ROOT_ATTRIBUTE,
 		setNavigationViewPlacement
 	} from '../internal/navigation-view';
+	import { nameSource } from '../internal/accessible-name';
 	import Flyout from './Flyout.svelte';
 	import Self from './NavigationViewItem.svelte';
 	import ToolTip from './ToolTip.svelte';
 
-	let { tag, content, glyph, items, children }: NavigationViewItemProps = $props();
+	let {
+		tag,
+		content,
+		glyph,
+		items,
+		children,
+		class: className,
+		style,
+		ref = $bindable(null),
+		'aria-label': ariaLabel,
+		'aria-labelledby': ariaLabelledby,
+		'aria-describedby': ariaDescribedby,
+		...rest
+	}: NavigationViewItemProps = $props();
+
+	const name = $derived(nameSource({ 'aria-label': ariaLabel, 'aria-labelledby': ariaLabelledby }));
+
+	/** The consumer's description, or the open tooltip's, in its trigger props on the rail. */
+	const describedBy = (props: Record<string, unknown>) =>
+		ariaDescribedby ?? (props['aria-describedby'] as string | undefined);
 
 	// Everything else this row needs is a fact about the pane it sits in, and the pane
 	// publishes it — `internal/navigation-view.ts` says why, and why an absent context is
@@ -368,7 +401,7 @@
 {/snippet}
 
 {#snippet item(anchor = EMPTY_TRIGGER_PROPS)}
-	<li role="none" {...anchor}>
+	<li role="none" class={className} {style} {...rest} {...anchor}>
 		<!-- The row is written once and rendered through a snippet, because the collapsed pane
 	     wraps it in a `ToolTip` and the expanded pane must have no wrapper and no extra
 	     element at all. `props` is the tooltip's trigger props in the first case and the
@@ -392,15 +425,21 @@
 				     string content, visible or not, and never the icon, and falls back to the
 				     localized control name `NavigationViewItem`. In that branch the label also keeps
 				     the expand chevron's out of the row's name. When `children` fills the content
-				     cell the row is named by its contents, and those include the chevron. -->
+				     cell the row is named by its contents, and those include the chevron. A name the
+				     consumer gives, `AutomationProperties.Name` or `LabeledBy` upstream, comes before
+				     all of it. -->
 				<div
+					bind:this={ref}
 					{...props}
 					role="treeitem"
 					class="item"
 					aria-selected={isSelected}
 					aria-expanded={hasChildren ? open : undefined}
 					aria-level={level}
-					aria-label={children ? undefined : content || 'NavigationViewItem'}
+					aria-label={name.label ??
+						(name.labelledby || children ? undefined : content || 'NavigationViewItem')}
+					aria-labelledby={name.label ? undefined : name.labelledby}
+					aria-describedby={describedBy(props)}
 					tabindex={tabStop ? 0 : -1}
 					data-selected={isSelected}
 					data-expanded={hasChildren ? open : undefined}

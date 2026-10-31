@@ -11,9 +11,9 @@
 		/** ParallaxView.VerticalShift. */
 		verticalShift?: number;
 		/** ParallaxView.IsHorizontalShiftClamped. */
-		isHorizontalShiftClamped?: boolean;
+		horizontalShiftClamped?: boolean;
 		/** ParallaxView.IsVerticalShiftClamped. */
-		isVerticalShiftClamped?: boolean;
+		verticalShiftClamped?: boolean;
 		/** ParallaxView.MaxHorizontalShiftRatio. */
 		maxHorizontalShiftRatio?: number;
 		/** ParallaxView.MaxVerticalShiftRatio. */
@@ -50,8 +50,8 @@
 		source = null,
 		horizontalShift = 0,
 		verticalShift = 0,
-		isHorizontalShiftClamped = true,
-		isVerticalShiftClamped = true,
+		horizontalShiftClamped = true,
+		verticalShiftClamped = true,
 		maxHorizontalShiftRatio = 1,
 		maxVerticalShiftRatio = 1,
 		horizontalSourceStartOffset = 0,
@@ -269,7 +269,7 @@
 			applyAxis(
 				'horizontal',
 				horizontalShift,
-				isHorizontalShiftClamped,
+				horizontalShiftClamped,
 				maxHorizontalShiftRatio,
 				horizontalSourceStartOffset,
 				horizontalSourceEndOffset,
@@ -278,7 +278,7 @@
 			applyAxis(
 				'vertical',
 				verticalShift,
-				isVerticalShiftClamped,
+				verticalShiftClamped,
 				maxVerticalShiftRatio,
 				verticalSourceStartOffset,
 				verticalSourceEndOffset,

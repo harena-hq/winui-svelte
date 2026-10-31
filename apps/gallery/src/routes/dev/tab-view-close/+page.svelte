@@ -53,7 +53,7 @@
 	<TabView
 		items={bound}
 		bind:selected={boundSelected}
-		onSelectionChanged={(id) => (boundReported = [...boundReported, id ?? 'null'])}
+		onSelectedChange={(id) => (boundReported = [...boundReported, id ?? 'null'])}
 		onTabCloseRequested={(id) => (bound = remove(bound, id))}
 	/>
 	<output>{boundReported.join(' ')}</output>
@@ -62,7 +62,7 @@
 <div class="frame" id="free">
 	<TabView
 		items={free}
-		onSelectionChanged={(id) => (freeReported = [...freeReported, id ?? 'null'])}
+		onSelectedChange={(id) => (freeReported = [...freeReported, id ?? 'null'])}
 		onTabCloseRequested={(id) => (free = remove(free, id))}
 	/>
 	<output>{freeReported.join(' ')}</output>
@@ -71,7 +71,7 @@
 <div class="frame" id="skip">
 	<TabView
 		items={skip}
-		onSelectionChanged={(id) => (skipReported = [...skipReported, id ?? 'null'])}
+		onSelectedChange={(id) => (skipReported = [...skipReported, id ?? 'null'])}
 		onTabCloseRequested={(id) => (skip = remove(skip, id))}
 	/>
 	<output>{skipReported.join(' ')}</output>
@@ -80,7 +80,7 @@
 <div class="frame" id="lone">
 	<TabView
 		items={lone}
-		onSelectionChanged={(id) => (loneReported = [...loneReported, id ?? 'null'])}
+		onSelectedChange={(id) => (loneReported = [...loneReported, id ?? 'null'])}
 		onTabCloseRequested={(id) => (lone = remove(lone, id))}
 	/>
 	<output>{loneReported.join(' ')}</output>

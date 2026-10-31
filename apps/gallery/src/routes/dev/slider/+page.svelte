@@ -60,7 +60,7 @@
 
 <h2 class="winui-SubtitleTextBlockStyle">vertical, reversed</h2>
 <div class="row-across">
-	<Slider orientation="vertical" isDirectionReversed value={40} style="height: 100px" />
+	<Slider orientation="vertical" directionReversed value={40} style="height: 100px" />
 </div>
 
 <h2 class="winui-SubtitleTextBlockStyle">vertical, a header</h2>
@@ -73,7 +73,7 @@
 		min={0}
 		max={16}
 		step={1}
-		isDirectionReversed
+		directionReversed
 	/>
 </div>
 
@@ -84,7 +84,7 @@
 
 <h2 class="winui-SubtitleTextBlockStyle">horizontal, reversed</h2>
 <div class="row">
-	<Slider isDirectionReversed value={30} />
+	<Slider directionReversed value={30} />
 </div>
 
 <h2 class="winui-SubtitleTextBlockStyle">ticks, inline</h2>
@@ -105,7 +105,7 @@
 		min={0}
 		max={16}
 		value={8}
-		isDirectionReversed
+		directionReversed
 		style="height: 100px"
 	/>
 	<Slider orientation="vertical" tickPlacement="topLeft" tickFrequency={4} style="height: 100px" />

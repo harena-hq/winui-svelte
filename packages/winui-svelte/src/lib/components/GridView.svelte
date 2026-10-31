@@ -17,9 +17,9 @@
 		/** GridView.SelectedItems and SelectedIndex, held as indexes. */
 		selectedIndexes?: number[];
 		/** SelectionChanged. Reports the new selection. */
-		onSelectionChanged?: (indexes: number[]) => void;
+		onSelectedIndexesChange?: (indexes: number[]) => void;
 		/** GridView.IsItemClickEnabled. Defaults to `false`. */
-		isItemClickEnabled?: boolean;
+		itemClickEnabled?: boolean;
 		/** ItemClick. Its args carry the clicked item. */
 		onItemClick?: (item: T, index: number) => void;
 		/** GridView.Header. */
@@ -44,8 +44,8 @@
 		key,
 		selectionMode = 'single',
 		selectedIndexes = $bindable([]),
-		onSelectionChanged,
-		isItemClickEnabled = false,
+		onSelectedIndexesChange,
+		itemClickEnabled = false,
 		onItemClick,
 		header,
 		footer,
@@ -70,7 +70,7 @@
 		)
 			return;
 		selectedIndexes = sorted;
-		onSelectionChanged?.(sorted);
+		onSelectedIndexesChange?.(sorted);
 	}
 
 	// Which item was interacted with. The repeater renders one element per item, in order, so
@@ -84,7 +84,7 @@
 
 	function interact(index: number, ctrl: boolean, shift: boolean) {
 		if (index < 0 || index >= items.length) return;
-		if (isItemClickEnabled) onItemClick?.(items[index], index);
+		if (itemClickEnabled) onItemClick?.(items[index], index);
 		// ItemsView delegates to SingleSelector, MultipleSelector, and ExtendedSelector; ListViewBase's
 		// own selection is in neither pin, so both controls use this one transcription of those rules.
 		commit(nextSelection(selectionMode, { index, selected: selectedIndexes, anchor, ctrl, shift }));

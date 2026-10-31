@@ -121,7 +121,7 @@
 							<SelectorBar
 								items={sourceItems}
 								selected={selectedLanguage}
-								onSelectionChanged={(id) => (selectedLanguage = id)}
+								onSelectedChange={(id) => (selectedLanguage = id)}
 							/>
 						</div>
 						<div class="presenter-row">

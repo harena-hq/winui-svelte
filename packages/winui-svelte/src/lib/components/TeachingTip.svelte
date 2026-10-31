@@ -68,7 +68,7 @@
 		/** TailVisibility. */
 		tailVisibility?: TeachingTipTailVisibility;
 		/** IsLightDismissEnabled. ADR 0009 drops the leading `Is`. */
-		lightDismiss?: boolean;
+		lightDismissEnabled?: boolean;
 		/** IsOpen. `open` is in ADR 0009's closed HTML-attribute exception set. */
 		open?: boolean;
 		/** Fired whenever the tip opens or closes, for any reason. */
@@ -112,7 +112,7 @@
 		children,
 		preferredPlacement = 'auto',
 		tailVisibility = 'auto',
-		lightDismiss = false,
+		lightDismissEnabled = false,
 		open = $bindable(false),
 		onOpenChange,
 		onCloseButtonClick,
@@ -194,7 +194,7 @@
 	let disarm: (() => void) | null = null;
 
 	$effect(() => {
-		if (!open || !lightDismiss) return;
+		if (!open || !lightDismissEnabled) return;
 		const down = () => (pressed = true);
 		const up = () => (pressed = false);
 		document.addEventListener('pointerdown', down, true);
@@ -283,8 +283,8 @@
 			avoidCollisions={targeted}
 			trapFocus={false}
 			onOpenAutoFocus={(event) => event.preventDefault()}
-			interactOutsideBehavior={lightDismiss ? 'close' : 'ignore'}
-			escapeKeydownBehavior={lightDismiss ? 'close' : 'ignore'}
+			interactOutsideBehavior={lightDismissEnabled ? 'close' : 'ignore'}
+			escapeKeydownBehavior={lightDismissEnabled ? 'close' : 'ignore'}
 			onInteractOutside={swallowDismissingClick}
 		>
 			{#snippet child({ props, wrapperProps })}
@@ -293,7 +293,7 @@
 						{...props}
 						bind:this={ref}
 						class={['card', 'winui-BodyTextBlockStyle', className]}
-						data-light-dismiss={lightDismiss ? '' : undefined}
+						data-light-dismiss={lightDismissEnabled ? '' : undefined}
 						data-footer-close={footerCloseButton ? '' : undefined}
 						{style}
 						{...rest}

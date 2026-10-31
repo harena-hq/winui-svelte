@@ -70,7 +70,7 @@
 	primaryButtonText="Save"
 	closeButtonText="Cancel"
 	defaultButton="primary"
-	primaryButtonDisabled
+	primaryButtonEnabled={false}
 >
 	<CheckBox>Upload your content to the cloud.</CheckBox>
 </ContentDialog>

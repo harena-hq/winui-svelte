@@ -160,7 +160,7 @@ test('ArrowDown lowers and ArrowUp raises', async ({ page }) => {
 	const thumb = page.getByTestId('default').locator('.thumb');
 	await thumb.focus();
 	// ColorPickerSlider.cpp:100 derives inversion from RTL flow, not IsDirectionReversed;
-	// this specimen deliberately leaves isDirectionReversed unset.
+	// this specimen deliberately leaves directionReversed unset.
 	await page.keyboard.press('ArrowDown');
 	await expect.poll(() => thumb.getAttribute('aria-valuenow')).toBe('49');
 	await page.keyboard.press('ArrowUp');

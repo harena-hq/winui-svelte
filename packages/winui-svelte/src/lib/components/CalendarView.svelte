@@ -9,11 +9,11 @@
 		/** CalendarView.DayOfWeekFormat. */
 		dayOfWeekFormat?: string | undefined;
 		/** CalendarView.IsGroupLabelVisible. */
-		isGroupLabelVisible?: boolean;
+		groupLabelVisible?: boolean;
 		/** CalendarView.IsOutOfScopeEnabled. */
-		isOutOfScopeEnabled?: boolean;
+		outOfScopeEnabled?: boolean;
 		/** CalendarView.IsTodayHighlighted. */
-		isTodayHighlighted?: boolean;
+		todayHighlighted?: boolean;
 		/** CalendarView.MinDate. */
 		minDate?: Date | undefined;
 		/** CalendarView.MaxDate. */
@@ -62,9 +62,9 @@
 		language = undefined,
 		firstDayOfWeek = undefined,
 		dayOfWeekFormat = undefined,
-		isGroupLabelVisible = false,
-		isOutOfScopeEnabled = true,
-		isTodayHighlighted = true,
+		groupLabelVisible = false,
+		outOfScopeEnabled = true,
+		todayHighlighted = true,
 		// CalendarView clamps against the same ±100-year default (DatePicker_Partial.cpp:31).
 		minDate = dateOffsetByYears(-100),
 		maxDate = dateOffsetByYears(100),
@@ -348,9 +348,9 @@
 				class={['calendar-view', className]}
 				{style}
 				data-display-mode={displayMode}
-				data-out-of-scope-enabled={isOutOfScopeEnabled ? '' : undefined}
-				data-today-highlighted={isTodayHighlighted ? '' : undefined}
-				data-group-labels={isGroupLabelVisible ? '' : undefined}
+				data-out-of-scope-enabled={outOfScopeEnabled ? '' : undefined}
+				data-today-highlighted={todayHighlighted ? '' : undefined}
+				data-group-labels={groupLabelVisible ? '' : undefined}
 				{@attach rootKeydown}
 				{...rest}
 			>
@@ -438,7 +438,7 @@
 															<Calendar.Day>
 																{#snippet child({ props: dayProps })}
 																	<div {...dayProps} class="day item-chrome" {@attach focusVisual}>
-																		{#if isGroupLabelVisible && date.day === 1}
+																		{#if groupLabelVisible && date.day === 1}
 																			<!-- CalendarViewGeneratorMonthViewHost.cpp:121-150 uses the
 																			     abbreviated month name on the first day. -->
 																			<span class="label"
@@ -482,7 +482,7 @@
 										data-today={isToday(item, 'month') ? '' : undefined}
 										data-disabled={isDisabled(item, 'month') ? '' : undefined}
 									>
-										{#if isGroupLabelVisible && item.month === 1}
+										{#if groupLabelVisible && item.month === 1}
 											<span class="year-decade-label"
 												>{formatDate('year', dateFor(item), locale)}</span
 											>

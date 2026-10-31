@@ -5,7 +5,7 @@
 	 * TreeViewSelectionMode.Multiple and its check box column remain owed with ListViewItem's
 	 * check box in v9 (docs/plan.md). CanDragItems, CanReorderItems and AllowDrop are reordering
 	 * work this version does not build. Expanding and Collapsed event args expose Node and Item;
-	 * onExpandedChange instead reports the new key set. TreeViewNode itself is absent because
+	 * onExpandedKeysChange instead reports the new key set. TreeViewNode itself is absent because
 	 * ADR 0013 keeps the caller's item type rather than wrapping it.
 	 */
 	export interface TreeViewProps<T> {
@@ -22,11 +22,11 @@
 		/** TreeView.SelectedItem, held as a key. */
 		selectedKey?: string | number | null;
 		/** SelectionChanged, narrowed to the new key. */
-		onSelectionChanged?: (key: string | number | null) => void;
+		onSelectedKeyChange?: (key: string | number | null) => void;
 		/** Which branches are open, by key. Bindable, because the tree opens them itself. */
 		expandedKeys?: (string | number)[];
 		/** Expanding and Collapsed, reported together as the new set. */
-		onExpandedChange?: (keys: (string | number)[]) => void;
+		onExpandedKeysChange?: (keys: (string | number)[]) => void;
 		/** ItemInvoked. */
 		onItemInvoked?: (item: T, depth: number) => void;
 		class?: string;
@@ -47,9 +47,9 @@
 		itemTemplate,
 		selectionMode = 'single',
 		selectedKey = $bindable<string | number | null>(null),
-		onSelectionChanged,
+		onSelectedKeyChange,
 		expandedKeys = $bindable<(string | number)[]>([]),
-		onExpandedChange,
+		onExpandedKeysChange,
 		onItemInvoked,
 		class: className,
 		style,
@@ -84,7 +84,7 @@
 	function select(id: string | number) {
 		if (selectionMode !== 'single' || selectedKey === id) return;
 		selectedKey = id;
-		onSelectionChanged?.(id);
+		onSelectedKeyChange?.(id);
 	}
 
 	function toggle(id: string | number) {
@@ -92,7 +92,7 @@
 			? expandedKeys.filter((candidate) => candidate !== id)
 			: [...expandedKeys, id];
 		expandedKeys = next;
-		onExpandedChange?.(next);
+		onExpandedKeysChange?.(next);
 	}
 
 	function invoke(row: Row) {

@@ -22,9 +22,9 @@
 	<h2 class="winui-SubtitleTextBlockStyle">Photo over display name</h2>
 	<PersonPicture profilePicture="/rainier.jpg" displayName="Jane Doe" />
 	<h2 class="winui-SubtitleTextBlockStyle">Group</h2>
-	<PersonPicture isGroup />
+	<PersonPicture group />
 	<h2 class="winui-SubtitleTextBlockStyle">Group over photo</h2>
-	<PersonPicture isGroup profilePicture="/rainier.jpg" />
+	<PersonPicture group profilePicture="/rainier.jpg" />
 	<h2 class="winui-SubtitleTextBlockStyle">Badge number</h2>
 	<PersonPicture initials="SB" badgeNumber={5} />
 	<h2 class="winui-SubtitleTextBlockStyle">Badge number over ninety-nine</h2>

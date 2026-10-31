@@ -16,7 +16,7 @@
 		/** Orientation. Horizontal, or the vertical template (Slider_themeresources.xaml:418). */
 		orientation?: 'horizontal' | 'vertical';
 		/** IsDirectionReversed. The value grows leftward, or downward when vertical. */
-		isDirectionReversed?: boolean;
+		directionReversed?: boolean;
 		/** TickFrequency. The value interval between tick marks; 0, the default, draws none. */
 		tickFrequency?: number;
 		/** TickPlacement. Where the ticks are drawn; Slider's default is Inline. */
@@ -58,7 +58,7 @@
 		max = 100,
 		step = 1,
 		orientation = 'horizontal',
-		isDirectionReversed = false,
+		directionReversed = false,
 		tickFrequency = 0,
 		tickPlacement = 'inline',
 		disabled = false,
@@ -102,7 +102,7 @@
 		tickMarkNumber += 1;
 
 		const thumbOffset = Math.max(0, (measuredThumbLength - 1) / 2);
-		const forward = orientation === 'horizontal' ? !isDirectionReversed : isDirectionReversed;
+		const forward = orientation === 'horizontal' ? !directionReversed : directionReversed;
 		return Array.from({ length: tickMarkNumber }, (_, index) => {
 			const offset = forward
 				? thumbOffset + index * interval
@@ -199,7 +199,7 @@
 		{step}
 		{disabled}
 		{orientation}
-		dir={isDirectionReversed ? 'rtl' : 'ltr'}
+		dir={directionReversed ? 'rtl' : 'ltr'}
 	>
 		{#snippet child({ props, thumbItems })}
 			<!-- Every element the primitive would render is rendered here instead, through its

@@ -30,7 +30,7 @@
 
 <!-- This must be last: its 300 by 352 flyout overlays content below it. -->
 <h2 class="winui-SubtitleTextBlockStyle">open flyout</h2>
-<div class="row"><CalendarDatePicker isCalendarOpen /></div>
+<div class="row"><CalendarDatePicker calendarOpen /></div>
 <!-- The flyout is 352 tall and flips above its trigger when it would leave the viewport, which
      is what it should do and which would draw it over the rows above. The spacer gives it room
      to open downward so every row above stays photographable. -->

@@ -108,7 +108,7 @@
 						<ListView
 							items={NAV_LINKS}
 							selectionMode="single"
-							isItemClickEnabled
+							itemClickEnabled
 							onItemClick={(link) => (contentText = `${link.label} Page`)}
 							itemTemplate={placementRight ? rightIconItem : leftIconItem}
 							style="margin-top: 12px"

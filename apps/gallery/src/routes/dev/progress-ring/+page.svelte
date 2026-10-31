@@ -19,26 +19,26 @@
 
 <h2 class="winui-SubtitleTextBlockStyle">determinate</h2>
 <div class="row">
-	<ProgressRing isIndeterminate={false} value={0} />
-	<ProgressRing isIndeterminate={false} value={12} />
-	<ProgressRing isIndeterminate={false} value={25} />
-	<ProgressRing isIndeterminate={false} value={50} />
-	<ProgressRing isIndeterminate={false} value={75} />
-	<ProgressRing isIndeterminate={false} value={90} />
-	<ProgressRing isIndeterminate={false} value={100} />
+	<ProgressRing indeterminate={false} value={0} />
+	<ProgressRing indeterminate={false} value={12} />
+	<ProgressRing indeterminate={false} value={25} />
+	<ProgressRing indeterminate={false} value={50} />
+	<ProgressRing indeterminate={false} value={75} />
+	<ProgressRing indeterminate={false} value={90} />
+	<ProgressRing indeterminate={false} value={100} />
 </div>
 
 <h2 class="winui-SubtitleTextBlockStyle">indeterminate</h2>
 <div class="row">
 	<ProgressRing />
-	<ProgressRing isActive={false} />
+	<ProgressRing active={false} />
 </div>
 
 <h2 class="winui-SubtitleTextBlockStyle">size</h2>
 <div class="row">
-	<ProgressRing isIndeterminate={false} value={50} style="width: 16px; height: 16px" />
-	<ProgressRing isIndeterminate={false} value={50} style="width: 60px; height: 60px" />
-	<ProgressRing isIndeterminate={false} value={50} style="width: 100px; height: 100px" />
+	<ProgressRing indeterminate={false} value={50} style="width: 16px; height: 16px" />
+	<ProgressRing indeterminate={false} value={50} style="width: 60px; height: 60px" />
+	<ProgressRing indeterminate={false} value={50} style="width: 100px; height: 100px" />
 </div>
 
 <style>

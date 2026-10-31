@@ -59,7 +59,7 @@
 			subtitle="And this is the subtitle"
 			actionButtonContent="Action button"
 			closeButtonContent="Close button"
-			lightDismiss
+			lightDismissEnabled
 			placementMargin={20}
 		/>
 	</ControlExample>

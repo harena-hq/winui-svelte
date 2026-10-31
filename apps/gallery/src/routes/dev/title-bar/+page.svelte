@@ -36,7 +36,7 @@
 <div class="frame">
 	<TitleBar
 		title="WinUI Gallery"
-		iconGlyph="E790"
+		glyph="E790"
 		backButtonVisible
 		paneToggleButtonVisible
 		onBackRequested={back('row 1')}
@@ -52,7 +52,7 @@
 <div class="frame">
 	<TitleBar
 		title="WinUI Gallery"
-		iconGlyph="E790"
+		glyph="E790"
 		backButtonVisible
 		backButtonEnabled={false}
 		paneToggleButtonVisible
@@ -67,7 +67,7 @@
 
 <h2 class="winui-SubtitleTextBlockStyle">title and subtitle</h2>
 <div class="frame">
-	<TitleBar title="WinUI Gallery" subtitle="Preview" iconGlyph="E790">
+	<TitleBar title="WinUI Gallery" subtitle="Preview" glyph="E790">
 		{#snippet content()}
 			<input type="search" placeholder="Search" autocomplete="off" />
 		{/snippet}
@@ -76,7 +76,7 @@
 
 <h2 class="winui-SubtitleTextBlockStyle">title and icon only — compact height</h2>
 <div class="frame">
-	<TitleBar title="WinUI Gallery" iconGlyph="E790" />
+	<TitleBar title="WinUI Gallery" glyph="E790" />
 </div>
 
 <h2 class="winui-SubtitleTextBlockStyle">content only</h2>
