@@ -45,6 +45,7 @@
 </script>
 
 <script lang="ts">
+	import { useStrings } from '../strings';
 	let {
 		value = $bindable(''),
 		onValueChange,
@@ -61,6 +62,8 @@
 		ref = $bindable(null),
 		...rest
 	}: PasswordBoxProps = $props();
+
+	const str = useStrings();
 
 	let revealing = $state(false);
 
@@ -149,7 +152,9 @@
 				type="button"
 				class="reveal"
 				tabindex="-1"
-				aria-label={revealing ? 'Hide password' : 'Show password'}
+				aria-label={str(
+					revealing ? 'WinUISveltePasswordBoxHidePasswordName' : 'UIA_PASSWORDBOX_REVEAL'
+				)}
 				onmousedown={(event) => event.preventDefault()}
 				onpointerdown={reveal}
 				onpointerup={hide}

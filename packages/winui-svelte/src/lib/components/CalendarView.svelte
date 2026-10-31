@@ -43,6 +43,7 @@
 </script>
 
 <script lang="ts">
+	import { useStrings } from '../strings';
 	import {
 		fromDate,
 		getLocalTimeZone,
@@ -78,6 +79,8 @@
 		ref = $bindable(null),
 		...rest
 	}: CalendarViewProps = $props();
+
+	const str = useStrings();
 
 	const timeZone = getLocalTimeZone();
 	const calendar = $derived(calendarOf(calendarIdentifier));
@@ -329,6 +332,7 @@
 	<Calendar.Root
 		bind:ref
 		type="multiple"
+		calendarLabel={str('WinUISvelteCalendarViewName')}
 		bind:value={() => selectedValues, changeSelectedDates}
 		{locale}
 		bind:placeholder={
@@ -377,14 +381,22 @@
 						<!-- bits-ui owns month navigation because it also owns its date-bound disabled state. -->
 						<Calendar.PrevButton>
 							{#snippet child({ props: previousProps })}
-								<button {...previousProps} class="nav previous" {@attach focusVisual}
-									>&#xEDDB;</button
+								<button
+									{...previousProps}
+									aria-label={str('UIA_FLIPVIEW_PREVIOUS')}
+									class="nav previous"
+									{@attach focusVisual}>&#xEDDB;</button
 								>
 							{/snippet}
 						</Calendar.PrevButton>
 						<Calendar.NextButton>
 							{#snippet child({ props: nextProps })}
-								<button {...nextProps} class="nav next" {@attach focusVisual}>&#xEDDC;</button>
+								<button
+									{...nextProps}
+									aria-label={str('UIA_FLIPVIEW_NEXT')}
+									class="nav next"
+									{@attach focusVisual}>&#xEDDC;</button
+								>
 							{/snippet}
 						</Calendar.NextButton>
 					{:else}
@@ -392,7 +404,7 @@
 						<button
 							class="nav previous"
 							type="button"
-							aria-label="Previous"
+							aria-label={str('UIA_FLIPVIEW_PREVIOUS')}
 							{@attach focusVisual}
 							disabled={!scopeCanNavigate(-1)}
 							onclick={() => navigateScope(-1)}
@@ -402,7 +414,7 @@
 						<button
 							class="nav next"
 							type="button"
-							aria-label="Next"
+							aria-label={str('UIA_FLIPVIEW_NEXT')}
 							{@attach focusVisual}
 							disabled={!scopeCanNavigate(1)}
 							onclick={() => navigateScope(1)}

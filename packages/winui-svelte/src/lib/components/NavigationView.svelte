@@ -196,6 +196,7 @@
 </script>
 
 <script lang="ts" generics="T extends NavigationViewItemData = NavigationViewItemData">
+	import { useStrings } from '../strings';
 	import {
 		enterRingFromHead,
 		RING_HEAD_ATTRIBUTE,
@@ -233,6 +234,8 @@
 		...rest
 	}: NavigationViewProps<T> = $props();
 
+	const str = useStrings();
+
 	// The control's own width, not the viewport's: NavigationView measures itself, and a
 	// pane inside a split screen is meant to collapse on its own account. `bind:clientWidth`
 	// is Svelte's own resize binding, so no ResizeObserver and no container query.
@@ -250,18 +253,14 @@
 	//
 	// The label is the localized `SettingsButtonName`, which
 	// `NavigationView/Strings/en-us/Resources.resw` gives as "Settings".
-	const SETTINGS_ITEM: NavigationViewItemData = {
-		id: 'settings',
-		content: 'Settings',
-		glyph: 'E713'
-	};
-	// The same item on the top pane, with no content. That is not a shortcut for hiding the
-	// label: an empty content is what enters the presenter's `IconOnly` state
+	// The item has no content of its own, as the table is read where the rows are drawn. On the top
+	// pane that is not a shortcut for hiding the label: an empty content is what enters the
+	// presenter's `IconOnly` state
 	// (`NavigationView_themeresources.xaml:791`), which is what sizes the button 36 rather than
 	// 44 — the size the reference render shows and `MUX_NavigationViewSettingsItemStyleWhenOnTopPane`
 	// does not. The label survives as the tooltip, which is where upstream puts it too
 	// (`UpdateSettingsItemToolTip`, NavigationView.cpp:1921).
-	const SETTINGS_ITEM_TOP: NavigationViewItemData = { id: 'settings', content: '', glyph: 'E713' };
+	const SETTINGS_ITEM: NavigationViewItemData = { id: 'settings', content: '', glyph: 'E713' };
 
 	// `TopNavigationViewOverflowButtonWidth` — NavigationView_themeresources.xaml:213. A number
 	// rather than the custom property because it is subtracted from a `clientWidth`, and the
@@ -837,7 +836,7 @@
 				<button
 					type="button"
 					class="back-button"
-					aria-label="Back"
+					aria-label={str('NavigationBackButtonName')}
 					disabled={!backEnabled}
 					onclick={() => onBackRequested?.()}
 					onkeydown={(event) => {
@@ -856,7 +855,7 @@
 				<button
 					type="button"
 					class="close-button"
-					aria-label="Close"
+					aria-label={str('NavigationCloseButtonName')}
 					onclick={() => setPaneOpen(false)}
 				></button>
 			{/if}
@@ -870,7 +869,7 @@
 				<button
 					type="button"
 					class="pane-toggle"
-					aria-label={paneOpen ? 'Close navigation' : 'Open navigation'}
+					aria-label={str(paneOpen ? 'NavigationButtonOpenName' : 'NavigationButtonClosedName')}
 					aria-expanded={paneOpen}
 					onclick={() => setPaneOpen(!paneOpen)}
 					onkeydown={(event) => {
@@ -984,7 +983,7 @@
 						<ul role="tree" class="menu-items">
 							<NavigationViewItem
 								tag={SETTINGS_ITEM.id}
-								content={SETTINGS_ITEM.content}
+								content={str('SettingsButtonName')}
 								glyph={SETTINGS_ITEM.glyph}
 							/>
 						</ul>
@@ -1031,7 +1030,7 @@
 								{...props}
 								type="button"
 								class="overflow-button"
-								aria-label="More"
+								aria-label={str('NavigationOverflowButtonName')}
 							></button>{/snippet}
 					</Flyout>
 				{/if}
@@ -1045,11 +1044,11 @@
 					{#if settingsVisible}
 						<ul role="tree" class="top-list">
 							<NavigationViewTopItem
-								item={SETTINGS_ITEM_TOP}
+								item={SETTINGS_ITEM}
 								{selected}
 								{onItemInvoked}
 								placement="primary"
-								tooltip="Settings"
+								tooltip={str('SettingsButtonName')}
 							/>
 						</ul>
 					{/if}

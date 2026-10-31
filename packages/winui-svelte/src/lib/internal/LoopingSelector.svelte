@@ -22,6 +22,7 @@
 </script>
 
 <script lang="ts">
+	import { useStrings } from '../strings';
 	let {
 		items,
 		selectedIndex = $bindable(0),
@@ -34,6 +35,8 @@
 		ref = $bindable(null),
 		...rest
 	}: LoopingSelectorProps = $props();
+
+	const str = useStrings();
 
 	let scroller = $state<HTMLDivElement | null>(null);
 	let viewportHeight = $state(0);
@@ -194,14 +197,14 @@
 	<button
 		class="navigation up"
 		type="button"
-		aria-label="Previous item"
+		aria-label={str('WinUISvelteLoopingSelectorPreviousName')}
 		disabled={!shouldLoop && selectedIndex === 0}
 		onclick={() => move(-1)}>&#xEDDB;</button
 	>
 	<button
 		class="navigation down"
 		type="button"
-		aria-label="Next item"
+		aria-label={str('WinUISvelteLoopingSelectorNextName')}
 		disabled={!shouldLoop && (items.length === 0 || selectedIndex === items.length - 1)}
 		onclick={() => move(1)}>&#xEDDC;</button
 	>

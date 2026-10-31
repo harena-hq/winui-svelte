@@ -46,6 +46,7 @@
 </script>
 
 <script lang="ts">
+	import { useStrings } from '../strings';
 	import { tick } from 'svelte';
 	import ComboBox from './ComboBox.svelte';
 	import ColorPickerSlider from './ColorPickerSlider.svelte';
@@ -80,6 +81,8 @@
 		ref = $bindable(null),
 		...rest
 	}: ColorPickerProps = $props();
+
+	const str = useStrings();
 	// Seeded here rather than in the effect below, so a server render paints the colour it was
 	// given. `parseColor` is a hoisted function declaration and its hex path needs no document,
 	// which is the whole reason that path exists; a colour it cannot read without a canvas —
@@ -231,14 +234,14 @@
 	const channelRows = $derived(
 		representation === 'rgb'
 			? [
-					{ key: 'r' as const, label: 'Red' },
-					{ key: 'g' as const, label: 'Green' },
-					{ key: 'b' as const, label: 'Blue' }
+					{ key: 'r' as const, label: str('TextRedLabel') },
+					{ key: 'g' as const, label: str('TextGreenLabel') },
+					{ key: 'b' as const, label: str('TextBlueLabel') }
 				]
 			: [
-					{ key: 'h' as const, label: 'Hue' },
-					{ key: 's' as const, label: 'Saturation' },
-					{ key: 'v' as const, label: 'Value' }
+					{ key: 'h' as const, label: str('TextHueLabel') },
+					{ key: 's' as const, label: str('TextSaturationLabel') },
+					{ key: 'v' as const, label: str('TextValueLabel') }
 				]
 	);
 	// `wcstoul` with the whole string required and an explicit nullopt for the empty one
@@ -465,7 +468,11 @@
 				aria-expanded={textEntryGridOpened}
 			>
 				<span class="more-content">
-					<span class="more-label">{textEntryGridOpened ? 'Less' : 'More'}</span>
+					<span class="more-label"
+						>{str(
+							textEntryGridOpened ? 'TextMoreButtonLabelExpanded' : 'TextMoreButtonLabelCollapsed'
+						)}</span
+					>
 					<span class="more-glyph" data-open={textEntryGridOpened || undefined}></span>
 				</span>
 			</ToggleButton>
@@ -478,8 +485,8 @@
 					<ComboBox
 						class="representation"
 						items={[
-							{ value: 'rgb', label: 'RGB' },
-							{ value: 'hsv', label: 'HSV' }
+							{ value: 'rgb', label: str('ContentRGBComboBoxItem') },
+							{ value: 'hsv', label: str('ContentHSVComboBoxItem') }
 						]}
 						value={representation}
 						onValueChange={updateRepresentation}
@@ -519,7 +526,7 @@
 								onfocusout={onBoxBlur}
 								maxLength={4}
 							/>
-							<span class="channel-label">Opacity</span>
+							<span class="channel-label">{str('TextAlphaLabel')}</span>
 						</div>
 					{/if}
 				</div>

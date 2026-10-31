@@ -20,7 +20,9 @@ The package root exports twenty components, each with the types its own module e
 With them it exports the `Symbol` table, WinUI's `Symbol` enum as the code points a `glyph`
 takes, and its `SymbolName` type; `ScrollAnimation`, with its `ScrollAnimationEasing` and
 `ScrollVector` types, which `ScrollView`'s `onScrollAnimationStarting` hands out and takes back;
-and `VERSION`. The stylesheets are `winui-svelte/tokens.css` and `winui-svelte/type-ramp.css`.
+`provideStrings`, which replaces the text the components write for themselves for a subtree, and
+`defaultStrings`, that text in English, with the `Strings` and `StringKey` types; and `VERSION`.
+The stylesheets are `winui-svelte/tokens.css` and `winui-svelte/type-ramp.css`.
 
 ### `preview`
 

@@ -41,6 +41,7 @@
 </script>
 
 <script lang="ts">
+	import { useStrings } from '../strings';
 	import { controlName } from '../internal/accessible-name';
 
 	let {
@@ -61,6 +62,8 @@
 		'aria-describedby': ariaDescribedby,
 		...rest
 	}: TextBoxProps = $props();
+
+	const str = useStrings();
 
 	const uid = $props.id();
 	// Upstream names a TextBox by its header when nothing else names it, and by its placeholder
@@ -146,7 +149,7 @@
 				type="button"
 				class="delete"
 				tabindex="-1"
-				aria-label="Clear text"
+				aria-label={str('UIA_TEXTBOX_DELETE')}
 				onmousedown={(event) => event.preventDefault()}
 				onclick={clear}
 			></button>

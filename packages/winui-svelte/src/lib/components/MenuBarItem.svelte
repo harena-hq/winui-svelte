@@ -35,7 +35,7 @@
 	const uid = $props.id();
 
 	let {
-		title = 'Item',
+		title = '',
 		items = [],
 		disabled = false,
 		value = uid,

@@ -126,6 +126,7 @@
 </script>
 
 <script lang="ts">
+	import { useStrings } from '../strings';
 	import type { RadioMenuFlyoutItemData } from './MenuFlyout.svelte';
 	import { Symbol } from '../symbol';
 	import AppBarButton from './AppBarButton.svelte';
@@ -184,6 +185,8 @@
 		ref = $bindable(null),
 		...rest
 	}: MediaTransportControlsProps = $props();
+
+	const str = useStrings();
 
 	const hasPlayer = $derived(player !== null);
 	const progressValue = $derived(duration > 0 ? (position / duration) * 100 : 0);
@@ -436,10 +439,10 @@
 	<div class="volume-row">
 		<AppBarButton
 			class="command-button"
-			label={muted ? 'Unmute' : 'Mute'}
+			label={str(muted ? 'UIA_MEDIA_UNMUTE' : 'UIA_MEDIA_MUTE')}
 			labelPosition="collapsed"
 			glyph={muted ? Symbol.Mute : Symbol.Volume}
-			title={muted ? 'Unmute' : 'Mute'}
+			title={str(muted ? 'UIA_MEDIA_UNMUTE' : 'UIA_MEDIA_MUTE')}
 			disabled={!volumeEnabled}
 			onclick={toggleMute}
 		/>
@@ -459,7 +462,7 @@
 	class={['media-transport-controls', panelVisible ? 'visible' : 'hidden', className]}
 	{style}
 	role="group"
-	aria-label="Media transport controls"
+	aria-label={str('WinUISvelteMediaTransportControlsName')}
 	data-compact={compact ? 'true' : 'false'}
 	data-media-state={mediaState}
 	{...rest}
@@ -494,10 +497,10 @@
 			<div class="left-side-play">
 				<AppBarButton
 					class="command-button"
-					label={playing ? 'Pause' : 'Play'}
+					label={str(playing ? 'UIA_MEDIA_PAUSE' : 'UIA_MEDIA_PLAY')}
 					labelPosition="collapsed"
 					glyph={playing ? 'F8AE' : 'F5B0'}
-					title={playing ? 'Pause' : 'Play'}
+					title={str(playing ? 'UIA_MEDIA_PAUSE' : 'UIA_MEDIA_PLAY')}
 					disabled={!playPauseEnabled}
 					onclick={togglePlayback}
 				/>
@@ -516,10 +519,10 @@
 							<AppBarButton
 								{...triggerProps}
 								class="command-button"
-								label="Volume"
+								label={str('UIA_MEDIA_VOLUME')}
 								labelPosition="collapsed"
 								glyph={muted ? Symbol.Mute : Symbol.Volume}
-								title="Volume"
+								title={str('UIA_MEDIA_VOLUME')}
 								disabled={!volumeEnabled}
 							/>
 						{/snippet}
@@ -528,20 +531,20 @@
 				{#if captionsAvailable}
 					<AppBarButton
 						class="command-button"
-						label="Closed captions"
+						label={str('UIA_MEDIA_CC_SELECTION')}
 						labelPosition="collapsed"
 						glyph="ED1E"
-						title="Closed captions"
+						title={str('UIA_MEDIA_CC_SELECTION')}
 						onclick={unavailableMediaCommand}
 					/>
 				{/if}
 				{#if audioTracksAvailable}
 					<AppBarButton
 						class="command-button"
-						label="Audio tracks"
+						label={str('UIA_MEDIA_AUDIO_SELECTION')}
 						labelPosition="collapsed"
 						glyph="ED1F"
-						title="Audio tracks"
+						title={str('UIA_MEDIA_AUDIO_SELECTION')}
 						onclick={unavailableMediaCommand}
 					/>
 				{/if}
@@ -551,10 +554,10 @@
 				{#if stopButtonVisible}
 					<AppBarButton
 						class="command-button"
-						label="Stop"
+						label={str('UIA_MEDIA_STOP')}
 						labelPosition="collapsed"
 						glyph={Symbol.Stop}
-						title="Stop"
+						title={str('UIA_MEDIA_STOP')}
 						disabled={!stopEnabled}
 						onclick={stop}
 					/>
@@ -562,10 +565,10 @@
 				{#if skipBackwardButtonVisible}
 					<AppBarButton
 						class="command-button"
-						label="Back 10 seconds"
+						label={str('UIA_MEDIA_SKIPBACKWARD')}
 						labelPosition="collapsed"
 						glyph="ED3C"
-						title="Back 10 seconds"
+						title={str('UIA_MEDIA_SKIPBACKWARD')}
 						disabled={!skipBackwardEnabled}
 						onclick={skipBackward}
 					/>
@@ -573,20 +576,20 @@
 				{#if previousTrackButtonVisible}
 					<AppBarButton
 						class="command-button"
-						label="Previous"
+						label={str('UIA_MEDIA_PREVIOUSTRACK')}
 						labelPosition="collapsed"
 						glyph="F8AC"
-						title="Previous"
+						title={str('UIA_MEDIA_PREVIOUSTRACK')}
 						onclick={unavailableMediaCommand}
 					/>
 				{/if}
 				{#if fastRewindButtonVisible}
 					<AppBarButton
 						class="command-button"
-						label="Rewind"
+						label={str('UIA_MEDIA_REWIND')}
 						labelPosition="collapsed"
 						glyph="E627"
-						title="Rewind"
+						title={str('UIA_MEDIA_REWIND')}
 						disabled={!fastRewindEnabled}
 						onclick={fastRewind}
 					/>
@@ -594,10 +597,10 @@
 				{#if playPauseButtonVisible && !compact}
 					<AppBarButton
 						class="command-button play-pause"
-						label={playing ? 'Pause' : 'Play'}
+						label={str(playing ? 'UIA_MEDIA_PAUSE' : 'UIA_MEDIA_PLAY')}
 						labelPosition="collapsed"
 						glyph={playing ? 'F8AE' : 'F5B0'}
-						title={playing ? 'Pause' : 'Play'}
+						title={str(playing ? 'UIA_MEDIA_PAUSE' : 'UIA_MEDIA_PLAY')}
 						disabled={!playPauseEnabled}
 						onclick={togglePlayback}
 					/>
@@ -605,10 +608,10 @@
 				{#if fastForwardButtonVisible}
 					<AppBarButton
 						class="command-button"
-						label="Fast forward"
+						label={str('UIA_MEDIA_FASTFORWARD')}
 						labelPosition="collapsed"
 						glyph="E628"
-						title="Fast forward"
+						title={str('UIA_MEDIA_FASTFORWARD')}
 						disabled={!fastForwardEnabled}
 						onclick={fastForward}
 					/>
@@ -616,20 +619,20 @@
 				{#if nextTrackButtonVisible}
 					<AppBarButton
 						class="command-button"
-						label="Next"
+						label={str('UIA_MEDIA_NEXTRACK')}
 						labelPosition="collapsed"
 						glyph="F8AD"
-						title="Next"
+						title={str('UIA_MEDIA_NEXTRACK')}
 						onclick={unavailableMediaCommand}
 					/>
 				{/if}
 				{#if skipForwardButtonVisible}
 					<AppBarButton
 						class="command-button"
-						label="Forward 30 seconds"
+						label={str('UIA_MEDIA_SKIPFORWARD')}
 						labelPosition="collapsed"
 						glyph="ED3D"
-						title="Forward 30 seconds"
+						title={str('UIA_MEDIA_SKIPFORWARD')}
 						disabled={!skipForwardEnabled}
 						onclick={skipForward}
 					/>
@@ -644,10 +647,10 @@
 							<AppBarButton
 								{...triggerProps}
 								class="command-button"
-								label="Playback rate"
+								label={str('UIA_MEDIA_PLAYBACKRATE')}
 								labelPosition="collapsed"
 								glyph="EC57"
-								title="Playback rate"
+								title={str('UIA_MEDIA_PLAYBACKRATE')}
 								disabled={!playbackRateEnabled}
 							/>
 						{/snippet}
@@ -659,10 +662,10 @@
 				{#if repeatButtonVisible}
 					<AppBarButton
 						class="command-button"
-						label="Repeat"
+						label={str('WinUISvelteMediaRepeatName')}
 						labelPosition="collapsed"
 						glyph={repeatState === 'one' ? Symbol.RepeatOne : Symbol.RepeatAll}
-						title="Repeat"
+						title={str('WinUISvelteMediaRepeatName')}
 						disabled={!repeatEnabled}
 						aria-pressed={repeatState !== 'none'}
 						onclick={cycleRepeat}
@@ -671,10 +674,10 @@
 				{#if zoomButtonVisible}
 					<AppBarButton
 						class="command-button"
-						label="Aspect ratio"
+						label={str('UIA_MEDIA_ASPECTRATIO')}
 						labelPosition="collapsed"
 						glyph="E799"
-						title="Aspect ratio"
+						title={str('UIA_MEDIA_ASPECTRATIO')}
 						disabled={!zoomEnabled}
 						onclick={toggleZoom}
 					/>
@@ -682,10 +685,10 @@
 				{#if castButtonVisible}
 					<AppBarButton
 						class="command-button"
-						label="Cast to device"
+						label={str('UIA_MEDIA_CAST')}
 						labelPosition="collapsed"
 						glyph="EC15"
-						title="Cast to device"
+						title={str('UIA_MEDIA_CAST')}
 						onclick={unavailableMediaCommand}
 					/>
 				{/if}

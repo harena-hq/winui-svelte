@@ -116,6 +116,7 @@
 </script>
 
 <script lang="ts">
+	import { useStrings } from '../strings';
 	import { untrack } from 'svelte';
 	import { scrollBehavior } from '../internal/motion';
 
@@ -137,6 +138,8 @@
 		ref = $bindable(null),
 		...rest
 	}: TabViewProps = $props();
+
+	const str = useStrings();
 
 	const uid = $props.id();
 	// `TabView.xaml:576` writes `Content="&#xE711;"` on the close button — a template
@@ -461,7 +464,7 @@
 						type="button"
 						class="scroll"
 						tabindex="-1"
-						aria-label="Scroll tab list backward"
+						aria-label={str('TabViewScrollDecreaseButtonTooltip')}
 						disabled={disabled || atStart}
 						onclick={(event) => {
 							// Pointer-down already stepped; keyboard clicks alone have detail zero.
@@ -513,7 +516,7 @@
 										type="button"
 										class="close"
 										tabindex="-1"
-										aria-label="Close"
+										aria-label={str('TabViewCloseButtonName')}
 										disabled={isItemDisabled(item)}
 										id={closeId(item.id)}
 										onkeydown={(event) => handleCloseKeydown(event, item)}
@@ -536,7 +539,7 @@
 						type="button"
 						class="scroll"
 						tabindex="-1"
-						aria-label="Scroll tab list forward"
+						aria-label={str('TabViewScrollIncreaseButtonTooltip')}
 						disabled={disabled || atEnd}
 						onclick={(event) => {
 							if (event.detail === 0) scrollBy(1);
@@ -555,7 +558,7 @@
 					type="button"
 					class="add"
 					id={addId}
-					aria-label="Add New Tab"
+					aria-label={str('TabViewAddButtonName')}
 					{disabled}
 					onkeydown={(event) => {
 						if (walk(event, addId)) event.stopPropagation();

@@ -51,6 +51,7 @@
 </script>
 
 <script lang="ts">
+	import { useStrings } from '../strings';
 	import * as numberInput from '@zag-js/number-input';
 	import { normalizeProps, useMachine } from '@zag-js/svelte';
 
@@ -73,6 +74,8 @@
 		...rest
 	}: NumberBoxProps = $props();
 
+	const str = useStrings();
+
 	// `value` is WinUI's `Value` — the number in the box — and a number in this component's
 	// contract. The Zag machine's `value` is a string: an empty box is `null` here and `''`
 	// there, and the conversion is at the boundary so neither side sees the other's type.
@@ -91,6 +94,10 @@
 	const uid = $props.id();
 
 	const service = useMachine(numberInput.machine, () => ({
+		translations: {
+			incrementLabel: str('NumberBoxUpSpinButtonName'),
+			decrementLabel: str('NumberBoxDownSpinButtonName')
+		},
 		id: uid,
 		value: machineValue,
 		min,
@@ -186,7 +193,6 @@
 				type="button"
 				class="spin-up"
 				tabindex="-1"
-				aria-label="Increase value"
 				{disabled}
 				{...api.getIncrementTriggerProps()}
 			></button>
@@ -194,7 +200,6 @@
 				type="button"
 				class="spin-down"
 				tabindex="-1"
-				aria-label="Decrease value"
 				{disabled}
 				{...api.getDecrementTriggerProps()}
 			></button>

@@ -42,6 +42,7 @@
 </script>
 
 <script lang="ts">
+	import { useStrings } from '../strings';
 	import { Popover } from 'bits-ui';
 	import CommandBarOverflowPresenter from './CommandBarOverflowPresenter.svelte';
 	import { FLYOUT_PLACEMENTS } from '../internal/flyout-placement';
@@ -67,6 +68,8 @@
 		ref = $bindable(null),
 		...rest
 	}: CommandBarFlyoutProps = $props();
+
+	const str = useStrings();
 
 	const position = $derived(FLYOUT_PLACEMENTS[placement]);
 	// `AvailableCommandsStates` (`:859`-`:875`), chosen the way `CommandBar_Partial.cpp:589`-`:590`
@@ -242,7 +245,7 @@
 								<button
 									type="button"
 									class="more"
-									aria-label="See more"
+									aria-label={str('UIA_MORE_BUTTON')}
 									aria-expanded={expanded}
 									onclick={() => setExpanded(!expanded)}
 								>

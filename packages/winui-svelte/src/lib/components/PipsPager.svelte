@@ -48,6 +48,7 @@
 </script>
 
 <script lang="ts">
+	import { useStrings } from '../strings';
 	import ScrollView from './ScrollView.svelte';
 	import { scrollBehavior } from '../internal/motion';
 
@@ -65,6 +66,8 @@
 		ref = $bindable(null),
 		...rest
 	}: PipsPagerProps = $props();
+
+	const str = useStrings();
 
 	let pipList = $state<HTMLDivElement | null>(null);
 
@@ -196,7 +199,7 @@
 	{style}
 	data-orientation={orientation}
 	role="group"
-	aria-label="Pager"
+	aria-label={str('PipsPagerNameText')}
 	onkeydown={handleKeydown}
 	{...rest}
 >
@@ -207,7 +210,7 @@
 			data-visibility={previousButtonVisibility}
 			data-generally-visible={isPreviousGenerallyVisible}
 			disabled={!isPreviousGenerallyVisible}
-			aria-label="Previous Page"
+			aria-label={str('PipsPagerPreviousPageButtonText')}
 			onclick={goPrevious}
 		>
 			<span class="nav-glyph previous"></span>
@@ -231,7 +234,7 @@
 					class="pip"
 					data-pip-index={index}
 					data-selected={index === selectedPageIndex || undefined}
-					aria-label={`Page ${index + 1}`}
+					aria-label={`${str('PipsPagerPageText')} ${index + 1}`}
 					aria-current={index === selectedPageIndex || undefined}
 					onclick={() => select(index)}
 				></button>
@@ -245,7 +248,7 @@
 			data-visibility={nextButtonVisibility}
 			data-generally-visible={isNextGenerallyVisible}
 			disabled={!isNextGenerallyVisible}
-			aria-label="Next Page"
+			aria-label={str('PipsPagerNextPageButtonText')}
 			onclick={goNext}
 		>
 			<span class="nav-glyph next"></span>

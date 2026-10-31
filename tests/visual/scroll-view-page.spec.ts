@@ -40,11 +40,11 @@ const animationButton = (page: Page) => page.getByRole('button', { name: 'Scroll
 // combobox on the page is the shell's search field.
 const animationCombo = (page: Page) =>
 	page.locator('.animation-options').getByRole('button').first();
-// The spin buttons expose Zag's names, "increment value" and "decrease value".
+// The spin buttons take their names from the table, "Increase" and "Decrease".
 const velocityIncrease = (page: Page) =>
-	page.getByRole('button', { name: 'increment value' }).nth(1);
+	page.getByRole('button', { name: 'Increase', exact: true }).nth(1);
 const velocityDecrease = (page: Page) =>
-	page.getByRole('button', { name: 'Decrease value' }).nth(1);
+	page.getByRole('button', { name: 'Decrease', exact: true }).nth(1);
 const velocityInput = (page: Page) => page.getByRole('spinbutton').nth(1);
 
 async function openPage(page: Page) {
@@ -138,7 +138,7 @@ test.describe('the ScrollView page runs its examples', () => {
 		await expect(code).toContainText('Accordion');
 		await expect(code).toContainText('1500');
 		// The duration box's increase button: the boxes are ZoomFactor, velocity, duration.
-		await page.getByRole('button', { name: 'increment value' }).nth(2).click();
+		await page.getByRole('button', { name: 'Increase', exact: true }).nth(2).click();
 		await expect(code).toContainText('TimeSpan.FromMilliseconds(2000)');
 	});
 });

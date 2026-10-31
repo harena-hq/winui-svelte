@@ -25,6 +25,7 @@
 </script>
 
 <script lang="ts">
+	import { useStrings } from '../strings';
 	import { Popover } from 'bits-ui';
 	import { isTwelveHourClock, localeOf } from '../internal/datetime';
 	import LoopingSelector from '../internal/LoopingSelector.svelte';
@@ -45,6 +46,8 @@
 		ref = $bindable(null),
 		...rest
 	}: TimePickerProps = $props();
+
+	const str = useStrings();
 
 	const locale = $derived(localeOf(language));
 	const twelveHour = $derived(isTwelveHourClock(locale, clockIdentifier));
@@ -162,7 +165,15 @@
 	}
 
 	function closedText(field: Field): string {
-		if (!time) return field === 'period' ? 'AM' : field;
+		if (!time) {
+			return str(
+				field === 'hour'
+					? 'TEXT_TIMEPICKER_HOUR_PLACEHOLDER'
+					: field === 'minute'
+						? 'TEXT_TIMEPICKER_MINUTE_PLACEHOLDER'
+						: 'TEXT_TIMEPICKER_PERIOD_PLACEHOLDER'
+			);
+		}
 		if (field === 'minute') return String(time.getMinutes()).padStart(2, '0');
 		if (field === 'period') return periods[time.getHours() < 12 ? 0 : 1] ?? '';
 		return String(twelveHour ? time.getHours() % 12 || 12 : time.getHours());
@@ -243,7 +254,13 @@
 												onSelectedIndexChange={(index) => setPending(field, index)}
 												shouldLoop={field !== 'period'}
 												itemHeight={40}
-												label={field}
+												label={str(
+													field === 'hour'
+														? 'UIA_AP_TIMEPICKER_HOURNAME'
+														: field === 'minute'
+															? 'UIA_AP_TIMEPICKER_MINUTENAME'
+															: 'UIA_AP_TIMEPICKER_PERIODNAME'
+												)}
 											/>
 										</div>
 									{/each}
@@ -251,11 +268,17 @@
 								<div class="accept-dismiss">
 									<i class="separator" aria-hidden="true"></i>
 									<!-- Upstream's two separate Date/Time presenter templates are why this is not shared with DatePicker. -->
-									<button class="accept" type="button" aria-label="Accept" onclick={accept}
-										>&#xE8FB;</button
+									<button
+										class="accept"
+										type="button"
+										aria-label={str('UIA_DIALOG_ACCEPT')}
+										onclick={accept}>&#xE8FB;</button
 									>
-									<button class="dismiss" type="button" aria-label="Dismiss" onclick={dismiss}
-										>&#xE711;</button
+									<button
+										class="dismiss"
+										type="button"
+										aria-label={str('UIA_DIALOG_DISMISS')}
+										onclick={dismiss}>&#xE711;</button
 									>
 								</div>
 							</div>
