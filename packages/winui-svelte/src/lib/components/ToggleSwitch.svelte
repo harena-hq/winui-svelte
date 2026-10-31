@@ -18,6 +18,16 @@
 		/** Header. Absent by default, as upstream's presenter is `Visibility="Collapsed"`
 		 *  until one is set. */
 		header?: Snippet | string;
+		/**
+		 * No WinUI member: as Button's `variant`, it selects a `Style` a consumer here has no other
+		 * way to set. `rightAlignedCompact` is the Community Toolkit's
+		 * `RightAlignedCompactToggleSwitchStyle` (SettingsCard.xaml:483-490), which `SettingsCard`
+		 * applies to a `ToggleSwitch` in it and so the Gallery's Settings page draws. The text comes
+		 * before the track, the control is as wide as they are and 36 tall, and the track is at its
+		 * right edge, for a row whose label is elsewhere. With `onContent` and `offContent` empty it
+		 * is the track and the 12 gap before it.
+		 */
+		variant?: 'default' | 'rightAlignedCompact';
 		/** OnContent. WinUI's own default is the word "On". */
 		onContent?: Snippet | string;
 		// ToggleSwitch has no default content slot upstream — its two content members are
@@ -56,6 +66,7 @@
 		onCheckedChange,
 		disabled = false,
 		header,
+		variant = 'default',
 		onContent,
 		offContent,
 		name,
@@ -236,6 +247,7 @@
 	{style}
 	data-checked={checked || undefined}
 	data-disabled={disabled || undefined}
+	data-variant={variant}
 	data-dragging={dragging || undefined}
 	{...rest}
 >
@@ -307,6 +319,53 @@
 		   inside it, which is why the root is a column and the body is not stretched. */
 		min-width: var(--winui-ToggleSwitchThemeMinWidth);
 		user-select: none;
+	}
+
+	/* `RightAlignedCompactToggleSwitchStyle`: `MinWidth="0"` and `Height="36"`
+	   (SettingsCard.xaml:487-488). Its outer grid has no rows, so the header lies over the body at
+	   the top left (:973-984), and the body is right-aligned and centred, as tall as its row
+	   (:985-987). Only the body takes the pointer: on the reference guest a pointer above the track
+	   does not reach the knob's hover. */
+	.root[data-variant='rightAlignedCompact'] {
+		display: inline-grid;
+		min-width: 0;
+		/* c1-allow: SettingsCard.xaml:488, `Height="36"` */
+		height: 36px;
+		pointer-events: none;
+	}
+
+	.root[data-variant='rightAlignedCompact'] .header {
+		grid-area: 1 / 1;
+		justify-self: start;
+		align-self: start;
+	}
+
+	.root[data-variant='rightAlignedCompact'] .body {
+		grid-area: 1 / 1;
+		justify-self: end;
+		align-self: center;
+		padding: 0;
+		pointer-events: auto;
+	}
+
+	/* The presenters are in the row's first column there and the track in its third, the 12 gap
+	   staying between them, and `HorizontalContentAlignment="Right"` puts the shorter text against
+	   the gap (SettingsCard.xaml:489). */
+	.root[data-variant='rightAlignedCompact'] .content {
+		order: -1;
+		justify-items: end;
+	}
+
+	/* The knob's rest place differs from the default template's: `HorizontalAlignment` and a 3
+	   margin (SettingsCard.xaml:1050-1051, :1065-1066), which the guest draws at 3 to 15. */
+	.root[data-variant='rightAlignedCompact'] .knob-off {
+		/* c1-allow: SettingsCard.xaml:1065, `Margin="3,0,0,0"` */
+		left: 3px;
+	}
+
+	.root[data-variant='rightAlignedCompact'] .knob-on {
+		/* c1-allow: SettingsCard.xaml:1050, `Margin="0,0,3,0"` */
+		right: 3px;
 	}
 
 	/* Row 0. `IsHitTestVisible="False"` and outside the switch area, so clicking it does not

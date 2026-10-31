@@ -110,10 +110,12 @@ is **renamed**, and the rule for a rename is to prefix it with its control's own
 `Style` on `TextBlock` is `textStyle`. That is a rename and not a new reserved name; the
 exception set above is untouched, and no existing prop changes.
 
-`TextBlock` is the only control that exposes `Style` at all, which is a scope decision rather
-than a naming one. A `Style` is an entry in a XAML resource dictionary, this library has no
-equivalent of one, and the ten `*TextBlockStyle` keys are the single family it already emits as
-CSS classes. A control that later needs its own takes its own noun by the same rule.
+`TextBlock` is the only control whose `Style` is one of the `*TextBlockStyle` keys, which is a scope
+decision rather than a naming one. A `Style` is an entry in a XAML resource dictionary, this library
+has no equivalent of one, and those ten keys are the single family it already emits as CSS classes.
+A control that later needs that family takes its own noun by the same rule. A style a control
+selects among its own looks is its `variant`: `Button`'s and `InfoBadge`'s, and `ToggleSwitch`'s
+below.
 `styleKey` was the alternative and names the value more exactly — it is a resource key — but it
 promises a generality nothing backs: there is no dictionary to key into, and the ten names are
 the whole vocabulary.
@@ -226,6 +228,15 @@ other list is not a departure: `ToggleSplitButton` hands `class`, `style` and `o
 that is the sense in which `open` is on the list. `title` is not on it: an HTML `title` draws a
 tooltip of its own, and `InfoBar`'s and `ContentDialog`'s `title` are WinUI's `Title`, where a
 consumer who wants the attribute cannot reach it.
+
+**`ToggleSwitch` takes a `variant`, `rightAlignedCompact`.** That is the Community Toolkit's
+`RightAlignedCompactToggleSwitchStyle`, and the shape is the one `Button` and `InfoBadge` already
+have for a style a consumer cannot set here. The style replaces the control's template, placing the
+text before the track, the header over them and the knob 3 from the track's ends, for the row with a
+label at the left that the original's own Settings page draws. WinUI reaches it through `Template`,
+and the `asChild` and `::part` alternatives below reject the two ways of offering one here. So a
+layout a consumer cannot build from outside is a value of the prop, under that key's name so that it
+can be looked up.
 
 ## Alternatives rejected
 
