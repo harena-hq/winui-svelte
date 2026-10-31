@@ -32,8 +32,8 @@
 		open?: boolean;
 		/** No WinUI member: ADR 0009 pairs every `$bindable` prop with its own change callback. */
 		onOpenChange?: (open: boolean) => void;
-		class?: string;
-		style?: string;
+		class?: import('svelte/elements').ClassValue | null;
+		style?: string | null;
 		/** ADR 0009's `ref` points at the interactive element: here, the presenter. */
 		ref?: HTMLElement | null;
 		[key: string]: unknown;

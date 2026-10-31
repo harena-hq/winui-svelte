@@ -20,8 +20,8 @@
 		 * succeeded" — `NavigationCompleted`'s own `IsSuccess` has no readable counterpart here.
 		 */
 		onNavigationCompleted?: (event: Event) => void;
-		class?: string;
-		style?: string;
+		class?: import('svelte/elements').ClassValue | null;
+		style?: string | null;
 		ref?: HTMLIFrameElement | null;
 		[key: string]: unknown;
 	}

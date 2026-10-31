@@ -15,9 +15,9 @@
 		/** SpinButtonPlacementMode. `'compact'` is not built in this unit. */
 		spinButtonPlacementMode?: 'hidden' | 'inline';
 		/** PlaceholderText. */
-		placeholder?: string;
+		placeholder?: string | null;
 		/** IsEnabled, inverted to HTML's attribute — ADR 0009. */
-		disabled?: boolean;
+		disabled?: boolean | null;
 		/** Header. A string or a snippet; nothing is rendered when it is not given. */
 		header?: Snippet | string;
 		/** Description. A string or a snippet; nothing is rendered when it is not given. */
@@ -26,11 +26,11 @@
 		// wrapper and these belong on the `<input>`, so they are declared rather than
 		// spread. The exception set is closed in ADR 0009 for the same reason.
 		/** No WinUI member: the form field name. */
-		name?: string;
+		name?: string | null;
 		/** No WinUI member: the id of the form to associate with. */
-		form?: string;
-		class?: string;
-		style?: string;
+		form?: string | null;
+		class?: import('svelte/elements').ClassValue | null;
+		style?: string | null;
 		/** The `<input>`, not the root — ADR 0009's `ref` points at the interactive
 		 *  element. */
 		ref?: HTMLInputElement | null;
@@ -103,9 +103,9 @@
 		min,
 		max,
 		step,
-		disabled,
-		name,
-		form,
+		disabled: disabled ?? false,
+		name: name ?? undefined,
+		form: form ?? undefined,
 		onValueChange: (details: { value: string; valueAsNumber: number }) => {
 			// The machine's empty value is `''`; this component's is `null`. Re-parse
 			// through `valueAsNumber` rather than `Number(details.value)` so the

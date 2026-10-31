@@ -25,8 +25,8 @@
 		content?: Snippet;
 		/** RightHeader — the narrow slot at the right end, before the window's own controls would be. */
 		rightHeader?: Snippet;
-		class?: string;
-		style?: string;
+		class?: import('svelte/elements').ClassValue | null;
+		style?: string | null;
 		ref?: HTMLElement | null;
 		[key: string]: unknown;
 	}

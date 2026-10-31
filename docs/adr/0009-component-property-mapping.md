@@ -238,6 +238,18 @@ and the `asChild` and `::part` alternatives below reject the two ways of offerin
 layout a consumer cannot build from outside is a value of the prop, under that key's name so that it
 can be looked up.
 
+**An HTML attribute's prop takes `null` as HTML's does.** `svelte/elements` types these as
+`T | null | undefined`, so a wrapper that spread those attributes onto a component failed
+`svelte-check`, which a consumer's trial found. `null` means what it means on an element, that the
+attribute is absent. It holds for `disabled`, `readonly`, `required`, `checked`,
+`placeholder`, `name`, `form`, `class`, `style` and the three naming attributes, and `C20` holds a
+component's own props to the first nine. `value`, and `min`, `max` and `step`, are typed per control
+and stay out, as does `title`, which is WinUI's `Title` where a control has one. `open` on a
+`<details>` is not what a component's `open` is. A control's state written back as `null` reads as
+false, so `checked={null}` is unchecked with its `aria-pressed` false, and not a button that is no
+toggle. A record in a collection, a `ComboBoxItemData`, is not an element's attributes and is not
+held.
+
 ## Alternatives rejected
 
 - **Keep the WinUI name verbatim, as ADR 0006 does for tokens.** The symmetry is false. A token

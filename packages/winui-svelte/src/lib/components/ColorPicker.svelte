@@ -37,8 +37,8 @@
 		/** MaxValue. */ maxValue?: number;
 		/** ColorSpectrumShape. */ colorSpectrumShape?: SpectrumShape;
 		/** ColorSpectrumComponents. */ colorSpectrumComponents?: SpectrumComponents;
-		class?: string;
-		style?: string;
+		class?: import('svelte/elements').ClassValue | null;
+		style?: string | null;
 		/** The root, following ADR 0009 — this control's interactive parts are its children. */ ref?: HTMLDivElement | null;
 		[key: string]: unknown;
 	}

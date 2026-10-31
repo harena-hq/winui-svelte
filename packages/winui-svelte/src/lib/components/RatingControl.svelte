@@ -11,9 +11,9 @@
 		 * tests it only on the pointer and key paths (`:839`, `:856`, `:907`, `:920`, `:980`),
 		 * and never to choose a visual state.
 		 */
-		readonly?: boolean;
+		readonly?: boolean | null;
 		/** IsEnabled, inverted into HTML's name, which ADR 0009's reserved set requires. */
-		disabled?: boolean;
+		disabled?: boolean | null;
 		/** MaxRating — how many stars. */
 		maxRating?: number;
 		/** PlaceholderValue. `-1` means none; another value fills placeholder stars while unset. */
@@ -22,8 +22,8 @@
 		value?: number;
 		/** ValueChanged. */
 		onValueChange?: (value: number) => void;
-		class?: string;
-		style?: string;
+		class?: import('svelte/elements').ClassValue | null;
+		style?: string | null;
 		ref?: HTMLDivElement | null;
 		[key: string]: unknown;
 	}

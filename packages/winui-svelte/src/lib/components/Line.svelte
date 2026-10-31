@@ -12,8 +12,8 @@
 		stroke?: string;
 		/** StrokeThickness. The line's width. */
 		strokeThickness?: number;
-		class?: string;
-		style?: string;
+		class?: import('svelte/elements').ClassValue | null;
+		style?: string | null;
 		ref?: SVGSVGElement | null;
 		[key: string]: unknown;
 	}

@@ -19,7 +19,8 @@ export const title =
 // name that drops a word, as `lightDismiss` did, passes, and only `iconSource` and `iconGlyph` are
 // refused of the spellings a code point has had: a new one passes. It reads that a callback or an
 // escape hatch is declared and not that it is used, and it does not test the middle of a name, so
-// `onIsFooChange` on a prop that is not bindable passes.
+// `onIsFooChange` on a prop that is not bindable passes. The `null` check reads the props interface
+// as text, does not follow `extends`, so `InlineProps` is not read, and refuses only `?: string;` and `?: boolean;`.
 
 const LIB = 'packages/winui-svelte/src/lib';
 
@@ -44,6 +45,9 @@ const MEASURED = {
 // What a component's rest props hand on to the component it is, which declares them:
 // `SplitButton` takes `class`, `style` and `onOpenChange`.
 const DELEGATED = { ToggleSplitButton: ['class', 'style', 'open'] };
+
+const HTML_NON_NULL =
+	/^\s+(disabled|readonly|required|checked|placeholder|name|form|class|style)\?: (?:string|boolean);/gm;
 
 const CODE_POINT_NAMES = new Set(['iconSource', 'iconGlyph']);
 
@@ -105,6 +109,12 @@ export async function run() {
 			if (/^(is|has|can)[A-Z]/.test(prop)) sites.push(`${path}: \`${prop}\` keeps its prefix`);
 			if (/.Disabled$/.test(prop)) sites.push(`${path}: \`${prop}\` inverts a WinUI polarity`);
 			if (CODE_POINT_NAMES.has(prop)) sites.push(`${path}: \`${prop}\`: a code point is \`glyph\``);
+		}
+		// A wrapper forwarding `svelte/elements` attributes hands on `T | null | undefined`.
+		const propsInterface =
+			source.match(/export interface \w+Props\b[^{]*\{[\s\S]*?\n\t\}/)?.[0] ?? '';
+		for (const match of propsInterface.matchAll(HTML_NON_NULL)) {
+			sites.push(`${path}: \`${match[1]}\` takes no \`null\`, as the HTML attribute does`);
 		}
 		const delegated = DELEGATED[name] ?? [];
 		const bindable = entries

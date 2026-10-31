@@ -10,8 +10,8 @@
 		 *  `CommandBarFlyout`'s overflow sets it `Visible`
 		 *  (`CommandBarFlyout_themeresources.xaml:552`). */
 		subItemChevronVisible?: boolean;
-		class?: string;
-		style?: string;
+		class?: import('svelte/elements').ClassValue | null;
+		style?: string | null;
 		ref?: HTMLDivElement | null;
 		[key: string]: unknown;
 	}

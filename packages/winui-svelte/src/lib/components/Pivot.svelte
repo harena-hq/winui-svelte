@@ -29,9 +29,9 @@
 		/** Pivot.Title, the general form. Wins over `title`. */
 		titleContent?: Snippet;
 		/** IsEnabled on the control, inverted to the attribute — ADR 0009. */
-		disabled?: boolean;
-		class?: string;
-		style?: string;
+		disabled?: boolean | null;
+		class?: import('svelte/elements').ClassValue | null;
+		style?: string | null;
 		ref?: HTMLElement | null;
 		[key: string]: unknown;
 	}

@@ -28,8 +28,8 @@
 		displayMode?: 'month' | 'year' | 'decade';
 		/** CalendarView.DisplayModeChanged. */
 		onDisplayModeChange?: ((mode: 'month' | 'year' | 'decade') => void) | undefined;
-		class?: string;
-		style?: string;
+		class?: import('svelte/elements').ClassValue | null;
+		style?: string | null;
 		/** The Calendar.Root element. */
 		ref?: HTMLDivElement | null;
 		[key: string]: unknown;

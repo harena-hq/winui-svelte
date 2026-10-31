@@ -31,8 +31,8 @@
 		onCloseButtonClick?: () => void;
 		/** Content — the free content below the banner row, as the default snippet. */
 		children?: Snippet;
-		class?: string;
-		style?: string;
+		class?: import('svelte/elements').ClassValue | null;
+		style?: string | null;
 		ref?: HTMLDivElement | null;
 		[key: string]: unknown;
 	}

@@ -8,8 +8,8 @@
 		stretchDirection?: 'upOnly' | 'downOnly' | 'both';
 		/** Child — the one element scaled, as the default snippet. */
 		children?: Snippet;
-		class?: string;
-		style?: string;
+		class?: import('svelte/elements').ClassValue | null;
+		style?: string | null;
 		ref?: HTMLDivElement | null;
 		[key: string]: unknown;
 	}

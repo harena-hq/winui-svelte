@@ -23,11 +23,11 @@
 		/** IsDirectionReversed. The value grows leftward. */
 		directionReversed?: boolean;
 		/** IsEnabled, inverted to HTML's attribute — ADR 0009. */
-		disabled?: boolean;
+		disabled?: boolean | null;
 		/** Header. A string or a snippet; nothing is rendered when it is not given. */
 		header?: Snippet | string;
-		class?: string;
-		style?: string;
+		class?: import('svelte/elements').ClassValue | null;
+		style?: string | null;
 		/** The thumb, not the root — ADR 0009's `ref` points at the interactive element. */
 		ref?: HTMLElement | null;
 		[key: string]: unknown;
@@ -123,7 +123,7 @@
 		{min}
 		{max}
 		{step}
-		{disabled}
+		disabled={disabled ?? false}
 		{orientation}
 		dir={directionReversed ? 'rtl' : 'ltr'}
 	>

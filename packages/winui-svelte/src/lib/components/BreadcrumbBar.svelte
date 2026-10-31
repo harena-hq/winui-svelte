@@ -27,9 +27,9 @@
 		/** No WinUI member: ADR 0009 pairs every `$bindable` prop with its own change callback. */
 		onEllipsisOpenChange?: (open: boolean) => void;
 		/** IsEnabled, inverted to the HTML attribute — ADR 0009. */
-		disabled?: boolean;
-		class?: string;
-		style?: string;
+		disabled?: boolean | null;
+		class?: import('svelte/elements').ClassValue | null;
+		style?: string | null;
 		ref?: HTMLElement | null;
 		[key: string]: unknown;
 	}

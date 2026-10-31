@@ -42,18 +42,18 @@
 		open?: boolean;
 		onOpenChange?: (open: boolean) => void;
 		/** PlaceholderText. */
-		placeholder?: string;
+		placeholder?: string | null;
 		/** IsEnabled, inverted to HTML's attribute — ADR 0009. */
-		disabled?: boolean;
+		disabled?: boolean | null;
 		/** Header. A string or a snippet. */
 		header?: Snippet | string;
 		/** Description. A string or a snippet. */
 		description?: Snippet | string;
 		/** Name and IsRequired, for a form. */
-		name?: string;
-		required?: boolean;
-		class?: string;
-		style?: string;
+		name?: string | null;
+		required?: boolean | null;
+		class?: import('svelte/elements').ClassValue | null;
+		style?: string | null;
 		/**
 		 * The editable `<input>`, or the non-editable trigger `<button>` — ADR 0009.
 		 * The root is the outer `<div>` the header and description sit on.
@@ -679,9 +679,9 @@
 			bind:open={() => open, changeOpen}
 			inputValue={text}
 			{items}
-			{disabled}
-			{required}
-			{name}
+			disabled={disabled ?? false}
+			required={required ?? false}
+			name={name ?? undefined}
 		>
 			<!-- No `svelte-ignore` for the handlers on this group: with a spread among its
 			     attributes the compiler cannot tell what role it ends with, and does not warn. -->
@@ -843,9 +843,9 @@
 				}
 			}
 			{items}
-			{disabled}
-			{required}
-			{name}
+			disabled={disabled ?? false}
+			required={required ?? false}
+			name={name ?? undefined}
 		>
 			<Select.Trigger>
 				<!-- Every element the primitive would render is rendered here instead, through its

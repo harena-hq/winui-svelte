@@ -13,8 +13,8 @@
 		minimum?: number;
 		/** Maximum. The upper bound used to calculate the determinate proportion. */
 		maximum?: number;
-		class?: string;
-		style?: string;
+		class?: import('svelte/elements').ClassValue | null;
+		style?: string | null;
 		ref?: HTMLDivElement | null;
 		[key: string]: unknown;
 	}

@@ -10,8 +10,8 @@
 		open?: string;
 		/** No WinUI member: ADR 0009 pairs every `$bindable` prop with its own change callback. */
 		onOpenChange?: (open: string) => void;
-		class?: string;
-		style?: string;
+		class?: import('svelte/elements').ClassValue | null;
+		style?: string | null;
 		ref?: HTMLDivElement | null;
 		[key: string]: unknown;
 	}

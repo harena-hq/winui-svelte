@@ -58,8 +58,8 @@
 		padding?: number | string;
 		/** Blocks, as the default snippet. */
 		children?: Snippet;
-		class?: string;
-		style?: string;
+		class?: import('svelte/elements').ClassValue | null;
+		style?: string | null;
 		/**
 		 * HTML's direction attribute, passed through to the root. Declared rather than left to the
 		 * rest props because `textAlignment="detectFromContent"` needs `dir="auto"` and overrides

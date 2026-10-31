@@ -188,8 +188,8 @@
 		paneFooter?: Snippet;
 		/** Content — the main content area. */
 		children?: Snippet;
-		class?: string;
-		style?: string;
+		class?: import('svelte/elements').ClassValue | null;
+		style?: string | null;
 		ref?: HTMLElement | null;
 		[key: string]: unknown;
 	}

@@ -21,7 +21,7 @@
 		overflowButtonVisibility?: 'auto' | 'visible' | 'collapsed';
 		/** IsEnabled, inverted to the HTML attribute — ADR 0009. Drives `CommonStates`' `Disabled`
 		 *  (`CommandBar_themeresources.xaml:114`), which recolours the ellipsis alone. */
-		disabled?: boolean;
+		disabled?: boolean | null;
 		/** IsOpen, under HTML's name for it — ADR 0009. */
 		open?: boolean;
 		/** No WinUI member: ADR 0009 pairs every `$bindable` prop with its own change callback. */
@@ -30,8 +30,8 @@
 		 *  photograph this: the Gallery's own page sets it only from code
 		 *  (`CommandBarPage.xaml.cs:44`), and the difference is what a click elsewhere does. */
 		sticky?: boolean;
-		class?: string;
-		style?: string;
+		class?: import('svelte/elements').ClassValue | null;
+		style?: string | null;
 		/** ADR 0009's `ref` points at the interactive element; a CommandBar is `IsTabStop="False"`
 		 *  (`:81`) and has none, so this is the root. */
 		ref?: HTMLDivElement | null;

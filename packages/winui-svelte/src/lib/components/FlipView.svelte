@@ -23,8 +23,8 @@
 		 * by default, and the Gallery's own third example sets it vertical.
 		 */
 		orientation?: 'horizontal' | 'vertical';
-		class?: string;
-		style?: string;
+		class?: import('svelte/elements').ClassValue | null;
+		style?: string | null;
 		ref?: HTMLElement | null;
 		[key: string]: unknown;
 	}

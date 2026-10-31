@@ -13,7 +13,7 @@
 		 * attribute, HTML's name and polarity win, because the rest props reach a real
 		 * `<button>` where `disabled` is already live.
 		 */
-		disabled?: boolean;
+		disabled?: boolean | null;
 		// Two WinUI members are deliberately absent, and a plain comment says so rather than
 		// a `/** */` one: a doc comment here would attach itself to `children` below and a
 		// consumer hovering that prop would be told about `Click`.
@@ -27,8 +27,8 @@
 		// `InnerBorderEdge` for default and subtle, `OuterBorderEdge` for accent.
 		/** Content — the button's label, as the default snippet. */
 		children?: Snippet;
-		class?: string;
-		style?: string;
+		class?: import('svelte/elements').ClassValue | null;
+		style?: string | null;
 		ref?: HTMLButtonElement | null;
 		[key: string]: unknown;
 	}

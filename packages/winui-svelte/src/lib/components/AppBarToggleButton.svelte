@@ -23,7 +23,7 @@
 		 *  an icon column. `OverflowWithMenuIcons`, AppBarToggleButton_themeresources.xaml:287. */
 		overflowWithMenuIcons?: boolean;
 		/** IsChecked's boolean half, under HTML's polarity — ADR 0009. A checked button is never also indeterminate. */
-		checked?: boolean;
+		checked?: boolean | null;
 		/** The change callback ADR 0009 pairs with `checked`. */
 		onCheckedChange?: (checked: boolean) => void;
 		/** IsChecked's null, spelled the way ARIA spells it: `aria-pressed="mixed"`. */
@@ -33,7 +33,7 @@
 		/** IsThreeState. True makes a click cycle through the indeterminate state. */
 		threeState?: boolean;
 		/** IsEnabled, inverted to the HTML attribute — ADR 0009. */
-		disabled?: boolean;
+		disabled?: boolean | null;
 		/** Content — drawn in the icon slot, and only when neither `icon` nor `glyph` is given. The
 		 *  template's one `ContentPresenter` (AppBarToggleButton_themeresources.xaml:485) is bound to
 		 *  `Icon`; the Gallery's `PathIcon` example (AppBarButtonPage.xaml:76) sets `Content`
@@ -41,8 +41,8 @@
 		children?: Snippet;
 		/** KeyboardAcceleratorTextOverride — the accelerator text drawn at the row's right edge. */
 		keyboardAcceleratorTextOverride?: string;
-		class?: string;
-		style?: string;
+		class?: import('svelte/elements').ClassValue | null;
+		style?: string | null;
 		ref?: HTMLButtonElement | null;
 		[key: string]: unknown;
 	}
@@ -154,7 +154,7 @@
 	// reports the indeterminate change alone rather than also reporting a `checked` that was
 	// already false.
 	function set(nextChecked: boolean, nextIndeterminate: boolean) {
-		if (checked !== nextChecked) {
+		if ((checked ?? false) !== nextChecked) {
 			checked = nextChecked;
 			onCheckedChange?.(nextChecked);
 		}
@@ -186,7 +186,7 @@
 	aria-label={label}
 	data-view-state={dataViewState}
 	data-checked={dataChecked}
-	aria-pressed={indeterminate ? 'mixed' : checked}
+	aria-pressed={indeterminate ? 'mixed' : (checked ?? false)}
 	{...rest}
 	onclick={click}
 >

@@ -18,8 +18,8 @@
 		 * `ProgressBar.cpp:87`.
 		 */
 		showError?: boolean;
-		class?: string;
-		style?: string;
+		class?: import('svelte/elements').ClassValue | null;
+		style?: string | null;
 		ref?: HTMLDivElement | null;
 		[key: string]: unknown;
 	}

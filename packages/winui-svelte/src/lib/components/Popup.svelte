@@ -20,8 +20,8 @@
 		 * closes it. WinUI's default is false and so is this one.
 		 */
 		lightDismissEnabled?: boolean;
-		class?: string;
-		style?: string;
+		class?: import('svelte/elements').ClassValue | null;
+		style?: string | null;
 		ref?: HTMLDivElement | null;
 		[key: string]: unknown;
 	}

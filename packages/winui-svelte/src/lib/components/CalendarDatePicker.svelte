@@ -17,7 +17,7 @@
 		/** No WinUI member: ADR 0009 pairs bindable state with a change callback. */
 		onCalendarOpenChange?: ((open: boolean) => void) | undefined;
 		/** UIElement.IsEnabled. */
-		disabled?: boolean;
+		disabled?: boolean | null;
 		/** FrameworkElement.Language. */
 		language?: string | undefined;
 		/** CalendarView.CalendarIdentifier. */
@@ -38,8 +38,8 @@
 		dayOfWeekFormat?: string | undefined;
 		/** CalendarView.DisplayMode. */
 		displayMode?: 'month' | 'year' | 'decade';
-		class?: string;
-		style?: string;
+		class?: import('svelte/elements').ClassValue | null;
+		style?: string | null;
 		/** The CalendarDatePicker root element. */
 		ref?: HTMLDivElement | null;
 		[key: string]: unknown;

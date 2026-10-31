@@ -42,7 +42,7 @@
 		/** No WinUI member: ADR 0009 pairs every `$bindable` prop with its own change callback. */
 		onOpenChange?: (open: boolean) => void;
 		/** IsEnabled, inverted to HTML's attribute — ADR 0009. */
-		disabled?: boolean;
+		disabled?: boolean | null;
 		/**
 		 * The element the tooltip is attached to. Receives the props it must spread.
 		 *
@@ -54,8 +54,8 @@
 		 * call the one from these props as well. `TitleBar.svelte` does both.
 		 */
 		children: Snippet<[Record<string, unknown>]>;
-		class?: string;
-		style?: string;
+		class?: import('svelte/elements').ClassValue | null;
+		style?: string | null;
 		/** ADR 0009's `ref` points at the interactive element: here, the popup. */
 		ref?: HTMLElement | null;
 		[key: string]: unknown;
@@ -562,7 +562,7 @@
      row right needs a clock this component does not have — the window is per provider and this
      renders one provider per tooltip — which is the rest of WD-094's argument. -->
 <Tooltip.Provider delayDuration={SHOW_DELAY} skipDelayDuration={0}>
-	<Tooltip.Root bind:open={() => open, (next) => setOpen(next)} {disabled}>
+	<Tooltip.Root bind:open={() => open, (next) => setOpen(next)} disabled={disabled ?? false}>
 		<Tooltip.Trigger bind:ref={triggerEl}>
 			<!-- The trigger is the consumer's element, not one this component invents.
 			     `Tooltip.Trigger` would render its own `<button>` by default; the `child`

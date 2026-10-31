@@ -18,8 +18,8 @@
 		profilePicture?: string;
 		/** Width and Height, which upstream keeps equal — `PersonPicture.cpp:563-591`. */
 		size?: number;
-		class?: string;
-		style?: string;
+		class?: import('svelte/elements').ClassValue | null;
+		style?: string | null;
 		ref?: HTMLElement | null;
 		[key: string]: unknown;
 	}

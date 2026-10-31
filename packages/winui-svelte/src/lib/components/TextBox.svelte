@@ -10,11 +10,11 @@
 		 *  Upstream signals this as `TextChanged`, which is not implemented. */
 		onValueChange?: (value: string) => void;
 		/** PlaceholderText, under HTML's name for it. */
-		placeholder?: string;
+		placeholder?: string | null;
 		/** IsReadOnly, under HTML's name for it. */
-		readonly?: boolean;
+		readonly?: boolean | null;
 		/** IsEnabled, inverted to HTML's attribute — ADR 0009. */
-		disabled?: boolean;
+		disabled?: boolean | null;
 		/** MaxLength. 0 upstream means no limit; omit the attribute in that case. */
 		maxLength?: number;
 		/** AcceptsReturn. True renders a `<textarea>`, false an `<input type="text">`. */
@@ -23,8 +23,8 @@
 		header?: Snippet | string;
 		/** Description. A string or a snippet; nothing is rendered when it is not given. */
 		description?: Snippet | string;
-		class?: string;
-		style?: string;
+		class?: import('svelte/elements').ClassValue | null;
+		style?: string | null;
 		ref?: HTMLInputElement | HTMLTextAreaElement | null;
 		[key: string]: unknown;
 	}

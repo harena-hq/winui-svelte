@@ -47,9 +47,9 @@
 		onScrollAnimationStarting?:
 			((args: ScrollingScrollAnimationStartingEventArgs) => void) | undefined;
 		/** UIElement.IsEnabled. */
-		disabled?: boolean;
-		class?: string;
-		style?: string;
+		disabled?: boolean | null;
+		class?: import('svelte/elements').ClassValue | null;
+		style?: string | null;
 		/** The ScrollView root element. */
 		ref?: HTMLDivElement | null;
 		[key: string]: unknown;
@@ -808,7 +808,7 @@
 				maximum={scrollableHeight}
 				viewportSize={viewportHeight}
 				indicatorMode={indicator}
-				{disabled}
+				disabled={disabled ?? false}
 				onValueChange={(value) => {
 					stopAnimation();
 					scrollVertically(value);
@@ -834,7 +834,7 @@
 				maximum={scrollableWidth}
 				viewportSize={viewportWidth}
 				indicatorMode={indicator}
-				{disabled}
+				disabled={disabled ?? false}
 				onValueChange={(value) => {
 					stopAnimation();
 					scrollHorizontally(value);

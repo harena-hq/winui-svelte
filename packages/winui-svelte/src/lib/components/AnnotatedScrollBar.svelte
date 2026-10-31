@@ -19,8 +19,8 @@
 		 *  Returning undefined suppresses the tooltip, which is what upstream does when no handler
 		 *  is attached. */
 		detailLabelRequested?: ((scrollOffset: number) => string | undefined) | undefined;
-		class?: string;
-		style?: string;
+		class?: import('svelte/elements').ClassValue | null;
+		style?: string | null;
 		/** The AnnotatedScrollBar root element. */
 		ref?: HTMLDivElement | null;
 		[key: string]: unknown;

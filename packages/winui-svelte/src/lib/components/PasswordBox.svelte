@@ -8,9 +8,9 @@
 		 *  Upstream signals this as `PasswordChanged`, which is not implemented. */
 		onValueChange?: (value: string) => void;
 		/** PlaceholderText, under HTML's name for it. */
-		placeholder?: string;
+		placeholder?: string | null;
 		/** IsEnabled, inverted to HTML's attribute — ADR 0009. */
-		disabled?: boolean;
+		disabled?: boolean | null;
 		/** MaxLength. 0 upstream means no limit; omit the attribute in that case. */
 		maxLength?: number;
 		/** Header. A string or a snippet; nothing is rendered when it is not given. */
@@ -21,13 +21,13 @@
 		// wrapper and these belong on the `<input>`, so they are declared rather than
 		// spread. The exception set is closed in ADR 0009 for the same reason.
 		/** No WinUI member: the form field name. */
-		name?: string;
+		name?: string | null;
 		/** No WinUI member: HTML form validation. */
-		required?: boolean;
+		required?: boolean | null;
 		/** No WinUI member: the id of the form to associate with. */
-		form?: string;
-		class?: string;
-		style?: string;
+		form?: string | null;
+		class?: import('svelte/elements').ClassValue | null;
+		style?: string | null;
 		/** The `<input type="password">`, not the root — ADR 0009's `ref` points at the
 		 *  interactive element, which for Button happens to be the root and here does not. */
 		ref?: HTMLInputElement | null;

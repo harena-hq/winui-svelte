@@ -17,7 +17,7 @@
 		/** ExpandDirection. Whether the content is revealed below the header or above it. */
 		expandDirection?: 'down' | 'up';
 		/** IsEnabled, inverted to the HTML attribute — ADR 0009. */
-		disabled?: boolean;
+		disabled?: boolean | null;
 		/**
 		 * HorizontalContentAlignment. A `Control` member rather than an Expander one, exposed
 		 * because the Gallery's second example is about varying it and because the default is
@@ -25,8 +25,8 @@
 		 * **centred**, not left-aligned.
 		 */
 		horizontalContentAlignment?: 'left' | 'center' | 'right' | 'stretch';
-		class?: string;
-		style?: string;
+		class?: import('svelte/elements').ClassValue | null;
+		style?: string | null;
 		ref?: HTMLDivElement | null;
 		[key: string]: unknown;
 	}
@@ -62,7 +62,7 @@
 	}: ExpanderProps = $props();
 </script>
 
-<Collapsible.Root bind:ref bind:open {onOpenChange} {disabled}>
+<Collapsible.Root bind:ref bind:open {onOpenChange} disabled={disabled ?? false}>
 	{#snippet child({ props })}
 		<div
 			{...props}

@@ -33,8 +33,8 @@
 		animatedVisualLoaded?: boolean;
 		/** No WinUI member: ADR 0009's change callback for `animatedVisualLoaded`. */
 		onAnimatedVisualLoadedChange?: (loaded: boolean) => void;
-		class?: string;
-		style?: string;
+		class?: import('svelte/elements').ClassValue | null;
+		style?: string | null;
 		ref?: HTMLElement | null;
 		[key: string]: unknown;
 	}

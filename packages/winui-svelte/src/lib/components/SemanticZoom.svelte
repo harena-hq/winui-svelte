@@ -27,9 +27,9 @@
 		/** SemanticZoom.IsZoomOutButtonEnabled. */
 		zoomOutButtonEnabled?: boolean;
 		/** UIElement.IsEnabled. */
-		disabled?: boolean;
-		class?: string;
-		style?: string;
+		disabled?: boolean | null;
+		class?: import('svelte/elements').ClassValue | null;
+		style?: string | null;
 		/** The SemanticZoom root element. */
 		ref?: HTMLDivElement | null;
 		[key: string]: unknown;

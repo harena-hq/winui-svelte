@@ -55,8 +55,8 @@
 		itemInvokedEnabled?: boolean;
 		/** ItemInvoked. Its args carry the invoked item (ItemsView.idl:17-20). */
 		onItemInvoked?: (item: T, index: number) => void;
-		class?: string;
-		style?: string;
+		class?: import('svelte/elements').ClassValue | null;
+		style?: string | null;
 		ref?: HTMLElement | null;
 		[key: string]: unknown;
 	}

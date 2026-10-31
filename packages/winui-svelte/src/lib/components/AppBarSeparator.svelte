@@ -4,8 +4,8 @@
 		compact?: boolean;
 		/** IsInOverflow, from `ICommandBarElement` — the separator is drawn across the overflow menu. */
 		inOverflow?: boolean;
-		class?: string;
-		style?: string;
+		class?: import('svelte/elements').ClassValue | null;
+		style?: string | null;
 		ref?: HTMLDivElement | null;
 		[key: string]: unknown;
 	}
