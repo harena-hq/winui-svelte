@@ -49,6 +49,7 @@
 </script>
 
 <script lang="ts">
+	import { useStrings } from '../strings';
 	import Button from './Button.svelte';
 	import ToolTip from './ToolTip.svelte';
 
@@ -69,6 +70,8 @@
 		ref = $bindable(null),
 		...rest
 	}: InfoBarProps = $props();
+
+	const str = useStrings();
 
 	// `InfoBarCloseButtonSymbol` is a `Symbol` at InfoBar_themeresources.xaml:87 and is
 	// deliberately not tokenized; the Cancel glyph at InfoBar.xaml:176-178 is written here.
@@ -177,13 +180,13 @@
 		</div>
 
 		{#if closable}
-			<ToolTip content="Close">
+			<ToolTip content={str('InfoBarCloseButtonTooltip')}>
 				{#snippet children(props)}
 					<Button
 						{...props}
 						variant="subtle"
 						class="close"
-						aria-label="Close"
+						aria-label={str('InfoBarCloseButtonName')}
 						style="grid-column: 3; grid-row: 1; box-sizing: border-box; width: var(--winui-InfoBarCloseButtonSize); height: var(--winui-InfoBarCloseButtonSize); margin: 5px; padding: 0; align-self: start"
 						onclick={withCloseClick(props)}
 					>

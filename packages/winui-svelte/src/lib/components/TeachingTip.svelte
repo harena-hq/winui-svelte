@@ -95,6 +95,7 @@
 </script>
 
 <script lang="ts">
+	import { useStrings } from '../strings';
 	import { Popover } from 'bits-ui';
 	import Button from './Button.svelte';
 
@@ -121,6 +122,8 @@
 		ref = $bindable(null),
 		...rest
 	}: TeachingTipProps = $props();
+
+	const str = useStrings();
 
 	const CLOSE_GLYPH = String.fromCodePoint(parseInt('E711', 16));
 	// s_untargetedTipWindowEdgeMargin (TeachingTip.h:310), between an untargeted tip and the
@@ -344,7 +347,12 @@
 							{#if !footerCloseButton}
 								<!-- CloseButtonLocations.FooterCloseButton (TeachingTip.xaml:75) leaves no
 								     header close button when the command row supplies one. -->
-								<button type="button" class="close" aria-label="Close" onclick={closeFromButton}>
+								<button
+									type="button"
+									class="close"
+									aria-label={str('TeachingTipAlternateCloseButtonName')}
+									onclick={closeFromButton}
+								>
 									<span class="close-fill" aria-hidden="true">{CLOSE_GLYPH}</span>
 								</button>
 							{/if}

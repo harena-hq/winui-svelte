@@ -60,6 +60,7 @@
 </script>
 
 <script lang="ts">
+	import { formatString, useStrings } from '../strings';
 	import { initialsFromDisplayName } from '../internal/initials';
 
 	let {
@@ -78,6 +79,8 @@
 		...rest
 	}: PersonPictureProps = $props();
 
+	const str = useStrings();
+
 	// PersonPicture.cpp:108-122 prefers a non-empty Initials property over generated initials.
 	const shownInitials = $derived(initials || initialsFromDisplayName(displayName ?? ''));
 	// PersonPicture.cpp:162-180 gives IsGroup precedence even when a profile picture is supplied.
@@ -94,15 +97,34 @@
 		}
 		return badgeGlyph ? { kind: 'glyph' as const, glyph: badgeGlyph } : null;
 	});
-	// PersonPicture.cpp:293-407 uses the Initials property rather than derived initials. Its seven
-	// en-US plural resources are identical, so only the singular/plural distinction remains.
+	// `GetLocalizedPluralBadgeItemStringResource`, PersonPicture.cpp:368-407: eight rungs, one string
+	// in en-US, and what a language with more plural forms fills.
+	function badgeItemKey(count: number) {
+		const units = count % 10;
+		if (count === 1) return 'BadgeItemSingular';
+		if (count === 2) return 'BadgeItemPlural7';
+		if (count === 3 || count === 4) return 'BadgeItemPlural2';
+		if (count >= 5 && count <= 10) return 'BadgeItemPlural5';
+		if (count >= 11 && count <= 19) return 'BadgeItemPlural6';
+		if (units === 1) return 'BadgeItemPlural1';
+		if (units >= 2 && units <= 4) return 'BadgeItemPlural3';
+		return 'BadgeItemPlural4';
+	}
+	// PersonPicture.cpp:293-407 uses the Initials property rather than derived initials.
 	const automationName = $derived.by(() => {
-		const name = group ? 'Group' : displayName || initials || 'Person';
-		if (badgeNumber > 0)
-			return `${name}, ${badgeNumber} ${badgeText || (badgeNumber === 1 ? 'item' : 'items')}`;
+		const name = group ? str('GroupName') : displayName || initials || str('PersonName');
+		if (badgeNumber > 0) {
+			if (badgeText)
+				return formatString(str('BadgeItemTextOverride'), name, badgeNumber, badgeText);
+			return formatString(str(badgeItemKey(badgeNumber)), name, badgeNumber);
+		}
 		// Upstream's automation branch treats a negative number as non-numeric here, even though the
 		// visual badge ladder hides it before reaching a glyph (PersonPicture.cpp:326-359).
-		if (badgeGlyph || badgeImageSource) return `${name}, ${badgeText || 'icon'}`;
+		if (badgeGlyph || badgeImageSource) {
+			return badgeText
+				? formatString(str('BadgeIconTextOverride'), name, badgeText)
+				: formatString(str('BadgeIcon'), name);
+		}
 		return name;
 	});
 	// Private, and deliberately not `--winui-` prefixed: that prefix means a design token and gate

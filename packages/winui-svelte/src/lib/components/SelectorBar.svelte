@@ -45,6 +45,7 @@
 </script>
 
 <script lang="ts">
+	import { useStrings } from '../strings';
 	let {
 		items,
 		selected = $bindable(null),
@@ -55,6 +56,8 @@
 		ref = $bindable(null),
 		...rest
 	}: SelectorBarProps = $props();
+
+	const str = useStrings();
 
 	// The pill's growth on load is keyed on this rather than on `@starting-style` alone. With
 	// `@starting-style` alone, the reference machine started no transition at all — not one
@@ -169,7 +172,7 @@
 			data-selected={isSelected(item) || undefined}
 			disabled={isItemDisabled(item)}
 			role="option"
-			aria-label={item.text ? undefined : 'SelectorBarItem'}
+			aria-label={item.text ? undefined : str('SelectorBarItemDefaultControlName')}
 			aria-selected={isSelected(item)}
 			aria-disabled={isItemDisabled(item) || undefined}
 			tabindex={tabIndexFor(item)}

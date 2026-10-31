@@ -44,6 +44,7 @@
 </script>
 
 <script lang="ts">
+	import { useStrings } from '../strings';
 	import Flyout from './Flyout.svelte';
 
 	let {
@@ -57,6 +58,8 @@
 		ref = $bindable(null),
 		...rest
 	}: BreadcrumbBarProps = $props();
+
+	const str = useStrings();
 
 	// BreadcrumbBar.xaml:116-128 sets these six presenter values. The presenter is portalled to
 	// `body`, so the ancestor cascade cannot carry the BreadcrumbBar overrides to it.
@@ -145,7 +148,7 @@
 							type="button"
 							class="item ellipsis"
 							{disabled}
-							aria-label="More breadcrumb items"
+							aria-label={str('AutomationNameEllipsisBreadcrumbBarItem')}
 						>
 							<span class="ellipsis-glyph" aria-hidden="true"></span>
 						</button>

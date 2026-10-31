@@ -39,6 +39,7 @@
 </script>
 
 <script lang="ts">
+	import { useStrings } from '../strings';
 	import MenuFlyout from './MenuFlyout.svelte';
 
 	let {
@@ -56,6 +57,8 @@
 		toggle = false,
 		...rest
 	}: SplitButtonInternalProps = $props();
+
+	const str = useStrings();
 
 	// `$state`, not a plain `let`: this component is in runes mode, where a plain `let` the
 	// template reads is a snapshot rather than a signal — the flag would flip and nothing
@@ -102,7 +105,13 @@
      compiler would reject it. -->
 {#snippet secondary(triggerProps = {})}
 	<!-- SplitButton.cpp:50 reads SR_SplitButtonSecondaryButtonName, “More Options”. -->
-	<button type="button" {...triggerProps} class="secondary" aria-label="More Options" {disabled}>
+	<button
+		type="button"
+		{...triggerProps}
+		class="secondary"
+		aria-label={str('SplitButtonSecondaryButtonName')}
+		{disabled}
+	>
 		<span class="chevron" aria-hidden="true">{String.fromCodePoint(0xe96e)}</span>
 	</button>
 {/snippet}

@@ -57,6 +57,7 @@
 </script>
 
 <script lang="ts">
+	import { useStrings } from '../strings';
 	import Button from './Button.svelte';
 
 	let {
@@ -72,6 +73,8 @@
 		ref = $bindable(null),
 		...rest
 	}: SemanticZoomProps = $props();
+
+	const str = useStrings();
 
 	/**
 	 * The one way the view changes.
@@ -158,7 +161,11 @@
 		     root without this file's scope hash, so a rule written for it here would match
 		     nothing. -->
 		<div class="zoom-out">
-			<Button tabindex={-1} aria-label="Zoom out" onclick={() => setActiveView(false)}>
+			<Button
+				tabindex={-1}
+				aria-label={str('WinUISvelteSemanticZoomOutName')}
+				onclick={() => setActiveView(false)}
+			>
 				{String.fromCodePoint(0xe0b8)}
 			</Button>
 		</div>

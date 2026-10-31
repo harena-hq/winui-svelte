@@ -31,6 +31,7 @@
 </script>
 
 <script lang="ts" generics="T">
+	import { useStrings } from '../strings';
 	import FlipViewItem from './FlipViewItem.svelte';
 
 	let {
@@ -45,6 +46,8 @@
 		ref = $bindable(null),
 		...rest
 	}: FlipViewProps<T> = $props();
+
+	const str = useStrings();
 
 	const canGoPrevious = $derived(selectedIndex > 0);
 	const canGoNext = $derived(selectedIndex < items.length - 1);
@@ -77,13 +80,18 @@
 			type="button"
 			class="flip previous"
 			tabindex="-1"
-			aria-label="Previous"
+			aria-label={str('UIA_FLIPVIEW_PREVIOUS')}
 			onclick={() => go(-1)}
 		></button>
 	{/if}
 	{#if canGoNext}
 		<!-- IsTabStop="False" on all four upstream buttons. -->
-		<button type="button" class="flip next" tabindex="-1" aria-label="Next" onclick={() => go(1)}
+		<button
+			type="button"
+			class="flip next"
+			tabindex="-1"
+			aria-label={str('UIA_FLIPVIEW_NEXT')}
+			onclick={() => go(1)}
 		></button>
 	{/if}
 </div>

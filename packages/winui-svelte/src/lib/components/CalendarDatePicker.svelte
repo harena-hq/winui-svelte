@@ -57,6 +57,7 @@
 </script>
 
 <script lang="ts">
+	import { useStrings } from '../strings';
 	import CalendarView from './CalendarView.svelte';
 	import Flyout from './Flyout.svelte';
 	import { formatDate, localeOf } from '../internal/datetime';
@@ -64,7 +65,7 @@
 	let {
 		date = $bindable(undefined),
 		onDateChange,
-		placeholderText = 'select a date',
+		placeholderText,
 		header = undefined,
 		dateFormat = undefined,
 		calendarOpen = $bindable(false),
@@ -86,10 +87,12 @@
 		...rest
 	}: CalendarDatePickerProps = $props();
 
+	const str = useStrings();
+
 	const locale = $derived(localeOf(language, calendarIdentifier));
 	const text = $derived(
 		date === undefined
-			? placeholderText
+			? (placeholderText ?? str('TEXT_CALENDARDATEPICKER_DEFAULT_PLACEHOLDER_TEXT'))
 			: dateFormat === undefined
 				? new Intl.DateTimeFormat(locale).format(date)
 				: formatDate(dateFormat, date, locale)

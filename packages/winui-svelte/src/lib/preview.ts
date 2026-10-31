@@ -256,6 +256,8 @@ export type { UnderlineProps } from './components/Underline.svelte';
 // amendment. Generated — see `scripts/symbol/`.
 export { Symbol } from './symbol';
 export type { SymbolName } from './symbol';
+export { defaultStrings, provideStrings } from './strings';
+export type { StringKey, Strings } from './strings';
 
 // Not a component: the animation `ScrollView`'s `onScrollAnimationStarting` hands out and takes
 // back, which a handler builds its own from.

@@ -48,6 +48,7 @@
 </script>
 
 <script lang="ts">
+	import { useStrings } from '../strings';
 	import { controlName } from '../internal/accessible-name';
 
 	let {
@@ -69,13 +70,15 @@
 		...rest
 	}: ToggleSwitchProps = $props();
 
+	const str = useStrings();
+
 	const uid = $props.id();
 
 	// The defaults are applied here rather than in the destructuring because upstream's peer
 	// names the switch by its content only when the property is set, so an unset content has to
 	// stay distinguishable from an explicit "On".
-	const shownOn = $derived(onContent ?? 'On');
-	const shownOff = $derived(offContent ?? 'Off');
+	const shownOn = $derived(onContent ?? str('TEXT_TOGGLESWITCH_ON'));
+	const shownOff = $derived(offContent ?? str('TEXT_TOGGLESWITCH_OFF'));
 
 	// `ToggleSwitchAutomationPeer::GetNameCore`: the header's string, and the content of the
 	// current state only — `OnContent` when on, `OffContent` when off — and that content only

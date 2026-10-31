@@ -33,6 +33,7 @@
 </script>
 
 <script lang="ts">
+	import { useStrings } from '../strings';
 	import ToolTip from './ToolTip.svelte';
 
 	let {
@@ -51,6 +52,8 @@
 		ref = $bindable(null),
 		...rest
 	}: TitleBarProps = $props();
+
+	const str = useStrings();
 
 	// `TitleBar.cpp`'s `UpdateHeight` is one rule — compact when `Content`, `LeftHeader`
 	// and `RightHeader` are all absent. This component has no `LeftHeader`, so the
@@ -136,13 +139,13 @@
 	     after this component's handler silently replaces it and the button stops working,
 	     and one that lands before it silently drops the dismissal. Measured both ways. -->
 	{#if backButtonVisible}
-		<ToolTip content="Back">
+		<ToolTip content={str('NavigationBackButtonToolTip')}>
 			{#snippet children(props)}
 				<button
 					{...props}
 					type="button"
 					class="back-button title-button"
-					aria-label="Back"
+					aria-label={str('NavigationBackButtonName')}
 					disabled={!backButtonEnabled}
 					onclick={withTriggerClick(props, handleBack)}
 				></button>
@@ -151,13 +154,13 @@
 	{/if}
 
 	{#if paneToggleButtonVisible}
-		<ToolTip content="Toggle Navigation">
+		<ToolTip content={str('NavigationButtonToggleName')}>
 			{#snippet children(props)}
 				<button
 					{...props}
 					type="button"
 					class="pane-toggle-button title-button"
-					aria-label="Toggle Navigation"
+					aria-label={str('NavigationButtonToggleName')}
 					onclick={withTriggerClick(props, handlePaneToggle)}
 				></button>
 			{/snippet}

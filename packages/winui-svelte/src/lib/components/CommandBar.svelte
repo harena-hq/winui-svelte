@@ -40,6 +40,7 @@
 </script>
 
 <script lang="ts">
+	import { useStrings } from '../strings';
 	import { Popover } from 'bits-ui';
 	import CommandBarOverflowPresenter from './CommandBarOverflowPresenter.svelte';
 	import { setCommandBarState } from '../internal/command-bar';
@@ -60,6 +61,8 @@
 		ref = $bindable(null),
 		...rest
 	}: CommandBarProps = $props();
+
+	const str = useStrings();
 
 	// A bar whose labels are underneath shows them only when it is open, so its closed commands
 	// are Compact; a bar whose labels are on the right or collapsed says so through labelPosition
@@ -119,7 +122,7 @@
 				type="button"
 				class="more"
 				{disabled}
-				aria-label="See more"
+				aria-label={str('UIA_MORE_BUTTON')}
 				onclick={() => setOpen(!open)}
 			>
 				<span class="more-fill">

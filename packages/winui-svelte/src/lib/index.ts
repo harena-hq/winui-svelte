@@ -88,6 +88,10 @@ export type { TitleBarProps } from './components/TitleBar.svelte';
 export { Symbol } from './symbol';
 export type { SymbolName } from './symbol';
 
+// Not a component: the text the components write for themselves. ADR 0020.
+export { defaultStrings, provideStrings } from './strings';
+export type { StringKey, Strings } from './strings';
+
 // Not a component: the animation `ScrollView`'s `onScrollAnimationStarting` hands out and takes
 // back, which a handler builds its own from.
 export { ScrollAnimation } from './scroll-animation';

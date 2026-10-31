@@ -78,6 +78,7 @@
 </script>
 
 <script lang="ts">
+	import { useStrings } from '../strings';
 	import {
 		getNavigationViewPane,
 		getNavigationViewPlacement,
@@ -104,6 +105,8 @@
 		'aria-describedby': ariaDescribedby,
 		...rest
 	}: NavigationViewItemProps = $props();
+
+	const str = useStrings();
 
 	const name = $derived(nameSource({ 'aria-label': ariaLabel, 'aria-labelledby': ariaLabelledby }));
 
@@ -437,7 +440,9 @@
 					aria-expanded={hasChildren ? open : undefined}
 					aria-level={level}
 					aria-label={name.label ??
-						(name.labelledby || children ? undefined : content || 'NavigationViewItem')}
+						(name.labelledby || children
+							? undefined
+							: content || str('NavigationViewItemDefaultControlName'))}
 					aria-labelledby={name.label ? undefined : name.labelledby}
 					aria-describedby={describedBy(props)}
 					tabindex={tabStop ? 0 : -1}
@@ -469,7 +474,11 @@
 						<button
 							type="button"
 							class="expand-chevron"
-							aria-label={open ? 'Collapse' : 'Expand'}
+							aria-label={str(
+								open
+									? 'WinUISvelteNavigationViewItemCollapseName'
+									: 'WinUISvelteNavigationViewItemExpandName'
+							)}
 							tabindex="-1"
 							onclick={toggle}
 						></button>

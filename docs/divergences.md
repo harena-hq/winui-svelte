@@ -2333,8 +2333,8 @@ changes`.
   (`NavigationView.cpp:657-661`); the toggle's is created in
   `SetPaneToggleButtonAutomationName` (`:1900-1919`) with the same text as its automation
   name, which changes with `IsPaneOpen`.
-- **We do**: give each an `aria-label` — "Back", "Close", and "Open navigation" or "Close
-  navigation" — and no tooltip.
+- **We do**: give each an `aria-label` — "Back", "Close", and "Open Navigation" or "Close
+  Navigation" — and no tooltip.
 - **Why accepted**: the toggle had none before the back button existed, and the back
   button was given the toggle's treatment rather than a second one, and the close button
   the back button's. Wrapping all three in this library's `ToolTip` is a change to how the

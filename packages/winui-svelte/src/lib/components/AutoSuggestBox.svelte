@@ -53,6 +53,7 @@
 </script>
 
 <script lang="ts">
+	import { useStrings } from '../strings';
 	import { Combobox } from 'bits-ui';
 
 	let {
@@ -73,6 +74,8 @@
 		ref = $bindable(null),
 		...rest
 	}: AutoSuggestBoxProps = $props();
+
+	const str = useStrings();
 
 	// The suggestion list's container is as wide as the control, which upstream gets by
 	// writing the control's `ActualWidth` onto `SuggestionsContainer` from code, not from the
@@ -244,7 +247,7 @@
 					type="button"
 					class="delete"
 					tabindex="-1"
-					aria-label="Clear text"
+					aria-label={str('UIA_TEXTBOX_DELETE')}
 					onmousedown={(event) => event.preventDefault()}
 					onclick={clear}
 				></button>
@@ -259,7 +262,7 @@
 					type="button"
 					class="query"
 					tabindex="-1"
-					aria-label="Submit query"
+					aria-label={str('UIA_AUTOSUGGESTBOX_QUERY')}
 					onmousedown={(event) => event.preventDefault()}
 					onclick={submit}>{String.fromCodePoint(parseInt(queryIcon, 16))}</button
 				>

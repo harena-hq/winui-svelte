@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { useStrings } from '../strings';
 	import type { NavigationViewItemData } from './NavigationView.svelte';
 	import ToolTip from './ToolTip.svelte';
 
@@ -19,6 +20,8 @@
 	}
 
 	let { item, selected, onItemInvoked, placement, tooltip, overflowed }: Props = $props();
+
+	const str = useStrings();
 	const isSelected = $derived(selected === item.id);
 	const hasIcon = $derived(Boolean(item.glyph));
 	const hasContent = $derived(Boolean(item.content));
@@ -61,7 +64,9 @@
 				role="treeitem"
 				class="item"
 				aria-selected={isSelected}
-				aria-label={!hasContent ? tooltip || 'NavigationViewItem' : undefined}
+				aria-label={!hasContent
+					? tooltip || str('NavigationViewItemDefaultControlName')
+					: undefined}
 				aria-level={1}
 				tabindex="0"
 				data-selected={isSelected}

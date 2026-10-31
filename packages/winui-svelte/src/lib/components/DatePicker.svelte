@@ -40,6 +40,7 @@
 </script>
 
 <script lang="ts">
+	import { useStrings } from '../strings';
 	import {
 		fromDate,
 		getLocalTimeZone,
@@ -74,6 +75,8 @@
 		ref = $bindable(null),
 		...rest
 	}: DatePickerProps = $props();
+
+	const str = useStrings();
 
 	const locale = $derived(localeOf(language));
 	const order = $derived(fieldOrder(locale));
@@ -215,7 +218,15 @@
 	}
 
 	function closedText(field: Field): string {
-		if (!date) return field;
+		if (!date) {
+			return str(
+				field === 'month'
+					? 'TEXT_DATEPICKER_MONTH_PLACEHOLDER'
+					: field === 'day'
+						? 'TEXT_DATEPICKER_DAY_PLACEHOLDER'
+						: 'TEXT_DATEPICKER_YEAR_PLACEHOLDER'
+			);
+		}
 		return formatDate(
 			field === 'month' ? monthFormat : field === 'day' ? dayFormat : yearFormat,
 			date,
@@ -304,18 +315,30 @@
 												onSelectedIndexChange={(index) => setPending(field, index)}
 												shouldLoop={field !== 'year'}
 												itemHeight={40}
-												label={field}
+												label={str(
+													field === 'month'
+														? 'UIA_AP_DATEPICKER_MONTHNAME'
+														: field === 'day'
+															? 'UIA_AP_DATEPICKER_DAYNAME'
+															: 'UIA_AP_DATEPICKER_YEARNAME'
+												)}
 											/>
 										</div>
 									{/each}
 								</div>
 								<div class="accept-dismiss">
 									<i class="separator" aria-hidden="true"></i>
-									<button class="accept" type="button" aria-label="Accept" onclick={accept}
-										>&#xE8FB;</button
+									<button
+										class="accept"
+										type="button"
+										aria-label={str('UIA_DIALOG_ACCEPT')}
+										onclick={accept}>&#xE8FB;</button
 									>
-									<button class="dismiss" type="button" aria-label="Dismiss" onclick={dismiss}
-										>&#xE711;</button
+									<button
+										class="dismiss"
+										type="button"
+										aria-label={str('UIA_DIALOG_DISMISS')}
+										onclick={dismiss}>&#xE711;</button
 									>
 								</div>
 							</div>
