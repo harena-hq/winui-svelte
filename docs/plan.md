@@ -4299,10 +4299,20 @@ two, and the last of them is the owner's alone. D55.
      a literal of its own. Below 1.0, because `index.ts` is a promise ADR 0017 makes and the owner's
      pass below may yet change a prop it holds, and under 1.0 a minor bump is where npm's caret
      range lets that happen: `^0.1.0` stops short of `0.2.0`.
-   - **The peer floors are the versions tested**: `svelte` `^5.57.0` and
+   - **The peer floors are the versions tested**: `svelte` `^5.37.0` and
      `@internationalized/date` `^3.12.3`, the ones `scripts/smoke/consumer/package.json` pins.
      The floors they replace, `^5.33.0` and `^3.8.1`, were never installed by anything. The
-     other three peers' floors already are the pinned versions.
+     other three peers' floors already are the pinned versions. **`svelte` was `^5.57.0` until
+     2026-10-31**, the version the repository happened to develop on, which a consumer's trial on
+     5.56.10 ran into. `^5.37.0` is measured: the smoke and all 1176 tests pass on it, with the
+     baselines. 5.36.0 fails two of ColorPicker's, 5.34.0 three of CalendarView's and one of
+     ColorPicker's, and on 5.33.0, the floor bits-ui declares, its server output runs a
+     class field's `$derived.by` before the constructor, so a prerender throws. Running the
+     Gallery below 5.56.10 took two local changes the repository does not keep: no function form
+     of `compilerOptions.runes`, and no `x?: T` parameter in its pages, which those compilers leave
+     a `?` of in their output. A package consumer meets neither in this package, as `dist` carries
+     no TypeScript. Vite 8's `@sveltejs/vite-plugin-svelte` 7 declares `svelte` `^5.46.4`, which is
+     a consumer's toolchain and not this package's floor.
    - **`@zag-js/svelte` and `@zag-js/number-input` are optional peers**, through
      `peerDependenciesMeta`: only NumberBox imports them, and it is in `preview`. The package
      README's install line leaves them out and its `preview` section names them, which is what
