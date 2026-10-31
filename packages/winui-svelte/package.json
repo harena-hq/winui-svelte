@@ -1,6 +1,6 @@
 {
 	"name": "winui-svelte",
-	"version": "0.1.0-rc.1",
+	"version": "0.1.0-rc.2",
 	"description": "WinUI 3 controls for Svelte 5",
 	"license": "MIT",
 	"type": "module",
