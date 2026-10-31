@@ -42,8 +42,8 @@
 		margin?: number | string;
 		/** Inlines, as the default snippet. */
 		children?: Snippet;
-		class?: string;
-		style?: string;
+		class?: import('svelte/elements').ClassValue | null;
+		style?: string | null;
 		/**
 		 * HTML's direction attribute, passed through to the root, and overridden by
 		 * `textAlignment="detectFromContent"`. ADR 0009, the same exception `TextBlock` takes.

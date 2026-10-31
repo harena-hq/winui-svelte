@@ -56,7 +56,7 @@ export interface InlineProps {
 	characterSpacing?: number;
 	/** Inlines, as the default snippet. */
 	children?: Snippet;
-	class?: string;
-	style?: string;
+	class?: import('svelte/elements').ClassValue | null;
+	style?: string | null;
 	[key: string]: unknown;
 }

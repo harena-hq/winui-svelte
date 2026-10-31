@@ -3,7 +3,7 @@
 
 	export interface ToggleButtonProps {
 		/** IsChecked's boolean half, under HTML's polarity — ADR 0009. A checked button is never also indeterminate. */
-		checked?: boolean;
+		checked?: boolean | null;
 		/** The change callback ADR 0009 pairs with `checked`. */
 		onCheckedChange?: (checked: boolean) => void;
 		/** IsChecked's null, spelled the way ARIA spells it: `aria-pressed="mixed"`. */
@@ -13,11 +13,11 @@
 		/** IsThreeState. True makes a click cycle through the indeterminate state. */
 		threeState?: boolean;
 		/** IsEnabled, inverted to the HTML attribute — ADR 0009. */
-		disabled?: boolean;
+		disabled?: boolean | null;
 		/** Content — the button's label, as the default snippet. */
 		children?: Snippet;
-		class?: string;
-		style?: string;
+		class?: import('svelte/elements').ClassValue | null;
+		style?: string | null;
 		ref?: HTMLButtonElement | null;
 		[key: string]: unknown;
 	}
@@ -41,7 +41,7 @@
 	const state = $derived(indeterminate ? 'indeterminate' : checked ? 'checked' : 'unchecked');
 
 	function set(nextChecked: boolean, nextIndeterminate: boolean) {
-		if (checked !== nextChecked) {
+		if ((checked ?? false) !== nextChecked) {
 			checked = nextChecked;
 			onCheckedChange?.(nextChecked);
 		}
@@ -67,7 +67,7 @@
 	class={['root', 'winui-BodyTextBlockStyle', className]}
 	{style}
 	{disabled}
-	aria-pressed={indeterminate ? 'mixed' : checked}
+	aria-pressed={indeterminate ? 'mixed' : (checked ?? false)}
 	data-state={state}
 	{...rest}
 	onclick={click}

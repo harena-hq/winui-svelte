@@ -20,8 +20,8 @@
 		 * from the Windows Symbol enumeration and neither pin confirms it.
 		 */
 		glyph?: string;
-		class?: string;
-		style?: string;
+		class?: import('svelte/elements').ClassValue | null;
+		style?: string | null;
 		ref?: HTMLSpanElement | null;
 		[key: string]: unknown;
 	}

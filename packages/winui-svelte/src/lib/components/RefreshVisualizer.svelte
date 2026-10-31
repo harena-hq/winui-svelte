@@ -19,8 +19,8 @@
 		pullDirection?: 'leftToRight' | 'topToBottom' | 'rightToLeft' | 'bottomToTop';
 		/** RefreshVisualizer.RefreshRequested. */
 		onRefreshRequested?: (() => void) | undefined;
-		class?: string;
-		style?: string;
+		class?: import('svelte/elements').ClassValue | null;
+		style?: string | null;
 		/** The RefreshVisualizer root element. */
 		ref?: HTMLDivElement | null;
 		[key: string]: unknown;

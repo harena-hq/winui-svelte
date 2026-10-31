@@ -17,19 +17,19 @@
 		/** SuggestionChosen. */
 		onSuggestionChosen?: (suggestion: string) => void;
 		/** PlaceholderText. */
-		placeholder?: string;
+		placeholder?: string | null;
 		/** QueryIcon, as the glyph's code point — `'E721'` is Search. The query button is
 		 *  rendered only when this is given, which is what the template's `QueryIcon`
 		 *  binding amounts to. */
 		queryIcon?: string;
 		/** IsEnabled, inverted — ADR 0009. */
-		disabled?: boolean;
+		disabled?: boolean | null;
 		/** Header. A string or a snippet. */
 		header?: Snippet | string;
 		/** Description. A string or a snippet. */
 		description?: Snippet | string;
-		class?: string;
-		style?: string;
+		class?: import('svelte/elements').ClassValue | null;
+		style?: string | null;
 		/** The `<input>`, not the root — ADR 0009's `ref` points at the interactive
 		 *  element. */
 		ref?: HTMLInputElement | null;
@@ -199,7 +199,7 @@
 			}
 		}
 		{items}
-		{disabled}
+		disabled={disabled ?? false}
 	>
 		<div class="box" bind:this={boxEl} bind:offsetWidth={boxWidth}>
 			<Combobox.Input {placeholder}>

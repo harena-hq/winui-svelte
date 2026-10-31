@@ -3,7 +3,7 @@
 
 	export interface RadioButtonProps {
 		/** IsChecked, under HTML's name for it — ADR 0009. */
-		checked?: boolean;
+		checked?: boolean | null;
 		/** No WinUI member: ADR 0009 pairs every `$bindable` prop with its own change
 		 *  callback. Upstream signals this as the `Checked` and `Unchecked` events. */
 		onCheckedChange?: (checked: boolean) => void;
@@ -17,7 +17,7 @@
 		/** No WinUI member: the change callback ADR 0009 pairs with `group`. */
 		onGroupChange?: (group: string) => void;
 		/** IsEnabled, inverted to the HTML attribute — ADR 0009. */
-		disabled?: boolean;
+		disabled?: boolean | null;
 		// Four HTML form attributes with no WinUI member follow, and a plain comment says so
 		// rather than a `/** */` one: a doc comment here would attach itself to `name` below.
 		//
@@ -27,17 +27,17 @@
 		// radios one group in the browser, and without it a group is a set of independent
 		// radios that all look selected.
 		/** No WinUI member: the form field name, and the browser's own grouping key. */
-		name?: string;
+		name?: string | null;
 		/** No WinUI member: the value submitted when this radio is the selected one. */
 		value?: string;
 		/** No WinUI member: HTML form validation. */
-		required?: boolean;
+		required?: boolean | null;
 		/** No WinUI member: the id of the form to associate with. */
-		form?: string;
+		form?: string | null;
 		/** Content — the label beside the ring, as the default snippet. */
 		children?: Snippet;
-		class?: string;
-		style?: string;
+		class?: import('svelte/elements').ClassValue | null;
+		style?: string | null;
 		/**
 		 * The `<input type="radio">`, not the `<label>` root — ADR 0009's `ref` points at the
 		 * interactive element, which for Button happens to be the root and here does not.
@@ -102,11 +102,11 @@
 	// parent that clears `group` leaves it unselected before and after. So the handler writes
 	// it here, inside the listener, where the activation keeps it.
 	function onclick(event: MouseEvent & { currentTarget: HTMLInputElement }) {
-		const state = () => (group === undefined ? checked : group);
+		const state = () => (group === undefined ? (checked ?? false) : group);
 		const before = state();
 		choose();
 		if (state() === before) event.preventDefault();
-		else event.currentTarget.checked = selected;
+		else event.currentTarget.checked = selected ?? false;
 	}
 </script>
 

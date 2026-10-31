@@ -35,14 +35,14 @@
 		/** KeyboardAcceleratorTextOverride — the accelerator text drawn at the row's right edge. */
 		keyboardAcceleratorTextOverride?: string;
 		/** IsEnabled, inverted to the HTML attribute — ADR 0009. */
-		disabled?: boolean;
+		disabled?: boolean | null;
 		/** Content — drawn in the icon slot, and only when neither `icon` nor `glyph` is given. The
 		 *  template's one `ContentPresenter` (AppBarButton_themeresources.xaml:370) is bound to
 		 *  `Icon`; the Gallery's `PathIcon` example (AppBarButtonPage.xaml:76) sets `Content`
 		 *  instead, so the slot has to accept both. */
 		children?: Snippet;
-		class?: string;
-		style?: string;
+		class?: import('svelte/elements').ClassValue | null;
+		style?: string | null;
 		ref?: HTMLButtonElement | null;
 		[key: string]: unknown;
 	}

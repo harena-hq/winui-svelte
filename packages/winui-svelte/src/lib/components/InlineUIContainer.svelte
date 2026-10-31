@@ -3,8 +3,8 @@
 	export interface InlineUIContainerProps {
 		/** Child is one UIElement; it carries its own formatting through the DOM cascade. */
 		children?: Snippet;
-		class?: string;
-		style?: string;
+		class?: import('svelte/elements').ClassValue | null;
+		style?: string | null;
 		ref?: HTMLSpanElement | null;
 		[key: string]: unknown;
 	}

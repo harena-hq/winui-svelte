@@ -37,8 +37,8 @@
 		onSecondaryButtonClick?: () => void;
 		/** CloseButtonClick. `ContentDialogResult.None` is this one. */
 		onCloseButtonClick?: () => void;
-		class?: string;
-		style?: string;
+		class?: import('svelte/elements').ClassValue | null;
+		style?: string | null;
 		/** ADR 0009's `ref` points at the interactive element: here, the card. */
 		ref?: HTMLElement | null;
 		[key: string]: unknown;

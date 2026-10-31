@@ -3,7 +3,7 @@
 
 	export interface ToggleSplitButtonProps extends SplitButtonProps {
 		/** IsChecked — ADR 0009's boolean, and the toggle the primary half performs. */
-		checked?: boolean;
+		checked?: boolean | null;
 		/** The change callback ADR 0009 pairs with `checked`. */
 		onCheckedChange?: (checked: boolean) => void;
 	}
@@ -28,4 +28,4 @@
 	}
 </script>
 
-<SplitButton bind:ref {checked} toggle onclick={click} bind:open {...rest} />
+<SplitButton bind:ref checked={checked ?? false} toggle onclick={click} bind:open {...rest} />

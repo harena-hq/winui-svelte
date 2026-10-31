@@ -9,12 +9,12 @@
 		 * `<input type="checkbox" role="switch">`, where `checked` is already live, and two
 		 * names for one state is the thing that rule exists to prevent.
 		 */
-		checked?: boolean;
+		checked?: boolean | null;
 		/** No WinUI member: ADR 0009 pairs every `$bindable` prop with its own change
 		 *  callback. Upstream signals this as the `Toggled` event. */
 		onCheckedChange?: (checked: boolean) => void;
 		/** IsEnabled, inverted to the HTML attribute — ADR 0009. */
-		disabled?: boolean;
+		disabled?: boolean | null;
 		/** Header. Absent by default, as upstream's presenter is `Visibility="Collapsed"`
 		 *  until one is set. */
 		header?: Snippet | string;
@@ -41,13 +41,13 @@
 		// The rest props land on the root element, which for this control is the outer `<div>`,
 		// so these would never reach the `<input>` they belong to.
 		/** No WinUI member: the form field name. */
-		name?: string;
+		name?: string | null;
 		/** No WinUI member: the value submitted when the switch is on. */
 		value?: string;
 		/** No WinUI member: the id of the form to associate with. */
-		form?: string;
-		class?: string;
-		style?: string;
+		form?: string | null;
+		class?: import('svelte/elements').ClassValue | null;
+		style?: string | null;
 		/**
 		 * The `<input type="checkbox">`, not the root `<div>` — ADR 0009's `ref` points at the
 		 * interactive element, which for Button happens to be the root and here does not.

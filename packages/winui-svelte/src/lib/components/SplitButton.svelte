@@ -4,7 +4,7 @@
 
 	export interface SplitButtonProps {
 		/** IsEnabled, inverted to the HTML attribute — ADR 0009. Disables both halves. */
-		disabled?: boolean;
+		disabled?: boolean | null;
 		/** Content — the primary half's label, as the default snippet. */
 		children?: Snippet;
 		/**
@@ -28,8 +28,8 @@
 		onOpenChange?: (open: boolean) => void;
 		/** `MenuFlyoutItem.Click`, reported by id — passed through to `MenuFlyout`. */
 		onItemInvoked?: (id: string) => void;
-		class?: string;
-		style?: string;
+		class?: import('svelte/elements').ClassValue | null;
+		style?: string | null;
 		/** The root element. */
 		ref?: HTMLDivElement | null;
 		[key: string]: unknown;

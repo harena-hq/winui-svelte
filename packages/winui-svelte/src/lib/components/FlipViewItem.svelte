@@ -4,8 +4,8 @@
 	export interface FlipViewItemProps {
 		/** FlipViewItem.Content, the content property. */
 		children?: Snippet;
-		class?: string;
-		style?: string;
+		class?: import('svelte/elements').ClassValue | null;
+		style?: string | null;
 		ref?: HTMLElement | null;
 		[key: string]: unknown;
 	}

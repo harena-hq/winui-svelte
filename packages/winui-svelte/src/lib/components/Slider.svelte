@@ -22,13 +22,13 @@
 		/** TickPlacement. Where the ticks are drawn; Slider's default is Inline. */
 		tickPlacement?: 'none' | 'topLeft' | 'bottomRight' | 'outside' | 'inline';
 		/** IsEnabled, inverted to HTML's attribute — ADR 0009. */
-		disabled?: boolean;
+		disabled?: boolean | null;
 		/** IsThumbToolTipEnabled. */
 		thumbToolTipEnabled?: boolean;
 		/** Header. A string or a snippet; nothing is rendered when it is not given. */
 		header?: Snippet | string;
-		class?: string;
-		style?: string;
+		class?: import('svelte/elements').ClassValue | null;
+		style?: string | null;
 		/**
 		 * The thumb, not the root — ADR 0009's `ref` points at the interactive element.
 		 * The root is the outer `<div>`; the thumb is the one bits-ui positions over the
@@ -197,7 +197,7 @@
 		{min}
 		{max}
 		{step}
-		{disabled}
+		disabled={disabled ?? false}
 		{orientation}
 		dir={directionReversed ? 'rtl' : 'ltr'}
 	>

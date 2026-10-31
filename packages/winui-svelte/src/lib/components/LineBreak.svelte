@@ -1,7 +1,7 @@
 <script lang="ts" module>
 	export interface LineBreakProps {
-		class?: string;
-		style?: string;
+		class?: import('svelte/elements').ClassValue | null;
+		style?: string | null;
 		ref?: HTMLBRElement | null;
 		[key: string]: unknown;
 	}

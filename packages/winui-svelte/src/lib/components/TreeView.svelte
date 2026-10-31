@@ -29,8 +29,8 @@
 		onExpandedKeysChange?: (keys: (string | number)[]) => void;
 		/** ItemInvoked. */
 		onItemInvoked?: (item: T, depth: number) => void;
-		class?: string;
-		style?: string;
+		class?: import('svelte/elements').ClassValue | null;
+		style?: string | null;
 		ref?: HTMLElement | null;
 		[key: string]: unknown;
 	}

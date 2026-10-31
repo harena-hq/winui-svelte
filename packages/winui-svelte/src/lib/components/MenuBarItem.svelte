@@ -8,7 +8,7 @@
 		 * because upstream's menu is a `MenuFlyout` too (`MenuBarItemFlyout.cpp`). */
 		items?: MenuFlyoutEntry[];
 		/** IsEnabled, inverted to the HTML attribute — ADR 0009. */
-		disabled?: boolean;
+		disabled?: boolean | null;
 		/** No WinUI member: the identity this item's menu is known by inside its `MenuBar`.
 		 * Defaults to a generated id, so a consumer never has to supply one. */
 		value?: string;
@@ -20,8 +20,8 @@
 		onSelectedChange?: (selected: Record<string, string>) => void;
 		/** `MenuFlyoutItem.Click`, reported by id. */
 		onItemInvoked?: (id: string) => void;
-		class?: string;
-		style?: string;
+		class?: import('svelte/elements').ClassValue | null;
+		style?: string | null;
 		/** ADR 0009's `ref` points at the interactive element: here, the trigger button. */
 		ref?: HTMLButtonElement | null;
 		[key: string]: unknown;
@@ -52,7 +52,7 @@
 </script>
 
 <Menubar.Menu {value}>
-	<Menubar.Trigger {disabled}>
+	<Menubar.Trigger disabled={disabled ?? false}>
 		{#snippet child({ props })}
 			<!-- `{...props}` first: they are the primitive's own handlers, and an attribute of the
 			     same name set after the spread replaces one rather than adding to it. That is the

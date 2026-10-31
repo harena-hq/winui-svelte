@@ -8,11 +8,11 @@
  */
 export interface AccessibleNameProps {
 	/** AutomationProperties.Name. Names the control, over its header. */
-	'aria-label'?: string;
+	'aria-label'?: string | null;
 	/** AutomationProperties.LabeledBy, as the ids of the labelling elements. */
-	'aria-labelledby'?: string;
+	'aria-labelledby'?: string | null;
 	/** Ids of the elements describing the control. */
-	'aria-describedby'?: string;
+	'aria-describedby'?: string | null;
 }
 
 /**

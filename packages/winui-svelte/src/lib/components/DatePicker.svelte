@@ -25,11 +25,11 @@
 		/** DatePicker.MaxYear. */
 		maxYear?: Date;
 		/** UIElement.IsEnabled. */
-		disabled?: boolean;
+		disabled?: boolean | null;
 		/** FrameworkElement.Language. */
 		language?: string | undefined;
-		class?: string;
-		style?: string;
+		class?: import('svelte/elements').ClassValue | null;
+		style?: string | null;
 		/** The DatePicker root element. */
 		ref?: HTMLDivElement | null;
 		[key: string]: unknown;

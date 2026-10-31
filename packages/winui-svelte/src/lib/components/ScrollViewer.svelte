@@ -29,9 +29,9 @@
 		/** No WinUI member: ADR 0009 pairs bindable state with a change callback. */
 		onZoomFactorChange?: ((factor: number) => void) | undefined;
 		/** UIElement.IsEnabled. */
-		disabled?: boolean;
-		class?: string;
-		style?: string;
+		disabled?: boolean | null;
+		class?: import('svelte/elements').ClassValue | null;
+		style?: string | null;
 		/** The ScrollViewer root element. */
 		ref?: HTMLDivElement | null;
 		[key: string]: unknown;

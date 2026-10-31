@@ -194,8 +194,8 @@
 		onSelectedChange?: (selected: Record<string, string>) => void;
 		/** `MenuFlyoutItem.Click`, reported by id. */
 		onItemInvoked?: (id: string) => void;
-		class?: string;
-		style?: string;
+		class?: import('svelte/elements').ClassValue | null;
+		style?: string | null;
 		/** ADR 0009's `ref` points at the interactive element: here, the presenter. */
 		ref?: HTMLElement | null;
 		[key: string]: unknown;

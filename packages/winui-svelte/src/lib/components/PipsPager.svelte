@@ -17,8 +17,8 @@
 		nextButtonVisibility?: 'visible' | 'visibleOnPointerOver' | 'collapsed';
 		/** PipsPager.WrapMode (PipsPagerWrapMode). */
 		wrapMode?: 'none' | 'wrap';
-		class?: string;
-		style?: string;
+		class?: import('svelte/elements').ClassValue | null;
+		style?: string | null;
 		/** The PipsPager root element. */
 		ref?: HTMLDivElement | null;
 		[key: string]: unknown;

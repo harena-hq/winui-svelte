@@ -31,11 +31,11 @@
 		 */
 		multiSelectMode?: 'auto' | 'single' | 'extended' | 'multiple';
 		/** IsEnabled on the container, inverted to the HTML sense — ADR 0009. */
-		disabled?: boolean;
+		disabled?: boolean | null;
 		/** ItemInvoked, without its args. Fires on a click and on Enter or Space. */
 		onItemInvoked?: () => void;
-		class?: string;
-		style?: string;
+		class?: import('svelte/elements').ClassValue | null;
+		style?: string | null;
 		ref?: HTMLElement | null;
 		[key: string]: unknown;
 	}

@@ -3,15 +3,15 @@
 
 	export interface DropDownButtonProps {
 		/** IsEnabled, inverted to the HTML attribute — ADR 0009. */
-		disabled?: boolean;
+		disabled?: boolean | null;
 		// The upstream `Flyout` property and `IsFlyoutOpen` state are deliberately absent.
 		// `MenuFlyout` and `Flyout` own their open state and pass the trigger props through the
 		// rest spread, so a DropDownButton is used as that trigger rather than owning a flyout.
 		// `aria-expanded` and the open/close handlers therefore arrive through `{...rest}`.
 		/** Content — the button's label, as the default snippet. */
 		children?: Snippet;
-		class?: string;
-		style?: string;
+		class?: import('svelte/elements').ClassValue | null;
+		style?: string | null;
 		ref?: HTMLButtonElement | null;
 		[key: string]: unknown;
 	}

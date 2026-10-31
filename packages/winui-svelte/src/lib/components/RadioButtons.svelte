@@ -7,11 +7,11 @@
 		/** MaxColumns. How many columns the items fill, column-major; defaults to 1 (RadioButtons.idl:24). */
 		maxColumns?: number;
 		/** IsEnabled, inverted to the HTML attribute — ADR 0009. Dims the header; the children carry their own. */
-		disabled?: boolean;
+		disabled?: boolean | null;
 		/** Items — the `RadioButton`s the caller writes, as the default snippet. Give them one `name`. */
 		children?: Snippet;
-		class?: string;
-		style?: string;
+		class?: import('svelte/elements').ClassValue | null;
+		style?: string | null;
 		ref?: HTMLDivElement | null;
 		[key: string]: unknown;
 	}

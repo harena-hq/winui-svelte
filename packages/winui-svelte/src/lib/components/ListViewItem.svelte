@@ -17,11 +17,11 @@
 		/** ListViewItem.IsSelected. The item never sets it; its owner does. */
 		selected?: boolean;
 		/** IsEnabled, inverted to the HTML sense — ADR 0009. */
-		disabled?: boolean;
+		disabled?: boolean | null;
 		/** No WinUI event of its own: the item reports a click or an Enter or Space. */
 		onItemInvoked?: () => void;
-		class?: string;
-		style?: string;
+		class?: import('svelte/elements').ClassValue | null;
+		style?: string | null;
 		ref?: HTMLElement | null;
 		[key: string]: unknown;
 	}

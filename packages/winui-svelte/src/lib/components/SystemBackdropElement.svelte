@@ -5,8 +5,8 @@
 		systemBackdrop?: 'mica' | 'micaAlt' | 'acrylic';
 		/** CornerRadius. XAML's own grammar — a number, or `"8"`, `"4,8,12,16"`. */
 		cornerRadius?: number | string;
-		class?: string;
-		style?: string;
+		class?: import('svelte/elements').ClassValue | null;
+		style?: string | null;
 		ref?: HTMLDivElement | null;
 		[key: string]: unknown;
 	}

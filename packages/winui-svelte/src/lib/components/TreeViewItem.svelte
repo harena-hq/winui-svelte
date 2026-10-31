@@ -13,13 +13,13 @@
 		/** TreeViewItem.IsSelected. */
 		selected?: boolean;
 		/** IsEnabled, inverted — ADR 0009. */
-		disabled?: boolean;
+		disabled?: boolean | null;
 		/** Raised by a click on the chevron alone. */
 		onExpandToggle?: () => void;
 		/** Raised by a click or an Enter or Space anywhere else on the row. */
 		onItemInvoked?: () => void;
-		class?: string;
-		style?: string;
+		class?: import('svelte/elements').ClassValue | null;
+		style?: string | null;
 		ref?: HTMLElement | null;
 		[key: string]: unknown;
 	}

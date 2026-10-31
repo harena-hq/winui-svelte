@@ -46,8 +46,8 @@
 		 * replaced by the flyout trigger's. A `role` or `tabindex` here is outside the pane's one tab
 		 * stop, so neither is for a row that wants to stay in it.
 		 */
-		class?: string;
-		style?: string;
+		class?: import('svelte/elements').ClassValue | null;
+		style?: string | null;
 		/** The row's focusable `treeitem`, not the `<li>` — ADR 0009's `ref`. */
 		ref?: HTMLElement | null;
 		[key: string]: unknown;

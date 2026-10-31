@@ -6,11 +6,11 @@
 		navigateUri?: string;
 		/** IsEnabled, inverted to the HTML attribute — ADR 0009. An `<a>` has no `disabled`,
 		 *  so a disabled navigating button drops its `href` and takes `aria-disabled`. */
-		disabled?: boolean;
+		disabled?: boolean | null;
 		/** Content — the label, as the default snippet. */
 		children?: Snippet;
-		class?: string;
-		style?: string;
+		class?: import('svelte/elements').ClassValue | null;
+		style?: string | null;
 		/** The interactive root, whose element type depends on `navigateUri`. */
 		ref?: HTMLElement | null;
 		[key: string]: unknown;

@@ -6,8 +6,8 @@
 		stretch?: 'none' | 'fill' | 'uniform' | 'uniformToFill';
 		/** NineGrid. XAML's Thickness grammar — a number, or `"3"`, `"3,3"`, `"30,20,30,20"`. */
 		nineGrid?: number | string;
-		class?: string;
-		style?: string;
+		class?: import('svelte/elements').ClassValue | null;
+		style?: string | null;
 		ref?: HTMLElement | null;
 		[key: string]: unknown;
 	}

@@ -18,8 +18,8 @@
 		/** No WinUI member: this supplies props to the internally-created controls, where WinUI
 		 *  instead accepts an author-created TransportControls instance. */
 		transportControlsProps?: Partial<MediaTransportControlsProps>;
-		class?: string;
-		style?: string;
+		class?: import('svelte/elements').ClassValue | null;
+		style?: string | null;
 		ref?: HTMLElement | null;
 		[key: string]: unknown;
 	}

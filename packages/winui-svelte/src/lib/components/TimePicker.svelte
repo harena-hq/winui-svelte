@@ -13,11 +13,11 @@
 		/** TimePicker.MinuteIncrement. */
 		minuteIncrement?: number;
 		/** UIElement.IsEnabled. */
-		disabled?: boolean;
+		disabled?: boolean | null;
 		/** FrameworkElement.Language. */
 		language?: string | undefined;
-		class?: string;
-		style?: string;
+		class?: import('svelte/elements').ClassValue | null;
+		style?: string | null;
 		/** The TimePicker root element. */
 		ref?: HTMLDivElement | null;
 		[key: string]: unknown;

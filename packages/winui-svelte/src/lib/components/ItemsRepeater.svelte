@@ -94,8 +94,8 @@
 		key?: (item: T, index: number) => string | number;
 		/** ItemsRepeater.Layout. An omitted layout is the default `StackLayout`. */
 		layout?: ItemsRepeaterLayout;
-		class?: string;
-		style?: string;
+		class?: import('svelte/elements').ClassValue | null;
+		style?: string | null;
 		ref?: HTMLElement | null;
 		[key: string]: unknown;
 	}

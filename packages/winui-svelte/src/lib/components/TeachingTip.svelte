@@ -75,8 +75,8 @@
 		onOpenChange?: (open: boolean) => void;
 		/** CloseButtonClick, raised by the header close button. */
 		onCloseButtonClick?: () => void;
-		class?: string;
-		style?: string;
+		class?: import('svelte/elements').ClassValue | null;
+		style?: string | null;
 		ref?: HTMLElement | null;
 		[key: string]: unknown;
 	}

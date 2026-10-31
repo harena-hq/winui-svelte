@@ -42,8 +42,8 @@
 		components?: ColorSpectrumComponents;
 		/** ColorChanged, represented as the current derived CSS color. */
 		onColorChange?: (color: string) => void;
-		class?: string;
-		style?: string;
+		class?: import('svelte/elements').ClassValue | null;
+		style?: string | null;
 		/** The interactive input target, following ADR 0009. */ ref?: HTMLDivElement | null;
 		[key: string]: unknown;
 	}

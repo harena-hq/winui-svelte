@@ -7,7 +7,7 @@
 		 * whose null is the indeterminate state; HTML splits the two, and `checked` here is
 		 * the boolean half. A checked box is never also indeterminate.
 		 */
-		checked?: boolean;
+		checked?: boolean | null;
 		/** No WinUI member: ADR 0009 pairs every `$bindable` prop with its own change
 		 *  callback. Upstream signals this as the `Checked` and `Unchecked` events. */
 		onCheckedChange?: (checked: boolean) => void;
@@ -15,14 +15,14 @@
 		 * IsChecked's null, under HTML's name for it — `input.indeterminate`. Setting it
 		 * makes the box show the dash regardless of `checked`.
 		 */
-		indeterminate?: boolean;
+		indeterminate?: boolean | null;
 		/** No WinUI member: the change callback ADR 0009 pairs with `indeterminate`.
 		 *  Upstream signals this as the `Indeterminate` event. */
 		onIndeterminateChange?: (indeterminate: boolean) => void;
 		/** IsThreeState. True makes a click cycle through the indeterminate state. */
 		threeState?: boolean;
 		/** IsEnabled, inverted to the HTML attribute — ADR 0009. */
-		disabled?: boolean;
+		disabled?: boolean | null;
 		// Four HTML form attributes with no WinUI member follow, and a plain comment says so
 		// rather than a `/** */` one: a doc comment here would attach itself to `name` below.
 		//
@@ -31,17 +31,17 @@
 		// never reach the control they belong to. They are declared instead, which is why
 		// ADR 0009 keeps the HTML attribute vocabulary as a closed reserved set.
 		/** No WinUI member: the form field name. */
-		name?: string;
+		name?: string | null;
 		/** No WinUI member: the value submitted when the box is checked. */
 		value?: string;
 		/** No WinUI member: HTML form validation. */
-		required?: boolean;
+		required?: boolean | null;
 		/** No WinUI member: the id of the form to associate with. */
-		form?: string;
+		form?: string | null;
 		/** Content — the label beside the box, as the default snippet. */
 		children?: Snippet;
-		class?: string;
-		style?: string;
+		class?: import('svelte/elements').ClassValue | null;
+		style?: string | null;
 		/**
 		 * The `<input type="checkbox">`, not the `<label>` root — ADR 0009's `ref` points at
 		 * the interactive element, which for Button happens to be the root and here does not.
@@ -73,11 +73,11 @@
 	const state = $derived(indeterminate ? 'indeterminate' : checked ? 'checked' : 'unchecked');
 
 	$effect(() => {
-		if (ref) ref.indeterminate = indeterminate;
+		if (ref) ref.indeterminate = indeterminate ?? false;
 	});
 
 	function set(nextChecked: boolean, nextIndeterminate: boolean) {
-		if (checked !== nextChecked) {
+		if ((checked ?? false) !== nextChecked) {
 			checked = nextChecked;
 			onCheckedChange?.(nextChecked);
 		}
@@ -117,7 +117,7 @@
 		// the props back from `onCheckedChange` or `onIndeterminateChange`. `indeterminate` needs
 		// no write here: the `$effect` above re-runs on any change to the prop, a bound parent's
 		// that puts it back included.
-		event.currentTarget.checked = checked;
+		event.currentTarget.checked = checked ?? false;
 	}
 </script>
 

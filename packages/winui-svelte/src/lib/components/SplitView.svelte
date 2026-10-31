@@ -20,8 +20,8 @@
 		pane?: Snippet;
 		/** Content — the default snippet. */
 		children?: Snippet;
-		class?: string;
-		style?: string;
+		class?: import('svelte/elements').ClassValue | null;
+		style?: string | null;
 		ref?: HTMLDivElement | null;
 		[key: string]: unknown;
 	}

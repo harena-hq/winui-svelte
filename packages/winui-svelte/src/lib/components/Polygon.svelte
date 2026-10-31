@@ -10,8 +10,8 @@
 		points?: string;
 		/** FillRule. The rule used for overlapping polygon regions. */
 		fillRule?: 'evenOdd' | 'nonzero';
-		class?: string;
-		style?: string;
+		class?: import('svelte/elements').ClassValue | null;
+		style?: string | null;
 		ref?: SVGSVGElement | null;
 		[key: string]: unknown;
 	}

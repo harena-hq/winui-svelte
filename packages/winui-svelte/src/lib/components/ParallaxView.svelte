@@ -30,8 +30,8 @@
 		horizontalSourceOffsetKind?: 'absolute' | 'relative';
 		/** ParallaxView.VerticalSourceOffsetKind. */
 		verticalSourceOffsetKind?: 'absolute' | 'relative';
-		class?: string;
-		style?: string;
+		class?: import('svelte/elements').ClassValue | null;
+		style?: string | null;
 		/** The ParallaxView root element. */
 		ref?: HTMLDivElement | null;
 		[key: string]: unknown;

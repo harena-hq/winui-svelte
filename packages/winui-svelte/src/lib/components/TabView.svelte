@@ -82,7 +82,7 @@
 		 */
 		onTabContextRequested?: (id: string, args: TabViewTabContextRequestedEventArgs) => void;
 		/** IsEnabled on the control, inverted to the attribute — ADR 0009. */
-		disabled?: boolean;
+		disabled?: boolean | null;
 		/** TabWidthMode. Defaults to `Equal`, as upstream does (`TabView.idl:105`). */
 		tabWidthMode?: TabViewWidthMode;
 		/** CloseButtonOverlayMode. Defaults to `Auto`, as upstream does (`TabView.idl:109`). */
@@ -100,8 +100,8 @@
 		tabStripHeader?: Snippet;
 		/** TabStripFooter, ADR 0012's general form — the content right of the add button. */
 		tabStripFooter?: Snippet;
-		class?: string;
-		style?: string;
+		class?: import('svelte/elements').ClassValue | null;
+		style?: string | null;
 		ref?: HTMLElement | null;
 		[key: string]: unknown;
 	}
