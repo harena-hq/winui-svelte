@@ -4404,8 +4404,14 @@ two, and the last of them is the owner's alone. D55.
    `0.1.0-rc.1`, and the tarball the smoke installed, from a HEAD whose battery is green, goes to
    a consumer to install before anything is published, so that what they find can still change
    the release without a second `0.1.0` under the same name. If the consumer's findings become
-   units, the next `rc` (`0.1.0-rc.2`) carries them. The cut sets both back to `0.1.0`. The
-   changelog keeps its `0.1.0` heading, the release the candidate is for.
+   units, the next `rc` carries them. The cut sets both back to `0.1.0`. The changelog keeps its
+   `0.1.0` heading, the release the candidate is for.
+
+   **`0.1.0-rc.2`, 2026-10-31,** carries what the consumer's trial of rc.1 found and two external
+   reviews of the prop names: the props brought onto ADR 0009 and C20 reading them, the components'
+   own text in a table (ADR 0020), ToggleSwitch's `rightAlignedCompact`, `null` on the HTML
+   attributes, and the Svelte floor at 5.37.0. A consumer of rc.1 has names to change, as the props
+   take an index signature and an old one type-checks and lands on the DOM.
 
 v19 starts after the cut, as D37 orders it.
 
