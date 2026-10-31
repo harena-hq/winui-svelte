@@ -14,13 +14,13 @@
 	// navigation groups, which this repository already holds as a record.
 	const GROUPS: GalleryGroup[] = [...groups];
 
-	let isZoomedInViewActive = $state(true);
+	let zoomedInViewActive = $state(true);
 </script>
 
 <ItemPage {item}>
 	<ControlExample headerText={sample.header ?? undefined} xaml={sample.xaml ?? undefined}>
 		<!-- SemanticZoomPage.xaml:59-80 — `Height="500"`. -->
-		<SemanticZoom class="sample-zoom" bind:isZoomedInViewActive {zoomedInView} {zoomedOutView} />
+		<SemanticZoom class="sample-zoom" bind:zoomedInViewActive {zoomedInView} {zoomedOutView} />
 	</ControlExample>
 </ItemPage>
 
@@ -48,7 +48,7 @@
 					<button
 						type="button"
 						class="group-header winui-SubtitleTextBlockStyle"
-						onclick={() => (isZoomedInViewActive = false)}
+						onclick={() => (zoomedInViewActive = false)}
 					>
 						{group.title}
 					</button>

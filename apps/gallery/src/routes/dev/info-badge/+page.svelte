@@ -38,12 +38,12 @@
 
 <h2 class="winui-SubtitleTextBlockStyle">icon</h2>
 <div class="row">
-	<InfoBadge variant="default" iconSource="F13C" />
-	<InfoBadge variant="attention" iconSource="EA38" />
-	<InfoBadge variant="informational" iconSource="F13F" />
-	<InfoBadge variant="success" iconSource="E8FB" />
-	<InfoBadge variant="caution" iconSource="E171" />
-	<InfoBadge variant="critical" iconSource="E711" />
+	<InfoBadge variant="default" glyph="F13C" />
+	<InfoBadge variant="attention" glyph="EA38" />
+	<InfoBadge variant="informational" glyph="F13F" />
+	<InfoBadge variant="success" glyph="E8FB" />
+	<InfoBadge variant="caution" glyph="E171" />
+	<InfoBadge variant="critical" glyph="E711" />
 </div>
 
 <h2 class="winui-SubtitleTextBlockStyle">value edge cases</h2>

@@ -15,7 +15,7 @@
 	 * which the roadmap's Motion tranche owns. `Padding`, which upstream binds to the repeater's
 	 * Margin, is absent because `class` and `style` are D21's escape hatch and a `padding` prop
 	 * would be a second way to say one thing. `SelectionChanged` has empty upstream event args
-	 * (ItemsView.idl:23-27), so `onSelectionChanged` reports the new selection instead.
+	 * (ItemsView.idl:23-27), so `onSelectedIndexesChange` reports the new selection instead.
 	 */
 
 	/**
@@ -50,9 +50,9 @@
 		 */
 		selectedIndexes?: number[];
 		/** SelectionChanged. Its upstream args are empty, so this reports the new selection. */
-		onSelectionChanged?: (indexes: number[]) => void;
+		onSelectedIndexesChange?: (indexes: number[]) => void;
 		/** ItemsView.IsItemInvokedEnabled. Defaults to `false`. */
-		isItemInvokedEnabled?: boolean;
+		itemInvokedEnabled?: boolean;
 		/** ItemInvoked. Its args carry the invoked item (ItemsView.idl:17-20). */
 		onItemInvoked?: (item: T, index: number) => void;
 		class?: string;
@@ -74,8 +74,8 @@
 		layout,
 		selectionMode = 'single',
 		selectedIndexes = $bindable([]),
-		onSelectionChanged,
-		isItemInvokedEnabled = false,
+		onSelectedIndexesChange,
+		itemInvokedEnabled = false,
 		onItemInvoked,
 		class: className,
 		style,
@@ -102,7 +102,7 @@
 		)
 			return;
 		selectedIndexes = sorted;
-		onSelectionChanged?.(sorted);
+		onSelectedIndexesChange?.(sorted);
 	}
 
 	// Which item was interacted with. The repeater renders one element per item, in order, so
@@ -115,7 +115,7 @@
 
 	function interact(index: number, ctrl: boolean, shift: boolean) {
 		if (index < 0 || index >= items.length) return;
-		if (isItemInvokedEnabled) onItemInvoked?.(items[index], index);
+		if (itemInvokedEnabled) onItemInvoked?.(items[index], index);
 		// ItemsView delegates to SingleSelector, MultipleSelector, and ExtendedSelector; ListViewBase's
 		// own selection is in neither pin, so both controls use this one transcription of those rules.
 		commit(nextSelection(selectionMode, { index, selected: selectedIndexes, anchor, ctrl, shift }));

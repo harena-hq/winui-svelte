@@ -19,17 +19,17 @@
 <h2 class="winui-SubtitleTextBlockStyle">default</h2>
 <div class="row"><CalendarView /></div>
 
-<h2 class="winui-SubtitleTextBlockStyle">isGroupLabelVisible</h2>
-<div class="row"><CalendarView isGroupLabelVisible /></div>
+<h2 class="winui-SubtitleTextBlockStyle">groupLabelVisible</h2>
+<div class="row"><CalendarView groupLabelVisible /></div>
 
-<h2 class="winui-SubtitleTextBlockStyle">isOutOfScopeEnabled=false</h2>
-<div class="row"><CalendarView isOutOfScopeEnabled={false} /></div>
+<h2 class="winui-SubtitleTextBlockStyle">outOfScopeEnabled=false</h2>
+<div class="row"><CalendarView outOfScopeEnabled={false} /></div>
 
-<h2 class="winui-SubtitleTextBlockStyle">isTodayHighlighted=false</h2>
-<div class="row"><CalendarView isTodayHighlighted={false} /></div>
+<h2 class="winui-SubtitleTextBlockStyle">todayHighlighted=false</h2>
+<div class="row"><CalendarView todayHighlighted={false} /></div>
 
 <h2 class="winui-SubtitleTextBlockStyle">Hebrew calendar with group labels</h2>
-<div class="row"><CalendarView calendarIdentifier="HebrewCalendar" isGroupLabelVisible /></div>
+<div class="row"><CalendarView calendarIdentifier="HebrewCalendar" groupLabelVisible /></div>
 
 <h2 class="winui-SubtitleTextBlockStyle">German language</h2>
 <div class="row"><CalendarView language="de-DE" /></div>
@@ -63,8 +63,8 @@
 <h2 class="winui-SubtitleTextBlockStyle">displayMode="decade"</h2>
 <div class="row"><CalendarView displayMode="decade" /></div>
 
-<h2 class="winui-SubtitleTextBlockStyle">displayMode="year" with isGroupLabelVisible</h2>
-<div class="row"><CalendarView displayMode="year" isGroupLabelVisible /></div>
+<h2 class="winui-SubtitleTextBlockStyle">displayMode="year" with groupLabelVisible</h2>
+<div class="row"><CalendarView displayMode="year" groupLabelVisible /></div>
 
 <style>
 	/* c1-allow: harness layout, not a WinUI value */

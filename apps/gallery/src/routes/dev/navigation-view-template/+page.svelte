@@ -49,6 +49,7 @@
 	let expanded = $state<string[]>(['design']);
 	let invoked = $state<string[]>([]);
 	let renameValue = $state('typed:');
+	let rowRef = $state<HTMLElement | null>(null);
 
 	function onItemInvoked(id: string) {
 		selected = id;
@@ -58,6 +59,7 @@
 
 <svelte:head><title>NavigationView menuItemTemplate — harness</title></svelte:head>
 
+<output hidden data-row-ref={rowRef?.getAttribute('role')}></output>
 <h1 class="winui-TitleTextBlockStyle">NavigationView — menuItemTemplate</h1>
 <p class="winui-BodyTextBlockStyle">
 	One control whose every row is drawn by the consumer's snippet. The header is drawn by it too,
@@ -82,7 +84,16 @@
 				     keydown guard exists for: a space typed here must reach the field rather
 				     than invoking the row. The field does **not** stop a click, so clicking it
 				     also invokes the row — WD-090, asserted in both directions by the spec. -->
-				<NavigationViewItem tag={entry.id} content={entry.content} glyph={entry.glyph}>
+				<NavigationViewItem
+					tag={entry.id}
+					content={entry.content}
+					glyph={entry.glyph}
+					class="tpl-row"
+					style="color: inherit"
+					data-tpl-row={entry.id}
+					aria-label="Rename row"
+					bind:ref={rowRef}
+				>
 					<input
 						class="tpl-rename"
 						aria-label="Rename"

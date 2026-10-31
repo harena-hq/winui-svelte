@@ -3,7 +3,7 @@
 
 	/** One item. `SelectorBar.Items` narrowed to plain records, the narrowing NavigationView applies. */
 	export interface SelectorBarItemData {
-		/** Stable identity. What `selected` holds and what `onSelectionChanged` reports. */
+		/** Stable identity. What `selected` holds and what `onSelectedChange` reports. */
 		id: string;
 		/** SelectorBarItem.Text. */
 		text?: string;
@@ -27,7 +27,7 @@
 		 */
 		selected?: string | null;
 		/** SelectionChanged. Reports the new `id`. */
-		onSelectionChanged?: (id: string | null) => void;
+		onSelectedChange?: (id: string | null) => void;
 		/** IsEnabled on the bar, inverted to the HTML attribute — ADR 0009. */
 		disabled?: boolean;
 		class?: string;
@@ -48,7 +48,7 @@
 	let {
 		items,
 		selected = $bindable(null),
-		onSelectionChanged,
+		onSelectedChange,
 		disabled = false,
 		class: className,
 		style,
@@ -82,7 +82,7 @@
 	function select(item: SelectorBarItemData) {
 		if (isItemDisabled(item)) return;
 		selected = item.id;
-		onSelectionChanged?.(item.id);
+		onSelectedChange?.(item.id);
 	}
 
 	function tabIndexFor(item: SelectorBarItemData) {

@@ -21,7 +21,7 @@
 		/** ColorChannel. ColorPickerSlider.idl:10-11; the default is `Value`. */
 		colorChannel?: ColorPickerHsvChannel;
 		/** IsDirectionReversed. The value grows leftward. */
-		isDirectionReversed?: boolean;
+		directionReversed?: boolean;
 		/** IsEnabled, inverted to HTML's attribute — ADR 0009. */
 		disabled?: boolean;
 		/** Header. A string or a snippet; nothing is rendered when it is not given. */
@@ -46,7 +46,7 @@
 		step = 1,
 		orientation = 'horizontal',
 		colorChannel = 'value',
-		isDirectionReversed = false,
+		directionReversed = false,
 		disabled = false,
 		header,
 		class: className,
@@ -125,7 +125,7 @@
 		{step}
 		{disabled}
 		{orientation}
-		dir={isDirectionReversed ? 'rtl' : 'ltr'}
+		dir={directionReversed ? 'rtl' : 'ltr'}
 	>
 		{#snippet child({ props, thumbItems })}
 			<!-- bits-ui supplies positioning and ARIA through `child`; rendering the nodes here keeps

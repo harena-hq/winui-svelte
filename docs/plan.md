@@ -2278,7 +2278,7 @@ group sizes, which no longer line up one-to-one with a version.
     3. **Border, and its page.** The component, the `Thickness` reader, the harness; then the
        page, which is the first control page on the frame and the first options pane with two
        groups side by side. Sealed as two commits.
-    4. **Slider's vertical template.** `orientation` and `isDirectionReversed`, from
+    4. **Slider's vertical template.** `orientation` and `directionReversed`, from
        `Slider_themeresources.xaml:418-434` and the three `SliderVertical*` keys the manifest
        excluded by name. bits-ui's `orientation` is verified against its documentation before the
        spec is written, and whether it can reverse a vertical track is the thing to verify.
@@ -4596,14 +4596,15 @@ reproduce is a recorded decision, never a silent one.
 popup layer), `C14` (no colour property reads a token that resolves to a gradient), `C15`
 (nothing cites a line in a generated source file), `C16` (nothing cites a line in a file this
 repository holds), `C17` (the gate list is every gate file, in order), `C18` (every
-content declaration that draws something states its alternative text) and `C19` (every glyph a
-component draws for itself has a row in the fallback face's table) are in `pnpm conform` and
-have no entry here — C11 and C12 landed without one, and none of the seven after them added
+content declaration that draws something states its alternative text), `C19` (every glyph a
+component draws for itself has a row in the fallback face's table) and `C20` (every exported
+component keeps ADR 0009's names) are in `pnpm conform` and
+have no entry here — C11 and C12 landed without one, and none of the eight after them added
 itself alone, because an entry for the newest while the ones before it have none would make the
 gap read as a choice. **`scripts/conformance/gates.mjs` is the list**, and `C17` holds it to the
 files beside it; this section is a commentary on the gates that have one, and the backfill is
-owed. Each of the nine carries its own reasoning in its own file, which is where the detail
-is; C13's through C19's also record what they cannot reach, and each names the test that
+owed. Each of the ten carries its own reasoning in its own file, which is where the detail
+is; C13's through C20's also record what they cannot reach, and each names the test that
 answers that half where one does; C17's other gaps, and the two documents it reads, are left
 to hand.
 

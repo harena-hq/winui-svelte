@@ -15,37 +15,37 @@
 
 <h2 class="winui-SubtitleTextBlockStyle">the zoomed-in view active — a short list of items</h2>
 <div class="box">
-	<SemanticZoom class="zoom" isZoomedInViewActive {zoomedInView} {zoomedOutView} />
+	<SemanticZoom class="zoom" zoomedInViewActive {zoomedInView} {zoomedOutView} />
 </div>
 
 <h2 class="winui-SubtitleTextBlockStyle">
 	the zoomed-out view active — a short list of group names
 </h2>
 <div class="box">
-	<SemanticZoom class="zoom" isZoomedInViewActive={false} {zoomedInView} {zoomedOutView} />
+	<SemanticZoom class="zoom" zoomedInViewActive={false} {zoomedInView} {zoomedOutView} />
 </div>
 
 <h2 class="winui-SubtitleTextBlockStyle">
-	isZoomOutButtonEnabled with the zoomed-in view active — the button is drawn
+	zoomOutButtonEnabled with the zoomed-in view active — the button is drawn
 </h2>
 <div class="box">
 	<SemanticZoom
 		class="zoom"
-		isZoomedInViewActive
-		isZoomOutButtonEnabled
+		zoomedInViewActive
+		zoomOutButtonEnabled
 		{zoomedInView}
 		{zoomedOutView}
 	/>
 </div>
 
 <h2 class="winui-SubtitleTextBlockStyle">
-	canChangeViews false with the zoomed-in view active — clicking the out view does nothing
+	changeViews false with the zoomed-in view active — clicking the out view does nothing
 </h2>
 <div class="box">
 	<SemanticZoom
 		class="zoom"
-		isZoomedInViewActive
-		canChangeViews={false}
+		zoomedInViewActive
+		changeViews={false}
 		{zoomedInView}
 		{zoomedOutView}
 	/>
@@ -53,7 +53,7 @@
 
 <h2 class="winui-SubtitleTextBlockStyle">disabled</h2>
 <div class="box">
-	<SemanticZoom class="zoom" isZoomedInViewActive disabled {zoomedInView} {zoomedOutView} />
+	<SemanticZoom class="zoom" zoomedInViewActive disabled {zoomedInView} {zoomedOutView} />
 </div>
 
 {#snippet zoomedInView()}

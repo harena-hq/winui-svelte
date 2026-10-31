@@ -3,7 +3,7 @@
 
 	/** One item. `Pivot.Items` narrowed to plain records — D26 and the narrowing NavigationView applies. */
 	export interface PivotItemData {
-		/** Stable identity. What `selected` holds and what `onSelectionChanged` reports. */
+		/** Stable identity. What `selected` holds and what `onSelectedChange` reports. */
 		id: string;
 		/** PivotItem.Header, narrowed to text. */
 		header?: string;
@@ -23,7 +23,7 @@
 		 * selects nothing until it is focused.
 		 */
 		selected?: string | null;
-		onSelectionChanged?: (id: string | null) => void;
+		onSelectedChange?: (id: string | null) => void;
 		/** Pivot.Title, narrowed to text. */
 		title?: string;
 		/** Pivot.Title, the general form. Wins over `title`. */
@@ -55,7 +55,7 @@
 	let {
 		items,
 		selected = $bindable(null),
-		onSelectionChanged,
+		onSelectedChange,
 		title,
 		titleContent,
 		disabled = false,
@@ -80,7 +80,7 @@
 	function select(item: PivotItemData) {
 		if (isItemDisabled(item) || item.id === current) return;
 		selected = item.id;
-		onSelectionChanged?.(item.id);
+		onSelectedChange?.(item.id);
 	}
 
 	function handleKeydown(event: KeyboardEvent) {

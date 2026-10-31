@@ -93,6 +93,19 @@ test('the index is the entry position in the list it came from', async ({ page }
 	);
 });
 
+test("a row takes a consumer's class, style and attributes on its root, and ref on the row", async ({
+	page
+}) => {
+	await page.goto(PAGE);
+	const row = page.locator('li[data-tpl-row]').first();
+	await expect(row).toHaveClass(/\btpl-row\b/);
+	await expect(row).toHaveAttribute('style', /color: inherit/);
+	await expect(page.locator('output[data-row-ref]')).toHaveAttribute('data-row-ref', 'treeitem');
+	// The name goes to the row, as on the release's other wrapper-rooted controls: ADR 0009.
+	await expect(row).not.toHaveAttribute('aria-label');
+	await expect(row.getByRole('treeitem', { name: 'Rename row' })).toBeVisible();
+});
+
 test('the settings row is never templated', async ({ page }) => {
 	await page.goto(PAGE);
 	const frame = page.locator('#templated');

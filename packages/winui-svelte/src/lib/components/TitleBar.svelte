@@ -10,7 +10,7 @@
 		 * No direct WinUI member; narrows `IconSource` to a Segoe Fluent Icons code point
 		 * as uppercase hex, e.g. `'E790'`.
 		 */
-		iconGlyph?: string | null;
+		glyph?: string | null;
 		/** IsBackButtonVisible — shown only when true; the app decides whether there is anywhere to go back to. */
 		backButtonVisible?: boolean;
 		/** IsBackButtonEnabled. */
@@ -38,7 +38,7 @@
 	let {
 		title,
 		subtitle,
-		iconGlyph,
+		glyph,
 		backButtonVisible = false,
 		backButtonEnabled = true,
 		onBackRequested,
@@ -166,8 +166,8 @@
 
 	<div class="left-header-padding"></div>
 
-	{#if iconGlyph}
-		<span class="icon" aria-hidden="true">{String.fromCodePoint(parseInt(iconGlyph, 16))}</span>
+	{#if glyph}
+		<span class="icon" aria-hidden="true">{String.fromCodePoint(parseInt(glyph, 16))}</span>
 	{/if}
 
 	{#if title}

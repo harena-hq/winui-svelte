@@ -13,9 +13,9 @@
 		/** CalendarDatePicker.DateFormat. */
 		dateFormat?: string | undefined;
 		/** CalendarDatePicker.IsCalendarOpen. */
-		isCalendarOpen?: boolean;
+		calendarOpen?: boolean;
 		/** No WinUI member: ADR 0009 pairs bindable state with a change callback. */
-		onIsCalendarOpenChange?: ((open: boolean) => void) | undefined;
+		onCalendarOpenChange?: ((open: boolean) => void) | undefined;
 		/** UIElement.IsEnabled. */
 		disabled?: boolean;
 		/** FrameworkElement.Language. */
@@ -27,11 +27,11 @@
 		/** CalendarView.MaxDate. */
 		maxDate?: Date | undefined;
 		/** CalendarView.IsTodayHighlighted. */
-		isTodayHighlighted?: boolean;
+		todayHighlighted?: boolean;
 		/** CalendarView.IsGroupLabelVisible. */
-		isGroupLabelVisible?: boolean;
+		groupLabelVisible?: boolean;
 		/** CalendarView.IsOutOfScopeEnabled. */
-		isOutOfScopeEnabled?: boolean;
+		outOfScopeEnabled?: boolean;
 		/** CalendarView.FirstDayOfWeek. */
 		firstDayOfWeek?: number | undefined;
 		/** CalendarView.DayOfWeekFormat. */
@@ -67,16 +67,16 @@
 		placeholderText = 'select a date',
 		header = undefined,
 		dateFormat = undefined,
-		isCalendarOpen = $bindable(false),
-		onIsCalendarOpenChange,
+		calendarOpen = $bindable(false),
+		onCalendarOpenChange,
 		disabled = false,
 		language = undefined,
 		calendarIdentifier = 'GregorianCalendar',
 		minDate = undefined,
 		maxDate = undefined,
-		isTodayHighlighted = true,
-		isGroupLabelVisible = false,
-		isOutOfScopeEnabled = true,
+		todayHighlighted = true,
+		groupLabelVisible = false,
+		outOfScopeEnabled = true,
 		firstDayOfWeek = undefined,
 		dayOfWeekFormat = undefined,
 		displayMode = 'month',
@@ -96,8 +96,8 @@
 	);
 
 	function setOpen(next: boolean) {
-		isCalendarOpen = next;
-		onIsCalendarOpenChange?.(next);
+		calendarOpen = next;
+		onCalendarOpenChange?.(next);
 	}
 
 	function selectDate(dates: Date[]) {
@@ -126,7 +126,7 @@
 	{/if}
 	<Flyout
 		placement="bottom"
-		bind:open={() => isCalendarOpen, setOpen}
+		bind:open={() => calendarOpen, setOpen}
 		style="padding: 0; border-width: 0; border-radius: var(--winui-OverlayCornerRadius)"
 	>
 		{#snippet children(props)}
@@ -140,9 +140,9 @@
 				{calendarIdentifier}
 				{minDate}
 				{maxDate}
-				{isTodayHighlighted}
-				{isGroupLabelVisible}
-				{isOutOfScopeEnabled}
+				{todayHighlighted}
+				{groupLabelVisible}
+				{outOfScopeEnabled}
 				{firstDayOfWeek}
 				{dayOfWeekFormat}
 				{displayMode}

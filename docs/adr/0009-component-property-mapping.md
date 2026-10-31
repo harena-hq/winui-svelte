@@ -190,6 +190,43 @@ a `TextBox` with a header was named by its placeholder or by nothing and is now 
 header, and a non-editable `ComboBox` with a header was named by its selection or its placeholder
 and is now named by the header, followed by the selection when there is one.
 
+**Amended 2026-10-31: the rule is now a gate, and the release is brought onto it.** Two external
+reviews of the names, before 0.1.0, found the package breaking this ADR where nothing read it.
+`C20` now reads each exported component's `$props()` and refuses a leading `is`, `has` or `can`, a
+`Disabled` other than `disabled`, a `$bindable` without its `on<Prop>Change`, and a component
+without `class`, `style`, `ref` and rest props. What it found was renamed in one unit, before a
+final release made each a breaking change: `isIndeterminate`, `isActive` and the rest of the
+prefixes, on every component that kept one; `primaryButtonDisabled` and `secondaryButtonDisabled`,
+which no element takes, are `primaryButtonEnabled` and `secondaryButtonEnabled`, as the polarity
+rule says and as `TitleBar`'s `backButtonEnabled` already was; and `onSelectionChanged` on a
+`selected`, `selectedIndex`, `selectedIndexes` or `selectedKey` prop is that prop's
+`on<Prop>Change`, as `TreeView`'s `onExpandedChange` on `expandedKeys` is `onExpandedKeysChange`.
+`ColorSpectrum`'s `hsvColor` and `RefreshContainer`'s `refreshing` had no callback and gained one.
+`TeachingTip`'s `lightDismiss` had dropped a word and is `lightDismissEnabled`,
+which the gate cannot see. `NavigationViewItem` takes the escape hatch, on its `<li>`, and its `ref`
+and the three naming attributes are the row's `treeitem`, so it is a fourth wrapper-rooted control
+of the release under the 2026-10-07 amendment above. A rename is not the touch that amendment means
+when it says `preview`'s wrapper-rooted controls follow: none of them gained the routing here.
+
+**A code point has one name, ADR 0012's `glyph`.** `InfoBar`'s and `InfoBadge`'s `iconSource` and
+`TitleBar`'s `iconGlyph` were the same thing under two more.
+
+**One departure is admitted: what a control reports of itself needs no callback.** The sentence
+above says a prop the control mutates "always has its `on<Prop>Change`", and that is right for a
+change a consumer can ask for. `ScrollView`'s offsets and sizes, `ScrollViewer`'s offsets, what
+`MediaTransportControls` reports of its media and `MediaPlayerElement`'s handle on its element are
+outputs. They stay bindable without one of their own, and `C20` lists them by name, so that another
+joins only by editing the list. The two offsets are observed together, through `onOffsetChange`;
+for the rest a consumer has `$effect` on the binding. The gate's
+other list is not a departure: `ToggleSplitButton` hands `class`, `style` and `open` to the
+`SplitButton` it renders, which declares them with `onOpenChange`.
+
+**The closed set is what this ADR's own reasons say and no more.** `Expander`'s `IsExpanded` is
+`open` because bits-ui and `<details>` both say so, not because its root takes the attribute, and
+that is the sense in which `open` is on the list. `title` is not on it: an HTML `title` draws a
+tooltip of its own, and `InfoBar`'s and `ContentDialog`'s `title` are WinUI's `Title`, where a
+consumer who wants the attribute cannot reach it.
+
 ## Alternatives rejected
 
 - **Keep the WinUI name verbatim, as ADR 0006 does for tokens.** The symmetry is false. A token

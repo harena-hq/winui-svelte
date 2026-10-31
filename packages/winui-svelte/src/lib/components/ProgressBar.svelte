@@ -10,7 +10,7 @@
 		 */
 		maximum?: number;
 		/** IsIndeterminate. Replaces the determinate fill with the repeating moving indicators. */
-		isIndeterminate?: boolean;
+		indeterminate?: boolean;
 		/** ShowPaused. Selects the paused foreground color. */
 		showPaused?: boolean;
 		/**
@@ -42,7 +42,7 @@
 		value = 0,
 		minimum = 0,
 		maximum = 100,
-		isIndeterminate = false,
+		indeterminate = false,
 		showPaused = false,
 		showError = false,
 		class: className,
@@ -52,7 +52,7 @@
 	}: ProgressBarProps = $props();
 
 	const state = $derived(
-		isIndeterminate
+		indeterminate
 			? showError
 				? 'indeterminate-error'
 				: showPaused
@@ -65,7 +65,7 @@
 					: 'determinate'
 	);
 	const percent = $derived(
-		isIndeterminate || maximum - minimum === 0
+		indeterminate || maximum - minimum === 0
 			? 0
 			: Math.min(100, Math.max(0, ((value - minimum) / (maximum - minimum)) * 100))
 	);
@@ -78,7 +78,7 @@
 	// and min/max ARIA values, while omitting aria-valuenow for the indeterminate state.
 </script>
 
-<Progress.Root value={isIndeterminate ? null : value} min={minimum} max={maximum}>
+<Progress.Root value={indeterminate ? null : value} min={minimum} max={maximum}>
 	{#snippet child({ props })}
 		<!-- `data-progress-state` is this component's state machine. bits-ui already writes
 		     its own `data-state` here, and the two attributes mean different things. -->

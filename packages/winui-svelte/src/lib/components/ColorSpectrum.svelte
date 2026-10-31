@@ -20,6 +20,8 @@
 		color?: string;
 		/** HsvColor. Maps WinUI's `HsvColor`; the component's bindable source of truth. */
 		hsvColor?: HsvColor;
+		/** No WinUI member: ADR 0009 pairs every `$bindable` prop with its own change callback. */
+		onHsvColorChange?: (hsvColor: HsvColor) => void;
 		/** MinHue. */ minHue?: number;
 		/** MaxHue. */ maxHue?: number;
 		/** MinSaturation. */ minSaturation?: number;
@@ -58,6 +60,7 @@
 	let {
 		color,
 		hsvColor = $bindable({ h: 0, s: 0, v: 1, a: 1 }),
+		onHsvColorChange,
 		minHue = 0,
 		maxHue = 359,
 		minSaturation = 0,
@@ -186,6 +189,7 @@
 	}
 	function setHsv(next: HsvColor) {
 		hsvColor = { h: next.h, s: next.s, v: next.v, a: next.a };
+		onHsvColorChange?.(hsvColor);
 		onColorChange?.(toCssColor(hsvColor));
 	}
 	function toCssColor(value: HsvColor) {

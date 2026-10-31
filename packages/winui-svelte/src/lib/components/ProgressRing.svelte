@@ -1,9 +1,9 @@
 <script lang="ts" module>
 	export interface ProgressRingProps {
 		/** IsActive. Whether the progress ring is visible and running. */
-		isActive?: boolean;
+		active?: boolean;
 		/** IsIndeterminate. Whether the ring uses the repeating indeterminate composition. */
-		isIndeterminate?: boolean;
+		indeterminate?: boolean;
 		/**
 		 * Value. The current progress value, clamped into `[minimum, maximum]` as `CoerceValue`
 		 * does at `ProgressRing.cpp:420`.
@@ -81,8 +81,8 @@
 	}
 
 	let {
-		isActive = true,
-		isIndeterminate = true,
+		active = true,
+		indeterminate = true,
 		value = 0,
 		minimum = 0,
 		maximum = 100,
@@ -97,11 +97,9 @@
 		maximum - minimum === 0 ? 0 : (clampedValue - minimum) / (maximum - minimum)
 	);
 	const trim = $derived(trimEnd(fraction));
-	const arcHidden = $derived(!isIndeterminate && fraction < VISIBILITY_PROGRESS);
-	const geometry = $derived(isIndeterminate ? INDETERMINATE_GEOMETRY : DETERMINATE_GEOMETRY);
-	const state = $derived(
-		!isActive ? 'inactive' : isIndeterminate ? 'active' : 'determinate-active'
-	);
+	const arcHidden = $derived(!indeterminate && fraction < VISIBILITY_PROGRESS);
+	const geometry = $derived(indeterminate ? INDETERMINATE_GEOMETRY : DETERMINATE_GEOMETRY);
+	const state = $derived(!active ? 'inactive' : indeterminate ? 'active' : 'determinate-active');
 
 	// The ring is a decorative, non-interactive visual: `ProgressRing.xaml:6` sets
 	// `IsHitTestVisible` false and `:11` sets `IsTabStop` false. Upstream has a
@@ -130,7 +128,7 @@
 			pathLength="1"
 			stroke-linecap="round"
 			transform="rotate(-90 16 16)"
-			style:stroke-dasharray={isIndeterminate ? undefined : `${trim} 1`}
+			style:stroke-dasharray={indeterminate ? undefined : `${trim} 1`}
 			style:visibility={arcHidden ? 'hidden' : undefined}
 		/>
 	</svg>

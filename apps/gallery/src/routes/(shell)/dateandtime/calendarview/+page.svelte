@@ -53,8 +53,8 @@
 		label: name
 	}));
 
-	let isGroupLabelVisible = $state(true);
-	let isOutOfScopeEnabled = $state(true);
+	let groupLabelVisible = $state(true);
+	let outOfScopeEnabled = $state(true);
 	let selectionMode = $state<SelectionModeName>('Single');
 	let calendarIdentifier = $state('GregorianCalendar');
 	// CalendarViewPage.xaml:50-61 — SelectedIndex="0" fires at load, so the control's
@@ -68,8 +68,8 @@
 		xaml={sample.xaml ?? undefined}
 		substitutions={{
 			SelectionMode: selectionMode,
-			IsGroupLabelVisible: isGroupLabelVisible ? 'True' : 'False',
-			IsOutOfScopeEnabled: isOutOfScopeEnabled ? 'True' : 'False',
+			IsGroupLabelVisible: groupLabelVisible ? 'True' : 'False',
+			IsOutOfScopeEnabled: outOfScopeEnabled ? 'True' : 'False',
 			Language: language,
 			CalendarIdentifier: calendarIdentifier
 		}}
@@ -79,16 +79,16 @@
 			data-vertical-alignment="top"
 			{calendarIdentifier}
 			{language}
-			{isGroupLabelVisible}
-			{isOutOfScopeEnabled}
+			{groupLabelVisible}
+			{outOfScopeEnabled}
 			selectionMode={SELECTION_MODES[selectionMode]}
 		/>
 		{#snippet options()}
 			<div class="options">
 				<!-- CalendarViewPage.xaml:25-28. -->
-				<CheckBox bind:checked={isGroupLabelVisible}>IsGroupLabelVisible</CheckBox>
+				<CheckBox bind:checked={groupLabelVisible}>IsGroupLabelVisible</CheckBox>
 				<!-- CalendarViewPage.xaml:29-32. -->
-				<CheckBox bind:checked={isOutOfScopeEnabled}>IsOutOfScopeEnabled</CheckBox>
+				<CheckBox bind:checked={outOfScopeEnabled}>IsOutOfScopeEnabled</CheckBox>
 				<!-- CalendarViewPage.xaml:33-42 — Margin="0,10,0,0". -->
 				<ComboBox
 					header="SelectionMode"

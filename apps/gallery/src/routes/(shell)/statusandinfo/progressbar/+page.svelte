@@ -41,7 +41,7 @@
 		     shorthand here would set it back to 0 and centre the bar. -->
 		<ProgressBar
 			data-vertical-alignment="top"
-			isIndeterminate
+			indeterminate
 			showPaused={progressState === 'paused'}
 			showError={progressState === 'error'}
 			style="width: 130px; margin-top: 10px; margin-left: 10px"

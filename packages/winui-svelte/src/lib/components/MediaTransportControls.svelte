@@ -481,7 +481,7 @@
 					thumbToolTipEnabled={false}
 				/>
 				{#if mediaState === 'loading' || mediaState === 'buffering'}
-					<ProgressBar class="buffering-progress" isIndeterminate showPaused={false} />
+					<ProgressBar class="buffering-progress" indeterminate showPaused={false} />
 				{/if}
 				<div class="time-text">
 					<span class="elapsed winui-CaptionTextBlockStyle">{elapsedText}</span>

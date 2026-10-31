@@ -78,7 +78,7 @@
 		     element to reach: the ring carries no role, as it has no automation peer here. -->
 		<ProgressRing
 			data-vertical-alignment="top"
-			isActive={working}
+			active={working}
 			style="width: 60px; height: 60px; margin-top: 10px; margin-left: 10px; {first.style}"
 		/>
 		{#snippet options()}
@@ -111,7 +111,7 @@
 		     exposes no way to name its input, and its header is not associated with it. -->
 		<div class="row">
 			<ProgressRing
-				isIndeterminate={false}
+				indeterminate={false}
 				value={ringValue}
 				class="determinate-ring"
 				style="width: 60px; height: 60px; {second.style}"

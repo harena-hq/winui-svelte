@@ -245,7 +245,7 @@ surface are painted the same way.
   `ImageSource` is `/Assets/Tiles/GalleryIcon.ico`, and the row draws that image left of
   the title.
 - **We do**: render no icon there.
-- **Why accepted**: `TitleBar` takes `iconGlyph`, a Segoe Fluent Icons code point, and has
+- **Why accepted**: `TitleBar` takes `glyph`, a Segoe Fluent Icons code point, and has
   no image slot — an app icon is a bitmap, not a glyph, so the slot would be a new
   feature of the control rather than a value to pass. The file itself is Microsoft's
   artwork in a checkout this project reads as source and copies nothing out of. Neither

@@ -128,7 +128,7 @@
 	bind:open={textDisabledDefaultOpen}
 	title="Text disabled default"
 	primaryButtonText="Replace"
-	primaryButtonDisabled
+	primaryButtonEnabled={false}
 	secondaryButtonText="Keep"
 	closeButtonText="Cancel"
 	defaultButton="primary"

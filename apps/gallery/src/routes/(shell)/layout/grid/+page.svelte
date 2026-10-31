@@ -54,7 +54,7 @@
 				<Slider
 					style="height: 100px"
 					orientation="vertical"
-					isDirectionReversed
+					directionReversed
 					header={rowSpacingHeader}
 					min={0}
 					max={16}
@@ -77,7 +77,7 @@
 				<Slider
 					style="height: 100px"
 					orientation="vertical"
-					isDirectionReversed
+					directionReversed
 					header={rowHeader}
 					min={0}
 					max={2}

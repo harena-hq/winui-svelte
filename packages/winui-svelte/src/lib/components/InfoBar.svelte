@@ -24,7 +24,7 @@
 		 * IconSource, as a Fluent code point in hex — `'E946'`. Supplying one selects the
 		 * `UserIconVisible` state, which hides the standard severity icon entirely.
 		 */
-		iconSource?: string;
+		glyph?: string;
 		/** ActionButton. */
 		actionButton?: Snippet;
 		/** CloseButtonClick. */
@@ -60,7 +60,7 @@
 		onOpenChange,
 		closable = true,
 		iconVisible = true,
-		iconSource,
+		glyph,
 		actionButton,
 		onCloseButtonClick,
 		children,
@@ -78,11 +78,11 @@
 	// the horizontal tallest child plus the Title's 14px top margin against this value.
 	const MIN_HEIGHT = 48;
 
-	const iconState = $derived(!iconVisible ? 'none' : iconSource ? 'user' : 'standard');
+	const iconState = $derived(!iconVisible ? 'none' : glyph ? 'user' : 'standard');
 	const contentPosition = $derived(
 		title === '' && message === '' && !actionButton ? 'top' : 'banner'
 	);
-	const userIcon = $derived(iconSource ? String.fromCodePoint(parseInt(iconSource, 16)) : '');
+	const userIcon = $derived(glyph ? String.fromCodePoint(parseInt(glyph, 16)) : '');
 
 	function close() {
 		// InfoBar.cpp:81-86 raises CloseButtonClick before changing IsOpen.

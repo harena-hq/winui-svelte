@@ -299,7 +299,7 @@
 					items={listItems}
 					key={(value) => value.title}
 					selectionMode="none"
-					isItemClickEnabled
+					itemClickEnabled
 					onItemClick={openList}
 					itemTemplate={listRow}
 				/>
@@ -320,7 +320,7 @@
 				items={allItems}
 				key={(value) => value.title}
 				selectionMode="none"
-				isItemClickEnabled
+				itemClickEnabled
 				onItemClick={openCard}
 				itemTemplate={cardTile}
 			/>

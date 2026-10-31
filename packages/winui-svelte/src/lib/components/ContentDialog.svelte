@@ -22,10 +22,10 @@
 		closeButtonText?: string;
 		/** DefaultButton. */
 		defaultButton?: ContentDialogButton;
-		/** IsPrimaryButtonEnabled, inverted — ADR 0009. */
-		primaryButtonDisabled?: boolean;
-		/** IsSecondaryButtonEnabled, inverted — ADR 0009. */
-		secondaryButtonDisabled?: boolean;
+		/** IsPrimaryButtonEnabled. No element takes this name, so the polarity stays — ADR 0009. */
+		primaryButtonEnabled?: boolean;
+		/** IsSecondaryButtonEnabled. */
+		secondaryButtonEnabled?: boolean;
 		/** `ShowAsync`/`Hide` as state. ADR 0009 maps a control's own state to a bindable prop. */
 		open?: boolean;
 		/** No WinUI member: ADR 0009 pairs every `$bindable` prop with its own change callback.
@@ -114,8 +114,8 @@
 		secondaryButtonText,
 		closeButtonText,
 		defaultButton = 'none',
-		primaryButtonDisabled = false,
-		secondaryButtonDisabled = false,
+		primaryButtonEnabled = true,
+		secondaryButtonEnabled = true,
 		open = $bindable(false),
 		onOpenChange,
 		onPrimaryButtonClick,
@@ -320,7 +320,7 @@
 									<Button
 										bind:ref={primaryRef}
 										variant={drawnAsDefault('primary') ? 'accent' : 'default'}
-										disabled={primaryButtonDisabled}
+										disabled={!primaryButtonEnabled}
 										onclick={() => dismiss(onPrimaryButtonClick)}
 									>
 										{primaryButtonText}
@@ -330,7 +330,7 @@
 									<Button
 										bind:ref={secondaryRef}
 										variant={drawnAsDefault('secondary') ? 'accent' : 'default'}
-										disabled={secondaryButtonDisabled}
+										disabled={!secondaryButtonEnabled}
 										onclick={() => dismiss(onSecondaryButtonClick)}
 									>
 										{secondaryButtonText}

@@ -200,7 +200,7 @@
 />
 
 <div class="frame">
-	<!-- WD-007: TitleBar is mounted without `iconGlyph` — the Gallery's icon is a bitmap
+	<!-- WD-007: TitleBar is mounted without `glyph` — the Gallery's icon is a bitmap
 	     asset, not a code point. See docs/divergences.md. -->
 	<TitleBar
 		title={titleBar.title}

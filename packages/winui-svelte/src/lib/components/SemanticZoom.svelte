@@ -18,14 +18,14 @@
 		/** SemanticZoom.ZoomedOutView — the summary view. */
 		zoomedOutView?: Snippet;
 		/** SemanticZoom.IsZoomedInViewActive. */
-		isZoomedInViewActive?: boolean;
+		zoomedInViewActive?: boolean;
 		/** No WinUI member: ADR 0009 pairs bindable state with a change callback. Upstream's own
 		 *  ViewChangeCompleted carries the same information in event form. */
-		onIsZoomedInViewActiveChange?: ((active: boolean) => void) | undefined;
+		onZoomedInViewActiveChange?: ((active: boolean) => void) | undefined;
 		/** SemanticZoom.CanChangeViews. */
-		canChangeViews?: boolean;
+		changeViews?: boolean;
 		/** SemanticZoom.IsZoomOutButtonEnabled. */
-		isZoomOutButtonEnabled?: boolean;
+		zoomOutButtonEnabled?: boolean;
 		/** UIElement.IsEnabled. */
 		disabled?: boolean;
 		class?: string;
@@ -62,10 +62,10 @@
 	let {
 		zoomedInView,
 		zoomedOutView,
-		isZoomedInViewActive = $bindable(true),
-		onIsZoomedInViewActiveChange,
-		canChangeViews = true,
-		isZoomOutButtonEnabled = false, // generic.xaml:9650 — the style's own setter
+		zoomedInViewActive = $bindable(true),
+		onZoomedInViewActiveChange,
+		changeViews = true,
+		zoomOutButtonEnabled = false, // generic.xaml:9650 — the style's own setter
 		disabled = false,
 		class: className,
 		style,
@@ -84,10 +84,10 @@
 	 * (`generic.xaml:9658-9673`) has no `Disabled` member and the style sets no disabled brush.
 	 */
 	function setActiveView(active: boolean) {
-		if (!canChangeViews || disabled) return;
-		if (active === isZoomedInViewActive) return;
-		isZoomedInViewActive = active;
-		onIsZoomedInViewActiveChange?.(active);
+		if (!changeViews || disabled) return;
+		if (active === zoomedInViewActive) return;
+		zoomedInViewActive = active;
+		onZoomedInViewActiveChange?.(active);
 	}
 
 	/**
@@ -101,12 +101,12 @@
 	 * active is not handled, which is why `preventDefault` runs only after a real change.
 	 */
 	function handleKeydown(event: KeyboardEvent) {
-		if (!canChangeViews || disabled) return;
+		if (!changeViews || disabled) return;
 		if (!event.ctrlKey || event.altKey || event.metaKey) return;
 		const zoomIn = event.key === '=' || event.key === '+';
 		const zoomOut = event.key === '-';
 		if (!zoomIn && !zoomOut) return;
-		if (zoomIn === isZoomedInViewActive) return;
+		if (zoomIn === zoomedInViewActive) return;
 		setActiveView(zoomIn);
 		event.preventDefault();
 	}
@@ -133,23 +133,23 @@
 	bind:this={ref}
 	class={['root', className]}
 	{style}
-	data-zoomed-in-view-active={isZoomedInViewActive}
+	data-zoomed-in-view-active={zoomedInViewActive}
 	aria-disabled={disabled || undefined}
 	onkeydown={handleKeydown}
 	{...rest}
 >
 	<!-- `ZoomedInPresenter` (`:9748`). -->
-	<div class="presenter" data-active={isZoomedInViewActive}>
+	<div class="presenter" data-active={zoomedInViewActive}>
 		{@render zoomedInView?.()}
 	</div>
 	<!-- `ZoomedOutPresenter` (`:9757`). The keyboard equivalent of this click is Control with
 	     the equals key, which the root handles for the whole control. -->
 	<!-- svelte-ignore a11y_click_events_have_key_events -->
 	<!-- svelte-ignore a11y_no_static_element_interactions -->
-	<div class="presenter" data-active={!isZoomedInViewActive} onclick={handleZoomedOutClick}>
+	<div class="presenter" data-active={!zoomedInViewActive} onclick={handleZoomedOutClick}>
 		{@render zoomedOutView?.()}
 	</div>
-	{#if isZoomOutButtonEnabled}
+	{#if zoomOutButtonEnabled}
 		<!-- `ZoomOutButton` (`:9768-9779`), and `OnZoomOutButtonClick` (`:2268-2273`) toggles the
 		     active view. `IsZoomOutButtonEnabled` is `False` on the style (`:9650`), so this is
 		     drawn only where a caller asks for it. `IsTabStop="False"` (`:9769`) is the
