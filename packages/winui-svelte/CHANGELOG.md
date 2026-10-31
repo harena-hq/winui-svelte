@@ -37,7 +37,7 @@ release is drawn there is the repository's ADR 0017,
 The package has no runtime dependencies of its own. Each peer's floor is the version the
 release was tested with.
 
-- Required: `svelte` `^5.57.0`, `bits-ui` `^2.19.0` and `@internationalized/date` `^3.12.3`,
+- Required: `svelte` `^5.37.0`, `bits-ui` `^2.19.0` and `@internationalized/date` `^3.12.3`,
   the last because `bits-ui` requires it as a peer of its own.
 - Optional: `@zag-js/svelte` and `@zag-js/number-input`, both `^1.43.3`. `preview`'s
   `NumberBox` imports them, and a bundler resolves them for any import from `preview`; a

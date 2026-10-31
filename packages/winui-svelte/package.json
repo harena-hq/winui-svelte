@@ -47,7 +47,7 @@
 		"@zag-js/number-input": "^1.43.3",
 		"@zag-js/svelte": "^1.43.3",
 		"bits-ui": "^2.19.0",
-		"svelte": "^5.57.0"
+		"svelte": "^5.37.0"
 	},
 	"peerDependenciesMeta": {
 		"@zag-js/number-input": {
