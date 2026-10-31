@@ -11,7 +11,12 @@
 		/** Title. Narrowed to a string: `object` has no Svelte analogue that a `Snippet` does not
 		 * already cover, and the content slot is the snippet. */
 		title?: string;
-		/** Content. */
+		/**
+		 * Content. To describe the dialog by part of it, give that part an `id` and the dialog its
+		 * `aria-describedby`, which the rest props carry to the dialog element. There is no
+		 * description member upstream, and a slot for one would have to choose between a dialog's
+		 * text and the fields beside it, which only the consumer knows.
+		 */
 		children?: Snippet;
 		/** PrimaryButtonText. A button with no text is not drawn, which is `PrimaryVisible` and
 		 * the states beside it. */
@@ -20,7 +25,11 @@
 		secondaryButtonText?: string;
 		/** CloseButtonText. */
 		closeButtonText?: string;
-		/** DefaultButton. */
+		/**
+		 * DefaultButton. As upstream, the button that takes Enter and the first focus is the one drawn
+		 * in the accent colour (ContentDialog_themeresources.xaml:194-208), so a dialog cannot accent
+		 * a confirm button while Cancel holds the focus.
+		 */
 		defaultButton?: ContentDialogButton;
 		/** IsPrimaryButtonEnabled. No element takes this name, so the polarity stays — ADR 0009. */
 		primaryButtonEnabled?: boolean;
