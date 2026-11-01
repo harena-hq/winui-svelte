@@ -890,6 +890,7 @@
 	}
 
 	.icon {
+		font-weight: normal;
 		display: flex;
 		flex: none;
 		align-items: center;

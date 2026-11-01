@@ -301,6 +301,7 @@
 		color: var(--winui-BreadcrumbBarNormalForegroundBrush);
 		font-family: var(--winui-SymbolThemeFontFamily);
 		font-size: var(--winui-BreadcrumbBarChevronFontSize);
+		line-height: normal;
 	}
 
 	.chevron::before {

@@ -62,7 +62,7 @@
 				{...props}
 				bind:this={ref}
 				type="button"
-				class={['root', className]}
+				class={['root', 'winui-BodyTextBlockStyle', className]}
 				{style}
 				{disabled}
 				{...rest}

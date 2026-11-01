@@ -248,6 +248,8 @@
 		background: var(--winui-ItemContainerCheckboxBackgroundUnchecked);
 		font-family: var(--winui-SymbolThemeFontFamily);
 		font-size: var(--winui-CheckBoxGlyphSize);
+		font-weight: normal;
+		line-height: normal;
 		pointer-events: none;
 	}
 

@@ -114,6 +114,7 @@
 	}
 
 	.value {
+		font-weight: normal;
 		margin: var(--winui-ValueInfoBadgeTextMargin);
 		font-family: var(--winui-ContentControlThemeFontFamily);
 		font-size: var(--winui-InfoBadgeValueFontSize);
@@ -127,6 +128,7 @@
 	   IconInfoBadgeFontIconMargin's `4,0,4,2` is emitted as `0 4px 2px 4px`, and the 2 that
 	   is last in the resource is the *bottom* here. */
 	.icon {
+		font-weight: normal;
 		margin: var(--winui-IconInfoBadgeFontIconMargin);
 		font-family: var(--winui-SymbolThemeFontFamily);
 		/* c1-allow: InfoBadge_themeresources.xaml:83, the Viewbox's aspect-preserving glyph scale requires a unit CSS line box */

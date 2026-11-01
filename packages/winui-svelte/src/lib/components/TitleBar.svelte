@@ -329,6 +329,7 @@
 	   it says the same at :244, where it currently holds by accident: no `max-height`, so it
 	   stretches the full row and centres its own text. */
 	.icon {
+		font-weight: normal;
 		display: inline-flex;
 		align-self: center;
 		align-items: center;
