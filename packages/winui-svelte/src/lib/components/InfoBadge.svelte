@@ -158,4 +158,12 @@
 		/* c1-allow: InfoBadge_themeresources.xaml:9, :96/:108 and :14, InfoBadgeMaxHeight 16 minus 4 + 2 padding and 0 + 2 margin is 8; :16's Icon margin is 4 + 4 */
 		font-size: 8px;
 	}
+
+	/* A contrast theme: the tokens are the high-contrast theme, so the browser's forcing is off
+	   for what this draws. ADR 0005. */
+	@media (forced-colors: active) {
+		* {
+			forced-color-adjust: none;
+		}
+	}
 </style>

@@ -35,4 +35,11 @@
 		justify-content: stretch;
 		background: var(--winui-FlipViewItemBackground);
 	}
+
+	/* Holds the consumer's own layout, which the browser still forces, under FlipView's rule. */
+	@media (forced-colors: active) {
+		.root {
+			forced-color-adjust: auto;
+		}
+	}
 </style>

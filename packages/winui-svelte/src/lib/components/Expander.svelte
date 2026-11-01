@@ -325,4 +325,16 @@
 		/* c1-allow: Expander.xaml:57, the closing SplineDoubleKeyFrame records 167ms and its key spline */
 		transition-timing-function: cubic-bezier(1, 1, 0, 1);
 	}
+
+	/* A contrast theme: the tokens are the high-contrast theme, so the browser's forcing is off
+	   for what this draws. ADR 0005. */
+	@media (forced-colors: active) {
+		* {
+			forced-color-adjust: none;
+		}
+		/* Holds the consumer's own layout, which the browser still forces. */
+		.content {
+			forced-color-adjust: auto;
+		}
+	}
 </style>

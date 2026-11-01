@@ -667,4 +667,20 @@
 	.card[data-light-dismiss] .tail polyline {
 		fill: var(--winui-TeachingTipTransientBackground);
 	}
+
+	/* A contrast theme: the tokens are the high-contrast theme, so the browser's forcing is off
+	   for what this draws. ADR 0005. */
+	@media (forced-colors: active) {
+		* {
+			forced-color-adjust: none;
+		}
+		/* Holds the consumer's own layout, which the browser still forces. */
+		.hero {
+			forced-color-adjust: auto;
+		}
+		/* Holds the consumer's own layout, which the browser still forces. */
+		.main {
+			forced-color-adjust: auto;
+		}
+	}
 </style>

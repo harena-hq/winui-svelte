@@ -110,3 +110,51 @@ Whether a TextBox actually shows a red edge under high contrast has not been obs
 this is not being called a defect. Our port resolves those stops to system colors like
 everything else. If the original does render red there, that is a deliberate departure and
 earns a `WD-` id at the point it can be seen side by side.
+
+## Amended 2026-11-01: a contrast theme turns the theme on, and the browser's forcing off
+
+The Decision above filled the eight from the system colours under `forced-colors: active`, and
+that was all that happened there. The tokens were still the page's light or dark ones unless the
+page also set `data-theme`, and the browser forces those: on an element it forces, a colour that is
+not a system colour is replaced, and `box-shadow` and a gradient are dropped. A consumer's trial
+under a real Windows contrast theme found an on ToggleSwitch with neither track nor knob, an off
+one with no knob, an InfoBar's icon without its disc, and an accent Button the same as a default
+one. The theme matrix sets `data-theme`, in a browser that is not forcing, so it had never seen
+any of them.
+
+**In forced-colors mode the tokens are the high-contrast theme, whatever `data-theme` says,** with
+the eight read from the system. The block is the high-contrast block emitted a second time, as
+the dark one is for its media query; it costs 133 KB of CSS and 10 KB gzipped.
+
+That alone brings the fills back, as a system colour is not replaced: measured in the local
+Chromium, an on ToggleSwitch draws its track and knob under the browser's forcing once the tokens
+are these. It does not bring back what is forced whatever its colour, which is every focus visual.
+
+**So a component's elements take `forced-color-adjust: none`,** by a scoped `*` in that component's
+styles, so each one reaches its own template and no further. What the page draws then is what the
+three-theme baselines already photograph, from the system's eight colours, and
+`tests/visual/forced-colors.spec.ts` compares the two pixel for pixel, on thirteen pages' first
+1265 by 720, at rest, in the one palette the browser's emulation has. C22 refuses a component
+without the rule, and names the ones that draw what the consumer asked for. The two component
+rules keyed on `data-theme`, ColorPicker's and Hyperlink's, are written a second time under the
+media query.
+
+**The property is inherited, so a slot takes it from its wrapper.** A label in a Button stays
+unforced, as forcing its colour over a Highlight fill could hide it. A wrapper that holds the
+consumer's layout sets `auto` again, and C22 holds the list. Three of these wrappers also draw
+the surface, Flyout's, Expander's and SplitView's pane, and the browser leaves that alone because
+those tokens are system colours. What a consumer draws there is forced as the rest of its page is.
+A consumer's own colour inside any other slot is not, a list row's for one, as it may sit on a
+selection's Highlight; setting `forced-color-adjust: auto` on it is how to ask. A token a consumer
+sets below `:root` is not forced either: it reaches a component's parts as it would anywhere.
+
+Rejected: **`forced-color-adjust: none` on `:root`.** One rule, but it takes the forcing off the
+consumer's whole page, which never asked to lose it. **Fixes part by part, for each fill.** Every
+state of every control would need its own reading of the upstream dictionaries, which the tokens
+have already done. **Emitting light and dark inside `@media not (forced-colors: active)`** with
+the high-contrast values as the base would save the second block, and rewrites the selector of
+every theme for 10 KB.
+
+**Not measured:** no WinUI app has been compared in a contrast theme, because the reference guest's
+theme is not changed. The values are the upstream's high-contrast dictionaries, read, and this
+drawing of them has been seen only under Chromium's emulation.
