@@ -212,6 +212,7 @@
 		pointer-events: none;
 	}
 	.glyph {
+		font-weight: normal;
 		font-family: var(--winui-SymbolThemeFontFamily);
 		/* c1-allow: RatingControl.cpp:380-388's expression rests at its 0.5 floor: 32px × 0.5 = 16px. */
 		font-size: calc(var(--winui-RatingControlFontSizeForRendering) * 0.5);
@@ -240,8 +241,11 @@
 	.caption {
 		/* c1-allow: RatingControl.xaml:61, the caption's Margin="4,0,20,0". */
 		margin: 0 20px 0 4px;
+		/* CaptionTextBlockStyle's family, which type-ramp.css reads from the same token. */
+		font-family: var(--winui-SmallFontFamily);
 		/* c1-allow: RatingControl.xaml:61, CaptionTextBlockStyle FontSize="12". */
 		font-size: 12px;
+		font-weight: normal;
 		line-height: normal;
 		text-box: trim-both cap alphabetic;
 		color: var(--winui-RatingControlCaptionForeground);

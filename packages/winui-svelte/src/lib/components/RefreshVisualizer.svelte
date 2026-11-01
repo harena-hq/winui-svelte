@@ -291,6 +291,7 @@
 	/* `DEFAULT_INDICATOR_SIZE` is 30 (`RefreshVisualizer.cpp:17`), set on the default
 	   `SymbolIcon` at `:61-65`. It is the icon element's box, not the glyph's em. */
 	.glyph {
+		font-weight: normal;
 		width: 30px;
 		height: 30px;
 		display: grid;

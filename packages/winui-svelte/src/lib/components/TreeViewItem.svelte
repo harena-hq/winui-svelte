@@ -153,6 +153,8 @@
 		font-family: var(--winui-SymbolThemeFontFamily);
 		/* c1-allow: TreeView.idl:206, GlyphSize defaults to 8.0 */
 		font-size: 8px;
+		font-weight: normal;
+		line-height: normal;
 		color: inherit;
 	}
 

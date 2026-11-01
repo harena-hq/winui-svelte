@@ -164,8 +164,11 @@
 	}
 
 	.item {
-		/* It carries no ramp class, so the family is read here: ADR 0021. */
+		/* It carries no ramp class, so the text's values are read here: ADR 0021. */
 		font-family: var(--winui-ContentControlThemeFontFamily);
+		font-size: var(--winui-ControlContentThemeFontSize);
+		font-weight: normal;
+		line-height: normal;
 		/* XAML minimums include padding; CSS's do not, unless the box is border-box. */
 		box-sizing: border-box;
 		position: relative;

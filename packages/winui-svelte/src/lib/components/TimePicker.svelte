@@ -291,6 +291,15 @@
 </div>
 
 <style>
+	/* It carries no ramp class, so the text's values are read here: ADR 0021. Without specificity,
+	   so a consumer's class on the root still sets them. */
+	:where(.time-picker) {
+		font-family: var(--winui-ContentControlThemeFontFamily);
+		font-size: var(--winui-ControlContentThemeFontSize);
+		font-weight: normal;
+		line-height: normal;
+	}
+
 	.time-picker {
 		box-sizing: border-box;
 		display: grid;

@@ -666,6 +666,7 @@
 		max-width: var(--winui-ToolTipMaxWidth);
 		font-family: var(--winui-ContentControlThemeFontFamily);
 		font-size: var(--winui-ToolTipContentThemeFontSize);
+		font-weight: normal;
 		line-height: normal;
 	}
 

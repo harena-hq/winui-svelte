@@ -39,10 +39,24 @@ optical faces to split. They are this library's, in the same shape.
 **The released controls with no ramp class read the token themselves:**
 TextBox, PasswordBox and NumberBox on their root, NavigationView's rows on their `<li>`, each
 without specificity, so that a consumer's class there still sets the family as FontFamily on the
-control does. A font on an ancestor no longer reaches them, as it does not upstream. Their size and
-weight still come from the page. A TextBlock with no `textStyle` inherits from the page, and so
-do about ten preview controls, CalendarView's days, CalendarDatePicker's date and ColorPicker's
-labels among them, which a Gallery page's ramp class hides.
+control does. A font on an ancestor no longer reaches them, as it does not upstream.
+
+**A page's size, weight and line height stop at the same rules (2026-11-01).** They also set the
+size to `ControlContentThemeFontSize` (`TextBox_themeresources.xaml:186`), the weight to `normal`
+and the line to `normal`: on the root or `<li>` as above, and on `.item` for NavigationView's top
+rows, whose `<li>` takes no consumer class. DatePicker, TimePicker, CalendarDatePicker, CalendarView
+and ColorPicker gained the same rule. Where a glyph or text element already had its own size, the
+part of this it lacked is set there: the weight on TabView, TitleBar, InfoBadge, RatingControl,
+RefreshVisualizer and ToolTip, the line on BreadcrumbBar, both on TreeViewItem and ItemContainer.
+RatingControl's caption also reads CaptionTextBlockStyle's family now, and MenuBarItem carries the
+body ramp class, its title having drawn in the browser's button font. A Gallery page's ramp class
+had hidden the rest; the caption's face and MenuBarItem's font showed there and were simply wrong.
+The weight is a divergence where upstream has no setter: `Control.cpp:150-158` lets a parent's
+weight reach a TextBox, and here a `body` is usually written for the page's own text, so the library
+stops it. A TextBlock with no `textStyle` and the inline text elements still inherit from the page.
+Content a consumer places in a control inherits from the control, and from the page only where the
+control sets nothing. This stops what a page's text passes down: being without specificity, these
+rules still lose to an element rule aimed at `li` or `div` itself.
 
 **A control's height stays its font's line.** ADR 0011 made every line box the font's `normal`, and
 ADR 0019 rejected an explicit `line-height` for taking 0.379px off every single-line box under

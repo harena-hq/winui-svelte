@@ -167,10 +167,13 @@
 </div>
 
 <style>
-	/* It carries no ramp class, so the family is read here: ADR 0021. Without specificity, so a
-	   consumer's class on the root still sets it, as FontFamily on the control does. */
+	/* It carries no ramp class, so the text's values are read here: ADR 0021. Without specificity,
+	   so a consumer's class on the root still sets them, as FontFamily on the control does. */
 	:where(.root) {
 		font-family: var(--winui-ContentControlThemeFontFamily);
+		font-size: var(--winui-ControlContentThemeFontSize);
+		font-weight: normal;
+		line-height: normal;
 	}
 
 	.root {
@@ -305,10 +308,8 @@
 		font: inherit;
 		color: inherit;
 		outline: none;
-		/* Kept where AutoSuggestBox's twin was deleted, and the difference is the root: that
-		   control carries `winui-BodyTextBlockStyle` and this one does not, so `font: inherit`
-		   here takes the consumer's page's size and line height, not a ramp class's. A WinUI TextBox
-		   draws its text at the font's own spacing whatever surrounds it, and this is what says so.
+		/* The root's rule sets this line too; this keeps it when a consumer's class on the root sets
+		   one. A WinUI TextBox draws its text at the font's own spacing, and this is what says so.
 		   ADR 0011. */
 		line-height: normal;
 	}
