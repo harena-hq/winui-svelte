@@ -634,6 +634,19 @@
 		height: 14px;
 	}
 
+	/* While pressed the knob holds its outer side and grows inward: `HorizontalAlignment` and a 3
+	   margin (ToggleSwitch_themeresources.xaml:284-287), which the guest draws at 3 to 20. */
+	.root:not([data-disabled]):active .knob-off,
+	.root[data-dragging] .knob-off {
+		/* c1-allow: ToggleSwitch_themeresources.xaml:287, `Margin="3,0,0,0"` */
+		left: 3px;
+	}
+	.root:not([data-disabled]):active .knob-on,
+	.root[data-dragging] .knob-on {
+		/* c1-allow: ToggleSwitch_themeresources.xaml:285, `Margin="0,0,3,0"` */
+		right: 3px;
+	}
+
 	/* Written last so it wins over `:hover` and `:active`: a disabled switch must not light up
 	   under the pointer. `data-disabled` is on the root rather than `:disabled` because
 	   `:disabled` matches the form control inside, and the root here is the outer `<div>`. */
