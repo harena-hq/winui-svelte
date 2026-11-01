@@ -4413,6 +4413,11 @@ two, and the last of them is the owner's alone. D55.
    attributes, and the Svelte floor at 5.37.0. A consumer of rc.1 has names to change, as the props
    take an index signature and an old one type-checks and lands on the DOM.
 
+   **`0.1.0-rc.3`, 2026-11-01,** carries what the first look at rc.2 on Windows found: a contrast
+   theme draws the high-contrast theme (ADR 0005, C22), and the text stacks are tokens a consumer
+   replaces (ADR 0021). A consumer of rc.2 has no names to change, and a TextBox and a NavigationView
+   row no longer take an ancestor's font.
+
 v19 starts after the cut, as D37 orders it.
 
 ### Final — the acceptance gate
