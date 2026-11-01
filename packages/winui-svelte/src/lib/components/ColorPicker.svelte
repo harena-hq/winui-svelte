@@ -886,4 +886,31 @@
 		grid-template-columns: auto 8px var(--winui-ColorPickerTextInputHorizontalOrientationMargin);
 		justify-content: start;
 	}
+
+	/* A contrast theme: the tokens are the high-contrast theme, so the browser's forcing is off
+	   for what this draws. ADR 0005. */
+	@media (forced-colors: active) {
+		* {
+			forced-color-adjust: none;
+		}
+		/* The HighContrast dictionary again, as a contrast theme sets no `data-theme`. */
+		.more-entries :global(.more-button) {
+			--winui-ToggleButtonBorderBrush: var(--winui-SystemColorButtonTextColor);
+			--winui-ToggleButtonForeground: var(--winui-SystemColorButtonTextColor);
+			--winui-ToggleButtonBorderBrushPointerOver: var(--winui-SystemColorHighlightColor);
+			--winui-ToggleButtonForegroundPointerOver: var(--winui-SystemColorHighlightColor);
+			--winui-ToggleButtonBorderBrushPressed: var(--winui-SystemColorHighlightColor);
+			--winui-ToggleButtonForegroundPressed: var(--winui-SystemColorHighlightColor);
+			--winui-ToggleButtonBorderBrushDisabled: var(--winui-SystemColorGrayTextColor);
+			--winui-ToggleButtonForegroundDisabled: var(--winui-SystemColorGrayTextColor);
+			--winui-ToggleButtonBorderBrushChecked: var(--winui-SystemColorButtonTextColor);
+			--winui-ToggleButtonForegroundChecked: var(--winui-SystemColorButtonTextColor);
+			--winui-ToggleButtonBorderBrushCheckedPointerOver: var(--winui-SystemColorHighlightColor);
+			--winui-ToggleButtonForegroundCheckedPointerOver: var(--winui-SystemColorHighlightColor);
+			--winui-ToggleButtonBorderBrushCheckedPressed: var(--winui-SystemColorHighlightColor);
+			--winui-ToggleButtonForegroundCheckedPressed: var(--winui-SystemColorHighlightColor);
+			--winui-ToggleButtonBorderBrushCheckedDisabled: var(--winui-SystemColorGrayTextColor);
+			--winui-ToggleButtonForegroundCheckedDisabled: var(--winui-SystemColorGrayTextColor);
+		}
+	}
 </style>

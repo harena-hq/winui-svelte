@@ -116,4 +116,12 @@
 	.items {
 		margin: var(--winui-CommandBarOverflowPresenterMargin);
 	}
+
+	/* A contrast theme: the tokens are the high-contrast theme, so the browser's forcing is off
+	   for what this draws. ADR 0005. */
+	@media (forced-colors: active) {
+		* {
+			forced-color-adjust: none;
+		}
+	}
 </style>

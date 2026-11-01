@@ -143,12 +143,25 @@
 	   difference reaches a component through a token, and `text-decoration-line` is not a value a
 	   token can carry. Specificity (0,5,0) against the (0,3,0) rule above it, and that rule is in
 	   this same file, so there is no theme block to lose the cascade to. */
-	:global(:root[data-theme='high-contrast']) .root:hover,
-	:global(:root[data-theme='high-contrast']) .root:active {
+	:global(:root[data-theme='high-contrast']) .root:not([data-underline-style='none']):hover,
+	:global(:root[data-theme='high-contrast']) .root:not([data-underline-style='none']):active {
 		text-decoration-line: underline;
 	}
 
 	.root[data-underline-style='none'] {
 		text-decoration-line: none;
+	}
+
+	/* A contrast theme: the tokens are the high-contrast theme, so the browser's forcing is off
+	   for what this draws. ADR 0005. */
+	@media (forced-colors: active) {
+		* {
+			forced-color-adjust: none;
+		}
+		/* As under `data-theme` above, which a contrast theme does not set. */
+		.root:not([data-underline-style='none']):hover,
+		.root:not([data-underline-style='none']):active {
+			text-decoration-line: underline;
+		}
 	}
 </style>

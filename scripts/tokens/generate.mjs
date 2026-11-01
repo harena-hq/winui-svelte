@@ -1274,16 +1274,18 @@ function stylesheet(doc, framework, selection, extraEmitted, icons) {
 		)
 	];
 
-	const highContrast = [
-		...systemColors(1, literal),
+	const highContrast = (depth, of) => [
+		...systemColors(depth, of),
 		'',
-		...forThemes([HIGH_CONTRAST], 1),
+		...forThemes([HIGH_CONTRAST], depth),
 		...Object.entries(PLATFORM_SHADOWS).flatMap(([key, value]) =>
-			declaration(key, value.highContrast, 1)
+			declaration(key, value.highContrast, depth)
 		)
 	];
 
-	const forcedColors = systemColors(2, (entry) => entry.keyword);
+	// The same array again, as dark's two are: a Windows contrast theme is this theme whatever
+	// `data-theme` asks for, and only the eight differ, read from the theme itself.
+	const forcedColors = highContrast(2, (entry) => entry.keyword);
 	const compact = [];
 	const compactSkipped = [];
 	for (const [key, record] of compactByKey) {
@@ -1349,13 +1351,16 @@ function stylesheet(doc, framework, selection, extraEmitted, icons) {
 		'/* High contrast is a remapping onto the eight system colors, not a third palette */',
 		'/* of values — ADR 0005. */',
 		":root[data-theme='high-contrast'] {",
-		...highContrast,
+		...highContrast(1, literal),
 		'}',
 		'',
-		'/* In forced-colors mode the browser fills the same eight from the actual Windows */',
-		'/* theme, which is the one place these values are measured rather than ours. */',
+		'/* In forced-colors mode the same theme, whatever `data-theme` asks for, with the eight',
+		'   filled from the actual Windows theme, the one place they are measured rather than',
+		'   ours. Three `:root`s to tie the strongest theme scope above, `:root:not():not()`,',
+		"   and come after it. A component turns the browser's own forcing off where it draws",
+		'   these: ADR 0005. */',
 		'@media (forced-colors: active) {',
-		'\t:root {',
+		'\t:root:root:root {',
 		...forcedColors,
 		'\t}',
 		'}',
@@ -1389,7 +1394,7 @@ function stylesheet(doc, framework, selection, extraEmitted, icons) {
 			external,
 			light: declared(light),
 			dark: declared(darkRoot),
-			highContrast: declared(highContrast),
+			highContrast: declared(highContrast(1, literal)),
 			forcedColors: declared(forcedColors),
 			compact: declared(compact),
 			compactSkipped,

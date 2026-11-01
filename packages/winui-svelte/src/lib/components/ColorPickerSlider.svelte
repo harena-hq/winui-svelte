@@ -324,4 +324,12 @@
 	/* No thumb rule. ColorPicker.xaml:525 gives VerticalThumb the horizontal thumb's
 	   SliderHorizontalThumbWidth and SliderHorizontalThumbHeight, so the base 18 by 18 is already
 	   right — unlike Slider_themeresources.xaml, which has separate vertical resources. */
+
+	/* A contrast theme: the tokens are the high-contrast theme, so the browser's forcing is off
+	   for what this draws. ADR 0005. */
+	@media (forced-colors: active) {
+		* {
+			forced-color-adjust: none;
+		}
+	}
 </style>

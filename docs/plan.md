@@ -4614,14 +4614,14 @@ popup layer), `C14` (no colour property reads a token that resolves to a gradien
 repository holds), `C17` (the gate list is every gate file, in order), `C18` (every
 content declaration that draws something states its alternative text), `C19` (every glyph a
 component draws for itself has a row in the fallback face's table), `C20` (every exported
-component keeps ADR 0009's names) and `C21` (a component's text comes from the table) are in
-`pnpm conform` and
-have no entry here — C11 and C12 landed without one, and none of the nine after them added
+component keeps ADR 0009's names), `C21` (a component's text comes from the table) and `C22` (a
+component that draws turns the browser's colour forcing off) are in `pnpm conform` and
+have no entry here — C11 and C12 landed without one, and none of the ten after them added
 itself alone, because an entry for the newest while the ones before it have none would make the
 gap read as a choice. **`scripts/conformance/gates.mjs` is the list**, and `C17` holds it to the
 files beside it; this section is a commentary on the gates that have one, and the backfill is
-owed. Each of the eleven carries its own reasoning in its own file, which is where the detail
-is; C13's through C21's also record what they cannot reach, and each names the test that
+owed. Each of the twelve carries its own reasoning in its own file, which is where the detail
+is; C13's through C22's also record what they cannot reach, and each names the test that
 answers that half where one does; C17's other gaps, and the two documents it reads, are left
 to hand.
 
