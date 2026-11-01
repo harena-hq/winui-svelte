@@ -37,6 +37,8 @@ test('the text comes before the track, 12 from it, and the track ends the contro
 });
 
 test('the shorter text meets the gap', async ({ page }) => {
+	// On and Off are the same width under the local lane's Arial-metric fallback.
+	test.skip(!CDP_ENDPOINT, 'the two texts differ in width only under Segoe');
 	const { text } = await boxes(page, 'on');
 	const shown = (await row(page, 'on').locator('.on-content').boundingBox())!;
 	expect(shown.width).toBeLessThan(text.width);
