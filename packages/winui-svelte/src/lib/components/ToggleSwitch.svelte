@@ -46,6 +46,11 @@
 		value?: string;
 		/** No WinUI member: the id of the form to associate with. */
 		form?: string | null;
+		/**
+		 * On the root, as ADR 0009 puts the rest props, so `<label for>` does not reach the switch.
+		 * Wrap it in the `<label>`, or name it with `aria-labelledby`, which goes to the `<input>`.
+		 */
+		id?: string | null;
 		class?: import('svelte/elements').ClassValue | null;
 		style?: string | null;
 		/**
