@@ -122,12 +122,14 @@
 	--winui-SystemAccentColorLight2: #4cc2ff;
 	--winui-SystemAccentColorLight3: #99ebff;
 	--winui-SymbolThemeFontFamily: 'Segoe Fluent Icons', 'Segoe MDL2 Assets', 'winui-svelte icons';
+	--winui-FallbackFontFamily: 'winui-svelte text', sans-serif;
+	--winui-SmallFontFamily: 'Segoe UI Variable Small', 'Segoe UI', var(--winui-FallbackFontFamily);
 	--winui-ContentControlThemeFontFamily:
-		'Segoe UI Variable Text', 'Segoe UI', 'winui-svelte text', sans-serif;
-	--winui-PivotHeaderItemFontFamily:
-		'Segoe UI Variable Text', 'Segoe UI', 'winui-svelte text', sans-serif;
-	--winui-PivotTitleFontFamily:
-		'Segoe UI Variable Text', 'Segoe UI', 'winui-svelte text', sans-serif;
+		'Segoe UI Variable Text', 'Segoe UI', var(--winui-FallbackFontFamily);
+	--winui-DisplayFontFamily:
+		'Segoe UI Variable Display', 'Segoe UI', var(--winui-FallbackFontFamily);
+	--winui-PivotHeaderItemFontFamily: var(--winui-ContentControlThemeFontFamily);
+	--winui-PivotTitleFontFamily: var(--winui-ContentControlThemeFontFamily);
 	--winui-FocusVisualPrimaryThickness: 2px;
 	--winui-FocusVisualSecondaryThickness: 1px;
 	--winui-ToolTipShadow: 0 4px 5.333px rgba(0, 0, 0, 0.137);

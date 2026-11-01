@@ -114,3 +114,6 @@ Open question O1 (what snapshots do about the missing font) exists because of th
 and the answer cannot be "install the font in CI" — that is the redistribution this ADR
 avoids. The Gallery's Iconography page needs a codepoint table, which comes from Microsoft's
 Segoe Fluent Icons documentation rather than from the font file.
+
+**Amended by ADR 0021**, 2026-11-01: the stacks are tokens a consumer can replace. The default
+stands.

@@ -22,7 +22,9 @@ takes, and its `SymbolName` type; `ScrollAnimation`, with its `ScrollAnimationEa
 `ScrollVector` types, which `ScrollView`'s `onScrollAnimationStarting` hands out and takes back;
 `provideStrings`, which replaces the text the components write for themselves for a subtree, and
 `defaultStrings`, that text in English, with the `Strings` and `StringKey` types; and `VERSION`.
-The stylesheets are `winui-svelte/tokens.css` and `winui-svelte/type-ramp.css`.
+The stylesheets are `winui-svelte/tokens.css` and `winui-svelte/type-ramp.css`. The text and icon
+fonts are tokens a consumer can replace on `:root`, and a Windows contrast theme draws the
+high-contrast theme.
 
 ### `preview`
 

@@ -12,6 +12,15 @@ Icons outlines, as do the glyphs `Symbol` names; a glyph code point a consumer p
 it only if it is one of those. The icon font is a `data:` URL, which a Content Security Policy's
 `font-src`, or its `default-src` where it has none, has to allow.
 
+The fonts are tokens, set on `:root` in CSS loaded after `tokens.css`. `--winui-FallbackFontFamily`
+names what draws after Segoe, so it draws any character neither Segoe family has and it has itself,
+which off Windows is all of the text, and on Windows leaves Segoe's alone.
+`--winui-SmallFontFamily`, `--winui-ContentControlThemeFontFamily` and `--winui-DisplayFontFamily`
+replace Segoe. `--winui-SymbolThemeFontFamily` is the icon font, whose replacement has to carry
+Segoe's code points. A control's height follows its font's line, so a font without Segoe's line
+metrics changes it, unless its `@font-face` sets `ascent-override: 107.91015625%`,
+`descent-override: 25.09765625%` and `line-gap-override: 0%`.
+
 ```sh
 pnpm add winui-svelte bits-ui @internationalized/date
 ```
