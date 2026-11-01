@@ -2,6 +2,8 @@ import { expect } from '@playwright/test';
 import { CDP_ENDPOINT, test } from './fixtures';
 import { snapshotAllThemes } from './themes';
 
+type Box = { x: number; y: number; width: number; height: number };
+
 test('ToggleSwitch in three themes', async ({ page }) => {
 	test.skip(!CDP_ENDPOINT, 'no tracked baseline exists for this browser');
 	await snapshotAllThemes(page, 'ToggleSwitch', '/dev/toggle-switch');
@@ -85,4 +87,36 @@ test('the on knob is fill to its edge, with no stroke inside it', async ({ page 
 		{ data: shot.toString('base64'), fill }
 	);
 	expect(solid).toBeGreaterThanOrEqual(10);
+});
+
+test('a pressed knob holds its outer side and grows inward', async ({ page }) => {
+	await page.goto('/dev/toggle-switch');
+	for (const [state, face, inset] of [
+		[':not([data-checked])', '.knob-off', (knob: Box, box: Box) => box.x - knob.x],
+		['[data-checked]', '.knob-on', (knob: Box, box: Box) => knob.x + knob.width - box.x - box.width]
+	] as const) {
+		const root = page.locator(`.root${state}:not([data-disabled])`).first();
+		const knob = root.locator('.knob');
+		const pressed = root.locator(face);
+		const bounds = (await knob.boundingBox())!;
+		await page.mouse.move(bounds.x + 10, bounds.y + 10);
+		await page.mouse.down();
+		await expect(pressed).toHaveCSS('width', '17px');
+		expect(inset((await knob.boundingBox())!, (await pressed.boundingBox())!)).toBe(3);
+		// Off the switch first, so that the release leaves the next row where it was.
+		await page.mouse.move(5, 5);
+		await page.mouse.up();
+	}
+});
+
+test('a disabled knob stays centred under a press', async ({ page }) => {
+	await page.goto('/dev/toggle-switch');
+	const root = page.locator('.root[data-disabled]:not([data-checked])').first();
+	const knob = (await root.locator('.knob').boundingBox())!;
+	await page.mouse.move(knob.x + 10, knob.y + 10);
+	await page.mouse.down();
+	const face = (await root.locator('.knob-off').boundingBox())!;
+	expect(face.x - knob.x).toBe((knob.width - face.width) / 2);
+	await page.mouse.move(5, 5);
+	await page.mouse.up();
 });
