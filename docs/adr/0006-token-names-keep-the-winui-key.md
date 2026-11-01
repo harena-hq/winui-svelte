@@ -33,6 +33,9 @@ thing added, and it exists so a consumer's own properties cannot collide with ou
 
 Permanent. Changing it later is a breaking change to every consumer.
 
+**Amended by ADR 0021**, 2026-11-01: `FallbackFontFamily`, `SmallFontFamily` and
+`DisplayFontFamily` are this library's names, as WinUI has no key for what they hold.
+
 ## Alternatives rejected
 
 - **Kebab-case.** CSS-idiomatic, and it buys a permanent translation step between our names

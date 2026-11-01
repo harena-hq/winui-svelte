@@ -6,70 +6,70 @@
  */
 
 .winui-BaseTextBlockStyle {
-	font-family: 'Segoe UI Variable Text', 'Segoe UI', 'winui-svelte text', sans-serif;
+	font-family: var(--winui-ContentControlThemeFontFamily);
 	font-size: var(--winui-BodyTextBlockFontSize);
 	font-weight: 600;
 	line-height: normal;
 }
 
 .winui-CaptionTextBlockStyle {
-	font-family: 'Segoe UI Variable Small', 'Segoe UI', 'winui-svelte text', sans-serif;
+	font-family: var(--winui-SmallFontFamily);
 	font-size: var(--winui-CaptionTextBlockFontSize);
 	font-weight: 400;
 	line-height: normal;
 }
 
 .winui-BodyTextBlockStyle {
-	font-family: 'Segoe UI Variable Text', 'Segoe UI', 'winui-svelte text', sans-serif;
+	font-family: var(--winui-ContentControlThemeFontFamily);
 	font-size: var(--winui-BodyTextBlockFontSize);
 	font-weight: 400;
 	line-height: normal;
 }
 
 .winui-BodyStrongTextBlockStyle {
-	font-family: 'Segoe UI Variable Text', 'Segoe UI', 'winui-svelte text', sans-serif;
+	font-family: var(--winui-ContentControlThemeFontFamily);
 	font-size: var(--winui-BodyTextBlockFontSize);
 	font-weight: 600;
 	line-height: normal;
 }
 
 .winui-BodyLargeTextBlockStyle {
-	font-family: 'Segoe UI Variable Text', 'Segoe UI', 'winui-svelte text', sans-serif;
+	font-family: var(--winui-ContentControlThemeFontFamily);
 	font-size: var(--winui-BodyLargeTextBlockFontSize);
 	font-weight: 400;
 	line-height: normal;
 }
 
 .winui-BodyLargeStrongTextBlockStyle {
-	font-family: 'Segoe UI Variable Text', 'Segoe UI', 'winui-svelte text', sans-serif;
+	font-family: var(--winui-ContentControlThemeFontFamily);
 	font-size: var(--winui-BodyLargeTextBlockFontSize);
 	font-weight: 600;
 	line-height: normal;
 }
 
 .winui-SubtitleTextBlockStyle {
-	font-family: 'Segoe UI Variable Display', 'Segoe UI', 'winui-svelte text', sans-serif;
+	font-family: var(--winui-DisplayFontFamily);
 	font-size: var(--winui-SubtitleTextBlockFontSize);
 	font-weight: 600;
 	line-height: normal;
 }
 
 .winui-TitleTextBlockStyle {
-	font-family: 'Segoe UI Variable Display', 'Segoe UI', 'winui-svelte text', sans-serif;
+	font-family: var(--winui-DisplayFontFamily);
 	font-size: var(--winui-TitleTextBlockFontSize);
 	font-weight: 600;
 	line-height: normal;
 }
 
 .winui-TitleLargeTextBlockStyle {
-	font-family: 'Segoe UI Variable Display', 'Segoe UI', 'winui-svelte text', sans-serif;
+	font-family: var(--winui-DisplayFontFamily);
 	font-size: var(--winui-TitleLargeTextBlockFontSize);
 	font-weight: 600;
 	line-height: normal;
 }
 
 .winui-DisplayTextBlockStyle {
-	font-family: 'Segoe UI Variable Display', 'Segoe UI', 'winui-svelte text', sans-serif;
+	font-family: var(--winui-DisplayFontFamily);
 	font-size: var(--winui-DisplayTextBlockFontSize);
 	font-weight: 600;
 	line-height: normal;

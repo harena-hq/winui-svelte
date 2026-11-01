@@ -175,6 +175,12 @@
 </div>
 
 <style>
+	/* It carries no ramp class, so the family is read here: ADR 0021. Without specificity, so a
+	   consumer's class on the root still sets it, as FontFamily on the control does. */
+	:where(.root) {
+		font-family: var(--winui-ContentControlThemeFontFamily);
+	}
+
 	.root {
 		display: flex;
 		flex-direction: column;
@@ -296,9 +302,9 @@
 		outline: none;
 		/* Kept where AutoSuggestBox's twin was deleted, and the difference is the root: that
 		   control carries `winui-BodyTextBlockStyle` and this one does not, so `font: inherit`
-		   here resolves against the consumer's page rather than against a ramp class inside the
-		   library. A WinUI TextBox draws its text at the font's own spacing whatever surrounds
-		   it, and this is what says so. ADR 0011. */
+		   here takes the consumer's page's size and line height, not a ramp class's. A WinUI TextBox
+		   draws its text at the font's own spacing whatever surrounds it, and this is what says so.
+		   ADR 0011. */
 		line-height: normal;
 		/* PasswordBox measures as TextBox does: see the same declaration in TextBox.svelte. */
 		field-sizing: content;

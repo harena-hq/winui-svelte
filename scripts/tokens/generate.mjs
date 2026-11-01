@@ -588,6 +588,13 @@ function flattenStyle(record, byKey) {
 	return flattened;
 }
 
+/** The token that holds each optical face's stack. ADR 0021. */
+const RAMP_FONT_TOKEN = {
+	Small: 'SmallFontFamily',
+	Text: 'ContentControlThemeFontFamily',
+	Display: 'DisplayFontFamily'
+};
+
 /**
  * One `Style` record as the four declarations its CSS class carries.
  *
@@ -662,7 +669,7 @@ function style(record, byKey) {
 		);
 
 	return {
-		fontFamily: `'Segoe UI Variable ${face}', 'Segoe UI', '${TEXT_FACE.family}', sans-serif`,
+		fontFamily: `var(--winui-${RAMP_FONT_TOKEN[face]})`,
 		fontSize: ref(fontSizeKey, record.theme, where),
 		fontWeight,
 		lineHeight: 'normal'
@@ -1242,7 +1249,7 @@ function stylesheet(doc, framework, selection, extraEmitted, icons) {
 		// for the same reason: a family that changed with the theme would be a different
 		// decision than the one ADR 0003 made. The icon stack ends in the face the
 		// `@font-face` the stylesheet opens with defines, for where neither Segoe family is
-		// installed (ADR 0018). The text stacks name ADR 0019's face in `PLATFORM_FONTS` itself.
+		// installed (ADR 0018). The text stacks reach ADR 0019's face in `PLATFORM_FONTS` itself.
 		...Object.entries(PLATFORM_FONTS).flatMap(([key, value]) =>
 			declaration(
 				key,
@@ -1404,16 +1411,31 @@ function stylesheet(doc, framework, selection, extraEmitted, icons) {
 }
 
 /**
- * Every text stack `PLATFORM_FONTS` writes ends in the face `TEXT_FACE` defines and then the
- * generic family, so that off Windows each draws a Segoe line box (ADR 0019). The type ramp's
- * stacks are built here from the same name.
+ * `FallbackFontFamily` is the face `TEXT_FACE` defines and then the generic family, and every
+ * stack the type ramp reads ends in it, with its own Segoe family first, so that off Windows each
+ * draws a Segoe line box (ADR 0019) and a consumer's fallback reaches them all (ADR 0021).
  */
 function checkTextStacks() {
-	const tail = `, '${TEXT_FACE.family}', sans-serif`;
-	for (const [key, stack] of Object.entries(PLATFORM_FONTS)) {
-		if (key === 'SymbolThemeFontFamily') continue;
-		if (!stack.endsWith(tail))
-			fail(`PLATFORM_FONTS.${key} is \`${stack}\`, not ending \`${tail}\``);
+	const fallback = `'${TEXT_FACE.family}', sans-serif`;
+	if (PLATFORM_FONTS.FallbackFontFamily !== fallback)
+		fail(`PLATFORM_FONTS.FallbackFontFamily is not \`${fallback}\``);
+	for (const [face, key] of Object.entries(RAMP_FONT_TOKEN)) {
+		const stack = `'Segoe UI Variable ${face}', 'Segoe UI', var(--winui-FallbackFontFamily)`;
+		if (PLATFORM_FONTS[key] !== stack) fail(`PLATFORM_FONTS.${key} is not \`${stack}\``);
+	}
+	for (const key of ['PivotHeaderItemFontFamily', 'PivotTitleFontFamily']) {
+		if (PLATFORM_FONTS[key] !== 'var(--winui-ContentControlThemeFontFamily)')
+			fail(`PLATFORM_FONTS.${key} does not read ContentControlThemeFontFamily`);
+	}
+	const known = [
+		'SymbolThemeFontFamily',
+		'FallbackFontFamily',
+		'PivotHeaderItemFontFamily',
+		'PivotTitleFontFamily',
+		...Object.values(RAMP_FONT_TOKEN)
+	];
+	for (const key of Object.keys(PLATFORM_FONTS)) {
+		if (!known.includes(key)) fail(`PLATFORM_FONTS.${key} is a stack this check does not know`);
 	}
 }
 

@@ -3210,21 +3210,22 @@ export const SYSTEM_COLORS = {
  * the framework record defines it as `XamlAutoFontFamily` in all three themes, a name that
  * resolves only inside WinUI, so the family it stands for is written here.
  *
- * The two stack values are kept in step: the `Text` row here is the same stack
- * `style()` in `scripts/tokens/generate.mjs` builds for the type ramp's Text face, and ADR 0003
- * fixes both — a future change to one is a change to the other.
+ * `SmallFontFamily`, `ContentControlThemeFontFamily` and `DisplayFontFamily` are the type ramp's
+ * three stacks, which `style()` in `scripts/tokens/generate.mjs` reads by step, and
+ * `FallbackFontFamily` is what each names after the two Segoe families. They are tokens so that a
+ * consumer can replace them on `:root`: ADR 0021. WinUI has none of these names but the second.
  *
  * The values are ADR 0003's decision, not a new one: reference the family by name and embed
  * nothing. `tests/visual/fonts.spec.ts` fails if they stop resolving where the baselines
  * are taken, which is the only place the reference can be checked. The generator emits the
  * icon stack with one family after the two written here, the face of the release's own glyphs
  * that ADR 0018 embeds in `tokens.css` for where Segoe is absent; `checkIconStack` compares
- * the two written here alone. Each text stack ends in `TEXT_FACE`'s family and then
- * `sans-serif`, which the generator checks (ADR 0019).
+ * the two written here alone. `FallbackFontFamily` is `TEXT_FACE`'s family and then `sans-serif`,
+ * and each stack ends in it, which the generator checks (ADR 0019).
  *
  * `PivotHeaderItemFontFamily` and `PivotTitleFontFamily` are records in the control pin, in all
  * three Pivot dictionaries, and like `ContentControlThemeFontFamily` each says
- * `XamlAutoFontFamily`, so they take the same written stack.
+ * `XamlAutoFontFamily`, so they read the same stack.
  *
  * ADR 0003 gives the type ramp an explicit family per step because Windows registers Segoe UI
  * Variable as three families rather than one with an `opsz` axis, and the ramp switches to the
@@ -3233,17 +3234,19 @@ export const SYSTEM_COLORS = {
  * 82.50, while Display measures 24.63, 73.50 and 79.97. The ramp's family is a property of
  * its step, not a rule about size, so XamlAutoFontFamily outside it gets Text whatever size.
  *
- * Four entries, because four are what the acceptance surface needs. WinUI's other text-family
+ * Seven entries, because seven are what the surface needs. WinUI's other text-family
  * resources are not here for the same reason the rest of the per-control vocabulary is not:
  * emitting a name nothing reads makes the layer harder to audit and easier to trust wrongly.
  */
 export const PLATFORM_FONTS = {
 	SymbolThemeFontFamily: "'Segoe Fluent Icons', 'Segoe MDL2 Assets'",
+	FallbackFontFamily: "'winui-svelte text', sans-serif",
+	SmallFontFamily: "'Segoe UI Variable Small', 'Segoe UI', var(--winui-FallbackFontFamily)",
 	ContentControlThemeFontFamily:
-		"'Segoe UI Variable Text', 'Segoe UI', 'winui-svelte text', sans-serif",
-	PivotHeaderItemFontFamily:
-		"'Segoe UI Variable Text', 'Segoe UI', 'winui-svelte text', sans-serif",
-	PivotTitleFontFamily: "'Segoe UI Variable Text', 'Segoe UI', 'winui-svelte text', sans-serif"
+		"'Segoe UI Variable Text', 'Segoe UI', var(--winui-FallbackFontFamily)",
+	DisplayFontFamily: "'Segoe UI Variable Display', 'Segoe UI', var(--winui-FallbackFontFamily)",
+	PivotHeaderItemFontFamily: 'var(--winui-ContentControlThemeFontFamily)',
+	PivotTitleFontFamily: 'var(--winui-ContentControlThemeFontFamily)'
 };
 
 /**

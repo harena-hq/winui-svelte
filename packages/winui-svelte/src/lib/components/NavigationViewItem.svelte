@@ -606,6 +606,12 @@
 	   makes; it is written here because this is the first comment in the file to say anything
 	   about the radius, and a sentence that states only the half that matches reads as a
 	   sentence that checked both. */
+	/* It carries no ramp class, so the family is read here: ADR 0021. On the row's root and without
+	   specificity, so a consumer's class there still sets it, as FontFamily on the control does. */
+	:where(li) {
+		font-family: var(--winui-ContentControlThemeFontFamily);
+	}
+
 	.item-presenter {
 		position: relative;
 		padding: var(--winui-NavigationViewItemButtonMargin);

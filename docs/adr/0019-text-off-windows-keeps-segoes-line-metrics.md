@@ -40,8 +40,8 @@ fonts is installed fails to load, and text asking for it falls through to `sans-
 that font's own line, so a system with a regular face and no bold one draws the two weights in
 different line boxes. `TEXT_FACE` in `scripts/tokens/manifest.mjs` is the definition, the
 token generator emits it at the top of `tokens.css` after the icon face, and it fails if a text
-stack in `PLATFORM_FONTS` stops ending in the face and `sans-serif`; the type ramp's stacks are
-built from the same name.
+stack in `PLATFORM_FONTS` stops ending in the fallback token ADR 0021 made of the face and
+`sans-serif`; the type ramp's stacks read those tokens.
 
 **On Windows nothing changes for a character either Segoe family has.** CSS falls back per
 character, so the face draws only a character neither has: such a character reaches the face
@@ -65,6 +65,7 @@ Accepted, 2026-10-16. **Amends ADR 0003**, whose stacks gain the face before `sa
 reference by name stands, and nothing is embedded. **Amends ADR 0011** off Windows only: the line
 height is still `normal`, and `normal` is now computed from Segoe's metrics there too, wherever
 the descriptors are supported.
+**Amended by ADR 0021**, 2026-11-01: the face and `sans-serif` are the default of a token.
 
 ## Alternatives rejected
 
