@@ -4419,6 +4419,12 @@ two, and the last of them is the owner's alone. D55.
    replaces (ADR 0021). A consumer of rc.2 has no names to change, and a TextBox and a NavigationView
    row no longer take an ancestor's font.
 
+   **`0.1.0-rc.4`, 2026-11-02,** follows rc.3's trial on real contrast themes, which found no
+   blocker. It carries what was sealed since: a focused text control keeps its height, a page's text
+   styles stop at a control's own text (ADR 0021), MenuBarItem's title and RatingControl's caption
+   draw in their ramp, and a pressed ToggleSwitch knob grows from its outer side. A consumer
+   of rc.3 has no names to change.
+
 v19 starts after the cut, as D37 orders it.
 
 ### Final — the acceptance gate
