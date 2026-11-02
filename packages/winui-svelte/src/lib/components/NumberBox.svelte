@@ -347,16 +347,12 @@
 	}
 
 	.root:focus-within .box {
-		border-width: var(--winui-TextControlBorderThemeThicknessFocused);
 		background: var(--winui-TextControlBackgroundFocused) padding-box;
 		color: var(--winui-TextControlForegroundFocused);
 	}
-	/* The four `inset` values mirror `TextControlBorderThemeThicknessFocused` — `1px 1px 2px
-	   1px` — negated; `calc()` cannot negate a multi-value shorthand, so they are written
-	   out. See the comment above TextBox.svelte's `.root:focus-within .box::after`
-	   for the measurement. */
+	/* The thicker border is the ring's alone, so focus moves nothing: see the comment above
+	   TextBox.svelte's `.root:focus-within .box::after`. */
 	.root:focus-within .box::after {
-		inset: -1px -1px -2px -1px;
 		padding: var(--winui-TextControlBorderThemeThicknessFocused);
 		background: var(--winui-TextControlBorderBrushFocused);
 	}
@@ -535,8 +531,7 @@
 	   `border-radius: inherit` puts the two curves on top of each other.
 
 	   `inset` is written out, not `calc(-1 * var(--winui-NumberBoxSpinButtonBorderThickness))`,
-	   because `calc()` cannot negate a multi-value shorthand. See the comment above
-	   TextBox.svelte's `.root:focus-within .box::after` for the same shape and the same reason. */
+	   because `calc()` cannot negate a multi-value shorthand. */
 	.spin-up::before,
 	.spin-down::before {
 		content: '';

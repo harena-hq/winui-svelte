@@ -229,7 +229,9 @@
 	   `inset` is the negative border width because an absolutely positioned child is placed
 	   against its parent's padding box; backing it out by exactly the border width makes the
 	   ring's box the parent's border box, so `border-radius: inherit` puts the two curves on
-	   top of each other with no correction.
+	   top of each other with no correction. `calc()` cannot negate a multi-value shorthand, so
+	   this holds while `TextControlBorderThemeThickness` is uniform, and the day it is not the
+	   `inset` is invalid, silently, because it is not a property C1 checks.
 
 	   The mask is two layers, the inner one clipped to the content box, composited so the
 	   content box is punched out. `-webkit-mask-composite: xor` is the same operation under
@@ -280,20 +282,14 @@
 	}
 
 	.root:focus-within .box {
-		border-width: var(--winui-TextControlBorderThemeThicknessFocused);
 		background: var(--winui-TextControlBackgroundFocused) padding-box;
 		color: var(--winui-TextControlForegroundFocused);
 	}
-	/* The four `inset` values mirror `TextControlBorderThemeThicknessFocused` — `1px 1px 2px
-	   1px` — negated, and they are written out because `calc()` cannot negate a multi-value
-	   shorthand. `inset: calc(-1 * var(…))` against that token is invalid, so the declaration
-	   is dropped and the ring falls back to its static position: measured at
-	   `5px 566px 35px 10px`, which is nowhere, and the focused border vanished entirely. The
-	   resting rule above can use `calc()` because `TextControlBorderThemeThickness` is the
-	   uniform `1px`; the day it is not, it breaks the same way and silently, because `inset`
-	   is not a property C1 checks. */
+	/* The thicker border is the ring's alone, and the box's own stays the resting one. Upstream's
+	   `BorderElement` shares a grid cell with the text instead of holding it
+	   (TextBox_themeresources.xaml:336-337), so focus moves nothing: the box keeps its height. The
+	   ring's `inset` is the resting rule's. */
 	.root:focus-within .box::after {
-		inset: -1px -1px -2px -1px;
 		padding: var(--winui-TextControlBorderThemeThicknessFocused);
 		background: var(--winui-TextControlBorderBrushFocused);
 	}

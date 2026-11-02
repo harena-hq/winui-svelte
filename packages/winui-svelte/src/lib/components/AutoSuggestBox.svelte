@@ -406,18 +406,14 @@
 	   TextBox_themeresources.xaml:195 binds. The framework dictionary defines it as
 	   `False` in all three themes, so the box opts out of the system focus visual and
 	   draws its own on the focused border — the same shape TextBox's `focus-within`
-	   rules paint, and the same reason no extra ring is needed. The four `inset` values
-	   mirror `TextControlBorderThemeThicknessFocused` — `1px 1px 2px 1px` — negated;
-	   `calc()` cannot negate a multi-value shorthand, so they are written out. See
-	   the comment above TextBox.svelte's `.root:focus-within .box::after` for the
-	   measurement. */
+	   rules paint, and the same reason no extra ring is needed. The thicker border is the
+	   ring's alone, so focus moves nothing: see the comment above TextBox.svelte's
+	   `.root:focus-within .box::after`. */
 	.root:focus-within .box {
-		border-width: var(--winui-TextControlBorderThemeThicknessFocused);
 		background: var(--winui-TextControlBackgroundFocused) padding-box;
 		color: var(--winui-TextControlForegroundFocused);
 	}
 	.root:focus-within .box::after {
-		inset: -1px -1px -2px -1px;
 		padding: var(--winui-TextControlBorderThemeThicknessFocused);
 		background: var(--winui-TextControlBorderBrushFocused);
 	}
