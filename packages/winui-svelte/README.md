@@ -17,9 +17,15 @@ names what draws after Segoe, so it draws any character neither Segoe family has
 which off Windows is all of the text, and on Windows leaves Segoe's alone.
 `--winui-SmallFontFamily`, `--winui-ContentControlThemeFontFamily` and `--winui-DisplayFontFamily`
 replace Segoe. `--winui-SymbolThemeFontFamily` is the icon font, whose replacement has to carry
-Segoe's code points. A control's height follows its font's line, so a font without Segoe's line
-metrics changes it, unless its `@font-face` sets `ascent-override: 107.91015625%`,
-`descent-override: 25.09765625%` and `line-gap-override: 0%`.
+Segoe's code points. A control's height follows its font's line. A font that replaces Segoe, or
+draws all the text off Windows, changes it unless its `@font-face` sets
+`ascent-override: 107.91015625%`, `descent-override: 25.09765625%` and `line-gap-override: 0%`. On
+Windows a font after Segoe draws only what Segoe lacks, and in Edge, at or below those three values,
+it did not grow a line at any of the type ramp's sizes; Malgun Gothic, unset, adds a pixel to a line
+it draws in at 18, 40 and 68px. The descriptors settle the line and nothing else, and widths move:
+one string measures differently in `Segoe UI` and in each of `Segoe UI Variable Small`, `Text` and
+`Display`. The name `Segoe UI Variable` with no optical suffix resolves to no font in Edge on
+Windows, so name a suffix.
 
 ```sh
 pnpm add winui-svelte bits-ui @internationalized/date
