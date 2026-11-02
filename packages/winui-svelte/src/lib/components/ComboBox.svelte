@@ -1751,7 +1751,7 @@
 	   class supplies the unfocused ring, hover, disabled and box-focus visuals. */
 	/* A `<div>`, not the `<button>` `.trigger` was written for, so the border-box sizing the
 	   user agent gives a button has to be stated: without it the box is the minimum height
-	   plus its border, and grows again when the focused bottom border thickens. */
+	   plus its border. */
 	.box {
 		box-sizing: border-box;
 		padding: 0;

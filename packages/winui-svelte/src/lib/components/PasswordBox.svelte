@@ -280,16 +280,12 @@
 	   routes, and worth writing down because the difference reads as an oversight in the
 	   source and is not one to reproduce differently. */
 	.root:focus-within .box {
-		border-width: var(--winui-TextControlBorderThemeThicknessFocused);
 		background: var(--winui-TextControlBackgroundFocused) padding-box;
 		color: var(--winui-TextControlForegroundFocused);
 	}
-	/* The four `inset` values mirror `TextControlBorderThemeThicknessFocused` — `1px 1px 2px
-	   1px` — negated. `calc()` cannot negate a multi-value shorthand, so they are written
-	   out: see the comment above TextBox.svelte's `.root:focus-within .box::after`
-	   for the measurement. */
+	/* The thicker border is the ring's alone, so focus moves nothing: see the comment above
+	   TextBox.svelte's `.root:focus-within .box::after`. */
 	.root:focus-within .box::after {
-		inset: -1px -1px -2px -1px;
 		padding: var(--winui-TextControlBorderThemeThicknessFocused);
 		background: var(--winui-TextControlBorderBrushFocused);
 	}
