@@ -81,6 +81,23 @@
 		 */
 		items: NavigationViewEntry<T>[];
 		/**
+		 * FooterMenuItems — the second item list, narrowed as `items` is, and named as `items` is:
+		 * `MenuItems` drops its `Menu` here, so `FooterMenuItems` drops the same word. Entries
+		 * are the same type and draw the same way, children included, in every pane display
+		 * mode `items` draws in.
+		 *
+		 * One selection across both lists, as upstream's one selection model holds both
+		 * (`m_selectionModelSource`, whose block 1 — `c_footerMenuBlockIndex`,
+		 * `NavigationView.cpp:98` — is the footer's source, set at `:875`): `selected` names a
+		 * row in either, and `onItemInvoked` reports either. So **an id must be unique across
+		 * `items`, `footerItems` and the reserved `'settings'`**: a row is found by its id
+		 * alone, so a duplicate draws as two selected rows where upstream selects one.
+		 *
+		 * The settings row is drawn after the last of these, in the same list, which is where
+		 * `UpdateFooterRepeaterItemsSource` appends it (`NavigationView.cpp:866-871`).
+		 */
+		footerItems?: NavigationViewEntry<T>[];
+		/**
 		 * Narrows `SelectedItem` (one of the menu's `NavigationViewItem` objects) to an
 		 * `id` the consumer holds.
 		 *
@@ -119,7 +136,9 @@
 		 * its repeaters (`NavigationView.cpp:470`, `:492`, `:511`, `:557`, `:580`); the two top
 		 * ones and the overflow draw `NavigationViewTopItem` here, a different component with a
 		 * different surface that a snippet drawing a `NavigationViewItem` would fill wrongly.
-		 * WD-089 has the record.
+		 * WD-089 has the record. The left pane's two are the menu's (`:470`) and the footer's
+		 * (`:557`), so a `footerItems` entry reaches the template as an `items` one does, with
+		 * its index in `footerItems`; the settings row beside it in that list still does not.
 		 */
 		menuItemTemplate?: Snippet<[NavigationViewEntry<T>, number]>;
 		/** ItemInvoked — fires when a menu row is activated. */
@@ -212,6 +231,7 @@
 
 	let {
 		items,
+		footerItems = [],
 		selected = null,
 		menuItemTemplate,
 		onItemInvoked,
@@ -404,8 +424,13 @@
 	$effect(() => {
 		if (collapsed === actedOnCollapsed) return;
 		actedOnCollapsed = collapsed;
+		// Both lists' top levels: a footer row is top-level by the same test a menu row is
+		// (`NavigationView.cpp:5748-5751`), because the footer's repeaters are two of the root
+		// ones `IsRootItemsRepeater` names (`:1078-1079`).
 		const topLevelIds = new Set(
-			items.filter((entry) => !isNavigationViewHeader(entry)).map((entry) => (entry as T).id)
+			[...items, ...footerItems]
+				.filter((entry) => !isNavigationViewHeader(entry))
+				.map((entry) => (entry as T).id)
 		);
 		if (collapsed) {
 			const closing = expandedItems.filter((id) => topLevelIds.has(id));
@@ -424,31 +449,118 @@
 		}
 	});
 
-	// `UpdatePaneLayout` decides the pane's separator, and the condition is not "the menu
-	// scrolls". `VisualItemsSeparator` is collapsed outright when the footer holds no menu item
-	// and no settings item (`NavigationView.cpp:1588`), and collapsed again when the menu and
-	// the footer group both fit (`:1599`). The three branches that show it (`:1610`, `:1617`,
-	// `:1624`) are the ones where they do not. That pair is the test, and not whether anything
-	// is below the rule: `FooterContentBorder` is in the grid either way, as the markup below
-	// says.
+	// `UpdatePaneLayout` (`NavigationView.cpp:1510-1652`) divides the pane's height between the
+	// menu and the footer, and the separator is a by-product of the division rather than a
+	// question of its own. `totalAvailableHeight` is `ItemsContainerRow`'s height, the row that
+	// holds the menu, the separator, `PaneFooter` and the footer list (`NavigationView.xaml:301`,
+	// `:350-388`); the footer *group* is the footer list's desired height and the pane footer's
+	// together, under upstream's own comment saying so (`:1585-1586`). Then six branches, in order:
 	//
-	// That first test reads `m_footerItemsSource`, which is set (`:852`) from the source built
-	// at `:818`-`:825` — `FooterMenuItemsSource`, or `FooterMenuItems` — and **not** from
-	// `PaneFooter`. The pane footer's height is counted where the space is partitioned
-	// (`:1586`, under upstream's own comment saying so at `:1585`) and nowhere in the decision,
-	// so filling that slot does not bring the rule back. This library has no `footerMenuItems` prop —
-	// `FooterItemsScrollViewer` is declined over the same absence — so that count is
-	// structurally zero and what is left of the test is `settingsVisible` alone.
+	// - no footer row and no settings row (`:1588`) — the menu takes the lot, no rule;
+	// - no menu entry (`:1593`) — the footer takes the lot and the menu nothing, no rule;
+	// - both fit (`:1599`) — each its own height, the menu the rest of the row, no rule;
+	// - the menu within half (`:1606`) — the menu capped at its own height, the footer at what
+	//   that leaves, so the footer scrolls; rule. The cap leaves out the separator and the pane
+	//   footer, so in the grid the `*` menu row is what gives: it lands their height, 14 pixels,
+	//   under its rows and scrolls by that much too, upstream and here;
+	// - the footer group within half (`:1613`) — the footer its own height, the menu what is left
+	//   and scrolls in it, rule;
+	// - neither (`:1620-1626`) — half each, rule.
 	//
-	// `:1593`'s empty-menu branch is deliberately not re-expressed: a pane with no items has
-	// nothing to overrun with, so the measurement below already answers it false.
+	// The first test reads `m_footerItemsSource`, which is set (`:852`) from the source built at
+	// `:818-825` — `FooterMenuItemsSource`, or `FooterMenuItems`, which is `footerItems` here —
+	// and **not** from `PaneFooter`, and it counts the settings row through `IsSettingsVisible`
+	// alone. So filling the pane footer neither brings the rule back nor takes it away: its height
+	// enters the division and never the decision. And the rule is not "the menu scrolls": with
+	// the menu inside half, it is the footer that scrolls under a drawn rule.
 	//
-	// ScrollView observes both its viewport and its content, so its published scrollable height
-	// puts `:1599`'s question to the laid-out boxes rather than to the measure pass — the menu
-	// does not fit in what the footer has left it.
-	let paneScrollableHeight = $state(0);
-	const menuOverflows = $derived(paneScrollableHeight > 0);
-	const paneSeparatorVisible = $derived(settingsVisible && menuOverflows);
+	// Measured rather than laid out, as upstream measures — the two caps are `MaxHeight`s written
+	// from code (`:1595-1623` on `FooterItemsScrollViewer`, `:1648` on
+	// `MenuItemsScrollViewer`), and no CSS sizing rule picks one of six branches. The four boxes
+	// read are content-sized or flexed and none of them is a box the caps are written to, so
+	// writing a cap never re-triggers the observer that wrote it. Until the first measurement
+	// both caps are absent and the menu takes what the footer leaves, which is the server render.
+	//
+	// Two things around it are not reproduced. `FooterItemsScrollViewer` anchors at its bottom
+	// (`VerticalAnchorRatio="1"`, `NavigationView.xaml:380`) and the footer's source update ends
+	// on `settings.StartBringIntoView()` (`NavigationView.cpp:897-900`), so a clipped footer
+	// upstream shows its settings row; here it shows its first row until scrolled — WD-108,
+	// see docs/divergences.md. And the
+	// branches upstream takes when a part is missing (`:1628-1640`) have no counterpart: every
+	// part is always rendered here.
+	let itemsContainer: HTMLElement | undefined = $state();
+	let menuList: HTMLElement | undefined = $state();
+	let footerList: HTMLElement | undefined = $state();
+	let paneFooterBox: HTMLElement | undefined = $state();
+	let menuMaxHeight = $state<number | null>(null);
+	let footerMaxHeight = $state<number | null>(null);
+	let paneSeparatorVisible = $state(false);
+	const footerRowCount = $derived(footerItems.length + (settingsVisible ? 1 : 0));
+
+	function updatePaneLayout() {
+		if (isTop || !itemsContainer) return;
+		// Rendered heights rather than `clientHeight` and `offsetHeight`, which round to whole
+		// pixels: nothing makes these boxes whole, and a branch decided on rounded heights can
+		// land on the wrong side of `:1599` by the rounding.
+		const total = itemsContainer.getBoundingClientRect().height;
+		// `:1530-1531`: only a positive amount of space is managed.
+		if (total <= 0) return;
+		const half = total / 2;
+		const menuHeight = menuList?.getBoundingClientRect().height ?? 0;
+		const footersHeight = footerList?.getBoundingClientRect().height ?? 0;
+		// `:1555-1567` — the pane footer's height with its margin, `0,0,0,4` at
+		// `NavigationView.xaml:377`, read off the box rather than restated.
+		const paneFooterHeight = paneFooterBox
+			? paneFooterBox.getBoundingClientRect().height +
+				parseFloat(getComputedStyle(paneFooterBox).marginTop) +
+				parseFloat(getComputedStyle(paneFooterBox).marginBottom)
+			: 0;
+		const footerGroupHeight = footersHeight + paneFooterHeight;
+		let menuCap: number;
+		// Left unset in the first branch, as upstream leaves it, and there is no footer list here
+		// to cap. Not read from the state it is written to, which would make the effect below
+		// depend on its own write.
+		let footerCap: number | null = null;
+		let rule: boolean;
+		if (footerRowCount === 0) {
+			[menuCap, rule] = [total, false];
+		} else if (items.length === 0) {
+			[menuCap, footerCap, rule] = [0, total, false];
+		} else if (total >= menuHeight + footerGroupHeight) {
+			[menuCap, footerCap, rule] = [total - footerGroupHeight, footersHeight, false];
+		} else if (menuHeight <= half) {
+			[menuCap, footerCap, rule] = [menuHeight, total - menuHeight, true];
+		} else if (footerGroupHeight <= half) {
+			[menuCap, footerCap, rule] = [total - footerGroupHeight, footersHeight, true];
+		} else {
+			[menuCap, footerCap, rule] = [half, half, true];
+		}
+		menuMaxHeight = menuCap;
+		footerMaxHeight = footerCap;
+		paneSeparatorVisible = rule;
+	}
+
+	$effect(() => {
+		// Read so that a list gaining or losing its first row re-runs the division: the boxes
+		// alone do not resize when a list is emptied to nothing and the element goes with it.
+		void footerRowCount;
+		void items.length;
+		const boxes = [itemsContainer, menuList, footerList, paneFooterBox].filter(
+			// `bind:this` writes `null` when the footer list goes, so the test is truthiness.
+			(box): box is HTMLElement => Boolean(box)
+		);
+		if (isTop || boxes.length === 0) return;
+		updatePaneLayout();
+		const observer = new ResizeObserver(updatePaneLayout);
+		for (const box of boxes) observer.observe(box);
+		return () => observer.disconnect();
+	});
+	// The menu is the grid's `*` row and the footer an `Auto` one (`NavigationView.xaml:352-359`),
+	// so the menu grows and shrinks and the footer does neither: whatever the caps leave over or
+	// short — the separator's height, which the division does not count — is the menu's.
+	const capped = (cap: number | null) => (cap === null ? '' : `; max-height: ${cap}px`);
+	const menuScrollStyle = $derived(`flex: 1 1 auto; min-height: 0${capped(menuMaxHeight)}`);
+	const footerScrollStyle = $derived(`flex: 0 0 auto${capped(footerMaxHeight)}`);
 
 	// Overlaying is what makes compact and minimal different from expanded: the pane is
 	// drawn above the content instead of beside it, so the content does not reflow.
@@ -627,60 +739,74 @@
 	// the opposite conclusion and was wrong twice over. `docs/keyboard.md` carries it under
 	// answer 8.
 	//
-	// `settingsVisible` puts the settings row in unconditionally, because it is a root list of
-	// one and is therefore always its own list's entry. That is the stop Tab reaches after the
-	// menu, which is what the reference press recorded (`docs/keyboard.md`, answer 1).
+	// **Two root lists, and each gets this answer for itself.** `OnRepeaterGettingFocus` runs per
+	// root repeater and picks `rootRepeaterForSelectedItem` by the selection's block (`:2974-2981`,
+	// `c_mainMenuBlockIndex` against the footer's), so the redirect lands in whichever list holds
+	// the selection, and the walk out (`:3018`) runs in whichever list focus is in. The footer's
+	// list is `footerItems` and then the settings row, one source (`:866-871`); with no footer
+	// item the settings row is a root list of one and so always its own list's entry, which is
+	// the stop Tab reaches after the menu that the reference press recorded (`docs/keyboard.md`,
+	// answer 1).
 	//
 	// **The left pane's, and computed in top mode as well.** `NavigationViewTopItem` draws the
 	// top pane's rows and never reads this, so what it computes there is unread rather than
 	// wrong — the same shape `expandedItems` and `collapsed` already have, and
 	// `internal/navigation-view.ts` says why the record is published in both modes anyway.
-	const tabStops = $derived.by((): string[] | null => {
-		if (selected === null) return null;
+	//
+	// A list's unredirected stop is its first row, where upstream's is wherever XAML's own Tab
+	// order enters it, and with footer items that parts in a press a reader can make: Shift+Tab
+	// from the content into a footer that holds no selection. `tabStops` in
+	// `internal/navigation-view.ts` lists it with the others. Not built, because the stop would
+	// have to know which side focus is coming from before the key that moves it.
+	// WD-108: a list entered from below by Shift+Tab stops on its first row; see docs/divergences.md
+	const footerRows = $derived(
 		// The `settingsVisible` test is belt-and-braces: an id in this list that names no
 		// rendered row changes nothing, because what reads the list is a row asking whether it
 		// is named. What it does buy is a consumer whose own row is tagged `settings` while the
-		// control's is hidden, which is the only way the two can collide.
-		const settings = settingsVisible ? [SETTINGS_ITEM.id] : [];
-		const path = pathTo(items, selected, []);
-		const first = items.find((entry) => !isNavigationViewHeader(entry)) as T | undefined;
-		const menuEntry = first ? [first.id, ...settings] : settings;
-		if (!path) {
-			// `selected` names no row in this list, and the two ways that happens are not the
-			// same upstream.
-			//
-			// **The settings row is one of them, and it is a real selection.** Its index is in
-			// the footer block, so `rootRepeaterForSelectedItem` (`:2980`) is the footer's
-			// repeater, the comparison at `:2986` fails for the menu's, and nothing is
-			// redirected — `GetContainerForIndexPath` at `:2988` is never reached, rather than
-			// reached and finding nothing. What XAML lands on entering is then simply the first
-			// row. The menu is still crossed in one press because the *other* branch runs: the
-			// walk that sets `IsTabStop(false)` on the way out (`:3018`) compares each row
-			// against the repeater being left, not against the selection, and the handler's own
-			// guard at `:2947` only asks that a selection exist somewhere, which this is. That
-			// walk is the focused row below, which this answer goes through too.
-			//
-			// **An id that names nothing is the other, and it is not a selection.** The model
-			// has no index, and `:2947` guards the whole handler on one, so neither branch runs
-			// and the rows are tab stops as they come. A consumer routing by URL is where this
-			// arrives: a page under no row, or one that has not resolved yet. Same answer as a
-			// `null` selection above, reached from a different premise — which is why it is
-			// written out rather than folded into that test.
-			if (!(settingsVisible && selected === SETTINGS_ITEM.id)) return null;
-		}
-		// A row of the menu with focus on it is the walk out of the list, and focus outside the
-		// control with no Tab pending is the Tab that nothing redirects; `tabStops` in
-		// `internal/navigation-view.ts` has both. The settings row is no row of `items`, so focus
-		// on it is focus elsewhere inside the control, as it is upstream, where it sits in the
-		// footer's repeater.
-		if (focusedRow !== null && pathTo(items, focusedRow, [])) return [focusedRow, ...settings];
-		if (!path || (!focusInside && !tabSeen)) return menuEntry;
-		let stop = path[0].id;
-		for (let i = 1; i < path.length; i++) {
-			if (!expandedItems.includes(path[i - 1].id)) break;
-			stop = path[i].id;
-		}
-		return [stop, ...settings];
+		// control's is hidden, which is the only way the two can collide. The cast is the
+		// settings row's, which is a bound row rather than a `T`; nothing reads past its id.
+		settingsVisible ? [...footerItems, SETTINGS_ITEM as T] : footerItems
+	);
+	const tabStops = $derived.by((): string[] | null => {
+		if (selected === null) return null;
+		const menuPath = pathTo(items, selected, []);
+		const footerPath = pathTo(footerRows, selected, []);
+		// **An id that names nothing is not a selection.** The model has no index, and `:2947`
+		// guards the whole handler on one, so neither branch runs and the rows are tab stops as
+		// they come. A consumer routing by URL is where this arrives: a page under no row, or one
+		// that has not resolved yet. Same answer as a `null` selection above, reached from a
+		// different premise — which is why it is written out rather than folded into that test.
+		if (!menuPath && !footerPath) return null;
+		const stopIn = (entries: NavigationViewEntry<T>[], path: T[] | null) => {
+			// A row of this list with focus on it is the walk out of the list, and focus outside the
+			// control with no Tab pending is the Tab that nothing redirects; `tabStops` in
+			// `internal/navigation-view.ts` has both. Focus on the other list's row is focus
+			// elsewhere inside the control, as it is upstream, where that row is in another
+			// repeater.
+			if (focusedRow !== null && pathTo(entries, focusedRow, [])) return focusedRow;
+			// **A selection in the other list is a real selection, and it redirects nothing
+			// here.** `rootRepeaterForSelectedItem` is that list's repeater, the comparison at
+			// `:2986` fails for this one, and `GetContainerForIndexPath` at `:2988` is never
+			// reached, rather than reached and finding nothing. What XAML lands on entering is
+			// then simply the first row. The list is still crossed in one press because the
+			// *other* branch runs: the walk that sets `IsTabStop(false)` on the way out (`:3018`)
+			// compares each row against the repeater being left, not against the selection, and
+			// the handler's own guard at `:2947` only asks that a selection exist somewhere. That
+			// walk is the focused row above.
+			if (!path || (!focusInside && !tabSeen)) {
+				const first = entries.find((entry) => !isNavigationViewHeader(entry)) as T | undefined;
+				return first?.id;
+			}
+			let stop = path[0].id;
+			for (let i = 1; i < path.length; i++) {
+				if (!expandedItems.includes(path[i - 1].id)) break;
+				stop = path[i].id;
+			}
+			return stop;
+		};
+		return [stopIn(items, menuPath), stopIn(footerRows, footerPath)].filter(
+			(stop): stop is string => stop !== undefined
+		);
 	});
 
 	setNavigationViewPane(() => ({
@@ -695,7 +821,8 @@
 		// than there because this is the only place that knows `T`. A snippet taking
 		// `NavigationViewEntry<T>` is not a snippet taking `NavigationViewEntry`: a parameter
 		// is contravariant and `T` is the narrower type. Every entry the markup below renders
-		// it with is one out of `items`, so the top level is exact; the nested path is where
+		// it with is one out of `items` or `footerItems`, both `NavigationViewEntry<T>[]`, so the
+		// top level is exact; the nested path is where
 		// the widening is real, because a row's `children` are typed by the record.
 		menuItemTemplate: menuItemTemplate as Snippet<[NavigationViewEntry, number]> | undefined
 	}));
@@ -908,10 +1035,12 @@
 		     that brings it in. An element added on open and removed on close has nothing to
 		     animate in either direction, which is what this was. Hidden by `visibility` below,
 		     so it is out of the tab order and out of the accessibility tree while closed. -->
-		<!-- The arrow keys' ring is the whole pane, menu and settings row together: upstream's
+		<!-- The arrow keys' ring is the whole pane, menu and footer together: upstream's
 		     Up and Down defer to XAML's directional focus, which crosses from one root repeater
 		     into the other, and the reference press recorded Down reaching Settings from the last
-		     menu row. Home and End read `role="tree"` instead and stop at one list's ends —
+		     menu row. A footer item is a row of the second repeater, above the settings row, so
+		     the same crossing reaches it first. Home and End read `role="tree"` instead and stop
+		     at one list's ends —
 		     `internal/navigation-view.ts` has both citations. -->
 		<div class="pane" {...RING_ROOT_ATTRIBUTE}>
 			<div class="pane-content-grid">
@@ -929,67 +1058,64 @@
 					<div class="toggle-button-row" aria-hidden="true"></div>
 				{/if}
 
-				<!-- This pane region is now a ScrollView; horizontal scrolling remains disabled.
-				     Upstream's is the older ScrollViewer, `MenuItemsScrollViewer`
-				     (NavigationView.xaml:363), which is what the attribute records. -->
-				<ScrollView
-					data-scroll-input="scroll-viewer"
-					class="items-container-grid"
-					style="flex: 1 1 auto; min-height: 0"
-					horizontalScrollMode="disabled"
-					bind:scrollableHeight={paneScrollableHeight}
-				>
-					<ul role="tree" class="menu-items">
-						<!-- The template comes first because it is handed every entry, headers
-						     included — the branch below it is what the control draws when there is
-						     no template, not a case the template does not cover. A snippet drawing
-						     a `NavigationViewItem` brings this `<li>` with it; one drawing a header
-						     writes its own, which is the cost of reproducing the selector as a
-						     function rather than as a second member. -->
-						{#each items as entry, i (isNavigationViewHeader(entry) ? `h${i}` : entry.id)}
-							{#if menuItemTemplate}
-								{@render menuItemTemplate(entry, i)}
-							{:else if isNavigationViewHeader(entry)}
-								<li role="none">
-									<div class="item-header winui-BodyStrongTextBlockStyle">{entry.header}</div>
-								</li>
-							{:else}
-								<NavigationViewItem
-									tag={entry.id}
-									content={entry.content}
-									glyph={entry.glyph}
-									items={entry.children}
-								/>
-							{/if}
-						{/each}
-					</ul>
-				</ScrollView>
-
-				{#if paneSeparatorVisible}
-					<div class="items-separator"></div>
-				{/if}
-
-				<!-- Always in the grid, as `FooterContentBorder` is — NavigationView.xaml:377.
-				     Empty it is 4 pixels of bottom margin, and those 4 are part of the space
-				     the footer sits in whether or not an app fills the slot. -->
-				<div class="footer-content-border">
-					{#if paneFooter}{@render paneFooter()}{/if}
-				</div>
-
-				{#if settingsVisible}
-					<div class="footer-items">
-						<!-- Never templated, whatever `menuItemTemplate` is:
-						     `NavigationViewItemsFactory::GetElementCore` returns the settings item
-						     ahead of both branches (`NavigationViewItemsFactory.cpp:39-43`). -->
-						<ul role="tree" class="menu-items">
-							<NavigationViewItem
-								tag={SETTINGS_ITEM.id}
-								content={str('SettingsButtonName')}
-								glyph={SETTINGS_ITEM.glyph}
-							/>
+				<!-- `ItemsContainerGrid`, NavigationView.xaml:350, in `ItemsContainerRow` (:301): the
+				     box whose height `UpdatePaneLayout` divides between the two lists — see
+				     `updatePaneLayout` for the division and the caps it writes. -->
+				<div class="items-container-row" bind:this={itemsContainer}>
+					<!-- This pane region is now a ScrollView; horizontal scrolling remains disabled.
+					     Upstream's is the older ScrollViewer, `MenuItemsScrollViewer`
+					     (NavigationView.xaml:363), which is what the attribute records. -->
+					<ScrollView
+						data-scroll-input="scroll-viewer"
+						class="items-container-grid"
+						style={menuScrollStyle}
+						horizontalScrollMode="disabled"
+					>
+						<ul role="tree" class="menu-items" bind:this={menuList}>
+							{@render paneRows(items)}
 						</ul>
+					</ScrollView>
+
+					{#if paneSeparatorVisible}
+						<div class="items-separator"></div>
+					{/if}
+
+					<!-- Always in the grid, as `FooterContentBorder` is — NavigationView.xaml:377.
+					     Empty it is 4 pixels of bottom margin, and those 4 are part of the space
+					     the footer sits in whether or not an app fills the slot. -->
+					<div class="footer-content-border" bind:this={paneFooterBox}>
+						{#if paneFooter}{@render paneFooter()}{/if}
 					</div>
-				{/if}
+
+					<!-- `FooterItemsScrollViewer` around `FooterMenuItemsHost`, NavigationView.xaml:380-381,
+					     below the pane footer in the grid's last row (:377-379). One root list:
+					     `footerItems` drawn as `items` is, then the settings row, which
+					     `UpdateFooterRepeaterItemsSource` appends to the same source
+					     (NavigationView.cpp:866-871) — so Home and End, which stop at one list's
+					     ends, treat the settings row as the footer's last. -->
+					{#if footerRowCount > 0}
+						<ScrollView
+							data-scroll-input="scroll-viewer"
+							class="footer-items"
+							style={footerScrollStyle}
+							horizontalScrollMode="disabled"
+						>
+							<ul role="tree" class="menu-items" bind:this={footerList}>
+								{@render paneRows(footerItems)}
+								<!-- Never templated, whatever `menuItemTemplate` is:
+								     `NavigationViewItemsFactory::GetElementCore` returns the settings item
+								     ahead of both branches (`NavigationViewItemsFactory.cpp:39-43`). -->
+								{#if settingsVisible}
+									<NavigationViewItem
+										tag={SETTINGS_ITEM.id}
+										content={str('SettingsButtonName')}
+										glyph={SETTINGS_ITEM.glyph}
+									/>
+								{/if}
+							</ul>
+						</ScrollView>
+					{/if}
+				</div>
 			</div>
 		</div>
 	{:else}
@@ -1039,18 +1165,41 @@
 				<!-- `PaneFooterOnTopPane` and `TopFooterMenuItemsHost` — NavigationView.xaml:278
 				     and :280 — are two columns; they share one box here because what the
 				     overflow measurement needs is the width of everything trailing the items,
-				     and one box is one `offsetWidth`. -->
+				     and one box is one `offsetWidth`. The footer list is the second column, after
+				     the pane footer, and holds `footerItems` and then the settings row, the one
+				     source `UpdateFooterRepeaterItemsSource` gives both repeaters
+				     (NavigationView.cpp:866-871, :879). Its rows never move into the overflow
+				     flyout: what moves is `m_topNavRepeater`'s primary list
+				     (`FindMovableItemsBeyondAvailableWidth`, :4019-4059), and this box is only
+				     the width it is measured against. -->
 				<div class="top-trailing" bind:this={topTrailing}>
 					{#if paneFooter}<div class="top-footer">{@render paneFooter()}</div>{/if}
-					{#if settingsVisible}
+					{#if footerRowCount > 0}
 						<ul role="tree" class="top-list">
-							<NavigationViewTopItem
-								item={SETTINGS_ITEM}
-								{selected}
-								{onItemInvoked}
-								placement="primary"
-								tooltip={str('SettingsButtonName')}
-							/>
+							{#each footerItems as entry, i (isNavigationViewHeader(entry) ? `h${i}` : entry.id)}
+								{#if isNavigationViewHeader(entry)}
+									<li role="none">
+										<div class="top-header winui-BodyStrongTextBlockStyle">{entry.header}</div>
+									</li>
+								{:else}
+									<!-- WD-025 holds here as in the primary list: no children drawn. -->
+									<NavigationViewTopItem
+										item={entry}
+										{selected}
+										{onItemInvoked}
+										placement="primary"
+									/>
+								{/if}
+							{/each}
+							{#if settingsVisible}
+								<NavigationViewTopItem
+									item={SETTINGS_ITEM}
+									{selected}
+									{onItemInvoked}
+									placement="primary"
+									tooltip={str('SettingsButtonName')}
+								/>
+							{/if}
 						</ul>
 					{/if}
 				</div>
@@ -1113,6 +1262,35 @@
 		<div class="light-dismiss" onclick={() => setPaneOpen(false)} aria-hidden="true"></div>
 	{/if}
 </div>
+
+<!-- One left-pane list's rows, for the menu and the footer alike: upstream hands both repeaters
+     the same factory (NavigationView.cpp:470, :557), so a footer entry is drawn, templated and
+     nested exactly as a menu entry is. The parameter is typed by its default rather than by an
+     annotation, which svelte-package's shipped source would not keep. -->
+{#snippet paneRows(entries = items)}
+	<!-- The template comes first because it is handed every entry, headers
+	     included — the branch below it is what the control draws when there is
+	     no template, not a case the template does not cover. A snippet drawing
+	     a `NavigationViewItem` brings this `<li>` with it; one drawing a header
+	     writes its own, which is the cost of reproducing the selector as a
+	     function rather than as a second member. -->
+	{#each entries as entry, i (isNavigationViewHeader(entry) ? `h${i}` : entry.id)}
+		{#if menuItemTemplate}
+			{@render menuItemTemplate(entry, i)}
+		{:else if isNavigationViewHeader(entry)}
+			<li role="none">
+				<div class="item-header winui-BodyStrongTextBlockStyle">{entry.header}</div>
+			</li>
+		{:else}
+			<NavigationViewItem
+				tag={entry.id}
+				content={entry.content}
+				glyph={entry.glyph}
+				items={entry.children}
+			/>
+		{/if}
+	{/each}
+{/snippet}
 
 {#snippet overflowRows()}
 	<!-- Headers have no overflow presenter style in the pin, so an overflowed header is dropped. -->
@@ -2041,7 +2219,16 @@
 		margin: var(--winui-NavigationViewPaneContentGridMargin);
 	}
 
+	/* `flow-root` so that a header's margins stay inside the list. `.item-header` carries
+	   `NavigationViewItemSeparatorMargin`, and with no padding or border on its `<li>` or on this
+	   `<ul>`, a header first or last in a list collapsed its margin through both, to the
+	   `ScrollView`'s own `flow-root` content box. Nothing moved — that box stopped the margin
+	   at the same edge this one now does, and the list is that box's only child — but the
+	   list's own height came out 3 or 4 short of what it draws, and that height is what
+	   `updatePaneLayout` divides by: a footer opening on a header was capped short and
+	   scrolled in a pane it fitted. */
 	.menu-items {
+		display: flow-root;
 		list-style: none;
 		margin: 0;
 		padding: 0;
@@ -2086,8 +2273,16 @@
 		margin: 0 0 4px;
 	}
 
-	.footer-items {
-		flex: 0 0 auto;
+	/* `ItemsContainerGrid` in the `*` row (NavigationView.xaml:301, :350): it takes what the
+	   rows above it leave, and that height is what `updatePaneLayout` divides. A column rather
+	   than a grid, because only the menu's row is `*` and a flexing first child is that row.
+	   The two lists' own flex is in their `style`, since each is a `ScrollView` whose root this
+	   file's scoped rules do not reach. */
+	.items-container-row {
+		display: flex;
+		flex-direction: column;
+		flex: 1 1 auto;
+		min-height: 0;
 	}
 
 	/* `:723`. Desktop `Auto` light dismiss leaves this transparent, so it is a hit target and

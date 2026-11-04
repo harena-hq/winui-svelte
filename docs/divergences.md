@@ -2496,3 +2496,48 @@ changes`.
   flyout showed no tooltips on its rows for that reason (WD-092, deleted with it).
 - **Would reconsider if**: Escape with a tooltip alone open is pressed on the reference and
   something is seen to depend on the tooltip staying.
+
+---
+
+### WD-108 — a NavigationView list entered from below, and a clipped footer, open at their first row
+
+- **Control**: `NavigationView`, the left pane's two root lists — the menu, and the footer that
+  holds `footerItems` and then the settings row.
+- **WinUI does**: two things, read from the pin and neither pressed on the reference. A Tab
+  entering a root repeater that does not hold the selection is not redirected: the redirect in
+  `OnRepeaterGettingFocus` asks that the repeater be the selection's (`NavigationView.cpp:2986`),
+  and the other branch runs only for focus already inside that repeater (`:2994-3038`), so XAML's
+  own reverse tab search picks the row for a Shift+Tab arriving from below — from the content
+  into the footer, or from a footer row into the menu. That search resolves the container it
+  lands on to its last focusable element (`GetPreviousTabStop`,
+  `dxaml/xcp/core/dll/focusmgr.cpp:1213-1217`), which walks the children in tab order and keeps
+  the last that can take focus (`GetLastFocusableElement`, `:335-348`, and its internal walk,
+  `:361-419`). The repeater is a `TabFocusNavigation="Once"` scope (`ItemsRepeater.cpp:31`), and
+  on that path `Once` is read only to leave a scope (`focusmgr.cpp:474`, `:1116`, `:1162`), not to
+  return to an element focused before; the one override consulted,
+  `Panel::GetLastFocusableElementOverride` (`dxaml/xcp/dxaml/lib/Panel_Partial.cpp:47-82`), answers
+  only for a `ListViewBase`'s items host.
+  So the reading is "the last row in tab order". Which row that is when the last row is expanded
+  — each `NavigationViewItem` is a `Once` scope of its own (`NavigationView.xaml:431`) — is not
+  settled by the reading. And `FooterItemsScrollViewer` anchors at its bottom
+  (`VerticalAnchorRatio="1"`, `NavigationView.xaml:380`) while `UpdateFooterRepeaterItemsSource`
+  ends on `settings.StartBringIntoView()` (`NavigationView.cpp:897-900`), so a footer capped below
+  its rows by `UpdatePaneLayout` shows its settings row.
+- **We do**: a list's unredirected stop is its first row, so that Shift+Tab lands on the list's
+  first row. A capped footer opens scrolled to its top and shows its first rows; the settings
+  row is reached by scrolling, or by an arrow key, whose focus brings it into view.
+- **Why accepted**: the stop is a `tabindex` set before the key rather than a redirect made
+  during it (`tabStops` in `internal/navigation-view.ts`). For a Tab pressed inside the document
+  that is not a wall: the control already listens for keys on the document in the capture phase,
+  which sees `shiftKey` before the browser moves focus, so a reverse Tab could re-choose the stop
+  first. What no listener sees is a Tab arriving from outside the document — the browser's own
+  chrome, or another frame. The rest is accepted for weight: the upstream row it would aim at is
+  a reading rather than a press, unsettled under an expanded last row, and building it adds a
+  second, direction-keyed stop to every list for one key in one direction. The scroll position is
+  the footer's `ScrollView`'s to keep, and that component carries no anchoring member yet: its own
+  comment puts the anchoring properties in a later unit. Scrolling the footer to its end from
+  `NavigationView` instead would have to tell a change of source, which upstream answers, from a
+  resize, which it does not.
+- **Would reconsider if**: the Shift+Tab is pressed on the reference and lands where the reading
+  says, with a consumer seen to depend on it; or `ScrollView` takes `VerticalAnchorRatio`, which
+  would make the second half a one-line reproduction rather than a divergence.

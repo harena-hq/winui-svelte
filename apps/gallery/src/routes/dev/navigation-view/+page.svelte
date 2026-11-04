@@ -91,6 +91,60 @@
 	onMount(() => {
 		overlayPaneOpen = true;
 	});
+
+	// The footer specimens, appended last and drawn only under `?footer`. This route's whole body
+	// is a baseline in three themes (`navigation-view.spec.ts`), and a specimen drawn on every
+	// load would move it; read on mount rather than from the page's URL because the route is
+	// prerendered, where the query is not there to read. `navigation-view-footer.spec.ts` is the
+	// reader. Each specimen holds its own selection and expansion, for the reason the overrun
+	// frames above give.
+	let footerSpecimens = $state(false);
+	onMount(() => {
+		footerSpecimens = new URLSearchParams(location.search).has('footer');
+	});
+	const footerMenu: NavigationViewEntry[] = [
+		{ id: 'home', content: 'Home', glyph: 'E80F' },
+		{ id: 'all', content: 'All', glyph: 'E8A9' }
+	];
+	const footerEntries: NavigationViewEntry[] = [
+		{ id: 'account', content: 'Account', glyph: 'E77B' },
+		{
+			id: 'help',
+			content: 'Help',
+			glyph: 'E897',
+			children: [
+				{ id: 'documentation', content: 'Documentation' },
+				{ id: 'feedback', content: 'Feedback' }
+			]
+		}
+	];
+	// Taller than half of any pane this page draws, with the overrunning menu beside it: the
+	// division's last branch, where each list gets half.
+	const tallFooter: NavigationViewEntry[] = [
+		{ id: 'footer-1', content: 'Footer 1', glyph: 'E77B' },
+		{ id: 'footer-2', content: 'Footer 2', glyph: 'E719' },
+		{ id: 'footer-3', content: 'Footer 3', glyph: 'E897' },
+		{ id: 'footer-4', content: 'Footer 4', glyph: 'E80F' },
+		{ id: 'footer-5', content: 'Footer 5', glyph: 'E8A9' }
+	];
+	let footerLeftSelected = $state<string | null>('home');
+	let footerLeftExpanded = $state<string[]>([]);
+	let footerTopSelected = $state<string | null>('home');
+	let footerSplitExpanded = $state(['design']);
+	// A footer that opens on a header and a menu that ends on one: the two places a header's
+	// margin used to collapse out of the list being measured.
+	const headedMenu: NavigationViewEntry[] = [...footerMenu, { header: 'More' }];
+	const headedFooter: NavigationViewEntry[] = [
+		{ header: 'Support' },
+		{ id: 'account', content: 'Account', glyph: 'E77B' }
+	];
+	const noMenu: NavigationViewEntry[] = [];
+	function selectFooter(where: string, set: (id: string) => void) {
+		return (id: string) => {
+			set(id);
+			events = [...events, `${where}: ${id}`];
+		};
+	}
 </script>
 
 <svelte:head><title>NavigationView — harness</title></svelte:head>
@@ -293,6 +347,85 @@
 
 <h2 class="winui-SubtitleTextBlockStyle">selection</h2>
 <pre class="log">{events.length ? events.join('\n') : 'nothing selected yet'}</pre>
+
+{#if footerSpecimens}
+	<h2 class="winui-SubtitleTextBlockStyle">left — footer items, a pane footer and settings</h2>
+	<div class="frame" id="footer-left">
+		<NavigationView
+			items={footerMenu}
+			footerItems={footerEntries}
+			selected={footerLeftSelected}
+			onItemInvoked={selectFooter('footer-left', (id) => (footerLeftSelected = id))}
+			bind:expandedItems={footerLeftExpanded}
+			paneDisplayMode="left"
+		>
+			{#snippet paneFooter()}
+				<p class="winui-CaptionTextBlockStyle pane-footer-note">Signed in as harness</p>
+			{/snippet}
+			<p class="winui-BodyTextBlockStyle">Content sits beside the pane.</p>
+		</NavigationView>
+	</div>
+
+	<h2 class="winui-SubtitleTextBlockStyle">top — footer items, a pane footer and settings</h2>
+	<div class="frame" id="footer-top">
+		<NavigationView
+			items={footerMenu}
+			footerItems={footerEntries}
+			selected={footerTopSelected}
+			onItemInvoked={selectFooter('footer-top', (id) => (footerTopSelected = id))}
+			paneDisplayMode="top"
+		>
+			{#snippet paneFooter()}
+				<p class="winui-CaptionTextBlockStyle pane-footer-note">Signed in as harness</p>
+			{/snippet}
+			<p class="winui-BodyTextBlockStyle">Content sits below the pane.</p>
+		</NavigationView>
+	</div>
+
+	<h2 class="winui-SubtitleTextBlockStyle">left — both lists taller than half the pane</h2>
+	<div class="frame" id="footer-split">
+		<NavigationView
+			{items}
+			footerItems={tallFooter}
+			selected={null}
+			bind:expandedItems={footerSplitExpanded}
+			paneDisplayMode="left"
+		>
+			<p class="winui-BodyTextBlockStyle">Content sits beside the pane.</p>
+		</NavigationView>
+	</div>
+
+	<h2 class="winui-SubtitleTextBlockStyle">left — a short menu over a footer that overruns</h2>
+	<div class="frame" id="footer-scrolls">
+		<NavigationView
+			items={footerMenu}
+			footerItems={tallFooter}
+			selected={null}
+			paneDisplayMode="left"
+		>
+			<p class="winui-BodyTextBlockStyle">Content sits beside the pane.</p>
+		</NavigationView>
+	</div>
+
+	<h2 class="winui-SubtitleTextBlockStyle">left — no menu entry, only a footer</h2>
+	<div class="frame" id="footer-no-menu">
+		<NavigationView items={noMenu} footerItems={tallFooter} selected={null} paneDisplayMode="left">
+			<p class="winui-BodyTextBlockStyle">Content sits beside the pane.</p>
+		</NavigationView>
+	</div>
+
+	<h2 class="winui-SubtitleTextBlockStyle">left — lists that open and end on a header</h2>
+	<div class="frame" id="footer-headers">
+		<NavigationView
+			items={headedMenu}
+			footerItems={headedFooter}
+			selected={null}
+			paneDisplayMode="left"
+		>
+			<p class="winui-BodyTextBlockStyle">Content sits beside the pane.</p>
+		</NavigationView>
+	</div>
+{/if}
 
 <style>
 	.frame {

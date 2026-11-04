@@ -7,10 +7,13 @@ import { expect, test } from './fixtures';
 // footer holds no menu item and no settings item (`NavigationView.cpp:1588`), and collapses it
 // again when the menu and the footer group both fit (`:1599`). Only where they do not
 // (`:1610`, `:1617`, `:1624`) is it drawn. That pair is the test, and not whether anything is
-// below the rule: `FooterContentBorder` is in the grid whether or not an app fills it. This library has no `footerMenuItems`, so the
-// first test is `settingsVisible` alone, and a filled `paneFooter` does not stand in for one:
-// upstream counts the pane footer's height when it divides the pane's space and never when it
-// decides the separator.
+// below the rule: `FooterContentBorder` is in the grid whether or not an app fills it. One more
+// collapse sits between the two: a menu with no entry (`:1593`) draws no rule even when the
+// footer it leaves the whole row to does not fit. No specimen here has an empty menu, so
+// `navigation-view-footer.spec.ts` holds that branch. These specimens set no `footerItems`, so
+// the first test is `settingsVisible` alone, and a filled `paneFooter` does not stand in for
+// one: upstream counts the pane footer's height when it divides the pane's space and never when
+// it decides the separator.
 //
 // Every test here asserts the overrun as well as the rule. Each specimen overruns because its
 // menu is a few rows taller than a 360-pixel frame leaves room for, which is a property of the
