@@ -1102,11 +1102,16 @@
 			);
 	}
 
-	.tab:not([aria-disabled='true']) .close:hover {
+	/* The button's own states. The tab's rules above set the button's `Background`
+	   (`TabView.xaml:320`), and the button's template paints over that in its own PointerOver and
+	   Pressed states (`TabView.xaml:198`, `:211`), so under a pointer that is over both, the
+	   button's wins. These are as specific as the tab's and come after them, which is what makes
+	   them win here: with one class fewer they lost, and the button showed no fill at all. */
+	.tab:not([aria-disabled='true']):hover .close:hover {
 		background: var(--winui-TabViewItemHeaderCloseButtonBackgroundPointerOver);
 		color: var(--winui-TabViewItemHeaderCloseButtonForegroundPointerOver);
 	}
-	.tab:not([aria-disabled='true']) .close:active {
+	.tab:not([aria-disabled='true']):active .close:active {
 		background: var(--winui-TabViewItemHeaderCloseButtonBackgroundPressed);
 		color: var(--winui-TabViewItemHeaderCloseButtonForegroundPressed);
 	}
