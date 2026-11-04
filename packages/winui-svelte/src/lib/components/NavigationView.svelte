@@ -2064,15 +2064,20 @@
 		display: none;
 	}
 
-	/* `VisualItemsSeparator` — NavigationView.xaml:375. The instance's own `Margin="0,0,0,2"`
-	   overrides the `NavigationViewItemSeparator` style's, so the token for that margin is
-	   deliberately not read here. */
+	/* `VisualItemsSeparator` — NavigationView.xaml:375. Two margins, one inside the other: the
+	   instance's `Margin="0,0,0,2"` is the control's, and the template's `SeparatorLine` carries
+	   `NavigationViewItemSeparatorMargin`, 3 above and 4 below (NavigationView.xaml:600), which
+	   the style sets no `Margin` to replace. The line is the content box, drawn by the fill, and
+	   the template's margin is the padding around it. This read only the instance's until
+	   2026-11-04, and the rule sat 7 pixels short of upstream's. */
 	.items-separator {
 		flex: 0 0 auto;
+		box-sizing: content-box;
 		height: var(--winui-NavigationViewItemSeparatorHeight);
+		padding: var(--winui-NavigationViewItemSeparatorMargin);
 		/* c1-allow: NavigationView.xaml:375, VisualItemsSeparator Margin="0,0,0,2" */
 		margin: 0 0 2px;
-		background: var(--winui-NavigationViewItemSeparatorForeground);
+		background: var(--winui-NavigationViewItemSeparatorForeground) content-box;
 	}
 
 	.footer-content-border {
