@@ -13,7 +13,7 @@
 </script>
 
 <script lang="ts">
-	import { ScrollView, ScrollViewer } from 'winui-svelte/preview';
+	import { ScrollView, ScrollViewer } from '@harena-hq/winui-svelte/preview';
 
 	let { children, scrollView = false }: InterimPageProps = $props();
 </script>

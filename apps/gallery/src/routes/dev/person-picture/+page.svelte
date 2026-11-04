@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { PersonPicture } from 'winui-svelte/preview';
+	import { PersonPicture } from '@harena-hq/winui-svelte/preview';
 
 	const COMBINING_NAME = 'J\u0301ohn Smith';
 </script>

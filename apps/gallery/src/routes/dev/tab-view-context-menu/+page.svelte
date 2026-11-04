@@ -4,7 +4,7 @@
 		TabView,
 		type MenuFlyoutEntry,
 		type TabViewTabContextRequestedEventArgs
-	} from 'winui-svelte/preview';
+	} from '@harena-hq/winui-svelte/preview';
 
 	/*
 	 * A tab's context menu, as the Gallery's TabView page gives every tab one shared

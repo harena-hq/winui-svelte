@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Button, Hyperlink, PasswordBox } from 'winui-svelte/preview';
+	import { Button, Hyperlink, PasswordBox } from '@harena-hq/winui-svelte/preview';
 	import ControlExample from '$lib/frame/ControlExample.svelte';
 	import ItemPage from '$lib/frame/ItemPage.svelte';
 	import NotApplicablePanel from '$lib/frame/NotApplicablePanel.svelte';

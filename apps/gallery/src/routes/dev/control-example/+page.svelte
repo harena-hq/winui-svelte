@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Button, CheckBox, ToggleSwitch } from 'winui-svelte/preview';
+	import { Button, CheckBox, ToggleSwitch } from '@harena-hq/winui-svelte/preview';
 	import ControlExample from '$lib/frame/ControlExample.svelte';
 
 	const xaml = `<FlipView MaxWidth="400" Height="270"

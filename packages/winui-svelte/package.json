@@ -1,5 +1,5 @@
 {
-	"name": "winui-svelte",
+	"name": "@harena-hq/winui-svelte",
 	"version": "0.1.0",
 	"description": "WinUI 3 controls for Svelte 5",
 	"license": "MIT",
@@ -22,6 +22,9 @@
 	],
 	"svelte": "./dist/index.js",
 	"types": "./dist/index.d.ts",
+	"publishConfig": {
+		"access": "public"
+	},
 	"exports": {
 		".": {
 			"types": "./dist/index.d.ts",

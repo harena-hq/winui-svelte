@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { PipsPager } from 'winui-svelte/preview';
+	import { PipsPager } from '@harena-hq/winui-svelte/preview';
 </script>
 
 <svelte:head><title>PipsPager — harness</title></svelte:head>

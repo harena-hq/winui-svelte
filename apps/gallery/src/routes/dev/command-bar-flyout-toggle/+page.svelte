@@ -1,5 +1,9 @@
 <script lang="ts">
-	import { AppBarButton, AppBarToggleButton, CommandBarFlyout } from 'winui-svelte/preview';
+	import {
+		AppBarButton,
+		AppBarToggleButton,
+		CommandBarFlyout
+	} from '@harena-hq/winui-svelte/preview';
 </script>
 
 <svelte:head><title>CommandBarFlyout toggle commands — harness</title></svelte:head>

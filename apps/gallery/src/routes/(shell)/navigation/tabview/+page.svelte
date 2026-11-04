@@ -7,7 +7,7 @@
 		type MenuFlyoutEntry,
 		type TabViewItemData,
 		type TabViewTabContextRequestedEventArgs
-	} from 'winui-svelte/preview';
+	} from '@harena-hq/winui-svelte/preview';
 	import ControlExample from '$lib/frame/ControlExample.svelte';
 	import ItemPage from '$lib/frame/ItemPage.svelte';
 	import { SamplePage1, SamplePage2, SamplePage3 } from '$lib/sample-pages';

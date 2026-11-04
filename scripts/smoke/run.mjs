@@ -173,7 +173,7 @@ async function assertNotTheWorkspace(directory) {
 	// `file:` tarball dependency pnpm extracts the package into the consumer's own virtual
 	// store, so the installed directory resolves under the temporary tree. A symlink back
 	// into this repository would mean the run proved nothing at all.
-	const installed = path.join(directory, 'node_modules/winui-svelte');
+	const installed = path.join(directory, 'node_modules/@harena-hq/winui-svelte');
 	const resolved = await realpath(installed);
 	if (resolved.startsWith(`${ROOT}${path.sep}`) || resolved === ROOT) {
 		throw new Error(
@@ -199,7 +199,7 @@ function exportTargets(exportsField) {
 }
 
 async function assertPublishedSurface(directory) {
-	const installed = await realpath(path.join(directory, 'node_modules/winui-svelte'));
+	const installed = await realpath(path.join(directory, 'node_modules/@harena-hq/winui-svelte'));
 	const manifest = JSON.parse(await readFile(path.join(installed, 'package.json'), 'utf8'));
 
 	// Every literal path the `exports` map names has to exist in the tarball. This is the
@@ -302,11 +302,11 @@ async function runReleaseOnly(workdir, tarball) {
 	await prepareWithoutOptionalPeers(directory, tarball);
 	await writeFile(
 		path.join(directory, 'src/App.svelte'),
-		`<script lang="ts">\n\timport * as winui from 'winui-svelte';\n\n\t// @ts-expect-error VERSION is typed as a string, which fails if the types do not resolve.\n\tconst wrong: number = winui.VERSION;\n\tconst names = Object.keys(winui);\n</script>\n\n<p>{wrong} {names.length}</p>\n`
+		`<script lang="ts">\n\timport * as winui from '@harena-hq/winui-svelte';\n\n\t// @ts-expect-error VERSION is typed as a string, which fails if the types do not resolve.\n\tconst wrong: number = winui.VERSION;\n\tconst names = Object.keys(winui);\n</script>\n\n<p>{wrong} {names.length}</p>\n`
 	);
 	await writeFile(
 		path.join(directory, 'src/ssr.js'),
-		`import { render } from 'svelte/server';\nimport * as winui from 'winui-svelte';\n\nconst { body } = render(winui.Button, { props: {} });\n\nprocess.stdout.write(\`\${winui.VERSION}\\n\${body}\`);\n`
+		`import { render } from 'svelte/server';\nimport * as winui from '@harena-hq/winui-svelte';\n\nconst { body } = render(winui.Button, { props: {} });\n\nprocess.stdout.write(\`\${winui.VERSION}\\n\${body}\`);\n`
 	);
 
 	log('release only: type-checking, building, and rendering the whole index');
@@ -324,7 +324,7 @@ async function runReleaseOnly(workdir, tarball) {
 				'utf8'
 			)
 		);
-	const packed = await manifestOf('winui-svelte');
+	const packed = await manifestOf('@harena-hq/winui-svelte');
 
 	// A floor this run did not install is a floor nothing tested. What is read is the version
 	// installed, not the fixture's pin, so an override cannot stand between the two.
@@ -358,7 +358,7 @@ async function runOptionalPeerControl(workdir, tarball) {
 	await prepareWithoutOptionalPeers(directory, tarball);
 	await writeFile(
 		path.join(directory, 'src/App.svelte'),
-		`<script>\n\timport { NumberBox } from 'winui-svelte/preview';\n</script>\n\n<NumberBox />\n`
+		`<script>\n\timport { NumberBox } from '@harena-hq/winui-svelte/preview';\n</script>\n\n<NumberBox />\n`
 	);
 
 	log('optional peer control: building NumberBox without its peers');
@@ -368,7 +368,9 @@ async function runOptionalPeerControl(workdir, tarball) {
 			`expected the build to fail without the optional peers, but it exited 0; output: ${compactOutput(build)}`
 		);
 	}
-	if (!/__vite-optional-peer-dep:@zag-js\/[a-z-]+:winui-svelte/.test(commandOutput(build))) {
+	if (
+		!/__vite-optional-peer-dep:@zag-js\/[a-z-]+:@harena-hq\/winui-svelte/.test(commandOutput(build))
+	) {
 		throw new Error(
 			`expected the failed build to name an optional @zag-js peer, but found: ${compactOutput(build)}`
 		);
@@ -394,7 +396,7 @@ async function runRootRejects(workdir, tarball, name, label) {
 	await prepareConsumer(directory, tarball);
 	await writeFile(
 		path.join(directory, 'src/App.svelte'),
-		`<script>\n\timport { ${name} } from 'winui-svelte';\n</script>\n\n<${name} />\n`
+		`<script>\n\timport { ${name} } from '@harena-hq/winui-svelte';\n</script>\n\n<${name} />\n`
 	);
 
 	log(`${label}: installing the consumer`);
@@ -428,13 +430,13 @@ const TYPE_ERRORS = [
 	{
 		label: 'type error',
 		what: 'a prop value the published type refuses',
-		markup: `import { InfoBar } from 'winui-svelte';\n</script>\n\n<InfoBar severity="notASeverity" title="Smoke" />`,
+		markup: `import { InfoBar } from '@harena-hq/winui-svelte';\n</script>\n\n<InfoBar severity="notASeverity" title="Smoke" />`,
 		message: `Type '"notASeverity"' is not assignable to type`
 	},
 	{
 		label: 'missing prop',
 		what: 'a component without a required prop',
-		markup: `import { TabView } from 'winui-svelte';\n</script>\n\n<TabView />`,
+		markup: `import { TabView } from '@harena-hq/winui-svelte';\n</script>\n\n<TabView />`,
 		message: `Property 'items' is missing`
 	}
 ];

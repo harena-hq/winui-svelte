@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { SystemBackdropElement } from 'winui-svelte/preview';
+	import { SystemBackdropElement } from '@harena-hq/winui-svelte/preview';
 </script>
 
 <svelte:head><title>SystemBackdropElement — harness</title></svelte:head>

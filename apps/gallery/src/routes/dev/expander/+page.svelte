@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Expander } from 'winui-svelte/preview';
+	import { Expander } from '@harena-hq/winui-svelte/preview';
 </script>
 
 <svelte:head><title>Expander — harness</title></svelte:head>

@@ -1,12 +1,18 @@
 <script lang="ts">
-	import { InfoBar, provideStrings, TeachingTip, TextBox, ToggleSwitch } from 'winui-svelte';
+	import {
+		InfoBar,
+		provideStrings,
+		TeachingTip,
+		TextBox,
+		ToggleSwitch
+	} from '@harena-hq/winui-svelte';
 	import {
 		CalendarView,
 		DatePicker,
 		NumberBox,
 		PersonPicture,
 		TimePicker
-	} from 'winui-svelte/preview';
+	} from '@harena-hq/winui-svelte/preview';
 	import Nested from './Nested.svelte';
 
 	/**

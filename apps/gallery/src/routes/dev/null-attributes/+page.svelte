@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { Button, ComboBox, Expander, TextBox, ToggleSwitch } from 'winui-svelte';
-	import { CheckBox, Span, ToggleButton } from 'winui-svelte/preview';
+	import { Button, ComboBox, Expander, TextBox, ToggleSwitch } from '@harena-hq/winui-svelte';
+	import { CheckBox, Span, ToggleButton } from '@harena-hq/winui-svelte/preview';
 	import type { HTMLButtonAttributes, HTMLInputAttributes } from 'svelte/elements';
 
 	// What a wrapper forwarding `svelte/elements` attributes holds: `T | null | undefined`. That this

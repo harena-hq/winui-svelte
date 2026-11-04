@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { ItemContainer, ItemsRepeater } from 'winui-svelte/preview';
+	import { ItemContainer, ItemsRepeater } from '@harena-hq/winui-svelte/preview';
 
 	const tiles = ['One', 'Two', 'Three', 'Four', 'Five', 'Six'];
 	const choices = ['Alpha', 'Beta', 'Gamma'];

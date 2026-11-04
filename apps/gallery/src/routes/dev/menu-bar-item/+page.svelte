@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { MenuBar, MenuBarItem, type MenuFlyoutEntry } from 'winui-svelte/preview';
+	import { MenuBar, MenuBarItem, type MenuFlyoutEntry } from '@harena-hq/winui-svelte/preview';
 
 	const items: MenuFlyoutEntry[] = [
 		{ id: 'cut', text: 'Cut' },

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { ComboBox, TextBox, ToggleSwitch } from 'winui-svelte/preview';
+	import { ComboBox, TextBox, ToggleSwitch } from '@harena-hq/winui-svelte/preview';
 
 	/*
 	 * The harness for the naming attributes, not part of the Gallery reproduction. Each control

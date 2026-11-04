@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Button, TabView, type TabViewItemData } from 'winui-svelte/preview';
+	import { Button, TabView, type TabViewItemData } from '@harena-hq/winui-svelte/preview';
 
 	/*
 	 * Strips whose tabs close, for the selection a removal moves (`TabView::OnItemsChanged`,

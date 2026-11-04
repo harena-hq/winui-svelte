@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { ColorPicker } from 'winui-svelte/preview';
+	import { ColorPicker } from '@harena-hq/winui-svelte/preview';
 </script>
 
 <svelte:head><title>ColorPicker horizontal — harness</title></svelte:head>

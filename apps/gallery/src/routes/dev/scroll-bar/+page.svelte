@@ -1,5 +1,5 @@
 <script lang="ts">
-	import ScrollBar from 'winui-svelte/internal/ScrollBar.svelte';
+	import ScrollBar from '@harena-hq/winui-svelte/internal/ScrollBar.svelte';
 
 	let vertical = $state(0);
 	let verticalEnd = $state(800);

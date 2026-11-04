@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { GridViewItem } from 'winui-svelte/preview';
+	import { GridViewItem } from '@harena-hq/winui-svelte/preview';
 </script>
 
 <svelte:head><title>GridViewItem — harness</title></svelte:head>

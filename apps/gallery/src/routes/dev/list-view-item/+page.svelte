@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { ListViewItem } from 'winui-svelte/preview';
+	import { ListViewItem } from '@harena-hq/winui-svelte/preview';
 </script>
 
 <svelte:head><title>ListViewItem — harness</title></svelte:head>

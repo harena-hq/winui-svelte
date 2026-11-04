@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Button, Image, ToolTip } from 'winui-svelte/preview';
+	import { Button, Image, ToolTip } from '@harena-hq/winui-svelte/preview';
 	import ControlExample from '$lib/frame/ControlExample.svelte';
 	import ItemPage from '$lib/frame/ItemPage.svelte';
 	import { sampleOf } from '$lib/samples';

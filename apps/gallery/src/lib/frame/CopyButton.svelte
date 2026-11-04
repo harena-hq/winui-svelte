@@ -20,7 +20,7 @@
 </script>
 
 <script lang="ts">
-	import { Button } from 'winui-svelte/preview';
+	import { Button } from '@harena-hq/winui-svelte/preview';
 
 	// `Content="&#xE8C8;"` on the button and `Glyph="&#xE73E;"` on the CopySuccessGlyph
 	// presenter inside its template — CopyButton.xaml. Written as escapes rather than as the

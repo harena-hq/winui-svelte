@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { ColorSpectrum, type HsvColor } from 'winui-svelte/preview';
+	import { ColorSpectrum, type HsvColor } from '@harena-hq/winui-svelte/preview';
 
 	let interactive = $state<HsvColor>({ h: 0, s: 0, v: 1, a: 1 });
 	const components = [

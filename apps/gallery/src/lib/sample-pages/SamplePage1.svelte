@@ -3,7 +3,7 @@
 	 * The Gallery's SamplePage1 (SampleSupport/SamplePages/SamplePage1.xaml), the page the
 	 * Gallery's navigation samples show for their first item.
 	 */
-	import { ScrollViewer } from 'winui-svelte/preview';
+	import { ScrollViewer } from '@harena-hq/winui-svelte/preview';
 	import { LOREM } from './lorem';
 </script>
 

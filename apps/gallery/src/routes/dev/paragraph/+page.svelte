@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { LineBreak, Paragraph, RichTextBlock } from 'winui-svelte/preview';
+	import { LineBreak, Paragraph, RichTextBlock } from '@harena-hq/winui-svelte/preview';
 </script>
 
 <svelte:head><title>Paragraph — harness</title></svelte:head>

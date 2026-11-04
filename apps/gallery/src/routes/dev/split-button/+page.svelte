@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { SplitButton } from 'winui-svelte/preview';
+	import { SplitButton } from '@harena-hq/winui-svelte/preview';
 
 	const items = [
 		{ id: 'red', text: 'Red' },

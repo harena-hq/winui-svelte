@@ -41,7 +41,7 @@ Planning, review and commit discipline follow `docs/plan.md` and `AGENTS.md`.
 ## Status
 
 v18, the last version before the first release. The library's first release is twenty
-components, and every other component a consumer places is in `winui-svelte/preview` (ADR
+components, and every other component a consumer places is in `@harena-hq/winui-svelte/preview` (ADR
 0017). See `docs/plan.md` for what each version adds.
 
 ## License and attribution

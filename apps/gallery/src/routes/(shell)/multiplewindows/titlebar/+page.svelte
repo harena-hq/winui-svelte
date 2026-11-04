@@ -10,7 +10,7 @@
 		TextBox,
 		TitleBar,
 		ToggleSwitch
-	} from 'winui-svelte/preview';
+	} from '@harena-hq/winui-svelte/preview';
 	import { resolve } from '$app/paths';
 	import ControlExample from '$lib/frame/ControlExample.svelte';
 	import ItemPage from '$lib/frame/ItemPage.svelte';

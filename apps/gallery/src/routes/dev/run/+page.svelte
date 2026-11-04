@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Run, TextBlock } from 'winui-svelte/preview';
+	import { Run, TextBlock } from '@harena-hq/winui-svelte/preview';
 </script>
 
 <svelte:head><title>Run — harness</title></svelte:head>

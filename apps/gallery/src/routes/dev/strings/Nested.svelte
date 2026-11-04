@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { provideStrings, ToggleSwitch } from 'winui-svelte';
+	import { provideStrings, ToggleSwitch } from '@harena-hq/winui-svelte';
 
 	provideStrings({ TEXT_TOGGLESWITCH_OFF: 'Aus' });
 </script>

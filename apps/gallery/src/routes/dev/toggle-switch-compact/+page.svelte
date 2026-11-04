@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { ToggleSwitch } from 'winui-svelte';
+	import { ToggleSwitch } from '@harena-hq/winui-svelte';
 
 	// `variant="rightAlignedCompact"`, the Toolkit's style, as the original's Settings page draws it: a row
 	// with a label at the left and the switch at the right.

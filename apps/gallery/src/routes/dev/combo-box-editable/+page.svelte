@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { ComboBox } from 'winui-svelte/preview';
-	import type { ComboBoxTextSubmittedEventArgs } from 'winui-svelte/preview';
+	import { ComboBox } from '@harena-hq/winui-svelte/preview';
+	import type { ComboBoxTextSubmittedEventArgs } from '@harena-hq/winui-svelte/preview';
 
 	const sizes = [8, 9, 10, 11, 12, 14, 16, 18, 20, 24, 28, 36, 48, 72];
 	const sizeItems = sizes.map((n) => ({ value: String(n), label: String(n) }));

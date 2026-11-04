@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Button, CheckBox, Image } from 'winui-svelte/preview';
+	import { Button, CheckBox, Image } from '@harena-hq/winui-svelte/preview';
 	import { fitLines } from '$lib/fit-lines';
 	import ControlExample from '$lib/frame/ControlExample.svelte';
 	import ItemPage from '$lib/frame/ItemPage.svelte';

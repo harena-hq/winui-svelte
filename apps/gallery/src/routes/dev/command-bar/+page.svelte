@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { AppBarButton, AppBarToggleButton, CommandBar } from 'winui-svelte/preview';
+	import { AppBarButton, AppBarToggleButton, CommandBar } from '@harena-hq/winui-svelte/preview';
 </script>
 
 <svelte:head><title>CommandBar — harness</title></svelte:head>

@@ -5,7 +5,7 @@
 		ScrollView,
 		type ScrollingScrollAnimationStartingEventArgs,
 		type ScrollingScrollOptions
-	} from 'winui-svelte/preview';
+	} from '@harena-hq/winui-svelte/preview';
 
 	/** Drives ScrollView's scrollTo, scrollBy and addScrollVelocity from tests through
 	 * window.harness, and records each animation-starting event. */

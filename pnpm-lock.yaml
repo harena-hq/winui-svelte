@@ -59,7 +59,7 @@ importers:
 
   apps/gallery:
     dependencies:
-      winui-svelte:
+      '@harena-hq/winui-svelte':
         specifier: workspace:*
         version: link:../../packages/winui-svelte
     devDependencies:

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { ToggleSwitch } from 'winui-svelte/preview';
+	import { ToggleSwitch } from '@harena-hq/winui-svelte/preview';
 
 	/*
 	 * The component's own harness, not part of the Gallery reproduction: `/dev/` is where

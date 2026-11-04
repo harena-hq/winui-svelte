@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
-	import { CheckBox, HyperlinkButton } from 'winui-svelte/preview';
+	import { CheckBox, HyperlinkButton } from '@harena-hq/winui-svelte/preview';
 	import ControlExample from '$lib/frame/ControlExample.svelte';
 	import ItemPage from '$lib/frame/ItemPage.svelte';
 	import { sampleOf } from '$lib/samples';

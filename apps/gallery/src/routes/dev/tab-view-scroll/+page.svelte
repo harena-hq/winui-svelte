@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Button, TabView } from 'winui-svelte/preview';
+	import { Button, TabView } from '@harena-hq/winui-svelte/preview';
 
 	/*
 	 * A strip with more tabs than fit, for `BringSelectedTabIntoView` (`TabView.cpp:748`).

@@ -1,6 +1,7 @@
-# winui-svelte
+# @harena-hq/winui-svelte
 
-WinUI 3 controls for Svelte 5.
+WinUI 3 controls for Svelte 5, drawn in the DOM: a web reproduction that runs in any browser or
+WebView, not a binding to native WinUI.
 
 Styling is a CSS custom-property token cascade plus Svelte scoped styles — no Tailwind, no
 CSS-in-JS, and no build tooling required of consumers. The Segoe fonts are referenced from
@@ -28,27 +29,26 @@ one string measures differently in `Segoe UI` and in each of `Segoe UI Variable 
 Windows, so name a suffix.
 
 ```sh
-pnpm add winui-svelte bits-ui @internationalized/date
+pnpm add @harena-hq/winui-svelte bits-ui @internationalized/date
 ```
 
 `bits-ui` is a peer dependency rather than a bundled one: it carries state through Svelte
 context, and two copies in one tree do not share it. `@internationalized/date` is required because
 `bits-ui` requires it as a peer of its own; `preview`'s date components take its types too.
 
-`winui-svelte` is the release, and semantic versioning applies to it and its two stylesheets
-alone. It exports twenty components — `Button`, `ComboBox`, `ContentDialog`, `Expander`,
+`@harena-hq/winui-svelte` is the release, and semantic versioning applies to it and its two
+stylesheets alone. It exports twenty components — `Button`, `ComboBox`, `ContentDialog`, `Expander`,
 `Flyout`, `HyperlinkButton`, `InfoBar`, `MenuFlyout`, `NavigationView`, `NavigationViewItem`,
 `ProgressBar`, `ProgressRing`, `ScrollView`, `ScrollViewer`, `TabView`, `TeachingTip`, `TextBox`,
-`TitleBar`, `ToggleSwitch`, `ToolTip` —
-with their types, the `Symbol` table and its `SymbolName` type, `ScrollAnimation` and its two
-types, `VERSION`, and the two stylesheets `winui-svelte/tokens.css` and
-`winui-svelte/type-ramp.css`.
+`TitleBar`, `ToggleSwitch`, `ToolTip` — with their types, the `Symbol` table and its `SymbolName`
+type, `ScrollAnimation` and its two types, `VERSION`, and the two stylesheets
+`@harena-hq/winui-svelte/tokens.css` and `@harena-hq/winui-svelte/type-ramp.css`.
 
-`winui-svelte/preview` exports the release and every other component a consumer places, and
-promises nothing: a name there may change shape or leave in any version. So does any path into
-the package that is not one of those entries. It needs two peers the release does not, which
-its `NumberBox` imports and a bundler resolves for any import from `preview`. They are optional
-peers, so a consumer of the release alone goes without them; install them to use `preview`:
+`@harena-hq/winui-svelte/preview` exports the release and every other component a consumer places,
+and promises nothing: a name there may change shape or leave in any version. So does any path into
+the package that is not one of those entries. It needs two peers the release does not, which its
+`NumberBox` imports and a bundler resolves for any import from `preview`. They are optional peers,
+so a consumer of the release alone goes without them; install them to use `preview`:
 
 ```sh
 pnpm add @zag-js/svelte @zag-js/number-input

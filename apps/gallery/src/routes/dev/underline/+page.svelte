@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Bold, TextBlock, Underline } from 'winui-svelte/preview';
+	import { Bold, TextBlock, Underline } from '@harena-hq/winui-svelte/preview';
 </script>
 
 <svelte:head><title>Underline — harness</title></svelte:head>

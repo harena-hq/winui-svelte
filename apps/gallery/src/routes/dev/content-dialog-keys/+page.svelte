@@ -1,5 +1,11 @@
 <script lang="ts">
-	import { AutoSuggestBox, Button, CheckBox, ContentDialog, TextBox } from 'winui-svelte/preview';
+	import {
+		AutoSuggestBox,
+		Button,
+		CheckBox,
+		ContentDialog,
+		TextBox
+	} from '@harena-hq/winui-svelte/preview';
 
 	/*
 	 * Enter and Escape in a `ContentDialog` — `ProcessLayoutRootKey`

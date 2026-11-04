@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { NavigationView, type NavigationViewEntry } from 'winui-svelte/preview';
+	import { NavigationView, type NavigationViewEntry } from '@harena-hq/winui-svelte/preview';
 
 	/*
 	 * The back button — `IsBackButtonVisible`, `IsBackEnabled` and `BackRequested`.
