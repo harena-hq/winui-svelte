@@ -204,6 +204,7 @@
 		setNavigationViewPane,
 		setNavigationViewPlacement
 	} from '../internal/navigation-view';
+	import BackArrow from '../internal/BackArrow.svelte';
 	import Flyout from './Flyout.svelte';
 	import NavigationViewItem from './NavigationViewItem.svelte';
 	import NavigationViewTopItem from './NavigationViewTopItem.svelte';
@@ -844,8 +845,8 @@
 						paneToggle.focus();
 						event.preventDefault();
 					}}
-					bind:this={backButton}
-				></button>
+					bind:this={backButton}><BackArrow /></button
+				>
 			{/if}
 			<!-- `NavigationViewCloseButton`, NavigationView.xaml:192 — the back button's style and
 			     glyph, its automation name `NavigationCloseButtonName` ("Close",
@@ -856,8 +857,8 @@
 					type="button"
 					class="close-button"
 					aria-label={str('NavigationCloseButtonName')}
-					onclick={() => setPaneOpen(false)}
-				></button>
+					onclick={() => setPaneOpen(false)}><BackArrow /></button
+				>
 			{/if}
 			{#if !isTop && paneToggleButtonVisible}
 				<!-- The head of the arrow ring, and the only element outside the pane that the ring
@@ -1822,15 +1823,6 @@
 		line-height: normal;
 		cursor: pointer;
 		outline: none;
-	}
-
-	/* The `FallbackIconSource` of the template's `AnimatedIcon` (NavigationBackButton.xaml:60-62),
-	   drawn with no animation between states — the same reading as WD-006 for the title bar's. */
-	.back-button::before,
-	.close-button::before {
-		/* c1-allow: NavigationBackButton.xaml:13, Content="&#xE72B;" */
-		content: '\e72b' / '';
-		display: block;
 	}
 
 	.back-button:focus-visible::after,

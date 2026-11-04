@@ -159,10 +159,12 @@ surface are painted the same way.
   is 63 `CompositionObject`s driven by seven expression animators and six keyframe
   animators, and its `Markers()` map at `:730` names six segments between `Normal`,
   `PointerOver` and `Pressed`.
-- **We do**: render each `FallbackIconSource`'s glyph — `Symbol::Setting` as E713, the
-  navigation back and close buttons' E72B, the two title bar glyphs, CheckBox's E73E and
-  E9AE, Expander's E70D and E70E, and DropDownButton's and SplitButton's E96E — with no
-  transition between pointer states.
+- **We do**: render each `FallbackIconSource`'s glyph — `Symbol::Setting` as E713, the title
+  bar's pane-toggle glyph, CheckBox's E73E and E9AE, Expander's E70D and E70E, and
+  DropDownButton's and SplitButton's E96E — with no transition between pointer states. The back
+  arrow is the exception: NavigationView's back and close buttons and TitleBar's back button
+  draw the first frame of `AnimatedBackVisualSource` itself (`internal/BackArrow.svelte`); its
+  animation between states is absent, and so is the shorter arrow it holds while pressed.
 
   **The glyph is not always the same shape as the animation's frame, and Expander is where
   that was first measured.** Its chevron is `AnimatedChevronUpDownSmallVisualSource`, which
@@ -172,7 +174,8 @@ surface are painted the same way.
   composition's, not a placement error. The navigation back button is the same case at 16px:
   measured on 2026-10-01 on the reference guest, light theme, the original's disabled arrow on
   the AnimatedIcon and NavigationView pages is 12x12 pixels of ink and ours on the AnimatedIcon
-  page 16x15, their centres within a pixel of each other in a 40 by 36 button.
+  page 16x15, their centres within a pixel of each other in a 40 by 36 button. The owner's pass
+  found the difference by eye on 2026-11-04, which is why those buttons now draw the frame.
 
   **Where the fallback's own visibility differs from the animated original's, the original
   wins.** CheckBox is the case that forced the distinction. Its `CheckGlyph` is an

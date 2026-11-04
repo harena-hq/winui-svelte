@@ -34,6 +34,7 @@
 
 <script lang="ts">
 	import { useStrings } from '../strings';
+	import BackArrow from '../internal/BackArrow.svelte';
 	import ToolTip from './ToolTip.svelte';
 
 	let {
@@ -147,8 +148,8 @@
 					class="back-button title-button"
 					aria-label={str('NavigationBackButtonName')}
 					disabled={!backButtonEnabled}
-					onclick={withTriggerClick(props, handleBack)}
-				></button>
+					onclick={withTriggerClick(props, handleBack)}><BackArrow /></button
+				>
 			{/snippet}
 		</ToolTip>
 	{/if}
@@ -266,15 +267,6 @@
 		width: var(--winui-TitleBarBackButtonWidth);
 		background: var(--winui-TitleBarBackButtonBackground);
 		color: var(--winui-TitleBarBackButtonForeground);
-	}
-
-	/* WD-006: the original's glyph is an `AnimatedIcon` that plays on pointer-over and
-	   press; this is its `FallbackIconSource`, drawn with no transition between states.
-	   See docs/divergences.md. */
-	.back-button::before {
-		/* c1-allow: TitleBar_themeresources.xaml:112, Content="&#xE72B;" */
-		content: '\00e72b' / '';
-		display: block;
 	}
 
 	.back-button:hover:not(:disabled) {

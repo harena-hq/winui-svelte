@@ -61,7 +61,6 @@ const DRAWN = [
 	{ point: 'E712', segoe: 'More', fluent: 'more_horizontal_16_regular', box: [109, 891, 422, 578] },
 	{ point: 'E713', segoe: 'Settings', fluent: 'settings_16_regular', box: [16, 984, 0, 1000] },
 	{ point: 'E716', segoe: 'People', fluent: 'people_16_regular', box: [0, 1000, 63, 1000] },
-	{ point: 'E72B', segoe: 'Back', fluent: 'arrow_left_16_regular', box: [0, 1000, 63, 1000] },
 	{
 		point: 'E72C',
 		segoe: 'Refresh',
@@ -231,6 +230,7 @@ const SYMBOLS = [
 	{ point: 'E724', segoe: 'Send', fluent: 'send_16_regular', box: [0, 1000, 63, 1000] },
 	{ point: 'E729', segoe: 'Page', fluent: 'document_16_filled', box: [125, 875, 0, 1000] },
 	{ point: 'E72A', segoe: 'Forward', fluent: 'arrow_right_16_regular', box: [0, 1000, 63, 1000] },
+	{ point: 'E72B', segoe: 'Back', fluent: 'arrow_left_16_regular', box: [0, 1000, 63, 1000] },
 	{ point: 'E72D', segoe: 'Share', fluent: 'share_16_regular', box: [63, 984, 63, 938] },
 	{
 		point: 'E730',
