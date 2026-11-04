@@ -6,7 +6,7 @@
 		isTwelveHourClock,
 		localeOf,
 		weekStartsOn
-	} from 'winui-svelte/internal/datetime.js';
+	} from '@harena-hq/winui-svelte/internal/datetime.js';
 
 	const DATE = new Date(2026, 8, 8, 23, 4, 0);
 	const templateCases = [

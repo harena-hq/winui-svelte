@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { ContentDialog } from 'winui-svelte';
+	import { ContentDialog } from '@harena-hq/winui-svelte';
 </script>
 
 <svelte:head><title>ContentDialog aria-describedby — harness</title></svelte:head>

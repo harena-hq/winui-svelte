@@ -1,5 +1,11 @@
 <script lang="ts">
-	import { AppBarSeparator, Button, CheckBox, ComboBox, Hyperlink } from 'winui-svelte/preview';
+	import {
+		AppBarSeparator,
+		Button,
+		CheckBox,
+		ComboBox,
+		Hyperlink
+	} from '@harena-hq/winui-svelte/preview';
 	import { resolve } from '$app/paths';
 	import ColorSelector from '$lib/controls/ColorSelector.svelte';
 	import ControlExample from '$lib/frame/ControlExample.svelte';

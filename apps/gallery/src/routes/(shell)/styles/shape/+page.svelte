@@ -1,5 +1,11 @@
 <script lang="ts">
-	import { Ellipse, Polygon, Rectangle, Slider, ToggleSwitch } from 'winui-svelte/preview';
+	import {
+		Ellipse,
+		Polygon,
+		Rectangle,
+		Slider,
+		ToggleSwitch
+	} from '@harena-hq/winui-svelte/preview';
 	import ControlExample from '$lib/frame/ControlExample.svelte';
 	import ItemPage from '$lib/frame/ItemPage.svelte';
 	import { sampleOf } from '$lib/samples';

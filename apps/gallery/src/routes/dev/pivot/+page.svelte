@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Pivot } from 'winui-svelte/preview';
+	import { Pivot } from '@harena-hq/winui-svelte/preview';
 </script>
 
 {#snippet all()}<p class="winui-BodyTextBlockStyle">all emails go here.</p>{/snippet}

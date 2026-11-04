@@ -1,6 +1,6 @@
 <script lang="ts">
-	import 'winui-svelte/tokens.css';
-	import 'winui-svelte/type-ramp.css';
+	import '@harena-hq/winui-svelte/tokens.css';
+	import '@harena-hq/winui-svelte/type-ramp.css';
 	import '$lib/gallery-styles.css';
 	import favicon from '$lib/assets/favicon.svg';
 	import { theme } from '$lib/theme.svelte';

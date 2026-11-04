@@ -6,7 +6,7 @@
 		RadioButtons,
 		Rectangle,
 		Slider
-	} from 'winui-svelte/preview';
+	} from '@harena-hq/winui-svelte/preview';
 	import ControlExample from '$lib/frame/ControlExample.svelte';
 	import ItemPage from '$lib/frame/ItemPage.svelte';
 	import { sampleOf } from '$lib/samples';

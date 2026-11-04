@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { RadioButton } from 'winui-svelte/preview';
+	import { RadioButton } from '@harena-hq/winui-svelte/preview';
 
 	/*
 	 * The component's own harness, not part of the Gallery reproduction: `/dev/` is where

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { ComboBox } from 'winui-svelte/preview';
+	import { ComboBox } from '@harena-hq/winui-svelte/preview';
 
 	/*
 	 * Where a non-editable ComboBox's list opens, for `GetNonPannablePopupLayout`

@@ -1,6 +1,6 @@
 <script lang="ts">
 	/* The Gallery's SamplePage2 (SampleSupport/SamplePages/SamplePage2.xaml). */
-	import { ScrollViewer } from 'winui-svelte/preview';
+	import { ScrollViewer } from '@harena-hq/winui-svelte/preview';
 	import { LOREM } from './lorem';
 </script>
 

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Button, ToolTip } from 'winui-svelte/preview';
+	import { Button, ToolTip } from '@harena-hq/winui-svelte/preview';
 
 	/*
 	 * The component's own harness, not part of the Gallery reproduction: `/dev/` is where

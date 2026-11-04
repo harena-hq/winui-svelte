@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { ToggleSwitch } from 'winui-svelte/preview';
+	import { ToggleSwitch } from '@harena-hq/winui-svelte/preview';
 
 	/*
 	 * A `ToggleSwitch`'s accessible name — `ToggleSwitchAutomationPeer::GetNameCore`.

@@ -6,8 +6,8 @@
 		SplitView,
 		ToggleButton,
 		ToggleSwitch
-	} from 'winui-svelte/preview';
-	import type { ComboBoxProps, SplitViewProps } from 'winui-svelte/preview';
+	} from '@harena-hq/winui-svelte/preview';
+	import type { ComboBoxProps, SplitViewProps } from '@harena-hq/winui-svelte/preview';
 	import { icons, type Icon } from '$lib/design';
 	import ControlExample from '$lib/frame/ControlExample.svelte';
 	import ItemPage from '$lib/frame/ItemPage.svelte';

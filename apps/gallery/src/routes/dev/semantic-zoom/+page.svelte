@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { SemanticZoom } from 'winui-svelte/preview';
+	import { SemanticZoom } from '@harena-hq/winui-svelte/preview';
 
 	// One detailed list and one summary list, short enough that both fit the 200-tall box.
 	const ITEMS = ['Button', 'CheckBox', 'RadioButton', 'ToggleSwitch'];

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Button, InfoBar } from 'winui-svelte/preview';
+	import { Button, InfoBar } from '@harena-hq/winui-svelte/preview';
 
 	const SHORT_MESSAGE =
 		'Essential app message for your users to be informed of, acknowledge, or take action on.';

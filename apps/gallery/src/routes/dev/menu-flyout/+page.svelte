@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Button, MenuFlyout, type MenuFlyoutEntry } from 'winui-svelte/preview';
+	import { Button, MenuFlyout, type MenuFlyoutEntry } from '@harena-hq/winui-svelte/preview';
 
 	let checked = $state(['repeat', 'shuffle']);
 	let selectedRadio = $state({ orientation: 'portrait', size: 'medium' });

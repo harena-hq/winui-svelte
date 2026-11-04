@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { FlipView } from 'winui-svelte/preview';
+	import { FlipView } from '@harena-hq/winui-svelte/preview';
 
 	const slides = ['One', 'Two', 'Three', 'Four'];
 </script>

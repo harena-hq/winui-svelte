@@ -8,7 +8,7 @@
 		type ComboBoxProps,
 		type ScrollViewProps,
 		type ScrollingScrollAnimationStartingEventArgs
-	} from 'winui-svelte/preview';
+	} from '@harena-hq/winui-svelte/preview';
 	import ControlExample from '$lib/frame/ControlExample.svelte';
 	import ItemPage from '$lib/frame/ItemPage.svelte';
 	import { sampleOf, textOf } from '$lib/samples';

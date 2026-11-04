@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Rectangle } from 'winui-svelte/preview';
+	import { Rectangle } from '@harena-hq/winui-svelte/preview';
 
 	// ShapePage.xaml:27-28 — the original's own sample colours: its ellipse and its rectangle
 	// are filled SteelBlue and stroked Black. A shape's fill is a value its caller supplies, so

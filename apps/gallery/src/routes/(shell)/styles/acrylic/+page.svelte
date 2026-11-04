@@ -7,8 +7,8 @@
 		Rectangle,
 		RichTextBlock,
 		Slider
-	} from 'winui-svelte/preview';
-	import type { ComboBoxItemData, ComboBoxProps } from 'winui-svelte/preview';
+	} from '@harena-hq/winui-svelte/preview';
+	import type { ComboBoxItemData, ComboBoxProps } from '@harena-hq/winui-svelte/preview';
 	import { resolve } from '$app/paths';
 	import ControlExample from '$lib/frame/ControlExample.svelte';
 	import ItemPage from '$lib/frame/ItemPage.svelte';

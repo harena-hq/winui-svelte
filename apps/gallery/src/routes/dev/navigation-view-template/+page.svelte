@@ -3,7 +3,7 @@
 		NavigationView,
 		NavigationViewItem,
 		type NavigationViewEntry
-	} from 'winui-svelte/preview';
+	} from '@harena-hq/winui-svelte/preview';
 
 	/*
 	 * `menuItemTemplate` — ADR 0015's second half — on its own harness.
@@ -16,7 +16,7 @@
 	 *
 	 * `NavigationViewItem` is in the release with `NavigationView` (ADR 0015, ADR 0017); like
 	 * every Gallery page that imports a component either entry exports, this one imports from
-	 * `winui-svelte/preview`.
+	 * `@harena-hq/winui-svelte/preview`.
 	 */
 
 	/** A consumer's own row type: the record as the bound, plus a field of its own. */

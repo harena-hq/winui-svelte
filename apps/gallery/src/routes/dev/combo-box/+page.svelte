@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { ComboBox } from 'winui-svelte/preview';
-	import type { ComboBoxProps } from 'winui-svelte/preview';
+	import { ComboBox } from '@harena-hq/winui-svelte/preview';
+	import type { ComboBoxProps } from '@harena-hq/winui-svelte/preview';
 
 	/*
 	 * The component's own harness, not part of the Gallery reproduction: `/dev/` is where

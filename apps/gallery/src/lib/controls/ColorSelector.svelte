@@ -25,7 +25,7 @@
 </script>
 
 <script lang="ts">
-	import { SplitButton } from 'winui-svelte/preview';
+	import { SplitButton } from '@harena-hq/winui-svelte/preview';
 
 	let {
 		color = 'transparent',

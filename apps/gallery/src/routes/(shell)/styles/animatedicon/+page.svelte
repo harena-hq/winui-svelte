@@ -1,6 +1,12 @@
 <script lang="ts">
-	import { Button, ComboBox, Hyperlink, NavigationView, Symbol } from 'winui-svelte/preview';
-	import type { ComboBoxProps, NavigationViewEntry } from 'winui-svelte/preview';
+	import {
+		Button,
+		ComboBox,
+		Hyperlink,
+		NavigationView,
+		Symbol
+	} from '@harena-hq/winui-svelte/preview';
+	import type { ComboBoxProps, NavigationViewEntry } from '@harena-hq/winui-svelte/preview';
 	import ControlExample from '$lib/frame/ControlExample.svelte';
 	import ItemPage from '$lib/frame/ItemPage.svelte';
 	import { sampleOf } from '$lib/samples';

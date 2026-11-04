@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { ListView } from 'winui-svelte/preview';
+	import { ListView } from '@harena-hq/winui-svelte/preview';
 
 	const people = [
 		'Kendall Collins',

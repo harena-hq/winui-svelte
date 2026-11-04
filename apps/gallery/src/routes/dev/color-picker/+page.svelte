@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { ColorPicker } from 'winui-svelte/preview';
+	import { ColorPicker } from '@harena-hq/winui-svelte/preview';
 	let color = $state('#3478F6');
 </script>
 

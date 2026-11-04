@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { RefreshContainer, RefreshVisualizer } from 'winui-svelte/preview';
+	import { RefreshContainer, RefreshVisualizer } from '@harena-hq/winui-svelte/preview';
 
 	// The list row 7 puts inside the container, long enough that the region it scrolls actually
 	// scrolls — a container whose content holds no scrolled region takes no pull at all, which is

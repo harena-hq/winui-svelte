@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { AnnotatedScrollBar } from 'winui-svelte/preview';
+	import { AnnotatedScrollBar } from '@harena-hq/winui-svelte/preview';
 
 	// One region for every row: 3600 units of extent seen through a 500-unit viewport, which is the
 	// shape the Gallery's own example has. The offsets are two close pairs and a far one, so that

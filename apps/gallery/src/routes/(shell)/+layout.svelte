@@ -8,7 +8,7 @@
 		NavigationView,
 		TitleBar,
 		type NavigationViewDisplayMode
-	} from 'winui-svelte/preview';
+	} from '@harena-hq/winui-svelte/preview';
 	import {
 		QUERY_GLYPH,
 		ancestorsOf,

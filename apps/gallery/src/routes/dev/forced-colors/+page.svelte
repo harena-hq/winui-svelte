@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Button, Expander, ScrollView, ToggleSwitch } from 'winui-svelte';
+	import { Button, Expander, ScrollView, ToggleSwitch } from '@harena-hq/winui-svelte';
 </script>
 
 <svelte:head><title>Forced colors — harness</title></svelte:head>

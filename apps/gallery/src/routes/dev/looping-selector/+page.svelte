@@ -1,5 +1,5 @@
 <script lang="ts">
-	import LoopingSelector from 'winui-svelte/internal/LoopingSelector.svelte';
+	import LoopingSelector from '@harena-hq/winui-svelte/internal/LoopingSelector.svelte';
 
 	const months = [
 		'January',

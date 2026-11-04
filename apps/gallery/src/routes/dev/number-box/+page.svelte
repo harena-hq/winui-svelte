@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { NumberBox } from 'winui-svelte/preview';
-	import type { NumberBoxProps } from 'winui-svelte/preview';
+	import { NumberBox } from '@harena-hq/winui-svelte/preview';
+	import type { NumberBoxProps } from '@harena-hq/winui-svelte/preview';
 
 	/*
 	 * The component's own harness, not part of the Gallery reproduction: `/dev/` is where

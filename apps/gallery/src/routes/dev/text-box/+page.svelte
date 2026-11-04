@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { TextBox } from 'winui-svelte/preview';
-	import type { TextBoxProps } from 'winui-svelte/preview';
+	import { TextBox } from '@harena-hq/winui-svelte/preview';
+	import type { TextBoxProps } from '@harena-hq/winui-svelte/preview';
 
 	/*
 	 * The component's own harness, not part of the Gallery reproduction: `/dev/` is where

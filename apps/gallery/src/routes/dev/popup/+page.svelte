@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Popup } from 'winui-svelte/preview';
+	import { Popup } from '@harena-hq/winui-svelte/preview';
 </script>
 
 <svelte:head><title>Popup — harness</title></svelte:head>

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { SelectorBar } from 'winui-svelte/preview';
+	import { SelectorBar } from '@harena-hq/winui-svelte/preview';
 
 	const iconItems = [
 		{ id: 'recent', text: 'Recent', glyph: 'E823' },

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { ComboBox } from 'winui-svelte/preview';
+	import { ComboBox } from '@harena-hq/winui-svelte/preview';
 
 	/*
 	 * A disabled row drawn as the one selected, for `ComboBoxItem::ChangeVisualState`, which

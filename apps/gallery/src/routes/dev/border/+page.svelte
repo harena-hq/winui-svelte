@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Border } from 'winui-svelte/preview';
+	import { Border } from '@harena-hq/winui-svelte/preview';
 </script>
 
 <svelte:head><title>Border — harness</title></svelte:head>

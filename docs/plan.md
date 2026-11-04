@@ -4394,11 +4394,13 @@ two, and the last of them is the owner's alone. D55.
    release's twenty go to the queue, not to the release. The pass ends when the owner says it
    has, and not before.
 5. **The cut.** On a HEAD whose full battery is green, after the owner's sign-off and on their
-   explicit word: the tag `v0.1.0`, then `pnpm publish` from `packages/winui-svelte` — pnpm,
-   because `pnpm pack` made the tarball the smoke installed — over the `dist` that battery
-   built. The name `winui-svelte` was unclaimed on the registry on 2026-10-05. The repository
-   has no remote, so `package.json` carries no `repository` field; adding one waits for a
-   remote to point at.
+   explicit word: the tag `v0.1.0`, then `pnpm publish` from `packages/winui-svelte` — pnpm, because
+   `pnpm pack` made the tarball the smoke installed — over the `dist` that battery built. The name
+   `winui-svelte` was unclaimed on the registry on 2026-10-05 and taken on 2026-11-02 by another
+   project, a binding to native WinUI, so the package is `@harena-hq/winui-svelte`, under the scope
+   the owner already publishes from; a scoped package is not public unless told so, and its
+   `publishConfig` says so. The repository has no remote, so `package.json` carries no `repository`
+   field; adding one waits for a remote to point at.
 
    **A pre-release first, 2026-10-30.** At the owner's word, `version` and `VERSION` read
    `0.1.0-rc.1`, and the tarball the smoke installed, from a HEAD whose battery is green, goes to

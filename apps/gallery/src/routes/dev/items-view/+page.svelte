@@ -1,5 +1,9 @@
 <script lang="ts">
-	import { ItemContainer, ItemsView, type ItemsViewItemState } from 'winui-svelte/preview';
+	import {
+		ItemContainer,
+		ItemsView,
+		type ItemsViewItemState
+	} from '@harena-hq/winui-svelte/preview';
 
 	const photos = ['One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight'];
 	let picked = $state<number[]>([]);

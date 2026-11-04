@@ -19,7 +19,7 @@
 
 <script lang="ts">
 	import { afterNavigate } from '$app/navigation';
-	import { ScrollViewer } from 'winui-svelte/preview';
+	import { ScrollViewer } from '@harena-hq/winui-svelte/preview';
 	import PageHeader from './PageHeader.svelte';
 	import { lastInputWasKeyboard } from './last-input';
 	import { takeReselect } from './reselect';

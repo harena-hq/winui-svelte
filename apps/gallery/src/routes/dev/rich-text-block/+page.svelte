@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Hyperlink, Paragraph, RichTextBlock, Run } from 'winui-svelte/preview';
+	import { Hyperlink, Paragraph, RichTextBlock, Run } from '@harena-hq/winui-svelte/preview';
 	const longText =
 		'This sentence is deliberately wider than the narrow box and contains ordinary words for wrapping.';
 </script>

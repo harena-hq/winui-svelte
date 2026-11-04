@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { TabView } from 'winui-svelte/preview';
+	import { TabView } from '@harena-hq/winui-svelte/preview';
 
 	const documents = [
 		{ id: 'Document 0', header: 'Document 0', glyph: 'E8A5', content: document0 },

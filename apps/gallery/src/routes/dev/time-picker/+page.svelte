@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { TimePicker } from 'winui-svelte/preview';
+	import { TimePicker } from '@harena-hq/winui-svelte/preview';
 
 	const fixedTime = new Date(2026, 8, 8, 13, 34);
 </script>

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { AnimatedVisualPlayer, type AnimatedVisual } from 'winui-svelte/preview';
+	import { AnimatedVisualPlayer, type AnimatedVisual } from '@harena-hq/winui-svelte/preview';
 
 	const TALL: AnimatedVisual = {
 		width: 120,

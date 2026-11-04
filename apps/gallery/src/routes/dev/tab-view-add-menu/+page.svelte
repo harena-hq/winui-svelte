@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { MenuFlyout, TabView, type MenuFlyoutEntry } from 'winui-svelte/preview';
+	import { MenuFlyout, TabView, type MenuFlyoutEntry } from '@harena-hq/winui-svelte/preview';
 
 	/*
 	 * An add button that opens a menu rather than a tab, as an application offering several kinds

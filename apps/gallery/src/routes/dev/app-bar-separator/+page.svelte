@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { AppBarButton, AppBarSeparator } from 'winui-svelte/preview';
+	import { AppBarButton, AppBarSeparator } from '@harena-hq/winui-svelte/preview';
 </script>
 
 <svelte:head><title>AppBarSeparator — harness</title></svelte:head>

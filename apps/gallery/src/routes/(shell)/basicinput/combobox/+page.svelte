@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { ComboBox, ContentDialog } from 'winui-svelte/preview';
-	import type { ComboBoxTextSubmittedEventArgs } from 'winui-svelte/preview';
+	import { ComboBox, ContentDialog } from '@harena-hq/winui-svelte/preview';
+	import type { ComboBoxTextSubmittedEventArgs } from '@harena-hq/winui-svelte/preview';
 	import ControlExample from '$lib/frame/ControlExample.svelte';
 	import ItemPage from '$lib/frame/ItemPage.svelte';
 	import { sampleOf } from '$lib/samples';

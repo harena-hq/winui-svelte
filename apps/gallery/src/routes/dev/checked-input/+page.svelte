@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { CheckBox, RadioButton, ToggleSwitch } from 'winui-svelte/preview';
+	import { CheckBox, RadioButton, ToggleSwitch } from '@harena-hq/winui-svelte/preview';
 
 	/*
 	 * The `<input>` behind `CheckBox`, `ToggleSwitch` and `RadioButton`, in the cases where the

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { WebView2 } from 'winui-svelte/preview';
+	import { WebView2 } from '@harena-hq/winui-svelte/preview';
 </script>
 
 <svelte:head><title>WebView2 — harness</title></svelte:head>

@@ -1,5 +1,5 @@
 import { mount } from 'svelte';
-import 'winui-svelte/tokens.css';
+import '@harena-hq/winui-svelte/tokens.css';
 import App from './App.svelte';
 
 mount(App, { target: document.getElementById('app') });

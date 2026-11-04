@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Button, ProgressRing } from 'winui-svelte/preview';
+	import { Button, ProgressRing } from '@harena-hq/winui-svelte/preview';
 
 	let sweepValue = $state(25);
 	let sweepIndeterminate = $state(false);

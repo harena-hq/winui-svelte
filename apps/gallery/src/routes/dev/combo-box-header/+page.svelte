@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { ComboBox } from 'winui-svelte/preview';
+	import { ComboBox } from '@harena-hq/winui-svelte/preview';
 
 	/*
 	 * A ComboBox header with a word wider than the box, for `TextWrapping="Wrap"` on the header
