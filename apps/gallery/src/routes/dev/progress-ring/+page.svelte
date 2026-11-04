@@ -1,5 +1,10 @@
 <script lang="ts">
-	import { ProgressRing } from 'winui-svelte/preview';
+	import { Button, ProgressRing } from 'winui-svelte/preview';
+
+	let sweepValue = $state(25);
+	let sweepIndeterminate = $state(false);
+	let sweepActive = $state(true);
+	let sweepMount = $state(0);
 
 	/*
 	 * The component's own harness, not part of the Gallery reproduction: `/dev/` is where
@@ -39,6 +44,29 @@
 	<ProgressRing indeterminate={false} value={50} style="width: 16px; height: 16px" />
 	<ProgressRing indeterminate={false} value={50} style="width: 60px; height: 60px" />
 	<ProgressRing indeterminate={false} value={50} style="width: 100px; height: 100px" />
+</div>
+
+<h2 class="winui-SubtitleTextBlockStyle">sweep</h2>
+<div class="row">
+	{#key sweepMount}
+		<ProgressRing
+			indeterminate={sweepIndeterminate}
+			active={sweepActive}
+			value={sweepValue}
+			data-testid="sweep"
+		/>
+	{/key}
+	<Button onclick={() => (sweepValue = 75)}>Raise to 75</Button>
+	<Button onclick={() => (sweepValue = 10)}>Lower to 10</Button>
+	<Button onclick={() => (sweepIndeterminate = !sweepIndeterminate)}>Toggle indeterminate</Button>
+	<Button onclick={() => (sweepActive = !sweepActive)}>Toggle active</Button>
+	<Button
+		onclick={() => {
+			sweepIndeterminate = false;
+			sweepValue = 90;
+		}}>Determinate at 90</Button
+	>
+	<Button onclick={() => sweepMount++}>Remount</Button>
 </div>
 
 <style>
