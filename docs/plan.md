@@ -4423,6 +4423,14 @@ two, and the last of them is the owner's alone. D55.
    draw in their ramp, and a pressed ToggleSwitch knob grows from its outer side. A consumer
    of rc.3 has no names to change.
 
+   **The owner's pass, 2026-11-04,** covered the eleven release pages the consumer does not use;
+   the consumer's own testing covers the other eight. It ended on the owner's word once its major
+   findings were sealed: the back arrow is the animation's frame, a close button takes its own
+   fill, a rising ProgressRing sweeps, NavigationView has `footerItems`, and its separator keeps
+   its line's margins. Left for 0.1.x: tab reordering (WD-023), ScrollView's animated zoom on the
+   page's load, NumberBox's `NumberFormatter`, four pixels in the TabView page's content, and the
+   TitleBar page's example. `version` and `VERSION` read `0.1.0`.
+
 v19 starts after the cut, as D37 orders it.
 
 ### Final — the acceptance gate
