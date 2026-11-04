@@ -22,17 +22,18 @@
 	// `DeterminateSource` and `IndeterminateSource` are `MUX_PREVIEW` properties that replace
 	// the Lottie compositions wholesale. There is no `IAnimatedVisualSource` here to accept.
 	//
-	// The determinate play-forward is deliberately absent. `ProgressRing.cpp:305` plays the
-	// composition from the old value to the new one when the value rises, so a rising value
-	// sweeps over `|to - from| * 2s`, and snaps when it falls. CSS cannot express a duration
-	// proportional to the distance, and the asymmetry is not a look; it is deferred to the
-	// Motion tranche, so this ring moves to its new value immediately.
+	// A determinate ring sweeps up and snaps down. `UpdateLottieProgress` (ProgressRing.cpp:305-325)
+	// plays the composition from the old value's progress to the new one when that rises, and
+	// sets the new progress when it does not; the instance script says when it runs and how long
+	// a play takes. The play reads no animation switch (ADR 0016), so reduced motion keeps it.
 	//
 	// `ProgressRingTemplateSettings` is deliberately absent: `EllipseDiameter`, `EllipseOffset`
 	// and `MaxSideLength` are back-compat properties that the current template never binds.
 </script>
 
 <script lang="ts">
+	import { untrack } from 'svelte';
+
 	// Radius and stroke in a 32-unit box, read off the generated Lottie compositions.
 	// Indeterminate: ProgressRingIndeterminate.cpp:178 Radius 7 and :215 StrokeThickness 1.5,
 	//   both under the Scale:<5,5> at :162, in an 80-unit viewport (:326) — so 35 and 7.5
@@ -96,10 +97,120 @@
 	const fraction = $derived(
 		maximum - minimum === 0 ? 0 : (clampedValue - minimum) / (maximum - minimum)
 	);
-	const trim = $derived(trimEnd(fraction));
-	const arcHidden = $derived(!indeterminate && fraction < VISIBILITY_PROGRESS);
+
+	// The composition's duration: ProgressRingDeterminate.cpp:61, c_durationTicks 20000000 ticks
+	// of 100ns. A play from p0 to p1 lasts (p1 - p0) of it (AnimatedVisualPlayer.cpp:25-27) and
+	// moves linearly in time: the play's keyframe uses a linear easing (:58, :75), and the
+	// ring's player (ProgressRing.xaml:32) keeps PlaybackRate at its default of 1
+	// (AnimatedVisualPlayer.properties.cpp:119), which AnimatedVisualPlayer.cpp:106-107 hands
+	// the play's controller.
+	const DURATION_MS = 2000;
+	// AnimatedVisualPlayer.cpp:44-48: a play shorter than 20ms is not animated; the player is
+	// set to the play's *from* progress, so a rise of under 1% of the range leaves the arc where
+	// it was.
+	const MIN_PLAY_MS = 20;
+
+	// m_oldValue (ProgressRing.h:62): the old *value*, not its progress, so a range change
+	// measures it against the new range (ProgressRing.cpp:312).
+	let old = 0;
+	// The player's progress, which the arc draws. Mounting an active determinate ring settles it
+	// on `fraction` (see the effect below), so that is what the server renders; an indeterminate
+	// or inactive ring does not draw it.
+	let shown = $state(untrack(() => fraction));
+	let frame = 0;
+
+	function stop() {
+		cancelAnimationFrame(frame);
+		frame = 0;
+	}
+
+	// ProgressRing.cpp:305-325. The comparison is on the raw progress and the play on the
+	// clamped one (AnimatedVisualPlayer.cpp:704-705). A rise starts at the old value's
+	// progress even while an earlier sweep is short of it, so the arc first jumps ahead to
+	// where that sweep was going.
+	//
+	// Time is the frames' own, from the first frame on. Upstream's player pauses a play while
+	// its host is hidden or the app suspends and resumes it after (AnimatedVisualPlayer.cpp:329-352,
+	// :410-432). A sweep started in a background tab holds at its start until frames resume and
+	// then plays in full, as a play started hidden does (:99). A sweep already running when the
+	// tab is hidden does not pause: it has ended when the tab returns.
+	function updateProgress() {
+		const range = maximum - minimum;
+		const from = range === 0 ? 0 : (old - minimum) / range;
+		const to = fraction;
+		stop();
+		if (from < to) {
+			const start = Math.min(1, Math.max(0, from));
+			const end = Math.min(1, Math.max(0, to));
+			const duration = (end - start) * DURATION_MS;
+			shown = start;
+			if (duration >= MIN_PLAY_MS) {
+				let t0 = -1;
+				const step = (time: number) => {
+					if (t0 < 0) t0 = time;
+					const k = Math.min(1, (time - t0) / duration);
+					shown = start + (end - start) * k;
+					frame = k < 1 ? requestAnimationFrame(step) : 0;
+				};
+				frame = requestAnimationFrame(step);
+			}
+		} else {
+			shown = Math.min(1, Math.max(0, to));
+		}
+		old = clampedValue;
+	}
+
+	// ProgressRing.cpp:327-364. An active determinate ring runs the update, so a value that
+	// rose while the ring was indeterminate sweeps from the last determinate one: value changes
+	// do not update `old` while indeterminate (:165). An indeterminate ring's looped play (:340)
+	// replaces the sweep. An inactive ring's Stop (:359) sets the player's progress to
+	// m_currentPlayFromProgress (AnimatedVisualPlayer.cpp:778), which nothing assigns after its
+	// initial 0 (AnimatedVisualPlayer.h:136); the ring is transparent until the update runs.
+	function updateStates() {
+		if (active && !indeterminate) {
+			updateProgress();
+		} else {
+			if (frame && !active) shown = 0;
+			stop();
+		}
+	}
+
+	let applied = false;
+	let last = { value: 0, minimum: 0, maximum: 0, active: false, indeterminate: false };
+	$effect(() => {
+		const now = { value: clampedValue, minimum, maximum, active, indeterminate };
+		if (!applied) {
+			// OnApplyTemplate (ProgressRing.cpp:49-51) updates unconditionally and then the
+			// states, whose second update finds `old` equal to the value and sets it at once.
+			applied = true;
+			updateProgress();
+			updateStates();
+		} else {
+			// The Value, Maximum and Minimum handlers update only a determinate ring
+			// (ProgressRing.cpp:165, :185, :205); IsActive and IsIndeterminate update the
+			// states (:144, :149). When a state change and a value change land in one flush and
+			// the states will run an update of their own, the value's is skipped, so one update
+			// measures from `old`. For IsActive that is the state set first; set second, upstream
+			// sweeps while inactive and the activation snaps to the end. For IsIndeterminate it is
+			// the value set first. The orders differ only if the value moved while indeterminate:
+			// set first, the state plays from `old` to that value and the new value then plays
+			// on from there.
+			const ranged =
+				now.value !== last.value || now.minimum !== last.minimum || now.maximum !== last.maximum;
+			const states = now.active !== last.active || now.indeterminate !== last.indeterminate;
+			if (ranged && !indeterminate && !(states && active)) updateProgress();
+			if (states) updateStates();
+		}
+		last = now;
+	});
+	$effect(() => stop);
+
+	const trim = $derived(trimEnd(shown));
+	const arcHidden = $derived(!indeterminate && shown < VISIBILITY_PROGRESS);
 	const geometry = $derived(indeterminate ? INDETERMINATE_GEOMETRY : DETERMINATE_GEOMETRY);
-	const state = $derived(!active ? 'inactive' : indeterminate ? 'active' : 'determinate-active');
+	const ringState = $derived(
+		!active ? 'inactive' : indeterminate ? 'active' : 'determinate-active'
+	);
 
 	// The ring is a decorative, non-interactive visual: `ProgressRing.xaml:6` sets
 	// `IsHitTestVisible` false and `:11` sets `IsTabStop` false. Upstream has a
@@ -107,7 +218,7 @@
 	// There is no bits-ui primitive for this shape, and Progress's `<div>` has no use here.
 </script>
 
-<div bind:this={ref} {...rest} class={['root', className]} {style} data-ring-state={state}>
+<div bind:this={ref} {...rest} class={['root', className]} {style} data-ring-state={ringState}>
 	<svg class="ring" viewBox="0 0 32 32" aria-hidden="true">
 		<circle
 			class="track"
