@@ -65,7 +65,9 @@
 		Calendar: 'E787',
 		Page2: 'E7C3',
 		NewFolder: 'E8F4',
-		OpenLocal: 'E8DA'
+		OpenLocal: 'E8DA',
+		Shop: 'E719',
+		Help: 'E897'
 	} as const;
 
 	// Example 1 (NavigationViewPage.xaml:54-99, nvSample5): its first item selected from the
@@ -149,13 +151,20 @@
 	}
 
 	// Example 6 (:241-313, nvSample9): Left with no settings item, and three FooterMenuItems
-	// (:293-306) the library does not draw — FooterMenuItems is owed (docs/plan.md's row,
-	// which docs/library-gate.md's NavigationView row cites). Its header stays the XAML's.
+	// (:293-306), drawn as footerItems. Its header stays the XAML's. Help's Tag is SamplePage5
+	// (:305), the same as Your Cart's (:301), and an id is unique across both lists here, so Help
+	// is its own id and the page is looked up by the Tag, as in example 2.
 	const items6: NavigationViewEntry[] = [
 		{ id: 'SamplePage1', content: 'Browse', glyph: SYMBOL.Library },
 		{ id: 'SamplePage2', content: 'Track an Order', glyph: SYMBOL.Map },
 		{ id: 'SamplePage3', content: 'Order History', glyph: SYMBOL.Tag }
 	];
+	const footerItems6: NavigationViewEntry[] = [
+		{ id: 'SamplePage4', content: 'Account', glyph: SYMBOL.Contact },
+		{ id: 'SamplePage5', content: 'Your Cart', glyph: SYMBOL.Shop },
+		{ id: 'help', content: 'Help', glyph: SYMBOL.Help }
+	];
+	const TAGS6: Record<string, string> = { help: 'SamplePage5' };
 	let selected6 = $state('SamplePage1');
 	let mode6 = $state<'left' | 'top'>('left');
 	let paneOpen6 = $state(true);
@@ -399,6 +408,7 @@
 			<!-- :270-308. -->
 			<NavigationView
 				items={items6}
+				footerItems={footerItems6}
 				selected={selected6}
 				onItemInvoked={(id) => (selected6 = id)}
 				paneDisplayMode={mode6}
@@ -407,7 +417,7 @@
 				class="nv-page-view"
 			>
 				{#snippet header()}This is Header Text{/snippet}
-				{@const Page = PAGES[selected6]}
+				{@const Page = PAGES[TAGS6[selected6] ?? selected6]}
 				<Page />
 			</NavigationView>
 		</div>

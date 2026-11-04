@@ -80,9 +80,10 @@ app; the rest of a component's history was reviewed by gates, mutants and agents
 | ToggleSwitch       | `62f011d` (the off state), `69efa8c` (the drag) | failed on the on knob; fixed in `2523d0e`     | WD-096; the pressed knob's shape                                                          |
 | ToolTip            | `70b0c29`                                       | passes: height, inset, baseline               | WD-094, WD-095, WD-107; `PlacementRect`, `VerticalOffset`                                 |
 
-NavigationView's four rows: `FooterMenuItems`, the pane's custom content, header, title and
-search slot, and `OverflowLabelMode`, in v8's table of what that version left owed; and v7's
-`icon` row, which it shares with TeachingTip — both take a `glyph` only. `docs/keyboard.md`
+NavigationView's three rows: the pane's custom content, header, title and search slot, and
+`OverflowLabelMode`, in v8's table of what that version left owed; and v7's `icon` row, which
+it shares with TeachingTip — both take a `glyph` only. `FooterMenuItems` was a fourth row of
+that table when the gate ran, and has since been built as `footerItems`. `docs/keyboard.md`
 records at least six of its pane questions, or halves of them, as not pressed — where the
 fourth Tab press goes, the minimal pane's Left and Right, whether Left collapses, Space after a
 press on a chevron, whether the flyout's ring wraps, and question 9 — and the ring's top end as
@@ -220,7 +221,7 @@ It does not, now the one defect a page found is fixed, and the reasons differ by
   corners of a knob that is pressed for as long as a press lasts. A consumer sees the control
   the original draws; a side-by-side at a magnification finds them, which is how two of them
   were found.
-- **The owed rows** are surface not yet built: a consumer reaching for `FooterMenuItems` or an
+- **The owed rows** are surface not yet built: a consumer reaching for `OverflowLabelMode` or an
   `icon` finds it absent and nothing drawn wrong. D46, as ADR 0017 amends it, chose the release
   by what a consumer's source would replace rather than by completeness, and the gate holds
   that a member may ship with surface still to build, because building it later breaks nothing

@@ -1611,7 +1611,6 @@ group sizes, which no longer line up one-to-one with a version.
 
     | control        | not yet built                                                                     |
     | -------------- | --------------------------------------------------------------------------------- |
-    | NavigationView | `FooterMenuItems` — a second item list, in either pane                            |
     | NavigationView | `PaneCustomContent`, `PaneHeader`, `PaneTitle`, and the pane's `AutoSuggestBox`   |
     | NavigationView | `OverflowLabelMode`, whose two styles differ by a glyph size and drop both labels |
     | TabView        | `CanReorderTabs` and the rest of unit 5's table (tear-out is `WD-023`'s)          |

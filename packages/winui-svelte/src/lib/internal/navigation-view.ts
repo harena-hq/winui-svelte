@@ -106,18 +106,28 @@ export interface NavigationViewPaneState {
 	 * it with a Tab pending. And it is the list's first row while focus is outside the control
 	 * with none, the Tab that nothing redirects. The two agree on entering the list from either
 	 * side of it, on leaving it in either direction from any of its rows, and on a row focused by
-	 * pointer. They part in two places. A Shift+Tab into the menu from past the control with no
-	 * Tab pending and no settings row drawn lands upstream on the menu's last row and here on its
-	 * first. And a press on something inside the control that takes no focus leaves focus where
-	 * it was upstream, while the browser moves it to the body, outside the control.
+	 * pointer. They part in three places. A Shift+Tab into the menu from past the control with no
+	 * Tab pending and no footer row drawn lands upstream on the menu's last row and here on its
+	 * first. A Shift+Tab into a list that does not hold the selection, from below it inside the
+	 * control — from the content into the footer, or from a footer row into the menu — is the same
+	 * case with the Tab pending: nothing redirects it (`:2986`), so upstream lands wherever XAML's
+	 * reverse tab search enters the repeater, and here on the first row. The pin's core search
+	 * resolves a container to its last focusable element in tab order, with no memory of an earlier
+	 * focus on that path for a `TabFocusNavigation="Once"` scope such as a repeater; which row that
+	 * is under an expanded last row is not settled by the reading, and it was not pressed. WD-108
+	 * in `docs/divergences.md` records it. And a press on something inside the
+	 * control that takes no focus leaves focus where it was upstream, while the browser moves it
+	 * to the body, outside the control.
 	 *
 	 * Both of upstream's branches are guarded by `m_selectionModel.SelectedIndex()`, so with no
 	 * selection at all neither fires and the rows are tab stops as they come. That is what
 	 * `null` means here: the pin's own guard, not a default chosen for it.
 	 *
-	 * A list rather than one id, because the pane has two root lists — the menu and the
-	 * settings row — which is why Tab reaches Settings as a stop of its own. It holds at most
-	 * two, so membership is a scan, and a `string[]` is what `expandedItems` beside it already is.
+	 * A list rather than one id, because the pane has two root lists — the menu and the footer,
+	 * which is `footerItems` with the settings row appended (`NavigationView.cpp:866-871`) — and
+	 * that is why Tab reaches Settings as a stop of its own when no footer item is drawn above it.
+	 * It holds at most two, one per list, so membership is a scan, and a `string[]` is what
+	 * `expandedItems` beside it already is.
 	 */
 	tabStops: string[] | null;
 	/**
@@ -259,12 +269,14 @@ export const RING_HEAD_ATTRIBUTE: Record<string, string> = Object.freeze({ [RING
  * rather than recomputing it from the item tree, and the tree's shape never enters.
  *
  * **Two scopes, because the pin has two, and they differ twice over.** Up and Down defer to
- * XAML's directional focus, which crosses out of the menu's repeater into the settings row
- * below it — the reference press recorded exactly that, Down reaching Settings and Up returning
- * (`docs/keyboard.md`, answer 2). Home and End cross neither out of the list **nor into a
- * subtree**: `KeyboardFocusFirstItemFromItem` (`:2898`) and `KeyboardFocusLastItemFromItem`
- * (`:2921`) take `GetParentRootItemsRepeaterForContainer(nvib)` (`:2909`, `:2932`) and hand it
- * to `GetFirstFocusableElement` (`:2853`) or `GetLastFocusableElement` (`:2876`), each of which
+ * XAML's directional focus, which crosses out of the menu's repeater into the footer's below
+ * it — the reference press recorded exactly that, Down reaching Settings and Up returning
+ * (`docs/keyboard.md`, answer 2), and a footer item is crossed into the same way, being a row of
+ * the footer's repeater above the settings row in it (`NavigationView.cpp:866-871`). Home and
+ * End cross neither out of the list **nor into a subtree**: `KeyboardFocusFirstItemFromItem`
+ * (`:2898`) and `KeyboardFocusLastItemFromItem` (`:2921`) take
+ * `GetParentRootItemsRepeaterForContainer(nvib)` (`:2909`, `:2932`) and hand it to
+ * `GetFirstFocusableElement` (`:2853`) or `GetLastFocusableElement` (`:2876`), each of which
  * walks **`ir.ItemsSourceView()`** — one repeater's own items — and never descends into a
  * child repeater. The arrows do descend, which is the same distinction from the other side:
  * `FocusNextUpItem` asks `FindLastFocusableElement(childRepeater)` (`:2799`) for the row above
@@ -276,8 +288,9 @@ export const RING_HEAD_ATTRIBUTE: Record<string, string> = Object.freeze({ [RING
  * specimen on the harness could tell the two apart because the last top-level row there had no
  * children.
  *
- * In this DOM the two root lists are the pane's two `<ul role="tree">` and an inline expanded
- * subtree is a `<ul role="group">` inside one of them, so `closest('[role="tree"]')` climbs to
+ * In this DOM the two root lists are the pane's two `<ul role="tree">` — the menu's, and the
+ * footer's holding `footerItems` and then the settings row — and an inline expanded subtree
+ * is a `<ul role="group">` inside one of them, so `closest('[role="tree"]')` climbs to
  * the root exactly as `:1093` walks up to the root repeater — from any depth, which is why the
  * pressed row's own position never enters the ends. Inside the rail's children flyout the
  * flyout's own list is a `role="tree"` **and** carries the ring marker, so both scopes land on
