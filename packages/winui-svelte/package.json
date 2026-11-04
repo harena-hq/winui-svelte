@@ -3,6 +3,11 @@
 	"version": "0.1.0",
 	"description": "WinUI 3 controls for Svelte 5",
 	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/harena-hq/winui-svelte.git",
+		"directory": "packages/winui-svelte"
+	},
 	"type": "module",
 	"scripts": {
 		"build": "svelte-kit sync && svelte-package && node ../../scripts/package/strip-script-lang.mjs && publint",

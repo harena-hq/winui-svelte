@@ -319,9 +319,9 @@ a clean clone.
 The gates come first because a gate added after feature work has to be retrofitted against
 code that already violates it.
 
-**No hosted CI.** D6 puts the snapshot runner on a local Windows VM, and there is no remote to
-run a workflow against. `pnpm verify` runs wherever the work happens, and ends with the
-acceptance gate D48 defines.
+**No hosted CI.** D6 puts the snapshot runner on a local Windows VM, and there was no remote to
+run a workflow against until 2026-11-04. `pnpm verify` runs wherever the work happens, and ends
+with the acceptance gate D48 defines.
 
 **Sequencing note.** The harness runs on the Linux host, but its baselines are untracked there
 — only the Windows set is committed, because only there does Segoe UI Variable resolve. Taking
@@ -4398,8 +4398,8 @@ two, and the last of them is the owner's alone. D55.
    `winui-svelte` was unclaimed on the registry on 2026-10-05 and taken on 2026-11-02 by another
    project, a binding to native WinUI, so the package is `@harena-hq/winui-svelte`, under the scope
    the owner already publishes from; a scoped package is not public unless told so, and its
-   `publishConfig` says so. The repository has no remote, so `package.json` carries no `repository`
-   field; adding one waits for a remote to point at.
+   `publishConfig` says so. Its `repository` field names the public remote,
+   `github.com/harena-hq/winui-svelte`, from 2026-11-04, the day the remote was opened.
 
    **A pre-release first, 2026-10-30.** At the owner's word, `version` and `VERSION` read
    `0.1.0-rc.1`, and the tarball the smoke installed, from a HEAD whose battery is green, goes to
