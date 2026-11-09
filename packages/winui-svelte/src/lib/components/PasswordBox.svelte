@@ -355,10 +355,12 @@
 	/* The reveal button. `Width="30"` and `VerticalAlignment="Stretch"` upstream land a
 	   30-wide, full-height column the glyph is centred in.
 
-	   `TextControlButtonBackground` is a framework-dictionary name aliased to
-	   `SystemControlTransparentBrush`, a brush of colour `Transparent`. The generator emits
-	   `transparent`, and the reveal button writes `background: transparent`, so the button
-	   paints no fill at rest.
+	   `PASSWORDBOX_KEYS` seeds `TextControlButtonBackground`; `TEXTBOX_KEYS` seeds only its
+	   `…PointerOver` and `…Pressed` background variants. The framework dictionary aliases
+	   `TextControlButtonBackground` onto `SystemControlTransparentBrush`, a brush of colour
+	   `Transparent`, which `tokens.css` emits as `transparent`. The reveal button writes
+	   `background: transparent`, the value that alias chain resolves to; NumberBox.svelte reads the
+	   at-rest token.
 
 	   `--winui-HelperButtonThemePadding` is `0px -2px 0px 0px`. CSS rejects negative padding; with
 	   `var()` the declaration is invalid at computed-value time, so padding computes to 0 and the

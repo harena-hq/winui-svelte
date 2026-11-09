@@ -383,13 +383,15 @@
 	/* The delete button. `Width="30"` and `VerticalAlignment="Stretch"` upstream land
 	   a 30-wide, full-height column the glyph is centred in.
 
-	   `TextControlButtonBackground` is one of the framework-dictionary names undefined
-	   in the pin, and the original draws no fill at rest — `background: transparent`
-	   is what the source says.
+	   `TextControlButtonBackground` is absent from TextBox's own resource dictionary; it is a
+	   framework-dictionary name seeded by `PASSWORDBOX_KEYS`. Both TextBox.svelte and
+	   PasswordBox.svelte write `background: transparent` instead of reading the at-rest token,
+	   matching the original's lack of fill at rest.
 
-	   `HelperButtonThemePadding` is likewise undefined and has no visible effect here:
-	   the glyph is centred in a fixed 30-wide, full-height button, so a padding that
-	   would offset the glyph within the button is a padding that nothing reads. */
+	   `HelperButtonThemePadding` is also a framework-dictionary name, absent from TextBox's own
+	   resource dictionary. PasswordBox.svelte reads it; TextBox.svelte writes `padding: 0`, although
+	   upstream's DeleteButton reads `Padding="{ThemeResource HelperButtonThemePadding}"`. The token
+	   has no visible effect here: the glyph stays centred in a fixed 30-wide, full-height button. */
 	.delete {
 		position: relative;
 		display: flex;
