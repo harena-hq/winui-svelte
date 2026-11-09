@@ -5,7 +5,7 @@
  * Exports are listed explicitly — `export *` hides its names from every static reader, including
  * the conformance gate that checks this file against `preview.ts`.
  */
-export const VERSION = '0.1.0';
+export const VERSION = '0.2.0';
 export { default as Button } from './components/Button.svelte';
 export type { ButtonProps } from './components/Button.svelte';
 export { default as ContentDialog } from './components/ContentDialog.svelte';

@@ -4462,6 +4462,13 @@ Done-when for the version: each unit sealed with its own specs, a full battery g
 and `version` and `VERSION` at `0.2.0`. The text fallback face (ADR 0019) is a separate version
 and not part of this one.
 
+The three units were sealed on 2026-11-09 as specified, with two refinements the reviews settled:
+an item with a `panelId` gets no panel of the component's own, so one strip can mix the two; and
+focus follows a selection change only within the component's own panels, never into a consumer's,
+whose activation routine would otherwise contend with it. A key `onTabKeyDown` takes is left alone
+by the strip but still propagates. `version` and `VERSION` read `0.2.0`; tagging and publishing
+wait for the owner's word, as the 0.1.0 cut did.
+
 ### Final — the acceptance gate
 
 An observed, time-boxed side-by-side of the full Gallery against Windows 11, page by page. The

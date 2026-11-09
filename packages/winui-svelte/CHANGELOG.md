@@ -4,7 +4,7 @@ Semantic versioning applies to the package root, `@harena-hq/winui-svelte`, and 
 stylesheets the package maps, and to nothing else. Below 1.0, a change a consumer has to adapt to
 waits for a minor version, which npm's caret range does not cross: `^0.1.0` stops short of `0.2.0`.
 
-## 0.2.0 (unreleased)
+## 0.2.0
 
 ### `TabView`
 

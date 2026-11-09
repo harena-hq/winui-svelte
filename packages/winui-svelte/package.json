@@ -1,6 +1,6 @@
 {
 	"name": "@harena-hq/winui-svelte",
-	"version": "0.1.0",
+	"version": "0.2.0",
 	"description": "WinUI 3 controls for Svelte 5",
 	"license": "MIT",
 	"repository": {
