@@ -190,7 +190,7 @@ test('C14 guards every property that refuses a gradient, and no property that ta
 /**
  * The rule itself, over text this file writes.
  *
- * At `HEAD` the gate passes — the class it guards was closed by hand in `97e2335` — so every
+ * At `HEAD` the gate passes — the class it guards was closed by hand in `1548b22` — so every
  * mutation to its logic survives `pnpm conform` unchanged. That is a guard whose condition is
  * already true, and the only way to disagree with it is to hand it a violation. `sitesIn` takes
  * `{ path, text }` for exactly that reason, and each row below pairs a case the gate must see

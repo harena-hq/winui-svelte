@@ -121,19 +121,19 @@ Per control, what the second half adds beyond the template this library already 
 
 | control            | second half says                                                                                                                                                                                                                                                                                                                                                                            | state                                                                                                                                                       |
 | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| AutoSuggestBox     | `AutoSuggestBoxHelper.cpp:104` squares the interior corners while the list is open — the box's bottom corners and the popup's top corners, swapped when it opens upward                                                                                                                                                                                                                     | fixed in `581c46f`                                                                                                                                          |
-| NumberBox          | `NumberBox.cpp:680` disables the up button at `Maximum` and the down button at `Minimum`, which is what drives the template's `UpSpinButtonEnabledStates`                                                                                                                                                                                                                                   | fixed in `131f466`                                                                                                                                          |
+| AutoSuggestBox     | `AutoSuggestBoxHelper.cpp:104` squares the interior corners while the list is open — the box's bottom corners and the popup's top corners, swapped when it opens upward                                                                                                                                                                                                                     | fixed in `24b75e4`                                                                                                                                          |
+| NumberBox          | `NumberBox.cpp:680` disables the up button at `Maximum` and the down button at `Minimum`, which is what drives the template's `UpSpinButtonEnabledStates`                                                                                                                                                                                                                                   | fixed in `9359782`                                                                                                                                          |
 | ComboBox           | `ComboBoxHelper.cpp:93` does the same corner squaring as AutoSuggestBox — but only `if (comboBox.IsEditable())`                                                                                                                                                                                                                                                                             | built with `IsEditable` (2026-10-03), the way AutoSuggestBox's is: bits-ui's `data-side`, read back onto the root                                           |
-| NavigationViewItem | `NavigationViewItem.cpp:743` shows a tooltip carrying the item's content, and only when the left pane is closed-compact                                                                                                                                                                                                                                                                     | closed in `df3d8bb`                                                                                                                                         |
-| TitleBar           | `TitleBar.cpp:881` and `:906` attach tooltips to the back and pane-toggle buttons                                                                                                                                                                                                                                                                                                           | closed in `ffa2675`                                                                                                                                         |
+| NavigationViewItem | `NavigationViewItem.cpp:743` shows a tooltip carrying the item's content, and only when the left pane is closed-compact                                                                                                                                                                                                                                                                     | closed in `70bd289`                                                                                                                                         |
+| TitleBar           | `TitleBar.cpp:881` and `:906` attach tooltips to the back and pane-toggle buttons                                                                                                                                                                                                                                                                                                           | closed in `5004132`                                                                                                                                         |
 | TitleBar           | `TitleBar.cpp:210-251` dims every part to `TitleBarDeactivatedForegroundBrush` / `TitleBarDeactivatedOpacity` when the window is not the active one                                                                                                                                                                                                                                         | divergence candidate — a browser tab has no window activation to read                                                                                       |
-| TitleBar           | `TitleBar.cpp:174-186` collapses the title and subtitle when the content no longer fits, and re-expands past the width it collapsed at                                                                                                                                                                                                                                                      | fixed in `f8d4316`                                                                                                                                          |
+| TitleBar           | `TitleBar.cpp:174-186` collapses the title and subtitle when the content no longer fits, and re-expands past the width it collapsed at                                                                                                                                                                                                                                                      | fixed in `0fece9d`                                                                                                                                          |
 | TitleBar           | `TitleBar.cpp`'s `UpdateHeight` picks compact or expanded height from which slots are filled                                                                                                                                                                                                                                                                                                | already built — the one code-behind rule this project had read before the sweep                                                                             |
 | NavigationView     | pane, header, back-button, settings and auto-suggest visibility states, all decided in code                                                                                                                                                                                                                                                                                                 | already built as display modes                                                                                                                              |
 | NavigationView     | `NavigationView.cpp:5028` puts a `ThemeShadow` on the `ShadowCaster` grid at `PaneOverlayShadowDepth` while the pane is open and overlaying, and `UnsetDropShadow` (`:5046`) runs a storyboard to take it away                                                                                                                                                                              | built — `.shadow-caster`, faded in and out by the same group transitions                                                                                    |
 | NavigationView     | the menu is elements, and `MenuItems` (`NavigationView.idl:203`) is the collection the markup fills; a `MenuItemTemplate` that produces a `NavigationViewItem` _is_ the container and is returned as it stands (`NavigationViewItemsFactory.cpp:53-55`), anything else is put on a generated container's `ContentPresenter` (`:71-85`), and the settings row is exempt from both (`:39-43`) | `menuItemTemplate` built for the left pane and for a row's children at every depth; the settings row is exempt as upstream's is, and the top pane is WD-089 |
-| Slider             | `IsThumbToolTipEnabled` — the value in a tooltip while the thumb is dragged; recorded here as **not in the pin**, which the checkout has since falsified: `Slider_Partial.cpp` mentions `ThumbToolTip` 69 times                                                                                                                                                                             | closed in `f4a0a88`; **not in the pin** — measured on the reference guest instead                                                                           |
-| Pivot              | recorded as "no implementation in the pin" before the checkout carried `dxaml/phone/lib`, where `Pivot_Partial.cpp` is 4302 unswept lines; and the template collapses `TitleContentControl` (`Pivot_themeresources.xaml:316`) — the framework shows it, and the original draws it                                                                                                           | built in `09be096`, from the photograph rather than from the pin                                                                                            |
+| Slider             | `IsThumbToolTipEnabled` — the value in a tooltip while the thumb is dragged; recorded here as **not in the pin**, which the checkout has since falsified: `Slider_Partial.cpp` mentions `ThumbToolTip` 69 times                                                                                                                                                                             | closed in `b565217`; **not in the pin** — measured on the reference guest instead                                                                           |
+| Pivot              | recorded as "no implementation in the pin" before the checkout carried `dxaml/phone/lib`, where `Pivot_Partial.cpp` is 4302 unswept lines; and the template collapses `TitleContentControl` (`Pivot_themeresources.xaml:316`) — the framework shows it, and the original draws it                                                                                                           | built in `142bc29`, from the photograph rather than from the pin                                                                                            |
 | the other six      | recorded as "no implementation in the pin" against a checkout that did not carry one; all six have one now, unswept — see below                                                                                                                                                                                                                                                             | see the Gallery column below                                                                                                                                |
 
 And what the Gallery's own pages demonstrate that this library cannot do yet:
@@ -197,12 +197,12 @@ controls' dictionaries.
 
 **What this entry concluded from that — that there is therefore no implementation to read — was
 true of the evidence it had and is false now**, for the reason "The checkout grew and these
-claims did not" gives below: the checkout held `controls/dev` alone until `7fff31d`, and it now
+claims did not" gives below: the checkout held `controls/dev` alone until `fc98901`, and it now
 carries `ToolTip_Partial.cpp` at 2584 lines and `ToolTipService_Partial.cpp` at 2362. Steps 2
 and 3 did not apply to the evidence this entry had. Against the evidence the repository has,
 **placement and the show delay have now been run and dismissal has not.**
 
-Placement, read by `16cef0a`, the unit that stopped the pop-up moving out from under a leaving
+Placement, read by `42679d7`, the unit that stopped the pop-up moving out from under a leaving
 pointer: the
 popup is placed only by `PerformPlacementInternal`, whose six callers are
 `OnPlacementCriteriaChanged` (`ToolTip_Partial.cpp:569`), `OnToolTipSizeChanged` (`:1905`),
@@ -255,16 +255,16 @@ that left open — `PlacementRect`, and `VerticalOffset`'s effect on a tooltip a
 pointer — is read and not built; `library-gate.md`'s ToolTip paragraph has the reading.
 
 **The stale twin of this entry was in the component**, which still said there was no
-implementation to read; `16cef0a` corrected it. It is the **fourth** member of this
+implementation to read; `42679d7` corrected it. It is the **fourth** member of this
 class found in a component and the **sixteenth** overall — `Flyout.svelte`'s opening,
 `CommandBar.svelte`'s `MinimalVerticalDelta` note and `Pivot.svelte`'s title paragraph are the
-other three, and `03c1b4b` corrected all three. So the sweep did reach components; it reached
+other three, and `8be1520` corrected all three. So the sweep did reach components; it reached
 those three and not this one.
 
 **What none of the four could have been found by is the phrase the first sweep grepped for**,
 and the two reasons it failed them — a wrap for two of them and the wording for the other two —
 are measured in "The checkout grew and these claims did not" below. ToolTip's is the wrapping
-one: on the tree before `03c1b4b`, one line of its module script ends "…restyles: there is no" and
+one: on the tree before `8be1520`, one line of its module script ends "…restyles: there is no" and
 the next opens "implementation in the pin to read", so the phrase is present and no single line
 carries it.
 
@@ -1042,25 +1042,25 @@ is the whole of this section, and a first draft of it got the distinction backwa
 **The sixteenth's route is the part worth recording: it was not found by looking for it.** It is
 `ToolTip.svelte`'s own opening, and it turned up because a reviewer went to the pin to check a
 claim about the tooltip's placement and noticed the component asserting that pin was not there
-to be read. It dates from `70b0c29` (2026-09-06), three days before the widening, so it joins
+to be read. It dates from `150c4d6` (2026-09-06), three days before the widening, so it joins
 the fifteen of sixteen that were true when written. The ToolTip entry above has it, and the
 paragraph below has the harder half: a weaker token than the one the first pass ran _would_ have
 returned this line, and what reached it instead is not on the record.
 
 The pinned checkout is sparse, and `scripts/tokens/fetch.mjs` decides what it holds. Until
-`7fff31d` (2026-09-09, "the sparse checkout carries the second half, and the sweep looks for
+`fc98901` (2026-09-09, "the sparse checkout carries the second half, and the sweep looks for
 it") that list was `/controls/dev/**` and nothing else. The seven sites date from 2026-09-06 to
 09-08. An unscoped search of the checkout as it then stood returned nothing for those controls,
 so each claim was true of the evidence its author had.
 
-**`7fff31d` widened the checkout, corrected the procedure, and did not sweep what it had
+**`fc98901` widened the checkout, corrected the procedure, and did not sweep what it had
 falsified.** It rewrote step 1 to say "search the whole checkout, not `controls/dev`", and the
 second row at the top of this file is its correction of this section's own opening. What it left
 standing is every _downstream_ sentence that had recorded the old answer: four in this file —
 the `Slider`, `Pivot` and "other six" rows and the `ToolTip` entry — three in `docs/plan.md`, and
 one comment each in `Flyout.svelte`, `CommandBar.svelte`, `Pivot.svelte` and `ToolTip.svelte`.
 **The fourth component is the sixteenth member and it was added to this list a pass later**: its
-comment dates from `70b0c29` (2026-09-06), so `7fff31d` left it standing with the rest, and the
+comment dates from `150c4d6` (2026-09-06), so `fc98901` left it standing with the rest, and the
 sentence above says "every". Two of the
 `docs/plan.md` six were found only by the second sweep described at the end of this section:
 `IsThreeState` "lives in system XAML, not in the pin" and `IsSticky` which "the pin never
@@ -1096,14 +1096,14 @@ file, `docs/plan.md` and the components is **166 matching lines across 36 files*
 pre-fix tree, which is one pass of reading and returns thirteen of the fifteen that pass knew
 about.
 
-**Measured on `03c1b4b^`, that phrase fails in two distinct ways and only one of them is the
+**Measured on `8be1520^`, that phrase fails in two distinct ways and only one of them is the
 wording.** It matches three lines in two files, both documents — the plan's line
 beginning "no implementation in the pin at all" and two in this file — and **not one component**,
 even though two of the four component members carry the phrase: prettier had folded it across a line
 break in `ToolTip.svelte` ("there is no" / "implementation in the pin to read") and in
 `Flyout.svelte` ("implementation in the" / "pin to read"). A line-oriented grep cannot see a phrase
-a formatter has wrapped. **That is C9's own defect, 63 minutes earlier** — `7a54522` at 16:26:32
-repaired a per-line scan whose `\s*` the formatter wrapped, and `03c1b4b` at 17:30:01 ran a per-line
+a formatter has wrapped. **That is C9's own defect, 63 minutes earlier** — `17fb542` at 16:26:32
+repaired a per-line scan whose `\s*` the formatter wrapped, and `8be1520` at 17:30:01 ran a per-line
 phrase search across prose the same formatter wraps; neither commit knew it was working in the
 other's corpus.
 
@@ -1112,7 +1112,7 @@ partly on the record.** The second of those two lines in `ToolTip.svelte`'s modu
 "implementation in the pin to read", is inside those 166 lines and carries the word — so no
 instrument named here was too weak for it, and all four members carry `pin` on some line. What the
 phrase grep returned was the two documents and not one component, which is why the components
-arrived by other routes at all: `03c1b4b`'s body attributes `CommandBar.svelte` and `Pivot.svelte`
+arrived by other routes at all: `8be1520`'s body attributes `CommandBar.svelte` and `Pivot.svelte`
 to its review rather than to its own search, and it names Pivot's route — that file was "pointing at
 a `surface.md` row this change rewrote", an inbound reference from the document under edit, and
 **not a route either instrument supplies.** (Both would have _returned_ Pivot's comment — it carries
@@ -1146,7 +1146,7 @@ negative in it was looked at — not grepped — and classified: a claim about w
 contains, or a claim about a template, a dictionary, our own library, or a measurement taken on
 the reference guest. Only the first class can expire when the checkout grows. **Nothing new came
 out of it.** The two entries that would have — step 1's Pivot paragraph and the
-`ListViewItemPresenter` one — were already corrected by `7fff31d` itself, and each says the file
+`ListViewItemPresenter` one — were already corrected by `fc98901` itself, and each says the file
 is in the checkout "as of v12" and the control "has not been re-swept". Two more that read like
 the class are not: Popup's placement paragraph is a measurement from the guest, and "Popup draws
 no text at all" is about what this library's Popup renders.

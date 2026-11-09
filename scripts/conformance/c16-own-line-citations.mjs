@@ -13,7 +13,7 @@ export const title = 'nothing cites a line in a file this repository holds';
 // images, the rest a licence, a README, a `.gitignore` and untracked tool state — and none of
 // them is cited by line.
 //
-// **Measured on the tree this landed in, `3379412`.** 3440 citations of the `<name>:<line>`
+// **Measured on the tree this landed in, `365f9c2`.** 3440 citations of the `<name>:<line>`
 // shape, 3313 into a pin, 28 into a dependency's file, and **99 into a file this repository
 // holds** — one of them into a `data/` record, 15 into a basename with more than one copy, and
 // 83 into an authored file with exactly one. **39 of those 83 named a line whose content had
@@ -23,7 +23,7 @@ export const title = 'nothing cites a line in a file this repository holds';
 //
 // **Re-pointing means reading the line at the commit that wrote the citation, not the line at
 // that number today.** Two positions in AutoSuggestBox were re-pointed by hand once already, in
-// `1549641`, by naming the declaration then sitting at each number — a popup's `border-width`
+// `eecba0b`, by naming the declaration then sitting at each number — a popup's `border-width`
 // and a trigger's `outline: none`. Both had rotted before that commit, from ComboBox's `.item`
 // and `.item:focus-visible`, so the rewrite turned a wrong address into a wrong name, which no
 // gate can see. Every one of the 99 here was resolved against the commit `git log -S` finds

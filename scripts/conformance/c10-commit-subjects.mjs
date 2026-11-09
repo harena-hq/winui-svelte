@@ -24,7 +24,7 @@ export const title = 'every sealed subject parses as a type, a scope and one int
  */
 
 // **There is no boundary any more, and that is the point.** This gate used to read only from
-// `bd23773`, because of the 360 commits before it 66 conformed: 253 subjects were not
+// `ea5a0e1`, because of the 360 commits before it 66 conformed: 253 subjects were not
 // `<type>(<scope>): <intent>` and 41 more overran the limit. Those 294 subjects were rewritten
 // on 2026-09-22 with every tree left byte-identical, so the range is the whole log — the only
 // range that cannot quietly grow a hole in it.

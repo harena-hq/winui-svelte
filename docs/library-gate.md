@@ -33,15 +33,15 @@ Two defects, both missed by the unit that built the control — one a raster its
 the layout could not see, one a state it never compared:
 
 - **ProgressBar's track sat on a half pixel** — two rows of grey at half strength where the
-  reference draws one whole row on the middle of the indicator's three. `9140949` had measured
-  the track's box as centred, which it was; the paint was not. Fixed in `83b8bff`.
+  reference draws one whole row on the middle of the indicator's three. `e434d94` had measured
+  the track's box as centred, which it was; the paint was not. Fixed in `7a6c1ce`.
 - **ToggleSwitch's on knob drew a stroke** upstream binds and never gives a thickness: eight
   solid columns across the knob's middle row where the reference has ten. The unit that built
-  it compared the off state. Fixed in `2523d0e`.
+  it compared the off state. Fixed in `29a418f`.
 
 The battery for the first of those failed one test that was neither: a snapshot of the
-editable ComboBox that `f24dad9` had read as a state captured too early. It was the masked
-ring's corners rastering differently from run to run, one counted pixel each time, and `b32cc26`
+editable ComboBox that `c06e585` had read as a state captured too early. It was the masked
+ring's corners rastering differently from run to run, one counted pixel each time, and `6b55884`
 gives that picture a budget sized between the noise and a planted defect.
 
 Three smaller defects, measured and not fixed here; they are this record's to carry until the
@@ -62,23 +62,23 @@ app; the rest of a component's history was reviewed by gates, mutants and agents
 | component          | against the original                            | re-photographed 2026-10-04                    | owes                                                                                      |
 | ------------------ | ----------------------------------------------- | --------------------------------------------- | ----------------------------------------------------------------------------------------- |
 | Button             | none of its own (see below)                     | passes: fill, height, insets                  | —                                                                                         |
-| ComboBox           | `65d0719`, `76ede81`                            | passes: height, insets, chevron               | WD-097, WD-098; v4 row: touch and game-controller padding                                 |
-| ContentDialog      | `9608de0`, `ddf52df`, `b17cd85`                 | passes: 320 x 221                             | WD-014, WD-015                                                                            |
-| Expander           | `34f4ceb`                                       | passes, but for the chevron's phase           | WD-006, WD-010, WD-011; the chevron                                                       |
+| ComboBox           | `d9747f4`, `ef4572e`                            | passes: height, insets, chevron               | WD-097, WD-098; v4 row: touch and game-controller padding                                 |
+| ContentDialog      | `425aa91`, `3993c9c`, `f08b7af`                 | passes: 320 x 221                             | WD-014, WD-015                                                                            |
+| Expander           | `047be32`                                       | passes, but for the chevron's phase           | WD-006, WD-010, WD-011; the chevron                                                       |
 | HyperlinkButton    | none of its own (see below)                     | passes: ink, colour, hover                    | —                                                                                         |
-| InfoBar            | `2ae9dbe`                                       | passes: height, icon and title offsets        | —                                                                                         |
-| NavigationView     | `53c6c80`, `a846afa`, `2b585b0`                 | the shell, photographed on every Gallery page | WD-006, -025, -089, -091, -101; four rows; six more                                       |
+| InfoBar            | `892f6d4`                                       | passes: height, icon and title offsets        | —                                                                                         |
+| NavigationView     | `233a6e9`, `f6bec29`, `ccc1dce`                 | the shell, photographed on every Gallery page | WD-006, -025, -089, -091, -101; four rows; six more                                       |
 | NavigationViewItem | through NavigationView's                        | the shell                                     | WD-090                                                                                    |
-| ProgressBar        | `9140949`                                       | failed; fixed in `83b8bff`                    | —                                                                                         |
-| ProgressRing       | `ee2f763`                                       | passes: box and stroke at 60px                | —                                                                                         |
-| ScrollView         | `99c02d8`                                       | its Gallery page                              | WD-036; two layout rows                                                                   |
-| ScrollViewer       | `99c02d8`, perhaps (see below)                  | its Gallery page                              | WD-036, through ScrollView                                                                |
-| TabView            | `45dd13c`, `7790165`                            | passes, by eye on enlarged crops              | WD-023, tear-out included; v8 row: `CanReorderTabs`, the rest of unit 5's table; two more |
-| TeachingTip        | `adec259`, `1bf4e92`, `ce28cb8`                 | passes: 224 x 64, but for border and shadow   | WD-017; v7 row: `icon`; border and shadow                                                 |
-| TextBox            | `9ecf440`, `2b585b0`, `80c7176`, `351987f`      | passes: header gap, height, placeholder       | WD-100 (multi-line)                                                                       |
-| TitleBar           | `fb980a5`                                       | its Gallery page and the shell                | WD-006, WD-007, WD-099                                                                    |
-| ToggleSwitch       | `62f011d` (the off state), `69efa8c` (the drag) | failed on the on knob; fixed in `2523d0e`     | WD-096; the pressed knob's shape                                                          |
-| ToolTip            | `70b0c29`                                       | passes: height, inset, baseline               | WD-094, WD-095, WD-107; `PlacementRect`, `VerticalOffset`                                 |
+| ProgressBar        | `e434d94`                                       | failed; fixed in `7a6c1ce`                    | —                                                                                         |
+| ProgressRing       | `ef84d73`                                       | passes: box and stroke at 60px                | —                                                                                         |
+| ScrollView         | `c330701`                                       | its Gallery page                              | WD-036; two layout rows                                                                   |
+| ScrollViewer       | `c330701`, perhaps (see below)                  | its Gallery page                              | WD-036, through ScrollView                                                                |
+| TabView            | `dc4d852`, `b467f49`                            | passes, by eye on enlarged crops              | WD-023, tear-out included; v8 row: `CanReorderTabs`, the rest of unit 5's table; two more |
+| TeachingTip        | `ed2e259`, `24853b5`, `257e4dd`                 | passes: 224 x 64, but for border and shadow   | WD-017; v7 row: `icon`; border and shadow                                                 |
+| TextBox            | `8399f6b`, `ccc1dce`, `0fb2070`, `96b7c12`      | passes: header gap, height, placeholder       | WD-100 (multi-line)                                                                       |
+| TitleBar           | `a98aae7`                                       | its Gallery page and the shell                | WD-006, WD-007, WD-099                                                                    |
+| ToggleSwitch       | `377b9ba` (the off state), `fc7aa9c` (the drag) | failed on the on knob; fixed in `29a418f`     | WD-096; the pressed knob's shape                                                          |
+| ToolTip            | `150c4d6`                                       | passes: height, inset, baseline               | WD-094, WD-095, WD-107; `PlacementRect`, `VerticalOffset`                                 |
 
 NavigationView's three rows: the pane's custom content, header, title and search slot, and
 `OverflowLabelMode`, in v8's table of what that version left owed; and v7's `icon` row, which
@@ -136,16 +136,16 @@ out, so a tooltip above it ends 80 below the pointer; with the one-line tooltip'
 library's one `offset` at -80 put the popup's top at the pointer, measured.
 
 Added 2026-10-30, after the run: Expander's Gallery page, which its row owed, was built in
-`c8d6b06` and measured against the original on the reference guest, and the row no longer owes
+`c049552` and measured against the original on the reference guest, and the row no longer owes
 it. All thirteen components the run re-photographed from their dev routes now have Gallery
-pages, the last TabView's in `7ed4616` on 2026-10-14.
+pages, the last TabView's in `8b9ea92` on 2026-10-14.
 
-`deaaf2d` compared one thing with the original, an AppBarButton row in a CommandBar's
+`5738c6d` compared one thing with the original, an AppBarButton row in a CommandBar's
 overflow, and swept every other control's focus visual against its own; it is credited to no
 member here. That leaves Button and HyperlinkButton with no comparison of their own before
 this gate, and this gate's is now theirs.
 
-`99c02d8` built the ScrollView and ScrollViewer pages together and compared "the first
+`c330701` built the ScrollView and ScrollViewer pages together and compared "the first
 example's box" crop against crop with the original's; both pages open with a zoomable image,
 and the message does not say which page that was. ScrollViewer's own Gallery page is in the
 suite either way, which is what the gate's sentence asks.
@@ -172,7 +172,7 @@ Neither width is fixed here; like the three above, they are this record's to car
 members also keep bits-ui's light dismiss, which only a primary press performs: a right press
 outside an open `Flyout`, measured in Chromium, leaves it open, where upstream's light dismiss
 takes any button (`CPopupRoot::OnPointerPressed`). `MenuFlyout` opened without a trigger closes
-on one since `aa0f33d`; opened from its trigger, it does not.
+on one since `84490eb`; opened from its trigger, it does not.
 
 The Flyout page, drawn since, measures against the original's on the guest as the dev route
 did: the example's card and its source pane on the same rows and columns, and the open flyout
@@ -206,8 +206,8 @@ returned it with none.
 
 | component  | against the original                                                                   | re-photographed 2026-10-28               | owes                                                                                                                                                          |
 | ---------- | -------------------------------------------------------------------------------------- | ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Flyout     | `67a546b`, `ce28cb8`                                                                   | passes: 366 x 97, gap, insets            | the button's width; the right press                                                                                                                           |
-| MenuFlyout | `f463031`, `117aecd`, `edf2deb` (driven on the guest), `df99a73`, `c1080a5`, `aa0f33d` | passes: 103 x 105, 116 x 70, the submenu | WD-002, WD-013; a row's font; the accelerator example's row height; the submenu's width; the right press, from a trigger; the LOWs of `12b04b9` and `aa0f33d` |
+| Flyout     | `5d637fb`, `257e4dd`                                                                   | passes: 366 x 97, gap, insets            | the button's width; the right press                                                                                                                           |
+| MenuFlyout | `20393b4`, `fabde54`, `e51af7a` (driven on the guest), `c40ede1`, `537c22e`, `84490eb` | passes: 103 x 105, 116 x 70, the submenu | WD-002, WD-013; a row's font; the accelerator example's row height; the submenu's width; the right press, from a trigger; the LOWs of `a9bd7ec` and `84490eb` |
 
 ## Whether what they owe blocks the release
 
@@ -251,12 +251,12 @@ Read along the way rather than swept for, and recorded rather than rewritten, be
 message is history. The history was rewritten once since, on 2026-10-05 before publication, and
 the two items it could settle are marked:
 
-- **No `Reviewed:` trailer at all:** `61767d8`, and seven NavigationView commits of 2026-09-19
-  and -20 — `2463380`, `a1e5cbc`, `37424f9`, `154d028`, `117a7b2`, `d978d5e`, `4ea6cf5`.
-- **A battery count never filled in** ("guest battery NNN passed"): `9230f3d`, `7b7eaec`,
-  `70e9cc4`, and a fourth. _Settled by the 2026-10-05 rewrite_: the count is not known, and each
+- **No `Reviewed:` trailer at all:** `b563cb6`, and seven NavigationView commits of 2026-09-19
+  and -20 — `6c028fe`, `31648ef`, `68ca9ad`, `9982f04`, `ab83cb6`, `e6a7c64`, `832e441`.
+- **A battery count never filled in** ("guest battery NNN passed"): `e03b348`, `b984ab3`,
+  `5894975`, and a fourth. _Settled by the 2026-10-05 rewrite_: the count is not known, and each
   now says it was not recorded.
-- **A trailer cut off mid-sentence:** `16cef0a`, `1549641`. And two, `7a74bfd` and `cdea038`,
+- **A trailer cut off mid-sentence:** `42679d7`, `eecba0b`. And two, `db09a6a` and `bc8950b`,
   whose `Reviewed:` line git did not parse as a trailer. _Settled by the 2026-10-05 rewrite_, with
   three more of the same shape: a blank line now separates the prose from the trailer block, and
   none is left inside it.

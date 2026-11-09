@@ -53,7 +53,7 @@
 	// implementation** — `dxaml/xcp/dxaml/lib/Flyout_partial.cpp`, 112 lines. This comment used
 	// to say there was none to read and that the dictionary and the recorded measurement were
 	// the complete record. That was true when it was written: the sparse checkout held
-	// `controls/dev` alone until `7fff31d` widened it, and the sentence was never revisited
+	// `controls/dev` alone until `fc98901` widened it, and the sentence was never revisited
 	// afterwards. What those 112 lines add here is unswept — `docs/surface.md`'s "The checkout
 	// grew and these claims did not" has the measurement and the rest of the list.
 </script>

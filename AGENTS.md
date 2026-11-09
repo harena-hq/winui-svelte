@@ -87,6 +87,18 @@ re-pointed by `git filter-repo`, and the 128 cited in tracked files at the tip
 by the commit that records this; a sha cited in an older version of a file
 still names the commit as it was.
 
+**It was rewritten a third time on 2026-11-09, after publication.** The
+repository became public on 2026-11-04. In every version of every file and in
+every message, the names of the maintainer's own skills, citations of their
+numbered sections, a rule about the language of conversation with the
+maintainer, and citations of sections of private working documents were
+restated as the rules or facts they stood for: 49 passages in all, 39 in files
+and 10 in messages. The final tree was byte-identical to the one before. Shas
+cited in messages were re-pointed by `git filter-repo`, and the 143 cited in
+tracked files at the tip by the commit that records this; as before, a sha
+cited in an older version of a file still names the commit as it was. A clone
+or fork taken between 2026-11-04 and 2026-11-09 still holds the old history.
+
 **A subject with two clauses is still one intent.** A commit is one intent, and a subject
 that needs "and" usually names two; yet 151 of these 412 subjects carry an `and` or a
 semicolon. The rule is about the unit, not the conjunction: "the pane is one tab stop and the

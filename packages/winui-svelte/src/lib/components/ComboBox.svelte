@@ -1520,7 +1520,7 @@
 		   `FocusStrokeColorOuter` is `#000000e4` in `:root` and composites to 27 over
 		   this fill against 26 over the page behind it; dark and high contrast paint the
 		   stroke opaque. Written because the rule is the rule, not because a test can see it
-		   — none can, and `59f5513` and `561bd39` are both this same mistake in this same
+		   — none can, and `8ac39ab` and `1b139ef` are both this same mistake in this same
 		   component. */
 		background: var(--winui-ComboBoxBackgroundFocused) padding-box;
 		pointer-events: none;
