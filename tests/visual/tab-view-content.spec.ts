@@ -10,11 +10,13 @@ import { test } from './fixtures';
  *
  * The route's one strip: Keep A holds Note A and three buttons, `Next tab` selecting Keep B, `Show
  * C` selecting Keep C and `Close this tab` removing Keep A; Keep B holds Note B, Keep C only a
- * paragraph, and Keep D has no content. `Select C`, outside the strip, selects Keep C.
+ * paragraph, and Keep D has no content. `Select C`, outside the strip, selects Keep C. Keep C's tab
+ * takes the id `keep-tab-c` rather than a derived one, so its panel's label and the move of focus
+ * to it are read through the item's `tabId`.
  */
 
 const strip = (page: Page) => page.getByTestId('keep');
-// A tab's own name takes its close button's in too ("Keep A Close").
+// A tab's own name takes its close button's in too ("Keep A Close Tab").
 const tab = (page: Page, name: string) => strip(page).getByRole('tab', { name });
 const note = (page: Page, name: string) => strip(page).getByRole('textbox', { name });
 

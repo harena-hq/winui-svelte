@@ -16,6 +16,12 @@ waits for a minor version, which npm's caret range does not cross: `^0.1.0` stop
   content, or to the tab when that holds nothing focusable, as upstream does; focus anywhere else
   stays put. A tab's `aria-controls` now names its own panel, and an item without `content` has
   none.
+- **`stripOnly` renders the strip without its content region**, for a consumer that renders and
+  places the panels itself: with other content between strip and panels, the consumer's own
+  classes on each, or panels for records that have no tab. Items gain `panelId`, the `id` of the
+  consumer's panel, which the tab's `aria-controls` names and for which the component renders no
+  panel of its own, and `tabId`, the tab's own `id`, for that panel's `aria-labelledby`. Focus
+  does not follow a selection change into a consumer's panel.
 
 ## 0.1.0
 

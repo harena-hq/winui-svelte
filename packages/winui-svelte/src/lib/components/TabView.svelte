@@ -59,6 +59,20 @@
 		 * the document, so whatever it runs keeps running while it is hidden.
 		 */
 		content?: Snippet;
+		/**
+		 * No WinUI member: the tab element's `id`. Defaults to one derived from the component's own
+		 * id and `id`; give one when a panel the consumer renders has to name the tab in
+		 * `aria-labelledby`. It has to be unique in the document and hold no space, since it
+		 * reaches an id list. An empty string counts as none.
+		 */
+		tabId?: string;
+		/**
+		 * No WinUI member: the `id` of a panel the consumer renders for this tab, which the tab's
+		 * `aria-controls` names, with no space in it. The component then renders no panel of its
+		 * own for this item, so its `content` is not rendered, and a selection change carries no
+		 * focus into the consumer's panel: the consumer's panels are the consumer's to focus.
+		 */
+		panelId?: string;
 		/** TabViewItem.IsClosable. Defaults to true, as upstream does. */
 		closable?: boolean;
 		/** IsEnabled on the tab, inverted to the attribute — ADR 0009. */
@@ -71,7 +85,8 @@
 		 * SelectedItem, narrowed to the `id` of one record. `null` means the first tab. Removing
 		 * the selected record, by a close request or otherwise, moves it to the closest enabled tab.
 		 * When focus is inside the shown content, a selection change moves it into the new content,
-		 * or to the tab when that holds nothing focusable; otherwise nothing moves.
+		 * or to the tab when that holds nothing focusable; otherwise nothing moves. Only the
+		 * component's own panels count: a panel the consumer renders (`panelId`) is not one.
 		 */
 		selected?: string | null;
 		onSelectedChange?: (id: string | null) => void;
@@ -107,6 +122,15 @@
 		tabStripHeader?: Snippet;
 		/** TabStripFooter, ADR 0012's general form — the content right of the add button. */
 		tabStripFooter?: Snippet;
+		/**
+		 * No WinUI member: renders the tab strip alone, without the content region
+		 * (`TabContentPresenter`, `TabView.xaml:45`), so the consumer renders and places the panels
+		 * itself; items' `content` is then not rendered, and no focus follows a selection change
+		 * into a panel. Each item's `panelId` names the consumer's panel for the tab's
+		 * `aria-controls`, and its `tabId` gives the tab an id the panel's `aria-labelledby` can
+		 * name.
+		 */
+		stripOnly?: boolean;
 		class?: import('svelte/elements').ClassValue | null;
 		style?: string | null;
 		ref?: HTMLElement | null;
@@ -166,6 +190,7 @@
 		onAddTabButtonClick,
 		tabStripHeader,
 		tabStripFooter,
+		stripOnly = false,
 		class: className,
 		style,
 		ref = $bindable(null),
@@ -185,7 +210,8 @@
 	const isItemDisabled = (item: TabViewItemData) => disabled || item.disabled === true;
 	const isClosable = (item: TabViewItemData) => item.closable !== false;
 	const current = $derived(selected ?? items[0]?.id ?? null);
-	const tabId = (id: string | null) => `${uid}-tab-${id ?? 'none'}`;
+	const tabDomId = (id: string | null) =>
+		items.find((item) => item.id === id)?.tabId || `${uid}-tab-${id ?? 'none'}`;
 	const panelIdOf = (id: string) => `${uid}-panel-${id}`;
 
 	function select(item: TabViewItemData) {
@@ -211,8 +237,8 @@
 			isItemDisabled(item)
 				? []
 				: hasCloseButton(item)
-					? [tabId(item.id), closeId(item.id)]
-					: [tabId(item.id)]
+					? [tabDomId(item.id), closeId(item.id)]
+					: [tabDomId(item.id)]
 		),
 		...(addTabButtonVisible && !disabled ? [addId] : [])
 	]);
@@ -281,7 +307,7 @@
 			return;
 		}
 
-		walk(event, tabId(item.id));
+		walk(event, tabDomId(item.id));
 	}
 
 	// A `contextmenu` the keyboard raised, Shift+F10 or the menu key, carries no pointer
@@ -355,7 +381,10 @@
 	 * buttons' `ChangeView` does, only while the platform's animations are on (ADR 0016).
 	 */
 	function bringSelectedTabIntoView() {
-		const tab = current === null ? null : document.getElementById(tabId(current));
+		// The id is read untracked: `tabDomId` reads `items`, and the effect that calls this on a new
+		// selection would otherwise run on every change to the items too, scrolling the strip after
+		// a removal that has to hold it still.
+		const tab = current === null ? null : document.getElementById(untrack(() => tabDomId(current)));
 		// c1-allow: TabViewItem.h:120, c_targetRectWidthIncrement = 2
 		if (tab) bringIntoView(tab, 2);
 	}
@@ -434,7 +463,10 @@
 	// that moves the selection still finds its old panel, and moved once the new one is shown.
 	// The move reads the selection as it stands then, so a consumer that redirects it in the same
 	// update sends focus to the tab it ends on. The tab needs no scroll of its own: becoming
-	// selected already brings it into view, in the effect below.
+	// selected already brings it into view, in the effect below. With `stripOnly`, or for an item
+	// with a `panelId`, there is no component panel: focus is never found inside one on leaving
+	// such an item, and on arriving at such an item from inside a component panel, focus goes to
+	// its tab, never into the consumer's panel.
 	let shownBefore: string | null = null;
 	let focusPending = false;
 	$effect.pre(() => {
@@ -450,7 +482,7 @@
 			const shownId = untrack(() => current);
 			if (shownId === null) return;
 			const shown = document.getElementById(panelIdOf(shownId));
-			const tab = document.getElementById(tabId(shownId));
+			const tab = document.getElementById(tabDomId(shownId));
 			const target = (shown && firstFocusable(shown)) ?? tab;
 			target?.focus({ preventScroll: true });
 			// A candidate that refuses focus leaves it on the body; the tab is upstream's fallback.
@@ -545,12 +577,13 @@
 						<div
 							class="tab"
 							role="tab"
-							id={tabId(item.id)}
+							id={tabDomId(item.id)}
 							data-closable={isClosable(item) || undefined}
 							tabindex={item.id === entry ? 0 : -1}
 							aria-selected={item.id === current}
 							aria-disabled={isItemDisabled(item) || undefined}
-							aria-controls={item.content ? panelIdOf(item.id) : undefined}
+							aria-controls={item.panelId ||
+								(!stripOnly && item.content ? panelIdOf(item.id) : undefined)}
 							data-selected={item.id === current || undefined}
 							onclick={() => select(item)}
 							onfocusin={() => (remembered = item.id)}
@@ -633,22 +666,24 @@
 		{#if tabStripFooter}<div class="strip-footer">{@render tabStripFooter()}</div>{/if}
 	</div>
 	<!-- TabContentPresenter (`TabView.xaml:45`). Every item's content stays mounted, and only the
-	     selected one's panel is shown. -->
-	<div class="content">
-		{#each items as item (item.id)}
-			{#if item.content}
-				<div
-					class="panel"
-					role="tabpanel"
-					id={panelIdOf(item.id)}
-					aria-labelledby={tabId(item.id)}
-					hidden={item.id !== current}
-				>
-					{@render item.content()}
-				</div>
-			{/if}
-		{/each}
-	</div>
+	     selected one's panel is shown. `stripOnly` leaves it to the consumer. -->
+	{#if !stripOnly}
+		<div class="content">
+			{#each items as item (item.id)}
+				{#if item.content && !item.panelId}
+					<div
+						class="panel"
+						role="tabpanel"
+						id={panelIdOf(item.id)}
+						aria-labelledby={tabDomId(item.id)}
+						hidden={item.id !== current}
+					>
+						{@render item.content()}
+					</div>
+				{/if}
+			{/each}
+		</div>
+	{/if}
 </div>
 
 <style>

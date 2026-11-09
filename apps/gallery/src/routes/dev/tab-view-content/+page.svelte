@@ -8,11 +8,12 @@
 	 * **Nothing photographs this page.** `tab-view-content.spec.ts` types into the notes and reads
 	 * where focus lands.
 	 */
+	// Keep C's tab takes an id of the consumer's, which its panel and the focus move have to use.
 	// Keep D has no content, so it controls no panel.
 	let items = $state([
 		{ id: 'keep-a', header: 'Keep A', content: keepA },
 		{ id: 'keep-b', header: 'Keep B', content: keepB },
-		{ id: 'keep-c', header: 'Keep C', content: keepC },
+		{ id: 'keep-c', header: 'Keep C', tabId: 'keep-tab-c', content: keepC },
 		{ id: 'keep-d', header: 'Keep D' }
 	]);
 	let selected = $state<string | null>('keep-a');
