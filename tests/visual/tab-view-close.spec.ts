@@ -113,7 +113,7 @@ test('closing the only tab leaves none, and reports nothing for it', async ({ pa
 	await close(page, 'free', 'doc-2');
 	await expect(strip(page, 'free').locator('[role=tab]')).toHaveCount(0);
 	await expect(reported(page, 'free')).toHaveText('doc-1 doc-2');
-	await expect(strip(page, 'free').getByRole('tabpanel')).toBeEmpty();
+	await expect(strip(page, 'free').locator('[role=tabpanel]')).toHaveCount(0);
 });
 
 test('with no selection given, closing the first tab selects and reports the next', async ({
@@ -163,7 +163,7 @@ test('with no selection given and no enabled tab left, closing the first leaves 
 	await expect(tab(page, 'lone', 'doc-0')).toHaveCount(0);
 	expect(await selectedTabs(page, 'lone')).toEqual([]);
 	await expect(reported(page, 'lone')).toHaveText('');
-	await expect(strip(page, 'lone').getByRole('tabpanel')).toBeEmpty();
-	// Nor is the panel labelled by a tab that is gone.
-	await expect(strip(page, 'lone').getByRole('tabpanel')).not.toHaveAttribute('aria-labelledby');
+	// No panel is shown: the disabled tab's stays hidden, and the closed one's went with its tab.
+	await expect(strip(page, 'lone').locator('[role=tabpanel]')).toHaveCount(1);
+	await expect(strip(page, 'lone').locator('[role=tabpanel]')).toHaveAttribute('hidden');
 });

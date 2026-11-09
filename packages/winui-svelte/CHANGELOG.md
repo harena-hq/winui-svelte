@@ -4,6 +4,19 @@ Semantic versioning applies to the package root, `@harena-hq/winui-svelte`, and 
 stylesheets the package maps, and to nothing else. Below 1.0, a change a consumer has to adapt to
 waits for a minor version, which npm's caret range does not cross: `^0.1.0` stops short of `0.2.0`.
 
+## 0.2.0 (unreleased)
+
+### `TabView`
+
+- **An unselected tab's content stays mounted.** Every item's `content` is mounted with its tab
+  and hidden while another tab is selected, so its state survives a switch; it was unmounted, and
+  upstream does not destroy it either. **Every tab's content now runs at once**: its effects and
+  timers keep running while hidden, and an `id` written in two tabs' content is in the document
+  twice. When focus is inside the content being replaced, a selection change moves it into the new
+  content, or to the tab when that holds nothing focusable, as upstream does; focus anywhere else
+  stays put. A tab's `aria-controls` now names its own panel, and an item without `content` has
+  none.
+
 ## 0.1.0
 
 The first release. Nothing was published before it, so it has no earlier history to record.

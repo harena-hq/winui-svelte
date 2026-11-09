@@ -32,7 +32,7 @@ async function shown(tv: Locator) {
 		['SamplePage3', '.gray']
 	];
 	for (const [name, mark] of marks)
-		if ((await tv.locator('[role=tabpanel]').locator(mark).count()) > 0) return name;
+		if ((await tv.locator('[role=tabpanel]:not([hidden])').locator(mark).count()) > 0) return name;
 	return null;
 }
 

@@ -4435,6 +4435,33 @@ two, and the last of them is the owner's alone. D55.
 
 v19 starts after the cut, as D37 orders it.
 
+### 0.2.0 — a TabView a host can drive
+
+**Goal: a consumer whose tabs host live sessions can replace its own strip with `TabView`.** The
+consumer that adopted 0.1.0 stated its strip's requirements on 2026-11-09, and three of them the
+component cannot meet. 0.2.0 comes before v19, because it answers the consumer of 0.1.0. Each is
+one unit, in this order:
+
+1. **An unselected tab's content stays mounted, hidden.** Every item with `content` gets its own
+   `tabpanel`, and every panel but the selected one is `hidden`. Upstream does not destroy an
+   unselected item's content either: `TabView::UpdateTabContent` (`TabView.cpp:964-1015`) hands
+   the selected item's `Content` to one presenter, and the other items keep theirs. When focus was
+   in the content being replaced, upstream moves it to the first focusable element of the new
+   content, or to the tab if there is none (`:984-1011`), and so does this. Until this unit the
+   unselected content was unmounted, which lost its state; upstream takes it out of the visual tree
+   and this keeps it in the document, hidden, so it keeps running.
+2. **A strip without the component's panel.** The consumer renders its own panels, with other
+   content between them and the strip, and keeps panels mounted for sessions that have no tab in the
+   strip. One option drops the component's panels. A per-item id names the consumer's panel, for the
+   tab's `aria-controls`.
+3. **A tab's key handler runs first.** It is reported before the component's own handling, and a
+   `preventDefault` skips that handling. The consumer then carries focus from either end of the ring
+   and closes with Delete, while the ring keeps upstream's wrap.
+
+Done-when for the version: each unit sealed with its own specs, a full battery green on the last,
+and `version` and `VERSION` at `0.2.0`. The text fallback face (ADR 0019) is a separate version
+and not part of this one.
+
 ### Final — the acceptance gate
 
 An observed, time-boxed side-by-side of the full Gallery against Windows 11, page by page. The

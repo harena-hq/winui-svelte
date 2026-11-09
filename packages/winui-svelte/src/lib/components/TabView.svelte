@@ -52,7 +52,12 @@
 		glyph?: string | null;
 		/** TabViewItem.IconSource, ADR 0012's general form. Wins over `glyph`. */
 		icon?: Snippet;
-		/** The tab's content. */
+		/**
+		 * The tab's content. It is mounted with the tab and stays mounted, hidden, while the tab is
+		 * unselected. Upstream keeps each item's `Content` too, but takes an unselected one out of
+		 * the visual tree (`TabView::UpdateTabContent`, `TabView.cpp:964-1015`); here it stays in
+		 * the document, so whatever it runs keeps running while it is hidden.
+		 */
 		content?: Snippet;
 		/** TabViewItem.IsClosable. Defaults to true, as upstream does. */
 		closable?: boolean;
@@ -65,6 +70,8 @@
 		/**
 		 * SelectedItem, narrowed to the `id` of one record. `null` means the first tab. Removing
 		 * the selected record, by a close request or otherwise, moves it to the closest enabled tab.
+		 * When focus is inside the shown content, a selection change moves it into the new content,
+		 * or to the tab when that holds nothing focusable; otherwise nothing moves.
 		 */
 		selected?: string | null;
 		onSelectedChange?: (id: string | null) => void;
@@ -113,11 +120,37 @@
 	// items host, so D26 has this component render its records directly. WD-022 also applies here:
 	// the label presenter uses `OpticalMarginAlignment="TrimSideBearings"` (`TabView.xaml:575`),
 	// which CSS cannot express.
+
+	const focusableSelector = [
+		'a[href]',
+		'area[href]',
+		'button',
+		'input',
+		'select',
+		'textarea',
+		'iframe',
+		'audio[controls]',
+		'video[controls]',
+		'summary',
+		"[contenteditable]:not([contenteditable='false'])",
+		'[tabindex]'
+	].join(', ');
+
+	// Stands in for `FocusManager::FindFirstFocusableElement` (`TabView.cpp:1000`).
+	function firstFocusable(root: HTMLElement): HTMLElement | null {
+		for (const element of root.querySelectorAll<HTMLElement>(focusableSelector)) {
+			if (element.tabIndex < 0 || element.matches(':disabled')) continue;
+			if (element.closest('[inert]')) continue;
+			if (!element.checkVisibility({ visibilityProperty: true })) continue;
+			return element;
+		}
+		return null;
+	}
 </script>
 
 <script lang="ts">
 	import { useStrings } from '../strings';
-	import { untrack } from 'svelte';
+	import { tick, untrack } from 'svelte';
 	import { scrollBehavior } from '../internal/motion';
 
 	let {
@@ -152,9 +185,8 @@
 	const isItemDisabled = (item: TabViewItemData) => disabled || item.disabled === true;
 	const isClosable = (item: TabViewItemData) => item.closable !== false;
 	const current = $derived(selected ?? items[0]?.id ?? null);
-	const currentItem = $derived(items.find((item) => item.id === current) ?? null);
 	const tabId = (id: string | null) => `${uid}-tab-${id ?? 'none'}`;
-	const panelId = `${uid}-panel`;
+	const panelIdOf = (id: string) => `${uid}-panel-${id}`;
 
 	function select(item: TabViewItemData) {
 		if (isItemDisabled(item) || item.id === current) return;
@@ -395,6 +427,36 @@
 		// Untracked, so neither the selection nor what the consumer's callback reads re-runs this.
 		untrack(() => selectAfterRemoval(before, kept));
 	});
+	// Focus inside the content being replaced moves into the new content, its first focusable
+	// element or else the tab (`TabView::UpdateTabContent`, `TabView.cpp:984-1011`); focus anywhere
+	// else stays put. Upstream learns it from the presenter's LosingFocus, raised as the content is
+	// swapped; here it is read before the DOM updates, after the removal effect above, so a removal
+	// that moves the selection still finds its old panel, and moved once the new one is shown.
+	// The move reads the selection as it stands then, so a consumer that redirects it in the same
+	// update sends focus to the tab it ends on. The tab needs no scroll of its own: becoming
+	// selected already brings it into view, in the effect below.
+	let shownBefore: string | null = null;
+	let focusPending = false;
+	$effect.pre(() => {
+		const next = current;
+		if (next === shownBefore) return;
+		const panel = shownBefore === null ? null : document.getElementById(panelIdOf(shownBefore));
+		const focusWasInside = panel?.contains(document.activeElement) ?? false;
+		shownBefore = next;
+		if (!focusWasInside || focusPending) return;
+		focusPending = true;
+		tick().then(() => {
+			focusPending = false;
+			const shownId = untrack(() => current);
+			if (shownId === null) return;
+			const shown = document.getElementById(panelIdOf(shownId));
+			const tab = document.getElementById(tabId(shownId));
+			const target = (shown && firstFocusable(shown)) ?? tab;
+			target?.focus({ preventScroll: true });
+			// A candidate that refuses focus leaves it on the body; the tab is upstream's fallback.
+			if (target !== tab && document.activeElement !== target) tab?.focus({ preventScroll: true });
+		});
+	});
 	// The selected tab's flare reaches 4 past it, so a new selection can move the content's edge
 	// without any tab changing size; it is recorded here so that a later measure does not read
 	// that as the items resizing.
@@ -488,7 +550,7 @@
 							tabindex={item.id === entry ? 0 : -1}
 							aria-selected={item.id === current}
 							aria-disabled={isItemDisabled(item) || undefined}
-							aria-controls={panelId}
+							aria-controls={item.content ? panelIdOf(item.id) : undefined}
 							data-selected={item.id === current || undefined}
 							onclick={() => select(item)}
 							onfocusin={() => (remembered = item.id)}
@@ -570,13 +632,22 @@
 		{/if}
 		{#if tabStripFooter}<div class="strip-footer">{@render tabStripFooter()}</div>{/if}
 	</div>
-	<div
-		class="panel"
-		role="tabpanel"
-		id={panelId}
-		aria-labelledby={currentItem ? tabId(currentItem.id) : undefined}
-	>
-		{#if currentItem?.content}{@render currentItem.content()}{/if}
+	<!-- TabContentPresenter (`TabView.xaml:45`). Every item's content stays mounted, and only the
+	     selected one's panel is shown. -->
+	<div class="content">
+		{#each items as item (item.id)}
+			{#if item.content}
+				<div
+					class="panel"
+					role="tabpanel"
+					id={panelIdOf(item.id)}
+					aria-labelledby={tabId(item.id)}
+					hidden={item.id !== current}
+				>
+					{@render item.content()}
+				</div>
+			{/if}
+		{/each}
 	</div>
 </div>
 
@@ -1158,8 +1229,18 @@
 		pointer-events: none;
 	}
 
+	.content {
+		flex-grow: 1;
+		display: flex;
+		flex-direction: column;
+	}
+
 	.panel {
 		flex-grow: 1;
+	}
+
+	.panel[hidden] {
+		display: none;
 	}
 
 	/* A contrast theme: the tokens are the high-contrast theme, so the browser's forcing is off
