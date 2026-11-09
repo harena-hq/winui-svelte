@@ -1,5 +1,9 @@
 # winui-svelte
 
+**If `.private/AGENTS.md` exists, read it after this file.** It is untracked and holds what
+depends on one machine or one person's tooling; a fresh clone does not have it, and nothing here
+needs it.
+
 ## Language
 
 Artifacts — code, documents, comments, commit messages, file contents — are written in
@@ -12,11 +16,11 @@ code, docs, commit messages — so that opening the repository later requires no
 history rewrite. The unit of exposure is the commit, not the working tree:
 deleting a file in a later commit publishes it just as surely as leaving it.
 
-Private context lives in `.private/`, untracked. Read it like any other
-context, and treat it as **input only** — nothing from `.private/` reaches a
-tracked file, commit message, PR, or issue unless it is first restated in a
-form that would be fine published. A rationale worth keeping is _promoted_ to a
-commit trailer or an ADR in publishable form, never copied across.
+Private context lives in `.private/`, which is ignored and absent from a clone. Where it
+exists, read it like any other context, and treat it as **input only** — nothing from
+`.private/` reaches a tracked file, commit message, PR, or issue unless it is first restated in
+a form that would be fine published. A rationale worth keeping is _promoted_ to a commit
+trailer or an ADR in publishable form, never copied across.
 
 **Run this once per clone**, before the first commit from it:
 
@@ -122,12 +126,19 @@ not checked.
 
 ## Engineering method
 
-The engineering method in this brief governs planning, reviewing and sealing
-work here. One goal per version; each unit states its Done-when, passes its
-conformance gates and receives an independent review. This brief may record
-an exception with its rationale.
+A _unit_ is the smallest change that does one thing and passes its checks; it is _sealed_ when
+it is committed.
 
-One exception is in force, and it is the one recorded under **Commit subjects** above:
-the rule that a subject needing "and" names two intents governs the unit, not the
-conjunction, so a two-clause intent line is allowed where the clauses are two halves
-of one mechanism.
+- **Plan before code.** `docs/plan.md` is the living plan. A version has one goal, and a change
+  that departs from a decision the plan records as locked says so: in a `Directive:` or
+  `Rejected:` trailer if small, in an ADR under `docs/adr/` if architectural.
+- **Done means checked.** A unit states its Done-when, a check that can fail, and is sealed only
+  when that passes and so does the full battery: `pnpm verify`. Its last step, `pnpm gate`, needs
+  the reference browser the README describes; without one, run the README's second command line
+  (`pnpm verify` without `pnpm gate`) and say in the change that the gate is left to the maintainer.
+  The conformance gates in `scripts/conformance/` are part of the battery, not advice.
+- **Review is independent.** Whoever wrote a change does not approve it. A second reader, a
+  person or an agent in a fresh context, reads the diff cold. Each test's input is checked
+  against the case its name claims, and the commit's `Reviewed:` trailer names that evidence.
+- **One commit, one intent**, as stated under Commit subjects. Fixes found in review fold into
+  the unit before it is shared.

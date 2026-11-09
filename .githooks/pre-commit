@@ -12,7 +12,7 @@ if staged | grep -qE '(^|/)\.private(/|$)'; then
   refuse "staged path under .private/ (private context)"
 fi
 
-if staged | grep -qE '(^|/)\.(omc|omx)(/|$)'; then
+if staged | grep -qE '(^|/)\.(omc|omx|claude)(/|$)'; then
   refuse "staged path under agent-runtime state"
 fi
 
