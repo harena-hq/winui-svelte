@@ -22,6 +22,11 @@ waits for a minor version, which npm's caret range does not cross: `^0.1.0` stop
   consumer's panel, which the tab's `aria-controls` names and for which the component renders no
   panel of its own, and `tabId`, the tab's own `id`, for that panel's `aria-labelledby`. Focus
   does not follow a selection change into a consumer's panel.
+- **`onTabKeyDown` reports a key pressed on a tab or its close button before the strip handles
+  it**, with the tab's `id`. A handler that calls `preventDefault()` takes the key, and the strip
+  selects, closes and moves focus for none of it, nor for a key any earlier listener prevented;
+  the key still propagates. A consumer can stop the arrows at either end of the ring and carry
+  focus to its own control, or close with Delete, while the ring keeps upstream's wrap by default.
 
 ## 0.1.0
 

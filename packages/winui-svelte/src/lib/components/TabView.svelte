@@ -103,6 +103,15 @@
 		 * shown on an enabled tab; a disabled tab raises none and keeps the browser's menu.
 		 */
 		onTabContextRequested?: (id: string, args: TabViewTabContextRequestedEventArgs) => void;
+		/**
+		 * No WinUI member: each TabViewItem's KeyDown, reported by id before the strip's own
+		 * handling, for a key pressed on the tab or anything inside it, its close button included;
+		 * `event.target` tells which. A disabled tab reports none. A handler that calls
+		 * `event.preventDefault()` takes the key: the strip then does nothing with it — no
+		 * selection, no close, no focus move — and it does the same with a key any earlier
+		 * listener prevented. The key still propagates.
+		 */
+		onTabKeyDown?: (id: string, event: KeyboardEvent) => void;
 		/** IsEnabled on the control, inverted to the attribute — ADR 0009. */
 		disabled?: boolean | null;
 		/** TabWidthMode. Defaults to `Equal`, as upstream does (`TabView.idl:105`). */
@@ -183,6 +192,7 @@
 		onSelectedChange,
 		onTabCloseRequested,
 		onTabContextRequested,
+		onTabKeyDown,
 		disabled = false,
 		tabWidthMode = 'equal',
 		closeButtonOverlayMode = 'auto',
@@ -290,7 +300,18 @@
 		return true;
 	}
 
+	// A tab's KeyDown, reported in the capture phase so it precedes the close button's own handler
+	// as well as the tab's. A key the consumer prevents is left alone by both, which read
+	// `defaultPrevented`; its propagation is not stopped, so the root's and the page's own
+	// listeners still see it.
+	function reportKey(event: KeyboardEvent, item: TabViewItemData) {
+		if (!onTabKeyDown || isItemDisabled(item)) return;
+		onTabKeyDown(item.id, event);
+	}
+
 	function handleKeydown(event: KeyboardEvent, item: TabViewItemData) {
+		// A key already taken, by `onTabKeyDown` or anything before it, is left alone.
+		if (event.defaultPrevented) return;
 		if (event.ctrlKey && event.key === 'F4') {
 			if (item.id === current && isClosable(item) && !isItemDisabled(item)) {
 				event.preventDefault();
@@ -323,6 +344,7 @@
 	}
 
 	function handleCloseKeydown(event: KeyboardEvent, item: TabViewItemData) {
+		if (event.defaultPrevented) return;
 		if (walk(event, closeId(item.id))) event.stopPropagation();
 	}
 
@@ -587,6 +609,7 @@
 							data-selected={item.id === current || undefined}
 							onclick={() => select(item)}
 							onfocusin={() => (remembered = item.id)}
+							onkeydowncapture={(event) => reportKey(event, item)}
 							onkeydown={(event) => handleKeydown(event, item)}
 							oncontextmenu={(event) => requestContext(event, item)}
 						>
