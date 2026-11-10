@@ -281,10 +281,17 @@
 	// close button that had focus remembers its tab, and a change of selection moves it too, as
 	// `Selector` does when the selection changes (`Selector_Partial.cpp:990`, `:2397`): the
 	// remembered tab is derived from the selection and overwritten by focus, so until a tab is
-	// visited the stop is the selected one.
+	// visited the stop is the selected one. If the remembered tab is absent or disabled, the stop is
+	// the enabled selected tab, else the first enabled tab; with none enabled, no tab is a stop.
 	let remembered = $derived<string | null>(current);
+	const isStop = (id: string | null) =>
+		items.some((item) => item.id === id && !isItemDisabled(item));
 	const entry = $derived(
-		items.some((item) => item.id === remembered && !isItemDisabled(item)) ? remembered : current
+		isStop(remembered)
+			? remembered
+			: isStop(current)
+				? current
+				: (items.find((item) => !isItemDisabled(item))?.id ?? null)
 	);
 
 	function walk(event: KeyboardEvent, here: string) {

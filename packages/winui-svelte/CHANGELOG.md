@@ -29,6 +29,8 @@ waits for a minor version, which npm's caret range does not cross: `^0.1.0` stop
   focus to its own control, or close with Delete, while the ring keeps upstream's wrap by default.
 - **Closing or removing the tab that holds focus moves focus to the next enabled tab**, else the
   previous enabled tab, else the add-tab button, as upstream does. In 0.1.0, focus was lost.
+- **The strip's Tab stop is always an enabled tab.** In 0.1.0 a selection naming no tab left the
+  strip with no stop, and a disabled first tab with no selection was a stop the arrows ignored.
 
 ## 0.1.0
 

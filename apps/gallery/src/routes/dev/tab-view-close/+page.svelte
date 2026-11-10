@@ -28,6 +28,8 @@
 	let skipReported = $state<string[]>([]);
 	let lone = $state(make(2, [1]));
 	let loneReported = $state<string[]>([]);
+	let firstOff = $state(make(3, [0]));
+	let firstOffReported = $state<string[]>([]);
 </script>
 
 {#snippet content()}<p class="winui-BodyTextBlockStyle">Document content.</p>{/snippet}
@@ -84,6 +86,15 @@
 		onTabCloseRequested={(id) => (lone = remove(lone, id))}
 	/>
 	<output>{loneReported.join(' ')}</output>
+</div>
+
+<div class="frame" id="first-off">
+	<TabView
+		items={firstOff}
+		onSelectedChange={(id) => (firstOffReported = [...firstOffReported, id ?? 'null'])}
+		onTabCloseRequested={(id) => (firstOff = remove(firstOff, id))}
+	/>
+	<output>{firstOffReported.join(' ')}</output>
 </div>
 
 <style>

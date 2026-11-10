@@ -16,6 +16,9 @@ import { test } from './fixtures';
  * before it searching backwards, else the add button (`TabView::RequestCloseTab`,
  * `TabView.cpp:1017-1101`, searches at `:1048-1070`, fallback at `:1079-1082`). Here any removal
  * counts, not only a close request; focus outside the removed tab stays put.
+ *
+ * The strip's Tab stop is an enabled tab even when the selection names none or the first tab is
+ * disabled.
  */
 
 const strip = (page: Page, name: string) => page.locator(`#${name}`);
@@ -35,6 +38,23 @@ const close = (page: Page, name: string, id: string) =>
 
 test.beforeEach(async ({ page }) => {
 	await page.goto('/dev/tab-view-close');
+});
+
+test('Tab reaches a tab when the selection names none', async ({ page }) => {
+	await page.locator('#select-none').click();
+	await page.locator('#close-and-pick').focus();
+	await page.keyboard.press('Tab');
+	await expect(tab(page, 'bound', 'doc-0')).toBeFocused();
+});
+
+test('Tab skips a disabled first tab, and the arrows walk from where it lands', async ({
+	page
+}) => {
+	await strip(page, 'lone').getByRole('button', { name: 'Add New Tab' }).focus();
+	await page.keyboard.press('Tab');
+	await expect(tab(page, 'first-off', 'doc-1')).toBeFocused();
+	await page.keyboard.press('ArrowRight');
+	await expect(tab(page, 'first-off', 'doc-1').locator('button.close')).toBeFocused();
 });
 
 test.describe('focus after removing a tab', () => {
