@@ -467,16 +467,46 @@
 	// `:1324-1336`). A mode that did change on leaving would have to bring the selection in then.
 	let removalPending = false;
 	let previousIds: string[] = [];
+	let previousDomIds: string[] = [];
 	let itemsWidth = 0;
 	$effect.pre(() => {
 		const ids = items.map((item) => item.id);
 		const kept = new Set(ids);
 		const before = previousIds;
+		const beforeDomIds = previousDomIds;
 		previousIds = ids;
+		previousDomIds = items.map((item) => tabDomId(item.id));
 		if (!before.some((id) => !kept.has(id))) return;
 		removalPending = true;
 		// Untracked, so neither the selection nor what the consumer's callback reads re-runs this.
-		untrack(() => selectAfterRemoval(before, kept));
+		untrack(() => {
+			// Closing a tab that holds focus moves it to the first focusable tab after it, else
+			// the first before it searching backwards, else the add button (`TabView::RequestCloseTab`,
+			// `TabView.cpp:1017-1101`, searches at `:1048-1070`, fallback at `:1079-1082`). Here any
+			// removal of the focused tab counts, not only a close request: the consumer removes the
+			// record, so the component cannot distinguish them. This departure is deliberate.
+			const focused = before.findIndex(
+				(id, i) =>
+					!kept.has(id) &&
+					document.getElementById(beforeDomIds[i])?.contains(document.activeElement)
+			);
+			if (focused !== -1) {
+				const canFocus = (id: string) =>
+					kept.has(id) && items.some((item) => item.id === id && !isItemDisabled(item));
+				const targetId =
+					before.slice(focused + 1).find(canFocus) ??
+					before.slice(0, focused).reverse().find(canFocus);
+				const focusAdd = targetId === undefined && addTabButtonVisible && !disabled;
+				if (targetId !== undefined || focusAdd) {
+					tick().then(() => {
+						if (document.activeElement !== document.body && document.activeElement !== null) return;
+						if (targetId !== undefined) focusInStrip(tabDomId(targetId));
+						else document.getElementById(addId)?.focus({ preventScroll: true });
+					});
+				}
+			}
+			selectAfterRemoval(before, kept);
+		});
 	});
 	// Focus inside the content being replaced moves into the new content, its first focusable
 	// element or else the tab (`TabView::UpdateTabContent`, `TabView.cpp:984-1011`); focus anywhere

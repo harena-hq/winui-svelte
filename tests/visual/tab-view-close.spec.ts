@@ -11,6 +11,11 @@ import { test } from './fixtures';
  * Pressed on the reference on 2026-10-14, the Gallery's first TabView sample: with Document 1
  * selected, closing it selected Document 2; closing Document 2, now selected and last, selected
  * Document 0.
+ *
+ * Removing the tab that holds focus moves it to the first enabled tab after it, else the first
+ * before it searching backwards, else the add button (`TabView::RequestCloseTab`,
+ * `TabView.cpp:1017-1101`, searches at `:1048-1070`, fallback at `:1079-1082`). Here any removal
+ * counts, not only a close request; focus outside the removed tab stays put.
  */
 
 const strip = (page: Page, name: string) => page.locator(`#${name}`);
@@ -30,6 +35,47 @@ const close = (page: Page, name: string, id: string) =>
 
 test.beforeEach(async ({ page }) => {
 	await page.goto('/dev/tab-view-close');
+});
+
+test.describe('focus after removing a tab', () => {
+	test('closing the focused tab focuses the next enabled tab', async ({ page }) => {
+		await tab(page, 'bound', 'doc-2').click();
+		await page.keyboard.press('Control+F4');
+		await expect(tab(page, 'bound', 'doc-2')).toHaveCount(0);
+		await expect(tab(page, 'bound', 'doc-3')).toBeFocused();
+	});
+
+	test('closing the focused last tab focuses the previous enabled tab', async ({ page }) => {
+		await tab(page, 'bound', 'doc-4').click();
+		await page.keyboard.press('Control+F4');
+		await expect(tab(page, 'bound', 'doc-4')).toHaveCount(0);
+		await expect(tab(page, 'bound', 'doc-3')).toBeFocused();
+	});
+
+	test('closing the focused tab skips disabled neighbours in both directions', async ({ page }) => {
+		await tab(page, 'skip', 'doc-2').click();
+		await page.keyboard.press('Control+F4');
+		await expect(tab(page, 'skip', 'doc-2')).toHaveCount(0);
+		await expect(tab(page, 'skip', 'doc-0')).toBeFocused();
+	});
+
+	test('closing the focused tab with none enabled left focuses the add button', async ({
+		page
+	}) => {
+		await tab(page, 'lone', 'doc-0').click();
+		await page.keyboard.press('Control+F4');
+		await expect(tab(page, 'lone', 'doc-0')).toHaveCount(0);
+		await expect(strip(page, 'lone').getByRole('button', { name: 'Add New Tab' })).toBeFocused();
+	});
+
+	test('removing tabs from an outside button keeps focus on that button', async ({ page }) => {
+		const button = page.locator('#close-two');
+		await button.focus();
+		await page.keyboard.press('Enter');
+		await expect(tab(page, 'bound', 'doc-0')).toHaveCount(0);
+		await expect(tab(page, 'bound', 'doc-1')).toHaveCount(0);
+		await expect(button).toBeFocused();
+	});
 });
 
 test('closing the selected tab selects the one now at its index, and reports it', async ({

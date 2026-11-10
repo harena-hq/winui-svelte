@@ -61,7 +61,7 @@ test('keys the handler does not take keep the strip behaviour', async ({ page })
 
 /**
  * Delete on a focused tab reaches the handler with that tab's id, and the handler closes it; the
- * selection stays on Overview.
+ * selection stays on Overview, and focus moves to Third, the next enabled tab.
  */
 test('Delete closes the focused tab through the handler', async ({ page }) => {
 	await tab(page, 'Second').focus();
@@ -69,6 +69,7 @@ test('Delete closes the focused tab through the handler', async ({ page }) => {
 	await expect(page.getByTestId('log')).toHaveText('k-2:Delete');
 	await expect(tab(page, 'Second')).toHaveCount(0);
 	await expect(tab(page, 'Overview')).toHaveAttribute('aria-selected', 'true');
+	await expect(tab(page, 'Third')).toBeFocused();
 });
 
 /**

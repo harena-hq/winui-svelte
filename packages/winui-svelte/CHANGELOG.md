@@ -27,6 +27,8 @@ waits for a minor version, which npm's caret range does not cross: `^0.1.0` stop
   selects, closes and moves focus for none of it, nor for a key any earlier listener prevented;
   the key still propagates. A consumer can stop the arrows at either end of the ring and carry
   focus to its own control, or close with Delete, while the ring keeps upstream's wrap by default.
+- **Closing or removing the tab that holds focus moves focus to the next enabled tab**, else the
+  previous enabled tab, else the add-tab button, as upstream does. In 0.1.0, focus was lost.
 
 ## 0.1.0
 
