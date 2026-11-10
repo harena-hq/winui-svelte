@@ -57,6 +57,20 @@ test('Tab skips a disabled first tab, and the arrows walk from where it lands', 
 	await expect(tab(page, 'first-off', 'doc-1').locator('button.close')).toBeFocused();
 });
 
+test('Enter on a focused close button closes its tab', async ({ page }) => {
+	await tab(page, 'bound', 'doc-2').locator('button.close').focus();
+	await page.keyboard.press('Enter');
+	await expect(tab(page, 'bound', 'doc-2')).toHaveCount(0);
+	await expect.poll(() => selectedTabs(page, 'bound')).toEqual(['Document 0']);
+});
+
+test('Space on a focused close button closes its tab', async ({ page }) => {
+	await tab(page, 'bound', 'doc-3').locator('button.close').focus();
+	await page.keyboard.press('Space');
+	await expect(tab(page, 'bound', 'doc-3')).toHaveCount(0);
+	await expect.poll(() => selectedTabs(page, 'bound')).toEqual(['Document 0']);
+});
+
 test.describe('focus after removing a tab', () => {
 	test('closing the focused tab focuses the next enabled tab', async ({ page }) => {
 		await tab(page, 'bound', 'doc-2').click();

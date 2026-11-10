@@ -330,6 +330,9 @@
 		// A tab is a `div`, so Enter and Space are not free — and they are what selects, because
 		// the arrows do not: focus and selection are separate in this strip.
 		if (event.key === 'Enter' || event.key === ' ') {
+			// Leave Enter and Space to the focused child; preventing them cancels a button's click.
+			// Upstream's close button requests the close on Click (`TabViewItem.cpp:328`).
+			if (event.target !== event.currentTarget) return;
 			event.preventDefault();
 			select(item);
 			return;

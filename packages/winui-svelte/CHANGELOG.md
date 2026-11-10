@@ -31,6 +31,7 @@ waits for a minor version, which npm's caret range does not cross: `^0.1.0` stop
   previous enabled tab, else the add-tab button, as upstream does. In 0.1.0, focus was lost.
 - **The strip's Tab stop is always an enabled tab.** In 0.1.0 a selection naming no tab left the
   strip with no stop, and a disabled first tab with no selection was a stop the arrows ignored.
+- **Enter or Space on a focused close button now closes its tab.** In 0.1.0 it selected the tab.
 
 ## 0.1.0
 
