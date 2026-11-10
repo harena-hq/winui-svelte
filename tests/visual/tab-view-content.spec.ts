@@ -8,11 +8,12 @@ import { test } from './fixtures';
  * moves to the first focusable element of the new content, or to the tab when there is none
  * (`:984-1011`); focus anywhere else stays where it is.
  *
- * The route's one strip: Keep A holds Note A and three buttons, `Next tab` selecting Keep B, `Show
- * C` selecting Keep C and `Close this tab` removing Keep A; Keep B holds Note B, Keep C only a
- * paragraph, and Keep D has no content. `Select C`, outside the strip, selects Keep C. Keep C's tab
- * takes the id `keep-tab-c` rather than a derived one, so its panel's label and the move of focus
- * to it are read through the item's `tabId`.
+ * The route's one strip: Keep A holds Note A and four buttons, `Next tab` selecting Keep B,
+ * `Show C` selecting Keep C, `Show C, focus outside` selecting Keep C and focusing the Outside
+ * input in a consumer effect, and `Close this tab` removing Keep A; Keep B holds Note B, Keep C
+ * only a paragraph, and Keep D has no content. `Select C` and the Outside input sit outside the
+ * strip. Keep C's tab takes the id `keep-tab-c` rather than a derived one, so its panel's label
+ * and the move of focus to it are read through the item's `tabId`.
  */
 
 const strip = (page: Page) => page.getByTestId('keep');
@@ -106,9 +107,17 @@ test('clicking a tab with the mouse leaves focus on the clicked tab', async ({ p
 test('focus in the content goes to the tab when the new content has nothing to focus', async ({
 	page
 }) => {
-	await strip(page).getByRole('button', { name: 'Show C' }).click();
+	await strip(page).getByRole('button', { name: 'Show C', exact: true }).click();
 	await expect(tab(page, 'Keep C')).toHaveAttribute('aria-selected', 'true');
 	await expect(tab(page, 'Keep C')).toBeFocused();
+});
+
+test('a consumer that moves focus in the same selection change keeps it', async ({ page }) => {
+	const showC = strip(page).getByRole('button', { name: 'Show C, focus outside' });
+	await showC.focus();
+	await showC.press('Enter');
+	await expect(tab(page, 'Keep C')).toHaveAttribute('aria-selected', 'true');
+	await expect(page.getByRole('textbox', { name: 'Outside' })).toBeFocused();
 });
 
 /**

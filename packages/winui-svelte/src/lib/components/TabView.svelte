@@ -484,11 +484,12 @@
 	// swapped; here it is read before the DOM updates, after the removal effect above, so a removal
 	// that moves the selection still finds its old panel, and moved once the new one is shown.
 	// The move reads the selection as it stands then, so a consumer that redirects it in the same
-	// update sends focus to the tab it ends on. The tab needs no scroll of its own: becoming
-	// selected already brings it into view, in the effect below. With `stripOnly`, or for an item
-	// with a `panelId`, there is no component panel: focus is never found inside one on leaving
-	// such an item, and on arriving at such an item from inside a component panel, focus goes to
-	// its tab, never into the consumer's panel.
+	// update sends focus to the tab it ends on. A consumer that moves focus itself in the same
+	// update keeps it, as upstream's move happens synchronously during the swap. The tab needs no
+	// scroll of its own: becoming selected already brings it into view, in the effect below. With
+	// `stripOnly`, or for an item with a `panelId`, there is no component panel: focus is never
+	// found inside one on leaving such an item, and on arriving at such an item from inside a
+	// component panel, focus goes to its tab, never into the consumer's panel.
 	let shownBefore: string | null = null;
 	let focusPending = false;
 	$effect.pre(() => {
@@ -499,8 +500,15 @@
 		shownBefore = next;
 		if (!focusWasInside || focusPending) return;
 		focusPending = true;
+		const from = document.activeElement;
 		tick().then(() => {
 			focusPending = false;
+			if (
+				document.activeElement !== from &&
+				document.activeElement !== document.body &&
+				document.activeElement !== null
+			)
+				return;
 			const shownId = untrack(() => current);
 			if (shownId === null) return;
 			const shown = document.getElementById(panelIdOf(shownId));

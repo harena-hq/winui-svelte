@@ -13,9 +13,9 @@ waits for a minor version, which npm's caret range does not cross: `^0.1.0` stop
   upstream does not destroy it either. **Every tab's content now runs at once**: its effects and
   timers keep running while hidden, and an `id` written in two tabs' content is in the document
   twice. When focus is inside the content being replaced, a selection change moves it into the new
-  content, or to the tab when that holds nothing focusable, as upstream does; focus anywhere else
-  stays put. A tab's `aria-controls` now names its own panel, and an item without `content` has
-  none.
+  content, or to the tab when that holds nothing focusable, as upstream does; a consumer that moves
+  focus itself in the same update keeps it, and focus anywhere else stays put. A tab's
+  `aria-controls` now names its own panel, and an item without `content` has none.
 - **`stripOnly` renders the strip without its content region**, for a consumer that renders and
   places the panels itself: with other content between strip and panels, the consumer's own
   classes on each, or panels for records that have no tab. Items gain `panelId`, the `id` of the
