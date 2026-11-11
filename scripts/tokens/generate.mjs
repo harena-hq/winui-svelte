@@ -243,9 +243,12 @@ function brush(record) {
 	return `color-mix(in srgb, ${base} ${percent(record.opacity, where)}, transparent)`;
 }
 
+// Printed as Prettier prints a CSS number, for the reason `declaration` gives: it drops a
+// fraction's trailing zeros, so upstream's `0.50` (`ListViewItem_themeresources.xaml:9`) is
+// `0.5` and `10.0` is `10`.
 const number = (text, where) => {
 	if (!/^-?\d+(?:\.\d+)?$/.test(text)) fail(`${where}: \`${text}\` is not a number`);
-	return text;
+	return text.replace(/(\.\d*?)0+$/, '$1').replace(/\.$/, '');
 };
 
 /**

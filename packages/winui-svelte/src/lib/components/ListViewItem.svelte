@@ -4,12 +4,13 @@
 	/*
 	 * ListViewItem stacks presenter chrome around caller content. Its template is the native
 	 * ListViewItemPresenter, so its background and indicator geometry were measured on the
-	 * reference machine rather than read from XAML. Drag, reorder and placeholder families are
-	 * absent because reordering is not built; pre-Fluent *ThemeBrush families are read by no
-	 * current template; the presenter's FocusBorderBrush/FocusSecondaryBorderBrush rectangle is
-	 * superseded by the system focus band. The inline checkbox — ListViewItemContentOffsetX,
-	 * ListViewItemCheckMode, both *VisualEnabled booleans and the ListViewItemCheckBox* family —
-	 * remains owed by v9 and docs/plan.md.
+	 * reference machine rather than read from XAML. The reorder-target opacity and scale are read
+	 * (ListViewItem_themeresources.xaml:9-10); drag, placeholder and multi-arrange families stay
+	 * absent because drag between lists and dragging several items are not built. Pre-Fluent
+	 * *ThemeBrush families are read by no current template; the presenter's FocusBorderBrush and
+	 * FocusSecondaryBorderBrush rectangle is superseded by the system focus band. The inline
+	 * checkbox — ListViewItemContentOffsetX, ListViewItemCheckMode, both *VisualEnabled booleans
+	 * and the ListViewItemCheckBox* family — remains owed by v9 and docs/plan.md.
 	 */
 	export interface ListViewItemProps {
 		/** ListViewItem.Content, the content property — ADR 0009 maps it to `children`. */
@@ -182,6 +183,29 @@
 
 	.root[data-selected][data-disabled] .indicator {
 		background: var(--winui-ListViewItemSelectionIndicatorDisabledBrush);
+	}
+
+	/* A reorder in progress (ListView's `reorderItems`). The dragged item is the one under the
+	   pointer and draws that state; the others are reorder targets, at upstream's opacity and
+	   scale (ListViewItem_themeresources.xaml:9-10). Every item's offset is ListView's
+	   `translate`. Upstream animates over 240 ms (ListViewBaseItemPresenter_Partial.cpp:21,
+	   :403-406); the nearest duration token, 250 ms, stands in for it. */
+	.root[data-dragging] {
+		z-index: 1;
+	}
+	.root[data-dragging]:not([data-disabled]):not([data-selected]) .background {
+		background: var(--winui-ListViewItemBackgroundPointerOver);
+	}
+	.root[data-dragging][data-selected]:not([data-disabled]) .background {
+		background: var(--winui-ListViewItemBackgroundSelectedPointerOver);
+	}
+	.root[data-reorder-target] {
+		opacity: var(--winui-ListViewItemReorderTargetThemeOpacity);
+		scale: var(--winui-ListViewItemReorderTargetThemeScale);
+		transition:
+			opacity var(--winui-ControlNormalAnimationDuration),
+			translate var(--winui-ControlNormalAnimationDuration),
+			scale var(--winui-ControlNormalAnimationDuration);
 	}
 
 	.root[data-disabled] {

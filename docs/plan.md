@@ -4502,7 +4502,7 @@ reordering and this NavigationView has no `PaneCustomContent`, and `docs/diverge
 neither. This version closes ListView's; NavigationView's missing slot is a candidate for a version
 of its own, as below.
 
-**The unit: a ListView reorders its items, by drag and from the keyboard.** `canReorderItems` lets a
+**The unit: a ListView reorders its items, by drag and from the keyboard.** `reorderItems` lets a
 person move an item to a new index in the same list, and `onItemReorder(fromIndex, toIndex)` reports
 it, since this ListView names its items by index; the consumer moves the record, as it removes one
 in answer to `onTabCloseRequested`. The selection follows the moved item, which upstream re-selects

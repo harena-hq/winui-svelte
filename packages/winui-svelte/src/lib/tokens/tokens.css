@@ -1203,6 +1203,8 @@
 	--winui-HyperlinkForegroundPointerOver: var(--winui-AccentTextFillColorSecondaryBrush);
 	--winui-HyperlinkForegroundPressed: var(--winui-AccentTextFillColorTertiaryBrush);
 	--winui-ListViewItemDisabledThemeOpacity: 0.3;
+	--winui-ListViewItemReorderTargetThemeOpacity: 0.5;
+	--winui-ListViewItemReorderTargetThemeScale: 0.95;
 	--winui-ListViewItemMinWidth: 88px;
 	--winui-ListViewItemMinHeight: 40px;
 	--winui-ListViewItemBackground: var(--winui-SubtleFillColorTransparentBrush);
@@ -3393,6 +3395,8 @@
 	--winui-HyperlinkForegroundPointerOver: var(--winui-AccentTextFillColorSecondaryBrush);
 	--winui-HyperlinkForegroundPressed: var(--winui-AccentTextFillColorTertiaryBrush);
 	--winui-ListViewItemDisabledThemeOpacity: 0.3;
+	--winui-ListViewItemReorderTargetThemeOpacity: 0.5;
+	--winui-ListViewItemReorderTargetThemeScale: 0.95;
 	--winui-ListViewItemMinWidth: 88px;
 	--winui-ListViewItemMinHeight: 40px;
 	--winui-ListViewItemBackground: var(--winui-SubtleFillColorTransparentBrush);
@@ -5380,6 +5384,8 @@
 		--winui-HyperlinkForegroundPointerOver: var(--winui-AccentTextFillColorSecondaryBrush);
 		--winui-HyperlinkForegroundPressed: var(--winui-AccentTextFillColorTertiaryBrush);
 		--winui-ListViewItemDisabledThemeOpacity: 0.3;
+		--winui-ListViewItemReorderTargetThemeOpacity: 0.5;
+		--winui-ListViewItemReorderTargetThemeScale: 0.95;
 		--winui-ListViewItemMinWidth: 88px;
 		--winui-ListViewItemMinHeight: 40px;
 		--winui-ListViewItemBackground: var(--winui-SubtleFillColorTransparentBrush);
@@ -7415,6 +7421,8 @@
 	--winui-ListViewItemFocusVisualPrimaryBrush: var(--winui-SystemColorWindowTextColor);
 	--winui-ListViewItemFocusVisualSecondaryBrush: var(--winui-SystemColorWindowColor);
 	--winui-ListViewItemDisabledThemeOpacity: 0.3;
+	--winui-ListViewItemReorderTargetThemeOpacity: 0.5;
+	--winui-ListViewItemReorderTargetThemeScale: 0.95;
 	--winui-ListViewItemMinWidth: 88px;
 	--winui-ListViewItemMinHeight: 40px;
 	--winui-ListViewItemCornerRadius: 4px;
@@ -9463,6 +9471,8 @@
 		--winui-ListViewItemFocusVisualPrimaryBrush: var(--winui-SystemColorWindowTextColor);
 		--winui-ListViewItemFocusVisualSecondaryBrush: var(--winui-SystemColorWindowColor);
 		--winui-ListViewItemDisabledThemeOpacity: 0.3;
+		--winui-ListViewItemReorderTargetThemeOpacity: 0.5;
+		--winui-ListViewItemReorderTargetThemeScale: 0.95;
 		--winui-ListViewItemMinWidth: 88px;
 		--winui-ListViewItemMinHeight: 40px;
 		--winui-ListViewItemCornerRadius: 4px;

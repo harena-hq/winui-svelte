@@ -3106,6 +3106,8 @@ export const DOUBLE_RATIOS = {
 	LoopingSelectorUpDownButtonScalePressed:
 		"the pressed LoopingSelector navigation button's 0.875 scale",
 	ListViewItemDisabledThemeOpacity: "the disabled ListViewItem's 0.3 opacity",
+	ListViewItemReorderTargetThemeOpacity: "a reorder target ListViewItem's 0.5 opacity",
+	ListViewItemReorderTargetThemeScale: "a reorder target ListViewItem's 0.95 scale",
 	PipsPagerNavigationButtonScalePressed: "the pressed PipsPager navigation button's 0.875 scale"
 };
 
@@ -4506,17 +4508,18 @@ export const ITEMCONTAINER_KEYS = {
  * background is not the item's box — and that was measured on the reference machine: 2 above
  * and below, 4 either side, in a 40-tall row.
  *
- * Absent, with reasons. The drag, reorder, placeholder and multi-arrange families
- * (`ListViewItem_themeresources.xaml:7-11`, `:35-39`) belong to reordering, which this
- * version does not build. The fifteen pre-Fluent `*ThemeBrush` entries (`:42-56`) are
- * read by no current template — the same category `PIVOT_KEYS` records. `ListViewItemBorderBackground`,
+ * Absent, with reasons. Of the drag, reorder, placeholder and multi-arrange families
+ * (`ListViewItem_themeresources.xaml:7-11`, `:35-39`), only the reorder target's opacity and scale
+ * (`:9-10`) are read; the rest stay absent because drag between lists and dragging several items
+ * are not built. The fifteen pre-Fluent `*ThemeBrush` entries (`:42-56`) are read by no current
+ * template — the same category `PIVOT_KEYS` records. `ListViewItemBorderBackground`,
  * `ListViewItemSelectedBorderThemeThickness` and `ListViewItemCompactSelectedBorderThemeThickness`
  * (`:12`, `:15-16`) are the pre-Fluent selection border, replaced by the indicator.
- * `ListViewItemFocusBorderBrush` and `ListViewItemFocusSecondaryBorderBrush` (`:31-32`) are
- * the presenter's own focus rectangle, which the system focus visual supersedes.
- * `ListViewItemContentOffsetX`, `ListViewItemCheckMode`, the two `*VisualEnabled` booleans and
- * the whole `ListViewItemCheckBox*` family are the inline check box, which v9 leaves owed —
- * see docs/plan.md.
+ * `ListViewItemFocusBorderBrush` and `ListViewItemFocusSecondaryBorderBrush` (`:31-32`) are the
+ * presenter's own focus rectangle, which the system focus visual supersedes.
+ * `ListViewItemContentOffsetX`, `ListViewItemCheckMode`, the two `*VisualEnabled` booleans and the
+ * whole `ListViewItemCheckBox*` family are the inline check box, which v9 leaves owed, as
+ * docs/plan.md records.
  */
 export const LISTVIEWITEM_KEYS = {
 	ListViewItemMinWidth: 'ListViewItem minimum width',
@@ -4524,6 +4527,8 @@ export const LISTVIEWITEM_KEYS = {
 	ListViewItemCornerRadius: 'ListViewItem background corner radius',
 	ListViewItemSelectionIndicatorCornerRadius: 'ListViewItem selection indicator corner radius',
 	ListViewItemDisabledThemeOpacity: 'ListViewItem opacity while disabled',
+	ListViewItemReorderTargetThemeOpacity: 'ListViewItem opacity while another item is dragged',
+	ListViewItemReorderTargetThemeScale: 'ListViewItem scale while another item is dragged',
 	ListViewItemBackground: 'ListViewItem background, at rest',
 	ListViewItemBackgroundPointerOver: 'ListViewItem background under the pointer',
 	ListViewItemBackgroundPressed: 'ListViewItem background while pressed',

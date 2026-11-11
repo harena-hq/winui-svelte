@@ -4,6 +4,16 @@ Semantic versioning applies to the package root, `@harena-hq/winui-svelte`, and 
 stylesheets the package maps, and to nothing else. Below 1.0, a change a consumer has to adapt to
 waits for a minor version, which npm's caret range does not cross: `^0.1.0` stops short of `0.2.0`.
 
+## 0.3.0
+
+### `preview`'s `ListView`
+
+- **`reorderItems` lets a person move an item within the list**, by dragging it with a mouse
+  or pen, or with Alt+Shift and an arrow key, as upstream does. The callback
+  `onItemReorder(fromIndex, toIndex)` reports the move and the consumer moves the record;
+  the selection follows the items it named. Dragging between lists, dragging several selected
+  items together, scrolling while dragging and touch drag are not built.
+
 ## 0.2.0
 
 ### `TabView`
