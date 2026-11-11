@@ -4469,6 +4469,69 @@ whose activation routine would otherwise contend with it. A key `onTabKeyDown` t
 by the strip but still propagates. `version` and `VERSION` read `0.2.0`; tagging and publishing
 wait for the owner's word, as the 0.1.0 cut did.
 
+Before the tag, a read-only review of the whole version by a second model found three focus defects,
+one new in 0.2.0 and two from 0.1.0, and each was fixed as its own unit: a consumer that moves focus
+in answer to a selection change keeps it; closing the tab that holds focus moves it to the next
+enabled tab, else the previous, else the add button, the order `TabView::RequestCloseTab` searches
+(`TabView.cpp:1017-1101`, which asks whether a tab is focusable where this asks whether it is
+enabled); and the strip's Tab stop is always an enabled tab. Two items the version's own reviews had
+left open were closed with them: Enter and Space on a close button close its tab, and a test pins
+the function binding a host uses to confirm or refuse a selection. It was tagged `v0.2.0` and
+published on 2026-11-10.
+
+### 0.3.0 — a session list a person can reorder
+
+**Goal: a consumer can build a session list from library parts, with pinned sessions in the order a
+person sets and the rest in the order the consumer sorts them.** The consumer of 0.2.0 hosts chat
+sessions, and the usual shape is two lists: pinned, in an order a person keeps, and recent, newest
+first. Sorting is already the consumer's, because every collection here draws the records it is
+given in their order. Reordering is not, and WinUI has it on the list controls rather than on
+NavigationView: `ListView` takes `CanDragItems`, `CanReorderItems` and `AllowDrop`, which the
+Gallery demonstrates (`ListViewPage.xaml:193-212`); `TabView` has its own `CanDragTabs`,
+`CanReorderTabs` and `AllowDropTabs` (`TabView.idl:140`), and `TreeView` `CanDragItems` and
+`CanReorderItems` (`TreeView.idl:140-142`). NavigationView has no item reordering, so this version
+adds none to it.
+
+**What it composes.** A pane that holds a pinned ListView and a recent ListView. `SplitView`'s
+`pane` snippet already takes one. NavigationView's `PaneCustomContent` is upstream's other slot for
+content of the app's own, but it is an `Auto` row above the menu items (`NavigationView.xaml:348`,
+`PaneContentGrid`'s `Grid.Row="4"`), so a list there grows the pane's top rather than scrolling with
+the items; for a long list the SplitView is the fit, and the plan says so rather than bending
+NavigationView. Two absences found while answering this were recorded nowhere: this ListView has no
+reordering and this NavigationView has no `PaneCustomContent`, and `docs/divergences.md` names
+neither. This version closes ListView's; NavigationView's missing slot is a candidate for a version
+of its own, as below.
+
+**The unit: a ListView reorders its items, by drag and from the keyboard.** `canReorderItems` lets a
+person move an item to a new index in the same list, and `onItemReorder(fromIndex, toIndex)` reports
+it, since this ListView names its items by index; the consumer moves the record, as it removes one
+in answer to `onTabCloseRequested`. The selection follows the moved item, which upstream re-selects
+after the move (`ListViewBase_Partial_Reorder.cpp:1540-1545`), and is reported when its indexes
+change; dragging one of several selected items moves them all upstream (`:662-693`), and that is
+left out. The keyboard is upstream's: Alt+Shift with an arrow, without Control, moves the focused
+item one place (`ListViewBaseItem_Partial.cpp:2100-2103`, into `ListViewBase::OnKeyboardReorder`,
+`ListViewBase_Partial_Reorder.cpp:1868`). Dragging between lists, and `canDragItems` and `allowDrop`
+beyond that, are not this unit's. The states and animations come from the pinned implementation,
+`ListViewItemPresenter` delegating to `CListViewBaseItemChrome` (`ListViewBaseItemChrome.cpp:152`)
+and `ListViewBaseItemPresenter_Partial.cpp:370`, with the values in `generic.xaml:1761-1765`
+(`ListViewItemDragThemeOpacity` and `ListViewItemReorderThemeOpacity` 0.80,
+`ListViewItemReorderTargetThemeOpacity` 0.50, `ListViewItemReorderTargetThemeScale` 0.95,
+`ListViewItemReorderHintThemeOffset` 10), and are checked against the Gallery's sample dragged on
+the reference guest. The unit's route composes a pinned and a recent list in a `SplitView` pane and
+reorders the pinned one.
+
+Done-when for the version: the unit is sealed with its own specs, the composed route reorders its
+pinned list by pointer and by keyboard, a full battery is green on the unit, and `version` and
+`VERSION` both read `0.3.0`.
+
+Not this version's, each a candidate for its own: a TabView that reorders its tabs, by the same
+mechanism, after which `WD-023` keeps tear-out, the browser's `Control+Tab` and any drag between
+strips; TreeView's reordering (`TreeView.svelte`'s header declines it); NavigationView's
+`paneCustomContent`, in upstream's place: in the left pane above the menu items, and in the top pane
+at `Grid.Column="5"` (`NavigationView.xaml:274`); virtualising a long list (`WD-026`); and a TabView
+whose tabs shrink below `--winui-TabViewItemMinWidth` instead of scrolling, which the 0.2.0 consumer
+asked for and which departs from upstream.
+
 ### Final — the acceptance gate
 
 An observed, time-boxed side-by-side of the full Gallery against Windows 11, page by page. The
