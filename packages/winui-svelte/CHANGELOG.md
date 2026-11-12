@@ -14,6 +14,12 @@ waits for a minor version, which npm's caret range does not cross: `^0.1.0` stop
   the selection follows the items it named. Dragging between lists, dragging several selected
   items together, scrolling while dragging and touch drag are not built.
 
+### `TabView`
+
+- **An item `id` holding whitespace no longer breaks the tab's and panel's ARIA links.** The
+  ids the component derives from it are now escaped, so `aria-controls` and `aria-labelledby`
+  each name one element.
+
 ## 0.2.0
 
 ### `TabView`

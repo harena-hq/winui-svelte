@@ -220,9 +220,15 @@
 	const isItemDisabled = (item: TabViewItemData) => disabled || item.disabled === true;
 	const isClosable = (item: TabViewItemData) => item.closable !== false;
 	const current = $derived(selected ?? items[0]?.id ?? null);
+	// A record's `id` is the consumer's string and may hold whitespace, which an `id` attribute
+	// may not and an ID reference list (`aria-controls`, `aria-labelledby`) splits on.
+	// `encodeURIComponent` escapes every whitespace character and is injective, so two records
+	// still get two ids.
+	const idPart = (id: string) => encodeURIComponent(id);
 	const tabDomId = (id: string | null) =>
-		items.find((item) => item.id === id)?.tabId || `${uid}-tab-${id ?? 'none'}`;
-	const panelIdOf = (id: string) => `${uid}-panel-${id}`;
+		items.find((item) => item.id === id)?.tabId ||
+		`${uid}-tab-${id === null ? 'none' : idPart(id)}`;
+	const panelIdOf = (id: string) => `${uid}-panel-${idPart(id)}`;
 
 	function select(item: TabViewItemData) {
 		if (isItemDisabled(item) || item.id === current) return;
@@ -230,7 +236,7 @@
 		onSelectedChange?.(item.id);
 	}
 
-	const closeId = (id: string) => `${uid}-close-${id}`;
+	const closeId = (id: string) => `${uid}-close-${idPart(id)}`;
 	const hasCloseButton = (item: TabViewItemData) =>
 		isClosable(item) && (closeButtonOverlayMode !== 'onPointerOver' || item.id === current);
 
