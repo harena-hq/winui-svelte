@@ -11,6 +11,15 @@
 	 * it; upstream's drag visual is drawn above the window's content, past the list's edges (seen on
 	 * the reference, dragging the Gallery's sample). A change to `items` while a drag is in progress
 	 * is not followed: the drag keeps the indexes it started with.
+	 *
+	 * Three of upstream's reorder values are not used. `ListViewItemDragThemeOpacity` (0.80) is set
+	 * on the drag visual (ListViewBaseItem_Partial.cpp:1776-1781), and the Gallery's sample, dragged
+	 * on the reference, draws that visual's text at full opacity, so the dragged item here is
+	 * opaque. `ListViewItemReorderThemeOpacity` (0.80) fades the item's own container before it
+	 * is hidden (ListViewBaseItemPresenter_Partial.cpp:370-391); here the item is the one dragged,
+	 * and its slot closes. `ListViewItemReorderHintThemeOffset` (10) moves an item in a reorder hint
+	 * state (ListViewBaseItemChrome.cpp:2225-2247), and the pin enters none:
+	 * VisualStatesHelper.cpp:146 always chooses `NoReorderHint`.
 	 */
 	export interface ListViewProps<T> {
 		/** ListView.ItemsSource, deliberately named `items` by ADR 0013. */

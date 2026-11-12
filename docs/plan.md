@@ -4518,7 +4518,10 @@ and `ListViewBaseItemPresenter_Partial.cpp:370`, with the values in `generic.xam
 `ListViewItemReorderTargetThemeOpacity` 0.50, `ListViewItemReorderTargetThemeScale` 0.95,
 `ListViewItemReorderHintThemeOffset` 10), and are checked against the Gallery's sample dragged on
 the reference guest. The unit's route composes a pinned and a recent list in a `SplitView` pane and
-reorders the pinned one.
+reorders the pinned one. Of those five values the unit uses the reorder target's opacity and scale;
+the other three are not used, and `ListView.svelte`'s header says why for each: two belong to
+upstream's separate drag visual and to the container that visual replaces, and the third to a
+reorder hint state the pin never enters.
 
 Done-when for the version: the unit is sealed with its own specs, the composed route reorders its
 pinned list by pointer and by keyboard, a full battery is green on the unit, and `version` and
