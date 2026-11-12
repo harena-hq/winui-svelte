@@ -4535,6 +4535,12 @@ at `Grid.Column="5"` (`NavigationView.xaml:274`); virtualising a long list (`WD-
 whose tabs shrink below `--winui-TabViewItemMinWidth` instead of scrolling, which the 0.2.0 consumer
 asked for and which departs from upstream.
 
+The unit was sealed on 2026-11-11 as specified, keyboard reorder included; of the five reorder
+values the plan lists, the two the unit uses and the three it does not are accounted for in
+`ListView.svelte`'s header. One TabView fix rode along: an item `id` holding whitespace no longer
+breaks the ids the strip derives from it. `version` and `VERSION` read `0.3.0`; tagging and
+publishing wait for the owner's word.
+
 ### Final — the acceptance gate
 
 An observed, time-boxed side-by-side of the full Gallery against Windows 11, page by page. The
